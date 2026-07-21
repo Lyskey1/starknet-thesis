@@ -32,7 +32,11 @@ const OUT_DIR = path.join(ROOT, 'data');
 const OUT = path.join(OUT_DIR, 'recap.json');
 
 const SUBSTACK = 'https://starknetresearch.substack.com/';
-const FEED = SUBSTACK + 'feed';
+// CI routes the feed through a Cloudflare Worker proxy (Substack 403s runner
+// IPs even for RSS): FEED_URL overrides the target, FEED_PROXY_KEY (if set)
+// is sent as the x-proxy-key header. Local runs default to the direct feed.
+const FEED = process.env.FEED_URL || (SUBSTACK + 'feed');
+const FEED_PROXY_KEY = process.env.FEED_PROXY_KEY || '';
 const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36';
 const ARCHIVE = SUBSTACK + 'api/v1/archive?sort=new&limit=50&offset=';
 const PAGE_DELAY = 400;                        // ms between successful pages
@@ -151,10 +155,9 @@ async function fetchRssOnce() {
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
   try {
-    const res = await fetch(FEED, {
-      signal: ctrl.signal,
-      headers: { 'User-Agent': UA, Accept: 'application/rss+xml, application/xml, text/xml' },
-    });
+    const headers = { 'User-Agent': UA, Accept: 'application/rss+xml, application/xml, text/xml' };
+    if (FEED_PROXY_KEY) headers['x-proxy-key'] = FEED_PROXY_KEY;
+    const res = await fetch(FEED, { signal: ctrl.signal, headers: headers });
     if (!res.ok) throw new Error('HTTP ' + res.status);
     return await res.text();
   } finally {

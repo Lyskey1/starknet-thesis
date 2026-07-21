@@ -22,8 +22,11 @@ jobs:
         with:
           node-version: 'lts/*'
 
-      - name: Fetch latest posts (RSS merge — the archive API 403s from runner IPs)
+      - name: Fetch latest posts (RSS merge via Worker proxy — Substack 403s runner IPs)
         run: node scripts/fetch-recap.mjs
+        env:
+          FEED_URL: https://substack-feed-proxy.lyskey1.workers.dev
+          FEED_PROXY_KEY: ${{ secrets.FEED_PROXY_KEY }}
 
       - name: Rebuild the static digest block
         run: node scripts/build-digest.js
