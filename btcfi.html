@@ -955,6 +955,7 @@
 })();
 </script>
 
+<script src="js/news-lazy.js"></script>
 <script>
 (function() {
   var grid = document.getElementById('newsGrid');
@@ -1166,6 +1167,8 @@
   // ---------- public render: one grid cell per entry, real embeds ----------
   var publicCells = [];
   var cellTimers = {};
+  // shared progressive loader: 12-card batches, LOAD MORE, IO-lazy embeds
+  var lazy = window.NewsLazy({ grid: grid, batch: 12, parseTweetId: parseTweetId });
   var activated = false;
 
   // Parse the date formats used in entries ("Mar 2025", "September 2025", "Sep 2025",
@@ -1224,9 +1227,10 @@
       cell.style.order = pos[i];
       grid.appendChild(cell);
       publicCells.push(cell);
-      if (activated) renderCell(cell, c);
-      else cell.innerHTML = headerHTML(c) + fallbackHTML(c); // instant placeholder until widgets.js is lazily loaded
+      cell.innerHTML = headerHTML(c) + fallbackHTML(c); // facade: instant, zero iframes
+      cell.__newsCard = c;
     });
+    lazy.setItems(publicCells, cards, pos);
   }
 
   // Custom header (title + date) shown above the embed. Empty if neither is set.
@@ -1275,7 +1279,7 @@
   function activate(){
     if (activated) return;
     activated = true;
-    publicCells.forEach(function(cell, i){ if (cards[i]) renderCell(cell, cards[i]); });
+    lazy.start(); // batched reveal + lazy hydration (shared js/news-lazy.js)
   }
 
   // ---------- collapse toggle ----------

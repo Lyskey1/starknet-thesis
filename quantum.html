@@ -997,6 +997,7 @@ body.page-quantum{overflow-x:clip;}
   </div>
 </footer>
 
+<script src="js/news-lazy.js"></script>
 <script>
 // ============================================================
 // COUNTDOWN to Jan 1, 2029
@@ -1254,6 +1255,8 @@ var VIDEOS = [
   // ---------- public render: one grid cell per entry, real embeds ----------
   var publicCells = [];
   var cellTimers = {};
+  // shared progressive loader: 12-card batches, LOAD MORE, IO-lazy embeds
+  var lazy = window.NewsLazy({ grid: grid, batch: 12, parseTweetId: parseTweetId });
   var activated = false;
 
   var MONTHS = { jan:0, january:0, feb:1, february:1, mar:2, march:2, apr:3, april:3,
@@ -1309,9 +1312,10 @@ var VIDEOS = [
       cell.style.order = pos[i];
       grid.appendChild(cell);
       publicCells.push(cell);
-      if (activated) renderCell(cell, c);
-      else cell.innerHTML = headerHTML(c) + fallbackHTML(c);
+      cell.innerHTML = headerHTML(c) + fallbackHTML(c); // facade: instant, zero iframes
+      cell.__newsCard = c;
     });
+    lazy.setItems(publicCells, cards, pos);
   }
 
   function headerHTML(c){
@@ -1356,7 +1360,7 @@ var VIDEOS = [
   function activate(){
     if (activated) return;
     activated = true;
-    publicCells.forEach(function(cell, i){ if (cards[i]) renderCell(cell, cards[i]); });
+    lazy.start(); // batched reveal + lazy hydration (shared js/news-lazy.js)
   }
 
   // ---------- collapse toggle ----------
