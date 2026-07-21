@@ -1267,7 +1267,6 @@
   }
 
   @media (max-width: 768px) {
-    nav { padding: 16px 24px; }
     section { padding: 80px 24px; }
     .hero { padding: 100px 24px 60px; }
     .problem-grid { grid-template-columns: 1fr; }
@@ -1302,8 +1301,28 @@
   .nav-links a:hover { color: var(--white); }
   .nav-links a.active { color: var(--accent); }
   a.nav-logo { text-decoration: none; }
-  @media (max-width: 860px) {
+  
+/* ---------- mobile navigation (burger + full-screen overlay; js/nav.js) ---------- */
+.nav-burger { display: none; width: 44px; height: 44px; flex: 0 0 auto; flex-direction: column; align-items: center; justify-content: center; gap: 5px; background: none; border: 0; padding: 0; cursor: pointer; }
+.nav-burger span { display: block; width: 22px; height: 2px; border-radius: 1px; background: var(--white); }
+.nav-overlay { position: fixed; inset: 0; z-index: 300; background: rgba(10,10,11,0.97); backdrop-filter: blur(12px); display: flex; flex-direction: column; padding: 12px 20px calc(24px + env(safe-area-inset-bottom)); overflow-y: auto; }
+.nav-overlay[hidden] { display: none; }
+.nav-ov-top { display: flex; align-items: center; justify-content: flex-end; min-height: 64px; }
+.nav-ov-close { width: 44px; height: 44px; background: none; border: 1px solid var(--border); border-radius: 10px; color: var(--white); font-size: 22px; line-height: 1; cursor: pointer; }
+.nav-ov-links { display: flex; flex-direction: column; margin-top: 20px; }
+.nav-ov-links a { display: flex; align-items: center; gap: 14px; min-height: 48px; padding: 4px 6px; font-family: var(--mono); font-size: 15px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--white); text-decoration: none; border-bottom: 1px solid rgba(245,242,236,0.08); }
+.nav-ov-links a::before { content: ""; width: 7px; height: 7px; border-radius: 50%; flex: 0 0 auto; background: transparent; }
+.nav-ov-links a.active::before { background: var(--accent, #8b7bff); box-shadow: 0 0 10px rgba(139,123,255,0.6); }
+.nav-ov-cta { margin-top: auto; display: flex; justify-content: center; width: 100%; padding-top: 28px; }
+.nav-ov-cta .btn { width: 100%; justify-content: center; text-align: center; display: inline-flex; align-items: center; gap: 8px; }
+html.nav-locked, html.nav-locked body { overflow: hidden; }
+
+@media (max-width: 860px) {
+    /* mobile nav: compact 64px bar, links + CTA move into the overlay */
+    nav { height: 64px; padding: 0 16px; }
     .nav-links { display: none; }
+    nav > .nav-cta { display: none; }
+    .nav-burger { display: flex; }
   }
   /* Landing grid */
   .landing { min-height: 100vh; padding: 140px 48px 80px; max-width: 1100px; margin: 0 auto; }

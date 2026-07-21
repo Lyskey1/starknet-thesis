@@ -23,6 +23,7 @@
   <script type="application/ld+json">{"@context": "https://schema.org","@type": "WebApplication","name": "STRK Tokenomics and Staking Dashboard","url": "https://starknetthesis.io/strk.html","applicationCategory": "FinanceApplication","operatingSystem": "Web browser","description": "Live dashboard of STRK metrics: price, market cap, staking, TVL, users, revenue and STRK20 privacy figures, with monthly staking history reconstructed from onchain state.","isAccessibleForFree": true,"publisher": {"@type": "Organization","name": "Starknet Thesis"}}</script>
 
 <script defer src="https://cloud.umami.is/script.js" data-website-id="45f11859-9fc2-49ae-a59e-4826e0f1e174"></script>
+<script defer src="js/nav.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <!-- shared type system (matches css/styles.css / the rest of the site) -->
@@ -57,7 +58,6 @@ h1,h2,h3{font-family:var(--display),sans-serif;font-weight:800;line-height:1.04;
 
 /* nav */
 nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(10,10,10,0.78);backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
-.nav-in{max-width:none;margin:0;padding:16px 40px;display:flex;align-items:center;justify-content:space-between;gap:24px}
 /* shared wordmark — copied verbatim from css/styles.css so it matches every other page */
 .nav-logo{font-family:var(--display);font-weight:800;font-size:18px;letter-spacing:0.02em;text-transform:uppercase;color:var(--white);white-space:nowrap}
 .nav-logo b{color:var(--accent);font-weight:800}
@@ -67,7 +67,6 @@ a.nav-logo{text-decoration:none}
 .nav-links a:hover{color:var(--white)} .nav-links a.active{color:var(--acc-2)}
 /* CTA uses the shared .btn style (solid accent fill); see .btn rules below */
 .nav-cta{white-space:nowrap;padding:11px 20px}
-.menu-toggle{display:none;background:none;border:0;color:var(--white);font-size:24px;cursor:pointer}
 
 /* hero */
 .hero{position:relative;display:flex;flex-direction:column;align-items:center;padding:128px 0 60px;overflow:hidden;text-align:center}
@@ -514,12 +513,12 @@ footer.site-footer .foot-bottom a:hover{color:var(--accent)}
 
 
 @media(max-width:860px){
-  .nav-links{display:none}.menu-toggle{display:block}
+  .nav-links{display:none}
   .venn-wrap{grid-template-columns:1fr}
   .util.wide{grid-column:span 1}
 }
 @media(max-width:768px){
-  .nav-in{padding:16px 24px}
+  
 }
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
@@ -527,15 +526,14 @@ footer.site-footer .foot-bottom a:hover{color:var(--accent)}
 <body>
 
 <!-- NAV -->
-<nav><div class="nav-in">
+<nav>
   <a href="index.html" class="nav-logo" style="display:inline-flex;align-items:center;gap:11px"><svg width="22" height="22" viewBox="0 0 26 26" fill="none" aria-hidden="true"><path d="M4 7 H22" stroke="#8b7bff" stroke-width="2.6" stroke-linecap="round"/><path d="M4 13 H17" stroke="#8b7bff" stroke-opacity="0.55" stroke-width="2.6" stroke-linecap="round"/><path d="M4 19 H12" stroke="#8b7bff" stroke-opacity="0.3" stroke-width="2.6" stroke-linecap="round"/></svg><span>Starknet <b>Thesis</b></span></a>
   <div class="nav-links">
     <a href="privacy.html" data-umami-event="nav-click" data-umami-event-page="privacy">Privacy</a><a href="quantum.html" data-umami-event="nav-click" data-umami-event-page="quantum">Quantum</a><a href="btcfi.html" data-umami-event="nav-click" data-umami-event-page="btcfi">BTCFi</a>
     <a href="strk.html" class="active" data-umami-event="nav-click" data-umami-event-page="strk">STRK</a><a href="ecosystem.html" data-umami-event="nav-click" data-umami-event-page="ecosystem">Ecosystem</a><a href="digest.html" data-umami-event="nav-click" data-umami-event-page="digest">Digest</a>
   </div>
   <a class="btn nav-cta" href="index.html" data-umami-event="cta-read-thesis">Read the thesis <i class="ti ti-arrow-right"></i></a>
-  <button class="menu-toggle" aria-label="Menu"><i class="ti ti-menu-2"></i></button>
-</div></nav>
+</nav>
 
 <!-- HERO -->
 <header class="hero">
