@@ -22,6 +22,7 @@
   <meta name="twitter:image" content="https://starknetthesis.io/assets/og-default.png">
   <script type="application/ld+json">{"@context": "https://schema.org","@type": "WebApplication","name": "STRK Tokenomics and Staking Dashboard","url": "https://starknetthesis.io/strk.html","applicationCategory": "FinanceApplication","operatingSystem": "Web browser","description": "Live dashboard of STRK metrics: price, market cap, staking, TVL, users, revenue and STRK20 privacy figures, with monthly staking history reconstructed from onchain state.","isAccessibleForFree": true,"publisher": {"@type": "Organization","name": "Starknet Thesis"}}</script>
 
+<script defer src="https://cloud.umami.is/script.js" data-website-id="45f11859-9fc2-49ae-a59e-4826e0f1e174"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <!-- shared type system (matches css/styles.css / the rest of the site) -->
@@ -529,10 +530,10 @@ footer.site-footer .foot-bottom a:hover{color:var(--accent)}
 <nav><div class="nav-in">
   <a href="index.html" class="nav-logo" style="display:inline-flex;align-items:center;gap:11px"><svg width="22" height="22" viewBox="0 0 26 26" fill="none" aria-hidden="true"><path d="M4 7 H22" stroke="#8b7bff" stroke-width="2.6" stroke-linecap="round"/><path d="M4 13 H17" stroke="#8b7bff" stroke-opacity="0.55" stroke-width="2.6" stroke-linecap="round"/><path d="M4 19 H12" stroke="#8b7bff" stroke-opacity="0.3" stroke-width="2.6" stroke-linecap="round"/></svg><span>Starknet <b>Thesis</b></span></a>
   <div class="nav-links">
-    <a href="privacy.html">Privacy</a><a href="quantum.html">Quantum</a><a href="btcfi.html">BTCFi</a>
-    <a href="strk.html" class="active">STRK</a><a href="ecosystem.html">Ecosystem</a><a href="digest.html">Digest</a>
+    <a href="privacy.html" data-umami-event="nav-click" data-umami-event-page="privacy">Privacy</a><a href="quantum.html" data-umami-event="nav-click" data-umami-event-page="quantum">Quantum</a><a href="btcfi.html" data-umami-event="nav-click" data-umami-event-page="btcfi">BTCFi</a>
+    <a href="strk.html" class="active" data-umami-event="nav-click" data-umami-event-page="strk">STRK</a><a href="ecosystem.html" data-umami-event="nav-click" data-umami-event-page="ecosystem">Ecosystem</a><a href="digest.html" data-umami-event="nav-click" data-umami-event-page="digest">Digest</a>
   </div>
-  <a class="btn nav-cta" href="index.html">Read the thesis <i class="ti ti-arrow-right"></i></a>
+  <a class="btn nav-cta" href="index.html" data-umami-event="cta-read-thesis">Read the thesis <i class="ti ti-arrow-right"></i></a>
   <button class="menu-toggle" aria-label="Menu"><i class="ti ti-menu-2"></i></button>
 </div></nav>
 
@@ -930,10 +931,10 @@ footer.site-footer .foot-bottom a:hover{color:var(--accent)}
     <div class="nacc-item" id="market">
       <button class="nacc-head" aria-expanded="false" aria-controls="market-body"><span class="nacc-title">Market</span><span class="nacc-count">5</span><i class="ti ti-chevron-down nacc-chev"></i></button>
       <div class="nacc-body" id="market-body"><div class="nacc-inner"><div class="cells">
-        <div class="cell" data-chart-series="price"><div class="cell-top"><span class="cl">STRK price</span></div><div class="cv" data-stat="price">$0.0283</div></div>
-        <div class="cell" data-chart-series="mcap"><div class="cell-top"><span class="cl">Market cap</span></div><div class="cv" data-stat="mcap">$191.0M</div></div>
+        <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="STRK price" data-chart-series="price"><div class="cell-top"><span class="cl">STRK price</span></div><div class="cv" data-stat="price">$0.0283</div></div>
+        <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="Market cap" data-chart-series="mcap"><div class="cell-top"><span class="cl">Market cap</span></div><div class="cv" data-stat="mcap">$191.0M</div></div>
         <div class="cell"><div class="cell-top"><span class="cl">FDV</span></div><div class="cv" data-stat="fdv">$283.0M</div><div class="cbar"><i id="fdvBar" style="width:67.5%"></i></div><div class="cbar-leg"><span>MCAP / FDV</span><span data-stat="mcapfdv">67.5%</span></div></div>
-        <div class="cell" data-chart-series="circstaked"><div class="cell-top"><span class="cl">Circulating staked</span></div><div class="cv"><span data-stat="circstaked">21.2</span><span class="cu">%</span></div></div>
+        <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="Circulating staked" data-chart-series="circstaked"><div class="cell-top"><span class="cl">Circulating staked</span></div><div class="cv"><span data-stat="circstaked">21.2</span><span class="cu">%</span></div></div>
         <div class="cell"><div class="cell-top"><span class="cl">Unlocked supply</span></div><div class="cv"><span data-stat="unlockedpct">67.5</span><span class="cu">%</span></div><div class="cbar"><i id="unlockedBar" style="width:67.5%"></i></div><div class="cbar-leg"><span>UNLOCKED</span><span>LOCKED <span data-stat="lockedpct">32.5%</span></span></div></div>
       </div></div></div>
     </div>
@@ -941,42 +942,42 @@ footer.site-footer .foot-bottom a:hover{color:var(--accent)}
     <div class="nacc-item" id="staking">
       <button class="nacc-head" aria-expanded="false" aria-controls="staking-body"><span class="nacc-title">Staking</span><span class="nacc-count">4</span><i class="ti ti-chevron-down nacc-chev"></i></button>
       <div class="nacc-body" id="staking-body"><div class="nacc-inner"><div class="cells">
-        <div class="cell" data-chart-series="strkstaked"><div class="cell-top"><span class="cl">STRK staked</span></div><div class="cv"><span data-stat="strkstaked">1.43B</span><span class="cu"> STRK</span></div><div class="cs"><span data-stat="strkstakedusd">≈ $40.5M</span></div></div>
-        <div class="cell" data-chart-series="circstaked"><div class="cell-top"><span class="cl">% circulating staked</span></div><div class="cv"><span data-stat="circstaked">21.2</span><span class="cu">%</span></div><div class="cs">Staked ÷ circulating · computed</div></div>
-        <div class="cell" data-chart-series="btcstaked"><div class="cell-top"><span class="cl">BTC staked</span></div><div class="cv"><span data-stat="btcstaked">708</span><span class="cu"> BTC</span></div><div class="cs"><span data-stat="btcstakedusd">≈ $45.5M</span></div></div>
-        <div class="cell" data-chart-series="valuestaked"><div class="cell-top"><span class="cl">Total value staked</span></div><div class="cv" data-stat="valuestaked">$86.0M</div><div class="cs">STRK + BTC at spot · computed</div></div>
+        <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="STRK staked" data-chart-series="strkstaked"><div class="cell-top"><span class="cl">STRK staked</span></div><div class="cv"><span data-stat="strkstaked">1.43B</span><span class="cu"> STRK</span></div><div class="cs"><span data-stat="strkstakedusd">≈ $40.5M</span></div></div>
+        <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="% circulating staked" data-chart-series="circstaked"><div class="cell-top"><span class="cl">% circulating staked</span></div><div class="cv"><span data-stat="circstaked">21.2</span><span class="cu">%</span></div><div class="cs">Staked ÷ circulating · computed</div></div>
+        <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="BTC staked" data-chart-series="btcstaked"><div class="cell-top"><span class="cl">BTC staked</span></div><div class="cv"><span data-stat="btcstaked">708</span><span class="cu"> BTC</span></div><div class="cs"><span data-stat="btcstakedusd">≈ $45.5M</span></div></div>
+        <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="Total value staked" data-chart-series="valuestaked"><div class="cell-top"><span class="cl">Total value staked</span></div><div class="cv" data-stat="valuestaked">$86.0M</div><div class="cs">STRK + BTC at spot · computed</div></div>
       </div></div></div>
     </div>
 
     <div class="nacc-item" id="usage">
       <button class="nacc-head" aria-expanded="false" aria-controls="usage-body"><span class="nacc-title">Usage</span><span class="nacc-count">5</span><i class="ti ti-chevron-down nacc-chev"></i></button>
       <div class="nacc-body" id="usage-body"><div class="nacc-inner"><div class="cells">
-        <div class="cell" data-chart-series="dailyusers"><div class="cell-top"><span class="cl">Daily users</span></div><div class="cv" data-stat="dau">13.2K</div><div class="cs">Active addresses / day</div></div>
-        <div class="cell" data-chart-series="weeklyusers"><div class="cell-top"><span class="cl">Weekly users</span></div><div class="cv" data-stat="wau">43.4K</div><div class="cs">Active addresses / 7d</div></div>
-        <div class="cell" data-chart-series="totaltx"><div class="cell-top"><span class="cl">Total TX</span></div><div class="cv" data-stat="totaltx">307.7M</div><div class="cs">Since genesis</div></div>
-        <div class="cell" data-chart-series="tps"><div class="cell-top"><span class="cl">TPS (avg)</span></div><div class="cv"><span data-stat="tps">0.7</span><span class="cu"> TPS</span></div><div class="cs">Last full day</div></div>
-        <div class="cell" data-chart-series="downloads"><div class="cell-top"><span class="cl">StarkZap downloads</span></div><div class="cv" data-stat="downloads">7.4K</div><div class="cs">all-time · live</div></div>
+        <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="Daily users" data-chart-series="dailyusers"><div class="cell-top"><span class="cl">Daily users</span></div><div class="cv" data-stat="dau">13.2K</div><div class="cs">Active addresses / day</div></div>
+        <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="Weekly users" data-chart-series="weeklyusers"><div class="cell-top"><span class="cl">Weekly users</span></div><div class="cv" data-stat="wau">43.4K</div><div class="cs">Active addresses / 7d</div></div>
+        <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="Total TX" data-chart-series="totaltx"><div class="cell-top"><span class="cl">Total TX</span></div><div class="cv" data-stat="totaltx">307.7M</div><div class="cs">Since genesis</div></div>
+        <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="TPS (avg)" data-chart-series="tps"><div class="cell-top"><span class="cl">TPS (avg)</span></div><div class="cv"><span data-stat="tps">0.7</span><span class="cu"> TPS</span></div><div class="cs">Last full day</div></div>
+        <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="StarkZap downloads" data-chart-series="downloads"><div class="cell-top"><span class="cl">StarkZap downloads</span></div><div class="cv" data-stat="downloads">7.4K</div><div class="cs">all-time · live</div></div>
       </div></div></div>
     </div>
 
     <div class="nacc-item" id="defi">
       <button class="nacc-head" aria-expanded="false" aria-controls="defi-body"><span class="nacc-title">DeFi</span><span class="nacc-count">6</span><i class="ti ti-chevron-down nacc-chev"></i></button>
       <div class="nacc-body" id="defi-body"><div class="nacc-inner"><div class="cells">
-        <div class="cell" data-chart-series="tvl"><div class="cell-top"><span class="cl">TVL</span></div><div class="cv" data-stat="tvl">$173.1M</div><div class="cs">DeFi TVL</div></div>
-        <div class="cell" data-chart-series="tvs"><div class="cell-top"><span class="cl">TVS</span></div><div class="cv" data-stat="tvs">$388.9M</div><div class="cs">Total value secured</div></div>
-        <div class="cell" data-chart-series="stables"><div class="cell-top"><span class="cl">Stablecoins</span></div><div class="cv" data-stat="stables">$165.0M</div><div class="cs">On-chain stablecoin cap</div></div>
-        <div class="cell" data-chart-series="netflow"><div class="cell-top"><span class="cl">Total netflow (30D)</span></div><div class="cv" data-stat="netflow">-$25.5M</div><div class="cs">TVS 30d change, incl. price moves</div></div>
-        <div class="cell" data-chart-series="apprev"><div class="cell-top"><span class="cl">App revenue (30D)</span></div><div class="cv" data-stat="apprev">$12.6K</div><div class="cs">Apps on Starknet</div></div>
-        <div class="cell" data-chart-series="chainrev"><div class="cell-top"><span class="cl">Chain revenue (30D)</span></div><div class="cv" data-stat="chainrev">$120.7K</div><div class="cs">Sequencer revenue</div></div>
+        <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="TVL" data-chart-series="tvl"><div class="cell-top"><span class="cl">TVL</span></div><div class="cv" data-stat="tvl">$173.1M</div><div class="cs">DeFi TVL</div></div>
+        <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="TVS" data-chart-series="tvs"><div class="cell-top"><span class="cl">TVS</span></div><div class="cv" data-stat="tvs">$388.9M</div><div class="cs">Total value secured</div></div>
+        <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="Stablecoins" data-chart-series="stables"><div class="cell-top"><span class="cl">Stablecoins</span></div><div class="cv" data-stat="stables">$165.0M</div><div class="cs">On-chain stablecoin cap</div></div>
+        <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="Total netflow (30D)" data-chart-series="netflow"><div class="cell-top"><span class="cl">Total netflow (30D)</span></div><div class="cv" data-stat="netflow">-$25.5M</div><div class="cs">TVS 30d change, incl. price moves</div></div>
+        <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="App revenue (30D)" data-chart-series="apprev"><div class="cell-top"><span class="cl">App revenue (30D)</span></div><div class="cv" data-stat="apprev">$12.6K</div><div class="cs">Apps on Starknet</div></div>
+        <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="Chain revenue (30D)" data-chart-series="chainrev"><div class="cell-top"><span class="cl">Chain revenue (30D)</span></div><div class="cv" data-stat="chainrev">$120.7K</div><div class="cs">Sequencer revenue</div></div>
       </div></div></div>
     </div>
 
     <div class="nacc-item" id="strk20">
       <button class="nacc-head" aria-expanded="false" aria-controls="strk20-body"><span class="nacc-title">Privacy · STRK20</span><span class="nacc-count">3</span><i class="ti ti-chevron-down nacc-chev"></i></button>
       <div class="nacc-body" id="strk20-body"><div class="nacc-inner"><div class="cells c3">
-        <div class="cell" data-chart-series="p_tvl"><div class="cell-top"><span class="cl">TVL in STRK20 pool</span></div><div class="cv" data-stat="p_tvl">$528.9K</div><div class="cs">Shielded value</div></div>
-        <div class="cell" data-chart-series="p_rev"><div class="cell-top"><span class="cl">Revenue from STRK20 (30D)</span></div><div class="cv" data-stat="p_rev">$2.6K</div><div class="cs">4 STRK fee × 30d private TX · derived</div></div>
-        <div class="cell" data-chart-series="p_tx"><div class="cell-top"><span class="cl">Private TX (daily)</span></div><div class="cv" data-stat="p_tx">36</div><div class="cs">Last full day</div></div>
+        <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="TVL in STRK20 pool" data-chart-series="p_tvl"><div class="cell-top"><span class="cl">TVL in STRK20 pool</span></div><div class="cv" data-stat="p_tvl">$528.9K</div><div class="cs">Shielded value</div></div>
+        <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="Revenue from STRK20 (30D)" data-chart-series="p_rev"><div class="cell-top"><span class="cl">Revenue from STRK20 (30D)</span></div><div class="cv" data-stat="p_rev">$2.6K</div><div class="cs">4 STRK fee × 30d private TX · derived</div></div>
+        <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="Private TX (daily)" data-chart-series="p_tx"><div class="cell-top"><span class="cl">Private TX (daily)</span></div><div class="cv" data-stat="p_tx">36</div><div class="cs">Last full day</div></div>
       </div></div></div>
     </div>
 

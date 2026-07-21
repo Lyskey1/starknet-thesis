@@ -66,7 +66,7 @@ function cardHTML(post){
   const cover = post.cover_image ? '<div class="recap-cover"><img src="' + escA(post.cover_image) + '" loading="lazy" alt=""></div>' : '';
   const dateHtml = isNaN(d.getTime()) || !d.getTime() ? '' :
     '<time class="recap-date" datetime="' + d.toISOString().slice(0, 10) + '">' + esc(fmtDate(d)) + '</time>';
-  return '<a class="recap-card" data-cat="' + cat + '" href="' + escA(link) + '" target="_blank" rel="noopener">' +
+  return '<a class="recap-card" data-umami-event="digest-entry-click" data-cat="' + cat + '" href="' + escA(link) + '" target="_blank" rel="noopener">' +
     cover +
     '<div class="recap-content">' +
       '<span class="recap-cat ' + cat + '">' + CAT_LABELS[cat] + '</span>' +
