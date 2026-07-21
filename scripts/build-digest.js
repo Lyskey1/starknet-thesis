@@ -1,6 +1,14 @@
 #!/usr/bin/env node
-/* Static pre-render of the digest list — run `node scripts/build-digest.js`
-   after updating data/recap.json (i.e. after `node scripts/fetch-recap.mjs`).
+/* Static pre-render of the digest list.
+
+   Runs automatically on every Vercel deploy (vercel.json buildCommand →
+   `npm run build`), so production always ships a fresh static block.
+   Running it manually (`node scripts/build-digest.js`) is only needed for
+   LOCAL PREVIEW after updating data/recap.json.
+
+   CI-safe: exits non-zero with a loud message if recap.json is missing,
+   malformed, empty, or if the markers are gone from digest.html — a broken
+   data file blocks the deploy instead of shipping a broken digest.
 
    Reads data/recap.json, renders the 10 most recent entries with EXACTLY the
    markup the client-side renderer in digest.html produces (same classes, so
@@ -69,18 +77,30 @@ function cardHTML(post){
   '</a>';
 }
 
-const posts = JSON.parse(fs.readFileSync(DATA, 'utf8'))
+/* ---- CI validation: fail the build loudly rather than ship a broken digest ---- */
+function die(msg){ console.error('build-digest FAILED: ' + msg); process.exit(1); }
+if (!fs.existsSync(DATA)) die('data/recap.json not found');
+if (!fs.existsSync(PAGE)) die('digest.html not found');
+let raw;
+try { raw = JSON.parse(fs.readFileSync(DATA, 'utf8')); }
+catch (e) { die('data/recap.json is not valid JSON: ' + e.message); }
+if (!Array.isArray(raw) || raw.length === 0) die('data/recap.json must be a non-empty array (got ' + (Array.isArray(raw) ? 'empty array' : typeof raw) + ')');
+const bad = raw.findIndex(p => !p || typeof p !== 'object' || !(p.title || p.canonical_url || p.slug));
+if (bad !== -1) die('data/recap.json entry #' + bad + ' has neither title nor a resolvable URL');
+
+const posts = raw
   .slice()
   .sort((a, b) => new Date(b.post_date || b.published_at || b.date || 0) - new Date(a.post_date || a.published_at || a.date || 0))
   .slice(0, N);
+if (posts.length === 0) die('no posts to render');
 
 const block = START +
-  '\n    <!-- Pre-rendered from data/recap.json — regenerate with: node scripts/build-digest.js -->\n    ' +
+  '\n    <!-- Pre-rendered from data/recap.json — regenerated automatically on deploy (npm run build); run node scripts/build-digest.js for local preview -->\n    ' +
   posts.map(cardHTML).join('\n    ') + '\n    ' + END;
 
 let page = fs.readFileSync(PAGE, 'utf8');
 const si = page.indexOf(START), ei = page.indexOf(END);
-if (si < 0 || ei < 0) { console.error('markers not found in digest.html'); process.exit(1); }
+if (si < 0 || ei < 0 || ei < si) die('STATIC-DIGEST markers not found (or reversed) in digest.html');
 page = page.slice(0, si) + block + page.slice(ei + END.length);
 fs.writeFileSync(PAGE, page);
 console.log('digest.html: static block rebuilt with ' + posts.length + ' entries (latest: ' + (posts[0] && posts[0].title) + ')');
