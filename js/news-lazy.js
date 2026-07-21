@@ -72,7 +72,7 @@
     moreBtn.className = 'news-more-btn';
     moreBtn.textContent = 'Load more';
     moreBtn.setAttribute('data-umami-event', 'news-load-more');
-    moreBtn.setAttribute('data-umami-event-page', (location.pathname.split('/').pop() || 'index').replace('.html', '') || 'index');
+    moreBtn.setAttribute('data-umami-event-page', ((location.pathname || '').split('/').pop() || 'index').replace('.html', '') || 'index');
     moreWrap.appendChild(moreBtn);
     grid.parentNode.insertBefore(moreWrap, grid.nextSibling);
     moreBtn.addEventListener('click', function(){
