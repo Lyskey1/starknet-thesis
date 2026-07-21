@@ -903,7 +903,7 @@ body.page-quantum{overflow-x:clip;}
         <div class="qv-ph"><i class="ti ti-movie" aria-hidden="true"></i><span>No video set</span></div>
         <video class="qv-player" controls preload="metadata" playsinline hidden></video>
       </div>
-      <div class="meta"><h4 class="qv-title">Video 1: Eli Ben-Sasson</h4></div>
+      <div class="meta"><h4 class="qv-title">Starknet's strength against the quantum threat, and what are the missing pieces</h4></div>
       <div class="qv-editor" hidden>
         <div class="qv-fld"><label>Video source (path or URL)</label><input type="text" class="qv-src" placeholder="https://pub-3274162cfa1d48728621d5ec2d0906ad.r2.dev/eli-1.mp4 or a local path"></div>
         <div class="qv-fld"><label>Title</label><input type="text" class="qv-ttl" placeholder="Video title"></div>
@@ -916,7 +916,7 @@ body.page-quantum{overflow-x:clip;}
         <div class="qv-ph"><i class="ti ti-movie" aria-hidden="true"></i><span>No video set</span></div>
         <video class="qv-player" controls preload="metadata" playsinline hidden></video>
       </div>
-      <div class="meta"><h4 class="qv-title">Video 2: Eli Ben-Sasson</h4></div>
+      <div class="meta"><h4 class="qv-title">Starknet's seamless migration to post-quantum security</h4></div>
       <div class="qv-editor" hidden>
         <div class="qv-fld"><label>Video source (path or URL)</label><input type="text" class="qv-src" placeholder="https://pub-3274162cfa1d48728621d5ec2d0906ad.r2.dev/eli-2.mp4 or a local path"></div>
         <div class="qv-fld"><label>Title</label><input type="text" class="qv-ttl" placeholder="Video title"></div>
@@ -929,7 +929,7 @@ body.page-quantum{overflow-x:clip;}
         <div class="qv-ph"><i class="ti ti-movie" aria-hidden="true"></i><span>No video set</span></div>
         <video class="qv-player" controls preload="metadata" playsinline hidden></video>
       </div>
-      <div class="meta"><h4 class="qv-title">TITLE 3</h4></div>
+      <div class="meta"><h4 class="qv-title">Post-quantum by design: the ZK-STARK white paper called it eight years ago</h4></div>
       <div class="qv-editor" hidden>
         <div class="qv-fld"><label>Video source (path or URL)</label><input type="text" class="qv-src" placeholder="https://pub-3274162cfa1d48728621d5ec2d0906ad.r2.dev/Eli-3.mp4 or a local path"></div>
         <div class="qv-fld"><label>Title</label><input type="text" class="qv-ttl" placeholder="Video title"></div>
@@ -942,7 +942,7 @@ body.page-quantum{overflow-x:clip;}
         <div class="qv-ph"><i class="ti ti-movie" aria-hidden="true"></i><span>No video set</span></div>
         <video class="qv-player" controls preload="metadata" playsinline hidden></video>
       </div>
-      <div class="meta"><h4 class="qv-title">TITLE 4</h4></div>
+      <div class="meta"><h4 class="qv-title">How little Starknet needs to change to go post-quantum</h4></div>
       <div class="qv-editor" hidden>
         <div class="qv-fld"><label>Video source (path or URL)</label><input type="text" class="qv-src" placeholder="https://pub-3274162cfa1d48728621d5ec2d0906ad.r2.dev/eli-4.mp4 or a local path"></div>
         <div class="qv-fld"><label>Title</label><input type="text" class="qv-ttl" placeholder="Video title"></div>
@@ -1601,8 +1601,8 @@ var VIDEOS = [
   function save(){ try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){} }
   var state = load(); // [{ src, title }]
 
-  // one-time prefill for slots 3 and 4; only when the slot has never been saved or cleared
-  var seeds = { 2: { src:'https://pub-3274162cfa1d48728621d5ec2d0906ad.r2.dev/Eli-3.mp4', title:'TITLE 3' }, 3: { src:'https://pub-3274162cfa1d48728621d5ec2d0906ad.r2.dev/eli-4.mp4', title:'TITLE 4' } };
+  // one-time prefill for all four slots; only when the slot has never been saved or cleared
+  var seeds = { 0: { src: "https://pub-3274162cfa1d48728621d5ec2d0906ad.r2.dev/eli-1.mp4", title: "Starknet's strength against the quantum threat, and what are the missing pieces" }, 1: { src: "https://pub-3274162cfa1d48728621d5ec2d0906ad.r2.dev/eli-2.mp4", title: "Starknet's seamless migration to post-quantum security" }, 2: { src: "https://pub-3274162cfa1d48728621d5ec2d0906ad.r2.dev/Eli-3.mp4", title: "Post-quantum by design: the ZK-STARK white paper called it eight years ago" }, 3: { src: "https://pub-3274162cfa1d48728621d5ec2d0906ad.r2.dev/eli-4.mp4", title: "How little Starknet needs to change to go post-quantum" } };
   var seeded = false;
   Object.keys(seeds).forEach(function(k){ if(state[k] == null){ state[k] = seeds[k]; seeded = true; } });
   if(seeded) save();
