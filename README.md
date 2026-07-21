@@ -8,7 +8,10 @@ A multi-page static site presenting the Starknet × Bitcoin thesis (quantum resi
 - `privacy.html` — Page 02, Privacy (placeholder)
 - `btcfi.html` — Page 03, BTCFi ✅
 - `strk.html` — Page 04, STRK utilities (placeholder)
-- `digest.html` — Page 05, Digest
+- `digest.html` — Page 05, Digest. Its data (`data/recap.json`) and static
+  pre-render refresh automatically every day at 06:00 UTC via GitHub Actions
+  (`.github/workflows/refresh-digest.yml`); a manual run is available from
+  the repo's Actions tab ("Refresh digest" → Run workflow).
 - `ecosystem.html` — Page 06, Ecosystem (placeholder)
 
 All pages share `css/styles.css` (design system: colors, fonts, components).

@@ -109,6 +109,10 @@ async function main() {
     await sleep(PAGE_DELAY);
   }
 
+  // CI guard: an empty archive means Substack changed/failed — fail loudly
+  // rather than writing an empty file for downstream steps to trip over.
+  if (!all.length) throw new Error('archive returned zero posts — refusing to write an empty recap.json');
+
   // newest → oldest
   all.sort((a, b) => new Date(b.post_date || 0) - new Date(a.post_date || 0));
 

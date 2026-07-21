@@ -1,0 +1,41 @@
+# Keeps the digest fresh: pulls the latest Substack archive into
+# data/recap.json and regenerates digest.html's static block, committing
+# only when something actually changed. A fetch/parse failure fails the
+# run (both scripts exit non-zero) instead of committing bad data.
+name: Refresh digest
+
+on:
+  schedule:
+    - cron: '0 6 * * *' # daily, 06:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+
+      - name: Fetch latest archive from Substack
+        run: node scripts/fetch-recap.mjs
+
+      - name: Rebuild the static digest block
+        run: node scripts/build-digest.js
+
+      - name: Commit and push if changed
+        run: |
+          if git diff --quiet -- data/recap.json digest.html; then
+            echo "No changes — nothing to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/recap.json digest.html
+          git commit -m "Digest: automated refresh"
+          git push origin main
