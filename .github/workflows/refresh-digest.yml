@@ -22,7 +22,7 @@ jobs:
         with:
           node-version: 'lts/*'
 
-      - name: Fetch latest archive from Substack
+      - name: Fetch latest posts (RSS merge — the archive API 403s from runner IPs)
         run: node scripts/fetch-recap.mjs
 
       - name: Rebuild the static digest block
