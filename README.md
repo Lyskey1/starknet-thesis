@@ -51,3 +51,10 @@ Ask Claude Code: *"deploy this folder to Vercel"* and it will handle git + confi
 - `--black #0A0A0A`, `--white #F5F2EC`
 - `--orange #F7931A` (Bitcoin accent), `--stark-purple #8B5CF6` (Starknet accent)
 - Fonts: Syne (display), DM Mono (labels), DM Sans (body)
+
+## Video assets
+
+Video files are served from the Cloudflare R2 bucket `starknet-thesis-videos`
+(public base URL `https://pub-3274162cfa1d48728621d5ec2d0906ad.r2.dev/`), not
+from this repo — `videos/` is gitignored. To update a video, upload the new
+file to the bucket keeping the same filename (names are case-sensitive).

@@ -845,7 +845,7 @@
         </div>
         <div class="meta"><h4 class="qv-title"></h4></div>
         <div class="qv-editor" hidden>
-          <div class="qv-fld"><label>Video source (path or URL)</label><input type="text" class="qv-src" placeholder="videos/privacy-1.mp4 or https://.../privacy-1.mp4"></div>
+          <div class="qv-fld"><label>Video source (path or URL)</label><input type="text" class="qv-src" placeholder="https://pub-3274162cfa1d48728621d5ec2d0906ad.r2.dev/privacy-1.mp4 or a local path"></div>
           <div class="qv-fld"><label>Title</label><input type="text" class="qv-ttl" placeholder="Video title"></div>
           <div class="qv-fld qv-file"><label>Pick a local file (preview only)</label><input type="file" accept="video/*" class="qv-pick"><div class="qv-note">Local preview only. To publish, add the file to the project and set its path above.</div></div>
           <div class="qv-actions"><button type="button" class="qv-btn primary qv-save">Save</button><button type="button" class="qv-btn qv-clear">Clear</button></div>
@@ -858,7 +858,7 @@
         </div>
         <div class="meta"><h4 class="qv-title"></h4></div>
         <div class="qv-editor" hidden>
-          <div class="qv-fld"><label>Video source (path or URL)</label><input type="text" class="qv-src" placeholder="videos/privacy-2.mp4 or https://.../privacy-2.mp4"></div>
+          <div class="qv-fld"><label>Video source (path or URL)</label><input type="text" class="qv-src" placeholder="https://pub-3274162cfa1d48728621d5ec2d0906ad.r2.dev/privacy-2.mp4 or a local path"></div>
           <div class="qv-fld"><label>Title</label><input type="text" class="qv-ttl" placeholder="Video title"></div>
           <div class="qv-fld qv-file"><label>Pick a local file (preview only)</label><input type="file" accept="video/*" class="qv-pick"><div class="qv-note">Local preview only. To publish, add the file to the project and set its path above.</div></div>
           <div class="qv-actions"><button type="button" class="qv-btn primary qv-save">Save</button><button type="button" class="qv-btn qv-clear">Clear</button></div>
@@ -871,7 +871,7 @@
         </div>
         <div class="meta"><h4 class="qv-title"></h4></div>
         <div class="qv-editor" hidden>
-          <div class="qv-fld"><label>Video source (path or URL)</label><input type="text" class="qv-src" placeholder="videos/privacy-3.mp4 or https://.../privacy-3.mp4"></div>
+          <div class="qv-fld"><label>Video source (path or URL)</label><input type="text" class="qv-src" placeholder="https://pub-3274162cfa1d48728621d5ec2d0906ad.r2.dev/privacy-3.mp4 or a local path"></div>
           <div class="qv-fld"><label>Title</label><input type="text" class="qv-ttl" placeholder="Video title"></div>
           <div class="qv-fld qv-file"><label>Pick a local file (preview only)</label><input type="file" accept="video/*" class="qv-pick"><div class="qv-note">Local preview only. To publish, add the file to the project and set its path above.</div></div>
           <div class="qv-actions"><button type="button" class="qv-btn primary qv-save">Save</button><button type="button" class="qv-btn qv-clear">Clear</button></div>
@@ -884,7 +884,7 @@
         </div>
         <div class="meta"><h4 class="qv-title"></h4></div>
         <div class="qv-editor" hidden>
-          <div class="qv-fld"><label>Video source (path or URL)</label><input type="text" class="qv-src" placeholder="videos/privacy-4.mp4 or https://.../privacy-4.mp4"></div>
+          <div class="qv-fld"><label>Video source (path or URL)</label><input type="text" class="qv-src" placeholder="https://pub-3274162cfa1d48728621d5ec2d0906ad.r2.dev/privacy-4.mp4 or a local path"></div>
           <div class="qv-fld"><label>Title</label><input type="text" class="qv-ttl" placeholder="Video title"></div>
           <div class="qv-fld qv-file"><label>Pick a local file (preview only)</label><input type="file" accept="video/*" class="qv-pick"><div class="qv-note">Local preview only. To publish, add the file to the project and set its path above.</div></div>
           <div class="qv-actions"><button type="button" class="qv-btn primary qv-save">Save</button><button type="button" class="qv-btn qv-clear">Clear</button></div>
@@ -1713,9 +1713,9 @@
 
 <!-- PV: privacy videos. Same local-MP4 model as quantum.html's video section:
      a project-relative path or https URL per slot (seeded with
-     videos/privacy-1.mp4 / videos/privacy-2.mp4), or pick a local file for
+     the R2 bucket, e.g. privacy-1.mp4), or pick a local file for
      session-only preview. Persists only the src STRING under privacyVideos_v1.
-     While a seeded file is missing from videos/, the slot gracefully falls
+     While a seeded file is not yet uploaded to the bucket, the slot gracefully falls
      back to its mockup placeholder. -->
 <script>
 (function(){
@@ -1736,7 +1736,7 @@
   cards.forEach(function(c){ defaults[idx(c)] = (c.querySelector('.qv-title').textContent || '').trim(); });
 
   // one-time prefill; only when the slot has never been saved or cleared
-  var seeds = { 0: { src: 'videos/privacy-1.mp4' }, 1: { src: 'videos/privacy-2.mp4' }, 2: { src: 'videos/privacy-3.mp4' }, 3: { src: 'videos/privacy-4.mp4' } };
+  var seeds = { 0: { src: 'https://pub-3274162cfa1d48728621d5ec2d0906ad.r2.dev/privacy-1.mp4' }, 1: { src: 'https://pub-3274162cfa1d48728621d5ec2d0906ad.r2.dev/privacy-2.mp4' }, 2: { src: 'https://pub-3274162cfa1d48728621d5ec2d0906ad.r2.dev/privacy-3.mp4' }, 3: { src: 'https://pub-3274162cfa1d48728621d5ec2d0906ad.r2.dev/privacy-4.mp4' } };
   var seeded = false;
   Object.keys(seeds).forEach(function(k){ if (state[k] == null) { state[k] = seeds[k]; seeded = true; } });
   if (seeded) save();
@@ -1753,7 +1753,7 @@
   }
   cards.forEach(applyCard);
 
-  // graceful placeholder while the seeded file is not in videos/ yet
+  // graceful placeholder while the seeded file is not in the R2 bucket yet
   cards.forEach(function(c){
     var video = c.querySelector('.qv-player'), ph = c.querySelector('.qv-ph');
     video.addEventListener('error', function(){
