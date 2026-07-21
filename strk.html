@@ -1,0 +1,2488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>STRK Tokenomics and Staking Dashboard — Live Data</title>
+  <meta name="description" content="Live STRK dashboard: price, market cap, staking (STRK and BTC), TVL, users, revenue and STRK20 privacy metrics — with tokenomics, unlocks and history.">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+  <link rel="canonical" href="https://starknetthesis.com/strk.html">
+  <meta property="og:title" content="STRK Tokenomics and Staking Dashboard — Live Data">
+  <meta property="og:description" content="Live STRK dashboard: price, market cap, staking (STRK and BTC), TVL, users, revenue and STRK20 privacy metrics — with tokenomics, unlocks and history.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://starknetthesis.com/strk.html">
+  <meta property="og:site_name" content="Starknet Thesis">
+  <meta property="og:image" content="https://starknetthesis.com/assets/og-default.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="STRK Tokenomics and Staking Dashboard — Live Data">
+  <meta name="twitter:description" content="Live STRK dashboard: price, market cap, staking (STRK and BTC), TVL, users, revenue and STRK20 privacy metrics — with tokenomics, unlocks and history.">
+  <meta name="twitter:image" content="https://starknetthesis.com/assets/og-default.png">
+  <script type="application/ld+json">{"@context": "https://schema.org","@type": "WebApplication","name": "STRK Tokenomics and Staking Dashboard","url": "https://starknetthesis.com/strk.html","applicationCategory": "FinanceApplication","operatingSystem": "Web browser","description": "Live dashboard of STRK metrics: price, market cap, staking, TVL, users, revenue and STRK20 privacy figures, with monthly staking history reconstructed from onchain state.","isAccessibleForFree": true,"publisher": {"@type": "Organization","name": "Starknet Thesis"}}</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- shared type system (matches css/styles.css / the rest of the site) -->
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Expanded:wght@500;600;700;800;900&family=IBM+Plex+Mono:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.3.0/dist/tabler-icons.min.css">
+
+<style>
+:root{
+  --black:#0A0A0A; --panel:#0E0E12; --white:#F5F2EC;
+  --acc:#7C3AED; --acc-2:#A78BFA;
+  --accbg:rgba(124,58,237,0.12); --accbd:rgba(124,58,237,0.40); --accglow:rgba(124,58,237,0.20);
+  --p-btcfi:#F7931A; --p-privacy:#A78BFA; --p-quantum:#3DA9FC;
+  --green:#1FB68B; --red:#F0508C;
+  /* shared design tokens mirrored from css/styles.css — STRK page accent is violet */
+  --accent:#7C3AED; --accent-rgb:124,58,237;
+  --border:rgba(245,242,236,0.09);
+  --display:'Archivo Expanded',sans-serif; --mono:'IBM Plex Mono',monospace; --sans:'Inter',sans-serif;
+  --muted:rgba(245,242,236,0.45); --muted-2:rgba(245,242,236,0.64);
+  --line:rgba(245,242,236,0.10); --card:rgba(245,242,236,0.025);
+  --maxw:1180px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--black);color:var(--white);font-family:var(--sans),system-ui,sans-serif;
+  line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1180px;margin:0 auto;padding:0 32px}
+.eyebrow{font-family:var(--mono),monospace;font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:var(--accent)}
+h1,h2,h3{font-family:var(--display),sans-serif;font-weight:800;line-height:1.04;letter-spacing:-.01em}
+.lead{color:var(--muted-2);font-size:18px;max-width:46ch}
+.label{font-family:var(--mono),monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+
+/* nav */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(10,10,10,0.78);backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+.nav-in{max-width:none;margin:0;padding:16px 40px;display:flex;align-items:center;justify-content:space-between;gap:24px}
+/* shared wordmark — copied verbatim from css/styles.css so it matches every other page */
+.nav-logo{font-family:var(--display);font-weight:800;font-size:18px;letter-spacing:0.02em;text-transform:uppercase;color:var(--white);white-space:nowrap}
+.nav-logo b{color:var(--accent);font-weight:800}
+a.nav-logo{text-decoration:none}
+.nav-links{display:flex;gap:26px;align-items:center}
+.nav-links a{font-family:var(--mono),monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);transition:color .2s}
+.nav-links a:hover{color:var(--white)} .nav-links a.active{color:var(--acc-2)}
+/* CTA uses the shared .btn style (solid accent fill); see .btn rules below */
+.nav-cta{white-space:nowrap;padding:11px 20px}
+.menu-toggle{display:none;background:none;border:0;color:var(--white);font-size:24px;cursor:pointer}
+
+/* hero */
+.hero{position:relative;display:flex;flex-direction:column;align-items:center;padding:128px 0 60px;overflow:hidden;text-align:center}
+.hero-glow{position:absolute;inset:0;z-index:0;pointer-events:none;background:radial-gradient(56% 44% at 50% 0%,var(--accglow),transparent 70%)}
+.hero .wrap{position:relative;z-index:2}
+.hero h1{font-family:var(--display);font-size:clamp(34px,5.4vw,76px);font-weight:800;line-height:0.98;letter-spacing:-.01em;text-transform:uppercase;margin:22px auto 0;max-width:16ch}
+.hero h1 em{font-style:normal;color:var(--acc-2)}
+.hero .eyebrow{color:var(--acc-2)}
+.hero .lead{font-family:var(--sans);font-size:18px;font-weight:300;color:rgba(245,242,236,0.62);max-width:620px;margin:24px auto 0;text-align:center;line-height:1.7}
+
+/* inverted convergence motif — STRK apex (label + logo) fanning down to 3 pillars.
+   Sits just below the hero text; fully visible by default (entrance reveal removed). */
+.motif{position:relative;z-index:1;width:100%;max-width:900px;margin:clamp(28px,5vh,64px) auto 0}
+.motif svg{width:100%;height:auto;display:block;overflow:visible}
+.strand{fill:none;stroke-width:1.7;stroke-linecap:round}
+.node{transform-box:fill-box;transform-origin:center}
+.coreglow{transform-box:fill-box;transform-origin:center;animation:corePulse 3s ease-in-out infinite}
+@keyframes corePulse{0%,100%{opacity:.8}50%{opacity:.4}}
+.core-label{font-family:var(--mono),monospace;letter-spacing:.26em;fill:var(--acc-2);opacity:.9}
+.pillar{position:absolute;transform:translate(-50%,0);text-align:center;white-space:nowrap}
+.pillar a{display:inline-flex;align-items:center;gap:7px;cursor:pointer;
+  font-family:var(--mono),monospace;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--pc)}
+.pillar a .arr{font-size:12px;opacity:.6;transition:transform .2s,opacity .2s}
+.pillar a:hover{filter:brightness(1.25)}
+.pillar a:hover .arr{opacity:1;transform:translate(2px,-2px)}
+.pillar.p1{--pc:var(--p-privacy)} .pillar.p2{--pc:var(--p-quantum)} .pillar.p3{--pc:var(--p-btcfi)}
+.pillar.p1{left:16.7%;top:90%}
+.pillar.p2{left:50%;top:93%}
+.pillar.p3{left:83.3%;top:90%}
+@media(max-width:760px){
+  .pillar a{font-size:11px}
+  .pillar.p1{left:15%}.pillar.p3{left:85%}
+}
+@media(prefers-reduced-motion:reduce){
+  .strand{stroke-dashoffset:0!important;transition:none}
+  .node,.pillar{opacity:1!important;transform:translate(-50%,0)!important;transition:none}
+  .coreglow{animation:none}
+}
+
+/* sections */
+/* section header — mirrors btcfi's .sec-head: accent triangle + giant accent number + uppercase title */
+.section-marker{display:flex;align-items:center;gap:18px;margin-bottom:30px;flex-wrap:wrap}
+.section-marker::before{content:"";width:0;height:0;border-left:18px solid var(--accent);border-bottom:18px solid transparent;flex-shrink:0}
+.section-marker .num{font-family:var(--display);font-weight:800;font-size:clamp(30px,5vw,56px);color:var(--accent);line-height:1;letter-spacing:0}
+.section-marker h2{font-family:var(--display);font-weight:800;font-size:clamp(26px,4vw,50px);line-height:1;letter-spacing:-.01em;text-transform:uppercase}
+.section-marker h2 em{font-style:normal;color:var(--accent)}
+/* section headers ported from quantum.html (th-pm- structure), using strk's own violet accent (--acc-2 = #A78BFA) */
+.th-pm-head{display:flex;align-items:center;gap:18px;margin-bottom:30px;flex-wrap:wrap}
+.th-pm-marker{width:0;height:0;border-left:13px solid var(--acc-2);border-top:8px solid transparent;border-bottom:8px solid transparent;transform:translateY(2px);filter:drop-shadow(0 0 8px rgba(167,139,250,.6))}
+.th-pm-num{font-family:var(--display);font-weight:900;font-size:64px;line-height:1;color:var(--acc-2);letter-spacing:-.02em}
+.th-pm-title{font-family:var(--display);font-weight:800;font-size:52px;line-height:1.02;letter-spacing:-.015em;color:var(--white);max-width:none}
+.th-pm-title b, .th-pm-title em{color:var(--acc-2);font-weight:800;font-style:normal}
+.th-pm-eyebrow{font-family:var(--mono),monospace;font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:var(--acc-2);margin-top:16px;opacity:.85}
+@media(max-width:880px){.th-pm-title{font-size:38px}.th-pm-num{font-size:48px}}
+.block{padding:80px 0;border-top:1px solid var(--border)}
+
+/* section 01 — two-column: copy + STRK flywheel */
+.s01{display:grid;grid-template-columns:1fr 460px;gap:56px;align-items:center}
+.s01 .copy p{color:var(--muted-2);font-size:20px;line-height:1.6;max-width:46ch}
+.s01 .copy strong{color:var(--white);font-weight:600}
+.fly{position:relative;width:100%}
+.fly svg{width:100%;height:auto;overflow:visible;display:block}
+.track{fill:none;stroke:rgba(245,242,236,0.08);stroke-width:1.5}
+.track-dash{fill:none;stroke:rgba(124,58,237,0.35);stroke-width:1.5;stroke-dasharray:3 9;
+  transform-box:view-box;transform-origin:200px 200px;animation:flySpin 26s linear infinite}
+@keyframes flySpin{to{transform:rotate(360deg)}}
+.spoke{stroke:rgba(245,242,236,0.10);stroke-width:1}
+.travel{fill:#C4B5FD;filter:drop-shadow(0 0 6px rgba(167,139,250,.9))}
+.travel-orbit{transform-box:view-box;transform-origin:200px 200px;animation:orbit 9s linear infinite}
+@keyframes orbit{to{transform:rotate(360deg)}}
+.hub circle{fill:rgba(124,58,237,0.16);stroke:var(--acc);stroke-width:1.6}
+.hub text{fill:var(--white);font-family:var(--display);font-weight:800;font-size:17px;letter-spacing:.04em}
+.stage{cursor:pointer}
+.stage .dot{fill:var(--black);stroke:var(--acc-2);stroke-width:1.8;transition:transform .2s,stroke-width .2s;transform-box:fill-box;transform-origin:center}
+.stage .snum{fill:var(--acc-2);font-family:var(--mono),monospace;font-size:13px;font-weight:500;text-anchor:middle}
+.stage .slabel{fill:var(--muted-2);font-family:var(--mono),monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;text-anchor:middle;transition:fill .2s}
+.stage:hover .dot,.stage.on .dot{stroke-width:3;transform:scale(1.18)}
+.stage:hover .slabel,.stage.on .slabel{fill:var(--white)}
+.stage:hover .snum,.stage.on .snum{fill:var(--white)}
+.tip{position:absolute;display:none;max-width:260px;background:#101015;border:1px solid var(--accbd);
+  border-radius:12px;padding:12px 14px;pointer-events:none;z-index:5;box-shadow:0 16px 40px rgba(0,0,0,.55)}
+.tip .tt{font-family:var(--mono),monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--acc-2)}
+.tip .td{font-family:var(--sans);color:var(--muted-2);font-size:13px;line-height:1.5;margin-top:6px}
+@media(max-width:880px){
+  .s01{grid-template-columns:1fr;gap:36px}
+  .fly{max-width:420px;margin:0 auto}
+}
+
+/* utilities explorer (section 02) — selectable rail + animated micro-viz panels */
+.util{display:grid;grid-template-columns:340px 1fr;gap:24px;align-items:stretch}
+.util-list{display:flex;flex-direction:column;gap:10px}
+.util-tab{position:relative;display:flex;align-items:center;gap:16px;text-align:left;cursor:pointer;
+  background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;color:var(--white);
+  transition:border-color .2s,background .2s,transform .2s}
+.util-tab:hover{border-color:rgba(124,58,237,.35);background:rgba(245,242,236,.04)}
+.util-tab.on{border-color:var(--acc);background:rgba(124,58,237,.10)}
+.util-tab .ico{flex:0 0 auto;width:42px;height:42px;border-radius:12px;display:grid;place-items:center;position:relative;overflow:hidden;
+  background:linear-gradient(160deg,rgba(245,242,236,.10),rgba(245,242,236,.02));border:1px solid rgba(245,242,236,.14);backdrop-filter:blur(8px)}
+.util-tab .ico::before{content:"";position:absolute;inset:0;border-radius:12px;background:linear-gradient(160deg,rgba(255,255,255,.18),transparent 45%);pointer-events:none}
+.util-tab.on .ico{border-color:rgba(124,58,237,.45)}
+.util-tab .ico svg{width:22px;height:22px;position:relative;z-index:1}
+.util-tab .tx{display:flex;flex-direction:column;gap:4px;min-width:0;line-height:1.2}
+.util-tab .tx .nm{font-family:var(--sans);font-weight:600;font-size:16px}
+.util-tab .tx .te{font-family:var(--mono),monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.util-tab.on .tx .te{color:var(--acc-2)}
+.util-tab .idx{margin-left:auto;align-self:flex-start;font-family:var(--mono),monospace;font-size:12px;color:var(--muted)}
+.util-stage{position:relative;border:1px solid var(--line);border-radius:18px;background:var(--card);overflow:hidden}
+.util-panel{display:none;padding:34px 36px}
+.util-panel.show{display:block}
+.util-panel .eyebrow{font-family:var(--mono),monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--acc-2)}
+.util-panel h3{font-family:var(--display);font-weight:700;font-size:30px;text-transform:uppercase;letter-spacing:-.01em;margin:12px 0 14px}
+.util-panel p{color:var(--muted-2);font-size:16px;line-height:1.6;max-width:60ch}
+.viz{margin-top:28px;padding-top:26px;border-top:1px solid var(--line)}
+.barrow{margin-bottom:18px}
+.barrow .bl{font-family:var(--mono),monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.bartrack{position:relative;height:14px;border-radius:7px;background:rgba(245,242,236,.06);overflow:hidden;display:flex}
+.barfill{height:100%;width:0;transition:width .9s cubic-bezier(.22,1,.36,1)}
+.barfill.strk{background:linear-gradient(90deg,var(--acc),var(--acc-2))}
+.barfill.btc{background:rgba(247,147,26,.7)}
+.barfill.gas{background:rgba(245,242,236,.22)}
+.barfill.priv{background:linear-gradient(90deg,var(--acc),var(--acc-2))}
+.barfill.meter{background:linear-gradient(90deg,var(--acc),var(--acc-2))}
+.seglbl{display:flex;gap:18px;margin-top:10px;font-family:var(--mono),monospace;font-size:11px;letter-spacing:.06em;color:var(--muted-2)}
+.seglbl i{font-style:normal;display:inline-flex;align-items:center;gap:6px}
+.dotc{width:9px;height:9px;border-radius:3px;display:inline-block}
+.dotc.strk{background:var(--acc-2)} .dotc.btc{background:rgba(247,147,26,.8)} .dotc.gas{background:rgba(245,242,236,.4)} .dotc.priv{background:var(--acc-2)}
+.bignum{font-family:var(--display);font-weight:800;font-size:30px;line-height:1}
+.bignum .u{font-size:15px;color:var(--muted-2);margin-left:6px}
+.subt{font-family:var(--mono),monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-top:6px}
+.ticks{display:flex;gap:7px;align-items:flex-end;height:46px}
+.ticks a{width:10px;height:0;background:linear-gradient(180deg,var(--acc-2),var(--acc));border-radius:3px;
+  cursor:pointer;transform-origin:bottom;
+  transition:height .5s cubic-bezier(.22,1,.36,1),transform .15s ease,filter .15s ease}
+.ticks a:hover{filter:brightness(1.35);transform:scaleY(1.06) scaleX(1.4)}
+.util-panel.show .ticks a{height:46px}
+.util-panel.show .ticks a:nth-child(1){transition-delay:.02s}
+.util-panel.show .ticks a:nth-child(2){transition-delay:.05s}
+.util-panel.show .ticks a:nth-child(3){transition-delay:.08s}
+.util-panel.show .ticks a:nth-child(4){transition-delay:.11s}
+.util-panel.show .ticks a:nth-child(5){transition-delay:.14s}
+.util-panel.show .ticks a:nth-child(6){transition-delay:.17s}
+.util-panel.show .ticks a:nth-child(7){transition-delay:.20s}
+.util-panel.show .ticks a:nth-child(8){transition-delay:.23s}
+.util-panel.show .ticks a:nth-child(9){transition-delay:.26s}
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px}
+.chip{font-family:var(--mono),monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+  border:1px solid rgba(124,58,237,.4);color:var(--acc-2);border-radius:999px;padding:8px 14px;background:rgba(124,58,237,.06);
+  display:inline-flex;align-items:center;gap:6px;text-decoration:none;cursor:pointer;transition:background .2s,border-color .2s,color .2s}
+a.chip:hover{background:var(--acc);border-color:var(--acc);color:#0A0A0A}
+.chip .arr{font-size:11px;opacity:.7}
+.basebar{height:40px;border-radius:10px;background:linear-gradient(90deg,rgba(124,58,237,.22),rgba(167,139,250,.12));
+  border:1px solid rgba(124,58,237,.4);display:flex;align-items:center;padding:0 16px;
+  font-family:var(--mono),monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--white)}
+.vrow{display:flex;gap:46px;flex-wrap:wrap;margin-top:24px}
+.figlink{text-decoration:none;color:inherit;cursor:pointer;display:inline-block}
+.figlink .bignum,.figlink .subt{transition:color .2s}
+.figlink:hover .bignum,.figlink:hover .subt{color:var(--acc-2)}
+.figlink .subt .arr{margin-left:5px;font-size:11px;opacity:.7}
+@media(max-width:880px){
+  .util{grid-template-columns:1fr;gap:16px}
+  .util-list{flex-direction:row;flex-wrap:wrap}
+  .util-tab{flex:1 1 45%}
+  .util-tab .te,.util-tab .idx{display:none}
+}
+
+/* ===== convergence Venn (section 03) ===== */
+.venn-wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center}
+.venn-stage{position:relative}
+.venn-svg{width:100%;height:auto;display:block;overflow:visible}
+.venn-svg text{paint-order:stroke;stroke:var(--black);stroke-width:3px;stroke-linejoin:round}
+.venn-set{cursor:pointer;transition:opacity .3s}
+.venn-stage.focus .venn-set{opacity:.28}
+.venn-stage.focus .venn-set.on{opacity:1}
+.venn-set .ring{fill:transparent;stroke-width:2;transition:stroke-width .25s,filter .25s}
+.venn-set:hover .ring,.venn-set a:focus-visible .ring{stroke-width:3.5;filter:brightness(1.25)}
+.venn-svg a{cursor:pointer}
+.venn-core{transition:filter .25s}
+.venn-core:hover,.venn-core:focus-visible{filter:brightness(1.3)}
+.venn-svg a:focus-visible{outline:2px solid rgba(245,242,236,.65);outline-offset:3px;border-radius:50%}
+
+/* --- section 04: tokenomics supply block --- */
+.tk-big{font-family:'Archivo Expanded',sans-serif;font-weight:800;font-size:clamp(30px,4.4vw,44px);color:var(--white);margin:14px 0 14px;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.tk-big .tk-of{font-size:15px;font-weight:600;color:var(--muted);letter-spacing:.02em}
+.tk-track{height:6px;border-radius:3px;background:rgba(245,242,236,.08);overflow:hidden}
+.tk-track i{display:block;height:100%;border-radius:3px;background:linear-gradient(90deg,#6D4FD0,#A78BFA);transition:width .6s cubic-bezier(.22,.61,.36,1)}
+.tk-meta{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:10px;font-family:var(--mono),monospace;font-size:11px;letter-spacing:.06em;color:var(--muted)}
+.tk-meta a{color:var(--muted);text-decoration:none;border-bottom:1px solid rgba(245,242,236,.2)}
+.tk-meta a:hover{color:var(--white)}
+
+/* --- section 04: stats accordion --- */
+.nacc{display:flex;flex-direction:column;gap:10px;margin-top:26px}
+.nacc-item{border:1px solid rgba(245,242,236,.09);border-radius:14px;background:rgba(245,242,236,.02);overflow:hidden}
+.nacc-head{display:flex;align-items:center;gap:12px;width:100%;padding:16px 18px;background:none;border:0;cursor:pointer;text-align:left}
+.nacc-title{font-family:'Archivo Expanded',sans-serif;font-weight:700;font-size:14px;letter-spacing:.04em;text-transform:uppercase;color:var(--white)}
+.nacc-count{font-family:var(--mono),monospace;font-size:10px;color:var(--muted);border:1px solid rgba(245,242,236,.14);border-radius:20px;padding:2px 8px}
+.nacc-chev{margin-left:auto;color:var(--muted);transition:transform .35s ease}
+.nacc-item.open .nacc-chev{transform:rotate(180deg)}
+.nacc-head:hover .nacc-title{color:var(--acc-2,#A78BFA)}
+.nacc-head:focus-visible{outline:2px solid rgba(245,242,236,.5);outline-offset:-2px;border-radius:14px}
+.nacc-body{display:grid;grid-template-rows:0fr;transition:grid-template-rows .45s cubic-bezier(.22,.61,.36,1)}
+.nacc-item.open .nacc-body{grid-template-rows:1fr}
+.nacc-inner{overflow:hidden;min-height:0}
+.nacc-inner .cells{padding:2px 14px 16px}
+@media (prefers-reduced-motion: reduce){.nacc-body{transition:none}.nacc-chev{transition:none}.tk-track i{transition:none}}
+
+/* --- section 04: chart honest-range note + muted range buttons --- */
+#numbers .chartbox .cnote{position:absolute;top:10px;right:12px;font-family:var(--mono),monospace;font-size:10px;letter-spacing:.12em;color:var(--muted);pointer-events:none;text-align:right}
+#numbers .chartbox .cnote:empty{display:none}
+#numbers .chartbox .cleg{right:auto;left:12px;text-align:left}
+#numbers .ranges button.off{opacity:.25;pointer-events:none}
+/* --- section 04: chart date axis (HTML overlay — SVG text would distort
+       under preserveAspectRatio="none") --- */
+#numbers .chartbox .cax{position:relative;height:15px;margin-top:7px}
+#numbers .chartbox .cax:empty{display:none}
+#numbers .chartbox .cax span{position:absolute;top:0;transform:translateX(-50%);font-family:var(--mono),monospace;font-size:10px;letter-spacing:.08em;color:var(--muted);white-space:nowrap}
+#numbers .chartbox .cax span:first-child{transform:none}
+#numbers .chartbox .cax span:last-child{transform:none}
+/* --- section 04: stacked-chart legend (hover a token to highlight its band) --- */
+#numbers .chartbox .cstl{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:9px;font-family:var(--mono),monospace;font-size:10px;letter-spacing:.08em;color:var(--muted)}
+#numbers .chartbox .cstl:empty{display:none}
+#numbers .chartbox .cstl span{display:inline-flex;align-items:center;gap:6px;cursor:default}
+#numbers .chartbox .cstl span:hover{color:var(--white)}
+#numbers .chartbox .cstl i{width:8px;height:8px;border-radius:2px;display:inline-block}
+#numbers .cell.click:focus-visible{outline:2px solid rgba(245,242,236,.5);outline-offset:2px}
+/* card→chart scroll lands below the fixed nav; JS refines this with the
+   measured nav height + 24px at click time */
+#numbers .feat{scroll-margin-top:90px}
+
+/* --- metric card redesign: tabular values + unit suffixes, delta badges,
+       bottom-pinned sparklines, VIEW CHART hover tag, static-card bars --- */
+#numbers .cell{min-height:172px}
+#numbers .cell .cv{font-variant-numeric:tabular-nums}
+#numbers .cell .cv .cu{font-size:.55em;font-weight:600;color:var(--muted);letter-spacing:.04em}
+#numbers .cdelta{margin-left:auto;font-family:var(--mono),monospace;font-size:11px;font-weight:600;padding:2px 7px;border-radius:999px;white-space:nowrap}
+#numbers .cdelta:empty{display:none}
+#numbers .cdelta.up{color:var(--up);background:rgba(52,211,153,.09)}
+#numbers .cdelta.down{color:var(--down);background:rgba(240,80,140,.09)}
+#numbers .cdelta.flat{color:var(--muted);background:rgba(245,242,236,.06)}
+#numbers .cspark-wrap{position:relative;height:34px;margin-top:auto}
+#numbers .cspark{width:100%;height:34px;display:block}
+#numbers .cspark-wrap .cdot{position:absolute;right:0;width:5px;height:5px;border-radius:50%;background:#C4B5FD;transform:translate(50%,-50%)}
+#numbers .cspark-wrap .cdot::after{content:"";position:absolute;inset:0;border-radius:50%;border:1px solid #C4B5FD;animation:sparkPulse 2.4s ease-out infinite}
+@keyframes sparkPulse{0%{transform:scale(1);opacity:.8}100%{transform:scale(3.2);opacity:0}}
+#numbers .cview{position:absolute;right:12px;bottom:10px;font-family:var(--mono),monospace;font-size:10px;letter-spacing:.12em;color:var(--acc-2);background:rgba(124,58,237,.14);border:1px solid rgba(124,58,237,.30);border-radius:6px;padding:3px 8px;opacity:0;transform:translateY(4px);transition:opacity .2s,transform .2s;pointer-events:none}
+#numbers .cell.click:hover .cview,#numbers .cell.click:focus-visible .cview{opacity:1;transform:translateY(0)}
+#numbers .cell.click:hover,#numbers .cell.click:focus-visible{transform:translateY(-1px);border-color:rgba(124,58,237,.45);background:linear-gradient(180deg,rgba(245,242,236,.06),rgba(245,242,236,.02));box-shadow:none}
+#numbers .cbar{height:6px;border-radius:3px;background:rgba(255,255,255,.06);overflow:hidden;margin-top:auto}
+#numbers .cbar i{display:block;height:100%;border-radius:3px;background:linear-gradient(90deg,#6D4FD0,#A78BFA);transition:width .6s ease}
+#numbers .cbar-leg{display:flex;justify-content:space-between;gap:10px;margin-top:7px;font-family:var(--mono),monospace;font-size:10px;letter-spacing:.08em;color:var(--muted)}
+@media(prefers-reduced-motion:reduce){#numbers .cspark-wrap .cdot::after{animation:none}#numbers .cell.click:hover,#numbers .cell.click:focus-visible{transform:none;transition:none}#numbers .cview{transition:none}#numbers .cbar i{transition:none}}
+.venn-side h3{font-size:24px;margin-bottom:12px}
+.venn-side .lead{font-size:16px;max-width:40ch}
+.venn-legend{margin-top:24px;display:flex;flex-direction:column;gap:10px}
+.venn-legend a{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;cursor:pointer;text-align:left;text-decoration:none;color:var(--white);transition:border-color .2s,background .2s}
+.venn-legend a:hover{border-color:var(--acc-2);background:rgba(124,58,237,.10)}
+.venn-legend .swatch{width:11px;height:11px;border-radius:50%;background:var(--lc);box-shadow:0 0 10px var(--lc);flex:0 0 auto}
+.venn-legend .ln{font-family:var(--display);font-weight:700;font-size:15px;flex:1;color:var(--white)}
+.venn-legend .lmc{font-family:var(--mono),monospace;font-size:14px;color:var(--muted-2)}
+.venn-legend .lext{font-family:var(--mono),monospace;font-size:12px;color:var(--muted);margin-left:8px;transition:color .2s}
+.venn-legend a:hover .lext{color:var(--acc-2)}
+.venn-legend .l-btcfi{--lc:var(--p-btcfi)}.venn-legend .l-quantum{--lc:var(--p-quantum)}.venn-legend .l-privacy{--lc:var(--p-privacy)}.venn-legend .l-strk{--lc:var(--acc-2)}
+
+/* pillar flow strip */
+
+/* ===== 04 numbers dashboard — namespaced under #numbers (ported from reference/strk-section04.html) ===== */
+#numbers{--up:#34D399;--down:#F0508C;--acc-3:#C4B5FD}
+#numbers .nhead{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:8px}
+#numbers .pill{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono),monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+#numbers .pill .d{width:7px;height:7px;border-radius:50%;background:var(--acc-2);animation:numPulse 2.4s infinite}
+@keyframes numPulse{0%{box-shadow:0 0 0 0 rgba(167,139,250,.5)}70%{box-shadow:0 0 0 7px rgba(167,139,250,0)}100%{box-shadow:0 0 0 0 rgba(167,139,250,0)}}
+
+#numbers .feat{border:1px solid var(--line);border-radius:20px;background:linear-gradient(180deg,rgba(124,58,237,.05),rgba(245,242,236,.02));padding:26px 28px;margin-top:24px}
+#numbers .feat-top{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;flex-wrap:wrap}
+#numbers .feat .elabel{font-family:var(--mono),monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--acc-2)}
+#numbers .feat .val{font-family:var(--display);font-weight:800;font-stretch:115%;font-size:clamp(36px,5vw,54px);line-height:1;margin-top:10px}
+#numbers .feat .chgs{display:flex;gap:16px;align-items:center;margin-top:12px;font-family:var(--mono),monospace;font-size:12px}
+#numbers .feat .chgs span{color:var(--muted)}
+#numbers .feat .src a{color:var(--acc-2);text-decoration:none}#numbers .feat .src a:hover{text-decoration:underline}
+#numbers .up{color:var(--up)}#numbers .down{color:var(--down)}
+#numbers .ranges{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:rgba(0,0,0,.2)}
+#numbers .ranges button{font-family:var(--mono),monospace;font-size:11px;letter-spacing:.08em;padding:8px 12px;background:transparent;color:var(--muted);border:0;cursor:pointer;transition:.15s}
+#numbers .ranges button:hover{color:var(--white)}#numbers .ranges button.on{background:rgba(124,58,237,.18);color:var(--white)}
+#numbers .chartbox{position:relative;margin-top:20px}#numbers .chartbox svg{width:100%;height:auto;display:block}
+#numbers .tip{position:absolute;pointer-events:none;display:none;background:#101015;border:1px solid rgba(124,58,237,.4);border-radius:10px;padding:8px 11px;transform:translate(-50%,-100%);z-index:4;white-space:nowrap}
+#numbers .tip .tv{font-family:var(--display);font-weight:700;font-size:14px}#numbers .tip .tdt{font-family:var(--mono),monospace;font-size:10px;color:var(--muted);margin-top:2px}
+#numbers .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+#numbers .chip{font-family:var(--mono),monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--line);background:var(--card);color:var(--muted-2);border-radius:999px;padding:8px 14px;cursor:pointer;transition:.15s}
+#numbers .chip:hover{border-color:rgba(124,58,237,.4);color:var(--white)}#numbers .chip.on{background:rgba(124,58,237,.16);border-color:var(--acc);color:var(--white)}
+
+/* zoom modal / lightbox (reuses .elabel/.chgs/.ranges/.src/.up/.down/.tip above) */
+#numbers .nmodal{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;padding:24px}
+#numbers .nmodal.open{display:flex}
+#numbers .nmodal-bg{position:absolute;inset:0;background:rgba(5,5,8,.72);backdrop-filter:blur(6px)}
+#numbers .mpanel{position:relative;z-index:1;width:min(920px,100%);max-height:90vh;overflow:auto;border:1px solid rgba(124,58,237,.4);border-radius:20px;background:linear-gradient(180deg,#13101c,#0c0b12);padding:26px 28px;box-shadow:0 30px 90px rgba(0,0,0,.6)}
+#numbers .mclose{position:absolute;top:16px;right:16px;width:34px;height:34px;border-radius:9px;border:1px solid var(--line);background:rgba(0,0,0,.25);color:var(--muted);font-size:20px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s}
+#numbers .mclose:hover{color:var(--white);border-color:rgba(124,58,237,.5)}
+#numbers .mval{font-family:var(--display);font-weight:800;font-stretch:115%;font-size:clamp(34px,4.5vw,48px);line-height:1;margin-top:10px}
+#numbers .mchartbox{position:relative;margin-top:18px}#numbers .mchartbox svg{width:100%;height:auto;display:block}
+@media(prefers-reduced-motion:reduce){#numbers .nmodal-bg{backdrop-filter:none}}
+
+#numbers .grp{margin-top:40px}
+#numbers .grp.priv{padding-top:34px;border-top:1px solid var(--line)}
+#numbers .grp .gl{font-family:var(--mono),monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+#numbers .grp.priv .gl{color:var(--acc-2)}
+#numbers .cells{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+#numbers .cells.c3{grid-template-columns:repeat(3,1fr)}
+#numbers .cell{position:relative;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:linear-gradient(180deg,rgba(245,242,236,.045),rgba(245,242,236,.012));padding:15px 17px 12px;min-height:140px;display:flex;flex-direction:column;transition:.18s}
+#numbers .cell.click{cursor:pointer}
+#numbers .cell.click:hover{transform:translateY(-3px);border-color:rgba(124,58,237,.45);box-shadow:0 14px 34px rgba(124,58,237,.13)}
+#numbers .cell.active{border-color:var(--acc);background:linear-gradient(180deg,rgba(124,58,237,.13),rgba(124,58,237,.03))}
+#numbers .cell-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+#numbers .cell .cl{font-family:var(--mono),monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+#numbers .cell .delta{font-family:var(--mono),monospace;font-size:10px;padding:3px 7px;border-radius:999px}
+#numbers .cell .delta.up{color:var(--up);background:rgba(52,211,153,.10)}
+#numbers .cell .delta.down{color:var(--down);background:rgba(240,80,140,.10)}
+#numbers .cell .cv{font-family:var(--display);font-weight:700;font-stretch:110%;font-size:23px;margin-top:9px;line-height:1}
+#numbers .cell .cs{font-family:var(--mono),monospace;font-size:11px;color:var(--muted);margin-top:5px}
+#numbers .cell .spark{margin-top:auto;width:100%;height:32px;display:block;opacity:.65;transition:opacity .2s}
+#numbers .cell.click:hover .spark{opacity:1}
+#numbers .cell .spark path.l{fill:none;stroke:var(--acc-2);stroke-width:2;stroke-linejoin:round;stroke-linecap:round;stroke-dasharray:var(--len);stroke-dashoffset:var(--len);transition:stroke-dashoffset 1.1s cubic-bezier(.22,1,.36,1)}
+#numbers .cell.shown .spark path.l{stroke-dashoffset:0}
+#numbers .cell.bd{min-height:auto;cursor:default}
+#numbers .bd-list{margin-top:16px;display:flex;flex-direction:column;gap:11px}
+#numbers .bd-row{display:grid;grid-template-columns:64px 1fr auto;align-items:center;gap:10px;font-family:var(--mono),monospace;font-size:11px}
+#numbers .bd-row .bn{color:var(--muted-2);letter-spacing:.04em}
+#numbers .bd-row .bar{height:8px;border-radius:4px;background:rgba(245,242,236,.06);overflow:hidden}
+#numbers .bd-row .bar i{display:block;height:100%;width:0;border-radius:4px;background:linear-gradient(90deg,var(--acc),var(--acc-2));transition:width .9s cubic-bezier(.22,1,.36,1)}
+#numbers .cell.bd.shown .bar i{width:var(--w)}
+#numbers .bd-row .bv{color:var(--white)}
+@media(prefers-reduced-motion:reduce){#numbers .pill .d{animation:none}#numbers .cell .spark path.l{transition:none;stroke-dashoffset:0}#numbers .bd-row .bar i{transition:none;width:var(--w)}}
+@media(max-width:980px){#numbers .cells,#numbers .cells.c3{grid-template-columns:repeat(2,1fr)}}
+
+#numbers .panel{border:1px solid var(--line);border-radius:20px;background:linear-gradient(180deg,rgba(124,58,237,.05),rgba(245,242,236,.02));padding:26px 28px;margin-top:24px}
+#numbers .eyebrow{font-family:var(--mono),monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--acc-2)}
+#numbers .ptitle{font-family:var(--display);font-weight:700;font-stretch:110%;font-size:24px;text-transform:uppercase;margin:8px 0 4px}
+#numbers .supchart{position:relative;margin-top:18px}
+#numbers .supchart svg{width:100%;height:auto;display:block;overflow:visible}
+#numbers .legend{display:flex;gap:14px 18px;flex-wrap:wrap;margin-top:16px;font-family:var(--mono),monospace;font-size:11px;letter-spacing:.04em;color:var(--muted-2)}
+#numbers .legend span{display:inline-flex;align-items:center}#numbers .legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px}
+#numbers .stip{position:absolute;pointer-events:none;display:none;width:268px;background:#101015;border:1px solid rgba(124,58,237,.4);border-radius:10px;padding:11px 13px;z-index:5;box-shadow:0 12px 30px rgba(0,0,0,.5)}
+#numbers .stip .td{font-family:var(--mono),monospace;font-size:10px;letter-spacing:.06em;color:var(--muted);margin-bottom:5px}
+#numbers .stip .r{font-family:var(--mono),monospace;font-size:11px;display:flex;justify-content:space-between;gap:16px}
+#numbers .stip .r b{font-family:var(--display);font-weight:700}
+#numbers .stip .bd{margin-top:9px;padding-top:9px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:5px}
+#numbers .stip .br{display:grid;grid-template-columns:9px 1fr auto auto;align-items:center;gap:9px;font-family:var(--mono),monospace;font-size:10px}
+#numbers .stip .br .dot{width:8px;height:8px;border-radius:2px}
+#numbers .stip .br .bn{color:var(--muted-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#numbers .stip .br .bt{color:var(--white);text-align:right;font-variant-numeric:tabular-nums}
+#numbers .stip .br .bp{color:var(--acc-2);text-align:right;min-width:34px;font-variant-numeric:tabular-nums}
+#numbers .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:22px}
+#numbers .kpi{border:1px solid var(--line);border-radius:14px;background:var(--card);padding:16px 18px}
+#numbers .kpi .kl{font-family:var(--mono),monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+#numbers .kpi .kv{font-family:var(--display);font-weight:800;font-stretch:110%;font-size:25px;margin-top:8px}
+#numbers .kpi .ks{font-family:var(--mono),monospace;font-size:11px;color:var(--muted);margin-top:5px}
+#numbers .note{font-family:var(--mono),monospace;font-size:11px;letter-spacing:.03em;color:var(--muted);margin-top:16px;line-height:1.6}
+#numbers .note b{color:var(--white)}
+#numbers .dist{display:grid;grid-template-columns:1.5fr 1fr;gap:30px;align-items:center;margin-top:18px}
+#numbers .donut{position:relative}#numbers .donut svg{width:100%;height:auto;display:block;overflow:visible}
+#numbers .donut .seg{cursor:pointer;transition:opacity .15s}
+#numbers .donut.dim .seg{opacity:.3}#numbers .donut .seg.hot{opacity:1}
+#numbers .lab{cursor:pointer;transition:opacity .15s}
+#numbers .lab .lname{font-family:var(--sans);font-size:12px;font-weight:600;fill:#F5F2EC}
+#numbers .lab .lpct{font-family:var(--mono),monospace;font-size:11px;fill:rgba(245,242,236,.5)}
+#numbers .donut.dim .lab{opacity:.32}#numbers .lab.hot{opacity:1}
+#numbers .lab.hot .lname{fill:#fff}#numbers .lab.hot .lpct{fill:var(--acc-2)}
+#numbers .center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;pointer-events:none}
+#numbers .center .ct{font-family:var(--mono),monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+#numbers .center .cv{font-family:var(--display);font-weight:800;font-stretch:110%;font-size:26px;margin-top:3px}
+#numbers .center .cs{font-family:var(--mono),monospace;font-size:10px;color:var(--acc-2);margin-top:4px;max-width:150px}
+#numbers .detail{margin-top:14px;border-top:1px solid var(--line);padding-top:14px;min-height:120px}
+#numbers .detail .dt{font-family:var(--mono),monospace;font-size:11px;letter-spacing:.05em;color:var(--muted-2);line-height:1.6}#numbers .detail .dt b{color:var(--white);font-family:var(--display);font-weight:700}
+#numbers .detail .dl{font-family:var(--display);font-weight:700;font-stretch:110%;font-size:15px;text-transform:uppercase;letter-spacing:.01em;margin-bottom:10px}
+#numbers .detail .dl span{font-family:var(--mono),monospace;font-size:9px;letter-spacing:.08em;text-transform:uppercase;margin-left:8px;border-radius:999px;padding:1px 6px;vertical-align:middle}
+#numbers .detail .dl span.v{color:var(--acc-2);border:1px solid rgba(124,58,237,.4)}
+#numbers .detail .dl span.r{color:var(--muted);border:1px solid var(--line)}
+#numbers .detail .dg{display:flex;justify-content:space-between;gap:14px;font-family:var(--mono),monospace;font-size:11px;letter-spacing:.04em;color:var(--muted);margin-top:6px}
+#numbers .detail .dg b{color:var(--white);font-family:var(--mono),monospace;font-weight:500}
+@media(max-width:880px){#numbers .dist{grid-template-columns:1fr}#numbers .kpis{grid-template-columns:1fr}}
+
+/* bear */
+.bear{background:linear-gradient(180deg,rgba(124,58,237,0.06),transparent);border:1px solid var(--accbd);border-radius:18px;padding:34px}
+.bear .agreed{font-family:var(--mono),monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.bear h3{font-size:23px;margin:8px 0 16px}.bear p{color:var(--muted-2);max-width:62ch}.bear .but{color:var(--white)}
+
+/* buy */
+/* where to get — collapsible accordion categories */
+.buy-acc{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;align-items:start}
+.buy-cat{border:1px solid var(--line);border-radius:14px;background:var(--card);overflow:hidden}
+.buy-head{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;background:none;border:0;cursor:pointer;color:var(--white);padding:16px 18px;text-align:left;font-family:inherit}
+.buy-head:hover{background:rgba(245,242,236,.03)}
+.buy-head .bh-l{display:flex;align-items:center;gap:11px}
+.buy-head .bh-l>i{color:var(--acc-2);font-size:18px}
+.buy-head .bh-title{font-family:var(--display);font-weight:700;font-stretch:110%;text-transform:uppercase;letter-spacing:-.01em;font-size:16px}
+.buy-head .bh-count{font-family:var(--mono),monospace;font-size:10px;letter-spacing:.08em;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:2px 8px}
+.buy-head .bh-chev{color:var(--muted);font-size:18px;transition:transform .25s}
+.buy-cat.open .bh-chev{transform:rotate(180deg)}
+.buy-body{max-height:0;overflow:hidden;transition:max-height .32s cubic-bezier(.22,1,.36,1)}
+.buy-cat.open .buy-body{max-height:1400px}
+.buy-body .buy-list{padding:0 14px 14px}
+.buy-list{display:flex;flex-direction:column;gap:6px}
+.buy-item{display:flex;align-items:center;justify-content:space-between;gap:12px;background:rgba(245,242,236,.02);border:1px solid var(--line);border-radius:10px;padding:10px 13px;font-family:var(--mono),monospace;font-size:13px;transition:border-color .2s}
+.buy-item:hover{border-color:var(--accbd)} .buy-item .badge{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.buy-item .bi-name{display:flex;align-items:center;gap:9px;min-width:0}
+.buy-item .bi-logo{position:relative;width:18px;height:18px;border-radius:5px;flex:none;overflow:hidden;background:rgba(124,58,237,.12);display:flex;align-items:center;justify-content:center}
+.buy-item .bi-logo i{font-family:var(--mono),monospace;font-style:normal;font-size:9px;font-weight:600;color:var(--acc-2);line-height:1}
+.buy-item .bi-logo img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:rgba(245,242,236,.05)}
+@media(prefers-reduced-motion:reduce){.buy-body{transition:none}.buy-head .bh-chev{transition:none}}
+
+
+/* conclusion */
+/* hairline divider between section 05 and the conclusion */
+.sec-sep{height:1px;background:var(--border)}
+.conclude{text-align:center;padding:80px 0}
+.conclude h2{font-size:clamp(28px,4vw,46px);max-width:18ch;margin:0 auto 14px}
+.pillar-links{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin-top:30px}
+.pillar-links a{display:inline-flex;align-items:center;gap:9px;border:1px solid var(--line);border-radius:10px;padding:13px 20px;font-family:var(--mono),monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted-2);transition:.2s}
+.pillar-links a:hover{border-color:var(--clr);color:var(--white)} .pillar-links a i{color:var(--clr)}
+.pillar-links .l-btcfi{--clr:var(--p-btcfi)}.pillar-links .l-privacy{--clr:var(--p-privacy)}.pillar-links .l-quantum{--clr:var(--p-quantum)}
+
+/* footer */
+/* shared footer + buttons — copied verbatim from css/styles.css so it matches every other page */
+footer.site-footer{border-top:1px solid var(--border);padding:70px 0 0;margin-top:40px;position:relative}
+footer.site-footer .wrap{max-width:1240px;margin:0 auto;padding:0 40px}
+footer.site-footer .foot-top{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:30px}
+footer.site-footer .foot-brand .nav-logo{font-size:22px;display:inline-block;margin-bottom:16px}
+footer.site-footer .foot-brand p{font-family:var(--sans);font-size:13.5px;color:rgba(245,242,236,0.5);line-height:1.6;max-width:300px;margin-bottom:18px}
+footer.site-footer .foot-col .h{font-family:var(--mono);font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:rgba(245,242,236,0.35);margin-bottom:16px}
+footer.site-footer .foot-col a{display:block;font-family:var(--mono);font-size:13px;color:rgba(245,242,236,0.6);text-decoration:none;margin-bottom:11px;transition:color .2s}
+footer.site-footer .foot-col a:hover{color:var(--accent)}
+footer.site-footer .foot-bottom{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;padding:26px 0;margin-top:40px;border-top:1px solid var(--border);font-family:var(--mono);font-size:12px;letter-spacing:0.06em;color:rgba(245,242,236,0.4)}
+footer.site-footer .foot-bottom a{color:rgba(245,242,236,0.55);text-decoration:none}
+footer.site-footer .foot-bottom a:hover{color:var(--accent)}
+.status{display:inline-flex;align-items:center;gap:8px;color:var(--accent)}
+.status .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent);animation:statusPulse 2s infinite}
+@keyframes statusPulse{0%,100%{opacity:1}50%{opacity:0.3}}
+.foot-mark{font-family:var(--display);font-weight:900;font-size:clamp(60px,16vw,200px);text-transform:uppercase;text-align:center;line-height:0.8;letter-spacing:-0.02em;color:rgba(245,242,236,0.04);padding:30px 0 20px;user-select:none}
+.disclaimer{font-family:var(--sans);font-size:12px;color:rgba(245,242,236,0.35);line-height:1.7;max-width:880px;margin:8px auto 0;text-align:center}
+.btn{font-family:var(--mono);text-transform:uppercase;letter-spacing:0.12em;font-size:13px;font-weight:500;padding:16px 30px;background:var(--accent);color:#0A0A0A;border:none;border-radius:3px;box-shadow:0 0 34px rgba(var(--accent-rgb),0.4);cursor:pointer;display:inline-flex;align-items:center;gap:10px;text-decoration:none;transition:filter .2s,box-shadow .2s,transform .2s}
+.btn:hover{filter:brightness(1.08);box-shadow:0 0 48px rgba(var(--accent-rgb),0.6);transform:translateY(-1px)}
+.btn i{font-size:16px}
+.btn-ghost{background:transparent;color:var(--white);border:1px solid var(--border);box-shadow:none}
+.btn-ghost:hover{border-color:rgba(var(--accent-rgb),0.5);box-shadow:none;filter:none;transform:translateY(-1px)}
+@media(max-width:760px){footer.site-footer .foot-top{grid-template-columns:1fr 1fr}}
+
+
+@media(max-width:860px){
+  .nav-links{display:none}.menu-toggle{display:block}
+  .venn-wrap{grid-template-columns:1fr}
+  .util.wide{grid-column:span 1}
+}
+@media(max-width:768px){
+  .nav-in{padding:16px 24px}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav><div class="nav-in">
+  <a href="index.html" class="nav-logo" style="display:inline-flex;align-items:center;gap:11px"><svg width="22" height="22" viewBox="0 0 26 26" fill="none" aria-hidden="true"><path d="M4 7 H22" stroke="#8b7bff" stroke-width="2.6" stroke-linecap="round"/><path d="M4 13 H17" stroke="#8b7bff" stroke-opacity="0.55" stroke-width="2.6" stroke-linecap="round"/><path d="M4 19 H12" stroke="#8b7bff" stroke-opacity="0.3" stroke-width="2.6" stroke-linecap="round"/></svg><span>Starknet <b>Thesis</b></span></a>
+  <div class="nav-links">
+    <a href="privacy.html">Privacy</a><a href="quantum.html">Quantum</a><a href="btcfi.html">BTCFi</a>
+    <a href="strk.html" class="active">STRK</a><a href="ecosystem.html">Ecosystem</a><a href="digest.html">Digest</a>
+  </div>
+  <a class="btn nav-cta" href="index.html">Read the thesis <i class="ti ti-arrow-right"></i></a>
+  <button class="menu-toggle" aria-label="Menu"><i class="ti ti-menu-2"></i></button>
+</div></nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-glow"></div>
+  <div class="wrap">
+    <p class="eyebrow">One token. Three engines.</p>
+    <h1>The thesis, in a <em>single asset</em>.</h1>
+    <p class="lead">Privacy, quantum resistance, and Bitcoin all run on Starknet. STRK is the asset that secures the network and captures the demand the thesis creates.</p>
+  </div>
+
+  <!-- Inverted convergence: STRK label + Starknet logo at the apex → three strands
+       fanning down to three clickable pillar endpoints. -->
+  <div class="motif" id="motif">
+    <svg viewBox="0 0 900 440" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <defs>
+        <!-- userSpaceOnUse so the gradient renders even on the straight center strand -->
+        <linearGradient id="gq" gradientUnits="userSpaceOnUse" x1="0" y1="62" x2="0" y2="404">
+          <stop offset="0%" stop-color="#7C3AED"/><stop offset="100%" stop-color="#3DA9FC"/></linearGradient>
+        <linearGradient id="gp" gradientUnits="userSpaceOnUse" x1="0" y1="62" x2="0" y2="404">
+          <stop offset="0%" stop-color="#7C3AED"/><stop offset="100%" stop-color="#A78BFA"/></linearGradient>
+        <linearGradient id="gb" gradientUnits="userSpaceOnUse" x1="0" y1="62" x2="0" y2="404">
+          <stop offset="0%" stop-color="#7C3AED"/><stop offset="100%" stop-color="#F7931A"/></linearGradient>
+        <radialGradient id="coreg" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="rgba(167,139,250,0.5)"/><stop offset="100%" stop-color="rgba(124,58,237,0)"/></radialGradient>
+        <clipPath id="logoClip"><circle cx="450" cy="46" r="22"/></clipPath>
+      </defs>
+
+      <!-- STRK label (always visible) -->
+      <text class="core-label" x="450" y="14" text-anchor="middle" font-size="11">STRK</text>
+
+      <!-- soft halo behind the logo -->
+      <circle class="coreglow" cx="450" cy="46" r="32" fill="url(#coreg)"/>
+
+      <!-- strands from the apex (450,64) down to the three endpoints -->
+      <path class="strand s1" pathLength="1" stroke="url(#gq)" d="M450 64 C 450 220, 150 240, 150 392"/>
+      <path class="strand s2" pathLength="1" stroke="url(#gp)" d="M450 64 L 450 404"/>
+      <path class="strand s3" pathLength="1" stroke="url(#gb)" d="M450 64 C 450 220, 750 240, 750 392"/>
+
+      <!-- real Starknet logo asset, clipped to a circle (always visible) -->
+      <image x="428" y="24" width="44" height="44" clip-path="url(#logoClip)" preserveAspectRatio="xMidYMid slice" href="assets/starknet-logo.png"/>
+
+      <!-- endpoint nodes -->
+      <circle class="node n1" cx="150" cy="392" r="6" fill="#A78BFA"/>
+      <circle class="node n2" cx="450" cy="404" r="6" fill="#3DA9FC"/>
+      <circle class="node n3" cx="750" cy="392" r="6" fill="#F7931A"/>
+    </svg>
+
+    <div class="pillar p1"><a href="privacy.html">Privacy <span class="arr">↗</span></a></div>
+    <div class="pillar p2"><a href="quantum.html">Quantum Resistance <span class="arr">↗</span></a></div>
+    <div class="pillar p3"><a href="btcfi.html">BTCFi <span class="arr">↗</span></a></div>
+  </div>
+</header>
+
+<!-- 01 ROLE -->
+<section class="block"><div class="wrap">
+  <div class="th-pm-head"><span class="th-pm-marker"></span><span class="th-pm-num">01</span><h2 class="th-pm-title">What STRK is</h2></div>
+
+  <div class="s01">
+    <div class="copy">
+      <p><strong>STRK is the native asset powering Starknet.</strong> It pays for execution (both gas and privacy fees), secures the network through staking, governs the protocol, and serves as the base collateral across its DeFi. Every part of the thesis playing out, more private flows, a quantum-safe chain, more Bitcoin, routes that activity back to one token.</p>
+    </div>
+
+    <div class="fly" id="fly">
+      <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" aria-label="STRK flywheel">
+        <circle class="track" cx="200" cy="200" r="130"/>
+        <circle class="track-dash" cx="200" cy="200" r="130"/>
+
+        <line class="spoke" x1="200" y1="200" x2="200" y2="70"/>
+        <line class="spoke" x1="200" y1="200" x2="330" y2="200"/>
+        <line class="spoke" x1="200" y1="200" x2="200" y2="330"/>
+        <line class="spoke" x1="200" y1="200" x2="70"  y2="200"/>
+
+        <g class="travel-orbit"><circle class="travel" cx="200" cy="70" r="4.5"/></g>
+
+        <g class="hub">
+          <circle cx="200" cy="200" r="40"/>
+          <text x="200" y="206" text-anchor="middle">STRK</text>
+        </g>
+
+        <g class="stage" data-i="01" data-t="Thesis plays out" data-d="More demand for privacy, more capital seeking quantum-safety, more Bitcoin looking for DeFi, all of it drives activity onto Starknet.">
+          <circle class="dot" cx="200" cy="70" r="13"/>
+          <text class="snum" x="200" y="75">01</text>
+          <text class="slabel" x="200" y="44">Thesis</text>
+        </g>
+        <g class="stage" data-i="02" data-t="Activity needs STRK" data-d="Every transaction pays fees in STRK. As activity and TVS climb, demand to acquire and stake it rises, with BTC staking tied directly to STRK. It also governs the protocol and backs DeFi as base collateral.">
+          <circle class="dot" cx="330" cy="200" r="13"/>
+          <text class="snum" x="330" y="205">02</text>
+          <text class="slabel" x="330" y="234">Utility</text>
+        </g>
+        <g class="stage" data-i="03" data-t="STRK demand rises" data-d="Fees, staking, governance, and collateral all consume and lock up STRK as the chain is used.">
+          <circle class="dot" cx="200" cy="330" r="13"/>
+          <text class="snum" x="200" y="335">03</text>
+          <text class="slabel" x="200" y="360">Demand</text>
+        </g>
+        <g class="stage" data-i="04" data-t="Network strengthens" data-d="More security and value accrual make Starknet more attractive, feeding the next wave of activity.">
+          <circle class="dot" cx="70" cy="200" r="13"/>
+          <text class="snum" x="70" y="205">04</text>
+          <text class="slabel" x="70" y="234">Security</text>
+        </g>
+      </svg>
+
+      <div class="tip" id="tip"><div class="tt" id="tipT"></div><div class="td" id="tipD"></div></div>
+    </div>
+  </div>
+</div></section>
+
+<!-- 02 UTILITIES -->
+<section class="block"><div class="wrap">
+  <div class="th-pm-head"><span class="th-pm-marker"></span><span class="th-pm-num">02</span><h2 class="th-pm-title">The utilities</h2></div>
+
+  <svg width="0" height="0" style="position:absolute"><defs>
+    <linearGradient id="gv" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7C3AED"/><stop offset="1" stop-color="#C4B5FD"/></linearGradient>
+  </defs></svg>
+
+  <div class="util">
+    <!-- LEFT RAIL -->
+    <div class="util-list" id="utilRail">
+      <button class="util-tab on" data-k="fees">
+        <span class="ico"><svg viewBox="0 0 24 24"><path fill="url(#gv)" d="M13 2 4 13h6l-1 9 9-12h-6l1-8z"/></svg></span>
+        <span class="tx"><span class="nm">Fees</span><span class="te">Gas + privacy</span></span>
+        <span class="idx">01</span>
+      </button>
+      <button class="util-tab" data-k="staking">
+        <span class="ico"><svg viewBox="0 0 24 24"><path fill="url(#gv)" d="M12 2 20 5v6c0 5-3.4 7.7-8 9-4.6-1.3-8-4-8-9V5z"/><path fill="none" stroke="#0A0A0A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M9 12l2.2 2.2L15 10.2"/></svg></span>
+        <span class="tx"><span class="nm">Staking</span><span class="te">Secures the network</span></span>
+        <span class="idx">02</span>
+      </button>
+      <button class="util-tab" data-k="gov">
+        <span class="ico"><svg viewBox="0 0 24 24"><path fill="url(#gv)" d="M12 3 21.5 8.2H2.5z"/><rect x="5.4" y="9.3" width="2.4" height="7.6" fill="url(#gv)"/><rect x="10.8" y="9.3" width="2.4" height="7.6" fill="url(#gv)"/><rect x="16.2" y="9.3" width="2.4" height="7.6" fill="url(#gv)"/><rect x="3.2" y="17.6" width="17.6" height="2.4" rx="1" fill="url(#gv)"/></svg></span>
+        <span class="tx"><span class="nm">Governance</span><span class="te">Protocol control</span></span>
+        <span class="idx">03</span>
+      </button>
+      <button class="util-tab" data-k="coll">
+        <span class="ico"><svg viewBox="0 0 24 24"><path fill="url(#gv)" d="M12 2.6 21.5 8 12 13.4 2.5 8z"/><path fill="none" stroke="url(#gv)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" opacity=".6" d="M3 12l9 5.4L21 12M3 16l9 5.4L21 16"/></svg></span>
+        <span class="tx"><span class="nm">DeFi collateral</span><span class="te">Base layer</span></span>
+        <span class="idx">04</span>
+      </button>
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div class="util-stage">
+      <!-- FEES -->
+      <div class="util-panel show" data-k="fees">
+        <div class="eyebrow">Execution</div>
+        <h3>Fees</h3>
+        <p>Every transaction on Starknet is paid in STRK. Beyond standard gas, each private transaction also carries a protocol privacy fee in STRK.</p>
+        <div class="viz">
+          <div class="barrow">
+            <div class="bl" style="display:flex;justify-content:space-between"><span>Standard transaction</span><span style="color:var(--white)">~$0.01</span></div>
+            <div class="bartrack"><div class="barfill gas" data-w="10%"></div></div>
+          </div>
+          <div class="barrow">
+            <div class="bl">Private transaction</div>
+            <div class="bartrack"><div class="barfill gas" data-w="10%"></div><div class="barfill priv" data-w="80%"></div></div>
+            <div class="seglbl"><i><span class="dotc gas"></span>Gas <span style="color:var(--white)">~$0.01</span></i><i><span class="dotc priv"></span>Privacy fee <span style="color:var(--white)">4 STRK</span></i></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STAKING -->
+      <div class="util-panel" data-k="staking">
+        <div class="eyebrow">Security</div>
+        <h3>Staking</h3>
+        <p>Staking STRK is the core of Starknet's decentralization, carrying 75% of all staking power. Bitcoin staking was added on top to tie STRK and BTC value in a flywheel: BTC stakers take a fixed 25% share of staking rewards, so the more STRK is staked, the higher their rewards and APR, pulling even more Bitcoin into consensus. All of it runs on less than 1% annual STRK inflation.</p>
+        <div class="viz">
+          <div class="barrow">
+            <div class="bl">Staking power</div>
+            <div class="bartrack"><div class="barfill strk" data-w="75%"></div><div class="barfill btc" data-w="25%"></div></div>
+            <div class="seglbl"><i><span class="dotc strk"></span>STRK 75%</i><i><span class="dotc btc"></span>BTC 25%</i></div>
+          </div>
+          <div class="barrow">
+            <div class="bl">Circulating supply staked</div>
+            <div class="bartrack"><div class="barfill meter" data-w="21.18%"></div></div>
+          </div>
+          <div class="vrow">
+            <a class="figlink" href="https://dashboard.endur.fi/" target="_blank" rel="noopener noreferrer"><div class="bignum" data-metric="strk_staked_pct">21.18%</div><div class="subt">Of circulating STRK supply staked <span class="arr">↗</span></div></a>
+            <a class="figlink" href="https://dashboard.endur.fi/" target="_blank" rel="noopener noreferrer"><div class="bignum" data-metric="strk_staked_total">1.43B STRK</div><div class="subt">STRK staked <span class="arr">↗</span></div></a>
+            <div><div class="bignum">75 / 25</div><div class="subt">STRK / BTC power</div></div>
+          </div>
+          <div id="stakingUpdated" style="font-family:var(--mono),monospace;font-size:10px;letter-spacing:.12em;color:var(--muted);text-align:right;margin-top:10px;min-height:13px"></div>
+        </div>
+      </div>
+
+      <!-- GOVERNANCE -->
+      <div class="util-panel" data-k="gov">
+        <div class="eyebrow">Control</div>
+        <h3>Governance</h3>
+        <p>Governance is powered by STRK, and only staked or delegated STRK carries a vote. Stakers and delegators set the direction of the protocol, from upgrades to economic parameters and everything in between. It is already live, with 10 votes held as of 20 July 2026.</p>
+        <div class="viz">
+          <div class="bl" style="font-family:var(--mono),monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:12px">On-chain votes</div>
+          <div class="gov-votes" id="govVotes" style="position:relative">
+            <div class="ticks">
+              <a href="https://governance.starknet.io/#/sn:0x009fedaf0d7a480d21a27683b0965c0f8ded35b3f1cac39827a25a06a8a682a4/proposal/5" target="_blank" rel="noopener noreferrer" data-title="Staking on Starknet"></a>
+              <a href="https://governance.starknet.io/#/sn:0x009fedaf0d7a480d21a27683b0965c0f8ded35b3f1cac39827a25a06a8a682a4/proposal/6" target="_blank" rel="noopener noreferrer" data-title="Termination of Transaction Versions 0, 1, 2"></a>
+              <a href="https://governance.starknet.io/#/sn:0x009fedaf0d7a480d21a27683b0965c0f8ded35b3f1cac39827a25a06a8a682a4/proposal/8" target="_blank" rel="noopener noreferrer" data-title="Staking on Starknet V2"></a>
+              <a href="https://governance.starknet.io/#/sn:0x009fedaf0d7a480d21a27683b0965c0f8ded35b3f1cac39827a25a06a8a682a4/proposal/9" target="_blank" rel="noopener noreferrer" data-title="Starknet v0.14.0"></a>
+              <a href="https://governance.starknet.io/#/sn:0x009fedaf0d7a480d21a27683b0965c0f8ded35b3f1cac39827a25a06a8a682a4/proposal/10" target="_blank" rel="noopener noreferrer" data-title="Bitcoin Staking on Starknet"></a>
+              <a href="https://governance.starknet.io/#/sn:0x009fedaf0d7a480d21a27683b0965c0f8ded35b3f1cac39827a25a06a8a682a4/proposal/11" target="_blank" rel="noopener noreferrer" data-title="Starknet v0.14.2"></a>
+              <a href="https://governance.starknet.io/#/sn:0x009fedaf0d7a480d21a27683b0965c0f8ded35b3f1cac39827a25a06a8a682a4/proposal/12" target="_blank" rel="noopener noreferrer" data-title="strkBTC - Bitcoin on Starknet (SNIP-38)"></a>
+              <a href="https://governance.starknet.io/#/sn:0x009fedaf0d7a480d21a27683b0965c0f8ded35b3f1cac39827a25a06a8a682a4/proposal/13" target="_blank" rel="noopener noreferrer" data-title="strkBTC as a Stakable Token on Starknet (SNIP-39)"></a>
+              <a href="https://governance.starknet.io/#/sn:0x009fedaf0d7a480d21a27683b0965c0f8ded35b3f1cac39827a25a06a8a682a4/proposal/14" target="_blank" rel="noopener noreferrer" data-title="Starknet v0.14.3"></a>
+              <a href="https://governance.starknet.io/#/sn:0x009fedaf0d7a480d21a27683b0965c0f8ded35b3f1cac39827a25a06a8a682a4/proposal/15" target="_blank" rel="noopener noreferrer" data-title="Starknet v0.14.3 (Updated)"></a>
+            </div>
+            <div class="tip" id="govTip"><div class="tt"><span id="govTipT"></span> <span style="opacity:.7">↗</span></div></div>
+          </div>
+          <div class="vrow"><div><div class="bignum">10</div><div class="subt">Votes to date</div></div></div>
+        </div>
+      </div>
+
+      <!-- COLLATERAL -->
+      <div class="util-panel" data-k="coll">
+        <div class="eyebrow">Capital</div>
+        <h3>DeFi collateral</h3>
+        <p>Across Starknet DeFi, STRK is a core collateral asset. From lending and trading to leverage, liquid staking, and stablecoins, the native token plugs into every major venue, put to work instead of sitting idle.</p>
+        <div class="viz">
+          <div class="bl" style="font-family:var(--mono),monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:12px">Used across</div>
+          <div class="chips">
+            <a class="chip" href="https://vesu.xyz/lite/markets" target="_blank" rel="noopener noreferrer">Lending <span class="arr">↗</span></a>
+            <a class="chip" href="https://ekubo.org/positions?chainId=23448594291968334" target="_blank" rel="noopener noreferrer">LP <span class="arr">↗</span></a>
+            <a class="chip" href="https://www.troves.fi/" target="_blank" rel="noopener noreferrer">Leverage yield <span class="arr">↗</span></a>
+            <a class="chip" href="https://app.endur.fi/strk" target="_blank" rel="noopener noreferrer">Liquid stake <span class="arr">↗</span></a>
+            <a class="chip" href="https://www.opus.money/" target="_blank" rel="noopener noreferrer">Mint stablecoin <span class="arr">↗</span></a>
+          </div>
+          <div class="basebar">STRK · base collateral</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<!-- 03 CONVERGENCE -->
+<section class="block"><div class="wrap">
+  <div class="th-pm-head"><span class="th-pm-marker"></span><span class="th-pm-num">03</span><h2 class="th-pm-title">The convergence</h2></div>
+  <div class="venn-wrap">
+    <div class="venn-stage" id="vennStage">
+      <svg class="venn-svg" viewBox="0 0 600 560" xmlns="http://www.w3.org/2000/svg" aria-label="Three narratives converging on Starknet">
+        <defs>
+          <radialGradient id="g-btcfi" cx="50%" cy="50%" r="50%"><stop offset="40%" stop-color="rgba(247,147,26,0)"/><stop offset="100%" stop-color="rgba(247,147,26,0.16)"/></radialGradient>
+          <radialGradient id="g-quantum" cx="50%" cy="50%" r="50%"><stop offset="40%" stop-color="rgba(61,169,252,0)"/><stop offset="100%" stop-color="rgba(61,169,252,0.16)"/></radialGradient>
+          <radialGradient id="g-privacy" cx="50%" cy="50%" r="50%"><stop offset="40%" stop-color="rgba(167,139,250,0)"/><stop offset="100%" stop-color="rgba(167,139,250,0.16)"/></radialGradient>
+          <radialGradient id="g-core" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="rgba(124,58,237,0.55)"/><stop offset="100%" stop-color="rgba(124,58,237,0)"/></radialGradient>
+        </defs>
+
+        <!-- Each set links to the same CoinGecko page as its legend row. SVG <a>
+             hit areas follow the painted shapes (the ring's fill:transparent and
+             the gradient fill both cover the full disk), so overlap clicks go to
+             the topmost painted circle — and the core, painted last, wins over
+             all three. Native <a> focus gives tab + enter keyboard access. -->
+        <!-- BTCFi (top) -->
+        <g class="venn-set" data-set="btcfi">
+          <a href="https://www.coingecko.com/en/categories/bitcoin-layer-2" target="_blank" rel="noopener noreferrer" aria-label="BTCFi — Bitcoin Layer 2 category on CoinGecko">
+            <circle class="fill" cx="300" cy="190" r="155" fill="url(#g-btcfi)"/>
+            <circle class="ring" cx="300" cy="190" r="155" stroke="#F7931A"/>
+            <text x="300" y="90" text-anchor="middle" fill="#F7931A" font-family="Archivo Expanded" font-weight="800" font-size="22">BTCFi</text>
+            <text x="300" y="114" text-anchor="middle" fill="#F7931A" font-family="Archivo Expanded" font-weight="700" font-size="18" data-metric="venn.btcfi">$618.9M</text>
+          </a>
+        </g>
+        <!-- Quantum (bottom-left) -->
+        <g class="venn-set" data-set="quantum">
+          <a href="https://www.coingecko.com/en/categories/quantum-resistant" target="_blank" rel="noopener noreferrer" aria-label="Quantum — Quantum-Resistant category on CoinGecko">
+            <circle class="fill" cx="231" cy="310" r="155" fill="url(#g-quantum)"/>
+            <circle class="ring" cx="231" cy="310" r="155" stroke="#3DA9FC"/>
+            <text x="150" y="350" text-anchor="middle" fill="#3DA9FC" font-family="Archivo Expanded" font-weight="800" font-size="20">Quantum</text>
+            <text x="150" y="373" text-anchor="middle" fill="#3DA9FC" font-family="Archivo Expanded" font-weight="700" font-size="17" data-metric="venn.quantum">$10.11B</text>
+          </a>
+        </g>
+        <!-- Privacy (bottom-right) -->
+        <g class="venn-set" data-set="privacy">
+          <a href="https://www.coingecko.com/en/categories/privacy-infrastructure" target="_blank" rel="noopener noreferrer" aria-label="Privacy — Privacy Infrastructure category on CoinGecko">
+            <circle class="fill" cx="369" cy="310" r="155" fill="url(#g-privacy)"/>
+            <circle class="ring" cx="369" cy="310" r="155" stroke="#A78BFA"/>
+            <text x="450" y="350" text-anchor="middle" fill="#A78BFA" font-family="Archivo Expanded" font-weight="800" font-size="20">Privacy</text>
+            <text x="450" y="373" text-anchor="middle" fill="#A78BFA" font-family="Archivo Expanded" font-weight="700" font-size="17" data-metric="venn.privacy">$10.43B</text>
+          </a>
+        </g>
+        <!-- Core: Starknet intersection — painted last, so its circular hit area has priority -->
+        <a class="venn-core" data-set="strk" href="https://www.coingecko.com/en/coins/starknet" target="_blank" rel="noopener noreferrer" aria-label="Starknet (STRK) on CoinGecko">
+          <circle cx="300" cy="288" r="78" fill="url(#g-core)"/>
+          <text x="300" y="266" text-anchor="middle" fill="#F5F2EC" font-family="Archivo Expanded" font-weight="800" font-size="19">Starknet</text>
+          <text x="300" y="285" text-anchor="middle" fill="rgba(245,242,236,0.6)" font-family="IBM Plex Mono" font-size="8.5" letter-spacing="2">CONVERGENCE</text>
+          <text x="300" y="308" text-anchor="middle" fill="#A78BFA" font-family="Archivo Expanded" font-weight="800" font-size="21" data-metric="venn.starknet">$190.9M</text>
+        </a>
+      </svg>
+    </div>
+
+    <div class="venn-side">
+      <h3>One chain at the intersection</h3>
+      <p class="lead">Each narrative is a multi-billion-dollar market on its own. Starknet is the only chain that sits in all three at once, and STRK is the claim on that intersection.</p>
+      <div class="venn-legend">
+        <a class="l-privacy" data-set="privacy" href="https://www.coingecko.com/en/categories/privacy-infrastructure" target="_blank" rel="noopener noreferrer"><span class="swatch"></span><span class="ln">Privacy</span><span class="lmc" data-metric="venn.privacy">$10.43B</span><span class="lext">↗</span></a>
+        <a class="l-quantum" data-set="quantum" href="https://www.coingecko.com/en/categories/quantum-resistant" target="_blank" rel="noopener noreferrer"><span class="swatch"></span><span class="ln">Quantum-resistant</span><span class="lmc" data-metric="venn.quantum">$10.11B</span><span class="lext">↗</span></a>
+        <a class="l-btcfi" data-set="btcfi" href="https://www.coingecko.com/en/categories/bitcoin-layer-2" target="_blank" rel="noopener noreferrer"><span class="swatch"></span><span class="ln">BTCFi</span><span class="lmc" data-metric="venn.btcfi">$618.9M</span><span class="lext">↗</span></a>
+        <a class="l-strk" data-set="strk" href="https://www.coingecko.com/en/coins/starknet" target="_blank" rel="noopener noreferrer"><span class="swatch"></span><span class="ln">Starknet (STRK)</span><span class="lmc" data-metric="venn.starknet">$190.9M</span><span class="lext">↗</span></a>
+      </div>
+      <div id="vennUpdated" style="font-family:var(--mono),monospace;font-size:10px;letter-spacing:.12em;color:var(--muted);text-align:right;margin-top:10px;min-height:13px"></div>
+    </div>
+  </div>
+</div></section>
+
+<!-- 04 NUMBERS -->
+<section class="block"><div class="wrap"><div id="numbers">
+  <div class="nhead">
+    <div class="th-pm-head" style="margin-bottom:0"><span class="th-pm-marker"></span><span class="th-pm-num">04</span><h2 class="th-pm-title">The numbers</h2></div>
+    <span class="pill"><span class="d"></span><span id="upd">Updated --:--</span></span>
+  </div>
+
+  <!-- A. STRK TOKENOMICS — circulating supply is live (CoinGecko); the unlock
+       schedule is the official contractual vesting (docs.starknet.io), with the
+       next-unlock %-of-circulating computed from the live supply; the
+       distribution donut is static official protocol data. -->
+  <div class="grp" id="tokenomics">
+    <div class="gl">STRK tokenomics</div>
+    <div class="panel">
+      <div class="eyebrow">Supply</div>
+      <div class="ptitle">Circulating supply</div>
+      <div class="tk-big"><span data-stat="circ">6.75B</span><span class="tk-of">of 10B STRK</span></div>
+      <div class="tk-track"><i id="tkBar" style="width:67.5%"></i></div>
+      <div class="tk-meta"><span><span data-stat="circpct">67.5%</span> of the 10B max supply is on the market</span><a href="https://www.coingecko.com/en/coins/starknet" target="_blank" rel="noopener noreferrer">CoinGecko ↗</a></div>
+    </div>
+    <div class="panel">
+      <div class="eyebrow">Unlock schedule</div>
+      <div class="ptitle">Tokens entering circulation, next 12 months</div>
+      <div class="supchart" id="mucbox">
+        <svg id="muchart" viewBox="0 0 1000 300"></svg>
+        <div class="stip" id="mtip2"></div>
+      </div>
+      <div class="legend"><span><i style="background:#A78BFA"></i>Scheduled vesting</span><span><i style="background:#6D4FD0"></i>Estimated release</span><span><i style="background:#F5F2EC"></i>Cumulative supply</span></div>
+      <div class="kpis" id="mukpis"></div>
+      <div class="note">Scheduled vesting (Investors + Early Contributors) is the only contractual monthly unlock: about <b>127M STRK</b> on the 15th of each month until <b>March 15, 2027</b>, per the <a href="https://docs.starknet.io/learn/protocol/strk" target="_blank" rel="noopener noreferrer">official schedule ↗</a> (also tracked on <a href="https://defillama.com/unlocks/starknet" target="_blank" rel="noopener noreferrer">DefiLlama ↗</a>). The estimated release is the Foundation distributing the remaining allocations over time, with no fixed schedule. The next-unlock share of supply is computed against the live circulating figure above.</div>
+    </div>
+    <div class="panel">
+      <div class="eyebrow">Distribution</div>
+      <div class="ptitle">Planned distribution of STRK</div>
+      <div class="dist">
+        <div class="donut" id="udonut">
+          <svg viewBox="0 0 560 360" id="dsvg"></svg>
+          <div class="center"><div class="ct">Total supply</div><div class="cv">10B</div><div class="cs" id="cHint">Hover a category</div></div>
+        </div>
+        <div class="detail"><div class="dt" id="udetail">Investors and Early Contributors vest until <b>March 15, 2027</b>. The rest is released into circulation as the Foundation allocates it. Hover a category for its unlock detail.</div></div>
+      </div>
+      <div class="note">Static protocol data — the official allocation from the <a href="https://docs.starknet.io/learn/protocol/strk" target="_blank" rel="noopener noreferrer">Starknet documentation ↗</a>.</div>
+    </div>
+  </div>
+
+  <!-- B. PRICE CHART (existing component) -->
+  <div class="feat">
+    <div class="feat-top">
+      <div>
+        <div class="elabel" id="fLabel">STRK price</div>
+        <div class="val" id="fVal"></div>
+        <div class="chgs"><span><span id="cRLabel">7D</span> <b id="cR"></b></span><span class="src" id="fSub"></span><span class="src" id="fSrc"></span></div>
+      </div>
+      <div class="ranges" id="ranges">
+        <button data-r="24H">24H</button><button data-r="7D" class="on">7D</button><button data-r="30D">30D</button><button data-r="1Y">1Y</button><button data-r="ALL">ALL</button>
+      </div>
+    </div>
+    <div class="chartbox" id="chartbox">
+      <svg id="chart" viewBox="0 0 1000 280" preserveAspectRatio="none">
+        <defs><linearGradient id="fill" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#7C3AED" stop-opacity="0.34"/><stop offset="1" stop-color="#7C3AED" stop-opacity="0"/>
+        </linearGradient>
+        <linearGradient id="fillPos" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#34D399" stop-opacity="0.26"/><stop offset="1" stop-color="#34D399" stop-opacity="0"/>
+        </linearGradient>
+        <linearGradient id="fillNeg" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#F0508C" stop-opacity="0"/><stop offset="1" stop-color="#F0508C" stop-opacity="0.26"/>
+        </linearGradient></defs>
+        <g id="gridV"></g>
+        <path id="area" fill="url(#fill)"></path>
+        <g id="dbars"></g>
+        <g id="signG"></g>
+        <g id="stackG"></g>
+        <path id="line" fill="none" stroke="#A78BFA" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"></path>
+        <line id="cross" stroke="rgba(245,242,236,.25)" stroke-width="1" style="display:none"></line>
+        <circle id="cdot" r="4.5" fill="#C4B5FD" style="display:none"></circle>
+        <g id="peakG"></g>
+      </svg>
+      <div class="tip" id="nTip"><div class="tv" id="nTipV"></div><div class="tdt" id="nTipD"></div></div>
+      <div class="cnote" id="chartNote"></div>
+      <div class="cnote cleg" id="chartLegend"></div>
+      <div class="cax" id="chartAxis"></div>
+      <div class="cstl" id="stackLegend"></div>
+    </div>
+    <div class="chips" id="chips"></div>
+  </div>
+
+  <!-- C. ALL REMAINING STATS — accordion groups, collapsed by default,
+       deep-linkable (#market #staking #usage #defi #strk20). Every value is
+       live via the engine at the end of the page; seeds are today's real
+       readings, never mock. -->
+  <div class="nacc" id="statsAcc">
+
+    <div class="nacc-item" id="market">
+      <button class="nacc-head" aria-expanded="false" aria-controls="market-body"><span class="nacc-title">Market</span><span class="nacc-count">5</span><i class="ti ti-chevron-down nacc-chev"></i></button>
+      <div class="nacc-body" id="market-body"><div class="nacc-inner"><div class="cells">
+        <div class="cell" data-chart-series="price"><div class="cell-top"><span class="cl">STRK price</span></div><div class="cv" data-stat="price">$0.0283</div></div>
+        <div class="cell" data-chart-series="mcap"><div class="cell-top"><span class="cl">Market cap</span></div><div class="cv" data-stat="mcap">$191.0M</div></div>
+        <div class="cell"><div class="cell-top"><span class="cl">FDV</span></div><div class="cv" data-stat="fdv">$283.0M</div><div class="cbar"><i id="fdvBar" style="width:67.5%"></i></div><div class="cbar-leg"><span>MCAP / FDV</span><span data-stat="mcapfdv">67.5%</span></div></div>
+        <div class="cell" data-chart-series="circstaked"><div class="cell-top"><span class="cl">Circulating staked</span></div><div class="cv"><span data-stat="circstaked">21.2</span><span class="cu">%</span></div></div>
+        <div class="cell"><div class="cell-top"><span class="cl">Unlocked supply</span></div><div class="cv"><span data-stat="unlockedpct">67.5</span><span class="cu">%</span></div><div class="cbar"><i id="unlockedBar" style="width:67.5%"></i></div><div class="cbar-leg"><span>UNLOCKED</span><span>LOCKED <span data-stat="lockedpct">32.5%</span></span></div></div>
+      </div></div></div>
+    </div>
+
+    <div class="nacc-item" id="staking">
+      <button class="nacc-head" aria-expanded="false" aria-controls="staking-body"><span class="nacc-title">Staking</span><span class="nacc-count">4</span><i class="ti ti-chevron-down nacc-chev"></i></button>
+      <div class="nacc-body" id="staking-body"><div class="nacc-inner"><div class="cells">
+        <div class="cell" data-chart-series="strkstaked"><div class="cell-top"><span class="cl">STRK staked</span></div><div class="cv"><span data-stat="strkstaked">1.43B</span><span class="cu"> STRK</span></div><div class="cs"><span data-stat="strkstakedusd">≈ $40.5M</span></div></div>
+        <div class="cell" data-chart-series="circstaked"><div class="cell-top"><span class="cl">% circulating staked</span></div><div class="cv"><span data-stat="circstaked">21.2</span><span class="cu">%</span></div><div class="cs">Staked ÷ circulating · computed</div></div>
+        <div class="cell" data-chart-series="btcstaked"><div class="cell-top"><span class="cl">BTC staked</span></div><div class="cv"><span data-stat="btcstaked">708</span><span class="cu"> BTC</span></div><div class="cs"><span data-stat="btcstakedusd">≈ $45.5M</span></div></div>
+        <div class="cell" data-chart-series="valuestaked"><div class="cell-top"><span class="cl">Total value staked</span></div><div class="cv" data-stat="valuestaked">$86.0M</div><div class="cs">STRK + BTC at spot · computed</div></div>
+      </div></div></div>
+    </div>
+
+    <div class="nacc-item" id="usage">
+      <button class="nacc-head" aria-expanded="false" aria-controls="usage-body"><span class="nacc-title">Usage</span><span class="nacc-count">5</span><i class="ti ti-chevron-down nacc-chev"></i></button>
+      <div class="nacc-body" id="usage-body"><div class="nacc-inner"><div class="cells">
+        <div class="cell" data-chart-series="dailyusers"><div class="cell-top"><span class="cl">Daily users</span></div><div class="cv" data-stat="dau">13.2K</div><div class="cs">Active addresses / day</div></div>
+        <div class="cell" data-chart-series="weeklyusers"><div class="cell-top"><span class="cl">Weekly users</span></div><div class="cv" data-stat="wau">43.4K</div><div class="cs">Active addresses / 7d</div></div>
+        <div class="cell" data-chart-series="totaltx"><div class="cell-top"><span class="cl">Total TX</span></div><div class="cv" data-stat="totaltx">307.7M</div><div class="cs">Since genesis</div></div>
+        <div class="cell" data-chart-series="tps"><div class="cell-top"><span class="cl">TPS (avg)</span></div><div class="cv"><span data-stat="tps">0.7</span><span class="cu"> TPS</span></div><div class="cs">Last full day</div></div>
+        <div class="cell" data-chart-series="downloads"><div class="cell-top"><span class="cl">StarkZap downloads</span></div><div class="cv" data-stat="downloads">7.4K</div><div class="cs">all-time · live</div></div>
+      </div></div></div>
+    </div>
+
+    <div class="nacc-item" id="defi">
+      <button class="nacc-head" aria-expanded="false" aria-controls="defi-body"><span class="nacc-title">DeFi</span><span class="nacc-count">6</span><i class="ti ti-chevron-down nacc-chev"></i></button>
+      <div class="nacc-body" id="defi-body"><div class="nacc-inner"><div class="cells">
+        <div class="cell" data-chart-series="tvl"><div class="cell-top"><span class="cl">TVL</span></div><div class="cv" data-stat="tvl">$173.1M</div><div class="cs">DeFi TVL</div></div>
+        <div class="cell" data-chart-series="tvs"><div class="cell-top"><span class="cl">TVS</span></div><div class="cv" data-stat="tvs">$388.9M</div><div class="cs">Total value secured</div></div>
+        <div class="cell" data-chart-series="stables"><div class="cell-top"><span class="cl">Stablecoins</span></div><div class="cv" data-stat="stables">$165.0M</div><div class="cs">On-chain stablecoin cap</div></div>
+        <div class="cell" data-chart-series="netflow"><div class="cell-top"><span class="cl">Total netflow (30D)</span></div><div class="cv" data-stat="netflow">-$25.5M</div><div class="cs">TVS 30d change, incl. price moves</div></div>
+        <div class="cell" data-chart-series="apprev"><div class="cell-top"><span class="cl">App revenue (30D)</span></div><div class="cv" data-stat="apprev">$12.6K</div><div class="cs">Apps on Starknet</div></div>
+        <div class="cell" data-chart-series="chainrev"><div class="cell-top"><span class="cl">Chain revenue (30D)</span></div><div class="cv" data-stat="chainrev">$120.7K</div><div class="cs">Sequencer revenue</div></div>
+      </div></div></div>
+    </div>
+
+    <div class="nacc-item" id="strk20">
+      <button class="nacc-head" aria-expanded="false" aria-controls="strk20-body"><span class="nacc-title">Privacy · STRK20</span><span class="nacc-count">3</span><i class="ti ti-chevron-down nacc-chev"></i></button>
+      <div class="nacc-body" id="strk20-body"><div class="nacc-inner"><div class="cells c3">
+        <div class="cell" data-chart-series="p_tvl"><div class="cell-top"><span class="cl">TVL in STRK20 pool</span></div><div class="cv" data-stat="p_tvl">$528.9K</div><div class="cs">Shielded value</div></div>
+        <div class="cell" data-chart-series="p_rev"><div class="cell-top"><span class="cl">Revenue from STRK20 (30D)</span></div><div class="cv" data-stat="p_rev">$2.6K</div><div class="cs">4 STRK fee × 30d private TX · derived</div></div>
+        <div class="cell" data-chart-series="p_tx"><div class="cell-top"><span class="cl">Private TX (daily)</span></div><div class="cv" data-stat="p_tx">36</div><div class="cs">Last full day</div></div>
+      </div></div></div>
+    </div>
+
+  </div>
+</div></div></section>
+
+<!-- BUY -->
+<section class="block"><div class="wrap">
+  <div class="th-pm-head"><span class="th-pm-marker"></span><span class="th-pm-num">05</span><h2 class="th-pm-title">Where to get STRK</h2></div>
+  <div class="buy-acc">
+    <div class="buy-cat">
+      <button class="buy-head" aria-expanded="false"><span class="bh-l"><i class="ti ti-arrows-exchange"></i><span class="bh-title">On Starknet</span><span class="bh-count">2</span></span><i class="ti ti-chevron-down bh-chev"></i></button>
+      <div class="buy-body"><div class="buy-list">
+        <a class="buy-item" href="https://app.avnu.fi" target="_blank" rel="noopener noreferrer"><span class="bi-name"><span class="bi-logo"><img src="https://www.google.com/s2/favicons?domain=app.avnu.fi&sz=64" alt="" onerror="this.remove()"><i>A</i></span>avnu</span> <span class="badge">DEX aggregator</span></a>
+        <a class="buy-item" href="https://app.ekubo.org" target="_blank" rel="noopener noreferrer"><span class="bi-name"><span class="bi-logo"><img src="https://www.google.com/s2/favicons?domain=ekubo.org&sz=64" alt="" onerror="this.remove()"><i>E</i></span>Ekubo</span> <span class="badge">DEX</span></a>
+      </div></div>
+    </div>
+    <div class="buy-cat">
+      <button class="buy-head" aria-expanded="false"><span class="bh-l"><i class="ti ti-wallet"></i><span class="bh-title">Wallets</span><span class="bh-count">3</span></span><i class="ti ti-chevron-down bh-chev"></i></button>
+      <div class="buy-body"><div class="buy-list">
+        <a class="buy-item" href="https://www.ready.co" target="_blank" rel="noopener noreferrer"><span class="bi-name"><span class="bi-logo"><img src="https://www.google.com/s2/favicons?domain=ready.co&sz=64" alt="" onerror="this.remove()"><i>R</i></span>Ready</span> <span class="badge">Starknet</span></a>
+        <a class="buy-item" href="https://www.xverse.app" target="_blank" rel="noopener noreferrer"><span class="bi-name"><span class="bi-logo"><img src="https://www.google.com/s2/favicons?domain=xverse.app&sz=64" alt="" onerror="this.remove()"><i>X</i></span>Xverse</span> <span class="badge">Bitcoin + STARKNET</span></a>
+        <a class="buy-item" href="https://braavos.app" target="_blank" rel="noopener noreferrer"><span class="bi-name"><span class="bi-logo"><img src="https://www.google.com/s2/favicons?domain=braavos.app&sz=64" alt="" onerror="this.remove()"><i>B</i></span>Braavos</span> <span class="badge">Starknet</span></a>
+      </div></div>
+    </div>
+    <div class="buy-cat">
+      <button class="buy-head" aria-expanded="false"><span class="bh-l"><i class="ti ti-sun"></i><span class="bh-title">On Solana</span><span class="bh-count">3</span></span><i class="ti ti-chevron-down bh-chev"></i></button>
+      <div class="buy-body"><div class="buy-list">
+        <a class="buy-item" href="https://www.meteora.ag" target="_blank" rel="noopener noreferrer"><span class="bi-name"><span class="bi-logo"><img src="https://www.google.com/s2/favicons?domain=meteora.ag&sz=64" alt="" onerror="this.remove()"><i>M</i></span>Meteora</span> <span class="badge">DEX</span></a>
+        <a class="buy-item" href="https://phantom.app" target="_blank" rel="noopener noreferrer"><span class="bi-name"><span class="bi-logo"><img src="https://www.google.com/s2/favicons?domain=phantom.app&sz=64" alt="" onerror="this.remove()"><i>P</i></span>Phantom</span> <span class="badge">Wallet</span></a>
+        <a class="buy-item" href="https://backpack.exchange" target="_blank" rel="noopener noreferrer"><span class="bi-name"><span class="bi-logo"><img src="https://www.google.com/s2/favicons?domain=backpack.exchange&sz=64" alt="" onerror="this.remove()"><i>B</i></span>Backpack</span> <span class="badge">Wallet</span></a>
+      </div></div>
+    </div>
+    <div class="buy-cat">
+      <button class="buy-head" aria-expanded="false"><span class="bh-l"><i class="ti ti-building-bank"></i><span class="bh-title">Centralized exchanges</span><span class="bh-count">11</span></span><i class="ti ti-chevron-down bh-chev"></i></button>
+      <div class="buy-body"><div class="buy-list" data-list="cex"></div></div>
+    </div>
+  </div>
+</div></section>
+
+<!-- divider between section 05 and the conclusion -->
+<div class="wrap"><div class="sec-sep"></div></div>
+
+<!-- CONCLUSION -->
+<section class="conclude"><div class="wrap">
+  <p class="eyebrow" style="display:block;margin-bottom:18px">The whole bet, one ticker</p>
+  <h2>STRK is a bet on <span class="hl-privacy">privacy</span>, <span class="hl-quantum">quantum resistance</span> &amp; <span class="hl-btcfi">BTCFi</span>.</h2>
+  <p class="lead" style="margin:0 auto;text-align:center">Read the three pillars it's built on.</p>
+  <div class="pillar-links">
+    <a class="l-privacy" href="privacy.html"><i class="ti ti-eye-off"></i> Privacy</a>
+    <a class="l-quantum" href="quantum.html"><i class="ti ti-shield-bolt"></i> Quantum</a>
+    <a class="l-btcfi" href="btcfi.html"><i class="ti ti-currency-bitcoin"></i> BTCFi</a>
+  </div>
+</div></section>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-top">
+      <div class="foot-brand">
+        <a href="index.html" class="nav-logo">Starknet <b>Thesis</b></a>
+        <p>The thesis on how Starknet makes Bitcoin private, quantum-resistant and productive.</p>
+        <a href="https://x.com/Lyskey" target="_blank" rel="noopener" class="btn btn-ghost" style="padding:11px 18px">Made by Lyskey</a>
+      </div>
+      <div class="foot-col"><div class="h">Thesis</div><a href="privacy.html">Privacy</a><a href="quantum.html">Quantum</a><a href="btcfi.html">BTCFi</a><a href="strk.html">STRK</a></div>
+      <div class="foot-col"><div class="h">Ecosystem</div><a href="ecosystem.html">Ecosystem</a><a href="digest.html">Digest</a></div>
+      <div class="foot-col"><div class="h">Links</div><a href="https://x.com/Lyskey" target="_blank" rel="noopener">X / Twitter</a><a href="https://starknetresearch.substack.com/" target="_blank" rel="noopener">Newsletter</a></div>
+    </div>
+    <div class="disclaimer">Website made for educational purposes only. This is not financial advice. Always DYOR. This is also a personal project, not affiliated with or endorsed by StarkWare. All views expressed here are my own.</div>
+    <div class="foot-bottom">
+      <span>© 2026 · Made by <a href="https://x.com/Lyskey" target="_blank" rel="noopener">Lyskey</a></span>
+      <a href="https://status.starknet.io/" target="_blank" rel="noopener noreferrer" style="text-decoration:none;color:inherit;cursor:pointer"><span class="status"><span class="dot"></span> All systems operational</span></a>
+    </div>
+    <div class="foot-mark">Starknet</div>
+  </div>
+</footer>
+
+
+<script>
+/* =========================================================================
+   DATA CONTRACT (what /api/metrics returns). MOCK below for standalone preview.
+   Sources for step 2:
+     CoinGecko  → price/change/marketCap/fdv/supply, category ranks,
+                  category market caps (/coins/categories) for the Venn
+     Starknet RPC (staking contract) → strk/btc staked
+     DefiLlama  → tvl, tvs(proxy), stablecoins, chain revenue (+ history)
+     growthepie → daily users, app revenue (+ history)
+     static     → unlock schedule
+   Time series for the click-to-zoom charts: /api/series?metric=tvl&range=30
+   ========================================================================= */
+const MOCK = {
+  meta:{updatedAt:new Date().toISOString()},
+  price:{usd:0.1342,change24h:3.8,change7d:-2.1},
+  marketCap:512e6, fdv:1.34e9, circulatingSupply:3.82e9, totalSupply:10e9,
+  staking:{strkStaked:1.18e9,btcStaked:1450,totalUsd:310e6,pct:30.9,strkUsd:158e6,btcUsd:152e6},
+  rank:{zk:{r:2,n:48},privacy:{r:7,n:61},quantum:{r:3,n:19},bitcoinL2:{r:5,n:54}},
+  eco:{tvl:340e6,tvs:610e6,stables:96e6,appRev:1.9e6,users:78000,revenue:540000},
+  unlocks:{nextDate:"2026-07-15",nextAmount:127e6,nextPctOfSupply:1.27,circPct:38.2,
+    schedule:[ ["Jul 26",127e6],["Aug 26",98e6],["Sep 26",98e6],["Oct 26",112e6],
+               ["Nov 26",98e6],["Dec 26",98e6],["Jan 27",140e6],["Feb 27",98e6] ]},
+  cex:[{name:"Binance",url:"https://www.binance.com/en/trade/STRK_USDT"},
+       {name:"Coinbase",url:"https://www.coinbase.com/price/starknet"},
+       {name:"OKX",url:"https://www.okx.com"},{name:"Bybit",url:"https://www.bybit.com"},
+       {name:"Kraken",url:"https://www.kraken.com"},{name:"KuCoin",url:"https://www.kucoin.com"},
+       {name:"Gate",url:"https://www.gate.io"},{name:"MEXC",url:"https://www.mexc.com"},
+       {name:"Bitget",url:"https://www.bitget.com"},{name:"Bithumb",url:"https://www.bithumb.com"},
+       {name:"Backpack",url:"https://backpack.exchange"}]
+};
+
+const fmtUsd=n=>n==null?"—":"$"+(+n).toLocaleString("en-US",{minimumFractionDigits:n<1?4:2,maximumFractionDigits:n<1?4:2});
+const fmtBig=n=>{if(n==null)return"—";const a=Math.abs(n);
+  if(a>=1e9)return"$"+(n/1e9).toFixed(2)+"B"; if(a>=1e6)return"$"+(n/1e6).toFixed(1)+"M";
+  if(a>=1e3)return"$"+(n/1e3).toFixed(0)+"K"; return"$"+(+n).toFixed(0);};
+const fmtCount=n=>{if(n==null)return"—";const a=Math.abs(n);
+  if(a>=1e9)return(n/1e9).toFixed(2)+"B"; if(a>=1e6)return(n/1e6).toFixed(1)+"M";
+  if(a>=1e3)return(n/1e3).toFixed(1)+"K"; return(+n).toLocaleString("en-US");};
+const fmtPct=n=>n==null?"—":(n>0?"+":"")+n.toFixed(1)+"%";
+const chgClass=n=>n==null?"":(n>=0?"up":"down");
+function set(sel,val,cls){const el=document.querySelector(`[data-metric="${sel}"]`);if(!el)return;
+  el.textContent=val; if(cls!==undefined){el.className="";el.classList.add(cls);}}
+function setAll(sel,val){document.querySelectorAll(`[data-metric="${sel}"]`).forEach(e=>e.textContent=val);}
+
+let DATA=MOCK;
+/* render() now only feeds elements that still exist outside section 04:
+   the % circulating staked figure reused in section 02 and the CEX list
+   (section 05 / where-to-get). The section 03 Venn caps have their own
+   live CoinGecko engine at the end of the page (single source of truth
+   for both the SVG labels and the legend rows) — never fed from MOCK. */
+function render(d){
+  DATA=d;
+  setAll("staking.pct",d.staking.pct.toFixed(1)+"%");
+  const cex=document.querySelector('[data-list="cex"]');
+  if(cex&&d.cex)cex.innerHTML=d.cex.map(c=>{let dom="";try{dom=new URL(c.url).hostname.replace(/^www\./,"");}catch(e){}
+    return `<a class="buy-item" href="${c.url}" target="_blank" rel="noopener noreferrer"><span class="bi-name"><span class="bi-logo"><img src="https://www.google.com/s2/favicons?domain=${dom}&sz=64" alt="" onerror="this.remove()"><i>${c.name[0]}</i></span>${c.name}</span> <span class="badge">${c.tag||'CEX'}</span></a>`;}).join("");
+}
+async function load(){try{const r=await fetch("/api/metrics",{cache:"no-store"});if(!r.ok)throw 0;render(await r.json());}
+  catch(e){render(MOCK);}}
+load(); setInterval(load,60000);
+
+/* ---------- Venn focus interaction ---------- */
+const stage=document.getElementById("vennStage");
+function focusSet(s){if(!s||s==="strk"){stage.classList.remove("focus");
+    stage.querySelectorAll(".venn-set").forEach(g=>g.classList.remove("on"));return;}
+  stage.classList.add("focus");
+  stage.querySelectorAll(".venn-set").forEach(g=>g.classList.toggle("on",g.dataset.set===s));}
+document.querySelectorAll('.venn-set,[data-set]').forEach(el=>{
+  el.addEventListener("mouseenter",()=>focusSet(el.dataset.set));
+  el.addEventListener("mouseleave",()=>focusSet(null));
+  el.addEventListener("click",()=>focusSet(el.dataset.set));
+});
+
+/* ---------- section 05 where-to-get accordion (CSS-driven; ships collapsed, independent toggles) ---------- */
+document.querySelectorAll(".buy-head").forEach(h=>{
+  h.addEventListener("click",()=>{
+    const open=h.closest(".buy-cat").classList.toggle("open");
+    h.setAttribute("aria-expanded",open?"true":"false");
+  });
+});
+
+/* ---------- section 01 STRK flywheel ---------- */
+const fly=document.getElementById("fly");
+if(fly){
+  const tip=document.getElementById("tip"),tipT=document.getElementById("tipT"),tipD=document.getElementById("tipD");
+  const stages=[...fly.querySelectorAll(".stage")];
+  stages.forEach(s=>{
+    const dot=s.querySelector(".dot");
+    s.addEventListener("mouseenter",()=>{
+      stages.forEach(x=>x.classList.remove("on")); s.classList.add("on");
+      tipT.textContent=s.dataset.i+" · "+s.dataset.t; tipD.textContent=s.dataset.d;
+      tip.style.display="block";
+      const fr=fly.getBoundingClientRect(), dr=dot.getBoundingClientRect();
+      const cx=dr.left+dr.width/2-fr.left, cy=dr.top+dr.height/2-fr.top;
+      const tw=tip.offsetWidth, th=tip.offsetHeight;
+      let left=Math.max(4,Math.min(cx-tw/2, fr.width-tw-4));
+      let top=cy-th-16;
+      if(top<2) top=cy+22; /* not enough room above -> place below */
+      tip.style.left=left+"px"; tip.style.top=top+"px";
+    });
+    s.addEventListener("mouseleave",()=>{ s.classList.remove("on"); tip.style.display="none"; });
+  });
+}
+
+/* ---------- section 02 governance vote bars — hover tooltip ---------- */
+const govVotes=document.getElementById("govVotes");
+if(govVotes){
+  const gtip=document.getElementById("govTip"), gtipT=document.getElementById("govTipT");
+  [...govVotes.querySelectorAll(".ticks a")].forEach(b=>{
+    b.addEventListener("mouseenter",()=>{
+      gtipT.textContent=b.dataset.title;
+      gtip.style.display="block";
+      const fr=govVotes.getBoundingClientRect(), dr=b.getBoundingClientRect();
+      const cx=dr.left+dr.width/2-fr.left, cy=dr.top-fr.top;
+      const tw=gtip.offsetWidth, th=gtip.offsetHeight;
+      let left=Math.max(4,Math.min(cx-tw/2, fr.width-tw-4));
+      let top=cy-th-10;
+      if(dr.top-th-10<4) top=(dr.bottom-fr.top)+10; /* only place below if near top of viewport */
+      gtip.style.left=left+"px"; gtip.style.top=top+"px";
+    });
+    b.addEventListener("mouseleave",()=>{ gtip.style.display="none"; });
+  });
+}
+
+/* ---------- section 02 utilities explorer ---------- */
+(function(){
+  const tabs=[...document.querySelectorAll(".util-tab")];
+  const panels=[...document.querySelectorAll(".util-panel")];
+  if(!tabs.length) return;
+  function animateBars(p){
+    if(!p) return;
+    p.querySelectorAll(".barfill").forEach(b=>{
+      b.style.width="0";
+      requestAnimationFrame(()=>requestAnimationFrame(()=>{ b.style.width=b.dataset.w; }));
+    });
+  }
+  function select(k){
+    tabs.forEach(t=>t.classList.toggle("on",t.dataset.k===k));
+    panels.forEach(p=>{
+      const on=p.dataset.k===k;
+      p.classList.toggle("show",on);
+      if(on) animateBars(p);
+    });
+  }
+  tabs.forEach(t=>t.addEventListener("click",()=>select(t.dataset.k)));
+  animateBars(document.querySelector(".util-panel.show"));
+})();
+
+/* =========================================================================
+   04 NUMBERS — interactive dashboard (ported from reference/strk-section04.html)
+   Isolated in its own IIFE; all DOM queries scoped to #numbers (root).
+   MOCK data + seeded RNG engine for now. Each metric in M keeps {k,type,value,
+   optional source} grouped by grp, so live CoinGecko / DefiLlama / RPC / Artemis
+   values can replace the mock `value` (and `series`) in a later phase without
+   touching the markup. Real source links: StarkZap + Artemis (placeholder).
+   ========================================================================= */
+(function(){
+const root=document.getElementById('numbers'); if(!root) return;
+const RANGES={'24H':{days:1},'7D':{days:7},'30D':{days:30},'1Y':{days:365},'ALL':{days:Infinity}};
+const DAY=86400000;
+
+/* metric registry — powers the price chart + chips ONLY (accordion cards are
+   driven by the live engine at the end of the page). Every plotted curve is
+   REAL history fetched from the metric's source (HIST below) — the synthetic
+   series generator is gone. `value` is the live headline, used as the chart
+   header only for metrics with no public history. */
+const M=[
+ {k:'price',label:'STRK price',type:'price',value:0.02832224},
+ {k:'mcap',label:'Market cap',type:'usd',value:191008881},
+ {k:'strkstaked',label:'STRK staked',type:'amtstrk',value:1428664556,source:{name:'onchain (staking contract)',url:'https://dashboard.endur.fi/'}},
+ {k:'btcstaked',label:'BTC staked',type:'btc',value:708.36,source:{name:'onchain (staking contract)',url:'https://dashboard.endur.fi/'}},
+ {k:'valuestaked',label:'Total value staked',type:'usd',value:85973502,source:{name:'onchain × Binance monthly prices',url:'https://dashboard.endur.fi/'}},
+ {k:'circstaked',label:'% circulating staked',type:'pct',value:21.2,source:{name:'onchain ÷ CoinGecko supply',url:'https://dashboard.endur.fi/'}},
+ {k:'dailyusers',label:'Daily users',type:'num',value:13221,source:{name:'growthepie',url:'https://www.growthepie.com/chains/starknet'}},
+ {k:'weeklyusers',label:'Weekly users',type:'num',value:43443,source:{name:'growthepie',url:'https://www.growthepie.com/chains/starknet'}},
+ {k:'totaltx',label:'Total TX',type:'num',value:307714287,source:{name:'L2Beat',url:'https://l2beat.com/scaling/projects/starknet'}},
+ {k:'tps',label:'TPS (avg)',type:'tps',value:0.74,source:{name:'L2Beat',url:'https://l2beat.com/scaling/projects/starknet'}},
+ {k:'downloads',label:'StarkZap downloads',type:'num',value:7356,source:{name:'npm registry',url:'https://welttowelt.github.io/starkzap-stats/'}},
+ {k:'tvl',label:'TVL',type:'usd',value:173097155,source:{name:'DefiLlama',url:'https://defillama.com/chain/starknet'}},
+ {k:'tvs',label:'TVS',type:'usd',value:388942978,source:{name:'L2Beat',url:'https://l2beat.com/scaling/projects/starknet'}},
+ {k:'stables',label:'Stablecoins',type:'usd',value:164973460,source:{name:'DefiLlama',url:'https://defillama.com/stablecoins/Starknet'}},
+ {k:'netflow',label:'Total netflow (30D)',type:'usdflow',value:-25499197,source:{name:'L2Beat',url:'https://l2beat.com/scaling/projects/starknet'}},
+ {k:'apprev',label:'App revenue',type:'usd',value:12568,source:{name:'DefiLlama',url:'https://defillama.com/chain/starknet'}},
+ {k:'chainrev',label:'Chain revenue',type:'usd',value:120744,source:{name:'DefiLlama',url:'https://defillama.com/chain/starknet'}},
+ {k:'p_tvl',label:'TVL in STRK20 pool',type:'usd',value:528903},
+ {k:'p_rev',label:'Revenue from STRK20',type:'usd',value:3045},
+ {k:'p_tx',label:'Private TX (daily)',type:'num',value:36},
+];
+const map={};
+M.forEach(m=>{map[m.k]=m;});
+
+/* stacked-by-asset config for the STRK20 pool chart (site-family palette) */
+const STACK_BANDS=['strkBTC','STRK','USDC','WBTC','ETH'];
+const STACK_COLORS={strkBTC:'#F7931A',STRK:'#A78BFA',USDC:'#3DA9FC',WBTC:'#F0508C',ETH:'#34D399',OTHER:'#6B7480'};
+
+/* ---------- REAL history: per-source fetchers + TTL cache ----------
+   Cache entries live in localStorage (strkSeriesCache_v1:*) as compact
+   [[ms,value],…] arrays extracted from each response — TTLs scale with the
+   window (10m for 24H data up to 6h for full history) to stay well inside
+   free keyless rate limits. On a fetch failure, a stale cache entry is
+   served rather than anything synthetic. */
+const TTL={'24H':6e5,'7D':18e5,'30D':36e5,'1Y':108e5,'ALL':216e5};
+const memo={};
+function cached(key,ttl,fetcher){
+  if(memo[key]&&Date.now()-memo[key].t<ttl)return Promise.resolve(memo[key].d);
+  let st=null;try{st=JSON.parse(localStorage.getItem('strkSeriesCache_v1:'+key));}catch(e){}
+  if(st&&Date.now()-st.t<ttl){memo[key]=st;return Promise.resolve(st.d);}
+  return fetcher().then(d=>{const e={t:Date.now(),d:d};memo[key]=e;
+    try{localStorage.setItem('strkSeriesCache_v1:'+key,JSON.stringify(e));}catch(err){}
+    return d;
+  }).catch(err=>{if(st){memo[key]=st;return st.d;}throw err;});
+}
+function gj(url){return fetch(url).then(r=>{if(!r.ok)throw new Error(url);return r.json();});}
+/* full STRK/USD daily history: Binance klines (lists at the Feb 2024 launch);
+   Coinbase Exchange candles as fallback where binance.com is geo-blocked */
+function cbAll(out,end){
+  out=out||[];end=end||Date.now();
+  const start=new Date(end-300*DAY).toISOString();
+  return gj('https://api.exchange.coinbase.com/products/STRK-USD/candles?granularity=86400&start='+start+'&end='+new Date(end).toISOString())
+    .then(a=>{a.forEach(c=>out.push([c[0]*1000,c[4]]));
+      if(!a.length||out.length>1500)return out.sort((x,y)=>x[0]-y[0]);
+      return cbAll(out,end-300*DAY-DAY);});
+}
+const SRC={
+  cg(days){return cached('cg'+days,TTL[days<=1?'24H':days<=7?'7D':days<=30?'30D':'1Y'],()=>gj('https://api.coingecko.com/api/v3/coins/starknet/market_chart?vs_currency=usd&days='+days)
+    .then(d=>({p:d.prices,m:d.market_caps})));},
+  priceAll(){return cached('priceAll',TTL.ALL,()=>gj('https://api.binance.com/api/v3/klines?symbol=STRKUSDT&interval=1d&limit=1000')
+    .then(a=>a.map(k=>[k[0],parseFloat(k[4])]))
+    .catch(()=>cbAll()));},
+  tvl(){return cached('tvl',TTL['30D'],()=>gj('https://api.llama.fi/v2/historicalChainTvl/Starknet')
+    .then(a=>a.map(r=>[r.date*1000,r.tvl])));},
+  tvs30(){return cached('tvs30',TTL['7D'],()=>gj('https://l2beat.com/api/scaling/tvs/starknet?range=30d')
+    .then(d=>d.data.chart.data.map(r=>[r[0]*1000,r[1]+r[2]+r[3]])));},
+  tvsMax(){return cached('tvsMax',TTL['1Y'],()=>gj('https://l2beat.com/api/scaling/tvs/starknet?range=max')
+    .then(d=>d.data.chart.data.map(r=>[r[0]*1000,r[1]+r[2]+r[3]])));},
+  act(){return cached('act',TTL['30D'],()=>gj('https://l2beat.com/api/scaling/activity/starknet?range=max')
+    .then(d=>{const ci=d.data.chart.types.indexOf('count');return d.data.chart.data.map(r=>[r[0]*1000,r[ci]]);}));},
+  stables(){return cached('stables',TTL['30D'],()=>gj('https://stablecoins.llama.fi/stablecoincharts/Starknet')
+    .then(a=>a.map(r=>[(+r.date)*1000,r.totalCirculatingUSD.peggedUSD]).filter(p=>isFinite(p[1]))));},
+  apprev(){return cached('apprev',TTL['30D'],()=>gj('https://api.llama.fi/overview/fees/starknet?excludeTotalDataChartBreakdown=true&dataType=dailyAppRevenue')
+    .then(d=>d.totalDataChart.map(r=>[r[0]*1000,r[1]])));},
+  chainrev(){return cached('chainrev',TTL['30D'],()=>gj('https://api.llama.fi/summary/fees/starknet?dataType=dailyRevenue')
+    .then(d=>d.totalDataChart.map(r=>[r[0]*1000,r[1]])));},
+  gtp(){return cached('gtp',TTL['1Y'],()=>gj('https://api.growthepie.xyz/v1/fundamentals.json')
+    .then(a=>{const o={daa:[],wau:[]};a.forEach(r=>{if(r.origin_key!=='starknet')return;
+      if(r.metric_key==='daa')o.daa.push([Date.parse(r.date),r.value]);
+      else if(r.metric_key==='aa_last7d')o.wau.push([Date.parse(r.date),r.value]);});
+      o.daa.sort((x,y)=>x[0]-y[0]);o.wau.sort((x,y)=>x[0]-y[0]);return o;}));},
+  npm(){return cached('npm',TTL['1Y'],()=>{
+    const step=(from,acc)=>{const f=new Date(from+'T00:00:00Z'),t=new Date(Math.min(f.getTime()+539*DAY,Date.now()));
+      const span=f.toISOString().slice(0,10)+':'+t.toISOString().slice(0,10);
+      return gj('https://api.npmjs.org/downloads/range/'+span+'/starkzap').then(d=>{
+        (d.downloads||[]).forEach(x=>acc.push([Date.parse(x.day),x.downloads]));
+        if(t.getTime()>=Date.now()-DAY)return acc;
+        return step(new Date(t.getTime()+DAY).toISOString().slice(0,10),acc);});};
+    return step('2026-02-24',[]).then(a=>{let c=0;return a.map(p=>[p[0],c+=p[1]]);});});},
+  s20tx(){return cached('s20tx',TTL['7D'],()=>gj('https://strk20-dashboard-production.up.railway.app/agg/transactions')
+    .then(d=>{
+      let days=d.days||[];
+      // drop the in-progress day — a partial count would read as a real dip
+      if(days.length&&days[days.length-1].date===new Date().toISOString().slice(0,10))days=days.slice(0,-1);
+      return days.map(r=>[Date.parse(r.date),r.count]);
+    }));},
+  /* per-day totals + fixed per-asset bands (same STRK20 pipeline the privacy
+     page's "Shielded value over time" chart uses; OTHER buckets the tail) */
+  s20bal(){return cached('s20balStack',TTL['7D'],()=>gj('https://strk20-dashboard-production.up.railway.app/agg/shielded-balance')
+    .then(d=>d.days.map(r=>{
+      const by=r.byToken||{},bands={};let other=0,tot=0;
+      STACK_BANDS.forEach(b=>{bands[b]=0;});
+      Object.keys(by).forEach(k=>{const v=+by[k]||0;tot+=v;
+        if(STACK_BANDS.indexOf(k)>=0)bands[k]+=v;else other+=v;});
+      bands.OTHER=other;
+      return [Date.parse(r.date),tot,bands];
+    })));},
+  /* monthly staking history backfilled from onchain state at historical
+     blocks (Cartridge archive RPC) + Binance monthly prices + CoinGecko/
+     Wayback circulating — regenerate with scripts/backfill-staking.js */
+  stakingHist(){return cached('stakingHist',TTL['30D'],()=>gj('assets/data/strk-staking-history.json'));},
+};
+/* backfilled monthly points + today's live reading as the tail, so the
+   hourly engine seamlessly extends each staking series */
+function stakingSeries(field,mkey){
+  return SRC.stakingHist().then(d=>{
+    const pts=d.months.filter(r=>r[field]!=null&&isFinite(r[field])).map(r=>[Date.parse(r.date),r[field]]);
+    const m=map[mkey];
+    if(pts.length&&m&&isFinite(m.value))pts.push([Date.now(),m.value]);
+    return pts;
+  });
+}
+function cumsum(a){let c=0;return a.map(p=>[p[0],c+=p[1]]);}
+function rolling30(a){const out=[];for(let i=29;i<a.length;i++){let s=0;for(let j=i-29;j<=i;j++)s+=a[j][1];out.push([a[i][0],s]);}return out;}
+function weeklySum(a){ // daily [[ms,v]] → calendar-week (Mon–Sun, UTC) sums
+  const w={};
+  a.forEach(p=>{const d=new Date(p[0]);
+    const dow=(d.getUTCDay()+6)%7;
+    const ws=Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate()-dow);
+    w[ws]=(w[ws]||0)+p[1];});
+  return Object.keys(w).map(k=>[+k,w[k]]).sort((x,y)=>x[0]-y[0]);
+}
+
+/* per-metric history config: which ranges have data + how to get the series.
+   Staking series are monthly (reconstructed from onchain state at historical
+   blocks), so only 1Y/ALL are offered for them; any metric absent from HIST
+   would get an explicit "no history" state — never an invented curve. */
+const HIST={
+ price:{avail:['24H','7D','30D','1Y','ALL'],get:r=>r==='ALL'?SRC.priceAll():SRC.cg(RANGES[r].days).then(d=>d.p)},
+ strkstaked:{avail:['1Y','ALL'],get:()=>stakingSeries('strk_staked','strkstaked')},
+ btcstaked:{avail:['1Y','ALL'],get:()=>stakingSeries('btc_staked','btcstaked')},
+ valuestaked:{avail:['1Y','ALL'],get:()=>stakingSeries('tvs_usd','valuestaked')},
+ circstaked:{avail:['1Y','ALL'],get:()=>stakingSeries('pct_staked','circstaked')},
+ mcap:{avail:['24H','7D','30D','1Y','ALL'],capNote:'MCAP CAPPED AT 1Y (FREE API)',get:r=>SRC.cg(r==='ALL'?365:RANGES[r].days).then(d=>d.m)},
+ dailyusers:{avail:['7D','30D','1Y','ALL'],get:()=>SRC.gtp().then(d=>d.daa)},
+ weeklyusers:{avail:['7D','30D','1Y','ALL'],get:()=>SRC.gtp().then(d=>d.wau)},
+ /* dailyBars: cumulative line + per-day delta bars (dual view). deltaBadge:
+    cumulative-only metrics show the window's ABSOLUTE delta instead of a
+    %-from-near-zero. peak: annotate the window's max point. */
+ totaltx:{avail:['7D','30D','1Y','ALL'],dailyBars:true,deltaBadge:{unit:' TX'},get:()=>SRC.act().then(cumsum)},
+ tps:{avail:['7D','30D','1Y','ALL'],peak:true,get:()=>SRC.act().then(a=>a.map(p=>[p[0],p[1]/86400]))},
+ downloads:{avail:['7D','30D','1Y','ALL'],deltaBadge:{unit:''},get:()=>SRC.npm()},
+ tvl:{avail:['7D','30D','1Y','ALL'],get:()=>SRC.tvl()},
+ tvs:{avail:['7D','30D','1Y','ALL'],get:r=>(r==='7D'||r==='30D')?SRC.tvs30():SRC.tvsMax()},
+ /* signed: sign-colored segmented rendering + zero baseline; deltaBadge.usd:
+    window delta in absolute USD (%-vs-near-zero is meaningless here too) */
+ netflow:{avail:['7D','30D','1Y','ALL'],signed:true,deltaBadge:{suffix:' vs start'},get:()=>SRC.tvsMax().then(a=>{
+   const out=[];for(let i=0;i<a.length;i++){const t0=a[i][0]-30*DAY;let j=i;
+     while(j>0&&a[j-1][0]>=t0)j--;
+     if(a[i][0]-a[j][0]>=29*DAY)out.push([a[i][0],a[i][1]-a[j][1]]);}
+   return out;})},
+ stables:{avail:['7D','30D','1Y','ALL'],get:()=>SRC.stables()},
+ /* weeklyBars: Token-Terminal-style calendar-week bars; header = sum of the
+    displayed window, badge = last full week vs the week before (WoW). 24H/7D
+    make no sense at weekly granularity → muted. */
+ apprev:{avail:['30D','1Y','ALL'],weeklyBars:true,peak:true,get:()=>SRC.apprev().then(weeklySum)},
+ chainrev:{avail:['30D','1Y','ALL'],weeklyBars:true,peak:true,get:()=>SRC.chainrev().then(weeklySum)},
+ /* stacked: per-asset stacked areas + white total line; badge = absolute
+    window delta (%-vs-first-dust-deposit was absurd) */
+ p_tvl:{avail:['7D','30D','1Y','ALL'],stacked:true,get:()=>SRC.s20bal()},
+ p_tx:{avail:['7D','30D','1Y','ALL'],get:()=>SRC.s20tx()},
+ /* cumulative protocol revenue, valued like the source STRK20 dashboard:
+    fees accrue in STRK (flat 4/tx) and the whole series is priced at live
+    spot — so the header matches the dashboard's cumulative figure (~$3.0K,
+    verified at build time; a date-matched valuation would read $3.4K).
+    dailyBars recovers the per-day bars; sub30 keeps the rolling figure. */
+ p_rev:{avail:['7D','30D','1Y','ALL'],dailyBars:true,peakDaily:true,dailyUsd:true,deltaBadge:{},sub30:true,
+   get:()=>SRC.s20tx().then(a=>cumsum(a.map(p=>[p[0],p[1]*4*map.price.value])))},
+};
+function abbr(v){v=Math.abs(v);if(v>=1e9)return (v/1e9).toFixed(2)+'B';if(v>=1e6)return (v/1e6).toFixed(1)+'M';if(v>=1e3)return (v/1e3).toFixed(1)+'K';return Math.round(v).toString();}
+function fmt(m,v){
+  if(m.type==='price')return '$'+v.toFixed(4);
+  if(m.type==='pct')return v.toFixed(1)+'%';
+  if(m.type==='btc')return (v>=1000?(v/1000).toFixed(1)+'K':Math.round(v))+' BTC';
+  if(m.type==='amtstrk')return abbr(v)+' STRK';
+  if(m.type==='amt'||m.type==='num')return abbr(v);
+  if(m.type==='tps')return (v>=100?Math.round(v):v.toFixed(1))+' TPS';
+  if(m.type==='sec')return (v>=10?Math.round(v):v.toFixed(1))+'s';
+  if(m.type==='ratiox')return v.toFixed(1)+'x';
+  if(m.type==='usdflow')return (v>=0?'+':'-')+'$'+abbr(v);
+  return '$'+abbr(v);
+}
+function badge(id,p){document.getElementById(id).outerHTML='<b id="'+id+'" class="'+(p>=0?'up':'down')+'">'+(p>=0?'+':'')+p.toFixed(1)+'%</b>';}
+
+let curK='price',curR='7D',PTS=[],curSpan=0,drawSeq=0;
+const chart=document.getElementById('chart'),area=document.getElementById('area'),line=document.getElementById('line');
+const cross=document.getElementById('cross'),cdot=document.getElementById('cdot');
+const tip=document.getElementById('nTip'),tipV=document.getElementById('nTipV'),tipD=document.getElementById('nTipD');
+const fNote=document.getElementById('chartNote');
+function mon(d){return d.toLocaleString('en',{month:'short'}).toUpperCase();}
+/* tooltip / marker label — year included for windows over 90 days */
+function tsLabel(ts,spanMs){const d=new Date(ts);
+  if(spanMs<=2*DAY)return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+  const s=mon(d)+' '+d.getDate();
+  return spanMs>90*DAY?s+', '+d.getFullYear():s;}
+function setNote(t){fNote.textContent=t||'';}
+const dbars=document.getElementById('dbars'),peakG=document.getElementById('peakG'),legEl=document.getElementById('chartLegend');
+const gridV=document.getElementById('gridV'),axEl=document.getElementById('chartAxis');
+const stackG=document.getElementById('stackG'),stlEl=document.getElementById('stackLegend');
+/* X axis: first tick = the series' actual first point, last at the right
+   edge, evenly spaced in time between; 3 ticks on narrow screens. Formats:
+   month+year past ~3 months, month+day inside (year appended when the
+   window crosses a year boundary), day+hour intraday. Subtle vertical
+   gridlines at the interior ticks. */
+function renderAxis(t0,t1){
+  const span=t1-t0;
+  const wide=(chart.getBoundingClientRect().width||800)>=560;
+  const n=wide?5:3;
+  const crossYear=new Date(t0).getFullYear()!==new Date(t1).getFullYear();
+  function lbl(ts){const d=new Date(ts);
+    if(span<=2*DAY)return mon(d)+' '+d.getDate()+' '+String(d.getHours()).padStart(2,'0')+':00';
+    if(span<=92*DAY)return mon(d)+' '+d.getDate()+(crossYear?', '+d.getFullYear():'');
+    return mon(d)+' '+d.getFullYear();}
+  let html='',grid='';
+  for(let i=0;i<n;i++){
+    const f=i/(n-1),ts=t0+span*f;
+    const pos=i===0?'left:0':i===n-1?'right:0':'left:'+(f*100).toFixed(2)+'%';
+    html+='<span style="'+pos+'">'+lbl(ts)+'</span>';
+    if(i>0&&i<n-1)grid+='<line x1="'+(f*1000).toFixed(1)+'" y1="0" x2="'+(f*1000).toFixed(1)+'" y2="280" stroke="rgba(245,242,236,.05)"/>';
+  }
+  axEl.innerHTML=html;gridV.innerHTML=grid;
+}
+function clearChart(){line.setAttribute('d','');area.setAttribute('d','');cross.style.display='none';cdot.style.display='none';
+  dbars.innerHTML='';peakG.innerHTML='';legEl.innerHTML='';gridV.innerHTML='';axEl.innerHTML='';
+  document.getElementById('signG').innerHTML='';stackG.innerHTML='';stlEl.innerHTML='';
+  document.getElementById('fVal').style.color='';PTS=[];}
+function renderBadge(p,label){const el=document.getElementById('cR'),wrap=el.parentElement;
+  if(p==null||!isFinite(p)){wrap.style.visibility='hidden';return;}
+  wrap.style.visibility='visible';
+  document.getElementById('cRLabel').textContent=label;
+  badge('cR',p);}
+function renderBadgeText(text,pos,label){const el=document.getElementById('cR'),wrap=el.parentElement;
+  wrap.style.visibility='visible';
+  document.getElementById('cRLabel').textContent=label;
+  el.outerHTML='<b id="cR" class="'+(pos?'up':'down')+'">'+text+'</b>';}
+/* absolute delta in the metric's own unit (USD compact, counts, TPS, pp…) */
+function fmtDelta(m,d){const s=d>=0?'+':'−',a=Math.abs(d);
+  if(m.type==='price')return s+'$'+(a>=0.01?a.toFixed(2):a.toFixed(4));
+  if(m.type==='pct')return s+a.toFixed(1)+'pp';
+  if(m.type==='btc')return s+(a>=1000?(a/1000).toFixed(1)+'K':Math.round(a))+' BTC';
+  if(m.type==='amtstrk')return s+abbr(a)+' STRK';
+  if(m.type==='tps')return s+(a>=100?Math.round(a):a.toFixed(1))+' TPS';
+  if(m.type==='num'||m.type==='amt')return s+abbr(a);
+  return s+'$'+abbr(a); /* usd / usdflow */}
+/* THE badge rule, shared by every chart:
+   1) cumulative/flow metrics (deltaBadge flag) → always the absolute window
+      delta in their unit; never %.
+   2) level metrics → % only when the window's starting value is meaningful
+      (≥ MEANINGFUL_BASE of the ending value); otherwise the absolute delta.
+      Kills the "+8,247,856,067%"-from-near-zero class of badges for good. */
+const MEANINGFUL_BASE=0.05;
+function windowBadge(m,h,first,last,label){
+  const d=last-first;
+  if(!isFinite(d)){renderBadge(null);return;}
+  if(h&&h.deltaBadge){
+    renderBadgeText(fmtDelta(m,d)+(h.deltaBadge.unit||'')+(h.deltaBadge.suffix||''),d>=0,label);return;}
+  if(Math.abs(first)>1e-12&&Math.abs(first)>=MEANINGFUL_BASE*Math.abs(last))
+    renderBadge(d/Math.abs(first)*100,label);
+  else renderBadgeText(fmtDelta(m,d),d>=0,label);
+}
+/* draw(): fetch the REAL series for (metric, range), then render curve +
+   header value (= last point) + % evolution over the displayed window.
+   A stale response from a previous switch is discarded via drawSeq. */
+function draw(){
+  const m=map[curK],h=HIST[m.k],seq=++drawSeq;
+  document.getElementById('fLabel').textContent=m.label;
+  document.getElementById('fSub').textContent='';
+  document.getElementById('fSrc').innerHTML=m.source?`· Source: <a href="${m.source.url}" target="_blank" rel="noopener noreferrer">${m.source.name} ↗</a>`:'';
+  if(!h){ /* explicit empty state — never an invented curve */
+    clearChart();
+    document.getElementById('fVal').textContent=fmt(m,m.value);
+    renderBadge(null);
+    setNote('NO PUBLIC HISTORY · LIVE VALUE ONLY');
+    return;
+  }
+  setNote('LOADING…');
+  h.get(curR).then(all=>{
+    if(seq!==drawSeq)return;
+    const days=RANGES[curR].days;
+    const cut=days===Infinity?-Infinity:Date.now()-days*DAY;
+    const pts=all.filter(p=>p[0]>=cut&&isFinite(p[1]));
+    if(pts.length<2){
+      clearChart();document.getElementById('fVal').textContent=fmt(m,m.value);
+      renderBadge(null);setNote('NO DATA FOR THIS RANGE');return;}
+    const W=1000,H=280,pT=18,pB=18;
+    const t0=pts[0][0],t1=pts[pts.length-1][0];curSpan=t1-t0;
+    let mn=Infinity,mx=-Infinity;pts.forEach(p=>{if(p[1]<mn)mn=p[1];if(p[1]>mx)mx=p[1];});
+    if(h.signed){mn=Math.min(mn,0);mx=Math.max(mx,0);} // signed charts anchor on zero
+    if(h.weeklyBars||h.stacked)mn=Math.min(mn,0); // bars/stacks grow from a zero base
+    const rng=(mx-mn)||1;
+    PTS=pts.map(p=>({x:(p[0]-t0)/(curSpan||1)*W,y:H-pB-(p[1]-mn)/rng*(H-pT-pB),v:p[1],ts:p[0]}));
+    const signG=document.getElementById('signG');signG.innerHTML='';
+    stackG.innerHTML='';stlEl.innerHTML='';
+    if(h.signed){
+      /* sign-colored rendering: split into one-sided segments at exact zero
+         crossings (interpolated), each with its own line color and a soft
+         gradient fill toward the dashed zero baseline */
+      line.setAttribute('d','');area.setAttribute('d','');
+      const zy=H-pB-(0-mn)/rng*(H-pT-pB);
+      const segs=[];let cur=[PTS[0]];
+      for(let i=1;i<PTS.length;i++){
+        const a=PTS[i-1],b=PTS[i];
+        if((a.v>=0)!==(b.v>=0)){
+          const f=a.v/(a.v-b.v);
+          const cross={x:a.x+(b.x-a.x)*f,y:zy,v:0,ts:a.ts+(b.ts-a.ts)*f};
+          cur.push(cross);segs.push(cur);cur=[cross];
+        }
+        cur.push(b);
+      }
+      segs.push(cur);
+      let s='<line x1="0" y1="'+zy.toFixed(1)+'" x2="'+W+'" y2="'+zy.toFixed(1)+'" stroke="rgba(245,242,236,.25)" stroke-width="1" stroke-dasharray="4 4"/>';
+      segs.forEach(sg=>{
+        if(sg.length<2)return;
+        const nz=sg.find(p=>p.v!==0),pos=nz?nz.v>0:true;
+        const sl=sg.map((p,i)=>(i?'L':'M')+p.x.toFixed(1)+','+p.y.toFixed(1)).join(' ');
+        s+='<path d="'+sl+' L'+sg[sg.length-1].x.toFixed(1)+','+zy.toFixed(1)+' L'+sg[0].x.toFixed(1)+','+zy.toFixed(1)+' Z" fill="url(#fill'+(pos?'Pos':'Neg')+')"/>';
+        s+='<path d="'+sl+'" fill="none" stroke="'+(pos?'#34D399':'#F0508C')+'" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>';
+      });
+      signG.innerHTML=s;
+    }else if(h.weeklyBars){
+      line.setAttribute('d','');area.setAttribute('d','');
+    }else if(h.stacked){
+      /* stacked areas by asset (ported from the privacy page's shielded-value
+         chart): cumulative bands bottom→top in fixed order, thin white total
+         line on top. Band values ride along in pts[i][2] for the tooltip. */
+      line.setAttribute('d','');area.setAttribute('d','');
+      const order=STACK_BANDS.concat(['OTHER']);
+      const vy=v=>H-pB-(v-mn)/rng*(H-pT-pB);
+      const base=pts.map(()=>0);
+      let s='';
+      order.forEach(b=>{
+        const upper=pts.map((p,i)=>base[i]+((p[2]&&p[2][b])||0));
+        let d='M'+PTS[0].x.toFixed(1)+','+vy(upper[0]).toFixed(1);
+        for(let i=1;i<pts.length;i++)d+=' L'+PTS[i].x.toFixed(1)+','+vy(upper[i]).toFixed(1);
+        for(let i=pts.length-1;i>=0;i--)d+=' L'+PTS[i].x.toFixed(1)+','+vy(base[i]).toFixed(1);
+        s+='<path data-band="'+b+'" d="'+d+' Z" fill="'+STACK_COLORS[b]+'" fill-opacity="0.82"/>';
+        for(let i=0;i<pts.length;i++)base[i]=upper[i];
+      });
+      let tl='M'+PTS[0].x.toFixed(1)+','+PTS[0].y.toFixed(1);
+      for(let i=1;i<PTS.length;i++)tl+=' L'+PTS[i].x.toFixed(1)+','+PTS[i].y.toFixed(1);
+      s+='<path d="'+tl+'" fill="none" stroke="rgba(245,242,236,.85)" stroke-width="1.6" stroke-linejoin="round"/>';
+      stackG.innerHTML=s;
+      PTS.forEach((p,i)=>{p.bands=pts[i][2];});
+      /* legend: dot + token; hovering an item highlights its band */
+      stlEl.innerHTML=order.map(b=>'<span data-band="'+b+'"><i style="background:'+STACK_COLORS[b]+'"></i>'+b+'</span>').join('');
+      stlEl.querySelectorAll('span').forEach(it=>{
+        const bandPaths=()=>stackG.querySelectorAll('path[data-band]');
+        it.addEventListener('mouseenter',()=>{bandPaths().forEach(pp=>{pp.setAttribute('fill-opacity',pp.getAttribute('data-band')===it.getAttribute('data-band')?'0.95':'0.12');});});
+        it.addEventListener('mouseleave',()=>{bandPaths().forEach(pp=>pp.setAttribute('fill-opacity','0.82'));});
+      });
+    }else{
+      const ln=PTS.map((p,i)=>(i?'L':'M')+p.x.toFixed(1)+','+p.y.toFixed(1)).join(' ');
+      line.setAttribute('d',ln);area.setAttribute('d',ln+` L ${W},${H} L 0,${H} Z`);
+    }
+    renderAxis(t0,t1);
+    /* dual view for cumulative metrics: per-day delta bars along the bottom
+       (own scale), tooltip carries both values via PTS[i].daily */
+    dbars.innerHTML='';peakG.innerHTML='';legEl.innerHTML='';
+    /* weekly revenue bars: one site-purple bar per calendar week */
+    if(h.weeklyBars&&PTS.length){
+      const bw=Math.max(1.5,Math.min(26,W/PTS.length*0.66));
+      let bs='';
+      PTS.forEach(p=>{const bh=H-pB-p.y;
+        if(bh>0.2)bs+=`<rect x="${(p.x-bw/2).toFixed(1)}" y="${p.y.toFixed(1)}" width="${bw.toFixed(1)}" height="${bh.toFixed(1)}" fill="#A78BFA" fill-opacity="0.82" rx="1.5"/>`;});
+      dbars.innerHTML=bs;
+    }
+    if(h.dailyBars&&pts.length>2){
+      const dl=[null];let mxd=0;
+      for(let i=1;i<pts.length;i++){const dv=Math.max(0,pts[i][1]-pts[i-1][1]);dl.push(dv);if(dv>mxd)mxd=dv;}
+      PTS.forEach((p,i)=>{p.daily=dl[i];});
+      const bw=Math.max(0.5,W/pts.length*0.55),BH=(H-pB)*0.30;
+      let bs='';
+      for(let i=1;i<PTS.length;i++){const bh=mxd?dl[i]/mxd*BH:0;
+        if(bh>0.2)bs+=`<rect x="${(PTS[i].x-bw/2).toFixed(1)}" y="${(H-pB-bh).toFixed(1)}" width="${bw.toFixed(1)}" height="${bh.toFixed(1)}" fill="#6D4FD0" fill-opacity="0.55" rx="0.5"/>`;}
+      dbars.innerHTML=bs;
+      legEl.innerHTML='<span style="color:#A78BFA">—</span> TOTAL&ensp;<span style="color:#6D4FD0">▮</span> PER DAY';
+      /* peak DAILY bar marker (revenue-style charts) */
+      if(h.peakDaily&&mxd>0){
+        let di=1;for(let i=2;i<dl.length;i++)if(dl[i]>dl[di])di=i;
+        const px=PTS[di].x,py=H-pB-dl[di]/mxd*BH;
+        const right=px>W-260,tx=right?px-10:px+10,anch=right?'end':'start';
+        peakG.innerHTML=`<circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="4" fill="#C4B5FD"/>`+
+          `<text x="${tx.toFixed(1)}" y="${(py-12).toFixed(1)}" text-anchor="${anch}" font-family="IBM Plex Mono,monospace" font-size="11" letter-spacing="1" fill="rgba(245,242,236,.75)">PEAK: ${(h.dailyUsd?'$':'')+abbr(dl[di])}/DAY · ${tsLabel(PTS[di].ts,500*DAY).toUpperCase()}</text>`;
+      }
+    }
+    /* window-max marker (TPS): dot + mono label, flipped near edges so it never clips */
+    if(h.peak&&PTS.length){
+      let pi=0;PTS.forEach((p,i)=>{if(p.v>PTS[pi].v)pi=i;});
+      const pk=PTS[pi],right=pk.x>W-260,below=pk.y<38;
+      const tx=right?pk.x-10:pk.x+10,anch=right?'end':'start',ty=below?pk.y+22:pk.y-12;
+      peakG.innerHTML=`<circle cx="${pk.x.toFixed(1)}" cy="${pk.y.toFixed(1)}" r="4" fill="#C4B5FD"/>`+
+        `<text x="${tx.toFixed(1)}" y="${ty.toFixed(1)}" text-anchor="${anch}" font-family="IBM Plex Mono,monospace" font-size="11" letter-spacing="1" fill="rgba(245,242,236,.75)">PEAK: ${fmt(m,pk.v)} · ${tsLabel(pk.ts,500*DAY).toUpperCase()}</text>`;
+    }
+    const first=pts[0][1],last=pts[pts.length-1][1];
+    const fv=document.getElementById('fVal');
+    if(h.weeklyBars){
+      /* header = sum of the displayed bars, labeled per window; badge = last
+         FULL week vs the week before (the in-progress week is skipped) */
+      fv.textContent=fmt(m,pts.reduce((a,p)=>a+p[1],0));
+      const SL={'30D':'30D SUM','1Y':'365D SUM','ALL':'SUM ALL TIME'};
+      document.getElementById('fLabel').textContent=m.label+' · '+(SL[curR]||curR+' SUM');
+      let n=pts.length-1;
+      if(pts[n][0]+7*DAY>Date.now())n--;
+      if(n>=1)windowBadge(m,null,pts[n-1][1],pts[n][1],'WOW');
+      else renderBadge(null);
+    }else{
+      fv.textContent=fmt(m,last);
+      windowBadge(m,h,first,last,curR);
+      if(h.sub30){ // rolling 30D figure stays available under the cumulative header
+        const cutoff=Date.now()-30*DAY;
+        let base=0;all.forEach(p=>{if(p[0]<=cutoff)base=p[1];});
+        document.getElementById('fSub').textContent='30D: $'+abbr(Math.max(0,all[all.length-1][1]-base));
+      }
+    }
+    fv.style.color=h.signed?(last>=0?'var(--up)':'var(--down)'):''; // signed header takes the sign color
+    /* honest-range note: window starts before the data does */
+    const dataStart=all.length?all[0][0]:t0;
+    if(days!==Infinity&&dataStart>cut+DAY)
+      setNote('DATA SINCE '+new Date(dataStart).toLocaleString('en',{month:'short',day:'numeric',year:'numeric'}).toUpperCase());
+    else if(days===Infinity)
+      setNote('SINCE '+new Date(t0).toLocaleString('en',{month:'short',year:'numeric'}).toUpperCase()+(h.capNote?' · '+h.capNote:''));
+    else setNote('');
+  }).catch(()=>{
+    if(seq!==drawSeq)return;
+    clearChart();document.getElementById('fVal').textContent=fmt(m,m.value);
+    renderBadge(null);setNote('DATA UNAVAILABLE');
+  });
+}
+function paintRanges(){const h=HIST[curK];
+  document.querySelectorAll('#ranges button').forEach(b=>{
+    const has=!!h&&h.avail.indexOf(b.dataset.r)>=0;
+    b.classList.toggle('off',!has);
+    b.classList.toggle('on',b.dataset.r===curR&&has);
+  });}
+function setMetric(k){curK=k;
+  root.querySelectorAll('.chip').forEach(c=>c.classList.toggle('on',c.dataset.k===k));
+  const h=HIST[k];
+  if(h&&h.avail.indexOf(curR)<0)curR=h.avail.indexOf('7D')>=0?'7D':h.avail[0];
+  paintRanges();draw();}
+function setRange(r){const h=HIST[curK];
+  if(!h||h.avail.indexOf(r)<0)return;
+  curR=r;paintRanges();draw();}
+
+const chipKeys=M.map(m=>m.k);
+document.getElementById('chips').innerHTML=chipKeys.map(k=>`<button class="chip${k==='price'?' on':''}" data-k="${k}">${map[k].label}</button>`).join('');
+
+root.querySelectorAll('.chip').forEach(c=>c.onclick=()=>setMetric(c.dataset.k));
+document.querySelectorAll('#ranges button').forEach(b=>b.onclick=()=>setRange(b.dataset.r));
+
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('shown');io.unobserve(e.target);}}),{threshold:.2});
+root.querySelectorAll('.cell').forEach(c=>io.observe(c));
+
+/* ---- stats accordion: collapsed by default, multi-open, deep-linkable ---- */
+(function(){
+  const items=[...root.querySelectorAll('.nacc-item')];
+  function setOpen(it,open){it.classList.toggle('open',open);
+    it.querySelector('.nacc-head').setAttribute('aria-expanded',open?'true':'false');
+    if(open&&window.__drawSparks)window.__drawSparks(it);}
+  items.forEach(it=>{
+    it.querySelector('.nacc-head').addEventListener('click',()=>{
+      const open=!it.classList.contains('open');setOpen(it,open);
+      if(open)history.replaceState(null,'','#'+it.id);
+    });
+  });
+  function openFromHash(){
+    const id=(location.hash||'').slice(1);if(!id)return;
+    const it=document.getElementById(id);
+    if(it&&it.classList.contains('nacc-item')){setOpen(it,true);
+      if(it.scrollIntoView)setTimeout(()=>it.scrollIntoView({behavior:'smooth',block:'start'}),120);}
+  }
+  window.addEventListener('hashchange',openFromHash);
+  openFromHash();
+})();
+
+/* ---- stat cards → chart visualizer: clicking a card focuses its series,
+   reusing the exact pill path (setMetric keeps the selected range). One
+   delegated listener; cards without a series (FDV, unlocked supply) carry
+   no data-chart-series and stay inert. ---- */
+(function(){
+  const feat=root.querySelector('.feat'),acc=document.getElementById('statsAcc');
+  if(!acc)return;
+  root.querySelectorAll('.cell[data-chart-series]').forEach(c=>{
+    c.classList.add('click'); /* existing scoped hover/cursor styles */
+    c.setAttribute('role','button');
+    c.setAttribute('tabindex','0');
+    c.setAttribute('aria-label','Show '+ (c.querySelector('.cl')?c.querySelector('.cl').textContent:'metric') +' in the chart');
+  });
+  function activate(t){
+    const c=t&&t.closest?t.closest('.cell[data-chart-series]'):null;
+    if(!c)return false;
+    setMetric(c.getAttribute('data-chart-series'));
+    setRange('1Y'); /* card clicks always land on [series] + 1Y (same handler
+      the range buttons use; pill clicks inside the visualizer stay range-neutral) */
+    if(feat&&feat.scrollIntoView){
+      /* measured at click time so the offset tracks the CURRENT nav height
+         (mobile vs desktop) — scroll-margin-top then does the offsetting;
+         the static rule in the page styles is the no-JS fallback */
+      const nav=document.querySelector('nav');
+      if(nav&&nav.offsetHeight)feat.style.scrollMarginTop=(nav.offsetHeight+24)+'px';
+      feat.scrollIntoView({behavior:'smooth',block:'start'});
+    }
+    return true;
+  }
+  acc.addEventListener('click',e=>{activate(e.target);});
+  acc.addEventListener('keydown',e=>{
+    if(e.key==='Enter'||e.key===' ')if(activate(e.target))e.preventDefault();
+  });
+})();
+
+/* ---- card sparklines + delta badges (one shared renderer) ----
+   Series come from the SAME cached HIST/SRC layer the visualizer uses — no
+   new endpoints, one fetch per source. Drawn lazily when a group opens (the
+   spark area is fixed-height, so late drawing causes zero layout shift);
+   a failed series simply leaves the card without sparkline or badge. */
+(function(){
+  const BADGE7=['price','mcap','tvl','tvs','stables','p_tvl','valuestaked','circstaked'];
+  const NO_BADGE=['netflow']; /* its value is already a signed delta */
+  const acc=document.getElementById('statsAcc');if(!acc)return;
+  const gd=document.createElement('div');
+  gd.innerHTML='<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="sparkFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#A78BFA" stop-opacity="0.22"/><stop offset="1" stop-color="#A78BFA" stop-opacity="0"/></linearGradient></defs></svg>';
+  acc.appendChild(gd.firstChild);
+  function scaffold(cell){
+    if(cell.querySelector('.cspark-wrap'))return;
+    const d=document.createElement('span');d.className='cdelta';
+    cell.querySelector('.cell-top').appendChild(d);
+    const w=document.createElement('div');w.className='cspark-wrap';
+    w.innerHTML='<svg class="cspark" viewBox="0 0 200 34" preserveAspectRatio="none"></svg>';
+    cell.appendChild(w);
+    const v=document.createElement('span');v.className='cview';v.textContent='VIEW CHART';
+    cell.appendChild(v);
+  }
+  function down(pts,maxN){
+    if(pts.length<=maxN)return pts;
+    const step=(pts.length-1)/(maxN-1),out=[];
+    for(let i=0;i<maxN;i++)out.push(pts[Math.round(i*step)]);
+    return out;
+  }
+  function renderSpark(cell,key){
+    const h=HIST[key];if(!h)return;
+    h.get('30D').then(all=>{
+      /* weekly series: drop the in-progress week — a partial sum reads as a
+         crash in both the sparkline and the badge (same rule as the chart's WoW) */
+      if(h.weeklyBars&&all.length&&all[all.length-1][0]+7*DAY>Date.now())all=all.slice(0,-1);
+      const cut=Date.now()-30*DAY;
+      let pts=all.filter(p=>p[0]>=cut&&isFinite(p[1]));
+      if(pts.length<2)pts=all.filter(p=>isFinite(p[1])).slice(-30); /* young/monthly series: use what exists */
+      if(pts.length<2)return;
+      pts=down(pts,60);
+      const svg=cell.querySelector('.cspark'),wrap=cell.querySelector('.cspark-wrap');
+      const W=200,SH=34,pad=3;
+      let mn=Infinity,mx=-Infinity;pts.forEach(q=>{if(q[1]<mn)mn=q[1];if(q[1]>mx)mx=q[1];});
+      const rng=(mx-mn)||1,t0=pts[0][0],span=(pts[pts.length-1][0]-t0)||1;
+      const X=q=>(q[0]-t0)/span*W,Y=q=>SH-pad-(q[1]-mn)/rng*(SH-2*pad);
+      const ln=pts.map((q,i)=>(i?'L':'M')+X(q).toFixed(1)+','+Y(q).toFixed(1)).join(' ');
+      svg.innerHTML='<path d="'+ln+' L'+W+','+SH+' L0,'+SH+' Z" fill="url(#sparkFill)"/>'+
+        '<path d="'+ln+'" fill="none" stroke="#A78BFA" stroke-width="1.6" stroke-opacity="0.85" stroke-linecap="round" stroke-linejoin="round"/>';
+      /* terminal dot as an HTML overlay — immune to preserveAspectRatio
+         stretching; the pulse ring is pure CSS (disabled under reduced motion) */
+      let dot=wrap.querySelector('.cdot');
+      if(!dot){dot=document.createElement('i');dot.className='cdot';wrap.appendChild(dot);}
+      dot.style.top=(Y(pts[pts.length-1])/SH*100).toFixed(1)+'%';
+      /* delta badge over the metric's window (7D market-like, 30D slower),
+         applying the site-wide badge rule (absolute delta off a near-zero base) */
+      if(NO_BADGE.indexOf(key)>=0)return;
+      const el=cell.querySelector('.cdelta');if(!el)return;
+      const days=BADGE7.indexOf(key)>=0?7:30,label=days===7?'7D':'30D';
+      const bcut=Date.now()-days*DAY;
+      let win=all.filter(p=>p[0]>=bcut&&isFinite(p[1]));
+      if(win.length<2)win=pts;
+      const first=win[0][1],last=win[win.length-1][1],d=last-first,m=map[key];
+      if(!isFinite(d))return;
+      if(h.deltaBadge){
+        el.className='cdelta '+(d>=0?'up':'down');
+        el.textContent=fmtDelta(m,d)+(h.deltaBadge.unit||'')+' '+label;
+      }else if(Math.abs(first)>1e-12&&Math.abs(first)>=MEANINGFUL_BASE*Math.abs(last)){
+        const pc=d/Math.abs(first)*100;
+        if(Math.abs(pc)<0.05){el.className='cdelta flat';el.textContent='0.0% '+label;}
+        else{el.className='cdelta '+(pc>=0?'up':'down');el.textContent=(pc>=0?'+':'')+pc.toFixed(1)+'% '+label;}
+      }else{
+        el.className='cdelta '+(d>=0?'up':'down');
+        el.textContent=fmtDelta(m,d)+' '+label;
+      }
+    }).catch(()=>{});
+  }
+  root.querySelectorAll('.cell[data-chart-series]').forEach(scaffold);
+  window.__drawSparks=function(group){
+    group.querySelectorAll('.cell[data-chart-series]').forEach(c=>{
+      if(c.dataset.sparked)return;c.dataset.sparked='1';
+      renderSpark(c,c.getAttribute('data-chart-series'));
+    });
+  };
+  root.querySelectorAll('.nacc-item.open').forEach(it=>window.__drawSparks(it));
+})();
+
+/* hook for the live engine (end of page): keep headline values current —
+   used as the chart header for no-history metrics (charts read their own
+   real series for everything else) */
+window.__numbersLive={
+  set(k,v){const m=map[k];if(!m||!isFinite(v))return;m.value=v;if(curK===k&&!HIST[k])draw();}
+};
+
+chart.addEventListener('mousemove',e=>{
+  if(!PTS.length)return;
+  const r=chart.getBoundingClientRect(),vx=(e.clientX-r.left)/r.width*1000;
+  /* nearest point by x (series can be unevenly sampled) — binary search */
+  let lo=0,hi=PTS.length-1;
+  while(hi-lo>1){const mid=(lo+hi)>>1;(PTS[mid].x<vx)?lo=mid:hi=mid;}
+  const p=(vx-PTS[lo].x<=PTS[hi].x-vx)?PTS[lo]:PTS[hi];
+  cross.style.display='block';cross.setAttribute('x1',p.x);cross.setAttribute('x2',p.x);cross.setAttribute('y1',0);cross.setAttribute('y2',280);
+  cdot.style.display='block';cdot.setAttribute('cx',p.x);cdot.setAttribute('cy',p.y);
+  const px=p.x/1000*r.width,py=p.y/280*r.height;tip.style.display='block';tip.style.left=px+'px';tip.style.top=(py-12)+'px';
+  tipV.textContent=fmt(map[curK],p.v);
+  tipV.style.color=(HIST[curK]&&HIST[curK].signed)?(p.v>=0?'var(--up)':'var(--down)'):'';
+  if(p.bands){ /* stacked: date + per-asset rows + total */
+    tipD.innerHTML=tsLabel(p.ts,curSpan)+STACK_BANDS.concat(['OTHER']).filter(b=>(p.bands[b]||0)>=1)
+      .map(b=>'<br><span style="color:'+STACK_COLORS[b]+'">'+b+'</span> $'+abbr(p.bands[b])).join('');
+  }else{
+    tipD.textContent=((HIST[curK]&&HIST[curK].weeklyBars)?'Week of ':'')+tsLabel(p.ts,curSpan)+(p.daily!=null?' · +'+(HIST[curK]&&HIST[curK].dailyUsd?'$':'')+abbr(p.daily)+'/day':'');
+  }});
+chart.addEventListener('mouseleave',()=>{cross.style.display='none';cdot.style.display='none';tip.style.display='none';});
+
+setMetric('price');setRange('7D');
+/* #upd (the "Updated" pill) is driven by the live engine at the end of the page */
+
+/* ---- supply in circulation (isolated) ---- */
+(function(){
+const SUPPLY=10e9, INV=18.17, EARLY=20.04, VEST=INV+EARLY;
+function buildVest(){const a=[];let c=0;for(let i=0;i<48;i++){let inc=0;if(i>=3&&i<=14)inc=0.64;else if(i>=15&&i<=38)inc=1.27;c=Math.min(c+inc,VEST);a.push(c);}return a;}
+const VS=buildVest();const MONTHS=96;const KCAL=1.10; /* calibrates non-vesting release so today ~= reported circulating (~65%) */
+function vestOwn(i){return i<48?VS[i]/VEST:1;}
+function fracAt(an,i){if(i<=an[0][0])return an[0][1];for(let k=1;k<an.length;k++){if(i<=an[k][0]){const[a,b]=an[k-1],[c,d]=an[k];return b+(d-b)*(i-a)/(c-a);}}return 1;}
+const CATS=[
+ {n:'StarkWare',p:10.76,c:'#1E2A6B',an:[[0,.10],[12,.35],[24,.60],[36,.80],[48,.95],[60,1]]},
+ {n:'Investors',p:18.17,c:'#4C3A98',vest:true},
+ {n:'Early Contributors',p:20.04,c:'#6D4FD0',vest:true},
+ {n:'Foundation Treasury',p:8.10,c:'#8B5CF6',an:[[0,.05],[12,.16],[24,.32],[36,.48],[48,.62],[72,.86],[84,1]]},
+ {n:'Strategic Reserves',p:10.00,c:'#A78BFA',an:[[0,.05],[12,.16],[24,.32],[36,.48],[48,.62],[60,.76],[72,.90],[84,1]]},
+ {n:'Donations',p:2.00,c:'#C4A0E8',an:[[0,0],[12,.10],[24,.26],[36,.42],[48,.56],[72,.82],[84,1]]},
+ {n:'Grants',p:12.93,c:'#E0719F',an:[[0,.05],[12,.20],[24,.40],[36,.62],[48,.78],[60,.88],[72,.96],[84,1]]},
+ {n:'Rebates',p:9.00,c:'#F0508C',an:[[0,.10],[12,.32],[24,.52],[36,.68],[48,.82],[72,.95],[84,1]]},
+ {n:'Provisions',p:9.00,c:'#F9A8C8',an:[[0,.55],[6,.80],[12,.90],[24,.97],[36,1]]},
+];
+CATS.forEach(c=>{c.cont=[];for(let i=0;i<MONTHS;i++){const f=c.vest?vestOwn(i):Math.min(fracAt(c.an,i)*KCAL,1);c.cont[i]=c.p*Math.min(f,1);}});
+let acc=new Array(MONTHS).fill(0);
+CATS.forEach(c=>{c.lo=acc.slice();acc=acc.map((v,i)=>v+c.cont[i]);c.hi=acc.slice();});
+const TOTAL=acc;
+const now=new Date();const TODAY_I=Math.max(0,Math.min(MONTHS-1,(now.getFullYear()-2024)*12+now.getMonth()));
+/* (the 96-month supply-over-time chart was replaced by the live circulating
+   supply block above; the CATS release model still powers the unlock bars
+   and the donut hover detail) */
+
+/* donut */
+const dsvg=document.getElementById('dsvg'),cx=280,cy=180,R=116,Ri=74,RL=150;let a=-Math.PI/2;
+function arc(a0,a1){const pol=(an,rad)=>[cx+rad*Math.cos(an),cy+rad*Math.sin(an)];const lg=(a1-a0)>Math.PI?1:0;
+  const[x0,y0]=pol(a0,R),[x1,y1]=pol(a1,R),[x2,y2]=pol(a1,Ri),[x3,y3]=pol(a0,Ri);
+  return `M${x0.toFixed(1)},${y0.toFixed(1)} A${R},${R} 0 ${lg} 1 ${x1.toFixed(1)},${y1.toFixed(1)} L${x2.toFixed(1)},${y2.toFixed(1)} A${Ri},${Ri} 0 ${lg} 0 ${x3.toFixed(1)},${y3.toFixed(1)} Z`;}
+let segs='',labs='';
+CATS.forEach((c,i)=>{const frac=c.p/100,a1=a+frac*Math.PI*2,mid=a+frac*Math.PI;
+  segs+=`<path class="seg" data-i="${i}" d="${arc(a,a1)}" fill="${c.c}"/>`;
+  const co=Math.cos(mid),si=Math.sin(mid),right=co>=0,anc=right?'start':'end',ox=right?6:-6;
+  const lx1=cx+(R+2)*co,ly1=cy+(R+2)*si,lx2=cx+(RL-12)*co,ly2=cy+(RL-12)*si,tx=cx+RL*co+ox,ty=cy+RL*si;
+  labs+=`<g class="lab" data-i="${i}"><line x1="${lx1.toFixed(1)}" y1="${ly1.toFixed(1)}" x2="${lx2.toFixed(1)}" y2="${ly2.toFixed(1)}" stroke="${c.c}" stroke-width="1.5"/><text x="${tx.toFixed(1)}" y="${(ty-2).toFixed(1)}" text-anchor="${anc}" class="lname">${c.n}</text><text x="${tx.toFixed(1)}" y="${(ty+13).toFixed(1)}" text-anchor="${anc}" class="lpct">${c.p.toFixed(2)}%</text></g>`;
+  a=a1;});
+dsvg.innerHTML=segs+labs;
+function tok(p){const t=p/100*SUPPLY;return t>=1e9?(t/1e9).toFixed(2)+'B':(t/1e6).toFixed(0)+'M';}
+function lastIdx(c){return c.vest?38:c.an[c.an.length-1][0];}
+function relFrac(c,i){return c.vest?vestOwn(i):Math.min(fracAt(c.an,i)*KCAL,1);}
+function dateLbl(c){if(c.vest)return 'March 15, 2027';const d=new Date(2024,lastIdx(c),15);return '~'+d.toLocaleString('en',{month:'short',year:'numeric'});}
+const donut=document.getElementById('udonut'),detail=document.getElementById('udetail'),cHint=document.getElementById('cHint');
+function hot(i){donut.classList.add('dim');document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>s.classList.toggle('hot',+s.dataset.i===i));
+  const c=CATS[i];cHint.textContent=c.n;
+  const rf=Math.min(relFrac(c,TODAY_I),1),unl=rf*100,remn=(1-rf)*100;
+  const tag=c.vest?'<span class="v">vesting</span>':'<span class="r">releasing</span>';
+  detail.innerHTML=`<div class="dt">
+    <div class="dl">${c.n}${tag}</div>
+    <div class="dg"><span>Allocation</span><b>${c.p.toFixed(2)}% of total · ${tok(c.p)} STRK</b></div>
+    <div class="dg"><span>Unlocked so far</span><b>${unl.toFixed(1)}% · ${tok(c.p*rf)} STRK</b></div>
+    <div class="dg"><span>Still to unlock</span><b>${remn.toFixed(1)}% · ${tok(c.p*(1-rf))} STRK</b></div>
+    <div class="dg"><span>Last unlock</span><b>${dateLbl(c)}</b></div>
+  </div>`;}
+function unhot(){donut.classList.remove('dim');document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>s.classList.remove('hot'));cHint.textContent='Hover a category';detail.innerHTML='<div class="dt">Investors and Early Contributors vest until <b>March 15, 2027</b>. The rest is released into circulation as the Foundation allocates it. Hover a category for its unlock detail.</div>';}
+document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{s.addEventListener('mouseenter',()=>hot(+s.dataset.i));s.addEventListener('mouseleave',unhot);});
+
+/* ---- monthly unlock schedule: NEXT 12 MONTHS ---- */
+(function(){
+  const muchart=document.getElementById('muchart');if(!muchart)return;
+  const mtip=document.getElementById('mtip2');
+  const start=TODAY_I+1,n=12,end=Math.min(start+n-1,MONTHS-1); /* the 12 months ahead */
+  const aL=46,aR=948,aT=18,aB=252;
+  const bw=Math.max(3,(aR-aL)/n*0.62);
+  const vAt=i=>i<0?0:(i<48?VS[i]:VS[47]);
+  let maxD=0;const rows=[];
+  for(let k=0;k<n;k++){const i=Math.min(start+k,MONTHS-1);
+    const totD=Math.max(0,TOTAL[i]-(TOTAL[i-1]??0));
+    const vD=Math.max(0,vAt(i)-vAt(i-1));
+    const estD=Math.max(0,totD-vD);
+    rows.push({i,totD,vD,estD,cum:TOTAL[i]});if(totD>maxD)maxD=totD;}
+  maxD=(maxD||1)*1.12;
+  const bx=k=>aL+(n>1?k/(n-1):0)*(aR-aL);
+  const byB=v=>aB-v/maxD*(aB-aT);
+  const byC=p=>aB-p/100*(aB-aT);
+  const tok=p=>{const t=p/100*SUPPLY;return t>=1e9?(t/1e9).toFixed(2)+'B':Math.round(t/1e6)+'M';};
+  let s='';
+  [0,50,100].forEach(g=>{s+=`<line x1="${aL}" y1="${byC(g).toFixed(1)}" x2="${aR}" y2="${byC(g).toFixed(1)}" stroke="rgba(245,242,236,.06)"/><text x="${aR+6}" y="${(byC(g)+3).toFixed(1)}" font-family="IBM Plex Mono,monospace" font-size="10" fill="rgba(245,242,236,.35)">${g}%</text>`;});
+  rows.forEach((r,k)=>{const d=new Date(2024,r.i,1);
+    const lbl=d.getMonth()===0?d.toLocaleString('en',{month:'short'})+' '+String(d.getFullYear()).slice(2):d.toLocaleString('en',{month:'short'});
+    s+=`<text x="${bx(k).toFixed(1)}" y="${aB+22}" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="10" fill="rgba(245,242,236,.4)">${lbl}</text>`;});
+  rows.forEach((r,k)=>{const x=(bx(k)-bw/2).toFixed(1);const yT=byB(r.totD),yV=byB(r.vD);
+    if(r.totD-r.vD>0.001)s+=`<rect x="${x}" y="${yT.toFixed(1)}" width="${bw.toFixed(1)}" height="${(yV-yT).toFixed(1)}" fill="#6D4FD0" fill-opacity="0.6" rx="1"/>`;
+    if(r.vD>0.001)s+=`<rect x="${x}" y="${yV.toFixed(1)}" width="${bw.toFixed(1)}" height="${(aB-yV).toFixed(1)}" fill="#A78BFA" rx="1"/>`;});
+  let ln='';rows.forEach((r,k)=>{ln+=(k?'L':'M')+bx(k).toFixed(1)+','+byC(r.cum).toFixed(1)+' ';});
+  s+=`<path d="${ln}" fill="none" stroke="#F5F2EC" stroke-opacity=".55" stroke-width="1.5"/>`;
+  s+=`<line id="muhl" x1="0" y1="${aT}" x2="0" y2="${aB}" stroke="rgba(245,242,236,.25)" stroke-width="1" style="display:none"/>`;
+  muchart.innerHTML=s;
+  const now=new Date();let nu=new Date(now.getFullYear(),now.getMonth(),15);if(nu<=now)nu=new Date(now.getFullYear(),now.getMonth()+1,15);
+  /* next contractual unlock: the vesting bucket of the next 15th; exposed so
+     the live engine can compute its share of the live circulating supply */
+  const nuI=(nu.getFullYear()-2024)*12+nu.getMonth();
+  const nuAmt=Math.max(0,vAt(nuI)-vAt(nuI-1))/100*SUPPLY;
+  window.__nextUnlock={amount:nuAmt,date:nu.getFullYear()+'-'+String(nu.getMonth()+1).padStart(2,'0')+'-'+String(nu.getDate()).padStart(2,'0')};
+  document.getElementById('mukpis').innerHTML=
+    `<div class="kpi"><div class="kl">Next unlock</div><div class="kv">${nuAmt>0?'~'+Math.round(nuAmt/1e6)+'M':'—'}</div><div class="ks">${nu.toLocaleString('en',{month:'short',day:'numeric',year:'numeric'})} · <span data-stat="nextunlockpct">≈1.9%</span> of circulating</div></div>`+
+    `<div class="kpi"><div class="kl">Vesting rate</div><div class="kv">~127M</div><div class="ks">per month · until Mar 2027</div></div>`+
+    `<div class="kpi"><div class="kl">Full circulation</div><div class="kv">~2031</div><div class="ks">remaining via Foundation release</div></div>`;
+  const hl=document.getElementById('muhl');
+  muchart.addEventListener('mousemove',e=>{const r=muchart.getBoundingClientRect();const vx=(e.clientX-r.left)/r.width*1000;
+    let k=Math.round((vx-aL)/(aR-aL)*(n-1));k=Math.max(0,Math.min(n-1,k));const row=rows[k];const d=new Date(2024,row.i,1);
+    hl.style.display='block';hl.setAttribute('x1',bx(k).toFixed(1));hl.setAttribute('x2',bx(k).toFixed(1));
+    mtip.style.display='block';const px=bx(k)/1000*r.width;
+    mtip.style.top='8px';
+    if(px<r.width*0.6){mtip.style.left=(px+14)+'px';mtip.style.transform='translateX(0)';}
+    else{mtip.style.left=(px-14)+'px';mtip.style.transform='translateX(-100%)';}
+    mtip.innerHTML=`<div class="td">${d.toLocaleString('en',{month:'short',year:'numeric'})}</div>
+      <div class="r"><span style="color:#A78BFA">Scheduled vesting</span><b>${row.vD>0.001?tok(row.vD):'—'}</b></div>
+      <div class="r"><span style="color:#A78BFA;opacity:.8">Estimated release</span><b>${row.estD>0.001?tok(row.estD):'—'}</b></div>
+      <div class="r"><span style="color:var(--muted)">This month</span><b>${tok(row.totD)}</b></div>
+      <div class="r"><span style="color:var(--acc-2)">Cumulative</span><b>${row.cum.toFixed(1)}%</b></div>`;});
+  muchart.addEventListener('mouseleave',()=>{mtip.style.display='none';hl.style.display='none';});
+})();
+})();
+})();
+</script>
+
+<!-- UNIFIED LIVE METRICS ENGINE — feeds the utilities > Staking panel, the
+     section 04 tokenomics block, the stats accordion, and the price chart
+     header, from ONE set of keyless CORS-open fetches per hour (no duplicate
+     calls per source). Same architecture as the btcfi/privacy/venn blocks:
+     cache-busted fetches on load + silent hourly refresh, localStorage
+     last-known cache, committed seed fallback (assets/data/
+     strk-numbers-seed.json mirrors SEED below), count-up, UPDATED tickers.
+
+     Sources: CoinGecko /coins/starknet (price, mcap, 24h/7d change,
+     circulating supply, BTC cross-rate) · Endur dashboard API (STRK + BTC
+     staked; staking-contract get_total_stake over rotating free RPCs as the
+     STRK fallback) · DefiLlama (chain TVL, stablecoins, app revenue 30d,
+     chain revenue 30d) · L2Beat (TVS + 30d netflow proxy from one response;
+     activity history summed = total TX + avg TPS) · growthepie
+     fundamentals_7d (daily + weekly active addresses) · npm registry
+     (StarkZap downloads, chunked from first publish) · STRK20 backend
+     (pool TVL, private TX; 30d revenue derived at the flat 4-STRK fee).
+
+     Coherence: every computed stat commits atomically with ALL of its
+     inputs from the same round — staked% and staked-USD only commit when
+     Endur AND CoinGecko are both fresh; total value staked only when both
+     stake legs and prices are; STRK20 revenue only when its TX sum and the
+     STRK price are. A stat whose source fails keeps its last good value.
+     DefiLlama's emissions API went paid (402), so the unlock bars use the
+     official contractual schedule (static, exact) with the live circulating
+     share computed here. No keys anywhere. -->
+<script>
+(function(){
+  if (!window.fetch) return;
+
+  // mirrors assets/data/strk-numbers-seed.json — today's REAL readings, never mock
+  var SEED = {
+    updated: '2026-07-20T08:15:00Z',
+    price: 0.02832224, chg24: -1.81, chg7: -4.95, mcap: 191008881, fdv: 282999565, circ: 6746937561, unlockedPct: 67.47, btcUsd: 64246,
+    strkStaked: 1428664556, strkStakedUsd: 40462980, stakePct: 21.175, btcStaked: 708.36, btcStakedUsd: 45509277, valueStaked: 85972257,
+    tvl: 173097155, tvs: 388942978, netflow: -25499197, stables: 164973460, apprev: 12568, chainrev: 120744,
+    dau: 13221, wau: 43443, totaltx: 307714287, tps: 0.737, downloads: 7356,
+    p_tvl: 528903, p_tx: 36, p_rev: 2590
+  };
+  var CACHE_KEY = 'strkNumbers_v1';
+  var NPM_FIRST_PUBLISH = '2026-02-24'; // starkzap first npm release
+
+  var RPCS = ['https://rpc.starknet.lava.build', 'https://api.cartridge.gg/x/starknet/mainnet', 'https://1rpc.io/starknet'];
+  var STAKING_CONTRACT = '0x00ca1702e64c81d9a07b86bd2c540188d92a2c73cf5cc0e508d949015e7e84a7';
+  var SEL_GET_TOTAL_STAKE = '0x226ffc5db8f68325947f4c4fcbea7117624ed26d4a1354693f63de203c453c8';
+
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- formats (match the section 04 design) ---------- */
+  function abbr(v){ v = Math.abs(v); if (v >= 1e9) return (v / 1e9).toFixed(2) + 'B'; if (v >= 1e6) return (v / 1e6).toFixed(1) + 'M'; if (v >= 1e3) return (v / 1e3).toFixed(1) + 'K'; return Math.round(v).toString(); }
+  var FMT = {
+    price:      function(v){ return '$' + v.toFixed(4); },
+    mcap:       function(v){ return '$' + abbr(v); },
+    fdv:        function(v){ return '$' + abbr(v); },
+    /* card units (STRK, BTC, %, TPS) live in static .cu suffix spans — these
+       stats format the NUMBER only */
+    unlockedpct: function(v){ return v.toFixed(1); },
+    mcapfdv:    function(v){ return v.toFixed(1) + '%'; },
+    lockedpct:  function(v){ return v.toFixed(1) + '%'; },
+    circ:       function(v){ return abbr(v); },
+    circpct:    function(v){ return v.toFixed(1) + '%'; },
+    strkstaked: function(v){ return abbr(v); },
+    strkstakedusd: function(v){ return '≈ $' + abbr(v); },
+    btcstaked:  function(v){ return String(Math.round(v)); },
+    btcstakedusd: function(v){ return '≈ $' + abbr(v); },
+    valuestaked: function(v){ return '$' + abbr(v); },
+    circstaked: function(v){ return v.toFixed(1); },
+    dau: abbr, wau: abbr, totaltx: abbr,
+    tps:        function(v){ return v >= 100 ? String(Math.round(v)) : v.toFixed(1); },
+    downloads:  abbr,
+    tvl:        function(v){ return '$' + abbr(v); },
+    tvs:        function(v){ return '$' + abbr(v); },
+    stables:    function(v){ return '$' + abbr(v); },
+    netflow:    function(v){ return (v >= 0 ? '+' : '-') + '$' + abbr(v); },
+    apprev:     function(v){ return '$' + abbr(v); },
+    chainrev:   function(v){ return '$' + abbr(v); },
+    p_tvl:      function(v){ return '$' + abbr(v); },
+    p_rev:      function(v){ return '$' + abbr(v); },
+    p_tx:       function(v){ return Math.round(v).toLocaleString('en-US'); }
+  };
+  // which state field feeds each [data-stat] hook
+  var BIND = {
+    price: 'price', mcap: 'mcap', fdv: 'fdv', unlockedpct: 'unlockedPct', circ: 'circ',
+    strkstaked: 'strkStaked', strkstakedusd: 'strkStakedUsd', btcstaked: 'btcStaked', btcstakedusd: 'btcStakedUsd',
+    valuestaked: 'valueStaked', circstaked: 'stakePct',
+    dau: 'dau', wau: 'wau', totaltx: 'totaltx', tps: 'tps', downloads: 'downloads',
+    tvl: 'tvl', tvs: 'tvs', stables: 'stables', netflow: 'netflow', apprev: 'apprev', chainrev: 'chainrev',
+    p_tvl: 'p_tvl', p_rev: 'p_rev', p_tx: 'p_tx'
+  };
+  // chart-registry keys for window.__numbersLive (price chart chips)
+  // note: p_rev is deliberately absent — its chart registry value is the
+  // CUMULATIVE figure (dashboard-matching), not this engine's rolling 30D stat
+  var CHART_KEYS = { price: 'price', mcap: 'mcap', strkStaked: 'strkstaked', btcStaked: 'btcstaked', valueStaked: 'valuestaked', stakePct: 'circstaked', dau: 'dailyusers', wau: 'weeklyusers', totaltx: 'totaltx', tps: 'tps', downloads: 'downloads', tvl: 'tvl', tvs: 'tvs', stables: 'stables', netflow: 'netflow', apprev: 'apprev', chainrev: 'chainrev', p_tvl: 'p_tvl', p_tx: 'p_tx' };
+
+  // count-up tween; parses the on-screen number (handles $, %, sign, B/M/K)
+  function parseShown(text){
+    var m = String(text).match(/-?\d+(\.\d+)?/);
+    if (!m) return 0;
+    var n = parseFloat(m[0]);
+    if (/-\$|\(-/.test(text) && n > 0) n = -n;
+    if (/B/.test(text)) n *= 1e9; else if (/M/.test(text)) n *= 1e6; else if (/K/.test(text)) n *= 1e3;
+    return n;
+  }
+  function tween(el, to, fmt){
+    if (!el || to == null || !isFinite(to)) return;
+    var from = parseShown(el.textContent);
+    if (reduce || Math.abs(to - from) < 1e-9) { el.textContent = fmt(to); return; }
+    var t0 = performance.now(), DUR = 600;
+    (function tick(now){
+      var f = Math.min(1, (now - t0) / DUR);
+      f = 1 - Math.pow(1 - f, 3);
+      el.textContent = fmt(from + (to - from) * f);
+      if (f < 1) requestAnimationFrame(tick);
+    })(t0);
+  }
+
+  /* ---------- state ---------- */
+  function loadCache(){
+    try {
+      var s = JSON.parse(localStorage.getItem(CACHE_KEY));
+      return (s && isFinite(s.price) && isFinite(s.circ) && s.circ > 0) ? s : null;
+    } catch(e){ return null; }
+  }
+  function saveCache(s){ try { localStorage.setItem(CACHE_KEY, JSON.stringify(s)); } catch(e){} }
+  var state = loadCache();
+  if (!state) { state = {}; for (var k in SEED) state[k] = SEED[k]; state.updated = Date.parse(SEED.updated); }
+  else for (var sk in SEED) if (state[sk] == null && sk !== 'updated') state[sk] = SEED[sk]; // backfill fields added after a visitor's cache was written
+
+  /* ---------- DOM hooks ---------- */
+  var statEls = {};
+  document.querySelectorAll('[data-stat]').forEach(function(el){
+    var k = el.getAttribute('data-stat');
+    (statEls[k] = statEls[k] || []).push(el);
+  });
+  var stakePanel = document.querySelector('.util-panel[data-k="staking"]');
+  var spPct = stakePanel && stakePanel.querySelector('[data-metric="strk_staked_pct"]');
+  var spTot = stakePanel && stakePanel.querySelector('[data-metric="strk_staked_total"]');
+  var spBar = stakePanel && stakePanel.querySelector('.barfill.meter');
+  var spUp = document.getElementById('stakingUpdated');
+  var updPill = document.getElementById('upd');
+  var tkBar = document.getElementById('tkBar');
+
+  function tickUpdated(){
+    if (!state.updated) return;
+    var m = Math.floor((Date.now() - state.updated) / 60000);
+    var label = m < 1 ? 'UPDATED JUST NOW' : m < 60 ? 'UPDATED ' + m + ' MIN AGO'
+      : m < 2880 ? 'UPDATED ' + Math.floor(m / 60) + ' HR AGO' : 'UPDATED ' + Math.floor(m / 1440) + ' DAYS AGO';
+    if (updPill) updPill.textContent = label.charAt(0) + label.slice(1).toLowerCase();
+    if (spUp) spUp.textContent = 'LIVE DATA, ' + label;
+  }
+
+  function renderAll(){
+    Object.keys(BIND).forEach(function(k){
+      var v = state[BIND[k]];
+      (statEls[k] || []).forEach(function(el){ tween(el, v, FMT[k]); });
+    });
+    // netflow is the site's only signed stat — its card value takes the sign color
+    (statEls.netflow || []).forEach(function(el){ el.style.color = state.netflow >= 0 ? 'var(--up)' : 'var(--down)'; });
+    // static cards: FDV progress = mcap/FDV; unlocked bar + locked remainder
+    var mf = (isFinite(state.mcap) && state.fdv > 0) ? state.mcap / state.fdv * 100 : null;
+    if (mf != null) {
+      (statEls.mcapfdv || []).forEach(function(el){ tween(el, mf, FMT.mcapfdv); });
+      var fb = document.getElementById('fdvBar');
+      if (fb) fb.style.width = Math.min(100, mf).toFixed(1) + '%';
+    }
+    if (isFinite(state.unlockedPct)) {
+      (statEls.lockedpct || []).forEach(function(el){ tween(el, 100 - state.unlockedPct, FMT.lockedpct); });
+      var ub = document.getElementById('unlockedBar');
+      if (ub) ub.style.width = Math.min(100, state.unlockedPct).toFixed(1) + '%';
+    }
+    // tokenomics: % of max supply + progress bar (max supply is 10B, fixed)
+    var cp = state.circ / 1e10 * 100;
+    (statEls.circpct || []).forEach(function(el){ tween(el, cp, FMT.circpct); });
+    if (tkBar) tkBar.style.width = cp.toFixed(2) + '%';
+    // next unlock share of the live circulating supply
+    if (window.__nextUnlock && window.__nextUnlock.amount > 0) {
+      var up = window.__nextUnlock.amount / state.circ * 100;
+      (statEls.nextunlockpct || []).forEach(function(el){ el.textContent = '≈' + up.toFixed(2) + '%'; });
+    }
+    // utilities > Staking panel (same pair semantics as before)
+    if (spTot) tween(spTot, state.strkStaked, function(v){ return (v / 1e9).toFixed(2) + 'B STRK'; });
+    if (spPct) tween(spPct, state.stakePct, function(v){ return v.toFixed(2) + '%'; });
+    if (spBar && isFinite(state.stakePct)) {
+      spBar.dataset.w = state.stakePct.toFixed(2) + '%';
+      if (stakePanel.classList.contains('show')) spBar.style.width = spBar.dataset.w;
+    }
+    // keep the chart registry's headline values current (charts themselves
+    // plot real fetched history; these values drive the no-history metrics)
+    if (window.__numbersLive) {
+      Object.keys(CHART_KEYS).forEach(function(sk){ if (isFinite(state[sk])) window.__numbersLive.set(CHART_KEYS[sk], state[sk]); });
+    }
+    tickUpdated();
+  }
+  renderAll(); // paint last-known (cache or seed) immediately
+
+  /* ---------- fetch helpers ---------- */
+  function getJson(url){
+    return fetch(url + (url.indexOf('?') >= 0 ? '&' : '?') + '_=' + Date.now())
+      .then(function(r){ if (!r.ok) throw new Error(url); return r.json(); });
+  }
+  function getJsonPlain(url){ // npm rejects nothing, but keep its URLs canonical
+    return fetch(url).then(function(r){ if (!r.ok) throw new Error(url); return r.json(); });
+  }
+  function ok(v){ return isFinite(v) && v > 0; }
+  // staking-contract fallback for STRK staked, rotating over free RPCs
+  function rpcTotalStake(i){
+    i = i || 0;
+    if (i >= RPCS.length) return Promise.reject(new Error('all rpcs failed'));
+    return fetch(RPCS[i], {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'starknet_call',
+        params: [{ contract_address: STAKING_CONTRACT, entry_point_selector: SEL_GET_TOTAL_STAKE, calldata: [] }, 'latest'] })
+    }).then(function(r){ return r.json(); }).then(function(d){
+      if (!d.result || !d.result.length) throw new Error('bad result');
+      var v = parseInt(d.result[0], 16) / 1e18;
+      if (!ok(v)) throw new Error('bad stake');
+      return v;
+    }).catch(function(){ return rpcTotalStake(i + 1); });
+  }
+  // npm downloads since first publish; the range API caps at 18 months per call
+  function npmTotal(from, acc){
+    var f = new Date(from + 'T00:00:00Z');
+    var t = new Date(Math.min(f.getTime() + 539 * 86400000, Date.now()));
+    var span = f.toISOString().slice(0, 10) + ':' + t.toISOString().slice(0, 10);
+    return getJsonPlain('https://api.npmjs.org/downloads/range/' + span + '/starkzap').then(function(d){
+      var s = (d.downloads || []).reduce(function(a, x){ return a + (x.downloads || 0); }, 0);
+      acc = (acc || 0) + s;
+      if (t.getTime() >= Date.now() - 86400000) return acc;
+      return npmTotal(new Date(t.getTime() + 86400000).toISOString().slice(0, 10), acc);
+    });
+  }
+
+  /* ---------- refresh: fetch all sources, commit coherent clusters ---------- */
+  function refresh(){
+    var wrap = function(p){ return p.catch(function(){ return null; }); };
+    var pCg = wrap(getJson('https://api.coingecko.com/api/v3/coins/starknet?localization=false&tickers=false&market_data=true&community_data=false&developer_data=false&sparkline=false')
+      .then(function(d){
+        var md = d.market_data;
+        var price = md.current_price && md.current_price.usd, btc = md.current_price && md.current_price.btc;
+        if (!ok(price) || !ok(md.circulating_supply) || !ok(md.market_cap && md.market_cap.usd)) throw new Error('bad cg');
+        var fdv = md.fully_diluted_valuation && md.fully_diluted_valuation.usd;
+        if (!ok(fdv) && ok(md.total_supply)) fdv = md.total_supply * price; // field can be null
+        return { price: price, mcap: md.market_cap.usd, circ: md.circulating_supply,
+                 fdv: ok(fdv) ? fdv : null,
+                 unlockedPct: ok(md.total_supply) ? md.circulating_supply / md.total_supply * 100 : null,
+                 btcUsd: ok(btc) ? price / btc : null,
+                 chg24: md.price_change_percentage_24h, chg7: md.price_change_percentage_7d };
+      }));
+    var pEndur = wrap(getJson('https://api.dashboard.endur.fi/api/query/network/overview')
+      .then(function(d){
+        var strk = parseFloat(d.total_stake) / 1e18, btc = parseFloat(d.total_stake_btc) / 1e8;
+        if (!ok(strk)) throw new Error('bad endur');
+        return { strk: strk, btc: ok(btc) ? btc : null };
+      })
+      .catch(function(){ return rpcTotalStake().then(function(v){ return { strk: v, btc: null }; }); }));
+    var pTvl = wrap(getJson('https://api.llama.fi/v2/historicalChainTvl/Starknet')
+      .then(function(a){ var v = a[a.length - 1].tvl; if (!ok(v)) throw 0; return v; }));
+    var pTvs = wrap(getJson('https://l2beat.com/api/scaling/tvs/starknet?range=30d')
+      .then(function(d){
+        var dd = d.data, ch = dd.chart.data;
+        var tot = function(r){ return r[1] + r[2] + r[3]; };
+        if (!ok(dd.usdValue) || !ch.length) throw 0;
+        return { tvs: dd.usdValue, netflow: tot(ch[ch.length - 1]) - tot(ch[0]) };
+      }));
+    var pStables = wrap(getJson('https://stablecoins.llama.fi/stablecoinchains')
+      .then(function(a){
+        var row = a.filter(function(c){ return String(c.name).toLowerCase() === 'starknet'; })[0];
+        var v = row && row.totalCirculatingUSD && row.totalCirculatingUSD.peggedUSD;
+        if (!ok(v)) throw 0; return v;
+      }));
+    var pAppRev = wrap(getJson('https://api.llama.fi/overview/fees/starknet?excludeTotalDataChart=true&excludeTotalDataChartBreakdown=true&dataType=dailyAppRevenue')
+      .then(function(d){ if (!ok(d.total30d)) throw 0; return d.total30d; }));
+    var pChainRev = wrap(getJson('https://api.llama.fi/summary/fees/starknet?dataType=dailyRevenue')
+      .then(function(d){ if (!ok(d.total30d)) throw 0; return d.total30d; }));
+    var pGtp = wrap(getJson('https://api.growthepie.xyz/v1/fundamentals_7d.json')
+      .then(function(a){
+        var dau = null, wau = null, dd = '', dw = '';
+        a.forEach(function(r){
+          if (r.origin_key !== 'starknet') return;
+          if (r.metric_key === 'daa' && r.date > dd) { dd = r.date; dau = r.value; }
+          if (r.metric_key === 'aa_last7d' && r.date > dw) { dw = r.date; wau = r.value; }
+        });
+        if (!ok(dau) || !ok(wau)) throw 0;
+        return { dau: dau, wau: wau };
+      }));
+    var pAct = wrap(getJson('https://l2beat.com/api/scaling/activity/starknet?range=max')
+      .then(function(d){
+        var ch = d.data.chart, ci = ch.types.indexOf('count'), rows = ch.data;
+        if (ci < 0 || !rows.length) throw 0;
+        var total = rows.reduce(function(a, r){ return a + r[ci]; }, 0);
+        var tps = rows[rows.length - 1][ci] / 86400;
+        if (!ok(total) || !ok(tps)) throw 0;
+        return { totaltx: total, tps: tps };
+      }));
+    var pNpm = wrap(npmTotal(NPM_FIRST_PUBLISH).then(function(v){ if (!ok(v)) throw 0; return v; }));
+    var pS20tx = wrap(getJson('https://strk20-dashboard-production.up.railway.app/agg/transactions')
+      .then(function(d){
+        var days = d.days || [];
+        var today = new Date().toISOString().slice(0, 10);
+        if (days.length && days[days.length - 1].date === today) days = days.slice(0, -1); // drop the partial day
+        if (!days.length) throw 0;
+        var sum30 = days.slice(-30).reduce(function(a, x){ return a + (x.count || 0); }, 0);
+        return { p_tx: days[days.length - 1].count, sum30: sum30 };
+      }));
+    var pS20tvl = wrap(getJson('https://strk20-dashboard-production.up.railway.app/agg/pool-summary')
+      .then(function(d){ if (!ok(d.tvlUsd)) throw 0; return d.tvlUsd; }));
+
+    Promise.all([pCg, pEndur, pTvl, pTvs, pStables, pAppRev, pChainRev, pGtp, pAct, pNpm, pS20tx, pS20tvl]).then(function(r){
+      var cg = r[0], endur = r[1], tvl = r[2], tvs = r[3], stables = r[4], apprev = r[5],
+          chainrev = r[6], gtp = r[7], act = r[8], npm = r[9], s20tx = r[10], s20tvl = r[11];
+      var stamped = false;
+      function stamp(){ state.updated = Date.now(); stamped = true; }
+
+      // CG cluster — internally coherent (one response)
+      if (cg) {
+        state.price = cg.price; state.mcap = cg.mcap; state.circ = cg.circ;
+        if (ok(cg.fdv)) state.fdv = cg.fdv;
+        if (ok(cg.unlockedPct)) state.unlockedPct = cg.unlockedPct;
+        if (isFinite(cg.chg24)) state.chg24 = cg.chg24;
+        if (isFinite(cg.chg7)) state.chg7 = cg.chg7;
+        if (ok(cg.btcUsd)) state.btcUsd = cg.btcUsd;
+        stamp();
+      }
+      // staking legs — each commits only with SAME-ROUND CoinGecko inputs,
+      // so staked%, USD legs and totals never mix fresh and stale
+      var strkFresh = cg && endur && ok(endur.strk);
+      var btcFresh = cg && endur && ok(endur.btc) && ok(cg.btcUsd);
+      if (strkFresh) {
+        state.strkStaked = endur.strk;
+        state.stakePct = endur.strk / cg.circ * 100;
+        state.strkStakedUsd = endur.strk * cg.price;
+        stamp();
+      }
+      if (btcFresh) {
+        state.btcStaked = endur.btc;
+        state.btcStakedUsd = endur.btc * cg.btcUsd;
+        stamp();
+      }
+      if (strkFresh && btcFresh) state.valueStaked = state.strkStakedUsd + state.btcStakedUsd;
+      // independent single-source clusters
+      if (tvl) { state.tvl = tvl; stamp(); }
+      if (tvs) { state.tvs = tvs.tvs; state.netflow = tvs.netflow; stamp(); }
+      if (stables) { state.stables = stables; stamp(); }
+      if (apprev) { state.apprev = apprev; stamp(); }
+      if (chainrev) { state.chainrev = chainrev; stamp(); }
+      if (gtp) { state.dau = gtp.dau; state.wau = gtp.wau; stamp(); }
+      if (act) { state.totaltx = act.totaltx; state.tps = act.tps; stamp(); }
+      if (npm) { state.downloads = npm; stamp(); }
+      if (s20tvl) { state.p_tvl = s20tvl; stamp(); }
+      // STRK20 revenue derives from the flat 4-STRK privacy fee × 30d private
+      // TX × spot price — only committed when TX sum and price are same-round
+      if (s20tx) {
+        state.p_tx = s20tx.p_tx; stamp();
+        if (cg) state.p_rev = s20tx.sum30 * 4 * cg.price;
+      }
+
+      if (stamped) saveCache(state);
+      renderAll(); // stats whose source failed keep their last good value + timestamp
+    });
+  }
+
+  refresh();
+  setInterval(refresh, 3600000); // silent hourly refresh
+  setInterval(tickUpdated, 60000);
+})();
+</script>
+
+<!-- LIVE CONVERGENCE METRICS (section 03 Venn) — same zero-cost
+     client-side engine as the staking/btcfi/privacy blocks: cache-busted
+     fetches on load + silent hourly refresh, localStorage last-known
+     cache, committed seed fallback (assets/data/strk-venn-seed.json
+     mirrors SEED below). Exactly TWO CoinGecko keyless calls per
+     refresh: one /coins/categories (all three category caps) + one
+     /coins/markets?ids=starknet (STRK market cap). Categories are
+     matched by exact id first ('bitcoin-layer-2' is still the id behind
+     coingecko.com/en/categories/bitcoin-layer-2 even though CoinGecko
+     renamed it "Bitcoin Sidechains"), with a normalized-name fallback.
+     The four values commit all-or-nothing: if either call fails or any
+     category is missing, the whole previous set (and its timestamp)
+     stays on screen — fresh circles are never mixed with a stale center.
+     Both the SVG labels and the legend rows render from the same state.
+     Circle radii scale gently with the live caps (sqrt-area, clamped
+     ±8-10% so the layout can never break). No keys anywhere. -->
+<script>
+(function(){
+  var stage = document.getElementById('vennStage');
+  if (!stage || !window.fetch) return;
+
+  // mirrors assets/data/strk-venn-seed.json — initial fallback, never breaks
+  var SEED = { updated: '2026-07-20T07:48:00Z', btcfi: 618879927, quantum: 10114594898, privacy: 10429460807, starknet: 190938039 };
+  var CACHE_KEY = 'strkVennMetrics_v1';
+  var KEYS = ['btcfi', 'quantum', 'privacy', 'starknet'];
+
+  // id is the stable matcher (it is also the category page slug the legend
+  // links to); normalized display names are the fallback if CoinGecko ever
+  // recycles the id. norm() strips case and punctuation so renames like
+  // "Quantum-Resistant" vs "Quantum Resistant" cannot break the match.
+  var CATS = [
+    { key: 'btcfi',   id: 'bitcoin-layer-2',        names: ['bitcoinlayer2', 'bitcoinsidechains'] },
+    { key: 'quantum', id: 'quantum-resistant',      names: ['quantumresistant'] },
+    { key: 'privacy', id: 'privacy-infrastructure', names: ['privacyinfrastructure'] }
+  ];
+  function norm(s){ return String(s || '').toLowerCase().replace(/[^a-z0-9]/g, ''); }
+
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function fmtCap(v){ return v >= 1e9 ? '$' + (v / 1e9).toFixed(2) + 'B' : '$' + (v / 1e6).toFixed(1) + 'M'; }
+  // inverse of fmtCap for the count-up start value ("$10.43B" → 10.43e9)
+  function parseCap(text){
+    var n = parseFloat(String(text).replace(/[^0-9.]/g, ''));
+    if (!isFinite(n)) return 0;
+    return /B/.test(text) ? n * 1e9 : /M/.test(text) ? n * 1e6 : n;
+  }
+
+  // count-up tween to the new value; instant under reduced motion
+  function tween(el, to){
+    if (!el || to == null) return;
+    var from = parseCap(el.textContent);
+    if (reduce || Math.abs(to - from) < 1) { el.textContent = fmtCap(to); return; }
+    var t0 = performance.now(), DUR = 600;
+    (function tick(now){
+      var f = Math.min(1, (now - t0) / DUR);
+      f = 1 - Math.pow(1 - f, 3);
+      el.textContent = fmtCap(from + (to - from) * f);
+      if (f < 1) requestAnimationFrame(tick);
+    })(t0);
+  }
+
+  function loadCache(){
+    try {
+      var s = JSON.parse(localStorage.getItem(CACHE_KEY));
+      var ok = s && KEYS.every(function(k){ return isFinite(s[k]) && s[k] > 0; });
+      return ok ? s : null;
+    } catch(e){ return null; }
+  }
+  function saveCache(s){ try { localStorage.setItem(CACHE_KEY, JSON.stringify(s)); } catch(e){} }
+
+  var state = loadCache() || { updated: Date.parse(SEED.updated), btcfi: SEED.btcfi, quantum: SEED.quantum, privacy: SEED.privacy, starknet: SEED.starknet };
+
+  var upEl = document.getElementById('vennUpdated');
+  function tickUpdated(){
+    if (!upEl || !state.updated) return;
+    var m = Math.floor((Date.now() - state.updated) / 60000);
+    upEl.textContent = m < 1 ? 'LIVE DATA, UPDATED JUST NOW' : m < 60 ? 'LIVE DATA, UPDATED ' + m + ' MIN AGO'
+      : m < 2880 ? 'LIVE DATA, UPDATED ' + Math.floor(m / 60) + ' HR AGO' : 'LIVE DATA, UPDATED ' + Math.floor(m / 1440) + ' DAYS AGO';
+  }
+
+  var R_BASE = 155; // matches the r shipped in the SVG markup
+  function renderAll(){
+    KEYS.forEach(function(k){
+      // one state value feeds every element tagged venn.<k> — SVG label
+      // and legend row can never diverge
+      document.querySelectorAll('[data-metric="venn.' + k + '"]').forEach(function(el){ tween(el, state[k]); });
+    });
+    // gentle area-proportional sizing hint, clamped so labels and overlaps
+    // always stay inside the fixed viewBox geometry
+    var gm = Math.pow(state.btcfi * state.quantum * state.privacy, 1 / 3);
+    CATS.forEach(function(c){
+      var s = Math.max(0.9, Math.min(1.08, Math.sqrt(state[c.key] / gm)));
+      stage.querySelectorAll('.venn-set[data-set="' + c.key + '"] circle').forEach(function(ci){ ci.setAttribute('r', (R_BASE * s).toFixed(1)); });
+    });
+    tickUpdated();
+  }
+  renderAll(); // paint last-known (cache or seed) immediately
+
+  function getJson(url){
+    return fetch(url + (url.indexOf('?') >= 0 ? '&' : '?') + '_=' + Date.now())
+      .then(function(r){ if (!r.ok) throw new Error(url); return r.json(); });
+  }
+
+  function refresh(){
+    var pCats = getJson('https://api.coingecko.com/api/v3/coins/categories')
+      .then(function(list){
+        if (!Array.isArray(list) || !list.length) throw new Error('bad categories');
+        var out = {};
+        CATS.forEach(function(c){
+          var hit = null;
+          list.forEach(function(cat){
+            if (cat.id === c.id) hit = cat;
+          });
+          if (!hit) list.forEach(function(cat){
+            if (!hit && c.names.indexOf(norm(cat.name)) >= 0) hit = cat;
+          });
+          var v = hit && parseFloat(hit.market_cap);
+          if (!isFinite(v) || v <= 0) throw new Error('category missing: ' + c.id);
+          out[c.key] = v;
+        });
+        return out;
+      });
+    var pStrk = getJson('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=starknet')
+      .then(function(list){
+        var v = list && list[0] && parseFloat(list[0].market_cap);
+        if (!isFinite(v) || v <= 0) throw new Error('bad strk market cap');
+        return v;
+      });
+    // all-or-nothing: circles and center commit together or not at all
+    Promise.all([pCats, pStrk]).then(function(v){
+      state.btcfi = v[0].btcfi; state.quantum = v[0].quantum; state.privacy = v[0].privacy;
+      state.starknet = v[1]; state.updated = Date.now();
+      saveCache(state);
+      renderAll();
+    }).catch(function(){ renderAll(); }); // keep the whole previous set + timestamp
+  }
+
+  refresh();
+  setInterval(refresh, 3600000); // silent hourly refresh — same TTL as the other CoinGecko calls
+  setInterval(tickUpdated, 60000);
+})();
+</script>
+</body>
+</html>

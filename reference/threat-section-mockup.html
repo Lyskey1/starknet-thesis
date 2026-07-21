@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Threat section — redesign</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Expanded:wght@500;600;700;800;900&family=IBM+Plex+Mono:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --accent:#F7931A; --accent-rgb:247,147,26;
+    --risk:#E0524A; --risk-rgb:224,82,74;
+    --black:#0A0A0A; --white:#F5F2EC;
+    --border:rgba(245,242,236,0.09);
+    --display:'Archivo Expanded',sans-serif;
+    --mono:'IBM Plex Mono',monospace;
+    --sans:'Inter',sans-serif;
+  }
+  html{background:var(--black)}
+  body{font-family:var(--sans);color:var(--white);line-height:1.6;position:relative}
+  body::after{content:'';position:fixed;inset:0;z-index:-1;opacity:0.05;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+  .wrap{max-width:1240px;margin:0 auto;padding:80px 40px}
+
+  /* section header (the correct, aligned layout) */
+  .sec-head{display:flex;align-items:center;gap:18px;margin-bottom:8px}
+  .tri{width:0;height:0;border-left:18px solid var(--accent);border-bottom:18px solid transparent;flex-shrink:0}
+  .sec-num{font-family:var(--display);font-weight:800;font-size:clamp(32px,4.4vw,54px);color:var(--accent);line-height:1}
+  .sec-title{font-family:var(--display);font-weight:800;font-size:clamp(28px,4vw,52px);line-height:1.02;letter-spacing:-0.01em;text-transform:uppercase}
+  .sec-sub{font-family:var(--mono);font-size:12px;letter-spacing:0.18em;text-transform:uppercase;color:rgba(245,242,236,0.4);margin-bottom:4px}
+  .lead{font-size:17px;font-weight:300;color:rgba(245,242,236,0.7);max-width:720px;line-height:1.7;margin:22px 0 0}
+
+  /* threat cards — flat, hairline, restrained red signal */
+  .threat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:46px}
+  .threat-card{position:relative;border:1px solid var(--border);border-radius:8px;padding:28px 26px;background:rgba(255,255,255,0.014);transition:border-color .2s,box-shadow .2s,transform .2s}
+  .threat-card::before{content:'';position:absolute;left:0;top:22px;bottom:22px;width:2px;background:var(--risk);border-radius:2px;opacity:.85}
+  .threat-card:hover{border-color:rgba(var(--risk-rgb),0.4);box-shadow:0 10px 36px rgba(var(--risk-rgb),0.07);transform:translateY(-3px)}
+  .threat-card .idx{font-family:var(--mono);font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:var(--risk);margin-bottom:14px;display:block}
+  .threat-card h3{font-family:var(--sans);font-weight:600;font-size:18px;color:var(--white);margin-bottom:10px;line-height:1.25}
+  .threat-card p{font-size:14px;color:rgba(245,242,236,0.58);line-height:1.65}
+  @media(max-width:920px){.threat-grid{grid-template-columns:1fr 1fr}}
+  @media(max-width:600px){.threat-grid{grid-template-columns:1fr}}
+
+  /* closing pull-quote — replaces the cheap warning box */
+  .risk-quote{margin-top:30px;border-left:3px solid var(--risk);padding:6px 0 6px 34px;max-width:1000px}
+  .risk-quote .tag{font-family:var(--mono);font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:var(--risk);margin-bottom:16px;display:block}
+  .risk-quote p{font-size:clamp(19px,2.1vw,25px);font-weight:300;line-height:1.5;color:rgba(245,242,236,0.92);letter-spacing:-0.01em}
+  .risk-quote b{font-weight:500;color:var(--white)}
+  .risk-quote .em{color:var(--accent);font-weight:500}
+
+  .note{border:1px solid var(--border);border-radius:8px;padding:22px 26px;background:rgba(255,255,255,0.014);margin:50px 40px;max-width:1160px}
+  .note p{font-size:13px;color:rgba(245,242,236,0.5);line-height:1.7}
+  .note b{color:var(--white);font-weight:500}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <p class="sec-sub">Threat</p>
+  <div class="sec-head"><span class="tri"></span><span class="sec-num">03</span><h2 class="sec-title">The market risk if Bitcoin stays idle</h2></div>
+  <p class="lead">If Bitcoin's execution layer stays unsolved, the asset survives, but the risks compound, and the network around it captures the upside instead of Bitcoin holders.</p>
+
+  <div class="threat-grid">
+    <div class="threat-card">
+      <span class="idx">Risk 01</span>
+      <h3>Centralized wrappers dominate</h3>
+      <p>WBTC and its alternatives control most Bitcoin in DeFi. These rely on custodians, legal agreements and institutional trust, the exact model Bitcoin was built to replace.</p>
+    </div>
+    <div class="threat-card">
+      <span class="idx">Risk 02</span>
+      <h3>Trust assumptions everywhere</h3>
+      <p>Bridges introduce layers of custodial risk. Without a trustless settlement path, "Bitcoin DeFi" stays a marketing claim built on the same fragile rails as traditional finance.</p>
+    </div>
+    <div class="threat-card">
+      <span class="idx">Risk 03</span>
+      <h3>Fragmented liquidity</h3>
+      <p>Bitcoin's capital is scattered across dozens of chains with no unified DeFi layer. That adds friction and splits ecosystems that should compound on each other.</p>
+    </div>
+    <div class="threat-card">
+      <span class="idx">Risk 04</span>
+      <h3>The quantum clock is ticking</h3>
+      <p>Today's cryptographic assumptions may not hold, with researchers flagging risk as early as 2029. Bitcoin is slow to upgrade, exposed precisely where it reacts slowest.</p>
+    </div>
+    <div class="threat-card">
+      <span class="idx">Risk 05</span>
+      <h3>Full transparency is a liability</h3>
+      <p>Every balance, counterparty and transaction is permanently traceable. Once an address is linked to an identity, a full financial history follows, making real-world use, payroll and DeFi impossible to keep private.</p>
+    </div>
+  </div>
+
+  <div class="risk-quote">
+    <span class="tag">The deeper risk</span>
+    <p>Satoshi's vision never gets fulfilled. Bitcoin was never meant to be only digital gold, the whitepaper described a <span class="em">peer-to-peer electronic cash system</span>. The people who need that most, the unbanked and those in emerging economies, are exactly the ones most sensitive to fees, speed and friction. If Bitcoin's execution layer stays unsolved or gets captured by opaque intermediaries, <b>the asset survives, but its founding promise to billions of people quietly dies.</b></p>
+  </div>
+
+</div>
+
+<div class="note">
+  <p><b>Redesigned "Threat" section.</b> Flat hairline cards consistent with the rest of the site, red used only as a restrained signal (thin left bar + "Risk 0X" micro-label), white headings instead of the red-on-red look. The closing statement becomes a clean pull-quote with a red left rule, no warning-triangle alert box. The red is <code>#E0524A</code> (a muted, premium red). Tell me if you want the red toned down further, swapped for the page accent, or the cards in 2 columns instead of 3.</p>
+</div>
+</body>
+</html>

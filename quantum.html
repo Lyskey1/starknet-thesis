@@ -1,0 +1,1809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Is Starknet Quantum Resistant? The Quantum Thesis</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+  <link rel="canonical" href="https://starknetthesis.com/quantum.html">
+  <meta property="og:title" content="Is Starknet Quantum Resistant? The Quantum Thesis">
+  <meta property="og:description" content="Starknet's STARK proving system is post-quantum by design, with full end-to-end quantum resistance on a committed roadmap. The evidence and the timeline.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://starknetthesis.com/quantum.html">
+  <meta property="og:site_name" content="Starknet Thesis">
+  <meta property="og:image" content="https://starknetthesis.com/assets/og-default.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Is Starknet Quantum Resistant? The Quantum Thesis">
+  <meta name="twitter:description" content="Starknet's STARK proving system is post-quantum by design, with full end-to-end quantum resistance on a committed roadmap. The evidence and the timeline.">
+  <meta name="twitter:image" content="https://starknetthesis.com/assets/og-default.png">
+  <script type="application/ld+json">{"@context": "https://schema.org","@type": "Article","headline": "Is Starknet Quantum Resistant? The Quantum Thesis","description": "Starknet's STARK proving system is post-quantum by design, with full end-to-end quantum resistance on a committed roadmap. The evidence and the timeline.","datePublished": "2026-07-21","dateModified": "2026-07-21","author": {"@type": "Person","name": "Lyskey","url": "https://x.com/Lyskey"},"publisher": {"@type": "Organization","name": "Starknet Thesis","url": "https://starknetthesis.com/"},"mainEntityOfPage": "https://starknetthesis.com/quantum.html"}</script>
+<meta name="description" content="Starknet's STARK proving system is post-quantum by design, with full end-to-end quantum resistance on a committed roadmap. The evidence and the timeline.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Expanded:wght@500;600;700;800;900&family=IBM+Plex+Mono:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/dist/tabler-icons.min.css">
+<link rel="stylesheet" href="css/styles.css?v=20260618c">
+<style>
+  /* ============================================================ */
+  /* QUANTUM PAGE — page-specific components (purple-themed).      */
+  /* Inline so it never touches the shared stylesheet / other      */
+  /* pages. Shared nav, hero base, footer, news + tweet cards come */
+  /* from css/styles.css; the rules below override / extend them   */
+  /* to match the quantum mockup exactly.                          */
+  /* ============================================================ */
+  :root {
+    --blue: #378ADD;
+    --radius: 14px;
+  }
+  /* mockup used slightly brighter green/red for the fault-line + badges.
+     Quantum's accent is now electric blue: remap the page's old purple tokens
+     onto the shared --accent so every component (em, chart bars, badges,
+     roadmap, hovers, the news bar) renders in blue rather than purple.
+     NOTE: --border-p MUST live here on <body>, not in :root — declared in :root
+     its var(--accent-rgb) would substitute the default orange (the page accent is
+     only overridden on <body>), which left every --border-p border stuck orange. */
+  body { --green: #1FB68B; --red: #E5484D; --stark-purple: var(--accent); --stark-dim: rgba(var(--accent-rgb), 0.2); --border-p: rgba(var(--accent-rgb), 0.3); }
+
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 32px; }
+  em { font-style: normal; color: var(--stark-purple); }
+  .em-o { color: var(--orange); }
+
+  /* hero (override shared orange/100vh hero with the mockup's purple, compact hero) */
+  .hero {
+    min-height: auto; display: block; overflow: visible;
+    padding: 128px 32px 60px; max-width: 1100px; margin: 0 auto; text-align: center; position: relative;
+  }
+  .hero::before {
+    top: -40px; width: 760px; height: 420px; max-width: 100%;
+    background: radial-gradient(ellipse at center top, rgba(var(--accent-rgb),0.16), transparent 70%);
+  }
+  .hero-eyebrow { color: var(--stark-purple); opacity: 1; margin-bottom: 24px; position: relative; }
+  .hero-title { font-size: clamp(40px,6.5vw,76px); line-height: 1.0; margin-bottom: 26px; max-width: none; position: relative; }
+  .hero-title em { color: var(--stark-purple); }
+  .hero-subtitle { font-size: 18px; color: rgba(245,242,236,0.62); max-width: 620px; margin: 0 auto 8px; line-height: 1.7; position: relative; }
+
+  /* countdown */
+  .countdown { margin: 54px auto 0; max-width: 740px; border: 1px solid var(--border-p); border-radius: 18px; background: linear-gradient(180deg,rgba(var(--accent-rgb),0.06),rgba(var(--accent-rgb),0.01)); padding: 32px 32px 42px; position: relative; }
+  .countdown-label { font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(245,242,236,0.5); margin-bottom: 18px; }
+  .countdown-label b { color: var(--stark-purple); font-weight: 400; }
+  .cd-grid { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; }
+  .cd-unit { min-width: 92px; }
+  .cd-num { font-family: var(--display); font-weight: 800; font-size: clamp(34px,5vw,52px); line-height: 1; color: var(--white); font-variant-numeric: tabular-nums; }
+  .cd-unit .lab { font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(245,242,236,0.4); margin-top: 8px; }
+  .cd-sep { font-family: var(--display); font-weight: 800; font-size: clamp(28px,4vw,44px); color: rgba(var(--accent-rgb),0.4); align-self: flex-start; line-height: 1.2; }
+  .countdown-foot { font-size: 13px; color: rgba(245,242,236,0.45); margin: 34px auto 0; line-height: 1.6; max-width: 62ch; text-align: center; }
+
+  /* sections — full width with inner .wrap (override shared centered/maxwidth section) */
+  section { padding: 80px 0; max-width: none; margin: 0; border-top: 1px solid var(--border); }
+  .marker { font-family: var(--mono); font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(var(--accent-rgb),0.7); margin-bottom: 18px; }
+  .marker.o { color: rgba(var(--accent-rgb),0.7); }
+  .marker.r { color: rgba(229,72,77,0.7); }
+  .marker.g { color: rgba(31,182,139,0.8); }
+  .sec-title { font-family: var(--display); font-weight: 800; font-size: clamp(26px,3.6vw,46px); line-height: 1.02; letter-spacing: -0.01em; text-transform: uppercase; margin-bottom: 0; }
+
+  /* turkey intro callout */
+  .callout { border-left: 2px solid var(--stark-purple); padding: 6px 0 6px 24px; margin: 34px 0; font-size: 17px; font-weight: 300; color: rgba(245,242,236,0.75); line-height: 1.7; max-width: 760px; }
+  .callout b { color: var(--white); font-weight: 500; }
+
+  /* 2026 events timeline */
+  .events { display: grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap: 12px; margin-top: 36px; }
+  .ev { border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; background: rgba(255,255,255,0.014); transition: border-color .2s, transform .2s; }
+  .ev:hover { border-color: var(--border-p); transform: translateY(-3px); }
+  .ev .d { font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em; color: var(--stark-purple); margin-bottom: 8px; }
+  .ev .t { font-family: var(--display); font-weight: 600; font-size: 16px; margin-bottom: 6px; }
+  .ev .x { font-size: 13px; color: rgba(245,242,236,0.5); line-height: 1.55; }
+  .ev .big { font-family: var(--display); font-weight: 800; font-size: 24px; color: var(--orange); }
+
+  /* big stat */
+  .bigstat { display: flex; align-items: center; gap: 34px; margin: 40px 0; padding: 34px; border: 1px solid rgba(var(--accent-rgb),0.2); border-radius: 18px; background: linear-gradient(135deg,rgba(var(--accent-rgb),0.05),transparent); flex-wrap: wrap; }
+  .bigstat .n { font-family: var(--display); font-weight: 800; font-size: clamp(56px,9vw,104px); line-height: 0.9; color: var(--stark-purple); letter-spacing: -0.03em; }
+  .bigstat .x { flex: 1; min-width: 260px; font-size: 16px; color: rgba(245,242,236,0.7); line-height: 1.7; }
+  .bigstat .x b { color: var(--white); font-weight: 600; }
+
+  /* resource collapse chart */
+  .chart-card { margin-top: 36px; border: 1px solid var(--border); border-radius: 18px; padding: 28px; background: rgba(255,255,255,0.012); }
+  .chart-head { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 12px; margin-bottom: 8px; }
+  .chart-head .t { font-family: var(--display); font-weight: 700; font-size: 20px; }
+  .chart-head .s { font-family: var(--mono); font-size: 11px; color: rgba(245,242,236,0.4); letter-spacing: 0.06em; }
+  .chartbars { display: flex; align-items: flex-end; gap: 24px; height: 280px; padding: 20px 8px 0; position: relative; }
+  .bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; cursor: pointer; }
+  .bar { width: 100%; max-width: 120px; border-radius: 8px 8px 0 0; background: linear-gradient(180deg,var(--stark-purple),rgba(var(--accent-rgb),0.2)); transition: filter .2s, transform .2s; position: relative; display: flex; align-items: flex-start; justify-content: center; }
+  .bar-col:hover .bar { filter: brightness(1.25); }
+  a.bar-col { text-decoration: none; color: inherit; }
+  a.bar-col:hover .yr, a.bar-col:hover .lb { color: rgba(245,242,236,0.7); }
+  .bar .v { font-family: var(--display); font-weight: 700; font-size: 14px; color: var(--white); margin-top: -26px; white-space: nowrap; }
+  .bar-col .yr { font-family: var(--mono); font-size: 12px; color: rgba(245,242,236,0.5); margin-top: 12px; }
+  .bar-col .lb { font-size: 12px; color: rgba(245,242,236,0.4); text-align: center; margin-top: 4px; line-height: 1.4; max-width: 130px; }
+  .bar.red { background: linear-gradient(180deg,var(--red),rgba(229,72,77,0.2)); }
+  .bar.orange { background: linear-gradient(180deg,var(--accent-dim),rgba(var(--accent-rgb),0.2)); }
+  .chart-note { font-size: 13px; color: rgba(245,242,236,0.45); margin-top: 18px; text-align: center; }
+
+  /* fault line */
+  .fault { display: grid; grid-template-columns: 1fr auto 1fr; gap: 0; margin-top: 36px; align-items: stretch; }
+  .fcol { padding: 28px; border-radius: 18px; }
+  .fcol.vuln { border: 1px solid rgba(229,72,77,0.25); background: linear-gradient(135deg,rgba(229,72,77,0.05),transparent); }
+  .fcol.safe { border: 1px solid rgba(31,182,139,0.3); background: linear-gradient(135deg,rgba(31,182,139,0.06),transparent); }
+  .fcol h4 { font-family: var(--display); font-weight: 700; font-size: 18px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
+  .fcol.vuln h4 { color: var(--red); } .fcol.safe h4 { color: var(--green); }
+  .fcol .sub { font-size: 12px; color: rgba(245,242,236,0.4); margin-bottom: 18px; font-family: var(--mono); }
+  .fcol ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .fcol li { font-size: 14px; color: rgba(245,242,236,0.7); display: flex; align-items: center; gap: 10px; }
+  .fcol li i { font-size: 15px; }
+  .fcol.vuln li i { color: var(--red); } .fcol.safe li i { color: var(--green); }
+  .fault-mid { display: flex; align-items: center; justify-content: center; padding: 0 16px; }
+  .fault-line { width: 2px; height: 100%; background: linear-gradient(180deg,transparent,var(--stark-purple),transparent); position: relative; }
+  @media(max-width:760px){ .fault{grid-template-columns:1fr} .fault-mid{display:none} .fcol{margin-bottom:12px} }
+
+  /* migration visual */
+  .mig { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 36px; }
+  .mig-card { border-radius: 18px; padding: 28px; }
+  .mig-card.bad { border: 1px solid rgba(229,72,77,0.22); background: linear-gradient(135deg,rgba(229,72,77,0.04),transparent); }
+  .mig-card.good { border: 1px solid rgba(31,182,139,0.3); background: linear-gradient(135deg,rgba(31,182,139,0.06),transparent); }
+  .mig-card .who { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px; }
+  .mig-card.bad .who { color: var(--red); } .mig-card.good .who { color: var(--green); }
+  .mig-card h4 { font-family: var(--display); font-weight: 700; font-size: 22px; margin-bottom: 10px; line-height: 1.15; }
+  .mig-card p { font-size: 14px; color: rgba(245,242,236,0.6); line-height: 1.65; }
+  @media(max-width:680px){ .mig{grid-template-columns:1fr} }
+
+  /* landscape */
+  .land { margin-top: 36px; display: flex; flex-direction: column; gap: 14px; }
+  .land-group { border: 1px solid var(--border); border-radius: 18px; padding: 24px; background: rgba(255,255,255,0.012); }
+  .land-group.hl { border-color: var(--border-p); background: linear-gradient(135deg,rgba(var(--accent-rgb),0.06),transparent); }
+  .land-group .gt { font-family: var(--display); font-weight: 700; font-size: 18px; margin-bottom: 4px; }
+  .land-group .gs { font-size: 13px; color: rgba(245,242,236,0.45); margin-bottom: 14px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { font-family: var(--mono); font-size: 12px; padding: 6px 12px; border-radius: 8px; background: rgba(245,242,236,0.04); border: 1px solid var(--border); color: rgba(245,242,236,0.6); }
+  .land-group.hl .gt { color: var(--stark-purple); }
+
+  /* videos */
+  .videos { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 36px; }
+  .vid { border: 1px dashed var(--border-p); border-radius: 18px; aspect-ratio: 16/9; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; background: rgba(var(--accent-rgb),0.03); color: rgba(245,242,236,0.45); text-align: center; padding: 20px; overflow: hidden; }
+  .vid i { font-size: 38px; color: var(--stark-purple); }
+  .vid .t { font-family: var(--display); font-weight: 600; font-size: 15px; color: var(--white); }
+  .vid .s { font-size: 12px; font-family: var(--mono); }
+  .vid.embedded { display: block; padding: 0; border-style: solid; background: #000; }
+  .vid.embedded iframe { width: 100%; height: 100%; border: 0; display: block; }
+  .vid.tweet { aspect-ratio: auto; display: block; padding: 0; border-style: solid; background: rgba(255,255,255,0.012); }
+  .vid.tweet .twitter-tweet { margin: 0 auto !important; }
+  .vid.tweet .news-loading { min-height: 200px; }
+  @media(max-width:680px){ .videos{grid-template-columns:1fr} }
+
+  /* conclusion */
+  .concl { text-align: center; padding: 90px 0; border-top: 1px solid var(--border); }
+  .concl h2 { font-family: var(--display); font-weight: 800; font-size: clamp(30px,5vw,56px); line-height: 1.05; letter-spacing: -0.02em; max-width: 880px; margin: 0 auto 22px; }
+  .concl p { font-size: 17px; color: rgba(245,242,236,0.6); max-width: 620px; margin: 0 auto; line-height: 1.7; }
+
+  .note { border: 1px solid var(--border); border-radius: var(--radius); padding: 20px 24px; background: rgba(255,255,255,0.014); margin: 50px 0; }
+  .note p { font-size: 13px; color: rgba(245,242,236,0.5); line-height: 1.7; }
+  .note b { color: var(--white); font-weight: 500; }
+
+  /* ===== News editor (admin UI) — ported from btcfi.html ===== */
+  .news-admin-bar { display: flex; justify-content: flex-end; margin-bottom: 12px; }
+  .news-edit-btn {
+    display: inline-flex; align-items: center; gap: 7px;
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: rgba(245,242,236,0.5);
+    background: transparent; border: 1px solid var(--border); border-radius: 40px;
+    padding: 7px 14px; cursor: pointer; transition: color 0.2s, border-color 0.2s, background 0.2s;
+  }
+  .news-edit-btn:hover { color: var(--white); border-color: var(--border-orange); background: rgba(var(--accent-rgb),0.04); }
+  .news-edit-btn.active { color: var(--orange); border-color: var(--border-orange); background: rgba(var(--accent-rgb),0.06); }
+  .news-edit-btn i { font-size: 14px; }
+
+  .news-editor { border: 1px solid var(--border-orange); border-radius: 12px; background: rgba(var(--accent-rgb),0.03); padding: 24px; margin-top: 16px; }
+  .ne-toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 20px; padding-bottom: 18px; border-bottom: 1px solid var(--border); }
+  .ne-toolbar .ne-spacer { flex: 1; }
+  .ne-btn {
+    font-family: var(--mono); font-size: 12px; letter-spacing: 0.04em;
+    padding: 9px 16px; border-radius: 6px; cursor: pointer; border: 1px solid var(--border);
+    background: rgba(245,242,236,0.04); color: var(--white); transition: all 0.18s;
+    display: inline-flex; align-items: center; gap: 7px;
+  }
+  .ne-btn:hover { border-color: var(--border-orange); background: rgba(var(--accent-rgb),0.06); }
+  .ne-btn.primary { background: var(--orange); color: #0A0A0A; border-color: var(--orange); font-weight: 600; }
+  .ne-btn.primary:hover { opacity: 0.88; background: var(--orange); }
+  .ne-btn.danger:hover { border-color: rgba(229,62,62,0.5); background: rgba(229,62,62,0.08); color: #FC8181; }
+  .ne-btn i { font-size: 15px; }
+  .ne-count { font-family: var(--mono); font-size: 11px; color: rgba(245,242,236,0.4); }
+
+  .ne-cards { display: flex; flex-direction: column; gap: 14px; }
+  .ne-card { border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; background: rgba(10,10,10,0.5); position: relative; }
+  .ne-card-top { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .ne-badge { font-family: var(--mono); font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; padding: 3px 9px; border-radius: 40px; border: 1px solid var(--border); color: rgba(245,242,236,0.45); }
+  .ne-badge.default { color: var(--orange); border-color: rgba(var(--accent-rgb),0.3); }
+  .ne-badge.custom { color: var(--accent); border-color: rgba(var(--accent-rgb),0.35); }
+  .ne-card-title { font-family: var(--display); font-weight: 600; font-size: 14px; color: var(--white); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .ne-del { margin-left: auto; }
+
+  .ne-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .ne-field { display: flex; flex-direction: column; gap: 5px; }
+  .ne-field.full { grid-column: 1 / -1; }
+  .ne-field label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(245,242,236,0.4); }
+  .ne-field input[type=text], .ne-field input[type=url], .ne-field textarea {
+    font-family: var(--sans); font-size: 13px; color: var(--white);
+    background: rgba(10,10,10,0.8); border: 1px solid var(--border); border-radius: 6px; padding: 9px 11px;
+    width: 100%; transition: border-color 0.18s;
+  }
+  .ne-field input:focus, .ne-field textarea:focus { outline: none; border-color: var(--border-orange); }
+  .ne-field textarea { resize: vertical; min-height: 58px; line-height: 1.5; }
+  .ne-field input::placeholder, .ne-field textarea::placeholder { color: rgba(245,242,236,0.25); }
+
+  .ne-modal-backdrop { position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; padding: 24px; }
+  .ne-modal { width: 100%; max-width: 720px; max-height: 86vh; overflow: auto; background: #0D0D0D; border: 1px solid var(--border-orange); border-radius: 12px; padding: 28px; }
+  .ne-modal h3 { font-family: var(--display); font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+  .ne-modal p { font-size: 13px; color: rgba(245,242,236,0.5); margin-bottom: 18px; line-height: 1.6; }
+  .ne-modal-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--orange); margin: 18px 0 8px; }
+  .ne-modal textarea { width: 100%; min-height: 150px; font-family: var(--mono); font-size: 12px; line-height: 1.5; color: var(--white); background: rgba(10,10,10,0.8); border: 1px solid var(--border); border-radius: 6px; padding: 12px; resize: vertical; }
+  .ne-modal textarea:focus { outline: none; border-color: var(--border-orange); }
+  .ne-modal-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
+  .ne-msg { font-family: var(--mono); font-size: 11px; margin-top: 10px; min-height: 14px; }
+  .ne-msg.ok { color: #68D391; }
+  .ne-msg.err { color: #FC8181; }
+  .ne-req { color: var(--orange); font-family: var(--mono); font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; margin-left: 6px; }
+  .ne-hint { font-size: 12px; color: rgba(245,242,236,0.4); margin-top: 6px; line-height: 1.5; }
+  @media (max-width: 768px) { .ne-grid { grid-template-columns: 1fr; } }
+
+  /* ===== News embeds (real X/Twitter widgets + fallback) — ported from btcfi.html ===== */
+  .news-cell { min-width: 0; align-self: start; }
+  .news-head { margin-bottom: 12px; }
+  .news-head-title { font-family: var(--display); font-weight: 700; font-size: 17px; line-height: 1.3; letter-spacing: -0.01em; color: var(--white); }
+  .news-head-date { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(245,242,236,0.4); margin-top: 4px; }
+  .news-cell .twitter-tweet { margin: 0 !important; width: 100% !important; }
+  .news-cell .twitter-tweet-rendered { display: block; }
+  .news-cell iframe { border-radius: 12px !important; }
+  .news-loading { display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 140px; border: 1px solid var(--border); border-radius: 12px; background: rgba(255,255,255,0.012); font-family: var(--mono); font-size: 12px; letter-spacing: 0.04em; color: rgba(245,242,236,0.4); }
+  .news-spinner { width: 15px; height: 15px; border-radius: 50%; border: 2px solid rgba(var(--accent-rgb),0.25); border-top-color: var(--orange); animation: newsSpin 0.8s linear infinite; flex-shrink: 0; }
+  @keyframes newsSpin { to { transform: rotate(360deg); } }
+</style>
+<style>
+.th-cd{--q:#3DA9FC;--ink:#F5F2EC;--muted:#8b909c;--hair:rgba(245,242,236,.08);max-width:1000px;margin:0 auto;}
+.th-cd-eyebrow{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:30px;}
+.th-cd-eyebrow .lbl{font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);}
+.th-cd-row{display:flex;align-items:flex-end;justify-content:center;gap:8px;}
+.th-cd-unit{text-align:center;min-width:150px;}
+.th-cd-num{position:relative;display:inline-block;font-family:'Archivo Expanded','Archivo',sans-serif;font-weight:900;font-size:82px;line-height:1;color:var(--ink);letter-spacing:-.03em;font-variant-numeric:tabular-nums;padding-bottom:14px;}
+.th-cd-num::after{content:"";position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:54px;height:3px;border-radius:3px;background:var(--q);box-shadow:0 0 16px var(--q);opacity:.8;}
+.th-cd-lbl{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);margin-top:18px;}
+.th-cd-track{max-width:510px;margin:36px auto 0;height:1px;background:var(--hair);position:relative;}
+.th-cd-track .fill{position:absolute;left:0;top:0;height:100%;background:linear-gradient(90deg,transparent,var(--q));opacity:.6;width:0;}
+.th-cd-track .mk{position:absolute;top:50%;left:0;transform:translate(-50%,-50%);width:9px;height:9px;border-radius:50%;background:var(--q);box-shadow:0 0 12px var(--q);}
+.th-cd-ends{max-width:510px;margin:12px auto 0;display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;color:var(--muted);}
+@media(max-width:760px){.th-cd-row{flex-wrap:wrap}.th-cd-num{font-size:56px}}
+</style>
+</head>
+<body class="page-quantum">
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo" style="display:inline-flex;align-items:center;gap:11px"><svg width="22" height="22" viewBox="0 0 26 26" fill="none" aria-hidden="true"><path d="M4 7 H22" stroke="#8b7bff" stroke-width="2.6" stroke-linecap="round"/><path d="M4 13 H17" stroke="#8b7bff" stroke-opacity="0.55" stroke-width="2.6" stroke-linecap="round"/><path d="M4 19 H12" stroke="#8b7bff" stroke-opacity="0.3" stroke-width="2.6" stroke-linecap="round"/></svg><span>Starknet <b>Thesis</b></span></a>
+  <div class="nav-links"><a href="privacy.html">Privacy</a><a href="quantum.html" class="active">Quantum</a><a href="btcfi.html">BTCFi</a><a href="strk.html">STRK</a><a href="ecosystem.html">Ecosystem</a><a href="digest.html">Digest</a></div>
+  <a href="index.html" class="btn nav-cta">Read the thesis <i class="ti ti-arrow-right"></i></a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <p class="hero-eyebrow">The quantum reckoning</p>
+  <h1 class="hero-title">Quantum will break most chains. Starknet has been <em>waiting for it.</em></h1>
+  <p class="hero-subtitle">Governments, Big Tech, and researchers are increasingly converging on the same timeline for when quantum breaks today's cryptography. When it arrives, nearly every onchain wallet is exposed. For most of crypto, this is a threat. For Starknet, it highlights the strength of its architecture.</p>
+
+  <!-- COUNTDOWN -->
+  <div class="countdown">
+    <div class="th-cd">
+      <div class="th-cd-eyebrow">
+        <span class="lbl">The industry's converging deadline</span>
+      </div>
+      <div class="th-cd-row">
+        <div class="th-cd-unit"><span class="th-cd-num" id="cd-days">919</span><div class="th-cd-lbl">Days</div></div>
+        <div class="th-cd-unit"><span class="th-cd-num" id="cd-hours">10</span><div class="th-cd-lbl">Hours</div></div>
+        <div class="th-cd-unit"><span class="th-cd-num" id="cd-mins">45</span><div class="th-cd-lbl">Minutes</div></div>
+        <div class="th-cd-unit"><span class="th-cd-num" id="cd-secs">38</span><div class="th-cd-lbl">Seconds</div></div>
+      </div>
+      <div class="th-cd-track"><div class="fill" id="cd-fill"></div><div class="mk" id="cd-mark"></div></div>
+      <div class="th-cd-ends"><span>TODAY</span><span>2029</span></div>
+    </div>
+    <p class="countdown-foot">Microsoft, Google, and IBM have converged, independently, within days of each other, on 2029. The "when" is arriving faster than crypto has priced in, and it could arrive even sooner than that.</p>
+  </div>
+</div>
+
+<!-- TH-PM: shared premium design system (installed once) -->
+<style>
+.th-pm-sec{--th-q:#3DA9FC;--th-ink:#F5F2EC;--th-muted:#8b909c;--th-hair:rgba(245,242,236,.08);--th-hair-soft:rgba(245,242,236,.05);position:relative;max-width:1160px;margin:0 auto;padding:90px 32px 0;overflow:visible;}
+.th-pm-sec *{box-sizing:border-box;}
+.th-pm-sec::before{content:"";position:absolute;top:40px;left:6px;width:520px;height:520px;background:radial-gradient(circle,var(--th-q) 0%,transparent 60%);opacity:.07;filter:blur(8px);pointer-events:none;z-index:0;}
+.th-pm-sec>*{position:relative;z-index:1;}
+.th-pm-div{max-width:1160px;margin:0 auto;height:1px;background:var(--th-hair-soft);}
+.th-pm-head{display:flex;align-items:center;gap:18px;}
+.th-pm-marker{width:0;height:0;border-left:13px solid var(--th-q);border-top:8px solid transparent;border-bottom:8px solid transparent;transform:translateY(2px);filter:drop-shadow(0 0 8px rgba(61,169,252,.6));}
+.th-pm-num{font-family:'Archivo Expanded','Archivo',sans-serif;font-weight:900;font-size:64px;line-height:1;color:var(--th-q);letter-spacing:-.02em;}
+.th-pm-title{font-family:'Archivo Expanded','Archivo',sans-serif;font-weight:800;font-size:52px;line-height:1.02;letter-spacing:-.015em;color:var(--th-ink);max-width:none;}
+.th-pm-title b{color:var(--th-q);font-weight:800;}
+.th-pm-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:var(--th-q);margin-top:16px;opacity:.85;}
+.th-pm-intro{font-size:17px;line-height:1.6;color:var(--th-muted);max-width:62ch;margin-top:34px;}
+.th-pm-intro b{color:var(--th-ink);font-weight:600;}
+.th-pm-intro a,.th-pm-side .note a{color:inherit;text-decoration:underline;text-underline-offset:2px;text-decoration-thickness:1px;transition:color .2s;}
+.th-pm-intro a:hover,.th-pm-side .note a:hover{color:var(--th-q);}
+.th-pm-pull{position:relative;margin-top:40px;padding:26px 30px;border-radius:14px;background:linear-gradient(180deg,rgba(61,169,252,.05),rgba(255,255,255,.012));border:1px solid var(--th-hair);overflow:hidden;}
+.th-pm-pull::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--th-q);box-shadow:0 0 18px var(--th-q);}
+.th-pm-pull p{font-size:18px;line-height:1.55;color:var(--th-ink);opacity:.92;max-width:74ch;}
+.th-pm-pull b{color:var(--th-q);font-weight:600;}
+/* section 02 chapter headings: btcfi scale-heading pattern (scale-label/title/intro from shared css), blue accent */
+.th-q-chapter{margin-top:64px;padding-top:8px;}
+.th-pm-sec .scale-title span{color:var(--th-q);}
+/* free-flowing body text, same size/measure as btcfi .scale-intro */
+.th-q-flow{font-size:15px;line-height:1.7;color:rgba(245,242,236,.6);max-width:720px;margin-top:32px;}
+.th-q-flow b{color:var(--th-ink);font-weight:600;}
+.th-q-flow b.acc{color:var(--th-q);}
+.th-q-flow a{color:inherit;text-decoration:underline;text-underline-offset:2px;text-decoration-thickness:1px;transition:color .2s;}
+.th-q-flow a:hover{color:var(--th-q);}
+.th-eo-panels{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:26px;}
+.th-eo-panel{position:relative;overflow:hidden;display:flex;flex-direction:column;gap:10px;padding:22px 22px 24px;border-radius:12px;border:1px solid var(--th-hair);background:linear-gradient(180deg,rgba(255,255,255,.022),rgba(255,255,255,.006));transition:transform .28s cubic-bezier(.2,.7,.2,1),border-color .28s,box-shadow .28s;cursor:pointer;text-decoration:none;color:inherit;}
+.th-eo-panel::before{content:"";position:absolute;top:-40%;right:-30%;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,var(--th-q) 0%,transparent 65%);opacity:.06;transition:opacity .28s;pointer-events:none;}
+.th-eo-panel:hover{transform:translateY(-5px);border-color:color-mix(in srgb,var(--th-q) 50%,transparent);box-shadow:0 26px 60px -30px var(--th-q),inset 0 0 0 1px color-mix(in srgb,var(--th-q) 18%,transparent);}
+.th-eo-panel:hover::before{opacity:.15;}
+.th-eo-label{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--th-q);}
+.th-eo-panel h4{font-family:'Archivo Expanded','Archivo',sans-serif;font-weight:700;font-size:18px;line-height:1.25;color:var(--th-ink);margin:0;transition:color .2s;}
+.th-eo-panel:hover h4{color:var(--th-q);}
+@media(max-width:880px){.th-eo-panels{grid-template-columns:1fr;}}
+.th-yr-panels{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:26px;}
+.th-yr-panel{position:relative;overflow:hidden;display:flex;flex-direction:column;padding:22px 22px 24px;border-radius:12px;border:1px solid var(--th-hair);background:linear-gradient(180deg,rgba(255,255,255,.022),rgba(255,255,255,.006));transition:transform .28s cubic-bezier(.2,.7,.2,1),border-color .28s,box-shadow .28s;cursor:pointer;text-decoration:none;color:inherit;}
+.th-yr-panel::before{content:"";position:absolute;top:-40%;right:-30%;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,var(--th-q) 0%,transparent 65%);opacity:.06;transition:opacity .28s;pointer-events:none;}
+.th-yr-panel:hover{transform:translateY(-5px);border-color:color-mix(in srgb,var(--th-q) 50%,transparent);box-shadow:0 26px 60px -30px var(--th-q),inset 0 0 0 1px color-mix(in srgb,var(--th-q) 18%,transparent);}
+.th-yr-panel:hover::before{opacity:.15;}
+.th-yr-name{font-family:'Inter',sans-serif;font-size:15px;font-weight:600;color:var(--th-ink);}
+.th-yr-stat{font-family:'Archivo Expanded','Archivo',sans-serif;font-weight:900;font-size:44px;line-height:1;color:var(--th-q);letter-spacing:-.02em;margin-top:12px;}
+.th-yr-panel p{font-size:13.5px;line-height:1.55;color:var(--th-muted);margin-top:14px;}
+@media(max-width:880px){.th-yr-panels{grid-template-columns:1fr;}}
+.th-pm-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:40px;}
+.th-pm-card{position:relative;overflow:hidden;display:flex;flex-direction:column;padding:24px 24px 26px;border-radius:14px;border:1px solid var(--th-hair);background:linear-gradient(180deg,rgba(255,255,255,.022),rgba(255,255,255,.006));transition:transform .28s cubic-bezier(.2,.7,.2,1),border-color .28s,box-shadow .28s;cursor:pointer;text-decoration:none;color:inherit;}
+.th-pm-card::before{content:"";position:absolute;top:-40%;right:-30%;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,var(--th-q) 0%,transparent 65%);opacity:.06;transition:opacity .28s;pointer-events:none;}
+.th-pm-card .th-pm-date{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.08em;color:var(--th-q);}
+.th-pm-card h3{font-size:16px;font-weight:600;color:var(--th-ink);margin-top:12px;}
+.th-pm-card h3{transition:color .2s;}
+.th-pm-card:hover h3{color:var(--th-q);}
+.th-pm-card .th-pm-stat{font-family:'Archivo Expanded','Archivo',sans-serif;font-weight:900;font-size:34px;line-height:1;color:var(--th-q);margin-top:16px;letter-spacing:-.02em;}
+.th-pm-card p{font-size:13.5px;line-height:1.55;color:var(--th-muted);margin-top:14px;}
+.th-pm-card:hover{transform:translateY(-5px);border-color:color-mix(in srgb,var(--th-q) 50%,transparent);box-shadow:0 26px 60px -30px var(--th-q),inset 0 0 0 1px color-mix(in srgb,var(--th-q) 18%,transparent);}
+.th-pm-card:hover::before{opacity:.15;}
+@media(max-width:880px){.th-pm-grid{grid-template-columns:1fr;}.th-pm-title{font-size:38px;}.th-pm-num{font-size:48px;}}
+
+/* === premium sub-patterns (step 2): compare / stathero / note / feature / video / close === */
+.th-pm-sec{--th-red:#F2787A;--th-green:#36C692;}
+.th-pm-compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:40px;}
+.th-pm-side{position:relative;border-radius:14px;padding:26px 28px;border:1px solid color-mix(in srgb,var(--c) 26%,transparent);background:linear-gradient(180deg,color-mix(in srgb,var(--c) 6%,transparent),rgba(255,255,255,.006));}
+.th-pm-side h4{font-size:15px;font-weight:700;color:var(--c);letter-spacing:.02em;text-transform:uppercase;font-family:'IBM Plex Mono',monospace;}
+.th-pm-side ul{list-style:none;margin-top:16px;display:flex;flex-direction:column;gap:11px;}
+.th-pm-side li{font-size:14px;color:var(--th-ink);opacity:.9;padding-left:24px;position:relative;}
+.th-pm-side li::before{content:"";position:absolute;left:2px;top:7px;width:8px;height:8px;border-radius:50%;background:var(--c);}
+.th-pm-side .note{margin-top:16px;font-size:13.5px;line-height:1.55;color:var(--c);opacity:.92;}
+.th-pm-side>p{font-size:14px;line-height:1.6;color:var(--th-ink);opacity:.9;margin-top:14px;}
+.th-pm-side>p b{color:var(--c);font-weight:700;}
+.th-pm-stathero{display:flex;align-items:center;gap:36px;margin-top:40px;padding:30px 32px;border-radius:14px;border:1px solid var(--th-hair);background:linear-gradient(180deg,rgba(61,169,252,.05),rgba(255,255,255,.008));flex-wrap:wrap;}
+.th-pm-stathero .big{font-family:'Archivo Expanded','Archivo',sans-serif;font-weight:900;font-size:84px;line-height:.9;color:var(--th-q);letter-spacing:-.03em;}
+.th-pm-stathero p{font-size:16px;line-height:1.55;color:var(--th-muted);max-width:48ch;}
+.th-pm-stathero b{color:var(--th-ink);font-weight:600;}
+.th-pm-note{margin-top:34px;padding:22px 26px;border-radius:14px;border:1px solid var(--th-hair);background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.006));}
+.th-pm-note p{font-size:15px;line-height:1.6;color:var(--th-muted);}
+.th-pm-note b{color:var(--th-ink);font-weight:600;}
+.th-pm-note>.chart-card{margin:0;border:0;background:transparent;padding:0;}
+.th-pm-video{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:40px;}
+.th-pm-vcard{border-radius:14px;overflow:hidden;border:1px solid var(--th-hair);background:#0b0d13;}
+.th-pm-vcard .frame{position:relative;aspect-ratio:16/9;background:#0a0c12;}
+.th-pm-vcard iframe{position:absolute;inset:0;width:100%;height:100%;border:0;}
+.th-pm-vcard .meta{padding:14px 18px;}
+.th-pm-vcard h4{font-size:15px;font-weight:600;color:var(--th-ink);}
+/* Eli videos: real HTML5 players + inline source editor (blue accent) */
+.th-pm-vcard .frame video{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000;object-fit:contain;display:block;}
+.th-pm-vcard .frame video[hidden]{display:none;}
+.qv-ph{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--th-muted);font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;pointer-events:none;}
+.qv-ph[hidden]{display:none;}
+.qv-ph i{font-size:26px;color:color-mix(in srgb,var(--th-q) 55%,transparent);}
+.th-pm-vid-admin{display:flex;justify-content:flex-end;margin-top:18px;margin-bottom:-22px;}
+.qv-editor{border-top:1px solid var(--th-hair);padding:14px 18px 16px;display:flex;flex-direction:column;gap:11px;}
+.qv-editor[hidden]{display:none;}
+.qv-fld label{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--th-muted);display:block;margin-bottom:5px;}
+.qv-fld input[type=text]{width:100%;background:rgba(10,10,10,.8);border:1px solid var(--th-hair);border-radius:6px;padding:9px 11px;color:var(--th-ink);font-size:13px;font-family:inherit;}
+.qv-fld input[type=text]:focus{outline:none;border-color:color-mix(in srgb,var(--th-q) 55%,transparent);}
+.qv-file input[type=file]{font-size:12px;color:var(--th-muted);max-width:100%;}
+.qv-note{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--th-q);line-height:1.5;margin-top:6px;}
+.qv-actions{display:flex;gap:8px;margin-top:2px;}
+.qv-btn{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.06em;padding:8px 14px;border-radius:6px;border:1px solid var(--th-hair);background:rgba(255,255,255,.02);color:var(--th-ink);cursor:pointer;transition:border-color .2s,background .2s;}
+.qv-btn:hover{border-color:color-mix(in srgb,var(--th-q) 50%,transparent);background:color-mix(in srgb,var(--th-q) 7%,transparent);}
+.qv-btn.primary{background:var(--th-q);border-color:var(--th-q);color:#06121f;font-weight:600;}
+.th-pm-close{--th-q:#3DA9FC;--th-ink:#F5F2EC;--th-muted:#8b909c;max-width:1000px;margin:0 auto;padding:110px 32px 0;text-align:center;}
+.th-pm-close h2{font-family:'Archivo Expanded','Archivo',sans-serif;font-weight:800;font-size:48px;line-height:1.06;letter-spacing:-.015em;color:var(--th-ink);}
+.th-pm-close h2 b{color:var(--th-q);font-weight:800;}
+.th-pm-close p{font-size:17px;line-height:1.6;color:var(--th-muted);max-width:60ch;margin:24px auto 0;}
+.th-pm-close p b{color:var(--th-q);font-weight:600;}
+@media(max-width:880px){.th-pm-compare,.th-pm-video{grid-template-columns:1fr;}.th-pm-stathero .big{font-size:60px;}.th-pm-close h2{font-size:34px;}}
+</style>
+
+<!-- 01 CATALYST -->
+<div class="th-pm-div"></div>
+<section class="th-pm-sec">
+  <div class="th-pm-head th-pm-reveal"><span class="th-pm-marker"></span><span class="th-pm-num">01</span><h2 class="th-pm-title">Nation-states became quantum <b>investors.</b></h2></div>
+  <p class="th-pm-eyebrow th-pm-reveal">The catalyst</p>
+
+  <!-- chapter 1: the money -->
+  <div class="th-q-chapter th-pm-reveal">
+    <h3 class="scale-title">States started taking <span>equity.</span></h3>
+    <p class="scale-intro">For decades, government support for quantum computing meant research grants and patient science. In the span of a few weeks in spring 2026, that posture changed in nature.</p>
+  </div>
+
+  <div class="th-pm-grid">
+    <a class="th-pm-card th-pm-reveal" href="https://www.govconwire.com/articles/ionq-skywater-technology-quantum-tech" target="_blank" rel="noopener noreferrer"><span class="th-pm-date">January 26, 2026</span><h3>IonQ buys its supply chain</h3><span class="th-pm-stat">$1.8B</span><p>IonQ moves to acquire US chip foundry SkyWater, a pure-play quantum company vertically integrating its own hardware supply chain.</p></a>
+    <a class="th-pm-card th-pm-reveal" href="https://www.techuk.org/resource/uk-government-announces-up-to-2-billion-for-quantum-technologies.html" target="_blank" rel="noopener noreferrer"><span class="th-pm-date">March 17, 2026</span><h3>UK ProQure</h3><span class="th-pm-stat">GBP 2B</span><p>The UK's national quantum program, part of a broader wave of sovereign quantum funding.</p></a>
+    <a class="th-pm-card th-pm-reveal" href="https://news.crunchbase.com/venture/quantum-computing-startup-investment-data-quantinuum-ipo/" target="_blank" rel="noopener noreferrer"><span class="th-pm-date">May 2026</span><h3>Photonic's record round</h3><span class="th-pm-stat">$200M</span><p>The largest quantum funding round of 2026. Vancouver's Photonic, a photonic quantum-computing company, raises $200 million at a $2 billion valuation.</p></a>
+    <a class="th-pm-card th-pm-reveal" href="https://www.nist.gov/news-events/news/2026/05/department-commerce-announces-letters-intent-9-companies-2-billion" target="_blank" rel="noopener noreferrer"><span class="th-pm-date">May 21, 2026</span><h3>US takes equity</h3><span class="th-pm-stat">$2B</span><p>Letters of intent across 9 quantum firms, in exchange for minority equity. The federal government became, structurally, a venture investor in quantum.</p></a>
+    <a class="th-pm-card th-pm-reveal" href="https://thequantuminsider.com/2026/05/25/emmanuel-macron-announces-1-55-billion-euros-more-for-quantum-and-semiconductors/" target="_blank" rel="noopener noreferrer"><span class="th-pm-date">May 22, 2026</span><h3>France responds</h3><span class="th-pm-stat">EUR 1B</span><p>Announced by Macron from the CEA for the national quantum plan, citing the acceleration of the US and China.</p></a>
+    <a class="th-pm-card th-pm-reveal" href="https://newsroom.ibm.com/2026-06-02-ibm-commits-more-than-10-billion-to-quantum-computing,-funding-its-roadmap-from-todays-leading-systems-to-the-worlds-first-fault-tolerant-quantum-computers" target="_blank" rel="noopener noreferrer"><span class="th-pm-date">June 2, 2026</span><h3>IBM commits</h3><span class="th-pm-stat">$10B+</span><p>Over 5 years, targeting its first large-scale fault-tolerant quantum computer by 2029.</p></a>
+  </div>
+  <!-- chapter 2: the state -->
+  <div class="th-q-chapter th-pm-reveal">
+    <h3 class="scale-title">Then the state <span>armed itself.</span></h3>
+    <p class="scale-intro">On June 22, 2026, the White House signed two quantum executive orders the same day. One launches a national effort to build a government-scale machine. The other orders an accelerated, government-wide migration to post-quantum cryptography.</p>
+  </div>
+
+  <div class="th-eo-panels th-pm-reveal">
+    <a class="th-eo-panel" href="https://www.whitehouse.gov/presidential-actions/2026/06/ushering-in-the-next-frontier-of-quantum-innovation/" target="_blank" rel="noopener noreferrer"><span class="th-eo-label">Executive order</span><h4>Ushering in the Next Frontier of Quantum Innovation</h4></a>
+    <a class="th-eo-panel" href="https://www.whitehouse.gov/presidential-actions/2026/06/securing-the-nation-against-advanced-cryptographic-attacks/" target="_blank" rel="noopener noreferrer"><span class="th-eo-label">Executive order</span><h4>Securing the Nation Against Advanced Cryptographic Attacks</h4></a>
+  </div>
+  <!-- chapter 3: the convergence -->
+  <div class="th-q-chapter th-pm-reveal">
+    <h3 class="scale-title">Finally, three of the biggest names in quantum converged on <span>a single year.</span></h3>
+    <p class="scale-intro">The three companies actually building the machines have independently pointed to the same date.</p>
+  </div>
+
+  <div class="th-yr-panels th-pm-reveal">
+      <a class="th-yr-panel" href="https://www.hpcwire.com/off-the-wire/microsoft-unveils-majorana-2-quantum-chip-targets-commercial-scale-quantum-computing-by-2029/" target="_blank" rel="noopener noreferrer"><span class="th-yr-name">Microsoft</span><span class="th-yr-stat">2029</span><p>After its Majorana 2 chip, Microsoft pulled its timeline for a scalable quantum computer forward from 2033 to 2029.</p></a>
+      <a class="th-yr-panel" href="https://blog.google/innovation-and-ai/technology/safety-security/cryptography-migration-timeline/" target="_blank" rel="noopener noreferrer"><span class="th-yr-name">Google</span><span class="th-yr-stat">2029</span><p>Google set an internal deadline of 2029 to migrate its own infrastructure to post-quantum cryptography.</p></a>
+      <a class="th-yr-panel" href="https://newsroom.ibm.com/2026-06-02-ibm-commits-more-than-10-billion-to-quantum-computing,-funding-its-roadmap-from-todays-leading-systems-to-the-worlds-first-fault-tolerant-quantum-computers" target="_blank" rel="noopener noreferrer"><span class="th-yr-name">IBM</span><span class="th-yr-stat">2029</span><p>IBM committed more than $10 billion over five years, targeting its first large-scale fault-tolerant quantum computer by 2029.</p></a>
+  </div>
+
+  <p class="th-q-flow th-pm-reveal">When governments take equity in quantum companies, race to build the machine, and order their own defenses against it, the risk profile has changed. Meanwhile, the three biggest quantum players converged, days apart, on the same year: 2029. <b class="acc">That year is now a deadline.</b></p>
+</section>
+
+<!-- 02 THREAT -->
+<div class="th-pm-div"></div>
+<section class="th-pm-sec">
+  <div class="th-pm-head th-pm-reveal"><span class="th-pm-marker"></span><span class="th-pm-num">02</span><h2 class="th-pm-title">Q-day, and the <b>fault line</b> it draws.</h2></div>
+  <p class="th-pm-eyebrow th-pm-reveal">The threat</p>
+
+  <!-- chapter 1: the race -->
+  <div class="th-q-chapter th-pm-reveal">
+    <h3 class="scale-title">One key. <span>Two machines.</span></h3>
+    <p class="scale-intro">Every wallet in crypto is protected by the same lock: elliptic-curve cryptography, the math that links your private key to your public address. Breaking it with today's computers is impossible on any human timescale. The picture changes completely with a quantum computer.</p>
+  </div>
+
+  <div class="th-pm-pull th-pm-reveal">
+    <p>Picture a giant maze; the exit is your private key. A classical computer walks the corridors one by one. There are more paths than atoms in the universe, so it never escapes. A quantum computer doesn't walk the maze: it notices the maze was built by repeating one pattern, and computes the exit directly. That is Shor's algorithm against elliptic-curve cryptography, the math that links your private key to your public address and secures nearly every wallet in crypto today.</p>
+  </div>
+
+  <div class="th-maze-grid">
+    <div class="th-maze-panel">
+      <div class="th-maze-head"><span class="d c"></span><h4>Classical</h4></div>
+      <p class="th-maze-sub">Walks the corridors one by one, and keeps walking.</p>
+      <div class="th-maze-cv"><canvas id="thMzC" width="640" height="640"></canvas></div>
+      <div class="th-maze-ctrl"><button id="thMzRunC">Run</button><button class="reset" id="thMzResetC">Reset</button></div>
+      <div class="th-maze-stats cl"><span>time <b id="thMzTimeC">0.0s</b></span><span>corridors walked <b id="thMzCntC">0</b></span></div>
+    </div>
+    <div class="th-maze-panel">
+      <div class="th-maze-head"><span class="d q"></span><h4>Quantum</h4></div>
+      <p class="th-maze-sub">Does not walk. It reads the maze and computes the exit.</p>
+      <div class="th-maze-cv"><canvas id="thMzQ" width="640" height="640"></canvas></div>
+      <div class="th-maze-ctrl"><button class="q" id="thMzRunQ">Run</button><button class="reset" id="thMzResetQ">Reset</button></div>
+      <div class="th-maze-stats qu"><span>time <b id="thMzTimeQ">0.00s</b></span><span id="thMzStateQ">idle</span></div>
+    </div>
+  </div>
+
+  <p class="th-q-flow th-pm-reveal">So what happens the day a quantum computer finally reaches the exit? It holds your private key, and <b class="acc">your funds are already gone</b>. That is the exact risk sitting under most blockchains today.</p>
+
+  <!-- chapter 2: the blind spot -->
+  <div class="th-q-chapter th-pm-reveal">
+    <h3 class="scale-title">Safe every single day, <span>right up until one day in 2029.</span></h3>
+    <p class="scale-intro">A turkey grows more confident every day, fed and cared for, right up to Thanksgiving, the day it gets eaten. Every safe day made the turkey more certain the next one would be safe too. Most blockchains sit on the same curve: a lengthening track record of safety that proves nothing about the day the machine arrives.</p>
+  </div>
+
+  <div class="th-turkey-panel">
+    <div class="th-turkey-chart"><canvas id="thTkCv" width="1000" height="460"></canvas></div>
+    <div class="th-turkey-ctrl">
+      <button id="thTkPlay">Play</button>
+      <button class="reset" id="thTkReset">Replay</button>
+      <span class="th-turkey-readout">
+        <span class="th-turkey-pill" id="thTkPill"><span class="dot"></span>status <b id="thTkStatus">secure</b></span>
+        <span>confidence <b id="thTkConf">0%</b></span>
+      </span>
+    </div>
+  </div>
+
+  <p class="th-q-flow th-pm-reveal">Unlike the turkey, <b class="acc">we can see the knife</b>. And it is moving faster every year: the cost and the hardware needed to break these keys have been collapsing for over a decade, and every new paper brings the drop closer.</p>
+
+  <!-- chapter 3: the evidence -->
+  <div class="th-q-chapter th-pm-reveal">
+    <h3 class="scale-title">The cost of the attack <span>is collapsing.</span></h3>
+  </div>
+
+  <div class="th-pm-stathero th-pm-reveal"><span class="big">10,000&times;</span>
+  <p>The estimated cost of a quantum attack on crypto's cryptography has <b>collapsed roughly 10,000x since 2012</b>, paper after paper, all from the organizations that actually build the hardware.</p></div>
+
+  <!-- resource collapse chart (component preserved, only wrapped + labels de-em-dashed) -->
+  <div class="th-pm-note th-pm-reveal">
+    <div class="chart-card">
+      <div class="chart-head">
+        <div class="t">The collapse of the qubit barrier</div>
+        <div class="s">physical qubits required · log scale</div>
+      </div>
+      <div class="chartbars" id="bars">
+        <a class="bar-col" href="https://arxiv.org/abs/1208.0928" target="_blank" rel="noopener noreferrer"><div class="bar red" style="height:90%"><span class="v">~1,000,000,000</span></div><div class="yr">2012</div><div class="lb">RSA-2048 estimate</div></a>
+        <a class="bar-col" href="https://arxiv.org/abs/2505.15917" target="_blank" rel="noopener noreferrer"><div class="bar orange" style="height:55%"><span class="v">&lt;1,000,000</span></div><div class="yr">May 2025</div><div class="lb">RSA-2048 (Gidney), ~1,000x drop</div></a>
+        <a class="bar-col" href="https://arxiv.org/abs/2603.28846" target="_blank" rel="noopener noreferrer"><div class="bar" style="height:42%"><span class="v">&lt;500,000</span></div><div class="yr">Mar 2026</div><div class="lb">ECDLP-256 (Google x EF), the curve behind your wallet</div></a>
+      </div>
+      <p class="chart-note">ECC keys are ~10x smaller than RSA keys, so a smaller machine breaks them first. Simply put: crypto is at the front line of the risk.</p>
+    </div>
+  </div>
+
+  <!-- chapter 4: what breaks, what holds -->
+  <div class="th-q-chapter th-pm-reveal">
+    <h3 class="scale-title">What breaks. <span>What holds.</span></h3>
+  </div>
+
+  <p class="th-q-flow th-pm-reveal"><a href="https://arxiv.org/abs/2603.28846" target="_blank" rel="noopener noreferrer">The Google and Ethereum Foundation paper (March 30, 2026)</a> maps exactly what breaks: a circuit of ~1,200 logical qubits and 90M Toffoli gates, executable on <b class="acc">fewer than 500,000 physical qubits</b>.</p>
+
+  <p class="th-q-flow th-pm-reveal">The exposure is concrete. On Bitcoin, <b class="acc">6.9M BTC</b> is vulnerable. On Ethereum, <b class="acc">20.5M ETH</b> sits in exposed top accounts, with <b class="acc">$200B</b> in stablecoins behind admin keys.</p>
+
+  <p class="th-q-flow th-pm-reveal">The paper draws a sharp line between what a quantum computer breaks and what it cannot touch:</p>
+
+  <div class="th-pm-compare th-pm-reveal">
+    <div class="th-pm-side" style="--c:var(--th-red)"><h4>Quantum-vulnerable</h4>
+      <ul><li>ECDSA signatures (Bitcoin, Ethereum)</li><li>BLS consensus signatures</li><li>KZG commitments</li><li>Pairing-based SNARKs (Groth16, Plonk)</li><li>Optimistic rollups, sidechains</li></ul></div>
+    <div class="th-pm-side" style="--c:var(--th-green)"><h4>Quantum-safe</h4>
+      <ul><li>zk-STARK proofs</li><li>Hash-based commitments (BLAKE2)</li><li>Post-quantum signatures (Falcon, ML-DSA)</li></ul>
+      <p class="note">In <a href="https://arxiv.org/abs/2603.28846" target="_blank" rel="noopener noreferrer">the paper's own risk chart</a>, zk-STARK is the only proving category in production today not flagged as quantum-vulnerable by Google. Starknet's proving system is named explicitly as resistant.</p></div>
+  </div>
+</section>
+
+<!-- 03 THE HEAD START -->
+<div class="th-pm-div"></div>
+<style>
+.th-st-rail{position:relative;margin-top:44px;padding-left:34px;}
+.th-st-rail::before{content:'';position:absolute;left:8px;top:14px;bottom:14px;width:1px;background:linear-gradient(180deg, rgba(61,169,252,.5), rgba(61,169,252,.12));}
+.th-st-item{position:relative;padding:0 0 52px;}
+.th-st-item:last-child{padding-bottom:0;}
+.th-st-item::before{content:'';position:absolute;left:-30px;top:7px;width:9px;height:9px;border-radius:50%;background:#3DA9FC;box-shadow:0 0 12px rgba(61,169,252,.8);}
+.th-st-top{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:10px;}
+.th-st-item h4{font-family:'Archivo Expanded','Archivo',sans-serif;font-weight:800;font-size:21px;letter-spacing:-.015em;color:#F5F2EC;}
+.th-st-item h4 .th-st-a{color:#3DA9FC;}
+.th-st-chip{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;padding:5px 11px;border-radius:999px;border:1px solid;white-space:nowrap;}
+.th-st-chip.q{color:#3DA9FC;border-color:rgba(61,169,252,.35);background:rgba(61,169,252,.07);}
+.th-st-chip.ok{color:#36C692;border-color:rgba(54,198,146,.35);background:rgba(54,198,146,.07);}
+.th-st-item p{max-width:66ch;font-size:14.5px;line-height:1.65;color:#8b909c;}
+.th-st-item p strong{color:#F5F2EC;font-weight:600;}
+.th-st-item p a{color:#F5F2EC;text-decoration:underline;text-decoration-color:rgba(245,242,236,.3);text-underline-offset:3px;}
+.th-st-item p a:hover{color:#3DA9FC;}
+.th-st-vs{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px;max-width:620px;}
+.th-st-col{border:1px solid rgba(245,242,236,.08);border-radius:12px;padding:13px 15px;}
+.th-st-col .th-st-lab{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:9px;}
+.th-st-col.them .th-st-lab{color:#E5726B;}
+.th-st-col.us .th-st-lab{color:#36C692;}
+.th-st-col ul{list-style:none;margin:0;padding:0;}
+.th-st-col li{display:flex;align-items:center;gap:8px;font-size:13px;color:#8b909c;padding:3px 0;}
+.th-st-col li::before{content:'';width:5px;height:5px;border-radius:50%;flex:0 0 auto;}
+.th-st-col.them li::before{background:#E5726B;}
+.th-st-col.us li::before{background:#36C692;}
+.th-st-col.us li{color:#F5F2EC;}
+@media(max-width:700px){.th-st-vs{grid-template-columns:1fr;}}
+</style>
+<section class="th-pm-sec">
+  <div class="th-pm-head th-pm-reveal"><span class="th-pm-marker"></span><span class="th-pm-num">03</span><h2 class="th-pm-title">Starknet will be ready <b>before Q-day.</b></h2></div>
+  <p class="th-pm-eyebrow th-pm-reveal">The head start</p>
+  <p class="th-q-flow th-pm-reveal">Every other major chain starts its quantum migration from zero: vulnerable proofs, vulnerable wallets, and a hard fork between them and safety. Starknet starts from three facts that are already true on mainnet today.</p>
+
+  <div class="th-st-rail th-pm-reveal">
+    <div class="th-st-item">
+      <div class="th-st-top">
+        <h4>The proofs were <span class="th-st-a">born post-quantum.</span></h4>
+        <span class="th-st-chip q">By design</span>
+      </div>
+      <p>STARKs rely on <strong>hash functions, not elliptic curves</strong>, which is why Shor's algorithm has nothing to attack. It comes from the <a href="https://eprint.iacr.org/2018/046" target="_blank" rel="noopener noreferrer">original STARK paper</a> co-authored by StarkWare's founders in 2018. The entire proving layer, the foundation every other layer rests on and the most expensive part to change, never needs to migrate.</p>
+    </div>
+    <div class="th-st-item">
+      <div class="th-st-top">
+        <h4>Migration is <span class="th-st-a">one transaction,</span> not a hard fork.</h4>
+        <span class="th-st-chip q">Native account abstraction</span>
+      </div>
+      <p>On Starknet, signature logic lives in the account contract, not in the protocol. Upgrading a wallet to post-quantum signatures is a <strong>single transaction by the user</strong>: no protocol change, no new address format, no network-wide coordination.</p>
+      <div class="th-st-vs">
+        <div class="th-st-col them">
+          <div class="th-st-lab">Most chains</div>
+          <ul>
+            <li>Protocol-level hard fork</li>
+            <li>New address formats</li>
+            <li>Forced user migration</li>
+          </ul>
+        </div>
+        <div class="th-st-col us">
+          <div class="th-st-lab">Starknet</div>
+          <ul>
+            <li>Deploy a new account contract</li>
+            <li>Same network, same wallet interface, self-custody intact</li>
+            <li>One-transaction migration per user</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="th-st-item">
+      <div class="th-st-top">
+        <h4>Post-quantum wallets, <span class="th-st-a">already running on mainnet.</span></h4>
+        <span class="th-st-chip ok">Live today</span>
+      </div>
+      <p><a href="https://www.s2morrow.xyz/" target="_blank" rel="noopener noreferrer">S2morrow</a> deployed a <strong>Falcon-512 post-quantum account, written in Cairo, live on Starknet mainnet</strong> and signing transactions since April 2026. <a href="https://quantumcomputingreport.com/starkware-outlines-post-quantum-cryptographic-roadmap-for-starknet-architecture/" target="_blank" rel="noopener noreferrer">OpenZeppelin is building a post-quantum account contract</a> of its own. Quantum-resistant wallets are already live.</p>
+    </div>
+  </div>
+
+<!-- TH-PQ: roadmap surface by surface (chapter of section 03) -->
+<style>
+.th-pq{--th-q:#3DA9FC;--th-done:#36C692;--th-dev:#E5A552;--th-ext:#8b909c;--th-ink:#F5F2EC;--th-muted:#8b909c;--th-panel:#0b0d13;--th-hair:rgba(245,242,236,.08);--th-hair-soft:rgba(245,242,236,.05);max-width:1080px;margin:0 auto;}
+.th-pq *{box-sizing:border-box;}
+.th-pq-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:var(--th-q);margin-bottom:14px;}
+.th-pq-title{font-family:'Archivo Expanded','Archivo',sans-serif;font-weight:800;font-size:32px;line-height:1.05;letter-spacing:-.01em;color:var(--th-ink);margin-bottom:12px;}
+.th-pq-lead{font-size:15px;color:var(--th-muted);max-width:66ch;line-height:1.55;margin-bottom:30px;}
+.th-pq-filters{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:22px;}
+.th-pq-chip{display:inline-flex;align-items:center;gap:9px;cursor:pointer;font-family:'IBM Plex Mono',monospace;font-size:12.5px;font-weight:500;letter-spacing:.04em;color:var(--th-muted);background:var(--th-panel);border:1px solid var(--th-hair);padding:9px 14px;border-radius:999px;transition:border-color .2s,color .2s,background .2s;user-select:none;}
+.th-pq-chip .th-pq-dot{width:8px;height:8px;border-radius:50%;background:var(--ac,var(--th-muted));box-shadow:0 0 8px var(--ac,transparent);}
+.th-pq-chip .th-pq-ct{font-weight:600;color:var(--th-ink);background:var(--th-hair-soft);border-radius:6px;padding:1px 7px;font-size:11.5px;}
+.th-pq-chip:hover{color:var(--th-ink);border-color:color-mix(in srgb,var(--ac,#fff) 45%,transparent);}
+.th-pq-chip.th-active{color:var(--th-ink);background:color-mix(in srgb,var(--ac,var(--th-q)) 14%,transparent);border-color:color-mix(in srgb,var(--ac,var(--th-q)) 55%,transparent);}
+.th-pq-card{border:1px solid var(--th-hair);border-radius:14px;overflow:hidden;background:var(--th-panel);}
+.th-pq-table{width:100%;border-collapse:collapse;}
+.th-pq-table thead th{text-align:left;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--th-muted);padding:16px 20px;border-bottom:1px solid var(--th-hair);background:rgba(255,255,255,.015);white-space:nowrap;}
+.th-pq-table tbody td{padding:16px 20px;font-size:14px;border-bottom:1px solid var(--th-hair-soft);vertical-align:middle;color:var(--th-ink);}
+.th-pq-table .th-mainrow{cursor:pointer;transition:background .2s,box-shadow .2s;}
+.th-pq-table .th-mainrow:hover{background:color-mix(in srgb,var(--th-q) 7%,transparent);box-shadow:inset 3px 0 0 var(--rowac,var(--th-q));}
+.th-pq-table .th-mainrow.th-open{background:color-mix(in srgb,var(--rowac,var(--th-q)) 9%,transparent);box-shadow:inset 3px 0 0 var(--rowac,var(--th-q));}
+.th-pq-table .th-mainrow.th-open td{border-bottom-color:transparent;}
+.th-pq-table .th-surface{font-weight:600;color:var(--th-ink);}
+.th-pq-table .th-surface .th-chev{display:inline-block;color:var(--th-muted);margin-right:9px;font-size:11px;transition:transform .2s,color .2s;transform:translateY(-1px);}
+.th-pq-table .th-mainrow.th-open .th-surface .th-chev{transform:rotate(90deg) translateX(-1px);color:var(--rowac,var(--th-q));}
+.th-pq-table .th-mono{font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--th-muted);}
+.th-pq-table .th-owner{font-size:13px;color:var(--th-muted);}
+.th-pq-badge{display:inline-flex;align-items:center;gap:7px;font-family:'IBM Plex Mono',monospace;font-size:11.5px;font-weight:600;letter-spacing:.04em;padding:5px 11px;border-radius:7px;white-space:nowrap;background:color-mix(in srgb,var(--bc) 13%,transparent);color:var(--bc);border:1px solid color-mix(in srgb,var(--bc) 28%,transparent);}
+.th-pq-badge .th-bdot{width:6px;height:6px;border-radius:50%;background:var(--bc);}
+.th-pq-table .th-detailrow{display:none;}
+.th-pq-table .th-detailrow.th-show{display:table-row;}
+.th-pq-table .th-detailrow td{padding:0;border-bottom:1px solid var(--th-hair-soft);}
+.th-detail-inner{padding:4px 24px 22px 24px;border-left:3px solid var(--rowac,var(--th-q));background:color-mix(in srgb,var(--rowac,var(--th-q)) 5%,transparent);}
+.th-detail-inner p{font-size:14px;line-height:1.6;color:var(--th-ink);max-width:80ch;opacity:.92;}
+.th-detail-metas{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;}
+.th-detail-meta{display:inline-flex;align-items:center;gap:8px;font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:.04em;color:var(--rowac,var(--th-q));border:1px solid color-mix(in srgb,var(--rowac,var(--th-q)) 30%,transparent);background:color-mix(in srgb,var(--rowac,var(--th-q)) 10%,transparent);padding:5px 11px;border-radius:7px;}
+.th-detail-meta .th-lbl{color:var(--th-muted);text-transform:uppercase;letter-spacing:.14em;font-size:10.5px;}
+.th-detail-meta.th-fallback{--rowac:var(--th-done);}
+.th-pq-empty{padding:34px 20px;text-align:center;color:var(--th-muted);font-size:14px;display:none;}
+@media(max-width:760px){.th-pq-card{overflow-x:auto;}.th-pq-table{min-width:680px;}}
+/* surface-by-surface: sticky right-column roadmap flow */
+/* the shared body{overflow-x:hidden} makes body a scroll container, which disables position:sticky; clip keeps the same horizontal clipping without breaking sticky (scoped to this page only) */
+body.page-quantum{overflow-x:clip;}
+.th-pq-layout{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:24px;align-items:start;margin-top:18px;}
+.th-pq-left{min-width:0;}
+.th-fl{position:sticky;top:100px;--th-q:#3DA9FC;--th-done:#36C692;--th-dev:#E5A552;--th-ext:#8b909c;--th-ink:#F5F2EC;--th-muted:#8b909c;--th-hair:rgba(245,242,236,.08);--th-hair-soft:rgba(245,242,236,.05);}
+.th-fl-head{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--th-q);margin-bottom:16px;}
+.th-fl-node{position:relative;border:1px solid var(--th-hair);border-left:3px solid var(--ac);border-radius:12px;overflow:hidden;cursor:pointer;background:linear-gradient(180deg,color-mix(in srgb,var(--ac) 7%,transparent),rgba(255,255,255,.006));transition:border-color .25s,box-shadow .25s,background .25s;}
+.th-fl-node:hover{box-shadow:0 18px 44px -26px var(--ac);background:linear-gradient(180deg,color-mix(in srgb,var(--ac) 12%,transparent),rgba(255,255,255,.01));}
+.th-fl-node.th-open{box-shadow:0 18px 44px -24px var(--ac);}
+.th-fl-headrow{display:flex;align-items:center;gap:12px;padding:15px 16px;}
+.th-fl-txt{flex:1;min-width:0;}
+.th-fl-phase{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ac);}
+.th-fl-title{font-size:15px;font-weight:600;color:var(--th-ink);margin-top:3px;}
+.th-fl-time{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--ac);border:1px solid color-mix(in srgb,var(--ac) 30%,transparent);background:color-mix(in srgb,var(--ac) 10%,transparent);padding:4px 9px;border-radius:6px;white-space:nowrap;}
+.th-fl-chev{color:var(--th-muted);font-size:10px;transition:transform .25s,color .25s;}
+.th-fl-node.th-open .th-fl-chev{transform:rotate(90deg);color:var(--ac);}
+.th-fl-detail{display:none;padding:0 16px 18px 16px;}
+.th-fl-node.th-open .th-fl-detail{display:block;animation:thflfade .25s ease;}
+@keyframes thflfade{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.th-fl-detail p{font-size:13px;line-height:1.55;color:var(--th-muted);}
+.th-fl-sfcs{display:flex;flex-wrap:wrap;gap:7px;margin-top:13px;}
+.th-fl-sfc{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ac);border:1px solid color-mix(in srgb,var(--ac) 26%,transparent);background:color-mix(in srgb,var(--ac) 8%,transparent);padding:4px 9px;border-radius:6px;}
+.th-fl-fallback{margin-top:12px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--th-done);border:1px solid color-mix(in srgb,var(--th-done) 30%,transparent);background:color-mix(in srgb,var(--th-done) 10%,transparent);padding:6px 10px;border-radius:6px;display:inline-block;}
+.th-fl-conn{display:flex;flex-direction:column;align-items:center;height:26px;}
+.th-fl-conn .th-fl-line{width:1px;flex:1;background:linear-gradient(var(--th-hair),var(--th-hair-soft));}
+.th-fl-conn .th-fl-tip{color:var(--th-muted);font-size:10px;line-height:1;margin-top:-2px;}
+.th-fl-node.th-dest .th-fl-title{color:var(--th-done);}
+@media(max-width:1080px){.th-pq-layout{grid-template-columns:1fr;}.th-fl{position:static;top:auto;}}
+.th-maze-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:26px;}
+.th-maze-panel{border:1px solid rgba(245,242,236,.08);border-radius:16px;padding:18px 18px 20px;background:linear-gradient(180deg,rgba(255,255,255,.015),rgba(255,255,255,.004));}
+.th-maze-head{display:flex;align-items:center;gap:9px;margin-bottom:5px;}
+.th-maze-head .d{width:9px;height:9px;border-radius:50%;}
+.th-maze-head .d.c{background:#7a808c;box-shadow:0 0 8px rgba(122,128,140,.6);}
+.th-maze-head .d.q{background:#3DA9FC;box-shadow:0 0 10px #3DA9FC;}
+.th-maze-head h4{font-family:'Archivo Expanded','Archivo',sans-serif;font-weight:800;font-size:18px;letter-spacing:-.01em;color:#F5F2EC;}
+.th-maze-sub{font-size:12px;color:#8b909c;line-height:1.5;min-height:32px;margin-bottom:12px;}
+.th-maze-cv{position:relative;border-radius:10px;overflow:hidden;background:#070910;border:1px solid rgba(245,242,236,.05);}
+.th-maze-cv canvas{display:block;width:100%;height:auto;}
+.th-maze-ctrl{display:flex;gap:9px;margin-top:12px;}
+.th-maze-ctrl button{font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:#F5F2EC;background:rgba(255,255,255,.04);border:1px solid rgba(245,242,236,.08);border-radius:8px;padding:8px 14px;cursor:pointer;transition:border-color .2s,background .2s,box-shadow .2s;}
+.th-maze-ctrl button:hover{border-color:color-mix(in srgb,#3DA9FC 50%,transparent);background:rgba(61,169,252,.08);}
+.th-maze-ctrl button.q:hover{box-shadow:0 10px 28px -16px #3DA9FC;}
+.th-maze-ctrl button.reset{color:#8b909c;}
+.th-maze-stats{margin-top:12px;display:flex;justify-content:space-between;gap:12px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#8b909c;}
+.th-maze-stats b{font-weight:600;font-variant-numeric:tabular-nums;}
+.th-maze-stats.cl b{color:#7a808c;}
+.th-maze-stats.qu b{color:#3DA9FC;}
+@media(max-width:720px){.th-maze-grid{grid-template-columns:1fr;}}
+.th-turkey-panel{margin-top:26px;border:1px solid rgba(245,242,236,.08);border-radius:18px;padding:26px 26px 24px;background:linear-gradient(180deg,rgba(255,255,255,.015),rgba(255,255,255,.004));}
+.th-turkey-chart{position:relative;border-radius:12px;overflow:hidden;background:#070910;border:1px solid rgba(245,242,236,.05);}
+.th-turkey-chart canvas{display:block;width:100%;height:auto;}
+.th-turkey-ctrl{display:flex;align-items:center;gap:10px;margin-top:16px;}
+.th-turkey-ctrl button{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#F5F2EC;background:rgba(255,255,255,.04);border:1px solid rgba(245,242,236,.08);border-radius:9px;padding:9px 16px;cursor:pointer;transition:border-color .2s,background .2s,box-shadow .2s;}
+.th-turkey-ctrl button:hover{border-color:color-mix(in srgb,#3DA9FC 50%,transparent);background:rgba(61,169,252,.08);box-shadow:0 10px 30px -16px #3DA9FC;}
+.th-turkey-ctrl button.reset{color:#8b909c;}
+.th-turkey-readout{margin-left:auto;display:flex;align-items:center;gap:16px;font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#8b909c;}
+.th-turkey-readout b{font-weight:600;color:#F5F2EC;font-variant-numeric:tabular-nums;}
+.th-turkey-pill{display:inline-flex;align-items:center;gap:7px;}
+.th-turkey-pill .dot{width:8px;height:8px;border-radius:50%;background:#36C692;box-shadow:0 0 8px #36C692;}
+.th-turkey-pill.broken .dot{background:#E5484D;box-shadow:0 0 8px #E5484D;}
+.th-turkey-pill.broken b{color:#E5484D;}
+</style>
+
+  <!-- chapter: what remains -->
+  <div class="th-q-chapter th-pm-reveal">
+    <h3 class="scale-title">What remains is <span>mapped, owned, and scheduled.</span></h3>
+    <p class="scale-intro">The head start does not cover everything. Here is every remaining cryptographic surface on Starknet: what it runs on today, what it moves to, who owns the change, and which phase delivers it. Filter by phase, and click any row for the details.</p>
+  </div>
+
+  <div class="th-pq">
+  <div class="th-pq-filters">
+    <span class="th-pq-chip th-active" data-filter="all" style="--ac:var(--th-q)"><span class="th-pq-dot"></span>All<span class="th-pq-ct">8</span></span>
+    <span class="th-pq-chip" data-filter="complete" style="--ac:var(--th-done)"><span class="th-pq-dot"></span>Complete<span class="th-pq-ct">2</span></span>
+    <span class="th-pq-chip" data-filter="phase1" style="--ac:var(--th-q)"><span class="th-pq-dot"></span>Committed · Phase 1<span class="th-pq-ct">3</span></span>
+    <span class="th-pq-chip" data-filter="phase2" style="--ac:var(--th-dev)"><span class="th-pq-dot"></span>In development · Phase 2<span class="th-pq-ct">1</span></span>
+    <span class="th-pq-chip" data-filter="external" style="--ac:var(--th-ext)"><span class="th-pq-dot"></span>External dependency<span class="th-pq-ct">2</span></span>
+  </div>
+  <div class="th-pq-layout">
+  <div class="th-pq-left">
+  <div class="th-pq-card">
+    <table class="th-pq-table">
+      <thead><tr><th>Surface</th><th>Current</th><th>Desired</th><th>Roadmap status</th><th>Owner</th></tr></thead>
+      <tbody id="th-pq-rows">
+        <tr class="th-mainrow" data-status="complete" style="--rowac:var(--th-done)"><td class="th-surface"><span class="th-chev">&#9656;</span>STARK prover</td><td class="th-mono">Hash-based (no ECC)</td><td class="th-mono">n/a</td><td><span class="th-pq-badge" style="--bc:var(--th-done)"><span class="th-bdot"></span>Complete</span></td><td class="th-owner">Starknet</td></tr>
+        <tr class="th-detailrow" style="--rowac:var(--th-done)"><td colspan="5"><div class="th-detail-inner"><p>The core proof system relies on collision-resistant hash functions, not elliptic curves, so it carries no quantum exposure. This is the layer that is normally the most expensive to change, and on Starknet it was never the problem.</p><div class="th-detail-metas"><span class="th-detail-meta"><span class="th-lbl">Status</span> Shipped. No migration required.</span></div></div></td></tr>
+
+        <tr class="th-mainrow" data-status="phase1" style="--rowac:var(--th-q)"><td class="th-surface"><span class="th-chev">&#9656;</span>State trie hashing</td><td class="th-mono">Pedersen</td><td class="th-mono">BLAKE2</td><td><span class="th-pq-badge" style="--bc:var(--th-q)"><span class="th-bdot"></span>Phase 1</span></td><td class="th-owner">Starknet</td></tr>
+        <tr class="th-detailrow" style="--rowac:var(--th-q)"><td colspan="5"><div class="th-detail-inner"><p>The contracts and storage tries commit state with Pedersen today. They migrate to BLAKE2, which removes the ability to forge balance proofs and is also cheaper to prove than Pedersen, so it is a security and a performance win at once.</p><div class="th-detail-metas"><span class="th-detail-meta"><span class="th-lbl">Estimated time</span> Phase 1, around 2 months from start.</span></div></div></td></tr>
+
+        <tr class="th-mainrow" data-status="phase1" style="--rowac:var(--th-q)"><td class="th-surface"><span class="th-chev">&#9656;</span>Address derivation</td><td class="th-mono">Pedersen</td><td class="th-mono">BLAKE2</td><td><span class="th-pq-badge" style="--bc:var(--th-q)"><span class="th-bdot"></span>Phase 1</span></td><td class="th-owner">Starknet</td></tr>
+        <tr class="th-detailrow" style="--rowac:var(--th-q)"><td colspan="5"><div class="th-detail-inner"><p>Account and contract addresses are derived with Pedersen. Moving derivation to BLAKE2 closes a narrow window where an attacker could find a collision and slip a malicious contract into an address before it is funded.</p><div class="th-detail-metas"><span class="th-detail-meta"><span class="th-lbl">Estimated time</span> Phase 1, around 2 months from start.</span></div></div></td></tr>
+
+        <tr class="th-mainrow" data-status="complete" style="--rowac:var(--th-done)"><td class="th-surface"><span class="th-chev">&#9656;</span>OS config hash</td><td class="th-mono">Pedersen</td><td class="th-mono">BLAKE2</td><td><span class="th-pq-badge" style="--bc:var(--th-done)"><span class="th-bdot"></span>Complete</span></td><td class="th-owner">Starknet</td></tr>
+        <tr class="th-detailrow" style="--rowac:var(--th-done)"><td colspan="5"><div class="th-detail-inner"><p>The chain's environment anchor (chain ID, version, fee token) is hashed with Pedersen. It moves to BLAKE2 in a one-line change with no historical data to recompute.</p><div class="th-detail-metas"><span class="th-detail-meta"><span class="th-lbl">Estimated time</span> Complete. Live on mainnet.</span></div></div></td></tr>
+
+        <tr class="th-mainrow" data-status="phase1" style="--rowac:var(--th-q)"><td class="th-surface"><span class="th-chev">&#9656;</span>Consensus signing</td><td class="th-mono">ECDSA</td><td class="th-mono">Falcon-512</td><td><span class="th-pq-badge" style="--bc:var(--th-q)"><span class="th-bdot"></span>Phase 1</span></td><td class="th-owner">Starknet</td></tr>
+        <tr class="th-detailrow" style="--rowac:var(--th-q)"><td colspan="5"><div class="th-detail-inner"><p>Sequencer signatures use ECDSA. They migrate to a post-quantum scheme such as Falcon-512 in two steps: the signing layer becomes scheme-agnostic first, then sequencers rotate their keys, with no disruption to consensus at either step.</p><div class="th-detail-metas"><span class="th-detail-meta"><span class="th-lbl">Estimated time</span> Phase 1, around 2 months from start.</span></div></div></td></tr>
+
+        <tr class="th-mainrow" data-status="phase2" style="--rowac:var(--th-dev)"><td class="th-surface"><span class="th-chev">&#9656;</span>Legacy storage</td><td class="th-mono">Pedersen (slot keys)</td><td class="th-mono">BLAKE2</td><td><span class="th-pq-badge" style="--bc:var(--th-dev)"><span class="th-bdot"></span>Phase 2</span></td><td class="th-owner">Starknet</td></tr>
+        <tr class="th-detailrow" style="--rowac:var(--th-dev)"><td colspan="5"><div class="th-detail-inner"><p>Contracts already deployed under Pedersen-derived storage keys keep working after Phase 1, but their internal key derivation no longer aligns. A migration toolkit brings them into BLAKE2 alignment with no manual data migration and no breaking changes to their interfaces.</p><div class="th-detail-metas"><span class="th-detail-meta"><span class="th-lbl">Estimated time</span> Phase 2, around 1 month after Phase 1 (dapp side TBD).</span></div></div></td></tr>
+
+        <tr class="th-mainrow" data-status="external" style="--rowac:var(--th-ext)"><td class="th-surface"><span class="th-chev">&#9656;</span>secp syscalls</td><td class="th-mono">secp256k1/r1 (ECDSA)</td><td class="th-mono">TBD</td><td><span class="th-pq-badge" style="--bc:var(--th-ext)"><span class="th-bdot"></span>External</span></td><td class="th-owner">Ethereum</td></tr>
+        <tr class="th-detailrow" style="--rowac:var(--th-ext)"><td colspan="5"><div class="th-detail-inner"><p>The Cairo VM's secp256k1/r1 syscalls support L1 to L2 messaging and the Ethereum bridge. They are quantum-vulnerable, but removing them depends on Ethereum migrating first, otherwise the bridge breaks.</p><div class="th-detail-metas"><span class="th-detail-meta"><span class="th-lbl">Estimated time</span> Gated on Ethereum's own migration.</span><span class="th-detail-meta th-fallback"><span class="th-lbl">Fallback</span> If Ethereum is late, Starknet can become its own L1, removing the dependency.</span></div></div></td></tr>
+
+        <tr class="th-mainrow" data-status="external" style="--rowac:var(--th-ext)"><td class="th-surface"><span class="th-chev">&#9656;</span>Blob data availability</td><td class="th-mono">KZG commitment</td><td class="th-mono">TBD</td><td><span class="th-pq-badge" style="--bc:var(--th-ext)"><span class="th-bdot"></span>External</span></td><td class="th-owner">Ethereum</td></tr>
+        <tr class="th-detailrow" style="--rowac:var(--th-ext)"><td colspan="5"><div class="th-detail-inner"><p>State-diff data posted to Ethereum as blobs is anchored by a KZG commitment, which is quantum-vulnerable. A KZG compromise would affect data availability transparency, not state-transition soundness, which the STARK proof still protects. This surface is Ethereum's to migrate.</p><div class="th-detail-metas"><span class="th-detail-meta"><span class="th-lbl">Estimated time</span> Gated on Ethereum's own migration.</span><span class="th-detail-meta th-fallback"><span class="th-lbl">Fallback</span> If Ethereum is late, Starknet can become its own L1, removing the dependency.</span></div></div></td></tr>
+      </tbody>
+    </table>
+    <div class="th-pq-empty" id="th-pq-empty">No surfaces in this category.</div>
+  </div>
+  </div>
+  <aside class="th-fl">
+    <div class="th-fl-head">The path to end-to-end</div>
+
+    <div class="th-fl-node th-open" style="--ac:var(--th-q)">
+      <div class="th-fl-headrow"><div class="th-fl-txt"><div class="th-fl-phase">Phase 1</div><div class="th-fl-title">Secure the future</div></div><span class="th-fl-time">&asymp; 2 months</span><span class="th-fl-chev">&#9656;</span></div>
+      <div class="th-fl-detail"><p>Every new deployment, transaction, and state update becomes quantum-safe by default. Pedersen moves to BLAKE2 across state commitment, address derivation, and the chain environment, and consensus signing moves to Falcon-512.</p><div class="th-fl-sfcs"><span class="th-fl-sfc">State trie hashing</span><span class="th-fl-sfc">Address derivation</span><span class="th-fl-sfc" style="--ac:var(--th-done)">OS config hash</span><span class="th-fl-sfc">Consensus signing</span></div></div>
+    </div>
+    <div class="th-fl-conn"><span class="th-fl-line"></span><span class="th-fl-tip">&#9662;</span></div>
+
+    <div class="th-fl-node" style="--ac:var(--th-dev)">
+      <div class="th-fl-headrow"><div class="th-fl-txt"><div class="th-fl-phase">Phase 2</div><div class="th-fl-title">Migrate what exists</div></div><span class="th-fl-time">&asymp; 1 month</span><span class="th-fl-chev">&#9656;</span></div>
+      <div class="th-fl-detail"><p>Existing contracts keep working after Phase 1, then a migration toolkit brings their storage key derivation into BLAKE2 alignment, with no manual data migration and no breaking changes to their interfaces.</p><div class="th-fl-sfcs"><span class="th-fl-sfc">Legacy storage</span></div></div>
+    </div>
+    <div class="th-fl-conn"><span class="th-fl-line"></span><span class="th-fl-tip">&#9662;</span></div>
+
+    <div class="th-fl-node" style="--ac:var(--th-ext)">
+      <div class="th-fl-headrow"><div class="th-fl-txt"><div class="th-fl-phase">Phase 3</div><div class="th-fl-title">Ethereum dependencies</div></div><span class="th-fl-time">Gated on ETH</span><span class="th-fl-chev">&#9656;</span></div>
+      <div class="th-fl-detail"><p>Two surfaces sit outside Starknet's direct control and resolve as Ethereum completes its own migration.</p><div class="th-fl-sfcs"><span class="th-fl-sfc">secp syscalls (bridge)</span><span class="th-fl-sfc">Blob data availability (KZG)</span></div><span class="th-fl-fallback">Fallback: Starknet can become its own L1</span></div>
+    </div>
+    <div class="th-fl-conn"><span class="th-fl-line"></span><span class="th-fl-tip">&#9662;</span></div>
+
+    <div class="th-fl-node th-dest" style="--ac:var(--th-done)">
+      <div class="th-fl-headrow"><div class="th-fl-txt"><div class="th-fl-phase">Destination</div><div class="th-fl-title">Full post-quantum security</div></div><span class="th-fl-time">Target ~2027</span><span class="th-fl-chev">&#9656;</span></div>
+      <div class="th-fl-detail"><p>No elliptic-curve assumptions anywhere in the proving, consensus, or state commitment layers. Starknet's side is targeted around 2027, ahead of the industry's 2029 horizon.</p></div>
+    </div>
+  </aside>
+  </div>
+
+  <style>
+  .th-adv::after{content:'';display:block;clear:both;}
+  .th-adv-photo{float:right;width:210px;height:auto;margin:32px 0 20px 28px;border-radius:14px;border:1px solid rgba(61,169,252,.28);}
+  .th-adv-role{margin-top:18px;font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:.08em;color:#8b909c;}
+  .th-adv-role b{color:#3DA9FC;font-weight:600;}
+  @media(max-width:760px){.th-adv{display:flex;flex-direction:column;}.th-adv-photo{float:none;order:5;margin:24px auto 0;}}
+  </style>
+
+  <!-- chapter: the referee -->
+  <div class="th-q-chapter th-pm-reveal">
+    <h3 class="scale-title">And to get this roadmap right, StarkWare brought in <span>one of the world's leading quantum minds.</span></h3>
+  </div>
+
+  <div class="th-adv">
+    <img class="th-adv-photo" src="assets/scott-aaronson.jpg" alt="Prof. Scott Aaronson">
+    <p class="th-q-flow">In February 2026, <b>Prof. Scott Aaronson</b> joined <a href="https://starkware.co/blog/quantum-computing-expert-scott-aaronson-joins-starkware/" target="_blank" rel="noopener noreferrer">StarkWare's Scientific Advisory Board</a> with a clear mandate: pressure-test this roadmap. Every assumption about what quantum computers can and cannot do, every cryptographic choice on the path to end-to-end resistance, now gets challenged by one of the foremost authorities in the field.</p>
+    <p class="th-adv-role"><b>Scott Aaronson</b> &middot; Schlumberger Chair of Computer Science, UT Austin &middot; Founding Director, Quantum Information Center</p>
+  </div>
+  </div>
+</section>
+
+<script>
+(function(){
+  var root = document.querySelector('.th-pq');
+  if(!root) return;
+  var chips = root.querySelectorAll('.th-pq-chip');
+  var mainrows = root.querySelectorAll('.th-mainrow');
+  var empty = root.querySelector('#th-pq-empty');
+  function closeAll(){
+    mainrows.forEach(function(r){
+      r.classList.remove('th-open');
+      var d = r.nextElementSibling;
+      if(d && d.classList.contains('th-detailrow')) d.classList.remove('th-show');
+    });
+  }
+  mainrows.forEach(function(row){
+    row.addEventListener('click',function(){
+      var detail = row.nextElementSibling;
+      var isOpen = row.classList.contains('th-open');
+      closeAll();
+      if(!isOpen){
+        row.classList.add('th-open');
+        if(detail && detail.classList.contains('th-detailrow')) detail.classList.add('th-show');
+      }
+    });
+  });
+  chips.forEach(function(chip){
+    chip.addEventListener('click',function(){
+      chips.forEach(function(c){c.classList.remove('th-active');});
+      chip.classList.add('th-active');
+      closeAll();
+      var f = chip.getAttribute('data-filter');
+      var shown = 0;
+      mainrows.forEach(function(r){
+        var match = (f==='all' || r.getAttribute('data-status')===f);
+        r.style.display = match ? '' : 'none';
+        var d = r.nextElementSibling;
+        if(d && d.classList.contains('th-detailrow')) d.style.display = match ? '' : 'none';
+        if(match) shown++;
+      });
+      empty.style.display = shown===0 ? 'block' : 'none';
+    });
+  });
+})();
+</script>
+
+<!-- VIDEOS -->
+<div class="th-pm-div"></div>
+<section class="th-pm-sec">
+  <div class="th-pm-head th-pm-reveal"><span class="th-pm-marker"></span>
+    <span class="th-pm-title" style="margin-top:0">Eli Ben-Sasson on the <b>quantum era.</b></span></div>
+  <p class="th-pm-eyebrow th-pm-reveal">From the source</p>
+  <p class="th-pm-intro th-pm-reveal">StarkWare's co-founder and CEO on why STARKs were built for this moment.</p>
+
+  <div class="th-pm-vid-admin"><button type="button" class="news-edit-btn" id="qvEditBtn" aria-expanded="false"><i class="ti ti-pencil" aria-hidden="true"></i> <span id="qvEditBtnLabel">Edit videos</span></button></div>
+
+  <div class="th-pm-video" id="qvVideos">
+    <div class="th-pm-vcard th-pm-reveal" data-qv="0">
+      <div class="frame">
+        <div class="qv-ph"><i class="ti ti-movie" aria-hidden="true"></i><span>No video set</span></div>
+        <video class="qv-player" controls preload="metadata" playsinline hidden></video>
+      </div>
+      <div class="meta"><h4 class="qv-title">Video 1: Eli Ben-Sasson</h4></div>
+      <div class="qv-editor" hidden>
+        <div class="qv-fld"><label>Video source (path or URL)</label><input type="text" class="qv-src" placeholder="videos/eli-1.mp4 or https://.../eli-1.mp4"></div>
+        <div class="qv-fld"><label>Title</label><input type="text" class="qv-ttl" placeholder="Video title"></div>
+        <div class="qv-fld qv-file"><label>Pick a local file (preview only)</label><input type="file" accept="video/*" class="qv-pick"><div class="qv-note">Local preview only. To publish, add the file to the project and set its path above.</div></div>
+        <div class="qv-actions"><button type="button" class="qv-btn primary qv-save">Save</button><button type="button" class="qv-btn qv-clear">Clear</button></div>
+      </div>
+    </div>
+    <div class="th-pm-vcard th-pm-reveal" data-qv="1">
+      <div class="frame">
+        <div class="qv-ph"><i class="ti ti-movie" aria-hidden="true"></i><span>No video set</span></div>
+        <video class="qv-player" controls preload="metadata" playsinline hidden></video>
+      </div>
+      <div class="meta"><h4 class="qv-title">Video 2: Eli Ben-Sasson</h4></div>
+      <div class="qv-editor" hidden>
+        <div class="qv-fld"><label>Video source (path or URL)</label><input type="text" class="qv-src" placeholder="videos/eli-2.mp4 or https://.../eli-2.mp4"></div>
+        <div class="qv-fld"><label>Title</label><input type="text" class="qv-ttl" placeholder="Video title"></div>
+        <div class="qv-fld qv-file"><label>Pick a local file (preview only)</label><input type="file" accept="video/*" class="qv-pick"><div class="qv-note">Local preview only. To publish, add the file to the project and set its path above.</div></div>
+        <div class="qv-actions"><button type="button" class="qv-btn primary qv-save">Save</button><button type="button" class="qv-btn qv-clear">Clear</button></div>
+      </div>
+    </div>
+    <div class="th-pm-vcard th-pm-reveal" data-qv="2">
+      <div class="frame">
+        <div class="qv-ph"><i class="ti ti-movie" aria-hidden="true"></i><span>No video set</span></div>
+        <video class="qv-player" controls preload="metadata" playsinline hidden></video>
+      </div>
+      <div class="meta"><h4 class="qv-title">TITLE 3</h4></div>
+      <div class="qv-editor" hidden>
+        <div class="qv-fld"><label>Video source (path or URL)</label><input type="text" class="qv-src" placeholder="videos/eli-3.mp4 or https://.../eli-3.mp4"></div>
+        <div class="qv-fld"><label>Title</label><input type="text" class="qv-ttl" placeholder="Video title"></div>
+        <div class="qv-fld qv-file"><label>Pick a local file (preview only)</label><input type="file" accept="video/*" class="qv-pick"><div class="qv-note">Local preview only. To publish, add the file to the project and set its path above.</div></div>
+        <div class="qv-actions"><button type="button" class="qv-btn primary qv-save">Save</button><button type="button" class="qv-btn qv-clear">Clear</button></div>
+      </div>
+    </div>
+    <div class="th-pm-vcard th-pm-reveal" data-qv="3">
+      <div class="frame">
+        <div class="qv-ph"><i class="ti ti-movie" aria-hidden="true"></i><span>No video set</span></div>
+        <video class="qv-player" controls preload="metadata" playsinline hidden></video>
+      </div>
+      <div class="meta"><h4 class="qv-title">TITLE 4</h4></div>
+      <div class="qv-editor" hidden>
+        <div class="qv-fld"><label>Video source (path or URL)</label><input type="text" class="qv-src" placeholder="videos/eli-4.mp4 or https://.../eli-4.mp4"></div>
+        <div class="qv-fld"><label>Title</label><input type="text" class="qv-ttl" placeholder="Video title"></div>
+        <div class="qv-fld qv-file"><label>Pick a local file (preview only)</label><input type="file" accept="video/*" class="qv-pick"><div class="qv-note">Local preview only. To publish, add the file to the project and set its path above.</div></div>
+        <div class="qv-actions"><button type="button" class="qv-btn primary qv-save">Save</button><button type="button" class="qv-btn qv-clear">Clear</button></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONCLUSION -->
+<section class="th-pm-close">
+  <h2 class="th-pm-reveal">On the day the line is drawn for everyone, most chains will discover which side they were born on. <b>Starknet already knows.</b></h2>
+  <p class="th-pm-reveal">The thesis needs only two recognitions: that the quantum-security premium is <b>not yet priced in</b>, and that Starknet holds the <b>structural moat</b> to capture it.</p>
+</section>
+
+<!-- NEWS -->
+<section>
+  <div class="wrap">
+    <div class="news-section news-flashy th-pm-reveal" id="newsSection">
+      <div class="news-admin-bar" id="newsAdminBar">
+        <button type="button" class="news-edit-btn" id="newsEditBtn" aria-expanded="false"><i class="ti ti-pencil" aria-hidden="true"></i> <span id="newsEditBtnLabel">Edit news</span></button>
+      </div>
+      <button class="news-toggle" id="newsToggle" aria-expanded="false">
+        <span class="news-toggle-title"><span class="news-eyebrow">Latest</span> Quantum × Starknet news</span>
+        <i class="ti ti-chevron-down news-chevron" aria-hidden="true"></i>
+      </button>
+      <div class="news-editor" id="newsEditor" hidden></div>
+      <div class="news-grid" id="newsGrid"></div>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-top">
+      <div class="foot-brand">
+        <a href="index.html" class="nav-logo">Starknet <b>Thesis</b></a>
+        <p>The independent thesis on how Starknet makes crypto private, quantum-resistant and productive.</p>
+        <a href="https://x.com/Lyskey" target="_blank" rel="noopener" class="btn btn-ghost" style="padding:11px 18px">Made by Lyskey</a>
+      </div>
+      <div class="foot-col"><div class="h">Thesis</div><a href="privacy.html">Privacy</a><a href="quantum.html">Quantum</a><a href="btcfi.html">BTCFi</a><a href="strk.html">STRK</a></div>
+      <div class="foot-col"><div class="h">Ecosystem</div><a href="ecosystem.html">Ecosystem</a><a href="digest.html">Digest</a></div>
+      <div class="foot-col"><div class="h">Links</div><a href="https://x.com/Lyskey" target="_blank" rel="noopener">X / Twitter</a><a href="https://starknetresearch.substack.com/" target="_blank" rel="noopener">Newsletter</a></div>
+    </div>
+    <div class="disclaimer">Website made for educational purposes only. This is not financial advice. Always DYOR. This is also a personal project, not affiliated with or endorsed by StarkWare. All views expressed here are my own.</div>
+    <div class="foot-bottom">
+      <span>© 2026 · Made by <a href="https://x.com/Lyskey" target="_blank" rel="noopener">Lyskey</a></span>
+      <a href="https://status.starknet.io/" target="_blank" rel="noopener noreferrer" style="text-decoration:none;color:inherit;cursor:pointer"><span class="status"><span class="dot"></span> All systems operational</span></a>
+    </div>
+    <div class="foot-mark">Starknet</div>
+  </div>
+</footer>
+
+<script>
+// ============================================================
+// COUNTDOWN to Jan 1, 2029
+// ============================================================
+(function(){
+  var target = new Date('2029-01-01T00:00:00Z').getTime();
+  var start = new Date('2026-01-01T00:00:00Z').getTime();
+  function tick(){
+    var now = Date.now(), d = Math.max(0, target - now);
+    var days = Math.floor(d/86400000),
+        h = Math.floor(d%86400000/3600000),
+        m = Math.floor(d%3600000/60000),
+        s = Math.floor(d%60000/1000);
+    var elD = document.getElementById('cd-days'); if (!elD) return;
+    elD.textContent = days.toLocaleString();
+    document.getElementById('cd-hours').textContent = String(h).padStart(2,'0');
+    document.getElementById('cd-mins').textContent = String(m).padStart(2,'0');
+    document.getElementById('cd-secs').textContent = String(s).padStart(2,'0');
+    var pct = Math.max(0, Math.min(100, (now - start) / (target - start) * 100));
+    var fill = document.getElementById('cd-fill'); if (fill) fill.style.width = pct + '%';
+    var mark = document.getElementById('cd-mark'); if (mark) mark.style.left = pct + '%';
+  }
+  tick(); setInterval(tick,1000);
+})();
+
+// ============================================================
+// EMBEDDED VIDEOS (2 Eli Ben-Sasson clips)
+// ------------------------------------------------------------
+// To embed: paste the YouTube or X (tweet) URL into `url` below.
+// Leave url:'' to keep the placeholder card.
+// Supports: youtube.com/watch?v=, youtu.be/, youtube embed links,
+// and x.com / twitter.com status links (rendered as an embedded post).
+// ============================================================
+var VIDEOS = [
+  { title: 'Video 1 — Eli Ben-Sasson', subtitle: 'paste the YouTube / X link', url: '' },
+  { title: 'Video 2 — Eli Ben-Sasson', subtitle: 'paste the YouTube / X link', url: '' }
+];
+(function(){
+  var el = document.getElementById('videos');
+  if (!el) return;
+
+  function escA(s){ return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+  function escT(s){ return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  function youtubeId(url){
+    var m = String(url||'').match(/(?:youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+    return m ? m[1] : null;
+  }
+  function tweetId(url){
+    var m = String(url||'').match(/(?:twitter\.com|x\.com)\/[^\/]+\/status(?:es)?\/(\d+)/i);
+    return m ? m[1] : null;
+  }
+
+  // Lazy X widgets loader (same pattern as the news section).
+  var widgetsPromise = null;
+  function ensureWidgets(){
+    if (widgetsPromise) return widgetsPromise;
+    widgetsPromise = new Promise(function(resolve, reject){
+      if (window.twttr && window.twttr.widgets) { resolve(window.twttr); return; }
+      var s = document.createElement('script');
+      s.src = 'https://platform.twitter.com/widgets.js';
+      s.async = true; s.charset = 'utf-8';
+      s.onload = function(){
+        if (window.twttr && window.twttr.widgets) {
+          if (window.twttr.ready) window.twttr.ready(function(t){ resolve(t); }); else resolve(window.twttr);
+        } else { reject(new Error('twttr unavailable')); }
+      };
+      s.onerror = function(){ reject(new Error('widgets.js failed to load')); };
+      document.head.appendChild(s);
+    });
+    return widgetsPromise;
+  }
+  function linkCard(v){
+    return '<a class="vid" href="' + escA(v.url) + '" target="_blank" rel="noopener" style="display:flex;text-decoration:none"><i class="ti ti-brand-x"></i><div class="t">' + escT(v.title) + '</div><div class="s">View on X</div></a>';
+  }
+
+  el.innerHTML = '';
+  VIDEOS.forEach(function(v){
+    var cell = document.createElement('div');
+    var yt = youtubeId(v.url);
+    var tw = !yt ? tweetId(v.url) : null;
+
+    if (yt) {
+      cell.className = 'vid embedded';
+      cell.innerHTML = '<iframe src="https://www.youtube.com/embed/' + escA(yt) + '" title="' + escA(v.title) +
+        '" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe>';
+    } else if (tw) {
+      cell.className = 'vid tweet';
+      cell.innerHTML = '<div class="news-loading"><span class="news-spinner"></span> Loading post…</div>';
+      ensureWidgets().then(function(twttr){
+        cell.innerHTML = '';
+        return twttr.widgets.createTweet(tw, cell, { theme: 'dark', dnt: true, conversation: 'none', align: 'center' });
+      }).then(function(node){
+        if (!node) cell.innerHTML = linkCard(v);
+      }).catch(function(){ cell.innerHTML = linkCard(v); });
+    } else if (v.url) {
+      cell.className = 'vid embedded';
+      cell.innerHTML = '<iframe src="' + escA(v.url) + '" title="' + escA(v.title) + '" allowfullscreen loading="lazy"></iframe>';
+    } else {
+      cell.className = 'vid';
+      cell.innerHTML = '<i class="ti ti-brand-youtube"></i><div class="t">' + escT(v.title) + '</div><div class="s">' + escT(v.subtitle || 'send me the link') + '</div>';
+    }
+    el.appendChild(cell);
+  });
+})();
+
+// ============================================================
+// QUANTUM × STARKNET NEWS — collapsible, editable, localStorage
+// (same engine as btcfi.html; STORAGE_KEY namespaced by DEFAULTS_VERSION
+//  so stale localStorage can never shadow new in-file defaults)
+// ============================================================
+(function() {
+  var grid = document.getElementById('newsGrid');
+  if (!grid) return;
+
+  // ====== EDIT HERE: add Quantum × Starknet posts/sources ======
+  // Each entry: { url, title, date, fallbackText, [name, handle, initials, color, verified] }
+  // X/Twitter status links render as real embeds. Non-tweet links (blogs, profiles)
+  // render as a styled fallback card — set name/handle/initials/color for a nicer look.
+  // These in-file defaults render WITHOUT any localStorage; localStorage is only an override.
+  var tweets = [
+    {
+      "url": "https://research.google/blog/",
+      "title": "Google × Ethereum Foundation: how much quantum hardware it actually takes to break the curve behind your wallet",
+      "date": "March 2026",
+      "name": "Google Research × Ethereum Foundation",
+      "handle": "research.google",
+      "initials": "GR",
+      "color": "#4285F4",
+      "verified": false,
+      "fallbackText": "New estimate maps ECDLP-256 to ~1,200 logical qubits / 90M Toffoli gates, executable on <500,000 physical qubits, and names zk-STARKs among the quantum-resistant approaches. (Confirm exact post link.)"
+    },
+    {
+      "url": "https://x.com/StarkWareLtd",
+      "title": "StarkWare's post-quantum roadmap: end-to-end PQ targeted by ~2027",
+      "date": "2026",
+      "fallbackText": "StarkWare lays out the path to a fully post-quantum Starknet, with STARK proofs already quantum-safe by design and the remaining layers scoped in months. (Confirm exact post link.)"
+    },
+    {
+      "url": "https://x.com/Starknet",
+      "title": "S2morrow: a post-quantum wallet live on Starknet Mainnet, signing real transactions with Falcon-512, no fork required",
+      "date": "2026",
+      "fallbackText": "The first quantum-safe account on Starknet, implemented as a Cairo verifier. Migration is one transaction, not a chain-wide hard fork. (Confirm exact post link.)"
+    },
+    {
+      "url": "https://x.com/avihu28",
+      "title": "Avihu Levy (StarkWare) on why Starknet was post-quantum before post-quantum was a deadline",
+      "date": "2026",
+      "fallbackText": "On Starknet's structural advantage: STARKs rely on hashes not curves, and native account abstraction makes the migration a single user transaction. (Confirm exact post link.)"
+    }
+  ];
+  // =============================================================
+
+  // Bump DEFAULTS_VERSION whenever the in-file `tweets` defaults change in a way
+  // that must override older saved data — it namespaces STORAGE_KEY so a stale
+  // localStorage entry from a previous version can never shadow the new defaults.
+  var DEFAULTS_VERSION = 1;
+  var STORAGE_KEY = 'quantum_news_v' + DEFAULTS_VERSION;
+
+  var DEFAULTS = tweets.map(function(t, i){ var c = {}; for (var k in t) c[k] = t[k]; c.id = 'd' + i; return c; });
+
+  function clone(o){ return JSON.parse(JSON.stringify(o)); }
+  function esc(s){ return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function escA(s){ return esc(s).replace(/"/g,'&quot;'); }
+  function newId(){ return 'u' + Date.now().toString(36) + Math.floor(Math.random()*1e4).toString(36); }
+
+  // ---------- persistence (merge saved cards with defaults) ----------
+  function loadStore(){
+    try { var raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : null; }
+    catch(e){ return null; }
+  }
+  function saveStore(store){ try { localStorage.setItem(STORAGE_KEY, JSON.stringify(store)); } catch(e){} }
+
+  function buildList(){
+    var store = loadStore();
+    if (!store || !Array.isArray(store.list)) return DEFAULTS.map(clone);
+    var list = store.list.map(clone);
+    var removed = store.removedDefaults || [];
+    var present = {};
+    list.forEach(function(c){ if (c.id) present[c.id] = true; });
+    // bring in any NEW defaults added to the code later (unless the user deleted them)
+    DEFAULTS.forEach(function(d){
+      if (!present[d.id] && removed.indexOf(d.id) === -1) list.push(clone(d));
+    });
+    return list;
+  }
+
+  var cards = buildList();
+
+  function persist(){
+    var present = {};
+    cards.forEach(function(c){ present[c.id] = true; });
+    var removedDefaults = DEFAULTS.filter(function(d){ return !present[d.id]; }).map(function(d){ return d.id; });
+    saveStore({ list: cards, removedDefaults: removedDefaults });
+  }
+
+  // ---------- X / Twitter embed helpers ----------
+  function parseTweetId(url){
+    var m = String(url || '').match(/(?:twitter\.com|x\.com)\/[^\/]+\/status(?:es)?\/(\d+)/i);
+    return m ? m[1] : null;
+  }
+  function parseHandle(url){
+    var m = String(url || '').match(/(?:twitter\.com|x\.com)\/(@?[A-Za-z0-9_]{1,15})(?:[\/?]|$)/i);
+    return m ? '@' + m[1].replace(/^@/, '') : '';
+  }
+
+  var widgetsPromise = null;
+  function ensureWidgets(){
+    if (widgetsPromise) return widgetsPromise;
+    widgetsPromise = new Promise(function(resolve, reject){
+      if (window.twttr && window.twttr.widgets) { resolve(window.twttr); return; }
+      var s = document.createElement('script');
+      s.src = 'https://platform.twitter.com/widgets.js';
+      s.async = true; s.charset = 'utf-8';
+      s.onload = function(){
+        if (window.twttr && window.twttr.widgets) {
+          if (window.twttr.ready) window.twttr.ready(function(t){ resolve(t); }); else resolve(window.twttr);
+        } else { reject(new Error('twttr unavailable')); }
+      };
+      s.onerror = function(){ reject(new Error('widgets.js failed to load')); };
+      document.head.appendChild(s);
+    });
+    return widgetsPromise;
+  }
+
+  // ---------- fallback card (graceful when a post can't be embedded) ----------
+  function stat(cls, icon, val){
+    return '<span class="tweet-stat ' + cls + '"><i class="ti ' + icon + '" aria-hidden="true"></i>' + (val != null && val !== '' ? val : '') + '</span>';
+  }
+  function fallbackHTML(c){
+    var handle = c.handle || parseHandle(c.url);
+    var name = c.name || (handle ? handle.replace(/^@/, '') : 'Post on X');
+    var initials = c.initials || (String(name).replace(/[^A-Za-z0-9]/g, '').slice(0, 2) || 'X');
+    var color = c.color || '#3C3489';
+    var text = c.fallbackText || c.text || 'This post couldn’t load right now. Open it in a new tab.';
+    var meta = esc(handle) + (c.date ? (handle ? ' · ' : '') + esc(c.date) : '');
+    var verified = c.verified === false ? '' : '<i class="ti ti-rosette-discount-check tweet-verified" aria-hidden="true"></i>';
+    return '<a class="tweet-card" href="' + (escA(c.url) || '#') + '" target="_blank" rel="noopener">' +
+      '<div class="tweet-head">' +
+        '<span class="tweet-avatar" style="background:' + escA(color) + '">' + esc(initials) + '</span>' +
+        '<span class="tweet-id">' +
+          '<span class="tweet-name-row"><span class="tweet-name">' + esc(name) + '</span>' + verified +
+          '<span class="tweet-meta">' + meta + '</span></span>' +
+        '</span>' +
+        '<i class="ti ti-brand-x tweet-x" aria-hidden="true"></i>' +
+      '</div>' +
+      '<p class="tweet-body">' + esc(text) + '</p>' +
+      '<div class="tweet-foot">' +
+        stat('reply','ti-message-circle','') + stat('repost','ti-repeat','') + stat('like','ti-heart','') +
+        '<span class="tweet-stat"><i class="ti ti-upload" aria-hidden="true"></i></span>' +
+      '</div>' +
+    '</a>';
+  }
+
+  // ---------- public render: one grid cell per entry, real embeds ----------
+  var publicCells = [];
+  var cellTimers = {};
+  var activated = false;
+
+  var MONTHS = { jan:0, january:0, feb:1, february:1, mar:2, march:2, apr:3, april:3,
+    may:4, jun:5, june:5, jul:6, july:6, aug:7, august:7, sep:8, sept:8, september:8,
+    oct:9, october:9, nov:10, november:10, dec:11, december:11 };
+  function parseDate(s){
+    if (s == null) return null;
+    s = String(s).trim();
+    if (!s) return null;
+    var lower = s.toLowerCase();
+    var ym = lower.match(/\b(\d{4})\b/);
+    var year = ym ? parseInt(ym[1], 10) : null;
+    var month = null;
+    lower.split(/[^a-z]+/).some(function(tok){ if (tok && MONTHS[tok] != null) { month = MONTHS[tok]; return true; } return false; });
+    var day = null;
+    var dm = lower.match(/(?:^|[^\d])(\d{1,2})(?:[^\d]|$)/);
+    if (dm) day = parseInt(dm[1], 10);
+    if (year != null) {
+      var d = new Date(year, month == null ? 0 : month, (day && day >= 1 && day <= 31) ? day : 1);
+      var t = d.getTime();
+      if (!isNaN(t)) return t;
+    }
+    var nat = Date.parse(s);
+    return isNaN(nat) ? null : nat;
+  }
+
+  // Display ranks: newest first; missing/unparseable dates sink to the end; ties keep array order.
+  function displayOrder(){
+    var arr = cards.map(function(c, idx){ return { idx: idx, t: parseDate(c.date) }; });
+    arr.sort(function(a, b){
+      if (a.t == null && b.t == null) return a.idx - b.idx;
+      if (a.t == null) return 1;
+      if (b.t == null) return -1;
+      if (b.t !== a.t) return b.t - a.t;
+      return a.idx - b.idx;
+    });
+    var pos = [];
+    arr.forEach(function(o, rank){ pos[o.idx] = rank; });
+    return pos;
+  }
+  function applyOrder(){
+    var pos = displayOrder();
+    publicCells.forEach(function(cell, i){ if (cell) cell.style.order = pos[i]; });
+  }
+
+  function renderPublic(){
+    grid.innerHTML = '';
+    publicCells = [];
+    var pos = displayOrder();
+    cards.forEach(function(c, i){
+      var cell = document.createElement('div');
+      cell.className = 'news-cell';
+      cell.style.order = pos[i];
+      grid.appendChild(cell);
+      publicCells.push(cell);
+      if (activated) renderCell(cell, c);
+      else cell.innerHTML = headerHTML(c) + fallbackHTML(c);
+    });
+  }
+
+  function headerHTML(c){
+    if (!c.title && !c.date) return '';
+    var t = c.title ? '<div class="news-head-title">' + esc(c.title) + '</div>' : '';
+    var d = c.date ? '<div class="news-head-date">' + esc(c.date) + '</div>' : '';
+    return '<div class="news-head">' + t + d + '</div>';
+  }
+
+  function renderCell(cell, c){
+    var head = headerHTML(c);
+    var id = parseTweetId(c.url);
+    if (!id) { cell.innerHTML = head + fallbackHTML(c); return; }
+    cell.innerHTML = head + '<div class="news-embed"><div class="news-loading"><span class="news-spinner"></span> Loading post…</div></div>';
+    var target = cell.querySelector('.news-embed');
+    ensureWidgets().then(function(twttr){
+      target.innerHTML = '';
+      return twttr.widgets.createTweet(id, target, { theme: 'dark', dnt: true, conversation: 'none', align: 'center' });
+    }).then(function(node){
+      if (!node) cell.innerHTML = headerHTML(c) + fallbackHTML(c);
+    }).catch(function(){
+      cell.innerHTML = headerHTML(c) + fallbackHTML(c);
+    });
+  }
+
+  function updateHeader(i){
+    var cell = publicCells[i];
+    if (!cell || !cards[i]) return;
+    var html = headerHTML(cards[i]);
+    var head = cell.querySelector(':scope > .news-head');
+    if (head) { if (html) head.outerHTML = html; else head.parentNode.removeChild(head); }
+    else if (html) cell.insertAdjacentHTML('afterbegin', html);
+  }
+
+  function scheduleCell(i){
+    clearTimeout(cellTimers[i]);
+    cellTimers[i] = setTimeout(function(){
+      if (publicCells[i] && cards[i]) renderCell(publicCells[i], cards[i]);
+    }, 500);
+  }
+
+  function activate(){
+    if (activated) return;
+    activated = true;
+    publicCells.forEach(function(cell, i){ if (cards[i]) renderCell(cell, cards[i]); });
+  }
+
+  // ---------- collapse toggle ----------
+  var section = document.getElementById('newsSection');
+  var toggle = document.getElementById('newsToggle');
+  toggle.addEventListener('click', function(){
+    var open = section.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    if (open) activate();
+  });
+
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if (en.isIntersecting && section.classList.contains('open')) { activate(); io.disconnect(); }
+      });
+    }, { rootMargin: '200px' });
+    io.observe(grid);
+  } else {
+    activate();
+  }
+
+  // ================= EDITOR =================
+  var editor = document.getElementById('newsEditor');
+  var editBtn = document.getElementById('newsEditBtn');
+  var editBtnLabel = document.getElementById('newsEditBtnLabel');
+  var editing = false;
+
+  function lbl(t){ return '<label>' + t + '</label>'; }
+  function cardSummary(c){
+    if (c.title) return c.title + (c.date ? ' · ' + c.date : '');
+    var h = parseHandle(c.url);
+    if (c.url) return (h || c.url) + (c.date ? ' · ' + c.date : '');
+    return '(paste a post URL)';
+  }
+  function editorCardHTML(c, i){
+    var isDefault = c.id && c.id.charAt(0) === 'd';
+    return '<div class="ne-card" data-i="' + i + '">' +
+      '<div class="ne-card-top">' +
+        '<span class="ne-badge ' + (isDefault ? 'default' : 'custom') + '">' + (isDefault ? 'default' : 'custom') + '</span>' +
+        '<span class="ne-card-title">' + esc(cardSummary(c)) + '</span>' +
+        '<button type="button" class="ne-btn danger ne-del" data-act="del" data-i="' + i + '"><i class="ti ti-trash" aria-hidden="true"></i> Delete</button>' +
+      '</div>' +
+      '<div class="ne-grid">' +
+        '<div class="ne-field full">' + lbl('Post URL <span class="ne-req">required</span>') + '<input type="url" data-i="' + i + '" data-key="url" value="' + escA(c.url || '') + '" placeholder="https://x.com/user/status/123…"><div class="ne-hint">Paste an X/Twitter post link — the real embed renders automatically. Other links (blog, profile) show as a styled card.</div></div>' +
+        '<div class="ne-field full">' + lbl('Title (optional)') + '<input type="text" data-i="' + i + '" data-key="title" value="' + escA(c.title || '') + '" placeholder="e.g. StarkWare’s post-quantum roadmap"></div>' +
+        '<div class="ne-field full">' + lbl('Date (optional)') + '<input type="text" data-i="' + i + '" data-key="date" value="' + escA(c.date || '') + '" placeholder="e.g. Mar 2026"><div class="ne-hint">Title and date show as a header above the embed. Leave both empty for no header.</div></div>' +
+        '<div class="ne-field full">' + lbl('Fallback text (optional — shown only if the post can’t load)') + '<textarea data-i="' + i + '" data-key="fallbackText" placeholder="Short summary shown if the post is deleted, offline, or not embeddable…">' + esc(c.fallbackText || c.text || '') + '</textarea></div>' +
+      '</div>' +
+    '</div>';
+  }
+  function renderEditor(){
+    editor.innerHTML =
+      '<div class="ne-toolbar">' +
+        '<button type="button" class="ne-btn primary" data-act="add"><i class="ti ti-plus" aria-hidden="true"></i> Add card</button>' +
+        '<button type="button" class="ne-btn" data-act="export"><i class="ti ti-file-export" aria-hidden="true"></i> Export</button>' +
+        '<button type="button" class="ne-btn" data-act="import"><i class="ti ti-file-import" aria-hidden="true"></i> Import JSON</button>' +
+        '<span class="ne-spacer"></span>' +
+        '<span class="ne-count">' + cards.length + ' card' + (cards.length === 1 ? '' : 's') + '</span>' +
+        '<button type="button" class="ne-btn danger" data-act="reset"><i class="ti ti-refresh" aria-hidden="true"></i> Reset to defaults</button>' +
+      '</div>' +
+      '<div class="ne-cards">' + cards.map(editorCardHTML).join('') + '</div>';
+  }
+
+  // live edits — update only the affected preview cell, no full reload
+  editor.addEventListener('input', function(e){
+    var t = e.target;
+    var idx = t.getAttribute('data-i'), key = t.getAttribute('data-key');
+    if (idx == null || !key) return;
+    var i = parseInt(idx, 10);
+    var card = cards[i];
+    if (!card) return;
+    card[key] = t.value;
+    var top = t.closest('.ne-card');
+    if (top) { var ttl = top.querySelector('.ne-card-title'); if (ttl) ttl.textContent = cardSummary(card); }
+    if (publicCells[i]) {
+      if (key === 'url') {
+        if (activated) scheduleCell(i);
+        else publicCells[i].innerHTML = headerHTML(card) + fallbackHTML(card);
+      } else if (key === 'title' || key === 'date') {
+        if (parseTweetId(card.url)) updateHeader(i);
+        else publicCells[i].innerHTML = headerHTML(card) + fallbackHTML(card);
+        if (key === 'date') applyOrder();
+      } else if (!parseTweetId(card.url)) {
+        publicCells[i].innerHTML = headerHTML(card) + fallbackHTML(card);
+      }
+    }
+    persist();
+  });
+
+  // buttons
+  editor.addEventListener('click', function(e){
+    var btn = e.target.closest('[data-act]');
+    if (!btn) return;
+    var act = btn.getAttribute('data-act');
+    if (act === 'add') {
+      cards.push({ id:newId(), url:'', title:'', date:'', fallbackText:'' });
+      persist(); renderPublic(); renderEditor();
+      var all = editor.querySelectorAll('.ne-card');
+      if (all.length) all[all.length - 1].scrollIntoView({ behavior:'smooth', block:'center' });
+    } else if (act === 'del') {
+      var i = parseInt(btn.getAttribute('data-i'), 10);
+      if (cards[i] && window.confirm('Delete this card?')) { cards.splice(i, 1); persist(); renderPublic(); renderEditor(); }
+    } else if (act === 'reset') {
+      if (window.confirm('Reset all news cards to the original defaults? Your custom cards and edits will be removed.')) {
+        try { localStorage.removeItem(STORAGE_KEY); } catch(e){}
+        cards = DEFAULTS.map(clone); renderPublic(); renderEditor();
+      }
+    } else if (act === 'export') {
+      openExport();
+    } else if (act === 'import') {
+      openImport();
+    }
+  });
+
+  // ---------- export / import ----------
+  function publicCards(){
+    return cards.map(function(c){
+      var o = { url: c.url || '' };
+      if (c.title) o.title = c.title;
+      if (c.date) o.date = c.date;
+      var fb = c.fallbackText || c.text;
+      if (fb) o.fallbackText = fb;
+      if (c.name) o.name = c.name;
+      if (c.handle) o.handle = c.handle;
+      if (c.initials) o.initials = c.initials;
+      if (c.color) o.color = c.color;
+      if (c.verified === false) o.verified = false;
+      return o;
+    });
+  }
+  function makeModal(inner){
+    var bd = document.createElement('div');
+    bd.className = 'ne-modal-backdrop';
+    bd.innerHTML = '<div class="ne-modal">' + inner + '</div>';
+    document.body.appendChild(bd);
+    bd.addEventListener('click', function(e){ if (e.target === bd) document.body.removeChild(bd); });
+    return bd;
+  }
+  function copyFrom(bd, sel, msgSel, okText){
+    var ta = bd.querySelector(sel); ta.focus(); ta.select();
+    var ok = false; try { ok = document.execCommand('copy'); } catch(e){}
+    if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(ta.value).catch(function(){}); ok = true; }
+    var m = bd.querySelector(msgSel); m.className = 'ne-msg ok'; m.textContent = ok ? okText : 'Select the text above and copy manually.';
+  }
+  function openExport(){
+    var arr = publicCards();
+    var json = JSON.stringify(arr, null, 2);
+    var tweetsLiteral = 'var tweets = ' + JSON.stringify(arr, null, 2) + ';';
+    var bd = makeModal(
+      '<h3>Export news cards</h3>' +
+      '<p>Copy the JSON to back up or re-import later — or copy the ready-to-paste <code>tweets</code> array to hardcode it permanently into quantum.html.</p>' +
+      '<div class="ne-modal-label">JSON array</div>' +
+      '<textarea id="neExpJson" readonly>' + esc(json) + '</textarea>' +
+      '<div class="ne-modal-actions"><button type="button" class="ne-btn" id="neCopyJson"><i class="ti ti-copy" aria-hidden="true"></i> Copy JSON</button></div>' +
+      '<div class="ne-modal-label">Ready-to-paste tweets array</div>' +
+      '<textarea id="neExpTweets" readonly>' + esc(tweetsLiteral) + '</textarea>' +
+      '<div class="ne-modal-actions">' +
+        '<button type="button" class="ne-btn" id="neCopyTweets"><i class="ti ti-copy" aria-hidden="true"></i> Copy tweets array</button>' +
+        '<button type="button" class="ne-btn" id="neCloseExp">Close</button>' +
+      '</div>' +
+      '<div class="ne-msg" id="neExpMsg"></div>'
+    );
+    bd.querySelector('#neCopyJson').addEventListener('click', function(){ copyFrom(bd, '#neExpJson', '#neExpMsg', 'JSON copied to clipboard.'); });
+    bd.querySelector('#neCopyTweets').addEventListener('click', function(){ copyFrom(bd, '#neExpTweets', '#neExpMsg', 'tweets array copied to clipboard.'); });
+    bd.querySelector('#neCloseExp').addEventListener('click', function(){ document.body.removeChild(bd); });
+  }
+  function openImport(){
+    var bd = makeModal(
+      '<h3>Import news cards</h3>' +
+      '<p>Paste a JSON array of cards (same shape as Export). This replaces all current cards.</p>' +
+      '<textarea id="neImp" placeholder=\'[ { "url": "https://x.com/user/status/123…", "title": "optional headline", "date": "Mar 2026" } ]\'></textarea>' +
+      '<div class="ne-modal-actions">' +
+        '<button type="button" class="ne-btn primary" id="neDoImport"><i class="ti ti-check" aria-hidden="true"></i> Import</button>' +
+        '<button type="button" class="ne-btn" id="neCancelImp">Cancel</button>' +
+      '</div>' +
+      '<div class="ne-msg" id="neImpMsg"></div>'
+    );
+    bd.querySelector('#neCancelImp').addEventListener('click', function(){ document.body.removeChild(bd); });
+    bd.querySelector('#neDoImport').addEventListener('click', function(){
+      var msg = bd.querySelector('#neImpMsg');
+      var raw = bd.querySelector('#neImp').value.trim();
+      var parsed;
+      try { parsed = JSON.parse(raw); } catch(err){ msg.className = 'ne-msg err'; msg.textContent = 'Invalid JSON: ' + err.message; return; }
+      if (!Array.isArray(parsed)) { msg.className = 'ne-msg err'; msg.textContent = 'Expected a JSON array.'; return; }
+      cards = parsed.map(function(c){ c = c || {}; if (!c.id) c.id = newId(); return c; });
+      persist(); renderPublic(); renderEditor();
+      msg.className = 'ne-msg ok'; msg.textContent = 'Imported ' + cards.length + ' card(s).';
+      setTimeout(function(){ if (bd.parentNode) document.body.removeChild(bd); }, 800);
+    });
+  }
+
+  // ---------- editor toggle ----------
+  editBtn.addEventListener('click', function(){
+    editing = !editing;
+    editor.hidden = !editing;
+    editBtn.classList.toggle('active', editing);
+    editBtn.setAttribute('aria-expanded', editing ? 'true' : 'false');
+    editBtnLabel.textContent = editing ? 'Done editing' : 'Edit news';
+    if (editing) {
+      section.classList.add('open');
+      toggle.setAttribute('aria-expanded', 'true');
+      activate();
+      renderEditor();
+    }
+  });
+
+  renderPublic();
+})();
+</script>
+
+<!-- TH-FL: surface-by-surface roadmap flow (one node open at a time) -->
+<script>
+(function(){
+  if(window.__thFlInit) return; window.__thFlInit = true;
+  document.querySelectorAll('.th-fl-node').forEach(function(n){
+    n.addEventListener('click', function(){
+      var wasOpen = n.classList.contains('th-open');
+      document.querySelectorAll('.th-fl-node').forEach(function(x){ x.classList.remove('th-open'); });
+      if(!wasOpen) n.classList.add('th-open');
+    });
+  });
+})();
+</script>
+
+<!-- QV: Eli Ben-Sasson videos. Local MP4 model: user sets a project-relative path or https URL, or picks a local file for session-only preview. Persists only the src STRING + title (never the blob) under quantumVideos_v1. -->
+<script>
+(function(){
+  if(window.__qvInit) return; window.__qvInit = true;
+  var KEY = 'quantumVideos_v1';
+  var grid = document.getElementById('qvVideos');
+  if(!grid) return;
+  var cards = [].slice.call(grid.querySelectorAll('.th-pm-vcard'));
+  var defaults = cards.map(function(c){ return (c.querySelector('.qv-title').textContent || '').trim(); });
+  var blobs = {}; // session-only object URLs per index, never persisted
+
+  function load(){ try{ var raw = localStorage.getItem(KEY); var a = raw ? JSON.parse(raw) : []; return Array.isArray(a) ? a : []; }catch(e){ return []; } }
+  function save(){ try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){} }
+  var state = load(); // [{ src, title }]
+
+  // one-time prefill for slots 3 and 4; only when the slot has never been saved or cleared
+  var seeds = { 2: { src:'videos/eli-3.mp4', title:'TITLE 3' }, 3: { src:'videos/eli-4.mp4', title:'TITLE 4' } };
+  var seeded = false;
+  Object.keys(seeds).forEach(function(k){ if(state[k] == null){ state[k] = seeds[k]; seeded = true; } });
+  if(seeded) save();
+
+  function applyCard(i){
+    var c = cards[i], st = state[i] || {};
+    var video = c.querySelector('.qv-player'), ph = c.querySelector('.qv-ph');
+    c.querySelector('.qv-title').textContent = (st.title != null && st.title !== '') ? st.title : defaults[i];
+    var live = blobs[i] || (st.src || '');   // prefer session preview, else saved path/URL
+    if(live){ video.src = live; video.hidden = false; ph.hidden = true; }
+    else { video.removeAttribute('src'); try{ video.load(); }catch(e){} video.hidden = true; ph.hidden = false; }
+  }
+  function applyAll(){ cards.forEach(function(_,i){ applyCard(i); }); }
+  applyAll();
+
+  // edit toggle
+  var editBtn = document.getElementById('qvEditBtn'), editLabel = document.getElementById('qvEditBtnLabel'), editing = false;
+  editBtn.addEventListener('click', function(){
+    editing = !editing;
+    editBtn.classList.toggle('active', editing);
+    editBtn.setAttribute('aria-expanded', editing ? 'true' : 'false');
+    editLabel.textContent = editing ? 'Done editing' : 'Edit videos';
+    cards.forEach(function(c,i){
+      c.querySelector('.qv-editor').hidden = !editing;
+      if(editing){
+        var st = state[i] || {};
+        c.querySelector('.qv-src').value = st.src || '';
+        c.querySelector('.qv-ttl').value = (st.title != null && st.title !== '') ? st.title : defaults[i];
+      }
+    });
+  });
+
+  // per-card actions
+  cards.forEach(function(c,i){
+    var video = c.querySelector('.qv-player'), ph = c.querySelector('.qv-ph');
+    c.querySelector('.qv-pick').addEventListener('change', function(e){
+      var f = e.target.files && e.target.files[0];
+      if(!f) return;
+      if(blobs[i]){ try{ URL.revokeObjectURL(blobs[i]); }catch(e2){} }
+      blobs[i] = URL.createObjectURL(f);     // local preview ONLY, not persisted
+      video.src = blobs[i]; video.hidden = false; ph.hidden = true;
+    });
+    c.querySelector('.qv-save').addEventListener('click', function(){
+      state[i] = { src: c.querySelector('.qv-src').value.trim(), title: c.querySelector('.qv-ttl').value.trim() };
+      save();
+      applyCard(i);
+    });
+    c.querySelector('.qv-clear').addEventListener('click', function(){
+      state[i] = { src:'', title:'' };
+      save();
+      if(blobs[i]){ try{ URL.revokeObjectURL(blobs[i]); }catch(e3){} delete blobs[i]; }
+      c.querySelector('.qv-src').value = ''; c.querySelector('.qv-ttl').value = defaults[i];
+      applyCard(i);
+    });
+  });
+})();
+</script>
+
+<script>
+(function(){
+  if(window.__thMz)return;window.__thMz=true;
+  var COLS=16,ROWS=16,N=640,cell=N/COLS;
+  var q='#3DA9FC',gray='#7a808c',wall='rgba(245,242,236,.16)',muted='#8b909c';
+  function makeMaze(){
+    var g=[];for(var r=0;r<ROWS;r++){g[r]=[];for(var c=0;c<COLS;c++)g[r][c]={N:true,E:true,S:true,W:true,v:false};}
+    var st=[[0,0]];g[0][0].v=true;var D=[['N',-1,0,'S'],['E',0,1,'W'],['S',1,0,'N'],['W',0,-1,'E']];
+    while(st.length){var cu=st[st.length-1],r=cu[0],c=cu[1],o=[];
+      for(var i=0;i<4;i++){var d=D[i],nr=r+d[1],nc=c+d[2];if(nr>=0&&nr<ROWS&&nc>=0&&nc<COLS&&!g[nr][nc].v)o.push(d);}
+      if(o.length){var d=o[Math.floor(Math.random()*o.length)],nr=r+d[1],nc=c+d[2];g[r][c][d[0]]=false;g[nr][nc][d[3]]=false;g[nr][nc].v=true;st.push([nr,nc]);}else st.pop();}
+    var D2=[['N',-1,0,'S'],['E',0,1,'W'],['S',1,0,'N'],['W',0,-1,'E']];
+    for(r=0;r<ROWS;r++)for(c=0;c<COLS;c++){var w=0;for(i=0;i<4;i++){if(g[r][c][D2[i][0]])w++;}
+      if(w>=3&&Math.random()<0.85){var ca=[];for(i=0;i<4;i++){var d=D2[i],nr=r+d[1],nc=c+d[2];if(g[r][c][d[0]]&&nr>=0&&nr<ROWS&&nc>=0&&nc<COLS)ca.push(d);}
+        if(ca.length){var d=ca[Math.floor(Math.random()*ca.length)],nr=r+d[1],nc=c+d[2];g[r][c][d[0]]=false;g[nr][nc][d[3]]=false;}}}
+    for(r=0;r<ROWS;r++)for(c=0;c<COLS;c++)g[r][c].v=false;return g;
+  }
+  function nb(g,r,c){var o=[];if(!g[r][c].N)o.push([r-1,c]);if(!g[r][c].E)o.push([r,c+1]);if(!g[r][c].S)o.push([r+1,c]);if(!g[r][c].W)o.push([r,c-1]);return o;}
+  function solve(g){var s=[0,0],e=[ROWS-1,COLS-1],qd=[s],pv={},sn={};sn['0,0']=true;
+    while(qd.length){var cu=qd.shift();if(cu[0]===e[0]&&cu[1]===e[1])break;var ns=nb(g,cu[0],cu[1]);
+      for(var i=0;i<ns.length;i++){var k=ns[i][0]+','+ns[i][1];if(!sn[k]){sn[k]=true;pv[k]=cu;qd.push(ns[i]);}}}
+    var p=[e],k=e[0]+','+e[1];while(k!=='0,0'){var pp=pv[k];if(!pp)break;p.unshift(pp);k=pp[0]+','+pp[1];}return p;}
+  var maze=makeMaze(),solution=solve(maze);
+  function cx(c){return c*cell+cell/2;}function cy(r){return r*cell+cell/2;}
+  function drawMaze(ctx){ctx.clearRect(0,0,N,N);ctx.strokeStyle=wall;ctx.lineWidth=2;ctx.lineCap='round';
+    for(var r=0;r<ROWS;r++)for(var c=0;c<COLS;c++){var x=c*cell,y=r*cell,m=maze[r][c];ctx.beginPath();
+      if(m.N){ctx.moveTo(x,y);ctx.lineTo(x+cell,y);}if(m.E){ctx.moveTo(x+cell,y);ctx.lineTo(x+cell,y+cell);}
+      if(m.S){ctx.moveTo(x+cell,y+cell);ctx.lineTo(x,y+cell);}if(m.W){ctx.moveTo(x,y+cell);ctx.lineTo(x,y);}ctx.stroke();}
+    ctx.fillStyle=muted;ctx.beginPath();ctx.arc(cx(0),cy(0),cell*0.16,0,7);ctx.fill();
+    ctx.strokeStyle='rgba(245,242,236,.35)';ctx.lineWidth=2;var ex=cx(COLS-1),ey=cy(ROWS-1),s=cell*0.22;ctx.strokeRect(ex-s,ey-s,s*2,s*2);}
+  function exitGlow(ctx,col){var ex=cx(COLS-1),ey=cy(ROWS-1),s=cell*0.22;ctx.save();ctx.shadowColor=col;ctx.shadowBlur=22;ctx.fillStyle=col;ctx.fillRect(ex-s,ey-s,s*2,s*2);ctx.restore();}
+  function fmt(ms){var s=ms/1000;if(s<10)return s.toFixed(1)+'s';if(s<600)return s.toFixed(0)+'s';var m=Math.floor(s/60);return m+'m '+Math.floor(s%60)+'s';}
+
+  var ctxC=document.getElementById('thMzC').getContext('2d');
+  var cntC=document.getElementById('thMzCntC'),timeC=document.getElementById('thMzTimeC');
+  var cStep=null,cRAF=null,cStart=0,cCount=0,TRAIL=15,trail=[],cur=[0,0],prev=null;
+  function isExit(n){return n[0]===ROWS-1&&n[1]===COLS-1;}
+  function resetC(){if(cStep){clearInterval(cStep);cStep=null;}if(cRAF){cancelAnimationFrame(cRAF);cRAF=null;}trail=[];cur=[0,0];prev=null;cCount=0;cntC.textContent='0';timeC.textContent='0.0s';drawMaze(ctxC);}
+  function stepC(){var ns=nb(maze,cur[0],cur[1]).filter(function(n){return !isExit(n);});
+    var fw=ns.filter(function(n){return !prev||n[0]!==prev[0]||n[1]!==prev[1];});
+    var pool=fw.length?fw:(ns.length?ns:[prev||cur]);var nx=pool[Math.floor(Math.random()*pool.length)];
+    prev=cur;cur=nx;trail.push(cur);if(trail.length>TRAIL)trail.shift();cCount++;cntC.textContent=cCount.toLocaleString();}
+  function renderC(){drawMaze(ctxC);for(var i=0;i<trail.length;i++){var a=(i+1)/trail.length;
+    ctxC.fillStyle='rgba(122,128,140,'+(0.10+a*0.28)+')';ctxC.beginPath();ctxC.arc(cx(trail[i][1]),cy(trail[i][0]),cell*0.16+a*cell*0.08,0,7);ctxC.fill();}
+    ctxC.save();ctxC.shadowColor=gray;ctxC.shadowBlur=12;ctxC.fillStyle=gray;ctxC.beginPath();ctxC.arc(cx(cur[1]),cy(cur[0]),cell*0.20,0,7);ctxC.fill();ctxC.restore();}
+  function runC(){if(cStep)return;cStart=performance.now();if(!trail.length)trail.push(cur);cStep=setInterval(stepC,80);
+    (function loop(){timeC.textContent=fmt(performance.now()-cStart);renderC();cRAF=requestAnimationFrame(loop);})();}
+
+  var ctxQ=document.getElementById('thMzQ').getContext('2d');
+  function fitSquare(canvas,context){
+    var rect=canvas.getBoundingClientRect();
+    var css=rect.width|| (N);
+    canvas.style.height=css+'px';
+    var dpr=window.devicePixelRatio||1;
+    canvas.width=Math.round(css*dpr);
+    canvas.height=Math.round(css*dpr);
+    context.setTransform((css/N)*dpr,0,0,(css/N)*dpr,0,0);
+  }
+  var timeQ=document.getElementById('thMzTimeQ'),stateQ=document.getElementById('thMzStateQ');var qBusy=false;
+  function resetQ(){timeQ.textContent='0.00s';stateQ.textContent='idle';drawMaze(ctxQ);qBusy=false;}
+  function runQ(){if(qBusy)return;qBusy=true;stateQ.textContent='reading';var t0=performance.now();drawMaze(ctxQ);
+    var s0=performance.now(),sh=220;
+    (function shimmer(now){var p=Math.min(1,(now-s0)/sh);drawMaze(ctxQ);ctxQ.fillStyle='rgba(61,169,252,'+(Math.sin(p*Math.PI)*0.10)+')';ctxQ.fillRect(0,0,N,N);
+      var y=p*N;ctxQ.strokeStyle='rgba(61,169,252,'+(0.5*Math.sin(p*Math.PI))+')';ctxQ.lineWidth=2;ctxQ.beginPath();ctxQ.moveTo(0,y);ctxQ.lineTo(N,y);ctxQ.stroke();
+      if(p<1)requestAnimationFrame(shimmer);else draw();})(performance.now());
+    function draw(){stateQ.textContent='exit found';var seg=performance.now();
+      (function step(now){var k=Math.min(solution.length,Math.floor((now-seg)/14)+2);drawMaze(ctxQ);
+        ctxQ.save();ctxQ.shadowColor=q;ctxQ.shadowBlur=16;ctxQ.strokeStyle=q;ctxQ.lineWidth=cell*0.30;ctxQ.lineJoin='round';ctxQ.lineCap='round';ctxQ.beginPath();
+        for(var j=0;j<k;j++){var p=solution[j];if(j===0)ctxQ.moveTo(cx(p[1]),cy(p[0]));else ctxQ.lineTo(cx(p[1]),cy(p[0]));}ctxQ.stroke();ctxQ.restore();
+        if(k<solution.length)requestAnimationFrame(step);else{exitGlow(ctxQ,q);timeQ.textContent=((performance.now()-t0)/1000).toFixed(2)+'s';qBusy=false;}})(performance.now());}
+  }
+  function fitAll(){fitSquare(document.getElementById('thMzC'),ctxC);fitSquare(document.getElementById('thMzQ'),ctxQ);}
+  fitAll();drawMaze(ctxC);drawMaze(ctxQ);
+  window.addEventListener('resize',function(){fitAll();drawMaze(ctxC);drawMaze(ctxQ);});
+  document.getElementById('thMzRunC').onclick=runC;document.getElementById('thMzResetC').onclick=resetC;
+  document.getElementById('thMzRunQ').onclick=runQ;document.getElementById('thMzResetQ').onclick=resetQ;
+})();
+</script>
+
+<script>
+(function(){
+  if(window.__thTk)return;window.__thTk=true;
+  var cv=document.getElementById('thTkCv');if(!cv)return;var ctx=cv.getContext('2d');
+  var BASE_W=1000,BASE_H=460,W=BASE_W,H=BASE_H,padL=58,padR=34,padT=30,padB=46;
+  var ink='#F5F2EC',muted='#8b909c',q='#3DA9FC',danger='#E5484D',hair='rgba(245,242,236,.07)';
+  var Y0=2016,Y1=2029;
+  var statusEl=document.getElementById('thTkStatus'),confEl=document.getElementById('thTkConf'),pill=document.getElementById('thTkPill');
+  function fitCanvas(){
+    var rect=cv.getBoundingClientRect();
+    var cssW=rect.width>0?rect.width:BASE_W;
+    var cssH=cssW*(BASE_H/BASE_W);
+    cv.style.height=cssH+'px';
+    var dpr=window.devicePixelRatio||1;
+    cv.width=Math.round(cssW*dpr);
+    cv.height=Math.round(cssH*dpr);
+    W=cssW;H=cssH;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+  var pts=[],crashFrac=0;
+  function build(){pts=[];var n=260,v=0.12;
+    for(var i=0;i<=n;i++){var x=i/n;var target=0.12+x*0.80;v+=(target-v)*0.06+(Math.random()-0.5)*0.012;if(v<0.05)v=0.05;pts.push({x:x,y:v});}
+    crashFrac=0.94+Math.random()*0.05;}
+  build();
+  function px(x){return padL+x*(W-padL-padR);}
+  function py(y){return (H-padB)-y*(H-padT-padB);}
+  function grid(){ctx.clearRect(0,0,W,H);
+    ctx.strokeStyle=hair;ctx.lineWidth=1;
+    for(var g=0;g<=4;g++){var yy=py(g/4);ctx.beginPath();ctx.moveTo(padL,yy);ctx.lineTo(W-padR,yy);ctx.stroke();}
+    ctx.strokeStyle='rgba(245,242,236,.18)';ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.moveTo(padL,padT);ctx.lineTo(padL,H-padB);ctx.lineTo(W-padR,H-padB);ctx.stroke();
+    ctx.save();ctx.translate(16,H/2);ctx.rotate(-Math.PI/2);ctx.fillStyle=muted;ctx.font="500 12px 'IBM Plex Mono',monospace";ctx.textAlign='center';ctx.fillText('PERCEIVED SECURITY',0,0);ctx.restore();
+    ctx.fillStyle=muted;ctx.font="500 11px 'IBM Plex Mono',monospace";ctx.textAlign='center';
+    var years=[2016,2020,2024,2029];
+    for(var i=0;i<years.length;i++){var fx=(years[i]-Y0)/(Y1-Y0);ctx.fillText(years[i],px(fx),H-padB+20);}}
+  function drawUpTo(p){grid();var crashIdx=null;
+    for(var i=0;i<pts.length;i++){if(pts[i].x>=crashFrac){crashIdx=i;break;}}
+    if(crashIdx===null)crashIdx=pts.length-1;
+    var revealX=p,lastDrawn=null;
+    ctx.save();ctx.shadowColor=q;ctx.shadowBlur=10;ctx.strokeStyle=q;ctx.lineWidth=2.4;ctx.lineJoin='round';ctx.lineCap='round';ctx.beginPath();var started=false;
+    for(var i=0;i<=crashIdx;i++){if(pts[i].x>revealX)break;var X=px(pts[i].x),Yp=py(pts[i].y);if(!started){ctx.moveTo(X,Yp);started=true;}else ctx.lineTo(X,Yp);lastDrawn=pts[i];}
+    ctx.stroke();ctx.restore();
+    if(lastDrawn&&revealX<crashFrac){ctx.save();ctx.shadowColor=q;ctx.shadowBlur=14;ctx.fillStyle=q;ctx.beginPath();ctx.arc(px(lastDrawn.x),py(lastDrawn.y),4.5,0,7);ctx.fill();ctx.restore();}
+    if(revealX>=crashFrac){var cxp=px(pts[crashIdx].x),cyTop=py(pts[crashIdx].y),cyBot=py(0);
+      ctx.save();ctx.shadowColor=danger;ctx.shadowBlur=16;ctx.strokeStyle=danger;ctx.lineWidth=2.6;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(cxp,cyTop);ctx.lineTo(cxp,cyBot);ctx.stroke();ctx.restore();
+      ctx.save();ctx.shadowColor=danger;ctx.shadowBlur=14;ctx.fillStyle=danger;ctx.beginPath();ctx.arc(cxp,cyBot,5,0,7);ctx.fill();ctx.restore();
+      ctx.fillStyle=danger;ctx.font="600 12px 'IBM Plex Mono',monospace";ctx.textAlign='right';ctx.fillText('Q-DAY',cxp-12,cyTop-26);
+      ctx.fillStyle=muted;ctx.font="500 10px 'IBM Plex Mono',monospace";ctx.fillText('A RANDOM DAY IN 2029',cxp-12,cyTop-12);
+      ctx.strokeStyle=danger;ctx.lineWidth=1.6;ctx.beginPath();ctx.moveTo(cxp-10,cyTop-8);ctx.lineTo(cxp-2,cyTop-2);ctx.stroke();}}
+  var raf=null,running=false;
+  function reset(){if(raf)cancelAnimationFrame(raf);raf=null;running=false;statusEl.textContent='secure';pill.classList.remove('broken');confEl.textContent='0%';drawUpTo(0);}
+  function play(){if(running)return;running=true;build();statusEl.textContent='secure';pill.classList.remove('broken');
+    var t0=performance.now(),dur=3600,broke=false;
+    function frame(now){var p=Math.min(1,(now-t0)/dur);drawUpTo(p);
+      if(p<crashFrac){var idx=Math.min(pts.length-1,Math.floor((p/crashFrac)*pts.length));confEl.textContent=Math.round(pts[idx].y*100)+'%';}
+      else if(!broke){broke=true;statusEl.textContent='broken';pill.classList.add('broken');confEl.textContent='0%';}
+      if(p<1)raf=requestAnimationFrame(frame);else running=false;}
+    raf=requestAnimationFrame(frame);}
+  function init(){fitCanvas();drawUpTo(0);}
+  if(document.readyState==='complete')requestAnimationFrame(init);
+  else window.addEventListener('load',function(){requestAnimationFrame(init);});
+  requestAnimationFrame(init);
+  window.addEventListener('resize',function(){fitCanvas();drawUpTo(0);});
+  var playBtn=document.getElementById('thTkPlay'),resetBtn=document.getElementById('thTkReset');
+  if(playBtn)playBtn.onclick=play;
+  if(resetBtn)resetBtn.onclick=function(){reset();play();};
+})();
+</script>
+
+</body>
+</html>

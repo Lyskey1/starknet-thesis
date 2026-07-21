@@ -1,0 +1,2280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Privacy Thesis — STRK20 and Private Transfers on Starknet</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+  <link rel="canonical" href="https://starknetthesis.com/privacy.html">
+  <meta property="og:title" content="The Privacy Thesis — STRK20 and Private Transfers on Starknet">
+  <meta property="og:description" content="Why crypto's radical transparency fails its users, and how Starknet's STRK20 standard enables private transfers, swaps and balances with wallet-level UX.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://starknetthesis.com/privacy.html">
+  <meta property="og:site_name" content="Starknet Thesis">
+  <meta property="og:image" content="https://starknetthesis.com/assets/og-default.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="The Privacy Thesis — STRK20 and Private Transfers on Starknet">
+  <meta name="twitter:description" content="Why crypto's radical transparency fails its users, and how Starknet's STRK20 standard enables private transfers, swaps and balances with wallet-level UX.">
+  <meta name="twitter:image" content="https://starknetthesis.com/assets/og-default.png">
+  <script type="application/ld+json">{"@context": "https://schema.org","@type": "Article","headline": "The Privacy Thesis \u2014 STRK20 and Private Transfers on Starknet","description": "Why crypto's radical transparency fails its users, and how Starknet's STRK20 standard enables private transfers, swaps and balances with wallet-level UX.","datePublished": "2026-07-21","dateModified": "2026-07-21","author": {"@type": "Person","name": "Lyskey","url": "https://x.com/Lyskey"},"publisher": {"@type": "Organization","name": "Starknet Thesis","url": "https://starknetthesis.com/"},"mainEntityOfPage": "https://starknetthesis.com/privacy.html"}</script>
+<meta name="description" content="Why crypto's radical transparency fails its users, and how Starknet's STRK20 standard enables private transfers, swaps and balances with wallet-level UX.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Expanded:wght@500;600;700;800;900&family=IBM+Plex+Mono:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/dist/tabler-icons.min.css">
+<link rel="stylesheet" href="css/styles.css?v=20260618d">
+<style>
+  /* ============================================================ */
+  /* PRIVACY PAGE — page-specific components (emerald-themed).     */
+  /* Inline so it never touches the shared stylesheet / other      */
+  /* pages. Shared nav, footer, tweet fallback cards and buttons   */
+  /* come from css/styles.css; the rules below override / extend   */
+  /* them to match the privacy full-page mockup exactly.           */
+  /* ============================================================ */
+
+  /* Per-page accent: emerald. Overrides the shared body.page-privacy
+     palette (purple) from css/styles.css — declared here, after the
+     shared sheet, at equal specificity, so it wins without touching
+     the shared file. The orange-family aliases in styles.css live on
+     <body> and re-substitute against this --accent automatically. */
+  body.page-privacy {
+    --accent: #1FCB94;
+    --accent-rgb: 31, 203, 148;
+    --accent-dim: #17A278;
+    --bg-glow: rgba(var(--accent-rgb), 0.11);
+
+    /* mockup tokens, mapped onto the site's design system */
+    --em: var(--accent);
+    --em-dim: rgba(var(--accent-rgb), .14);
+    --em-line: rgba(var(--accent-rgb), .35);
+    --danger: #E4574B;
+    --amber: #E8A33D;
+    --ink: var(--white);
+    --muted: #9AA3A7;
+    --line: rgba(255,255,255,.07);
+    --bg-raise: #0A0D0F;
+
+    font-size: 17px;
+    line-height: 1.65;
+    overflow-x: clip;
+  }
+  body.page-privacy ::selection { background: var(--em); color: #03110C; }
+
+  /* ============ HERO (quantum pattern: centered, eyebrow, uppercase display, accent glow) ============ */
+  .hero { min-height: auto; display: block; overflow: visible; padding: 128px 32px 60px; max-width: 1100px; margin: 0 auto; text-align: center; position: relative; }
+  .hero::before { top: -40px; width: 760px; height: 420px; max-width: 100%; background: radial-gradient(ellipse at center top, rgba(var(--accent-rgb),0.16), transparent 70%); }
+  .hero-eyebrow { color: var(--accent); opacity: 1; margin-bottom: 24px; position: relative; }
+  .hero-title { font-size: clamp(40px,6.5vw,76px); line-height: 1.0; margin-bottom: 26px; max-width: none; position: relative; }
+  /* the bracket-sealed fragments cannot wrap internally (white-space:nowrap),
+     so below ~526px the 40px floor would overflow: step the size down with
+     the viewport so the longest fragment always fits */
+  @media (max-width: 560px) { .hero-title { font-size: clamp(21px,6.8vw,40px); } }
+  .shield-wrap { position: relative; display: inline-block; white-space: nowrap; margin-right: .3ch; }
+  .shield-wrap .bk { color: var(--em); font-weight: 800; display: inline-block; opacity: 0; transform: translateX(var(--from,-12px)); animation: bkin .5s cubic-bezier(.2,.9,.25,1) var(--t,1.15s) forwards; }
+  .shield-wrap .bk.r { --from: 12px; }
+  .shield-wrap .word { display: inline-block; animation: seal .6s ease var(--t,1.15s) forwards; }
+  .sw2 { --t: 1.5s; } .sw3 { --t: 1.85s; }
+  @keyframes bkin { to { opacity: 1; transform: translateX(0); } }
+  @keyframes seal { to { filter: blur(6px); opacity: .5; } }
+  .hero .turn { display: block; margin-top: .35em; color: var(--em); opacity: 0; transform: translateY(10px); animation: turnin .6s ease 2.4s forwards; }
+  @keyframes turnin { to { opacity: 1; transform: none; } }
+  .hero-subtitle { font-size: 18px; color: rgba(245,242,236,0.62); max-width: 620px; margin: 0 auto 8px; line-height: 1.7; position: relative; }
+  .hero-subtitle b { color: var(--white); font-weight: 600; }
+  .status-row { display: flex; gap: 14px; margin-top: 42px; flex-wrap: wrap; justify-content: center; position: relative; }
+  .status-row .pill { font-family: var(--mono); font-size: 12px; letter-spacing: .1em; border: 1px solid var(--em-line); background: transparent; color: var(--em); padding: 9px 16px; border-radius: 99px; display: inline-flex; }
+
+  /* ============ SECTION SHELL (quantum th-pm design system, emerald) ============ */
+  .th-pm-sec { --th-q: var(--accent); --th-ink: var(--white); --th-muted: #8b909c; --th-hair: rgba(245,242,236,.08); --th-hair-soft: rgba(245,242,236,.05); position: relative; max-width: 1160px; margin: 0 auto; padding: 90px 32px 0; overflow: visible; }
+  .th-pm-sec::before { content: ""; position: absolute; top: 40px; left: 6px; width: 520px; height: 520px; background: radial-gradient(circle,var(--th-q) 0%,transparent 60%); opacity: .07; filter: blur(8px); pointer-events: none; z-index: 0; }
+  .th-pm-sec > * { position: relative; z-index: 1; }
+  .th-pm-div { max-width: 1160px; margin: 0 auto; height: 1px; background: rgba(245,242,236,.05); }
+  .th-pm-head { display: flex; align-items: center; gap: 18px; }
+  .th-pm-marker { width: 0; height: 0; border-left: 13px solid var(--accent); border-top: 8px solid transparent; border-bottom: 8px solid transparent; transform: translateY(2px); filter: drop-shadow(0 0 8px rgba(var(--accent-rgb),.6)); }
+  .th-pm-num { font-family: var(--display); font-weight: 900; font-size: 64px; line-height: 1; color: var(--accent); letter-spacing: -.02em; }
+  .th-pm-title { font-family: var(--display); font-weight: 800; font-size: 52px; line-height: 1.02; letter-spacing: -.015em; color: var(--white); max-width: none; }
+  .th-pm-title b { color: var(--accent); font-weight: 800; }
+  .th-pm-eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: var(--accent); margin-top: 16px; opacity: .85; }
+  .th-pm-intro { font-size: 17px; line-height: 1.6; color: #8b909c; max-width: 62ch; margin-top: 34px; }
+  .th-pm-intro b { color: var(--white); font-weight: 600; }
+  @media (max-width: 880px) { .th-pm-title { font-size: 38px; } .th-pm-num { font-size: 48px; } }
+
+  /* chapters (display headline + free prose) */
+  .chapter { margin-top: 84px; }
+  .chapter h3 { font-family: var(--display); font-weight: 700; font-size: clamp(23px,2.6vw,31px); line-height: 1.2; max-width: 28ch; margin-bottom: 22px; }
+  .chapter h3 .em { color: var(--em); }
+  .chapter h3 .wall-tag { display: block; font-family: var(--mono); font-size: 12px; letter-spacing: .16em; color: var(--muted); font-weight: 500; margin-bottom: 12px; }
+  .chapter p { max-width: 68ch; color: #C9CFCB; margin-bottom: 18px; }
+  .chapter p b { color: var(--ink); }
+  .kicker { font-family: var(--display); font-weight: 700; font-size: 21px; color: var(--ink); max-width: 30ch; line-height: 1.4; }
+  .kicker .em { color: var(--em); }
+
+  /* ============ 01: the three bills (printed receipts, hover to flip) ============ */
+  .printer { margin-top: 56px; }
+  .printer-bar { height: 14px; border-radius: 99px; background: linear-gradient(180deg,#181D20,#0C0F11); border: 1px solid var(--line); position: relative; margin: 0 6%; box-shadow: 0 6px 18px rgba(0,0,0,.5); }
+  .printer-bar span { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); width: 38%; height: 4px; border-radius: 99px; background: #03110C; box-shadow: inset 0 0 6px rgba(var(--accent-rgb),.5); }
+  .bills { display: grid; grid-template-columns: repeat(3,1fr); gap: 22px; padding: 0 2%; margin-top: -2px; }
+  .slot { overflow: hidden; padding: 14px 6px 26px; }
+  .flip { perspective: 1400px; transform: translateY(-108%); transition: transform 1.1s cubic-bezier(.22,.9,.3,1); }
+  .printer.printed .slot:nth-child(1) .flip { transform: translateY(0) rotate(-.6deg); transition-delay: .05s; }
+  .printer.printed .slot:nth-child(2) .flip { transform: translateY(0) rotate(.35deg); transition-delay: .45s; }
+  .printer.printed .slot:nth-child(3) .flip { transform: translateY(0) rotate(-.3deg); transition-delay: .85s; }
+  .inner { position: relative; transform-style: preserve-3d; transition: transform .7s cubic-bezier(.3,.8,.3,1); }
+  .flip:hover .inner, .flip.flipped .inner { transform: rotateY(180deg); }
+  .bill { background: #F2F1EA; color: #15181A; font-family: var(--mono); border-radius: 3px 3px 0 0; padding: 22px 20px 16px; box-shadow: 0 14px 30px rgba(0,0,0,.45); }
+  .face { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+  .bill.back { position: absolute; inset: 0; transform: rotateY(180deg); background: #EBEAE1; display: flex; flex-direction: column; overflow: auto; }
+  .bill.back .b-head { padding-bottom: 12px; border-bottom: 1px dashed #B9B7AC; }
+  .bp-t { font-family: var(--sans); font-size: 15.5px; line-height: 1.8; color: #2E3336; margin: auto 0; padding: 14px 0; }
+  .bp-t b { color: #B3261E; }
+  .bill::after { content: ''; display: block; height: 12px; margin: 14px -20px -16px; background: linear-gradient(45deg,transparent 33.33%,#F2F1EA 33.33%,#F2F1EA 66.66%,transparent 66.66%),linear-gradient(-45deg,transparent 33.33%,#F2F1EA 33.33%,#F2F1EA 66.66%,transparent 66.66%); background-size: 14px 24px; background-position: 0 -12px; filter: drop-shadow(0 3px 3px rgba(0,0,0,.25)); }
+  .bill.back::after { background: linear-gradient(45deg,transparent 33.33%,#EBEAE1 33.33%,#EBEAE1 66.66%,transparent 66.66%),linear-gradient(-45deg,transparent 33.33%,#EBEAE1 33.33%,#EBEAE1 66.66%,transparent 66.66%); background-size: 14px 24px; background-position: 0 -12px; margin-top: auto; }
+  .b-head { font-weight: 600; font-size: 12.5px; letter-spacing: .12em; }
+  .b-sub { font-size: 10px; letter-spacing: .1em; color: #6B7075; margin-top: 5px; padding-bottom: 12px; border-bottom: 1px dashed #B9B7AC; }
+  .b-line { display: flex; justify-content: space-between; gap: 12px; font-size: 11px; line-height: 1.5; padding: 10px 0; border-bottom: 1px dashed #D8D6CB; }
+  .b-line .amt { white-space: nowrap; font-weight: 600; color: #B3261E; }
+  .b-total { display: flex; justify-content: space-between; font-size: 11px; font-weight: 600; letter-spacing: .1em; padding-top: 12px; }
+  .b-total span:last-child { color: #0B7A57; }
+  .b-barcode { height: 26px; margin-top: 14px; background: repeating-linear-gradient(90deg,#15181A 0 2px,transparent 2px 5px,#15181A 5px 6px,transparent 6px 11px); }
+
+  /* ============ 01: what your address reveals ============ */
+  .reveal-lead { margin-top: 80px; }
+  .reveal { margin-top: 26px; border: 1px solid var(--line); border-radius: 14px; background: linear-gradient(180deg,var(--bg-raise),#07090A); overflow: hidden; }
+  .reveal-bar { display: flex; justify-content: space-between; align-items: center; padding: 18px 26px; border-bottom: 1px solid var(--line); gap: 14px; }
+  .reveal-bar .t { font-family: var(--mono); font-size: 12px; letter-spacing: .14em; color: var(--muted); }
+  .shield-toggle { font-family: var(--mono); font-size: 12px; letter-spacing: .1em; background: none; border: 1px solid var(--em-line); color: var(--em); padding: 9px 18px; border-radius: 99px; cursor: pointer; transition: background .2s; white-space: nowrap; }
+  .shield-toggle:hover { background: var(--em-dim); }
+  .reveal-body { padding: 30px 26px 34px; }
+  .addr { font-family: var(--mono); font-size: 15px; color: var(--ink); display: inline-flex; align-items: center; border: 1px dashed var(--line); padding: 12px 18px; border-radius: 8px; }
+  .leaks { display: grid; grid-template-columns: repeat(2,1fr); gap: 14px; margin-top: 22px; }
+  .leak { border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; background: #0B0F10; }
+  .leak .k { font-family: var(--mono); font-size: 10.5px; letter-spacing: .14em; color: var(--danger); }
+  .leak .v { font-family: var(--mono); font-size: 15px; margin-top: 8px; color: var(--ink); }
+  .leak .d { font-size: 13px; color: var(--muted); margin-top: 8px; line-height: 1.55; }
+  .reveal.shielded .leak .v, .reveal.shielded .leak .d { filter: blur(7px); user-select: none; }
+  .reveal.shielded .leak .k { color: var(--em); }
+  .reveal.shielded .leak { border-color: var(--em-line); }
+  .reveal.shielded .addr::before { content: '[ '; }
+  .reveal.shielded .addr::after { content: ' ]'; }
+  .reveal.shielded .addr::before, .reveal.shielded .addr::after { color: var(--em); font-weight: 600; }
+
+  /* ============ 02: case files / island / crowd ============ */
+  .cases { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 30px 0; max-width: 820px; }
+  .case { border: 1px solid var(--line); border-top: 2px solid var(--danger); background: var(--bg-raise); border-radius: 10px; padding: 22px 24px; font-family: var(--mono); }
+  .case .ch { font-size: 11px; letter-spacing: .16em; color: var(--danger); }
+  .case .cn { font-size: 16px; font-weight: 600; margin-top: 10px; letter-spacing: .03em; }
+  .case .cd { font-size: 12.5px; color: var(--muted); margin-top: 12px; line-height: 1.7; }
+  .case .cs { font-size: 11px; letter-spacing: .12em; margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--line); color: var(--ink); }
+
+  .island { display: flex; align-items: stretch; gap: 0; margin: 34px 0 10px; max-width: 820px; font-family: var(--mono); }
+  .landmass { border: 1px solid var(--line); background: var(--bg-raise); border-radius: 12px; padding: 22px; text-align: center; flex: 1; }
+  .landmass .lt { font-size: 12px; letter-spacing: .14em; }
+  .landmass .ls { font-size: 10.5px; color: var(--muted); margin-top: 8px; letter-spacing: .06em; line-height: 1.7; }
+  .landmass.iso { border-color: var(--em-line); }
+  .landmass.iso .lt { color: var(--em); }
+  .bridge { flex: 0 0 190px; text-align: center; padding: 0 8px; display: flex; flex-direction: column; justify-content: center; align-self: stretch; }
+  /* named .rail-line (not .rail) so the four-properties .rail styles can't
+     collide with it — the mockup's shared name shrank this line to a stub */
+  .bridge .rail-line { height: 2px; align-self: stretch; background: repeating-linear-gradient(90deg,var(--danger) 0 8px,transparent 8px 16px); }
+  .bridge .bl { font-size: 9.5px; letter-spacing: .14em; color: var(--danger); margin-top: 10px; }
+
+  .crowd { border: 1px solid var(--line); border-radius: 14px; background: var(--bg-raise); padding: 28px; margin: 34px 0 10px; max-width: 820px; }
+  .crowd-top { display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; }
+  .crowd-top .t { font-family: var(--mono); font-size: 12px; letter-spacing: .14em; color: var(--muted); }
+  .crowd-top input { accent-color: var(--em); width: 220px; }
+  .dots { display: grid; grid-template-columns: repeat(30,1fr); gap: 7px; margin-top: 24px; }
+  .dot { aspect-ratio: 1; border-radius: 50%; background: #20272B; transition: opacity .3s; }
+  .dot.hidden { opacity: 0; }
+  .dot.you { background: var(--em); box-shadow: 0 0 10px var(--em); position: relative; }
+  .crowd-cap { font-family: var(--mono); font-size: 12px; margin-top: 22px; letter-spacing: .06em; }
+  .crowd-cap .n { color: var(--em); }
+  .crowd-cap .warn { color: var(--danger); }
+  .wall-out { margin-top: 76px; max-width: 34ch; font-family: var(--display); font-weight: 700; font-size: clamp(22px,2.6vw,30px); line-height: 1.3; }
+  .wall-out .em { color: var(--em); }
+
+  /* ============ 03: protocol grid ============ */
+  .gridwrap { margin: 56px 0 0; overflow-x: auto; }
+  .pgrid { width: 100%; border-collapse: collapse; font-family: var(--mono); min-width: 860px; }
+  .pgrid th { font-size: 10px; letter-spacing: .08em; color: var(--ink); padding: 14px 10px; border: 1px solid var(--line); background: #0D1114; font-weight: 600; line-height: 1.5; }
+  .pgrid th span { display: block; color: var(--muted); font-weight: 400; margin-top: 5px; text-transform: lowercase; letter-spacing: .04em; }
+  .pgrid td { border: 1px solid var(--line); text-align: center; padding: 0; height: 56px; position: relative; }
+  .pgrid td.pname, .pgrid th.pname { text-align: left; padding: 14px 16px; font-size: 12.5px; letter-spacing: .1em; font-weight: 600; background: #0D1114; }
+  .hero-row td { background: rgba(var(--accent-rgb),.05); }
+  .hero-row td.pname { color: var(--em); background: rgba(var(--accent-rgb),.08); }
+  .pgrid td.y::before { content: ''; display: inline-block; width: 18px; height: 18px; border-radius: 50%; background: var(--em-dim); border: 1px solid var(--em); box-shadow: 0 0 8px rgba(var(--accent-rgb),.25); }
+  .pgrid td.y::after { content: '✓'; position: absolute; left: 50%; top: 50%; transform: translate(-50%,-52%); color: var(--em); font-size: 11px; font-weight: 600; }
+  .pgrid td.n::before { content: '—'; color: #394247; font-size: 13px; }
+  .pgrid td.p::before { content: ''; display: inline-block; width: 18px; height: 18px; border-radius: 50%; background: rgba(232,163,61,.12); border: 1px solid #E8A33D; box-shadow: 0 0 8px rgba(232,163,61,.2); }
+  .pgrid td.p::after { content: '~'; position: absolute; left: 50%; top: 50%; transform: translate(-50%,-54%); color: #E8A33D; font-size: 13px; font-weight: 600; }
+  .pgrid td.p:hover, .pgrid td.p:focus { background: rgba(232,163,61,.08); outline: none; cursor: help; }
+  .pgrid td.y:hover, .pgrid td.n:hover, .pgrid td.y:focus, .pgrid td.n:focus { background: rgba(var(--accent-rgb),.09); outline: none; cursor: help; }
+  .pgrid td[data-tip]:hover .tipbox, .pgrid td[data-tip]:focus .tipbox { opacity: 1; visibility: visible; }
+  .tipbox { position: absolute; bottom: calc(100% + 10px); left: 50%; transform: translateX(-50%); width: 250px; background: #10161A; border: 1px solid var(--em-line); border-radius: 8px; padding: 12px 14px; font-family: var(--sans); font-size: 12.5px; line-height: 1.55; color: #D6DAD6; text-align: left; opacity: 0; visibility: hidden; transition: opacity .18s; z-index: 20; pointer-events: none; box-shadow: 0 10px 26px rgba(0,0,0,.5); }
+  .grid-lead { max-width: 68ch; color: #C9CFCB; margin-top: 64px; font-size: 17px; }
+  .grid-lead b { color: var(--ink); }
+
+  /* ============ 03: forum post / lineage / rail ============ */
+  .forum { max-width: 760px; margin: 60px auto 0; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; font-family: var(--mono); }
+  .forum-bar { background: #10151A; padding: 13px 20px; font-size: 11.5px; letter-spacing: .1em; color: var(--muted); display: flex; justify-content: space-between; gap: 12px; border-bottom: 1px solid var(--line); }
+  .forum-post { display: grid; grid-template-columns: 150px 1fr; background: var(--bg-raise); }
+  .forum-user { padding: 20px; border-right: 1px solid var(--line); font-size: 12px; line-height: 1.8; }
+  .forum-user .u { color: var(--em); font-weight: 600; }
+  .forum-user .r { color: var(--muted); font-size: 10.5px; letter-spacing: .06em; }
+  .forum-body { padding: 20px 24px; font-size: 14px; line-height: 1.8; color: #D6DAD6; }
+  .forum-body .hl { background: var(--em-dim); color: var(--em); padding: 1px 4px; }
+  .forum-reply { border-top: 1px solid var(--em-line); background: linear-gradient(180deg,rgba(var(--accent-rgb),.06),transparent); padding: 22px 24px; font-family: var(--sans); }
+  .forum-reply .rt { font-family: var(--display); font-weight: 700; font-size: 22px; }
+  .forum-reply .rt .em { color: var(--em); }
+  .forum-reply .rd { font-size: 14.5px; color: var(--muted); margin-top: 10px; line-height: 1.7; }
+
+  .lineage { display: flex; justify-content: space-between; max-width: 760px; margin: 36px auto 0; font-family: var(--mono); position: relative; }
+  .lineage::before { content: ''; position: absolute; left: 4%; right: 4%; top: 5px; height: 1px; background: var(--line); }
+  .ln { text-align: center; position: relative; flex: 1; text-decoration: none; color: inherit; transition: transform .2s; }
+  a.ln:hover { transform: translateY(-3px); }
+  a.ln:hover .y { color: var(--em); }
+  a.ln:hover .l { color: var(--ink); }
+  .ln i { display: block; width: 10px; height: 10px; border-radius: 50%; background: #20272B; border: 2px solid var(--muted); margin: 0 auto; }
+  .ln.on i { background: var(--em); border-color: var(--em); box-shadow: 0 0 8px var(--em); }
+  .ln .y { font-size: 12px; margin-top: 12px; color: var(--ink); }
+  .ln .l { font-size: 10px; color: var(--muted); letter-spacing: .06em; margin-top: 4px; line-height: 1.6; }
+
+  .rail { max-width: 820px; margin: 80px auto 0; position: relative; padding-left: 44px; }
+  .rail::before { content: ''; position: absolute; left: 11px; top: 14px; bottom: 14px; width: 2px; background: linear-gradient(180deg,var(--em-line),var(--em)); }
+  .rnode { position: relative; padding: 0 0 54px; }
+  .rnode:last-child { padding-bottom: 0; }
+  .rnode::before { content: ''; position: absolute; left: -40px; top: 6px; width: 20px; height: 20px; border-radius: 50%; background: var(--black); border: 2px solid var(--em); box-shadow: 0 0 12px rgba(var(--accent-rgb),.4); }
+  .rnode .rn { font-family: var(--mono); font-size: 11px; letter-spacing: .16em; color: var(--em); }
+  .rnode h4 { font-family: var(--display); font-weight: 700; font-size: 23px; margin: 8px 0 10px; }
+  .rnode p { color: #C9CFCB; font-size: 15.5px; max-width: 62ch; }
+  .rnode .elim { font-family: var(--mono); font-size: 11px; letter-spacing: .12em; color: var(--danger); margin-top: 12px; }
+  .rail-out { max-width: 820px; margin: 70px auto 0; font-family: var(--display); font-weight: 700; font-size: clamp(22px,2.6vw,30px); line-height: 1.3; }
+  .rail-out .em { color: var(--em); }
+
+  /* ============ 04: rollout timeline / foundation / visualizer / waves ============ */
+  .lead { max-width: 68ch; color: #C9CFCB; margin: 56px 0 0; font-size: 17px; font-weight: 400; line-height: 1.65; }
+  .lead b { color: var(--ink); font-weight: 600; }
+  .h3d { font-family: var(--display); font-weight: 700; font-size: clamp(22px,2.6vw,30px); line-height: 1.25; margin: 84px 0 24px; max-width: 30ch; }
+  .h3d .em { color: var(--em); }
+
+  /* ===== shield-stamp foundation component ===== */
+  .stamp-wrap { display: grid; grid-template-columns: 1.05fr 1fr; border: 1px solid var(--line); border-radius: 16px; background: linear-gradient(180deg,var(--bg-raise),#07090A); overflow: hidden; margin-top: 40px; }
+  .stamp-stage { position: relative; min-height: 520px; padding: 46px 30px 30px; border-right: 1px solid var(--line); display: flex; flex-direction: column; align-items: center; overflow: hidden; }
+  .stamp-stage::after { content: ''; position: absolute; left: 50%; bottom: -120px; transform: translateX(-50%); width: 480px; height: 260px; background: radial-gradient(ellipse at center, rgba(var(--accent-rgb),.14), transparent 70%); pointer-events: none; }
+  .ss-scene { position: relative; width: 100%; height: 300px; display: flex; align-items: flex-end; justify-content: center; margin-top: auto; }
+  .ss-stamp { position: absolute; top: 34px; left: 50%; transform: translate(-50%,-260px); transition: transform .5s cubic-bezier(.3,.7,.4,1); z-index: 3; }
+  .ss-stamp.down { transform: translate(-50%,0); transition: transform .28s cubic-bezier(.6,.05,.8,.4); }
+  .ss-handle { width: 46px; height: 22px; margin: 0 auto; border-radius: 6px 6px 0 0; background: #171D21; border: 1px solid var(--line); border-bottom: none; }
+  .ss-head { width: 150px; height: 62px; border-radius: 10px; background: #171D21; border: 1px solid var(--line); display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 26px; letter-spacing: .3em; text-indent: .3em; color: var(--em); box-shadow: 0 10px 24px rgba(0,0,0,.5); }
+  .ss-coin { position: relative; width: 170px; height: 170px; border-radius: 50%; background: #0D1114; border: 2px solid #F7931A; display: flex; align-items: center; justify-content: center; transition: box-shadow .3s; }
+  .ss-coin.sealed { box-shadow: 0 0 42px rgba(var(--accent-rgb),.35); }
+  .ss-coin.in { animation: ssIn .35s ease; }
+  @keyframes ssIn { from { opacity: 0; transform: scale(.85); } to { opacity: 1; transform: scale(1); } }
+  .ss-coin.shake { animation: ssShake .3s ease; }
+  @keyframes ssShake { 0%,100% { transform: translateY(0); } 30% { transform: translateY(7px); } 60% { transform: translateY(-3px); } 80% { transform: translateY(2px); } }
+  .ss-ring { position: absolute; inset: -2px; border-radius: 50%; border: 2px solid var(--em); opacity: 0; pointer-events: none; }
+  .ss-ring.boom { animation: ssRing .7s ease-out; }
+  @keyframes ssRing { from { opacity: .7; transform: scale(1); } to { opacity: 0; transform: scale(1.6); } }
+  .ss-logo { width: 96px; height: 96px; object-fit: contain; display: block; }
+  .ss-logo[hidden] { display: none; }
+  .ss-fallback { font-family: var(--mono); font-size: 64px; font-weight: 600; line-height: 1; }
+  .ss-fallback[hidden] { display: none; }
+  /* seal marks: four thin corner ticks framing the logo (STRK20 stamp look).
+     Frame square = 96px logo + 10px air per side = 116px, centered in the
+     170px coin -> 27px inset; corners sit just inside the coin border. */
+  .ss-tick { position: absolute; width: 15px; height: 15px; border: 0 solid var(--em); opacity: 0; transition: opacity .25s, transform .25s; pointer-events: none; filter: drop-shadow(0 0 6px rgba(var(--accent-rgb),.55)); }
+  .ss-tick.tl { left: 27px; top: 27px; border-left-width: 2px; border-top-width: 2px; transform: translate(-10px,-10px); }
+  .ss-tick.tr { right: 27px; top: 27px; border-right-width: 2px; border-top-width: 2px; transform: translate(10px,-10px); }
+  .ss-tick.bl { left: 27px; bottom: 27px; border-left-width: 2px; border-bottom-width: 2px; transform: translate(-10px,10px); }
+  .ss-tick.br { right: 27px; bottom: 27px; border-right-width: 2px; border-bottom-width: 2px; transform: translate(10px,10px); }
+  .ss-coin.sealed .ss-tick { opacity: 1; transform: translate(0,0); }
+  .ss-amount { margin-top: 24px; font-family: var(--mono); font-size: 14px; letter-spacing: .08em; color: var(--ink); min-height: 22px; text-align: center; transition: color .2s; }
+  .ss-amount.sealed { color: var(--em); }
+  .ss-chips { display: flex; gap: 10px; margin-top: auto; padding-top: 30px; flex-wrap: wrap; justify-content: center; }
+  .ss-chip { font-family: var(--mono); font-size: 12px; letter-spacing: .1em; color: var(--em); border: 1px solid var(--em-line); background: rgba(var(--accent-rgb),.07); padding: 8px 14px; border-radius: 99px; opacity: 0; transform: translateY(8px); transition: opacity .35s, transform .35s; white-space: nowrap; }
+  .ss-chip.on { opacity: 1; transform: none; }
+  .stamp-props { padding: 26px; display: flex; flex-direction: column; gap: 10px; }
+  .sp-head { font-family: var(--mono); font-size: 11px; letter-spacing: .16em; color: var(--muted); margin-bottom: 6px; }
+  .sp-card { border: 1px solid var(--line); border-radius: 10px; padding: 13px 16px; background: #0B0F10; transition: border-color .25s, background .25s; }
+  .sp-card .n { font-family: var(--mono); font-size: 10.5px; letter-spacing: .16em; color: var(--muted); transition: color .25s; }
+  .sp-card h5 { font-family: var(--display); font-weight: 700; font-size: 15px; margin-top: 6px; }
+  .sp-card p { font-size: 13px; color: var(--muted); line-height: 1.6; max-height: 0; overflow: hidden; margin-top: 0; transition: max-height .35s ease, margin-top .35s ease; }
+  .sp-card p b { color: var(--ink); }
+  .sp-card.on, .sp-card:hover { border-color: var(--em-line); background: rgba(var(--accent-rgb),.05); }
+  .sp-card.on .n, .sp-card:hover .n { color: var(--em); }
+  .sp-card.on p, .sp-card:hover p { max-height: 160px; margin-top: 8px; }
+  @media (max-width: 900px) {
+    .stamp-wrap { grid-template-columns: 1fr; }
+    .stamp-stage { border-right: none; border-bottom: 1px solid var(--line); min-height: 460px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ss-stamp { display: none; }
+    .ss-coin.in, .ss-coin.shake { animation: none; }
+    .ss-ring { display: none; }
+    .ss-chip { transition: none; }
+    .sp-card p { transition: none; }
+  }
+
+  .viz { border: 1px solid var(--line); border-radius: 16px; background: linear-gradient(180deg,var(--bg-raise),#07090A); margin-top: 40px; overflow: hidden; }
+  .viz-bar { display: flex; justify-content: space-between; align-items: center; padding: 18px 26px; border-bottom: 1px solid var(--line); gap: 14px; flex-wrap: wrap; }
+  .viz-bar .t { font-family: var(--mono); font-size: 12px; letter-spacing: .14em; color: var(--muted); }
+  .switch { display: flex; border: 1px solid var(--em-line); border-radius: 99px; overflow: hidden; font-family: var(--mono); font-size: 11.5px; letter-spacing: .1em; }
+  .switch button { background: none; border: none; color: var(--muted); padding: 10px 18px; cursor: pointer; font-family: inherit; font-size: inherit; letter-spacing: inherit; }
+  .switch button.on { background: var(--em-dim); color: var(--em); }
+  .viz-body { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+  .viz-col { padding: 30px; border-right: 1px solid var(--line); }
+  .viz-col:last-child { border-right: none; }
+  .viz-col .vt { font-family: var(--mono); font-size: 11px; letter-spacing: .16em; color: var(--muted); margin-bottom: 18px; }
+  .tx { font-family: var(--mono); font-size: 13px; line-height: 2.1; }
+  .tx .k { color: var(--muted); }
+  .tx .red { color: var(--danger); }
+  .tx .grn { color: var(--em); }
+  .viz .note-state { display: none; }
+  .viz.shielded .note-state { display: block; }
+  .viz.shielded .pub-state { display: none; }
+  .viz-foot { padding: 16px 26px; border-top: 1px solid var(--line); font-family: var(--mono); font-size: 11px; letter-spacing: .08em; color: var(--muted); }
+  .viz-foot .em { color: var(--em); }
+
+  .waves { display: grid; grid-template-columns: repeat(3,1fr); gap: 18px; margin-top: 36px; }
+  .wave { border: 1px solid var(--line); background: var(--bg-raise); border-radius: 14px; padding: 26px; }
+  .wave .wn { font-family: var(--mono); font-size: 10.5px; letter-spacing: .16em; color: var(--em); }
+  .wave h5 { font-family: var(--display); font-weight: 700; font-size: 19px; margin: 10px 0 16px; line-height: 1.3; }
+  /* project cards inside the fronts (same interaction pattern as the properties panel) */
+  .wp-card { border: 1px solid var(--line); border-radius: 10px; padding: 11px 14px; background: #0B0F10; transition: border-color .25s, background .25s; margin-top: 8px; }
+  .wp-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+  .wp-t { font-family: var(--display); font-weight: 600; font-size: 13.5px; line-height: 1.35; color: var(--ink); }
+  .wp-card p { font-size: 12.5px; color: var(--muted); line-height: 1.6; max-height: 0; overflow: hidden; margin-top: 0; transition: max-height .35s ease, margin-top .35s ease; }
+  .wp-card p a { color: var(--em); text-decoration: underline; text-underline-offset: 3px; }
+  .wp-card:hover { border-color: var(--em-line); background: rgba(var(--accent-rgb),.05); }
+  .wp-card:hover p { max-height: 140px; margin-top: 8px; }
+  .wp-row .pill { font-family: var(--mono); font-size: 9px; letter-spacing: .1em; padding: 4px 9px; border-radius: 99px; white-space: nowrap; background: transparent; display: inline-flex; flex-shrink: 0; }
+  .wp-row .pill.live { color: var(--em); border: 1px solid var(--em-line); background: var(--em-dim); }
+  .wp-row .pill.dev { color: var(--amber); border: 1px solid rgba(232,163,61,.4); background: rgba(232,163,61,.1); }
+  .wp-row .pill.test { color: #7FB4E8; border: 1px solid rgba(127,180,232,.4); background: rgba(127,180,232,.1); }
+  .builders { margin-top: 44px; border: 1px solid var(--em-line); border-radius: 14px; padding: 28px 30px; background: linear-gradient(180deg,rgba(var(--accent-rgb),.05),transparent); }
+  .builders .bt { font-family: var(--display); font-weight: 700; font-size: 21px; margin-bottom: 14px; }
+  .build-tiles { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-top: 18px; }
+  .btile { position: relative; display: block; border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px 20px; background: #0B0F10; text-decoration: none; transition: border-color .25s, background .25s, transform .2s; }
+  .btile:hover { border-color: var(--em-line); background: rgba(var(--accent-rgb),.05); transform: translateY(-2px); }
+  .btile .be { font-family: var(--mono); font-size: 10.5px; letter-spacing: .16em; color: var(--em); }
+  .btile h5 { font-family: var(--display); font-weight: 700; font-size: 16px; margin: 8px 0 6px; color: var(--ink); }
+  .btile p { font-size: 13px; color: var(--muted); line-height: 1.6; }
+  .btile .ba { position: absolute; top: 18px; right: 18px; color: var(--em); font-size: 16px; transition: transform .2s; }
+  .btile:hover .ba { transform: translate(2px,-2px); }
+
+  /* ===== live pool metrics (data: strk20 backend; sources: Starkscan + STRK20 dashboard) ===== */
+  .pmx-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-top: 36px; }
+  .pmx-stats:empty { display: none; margin: 0; }
+  .pmx-stat { border: 1px solid var(--line); border-radius: 12px; background: var(--bg-raise); padding: 20px 22px; }
+  .pmx-stat .l { font-family: var(--mono); font-size: 10.5px; letter-spacing: .16em; color: var(--muted); }
+  .pmx-stat .v { font-family: var(--display); font-weight: 800; font-size: clamp(26px,2.6vw,34px); margin-top: 10px; line-height: 1; }
+  .pmx-stat .v .em { color: var(--em); }
+  .pmx-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 14px; }
+  .pmx-card { border: 1px solid var(--line); border-radius: 12px; background: var(--bg-raise); padding: 18px 20px 14px; display: flex; flex-direction: column; min-width: 0; }
+  .pmx-card.pmx-wide { grid-column: 1 / -1; }
+  .pmx-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+  .pmx-t { font-family: var(--mono); font-size: 11px; letter-spacing: .14em; color: var(--ink); }
+  .pmx-sub { font-family: var(--mono); font-size: 9.5px; letter-spacing: .1em; color: var(--muted); }
+  .pmx-body { margin-top: 14px; min-height: 150px; display: flex; flex-direction: column; justify-content: center; }
+  .pmx-body svg { width: 100%; height: auto; display: block; }
+  .pmx-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 10px; }
+  .pmx-legend span { font-family: var(--mono); font-size: 9.5px; letter-spacing: .08em; color: var(--muted); display: inline-flex; align-items: center; gap: 6px; }
+  .pmx-legend i { width: 9px; height: 9px; border-radius: 2px; display: inline-block; }
+  .pmx-src { font-family: var(--mono); font-size: 10px; letter-spacing: .1em; color: var(--em); text-decoration: underline; text-underline-offset: 3px; margin-top: 14px; align-self: flex-start; }
+  .pmx-live { display: flex; align-items: center; justify-content: center; min-height: 150px; border: 1px dashed var(--line); border-radius: 10px; font-family: var(--mono); font-size: 12px; letter-spacing: .14em; color: var(--em); text-decoration: none; transition: border-color .2s, background .2s; }
+  .pmx-live:hover { border-color: var(--em-line); background: rgba(var(--accent-rgb),.05); }
+  .pmx-skel { min-height: 150px; border-radius: 10px; background: linear-gradient(100deg, #0B0F10 40%, #131A1D 50%, #0B0F10 60%); background-size: 200% 100%; animation: pmxShimmer 1.4s linear infinite; }
+  @keyframes pmxShimmer { to { background-position: -200% 0; } }
+  .pmx-axis { font-family: var(--mono); font-size: 9px; fill: #6B7478; letter-spacing: .06em; }
+  .pmx-grid-line { stroke: rgba(245,242,236,.06); stroke-width: 1; }
+  .pmx-updated { font-family: var(--mono); font-size: 10px; letter-spacing: .12em; color: var(--muted); text-align: right; margin-top: 10px; }
+  .pmx-updated:empty { display: none; }
+  .pmx-plot { position: relative; touch-action: pan-y; }
+  .pmx-cross { position: absolute; top: 0; bottom: 0; width: 1px; background: rgba(var(--accent-rgb),.55); pointer-events: none; display: none; }
+  .pmx-tip { position: absolute; top: 6px; background: #10161A; border: 1px solid var(--em-line); border-radius: 8px; padding: 8px 10px; font-family: var(--mono); font-size: 10px; letter-spacing: .04em; color: #D6DAD6; pointer-events: none; display: none; z-index: 5; white-space: nowrap; box-shadow: 0 8px 20px rgba(0,0,0,.5); }
+  .pmx-tip .d { color: var(--em); margin-bottom: 5px; letter-spacing: .1em; }
+  .pmx-tip .r { display: flex; justify-content: space-between; gap: 14px; line-height: 1.7; }
+  .pmx-tip .r i { width: 8px; height: 8px; border-radius: 2px; display: inline-block; margin-right: 6px; }
+  .pmx-tip .r.t { border-top: 1px solid var(--line); margin-top: 4px; padding-top: 4px; }
+  @media (max-width: 900px) {
+    .pmx-stats, .pmx-grid { grid-template-columns: 1fr; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .pmx-skel { animation: none; }
+  }
+
+  /* ============ 05: compliance ============ */
+  .lead .red { color: var(--danger); }
+  .schema { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr; gap: 0; align-items: stretch; margin-top: 56px; font-family: var(--mono); }
+  .snode { border: 1px solid var(--line); background: var(--bg-raise); border-radius: 12px; padding: 20px 22px; transition: border-color .25s, background .25s; }
+  .snode .st { font-size: 11px; letter-spacing: .16em; color: var(--em); }
+  .snode h6 { font-family: var(--display); font-weight: 700; font-size: 16px; margin: 10px 0 0; color: var(--ink); }
+  .snode .sn-sum { font-family: var(--sans); font-size: 12.5px; color: var(--muted); line-height: 1.6; margin-top: 8px; }
+  .snode ul { list-style: none; font-size: 11.5px; color: var(--muted); line-height: 1.9; letter-spacing: .03em; max-height: 0; overflow: hidden; margin-top: 0; transition: max-height .4s ease, margin-top .4s ease; }
+  .snode:hover { border-color: var(--em-line); background: rgba(var(--accent-rgb),.05); }
+  .snode:hover ul { max-height: 280px; margin-top: 10px; }
+  .slink { display: flex; align-items: center; padding: 0 12px; color: var(--em); font-size: 18px; }
+  @media (prefers-reduced-motion: reduce) {
+    .snode ul { max-height: none; margin-top: 10px; transition: none; }
+  }
+  /* ============ closing ============ */
+  .closing { max-width: 1160px; margin: 0 auto; padding: 110px 32px 120px; text-align: center; }
+  .closing .cd { font-family: var(--display); font-weight: 800; font-size: clamp(38px,5.6vw,72px); line-height: 1.08; letter-spacing: -.01em; }
+  .closing .cd .em { color: var(--em); }
+
+  /* ============ news section (same engine as btcfi/quantum) ============ */
+  .news-sec { max-width: 1160px; margin: 0 auto; padding: 0 32px 100px; }
+  .news-admin-bar { display: flex; justify-content: flex-end; margin-bottom: 12px; }
+  .news-cell { min-width: 0; align-self: start; }
+  .news-head { margin-bottom: 12px; }
+  .news-head-title { font-family: var(--display); font-weight: 700; font-size: 17px; line-height: 1.3; letter-spacing: -0.01em; color: var(--white); }
+  .news-head-date { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(245,242,236,0.4); margin-top: 4px; }
+  .news-cell .twitter-tweet { margin: 0 !important; width: 100% !important; }
+  .news-cell .twitter-tweet-rendered { display: block; }
+  .news-cell iframe { border-radius: 12px !important; }
+  .news-loading { display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 140px; border: 1px solid var(--line); border-radius: 12px; background: rgba(255,255,255,0.012); font-family: var(--mono); font-size: 12px; letter-spacing: 0.04em; color: rgba(245,242,236,0.4); }
+  .news-spinner { width: 15px; height: 15px; border-radius: 50%; border: 2px solid rgba(var(--accent-rgb),0.25); border-top-color: var(--accent); animation: newsSpin 0.8s linear infinite; flex-shrink: 0; }
+  @keyframes newsSpin { to { transform: rotate(360deg); } }
+  .news-editor { border: 1px solid var(--border-orange); border-radius: 12px; background: rgba(var(--accent-rgb),0.03); padding: 24px; margin-top: 16px; }
+  .ne-toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 20px; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
+  .ne-toolbar .ne-spacer { flex: 1; }
+  .ne-btn { font-family: var(--mono); font-size: 12px; letter-spacing: 0.04em; padding: 9px 16px; border-radius: 6px; cursor: pointer; border: 1px solid var(--line); background: rgba(245,242,236,0.04); color: var(--white); transition: all 0.18s; display: inline-flex; align-items: center; gap: 7px; }
+  .ne-btn:hover { border-color: var(--border-orange); background: rgba(var(--accent-rgb),0.06); }
+  .ne-btn.primary { background: var(--accent); color: #03110C; border-color: var(--accent); font-weight: 600; }
+  .ne-btn.primary:hover { opacity: 0.88; background: var(--accent); }
+  .ne-btn.danger:hover { border-color: rgba(229,62,62,0.5); background: rgba(229,62,62,0.08); color: #FC8181; }
+  .ne-btn i { font-size: 15px; }
+  .ne-count { font-family: var(--mono); font-size: 11px; color: rgba(245,242,236,0.4); }
+  .ne-cards { display: flex; flex-direction: column; gap: 14px; }
+  .ne-card { border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; background: rgba(10,10,10,0.5); position: relative; }
+  .ne-card-top { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .ne-badge { font-family: var(--mono); font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; padding: 3px 9px; border-radius: 40px; border: 1px solid var(--line); color: rgba(245,242,236,0.45); }
+  .ne-badge.default { color: var(--accent); border-color: rgba(var(--accent-rgb),0.3); }
+  .ne-badge.custom { color: #7FB4E8; border-color: rgba(127,180,232,0.35); }
+  .ne-card-title { font-family: var(--display); font-weight: 600; font-size: 14px; color: var(--white); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .ne-del { margin-left: auto; }
+  .ne-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .ne-field { display: flex; flex-direction: column; gap: 5px; }
+  .ne-field.full { grid-column: 1 / -1; }
+  .ne-field label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(245,242,236,0.4); }
+  .ne-field input[type=text], .ne-field input[type=url], .ne-field textarea { font-family: var(--sans); font-size: 13px; color: var(--white); background: rgba(10,10,10,0.8); border: 1px solid var(--line); border-radius: 6px; padding: 9px 11px; width: 100%; transition: border-color 0.18s; }
+  .ne-field input:focus, .ne-field textarea:focus { outline: none; border-color: var(--border-orange); }
+  .ne-field textarea { resize: vertical; min-height: 58px; line-height: 1.5; }
+  .ne-field input::placeholder, .ne-field textarea::placeholder { color: rgba(245,242,236,0.25); }
+  .ne-modal-backdrop { position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; padding: 24px; }
+  .ne-modal { width: 100%; max-width: 720px; max-height: 86vh; overflow: auto; background: #0D0D0D; border: 1px solid var(--border-orange); border-radius: 12px; padding: 28px; }
+  .ne-modal h3 { font-family: var(--display); font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+  .ne-modal p { font-size: 13px; color: rgba(245,242,236,0.5); margin-bottom: 18px; line-height: 1.6; }
+  .ne-modal-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin: 18px 0 8px; }
+  .ne-modal textarea { width: 100%; min-height: 150px; font-family: var(--mono); font-size: 12px; line-height: 1.5; color: var(--white); background: rgba(10,10,10,0.8); border: 1px solid var(--line); border-radius: 6px; padding: 12px; resize: vertical; }
+  .ne-modal textarea:focus { outline: none; border-color: var(--border-orange); }
+  .ne-modal-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
+  .ne-msg { font-family: var(--mono); font-size: 11px; margin-top: 10px; min-height: 14px; }
+  .ne-msg.ok { color: #68D391; }
+  .ne-msg.err { color: #FC8181; }
+  .ne-req { color: var(--accent); font-family: var(--mono); font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; margin-left: 6px; }
+  .ne-hint { font-size: 12px; color: rgba(245,242,236,0.4); margin-top: 6px; line-height: 1.5; }
+  @media (max-width: 768px) { .ne-grid { grid-template-columns: 1fr; } }
+
+  /* ============ video slots (same qv mechanism as quantum.html) ============ */
+  .video-grid-wrap { max-width: 900px; margin: 56px auto 0; }
+  .vg-head { position: relative; text-align: center; margin-bottom: 32px; }
+  .vg-title { font-family: var(--display); font-weight: 700; font-size: clamp(20px,2.2vw,24px); line-height: 1.3; }
+  .vg-title .em { color: var(--em); }
+  .vg-head .pv-vadmin { position: absolute; right: 0; top: 50%; transform: translateY(-50%); margin: 0; }
+  @media (max-width: 760px) {
+    .vg-head .pv-vadmin { position: static; transform: none; justify-content: center; margin-top: 14px; }
+  }
+  .video-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .vg-written { display: block; text-align: center; margin-top: 26px; font-family: var(--mono); font-size: 11px; letter-spacing: .14em; color: var(--muted); text-decoration: none; transition: color .2s; }
+  .vg-written .arr { color: var(--em); }
+  .vg-written:hover { color: var(--em); }
+  .pv-vadmin { display: flex; justify-content: flex-end; margin-bottom: 10px; }
+  .video-slot { border: 1px dashed var(--em-line); border-radius: 14px; background: var(--bg-raise); overflow: hidden; }
+  .pv-vcard.has-video { border-style: solid; border-color: var(--line); background: #000; }
+  .pv-vcard .frame { position: relative; aspect-ratio: 16/9; }
+  .pv-vcard .frame .qv-ph { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 10px; font-family: var(--mono); font-size: 12px; letter-spacing: .14em; color: var(--muted); text-align: center; padding: 0 16px; pointer-events: none; }
+  .pv-vcard .frame .qv-ph[hidden] { display: none; }
+  .pv-vcard .frame video { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: #000; object-fit: contain; display: block; }
+  .pv-vcard .frame video[hidden] { display: none; }
+  .pv-vcard .meta { padding: 14px 18px; border-top: 1px solid var(--line); text-align: left; }
+  .pv-vcard .meta h4 { font-family: var(--display); font-weight: 600; font-size: 15px; color: var(--ink); }
+  .news-edit-btn { display: inline-flex; align-items: center; gap: 7px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(245,242,236,0.5); background: transparent; border: 1px solid var(--line); border-radius: 40px; padding: 7px 14px; cursor: pointer; transition: color 0.2s, border-color 0.2s, background 0.2s; }
+  .news-edit-btn:hover { color: var(--white); border-color: var(--em-line); background: rgba(var(--accent-rgb),0.04); }
+  .news-edit-btn.active { color: var(--em); border-color: var(--em-line); background: rgba(var(--accent-rgb),0.06); }
+  .news-edit-btn i { font-size: 14px; }
+  .qv-editor { border-top: 1px solid var(--line); padding: 14px 18px 16px; display: flex; flex-direction: column; gap: 11px; text-align: left; }
+  .qv-editor[hidden] { display: none; }
+  .qv-fld label { font-family: var(--mono); font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 5px; }
+  .qv-fld input[type=text] { width: 100%; background: rgba(10,10,10,.8); border: 1px solid var(--line); border-radius: 6px; padding: 9px 11px; color: var(--ink); font-size: 13px; font-family: inherit; }
+  .qv-fld input[type=text]:focus { outline: none; border-color: var(--em-line); }
+  .qv-file input[type=file] { font-size: 12px; color: var(--muted); max-width: 100%; }
+  .qv-note { font-family: var(--mono); font-size: 10.5px; color: var(--em); line-height: 1.5; margin-top: 6px; }
+  .qv-actions { display: flex; gap: 8px; margin-top: 2px; }
+  .qv-btn { font-family: var(--mono); font-size: 11px; letter-spacing: .06em; padding: 8px 14px; border-radius: 6px; border: 1px solid var(--line); background: rgba(255,255,255,.02); color: var(--ink); cursor: pointer; transition: border-color .2s, background .2s; }
+  .qv-btn:hover { border-color: var(--em-line); background: rgba(var(--accent-rgb),.07); }
+  .qv-btn.primary { background: var(--em); border-color: var(--em); color: #03110C; font-weight: 600; }
+
+  /* ============ responsive ============ */
+  @media (max-width: 900px) {
+    .cases { grid-template-columns: 1fr; }
+    .island { flex-direction: column; gap: 14px; }
+    .bridge { flex: none; width: 100%; padding: 8px 0; }
+    .dots { grid-template-columns: repeat(15,1fr); }
+    .forum-post { grid-template-columns: 1fr; }
+    .forum-user { border-right: none; border-bottom: 1px solid var(--line); }
+    .lineage { flex-wrap: wrap; gap: 18px; }
+    .lineage::before { display: none; }
+    .waves, .build-tiles { grid-template-columns: 1fr; }
+    .viz-body, .video-grid { grid-template-columns: 1fr; }
+    .viz-col { border-right: none; border-bottom: 1px solid var(--line); }
+    .viz-col:last-child { border-bottom: none; }
+    .schema { grid-template-columns: 1fr; }
+    .slink { padding: 10px 0; justify-content: center; transform: rotate(90deg); }
+    .closing { padding: 90px 32px 80px; }
+  }
+  @media (max-width: 860px) {
+    .bills { grid-template-columns: 1fr; }
+    .leaks { grid-template-columns: 1fr; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .shield-wrap .bk { animation: none; opacity: 1; transform: none; }
+    .shield-wrap .word { animation: none; }
+    .hero .turn { animation: none; opacity: 1; transform: none; }
+    .flip { transform: none !important; transition: none; }
+    .inner { transition: none; }
+    .dot { transition: none; }
+    a.ln:hover { transform: none; }
+  }
+</style>
+</head>
+<body class="page-privacy">
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo" style="display:inline-flex;align-items:center;gap:11px"><svg width="22" height="22" viewBox="0 0 26 26" fill="none" aria-hidden="true"><path d="M4 7 H22" stroke="#8b7bff" stroke-width="2.6" stroke-linecap="round"/><path d="M4 13 H17" stroke="#8b7bff" stroke-opacity="0.55" stroke-width="2.6" stroke-linecap="round"/><path d="M4 19 H12" stroke="#8b7bff" stroke-opacity="0.3" stroke-width="2.6" stroke-linecap="round"/></svg><span>Starknet <b>Thesis</b></span></a>
+  <div class="nav-links"><a href="privacy.html" class="active">Privacy</a><a href="quantum.html">Quantum</a><a href="btcfi.html">BTCFi</a><a href="strk.html">STRK</a><a href="ecosystem.html">Ecosystem</a><a href="digest.html">Digest</a></div>
+  <a href="index.html" class="btn nav-cta">Read the thesis <i class="ti ti-arrow-right"></i></a>
+</nav>
+
+<!-- ================= HERO ================= -->
+<div class="hero">
+  <p class="hero-eyebrow">The privacy flip</p>
+  <h1 class="hero-title">
+    <span class="shield-wrap sw1"><span class="bk">[</span><span class="word">Your savings.</span><span class="bk r">]</span></span>
+    <span class="shield-wrap sw2"><span class="bk">[</span><span class="word">Your strategy.</span><span class="bk r">]</span></span>
+    <span class="shield-wrap sw3"><span class="bk">[</span><span class="word">Your next trade.</span><span class="bk r">]</span></span><br>
+    Onchain, anyone can read all of it. Forever.
+    <span class="turn">Starknet just made that optional.</span>
+  </h1>
+  <p class="hero-subtitle">Crypto built the most surveilled financial system in history, <b>by accident</b>. Starknet shipped the layer that ends it: private to the market, transparent to the law, <b>and live today</b>.</p>
+  <div class="status-row">
+    <div class="pill">ZK-STARK</div>
+    <div class="pill">PROTOCOL-LEVEL PRIVACY</div>
+    <div class="pill">STRK20s</div>
+    <div class="pill">PRIVATE DEFI</div>
+  </div>
+</div>
+
+<!-- ================= SECTION 01 ================= -->
+<div class="th-pm-div"></div>
+<section class="th-pm-sec">
+  <div class="th-pm-head th-pm-reveal"><span class="th-pm-marker"></span><span class="th-pm-num">01</span><h2 class="th-pm-title">The cost of being visible</h2></div>
+  <p class="th-pm-eyebrow th-pm-reveal">The problem</p>
+  <p class="th-pm-intro th-pm-reveal">Transparency is not free. The invoice arrives on <b>three separate bills: extraction, strategy, and absence</b>.</p>
+
+  <!-- The three bills (hover to flip) -->
+  <div class="printer" id="printer">
+    <div class="printer-bar"><span></span></div>
+    <div class="bills">
+      <div class="slot"><div class="flip"><div class="inner">
+        <div class="bill face b1">
+          <div class="b-head">BILL Nº 01 — EXTRACTION</div>
+          <div class="b-sub">CHARGED ON EVERY VISIBLE TRADE</div>
+          <div class="b-line"><span>MEV extracted on Ethereum since the Merge</span><span class="amt">$B+</span></div>
+          <div class="b-line"><span>Sandwich bots on Solana in 16 months</span><span class="amt">$370–500M</span></div>
+          <div class="b-total"><span>STATUS</span><span>A STANDING TAX</span></div>
+          <div class="b-barcode"></div>
+        </div>
+        <div class="bill face back">
+          <div class="b-head">FINE PRINT — EXTRACTION</div>
+          <p class="bp-t">Every pending transaction in the public mempool announces what you are about to do to the parties best equipped to charge you for it. Billions extracted on Ethereum since the Merge; $370 to $500 million taken by Solana's sandwich bots in barely a year and a half; the same extraction runs on every transparent chain. A standing tax on anyone who interacts where everyone can watch.</p>
+        </div>
+      </div></div></div>
+      <div class="slot"><div class="flip"><div class="inner">
+        <div class="bill face b2">
+          <div class="b-head">BILL Nº 02 — STRATEGY</div>
+          <div class="b-sub">YOUR LIQUIDATION LEVELS, PUBLISHED TRANSPARENTLY TO THE ENTIRE WORLD</div>
+          <div class="b-line"><span>J. Wynn, $1.25B position, liq. price public</span><span class="amt">LIQUIDATED</span></div>
+          <div class="b-line"><span>M. Egorov, $96M in loans against his own CRV</span><span class="amt">LIQUIDATED</span></div>
+          <div class="b-line"><span>Bad debt left to the lending markets</span><span class="amt">$10M</span></div>
+          <div class="b-total"><span>STATUS</span><span>BAIT, ACCEPTED</span></div>
+          <div class="b-barcode"></div>
+        </div>
+        <div class="bill face back">
+          <div class="b-head">FINE PRINT — STRATEGY</div>
+          <p class="bp-t">May 2025: James Wynn runs the largest publicly visible leveraged position in crypto history, $1.25B at 40x leverage on Hyperliquid. His liquidation price was known to everyone, down to the penny. The position got liquidated, and the account ended the month at $23. <b>"They are hunting me,"</b> he posted, reopening a $100M position, which got liquidated too. The reality is that everything was public; nobody needed to conspire. A year earlier, the market got Egorov's levels the same way, in his borrowing strategy against his own CRV, and left $10M of bad debt across several lending markets. And this is no isolated event: it happens every day, across every DeFi vertical.</p>
+        </div>
+      </div></div></div>
+      <div class="slot"><div class="flip"><div class="inner">
+        <div class="bill face b3">
+          <div class="b-head">BILL Nº 03 — ABSENCE</div>
+          <div class="b-sub">THE CAPITAL THAT NEVER ARRIVES</div>
+          <div class="b-line"><span>BTC in use in DeFi vs total value</span><span class="amt">$14B / $1.5T</span></div>
+          <div class="b-line"><span>Tokenized RWAs parked as registry entries, usage kept off</span><span class="amt">$30B+</span></div>
+          <div class="b-line"><span>B2B stablecoins vs the market they can't attract</span><span class="amt">$226B / $89T</span></div>
+          <div class="b-total"><span>STATUS</span><span>WAITING OUTSIDE</span></div>
+          <div class="b-barcode"></div>
+        </div>
+        <div class="bill face back">
+          <div class="b-head">FINE PRINT — ABSENCE</div>
+          <p class="bp-t">Institutions do not publish supplier lists, treasuries do not broadcast rebalances, and sovereigns do not accumulate in daylight. The spot Bitcoin ETFs launched in January 2024 with every issuer declining to publish its addresses; it took Arkham <b>twelve days</b> to map BlackRock's and Fidelity's wallets anyway, over 58,000 BTC exposed before either firm had said a word. That is why the capital stays away: on transparent rails, showing up means being mapped. This is the bill nobody sees getting paid, and it is the biggest of the three.</p>
+        </div>
+      </div></div></div>
+    </div>
+  </div>
+
+  <!-- Interactive: what your address reveals -->
+  <p class="th-pm-intro reveal-lead th-pm-reveal">There is one way to cut every line on those bills: <b>onchain privacy</b>. And Starknet has just shipped the design that finally works. See for yourself:</p>
+  <div class="reveal th-pm-reveal" id="reveal">
+    <div class="reveal-bar">
+      <span class="t" id="revealTitle">WHAT YOUR ADDRESS REVEALS</span>
+      <button class="shield-toggle" id="shieldBtn">[ SHIELD IT ]</button>
+    </div>
+    <div class="reveal-body">
+      <div class="addr">0x7f3a…c92e</div>
+      <div class="leaks">
+        <div class="leak"><div class="k">SALARY DETECTED</div><div class="v">4,200 USDC / month</div><div class="d">Same counterparty, same amount, first business day. Your employer, your paycheck, your raise history.</div></div>
+        <div class="leak"><div class="k">LIQUIDATION PRICE</div><div class="v">$52,534</div><div class="d">Your loan's exact breaking point, published to everyone able to push price toward it.</div></div>
+        <div class="leak"><div class="k">COUNTERPARTIES</div><div class="v">142 addresses linked</div><div class="d">Who you pay, who pays you, how often, and since when. Your entire commercial graph.</div></div>
+        <div class="leak"><div class="k">STRATEGY READ</div><div class="v">DCA + rotation pattern</div><div class="d">Timing and sizing across venues. Anyone can position ahead of your next move.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SECTION 02 ================= -->
+<div class="th-pm-div"></div>
+<section class="th-pm-sec">
+  <div class="th-pm-head th-pm-reveal"><span class="th-pm-marker"></span><span class="th-pm-num">02</span><h2 class="th-pm-title">Three walls, fifty years of precedent</h2></div>
+  <p class="th-pm-eyebrow th-pm-reveal">The precedent</p>
+  <p class="th-pm-intro th-pm-reveal">Crypto has attempted privacy for a decade. Every attempt hit at least one of <b>three walls</b>.</p>
+
+  <div class="chapter th-pm-reveal">
+    <h3><span class="wall-tag">WALL Nº 01</span>Compliance: a privacy system with no disclosure path <span class="em">is a mixer with better branding.</span></h3>
+    <p>Tornado Cash was the category's most used product until OFAC sanctioned it in 2022. What put it on the list was not the hiding itself; it was the absence of any mechanism, for anyone, ever, to answer a court. The human cost of that design choice fell on the people who wrote it.</p>
+    <div class="cases">
+      <div class="case">
+        <div class="ch">CASE FILE — NL</div>
+        <div class="cn">ALEXEY PERTSEV</div>
+        <div class="cd th-pm-reveal">Arrested in the Netherlands days after the sanctions. Sentenced May 2024: five years and four months of jail, money laundering.</div>
+        <div class="cs">STATUS: APPEALING</div>
+      </div>
+      <div class="case">
+        <div class="ch">CASE FILE — US</div>
+        <div class="cn">ROMAN STORM</div>
+        <div class="cd th-pm-reveal">Arrested near Seattle, 2023. Convicted August 2025: unlicensed money transmitting. Jury hung on counts carrying forty more years.</div>
+        <div class="cs">STATUS: POST-TRIAL MOTIONS</div>
+      </div>
+    </div>
+    <p class="kicker">The sanctions were eventually struck down. <span class="em">But without a disclosure path, privacy is not a system a regulator can accept, and TradFi capital cannot touch it.</span></p>
+  </div>
+
+  <div class="chapter th-pm-reveal">
+    <h3><span class="wall-tag">WALL Nº 02</span>Composability: privacy kept being built as a destination, <span class="em">and destinations empty out.</span></h3>
+    <p>Zcash and Monero put real cryptography on dedicated chains and paid two prices: isolation and no programmability. Aztec rebuilt privacy as its own L2, but applications cannot be connected, they have to be rebuilt, and reaching real liquidity means bridging out in public and bridging back in public. Railgun stayed on the EVM chains but takes a 0.25% cut each way, on every shield and on every unshield. Do the math: shielding then unshielding a $100M treasury costs $500,000, for privacy alone.</p>
+    <div class="island">
+      <div class="landmass iso"><div class="lt">PRIVACY ISLAND</div><div class="ls">ZCASH · MONERO · AZTEC<br>REAL PRIVACY, NO ECONOMY</div></div>
+      <div class="bridge"><div class="rail-line"></div><div class="bl">EVERY CROSSING IS PUBLIC</div></div>
+      <div class="landmass"><div class="lt">DEFI MAINLAND</div><div class="ls">LIQUIDITY · LENDING · MARKETS<br>REAL ECONOMY, NO PRIVACY</div></div>
+    </div>
+  </div>
+
+  <div class="chapter th-pm-reveal">
+    <h3><span class="wall-tag">WALL Nº 03</span>Scale: anonymity is headcount. <span class="em">You are only as hidden as the crowd is large.</span></h3>
+    <p>If a thousand users shield similar amounts at similar times, you are lost in the crowd; if three do, you are one of three. Tornado split its users into fixed denominations and thinned each crowd. UCL researchers showed in 2018 that simple timing-and-amount heuristics collapsed much of Zcash's effective anonymity set.</p>
+    <div class="crowd">
+      <div class="crowd-top">
+        <span class="t">HOW HIDDEN ARE YOU? DRAG THE CROWD.</span>
+        <input type="range" id="crowdRange" min="3" max="240" value="8">
+      </div>
+      <div class="dots" id="dots"></div>
+      <div class="crowd-cap" id="crowdCap"></div>
+    </div>
+  </div>
+
+  <p class="wall-out th-pm-reveal">Compliance. Composability. Scale. Three walls, a decade of failed attempts. <span class="em">Starknet is the first design to clear all three at once.</span></p>
+</section>
+
+<!-- ================= SECTION 03 ================= -->
+<div class="th-pm-div"></div>
+<section class="th-pm-sec">
+  <div class="th-pm-head th-pm-reveal"><span class="th-pm-marker"></span><span class="th-pm-num">03</span><h2 class="th-pm-title">Why Starknet, structurally</h2></div>
+  <p class="th-pm-eyebrow th-pm-reveal">The architecture</p>
+  <p class="th-pm-intro th-pm-reveal">Strip away the branding and it comes down to architecture: <b>Starknet is, structurally, the strongest privacy platform in production today.</b> Not on one criterion. On all of them.</p>
+
+  <div class="gridwrap th-pm-reveal">
+    <table class="pgrid">
+      <thead>
+        <tr>
+          <th class="pname">PROTOCOL</th>
+          <th>MULTI-ASSET<br><span>one pool, all tokens</span></th>
+          <th>NO USER-MANAGED<br>SECRETS<br><span>nothing to back up</span></th>
+          <th>COMPLIANCE PATH<br><span>scoped disclosure</span></th>
+          <th>FAST SHIELD /<br>UNSHIELD<br><span>seconds, both ways</span></th>
+          <th>PROGRAMMABLE<br><span>private app logic</span></th>
+          <th>DEFI<br>COMPOSABILITY<br><span>existing protocols</span></th>
+          <th>EXISTING<br>ECOSYSTEM<br><span>real users, liquidity</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="hero-row">
+          <td class="pname">STRK20</td>
+          <td class="y" tabindex="0" data-tip="One shared pool for every ERC-20: BTC, USDC, STRK, memecoins. Every asset deepens the same crowd."></td>
+          <td class="y" tabindex="0" data-tip="Notes are discovered through the protocol itself. Nothing to back up, nothing to lose."></td>
+          <td class="y" tabindex="0" data-tip="Viewing-key escrow enforced by the proof itself. Scoped, lawful disclosure without exposing anyone else in the pool."></td>
+          <td class="y" tabindex="0" data-tip="One click in Ready or Xverse, settled in seconds, flat 4 STRK fee whatever the amount."></td>
+          <td class="y" tabindex="0" data-tip="Full Cairo expressivity: private flows inside real applications, not a fixed transfer circuit."></td>
+          <td class="y" tabindex="0" data-tip="The whole Starknet DeFi stack plugs into the pool: swaps, lending, staking, yield, all atomic with no intermediate public state, and cross-chain flows from other ecosystems are next."></td>
+          <td class="y" tabindex="0" data-tip="Live on Starknet mainnet DeFi since June 2026."></td>
+        </tr>
+        <tr>
+          <td class="pname">ZCASH</td>
+          <td class="n" tabindex="0" data-tip="Single asset. The pool only ever hides ZEC."></td>
+          <td class="n" tabindex="0" data-tip="Wallets manage spending and viewing keys, and must scan the whole chain to find notes."></td>
+          <td class="p" tabindex="0" data-tip="Viewing keys exist, but sharing is voluntary: compliance fails the moment a user refuses."></td>
+          <td class="n" tabindex="0" data-tip="Shielding rides Zcash block times and wallet scanning. Not a seconds-level toggle."></td>
+          <td class="n" tabindex="0" data-tip="No smart contracts. Privacy without programmability."></td>
+          <td class="n" tabindex="0" data-tip="A dedicated chain: no lending, no AMMs, no shared liquidity."></td>
+          <td class="y" tabindex="0" data-tip="A decade of real monetary usage and holders."></td>
+        </tr>
+        <tr>
+          <td class="pname">MONERO</td>
+          <td class="n" tabindex="0" data-tip="Single asset. XMR only."></td>
+          <td class="n" tabindex="0" data-tip="Users hold and manage their own keys and wallet state."></td>
+          <td class="p" tabindex="0" data-tip="View keys are opt-in and only reveal incoming funds; outgoing spends stay hidden even from the key holder."></td>
+          <td class="y" tabindex="0" data-tip="Nothing to toggle: every transaction is private by default."></td>
+          <td class="n" tabindex="0" data-tip="No programmability. Digital cash, not a platform."></td>
+          <td class="n" tabindex="0" data-tip="Isolated by design, and repeatedly delisted from major venues."></td>
+          <td class="y" tabindex="0" data-tip="The longest-running privacy money in crypto."></td>
+        </tr>
+        <tr>
+          <td class="pname">RAILGUN</td>
+          <td class="y" tabindex="0" data-tip="Any ERC-20 can enter its shielded pool."></td>
+          <td class="n" tabindex="0" data-tip="Note secrets live client-side; losing them means losing access."></td>
+          <td class="p" tabindex="0" data-tip="Proof-of-innocence screening is automatic at entry, but tracing a specific user afterwards still requires their cooperation."></td>
+          <td class="n" tabindex="0" data-tip="0.25% fee each way and waiting periods on freshly shielded tokens."></td>
+          <td class="n" tabindex="0" data-tip="A shielding layer, not a private programming environment."></td>
+          <td class="y" tabindex="0" data-tip="Relay Adapt reaches EVM DeFi from inside the pool."></td>
+          <td class="y" tabindex="0" data-tip="Live on Ethereum and other EVM chains."></td>
+        </tr>
+        <tr>
+          <td class="pname">AZTEC</td>
+          <td class="y" tabindex="0" data-tip="Multi-asset, within its own chain."></td>
+          <td class="n" tabindex="0" data-tip="Client-side note management is the user's problem."></td>
+          <td class="p" tabindex="0" data-tip="Opt-in viewing keys; nothing compels disclosure."></td>
+          <td class="y" tabindex="0" data-tip="Fast within Aztec itself."></td>
+          <td class="y" tabindex="0" data-tip="Noir enables genuinely private applications."></td>
+          <td class="y" tabindex="0" data-tip="Composable inside Aztec; reaching outside liquidity means bridging out in public."></td>
+          <td class="n" tabindex="0" data-tip="Alpha-stage network with minimal liquidity: privacy with little to use it on."></td>
+        </tr>
+        <tr>
+          <td class="pname">CANTON</td>
+          <td class="n" tabindex="0" data-tip="Privacy is scoped per contract domain, not one shared pool."></td>
+          <td class="n" tabindex="0" data-tip="Participants operate nodes and manage their own state."></td>
+          <td class="y" tabindex="0" data-tip="Built for regulated disclosure from day one."></td>
+          <td class="n" tabindex="0" data-tip="No public shield/unshield: the network is permissioned."></td>
+          <td class="n" tabindex="0" data-tip="Programmable, but inside permissioned domains, not open crypto."></td>
+          <td class="y" tabindex="0" data-tip="Composability across Canton's connected institutional applications."></td>
+          <td class="y" tabindex="0" data-tip="Real institutional users: the SWIFT-equivalent path, not Web3."></td>
+        </tr>
+        <tr>
+          <td class="pname">ZAMA</td>
+          <td class="y" tabindex="0" data-tip="FHE encrypts balances for any ERC-20."></td>
+          <td class="n" tabindex="0" data-tip="Relies on threshold key infrastructure users must depend on."></td>
+          <td class="y" tabindex="0" data-tip="Programmable disclosure through FHE access control."></td>
+          <td class="n" tabindex="0" data-tip="FHE computation is heavy: not a seconds-level experience yet."></td>
+          <td class="y" tabindex="0" data-tip="Encrypted smart contracts are the whole point."></td>
+          <td class="n" tabindex="0" data-tip="Confidential tokens do not yet compose with live DeFi at scale."></td>
+          <td class="y" tabindex="0" data-tip="Deploys onto existing EVM ecosystems."></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="chapter th-pm-reveal" style="margin-top:88px">
+    <h3>So how does one chain <span class="em">check every box at once?</span></h3>
+    <p>The answer starts fifteen years back, with Satoshi himself naming the tool.</p>
+  </div>
+
+  <div class="forum th-pm-reveal">
+    <div class="forum-bar"><a href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/174/" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;text-underline-offset:3px">BITCOINTALK.ORG — THREAD Nº 770</a><span>AUGUST 11, 2010</span></div>
+    <div class="forum-post">
+      <div class="forum-user"><span class="u">satoshi</span><br><span class="r">FOUNDER<br>ACTIVITY: 364</span></div>
+      <div class="forum-body">This is a very interesting topic. If a solution was found, <span class="hl">a much better, easier, more convenient implementation of Bitcoin would be possible</span>. [...] It's hard to think of how to apply zero-knowledge-proofs in this case.</div>
+    </div>
+    <div class="forum-reply">
+      <div class="rt">Sixteen years later, <span class="em">the answer shipped.</span></div>
+      <div class="rd">Eli Ben-Sasson presented ZK as the fix for Bitcoin's privacy and scaling at the San Jose conference in 2013. He co-authored the 2014 Zerocash paper, the note-and-nullifier model every modern shielded system descends from, and became a founding scientist of Zcash to fix privacy in crypto. Then he co-founded StarkWare to fix scaling with ZK-STARKs. In 2026, the circle closed: ZK-STARK on Starknet switched on its second property, privacy coupled with scaling.</div>
+    </div>
+  </div>
+
+  <div class="lineage th-pm-reveal">
+    <a class="ln on" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/174/" target="_blank" rel="noopener"><i></i><div class="y">2010</div><div class="l">SATOSHI'S<br>OPEN QUESTION</div></a>
+    <a class="ln on" href="https://www.youtube.com/watch?v=kLueWNsYRno" target="_blank" rel="noopener"><i></i><div class="y">2013</div><div class="l">SAN JOSE<br>TALK</div></a>
+    <a class="ln on" href="http://zerocash-project.org/paper" target="_blank" rel="noopener"><i></i><div class="y">2014</div><div class="l">ZEROCASH<br>PAPER</div></a>
+    <a class="ln on" href="https://en.wikipedia.org/wiki/Eli_Ben-Sasson" target="_blank" rel="noopener"><i></i><div class="y">2016</div><div class="l">ZCASH<br>FOUNDING SCIENTIST</div></a>
+    <a class="ln on" href="https://starkware.co" target="_blank" rel="noopener"><i></i><div class="y">2018</div><div class="l">STARKWARE<br>FOUNDED</div></a>
+    <a class="ln on" href="https://x.com/Starknet/status/2064375302957289598" target="_blank" rel="noopener"><i></i><div class="y">2026</div><div class="l">STRK20<br>LIVE</div></a>
+  </div>
+
+  <p class="grid-lead th-pm-reveal">The main strength of ZK-STARKs is the verification model itself. Chains that verify by re-execution cannot retrofit privacy: strip out the inputs and there is nothing left for validators to check. Starknet, based on ZK-STARKs, verifies proofs instead, and <b>checking a proof requires none of the underlying data</b>. And this was the plan from the very beginning.</p>
+
+  <!-- Videos: 2x2 grid (same qv mechanism as quantum.html) -->
+  <div class="video-grid-wrap th-pm-reveal">
+    <div class="vg-head">
+      <div class="vg-title">The core of <span class="em">Starknet's architecture.</span></div>
+      <div class="pv-vadmin"><button type="button" class="news-edit-btn pv-vedit" aria-expanded="false"><i class="ti ti-pencil" aria-hidden="true"></i> <span>Edit videos</span></button></div>
+    </div>
+    <div class="video-grid">
+      <div class="video-slot pv-vcard" data-pv="0">
+        <div class="frame">
+          <div class="qv-ph"><span>VIDEO 01 — TO BE ADDED</span></div>
+          <video class="qv-player" controls preload="metadata" playsinline hidden></video>
+        </div>
+        <div class="meta"><h4 class="qv-title"></h4></div>
+        <div class="qv-editor" hidden>
+          <div class="qv-fld"><label>Video source (path or URL)</label><input type="text" class="qv-src" placeholder="videos/privacy-1.mp4 or https://.../privacy-1.mp4"></div>
+          <div class="qv-fld"><label>Title</label><input type="text" class="qv-ttl" placeholder="Video title"></div>
+          <div class="qv-fld qv-file"><label>Pick a local file (preview only)</label><input type="file" accept="video/*" class="qv-pick"><div class="qv-note">Local preview only. To publish, add the file to the project and set its path above.</div></div>
+          <div class="qv-actions"><button type="button" class="qv-btn primary qv-save">Save</button><button type="button" class="qv-btn qv-clear">Clear</button></div>
+        </div>
+      </div>
+      <div class="video-slot pv-vcard" data-pv="1">
+        <div class="frame">
+          <div class="qv-ph"><span>VIDEO 02 — TO BE ADDED</span></div>
+          <video class="qv-player" controls preload="metadata" playsinline hidden></video>
+        </div>
+        <div class="meta"><h4 class="qv-title"></h4></div>
+        <div class="qv-editor" hidden>
+          <div class="qv-fld"><label>Video source (path or URL)</label><input type="text" class="qv-src" placeholder="videos/privacy-2.mp4 or https://.../privacy-2.mp4"></div>
+          <div class="qv-fld"><label>Title</label><input type="text" class="qv-ttl" placeholder="Video title"></div>
+          <div class="qv-fld qv-file"><label>Pick a local file (preview only)</label><input type="file" accept="video/*" class="qv-pick"><div class="qv-note">Local preview only. To publish, add the file to the project and set its path above.</div></div>
+          <div class="qv-actions"><button type="button" class="qv-btn primary qv-save">Save</button><button type="button" class="qv-btn qv-clear">Clear</button></div>
+        </div>
+      </div>
+      <div class="video-slot pv-vcard" data-pv="2">
+        <div class="frame">
+          <div class="qv-ph"><span>VIDEO 03 — TO BE ADDED</span></div>
+          <video class="qv-player" controls preload="metadata" playsinline hidden></video>
+        </div>
+        <div class="meta"><h4 class="qv-title"></h4></div>
+        <div class="qv-editor" hidden>
+          <div class="qv-fld"><label>Video source (path or URL)</label><input type="text" class="qv-src" placeholder="videos/privacy-3.mp4 or https://.../privacy-3.mp4"></div>
+          <div class="qv-fld"><label>Title</label><input type="text" class="qv-ttl" placeholder="Video title"></div>
+          <div class="qv-fld qv-file"><label>Pick a local file (preview only)</label><input type="file" accept="video/*" class="qv-pick"><div class="qv-note">Local preview only. To publish, add the file to the project and set its path above.</div></div>
+          <div class="qv-actions"><button type="button" class="qv-btn primary qv-save">Save</button><button type="button" class="qv-btn qv-clear">Clear</button></div>
+        </div>
+      </div>
+      <div class="video-slot pv-vcard" data-pv="3">
+        <div class="frame">
+          <div class="qv-ph"><span>VIDEO 04 — TO BE ADDED</span></div>
+          <video class="qv-player" controls preload="metadata" playsinline hidden></video>
+        </div>
+        <div class="meta"><h4 class="qv-title"></h4></div>
+        <div class="qv-editor" hidden>
+          <div class="qv-fld"><label>Video source (path or URL)</label><input type="text" class="qv-src" placeholder="videos/privacy-4.mp4 or https://.../privacy-4.mp4"></div>
+          <div class="qv-fld"><label>Title</label><input type="text" class="qv-ttl" placeholder="Video title"></div>
+          <div class="qv-fld qv-file"><label>Pick a local file (preview only)</label><input type="file" accept="video/*" class="qv-pick"><div class="qv-note">Local preview only. To publish, add the file to the project and set its path above.</div></div>
+          <div class="qv-actions"><button type="button" class="qv-btn primary qv-save">Save</button><button type="button" class="qv-btn qv-clear">Clear</button></div>
+        </div>
+      </div>
+    </div>
+    <a class="vg-written" href="https://x.com/StarkWareLtd/status/2055266920136425728" target="_blank" rel="noopener">PREFER IT WRITTEN? THE FULL ARCHITECTURE BEHIND STARKNET AND STARK PROOFS <span class="arr">→</span></a>
+  </div>
+
+  <p class="grid-lead th-pm-reveal" style="margin-top:64px">Based on that, Starknet built everything around proving, from scratch, <b>optimizing every layer of the stack</b>:</p>
+
+  <div class="rail th-pm-reveal">
+    <div class="rnode">
+      <div class="rn">PROPERTY 01</div>
+      <h4>Speed</h4>
+      <p>A privacy system is a consumer product before it is a cryptographic one, and private UX dies at high latency. Starknet runs at around 1,000 TPS today, with 10,000+ targeted for 2027, and latency sits in the hundreds of milliseconds for regular transactions, a few seconds for private ones.</p>
+      <div class="elim">ELIMINATES: DEDICATED PRIVACY L1s</div>
+    </div>
+    <div class="rnode">
+      <div class="rn">PROPERTY 02</div>
+      <h4>Succinct verifiability</h4>
+      <p>Privacy at scale eventually needs clients, on browsers or phones, that verify the chain without borrowing trust from someone else's server. That requires compact proofs, not replaying everything.</p>
+      <div class="elim">ELIMINATES: FAST-BUT-HEAVY CHAINS</div>
+    </div>
+    <div class="rnode">
+      <div class="rn">PROPERTY 03</div>
+      <h4>ZK-native, end to end</h4>
+      <p>Private computation means proving everything, constantly. Cairo was designed as a language whose execution is cheap to prove; EVM chains run a virtual machine that predates the idea, where every opcode never designed to be proven adds a cost that cannot be optimized away, and Ethereum itself is now converging on the bet StarkWare made in 2018.</p>
+      <div class="elim">ELIMINATES: EVM CHAINS</div>
+    </div>
+    <div class="rnode">
+      <div class="rn">PROPERTY 04</div>
+      <h4>In-protocol proof verification</h4>
+      <p>The piece that arrived this year. <a href="https://x.com/Starknet/status/2046232796625068334" target="_blank" rel="noopener" style="color:var(--em);text-decoration:underline;text-underline-offset:3px">The Shinobi upgrade</a> (April 2026, <a href="https://community.starknet.io/t/snip-36-in-protocol-proof-verification/116123" target="_blank" rel="noopener" style="color:var(--em);text-decoration:underline;text-underline-offset:3px">SNIP-36</a>) moved proof verification into consensus itself: a transaction carries its proof, the network checks it as part of ordinary block work, and private transactions went from impractical to seconds and cents.</p>
+    </div>
+  </div>
+
+  <p class="rail-out th-pm-reveal">With all four properties in place, Starknet is now shipping <span class="em">the most complete privacy ecosystem the market has seen</span>, designed against the failure list of the past decade.</p>
+</section>
+
+<!-- ================= SECTION 04 ================= -->
+<div class="th-pm-div"></div>
+<section class="th-pm-sec">
+  <div class="th-pm-head th-pm-reveal"><span class="th-pm-marker"></span><span class="th-pm-num">04</span><h2 class="th-pm-title">The most complete privacy ecosystem</h2></div>
+  <p class="th-pm-eyebrow th-pm-reveal">The ecosystem</p>
+  <p class="th-pm-intro th-pm-reveal">From first announcement to a live, multi-asset, wallet-native privacy system: in under a year. Here is what is live today, and the foundation it stands on.</p>
+
+  <div class="h3d th-pm-reveal">The foundation <span class="em">everything builds on.</span></div>
+  <div class="stamp-wrap th-pm-reveal" id="shieldStamp">
+    <div class="stamp-stage">
+      <div class="ss-scene">
+        <div class="ss-stamp" id="ssStamp" aria-hidden="true"><div class="ss-handle"></div><div class="ss-head">[ ]</div></div>
+        <div class="ss-coin in" id="ssCoin">
+          <div class="ss-ring" id="ssRing"></div>
+          <img class="ss-logo" id="ssLogo" src="assets/tokens/btc.png" alt="BTC logo">
+          <span class="ss-fallback" id="ssFb" hidden>₿</span>
+          <span class="ss-tick tl"></span><span class="ss-tick tr"></span><span class="ss-tick bl"></span><span class="ss-tick br"></span>
+        </div>
+      </div>
+      <div class="ss-amount" id="ssAmount">14,532 BTC</div>
+      <div class="ss-chips">
+        <span class="ss-chip" id="ssChip1">FLAT FEE ~$0.12</span>
+        <span class="ss-chip" id="ssChip2">SHIELDED IN SECONDS</span>
+      </div>
+    </div>
+    <div class="stamp-props" id="stampProps">
+      <div class="sp-head">SEVEN PROPERTIES OF THE BASE LAYER</div>
+      <div class="sp-card"><div class="n">01</div><h5>One pool for all assets</h5><p>A first in crypto: STRK, USDC, USDT, ETH, BTC, memecoins... <b>ALL crypto assets in the same pool</b>. Every new user and asset deepens the same crowd.</p></div>
+      <div class="sp-card"><div class="n">02</div><h5>Any amount, no denominations</h5><p>Where Tornado forced fixed sizes and fragmented its crowd, the Starknet pool takes arbitrary amounts through note splitting and merging.</p></div>
+      <div class="sp-card"><div class="n">03</div><h5>Flat fee: 4 STRK (~$0.12)</h5><p>Shielding a billion dollars costs the same dime as shielding a hundred: the cheapest privacy solution with real DeFi access, and the only one where the fee stays flat whatever the size.</p></div>
+      <div class="sp-card"><div class="n">04</div><h5>Best-in-class UX</h5><p>A few clicks inside Ready or Xverse, settled in seconds. No separate app, no new seed phrase, no protocol to learn.</p></div>
+      <div class="sp-card"><div class="n">05</div><h5>Security-first stack</h5><p>Public whitepaper, OpenZeppelin audit, formal Lean model with machine-checked theorems, and fully open source under Apache 2.0.</p></div>
+      <div class="sp-card"><div class="n">06</div><h5>Deep DeFi integration</h5><p>The pool plugs straight into live Starknet DeFi: private swaps, lending, staking, yield, all atomic, your funds never sitting at a public address in between. And it already reaches other ecosystems: anonymous trading on Polymarket's liquidity works today, straight from an EVM wallet.</p></div>
+      <div class="sp-card"><div class="n">07</div><h5>A compliance path built in</h5><p>Private to the market, transparent to the law. <b>Section 05 below.</b></p></div>
+    </div>
+  </div>
+
+  <div class="viz th-pm-reveal" id="viz">
+    <div class="viz-bar">
+      <span class="t">ONE BALANCE, TWO STATES, ONE CLICK APART</span>
+      <div class="switch"><button id="btnPub" class="on">₿ PUBLIC</button><button id="btnShd">[₿] SHIELDED</button></div>
+    </div>
+    <div class="viz-body">
+      <div class="viz-col">
+        <div class="vt">WHAT THE MARKET SEES</div>
+        <div class="tx pub-state">
+          <span class="k">owner:</span> <span class="red">0x7f3a…c92e (you, mapped)</span><br>
+          <span class="k">balance:</span> <span class="red">1.284 BTC</span><br>
+          <span class="k">last tx:</span> <span class="red">0.4 BTC → 0x91bb…e07a</span><br>
+          <span class="k">history:</span> <span class="red">complete, forever</span>
+        </div>
+        <div class="tx note-state">
+          <span class="k">note:</span> <span class="grn">0xa93f…e4d1 (ciphertext)</span><br>
+          <span class="k">owner:</span> <span class="grn">unreadable</span><br>
+          <span class="k">amount:</span> <span class="grn">unreadable</span><br>
+          <span class="k">link to past tx:</span> <span class="grn">none</span>
+        </div>
+      </div>
+      <div class="viz-col">
+        <div class="vt">WHAT YOU SEE</div>
+        <div class="tx">
+          <span class="k">balance:</span> 1.284 [₿]<br>
+          <span class="k">spendable:</span> instantly, atomically<br>
+          <span class="k">DeFi access:</span> swaps, lending, staking... all of it<br>
+          <span class="k">disclosure:</span> <span class="grn">scoped, lawful request only</span>
+        </div>
+      </div>
+    </div>
+    <div class="viz-foot">SAME TOKENS, SAME WALLET.</div>
+  </div>
+
+  <div class="h3d th-pm-reveal">Three fronts are building <span class="em">on top of it.</span></div>
+  <div class="waves th-pm-reveal">
+    <div class="wave">
+      <div class="wn">STARKNET DEFI</div><h5>Starknet DeFi grafts itself onto the pool</h5>
+      <div class="wp-card">
+        <div class="wp-row"><span class="wp-t">Wallet-native shielding · Ready &amp; Xverse</span><span class="pill live">LIVE</span></div>
+        <p>The privacy pool built directly into the Ready and Xverse wallet UI, one toggle away.</p>
+      </div>
+      <div class="wp-card">
+        <div class="wp-row"><span class="wp-t">Private swaps · avnu &amp; Ekubo</span><span class="pill live">LIVE</span></div>
+        <p>Swap privately against Starknet's existing public liquidity through <a href="https://www.avnu.fi" target="_blank" rel="noopener">avnu</a> &amp; <a href="https://ekubo.org" target="_blank" rel="noopener">Ekubo</a>.</p>
+      </div>
+      <div class="wp-card">
+        <div class="wp-row"><span class="wp-t">Private USDC · w/ Circle</span><span class="pill live">LIVE</span></div>
+        <p>Shielded USDC live on Starknet, highlighted by <a href="https://x.com/USDC/status/2070175190831833264" target="_blank" rel="noopener">Circle</a> itself.</p>
+      </div>
+      <div class="wp-card">
+        <div class="wp-row"><span class="wp-t">Private payroll · PriPay</span><span class="pill live">LIVE</span></div>
+        <p>Onchain salary payments with amounts and counterparties shielded. <a href="https://x.com/StarkWareLtd/status/2066857395528036643" target="_blank" rel="noopener">PriPay ↗</a></p>
+      </div>
+      <div class="wp-card">
+        <div class="wp-row"><span class="wp-t">Private KYC</span><span class="pill live">LIVE</span></div>
+        <p>Prove who you are without revealing more than the check requires. <a href="https://x.com/StarkWareLtd/status/2069369750942093745" target="_blank" rel="noopener">Private KYC ↗</a></p>
+      </div>
+      <div class="wp-card">
+        <div class="wp-row"><span class="wp-t">Dark pool · Zylith</span><span class="pill test">TESTNET</span></div>
+        <p>A call-auction dark pool on Starknet: order sizes and identities sealed until execution. <a href="https://x.com/ZylithFi/status/2064583548133339479" target="_blank" rel="noopener">Zylith ↗</a></p>
+      </div>
+      <div class="wp-card">
+        <div class="wp-row"><span class="wp-t">Liquid staking · Endur</span><span class="pill dev">COMING</span></div>
+        <p>Private liquid staking positions on Starknet. <a href="https://endur.fi" target="_blank" rel="noopener">Endur ↗</a></p>
+      </div>
+      <div class="wp-card">
+        <div class="wp-row"><span class="wp-t">Lending &amp; borrowing · Vesu</span><span class="pill dev">COMING</span></div>
+        <p>Borrow and lend without publishing your positions and liquidation levels. <a href="https://vesu.xyz" target="_blank" rel="noopener">Vesu ↗</a></p>
+      </div>
+      <div class="wp-card">
+        <div class="wp-row"><span class="wp-t">Yield · Troves, ArcX, ForgeYields</span><span class="pill dev">COMING</span></div>
+        <p>Yield strategies without broadcasting your allocations. <a href="https://x.com/trovesfi" target="_blank" rel="noopener">Troves ↗</a> <a href="https://x.com/arcxtrade" target="_blank" rel="noopener">ArcX ↗</a> <a href="https://x.com/ForgeYields" target="_blank" rel="noopener">ForgeYields ↗</a></p>
+      </div>
+      <div class="wp-card">
+        <div class="wp-row"><span class="wp-t">Private CASH stablecoin minting · Opus</span><span class="pill dev">COMING</span></div>
+        <p>Mint the CASH stablecoin privately, straight from the pool. <a href="https://x.com/OpusMoney" target="_blank" rel="noopener">Opus ↗</a></p>
+      </div>
+      <div class="wp-card">
+        <div class="wp-row"><span class="wp-t">Private payments · DashX</span><span class="pill dev">COMING</span></div>
+        <p>Private payments on Starknet. <a href="https://x.com/DashXHQ" target="_blank" rel="noopener">DashX ↗</a></p>
+      </div>
+    </div>
+    <div class="wave">
+      <div class="wn">OTHER ECOSYSTEMS</div><h5>The confidentiality layer for other ecosystems</h5>
+      <div class="wp-card">
+        <div class="wp-row"><span class="wp-t">OffMarket · on Polymarket</span><span class="pill live">LIVE</span></div>
+        <p>Anonymous trading on Polymarket's liquidity, straight from an EVM wallet. <a href="https://x.com/StarkWareLtd/status/2076613440873939355" target="_blank" rel="noopener">OffMarket ↗</a></p>
+      </div>
+      <div class="wp-card">
+        <div class="wp-row"><span class="wp-t">More integrations</span><span class="pill dev">COMING</span></div>
+        <p>Additional ecosystems and apps connecting to the pool over the coming months.</p>
+      </div>
+    </div>
+    <div class="wave">
+      <div class="wn">FIRST-PARTY PIPELINE</div><h5>Nine first-party projects by StarkWare &amp; the Foundation</h5>
+      <div class="wp-card">
+        <div class="wp-row"><span class="wp-t">Private Payroll</span><span class="pill live">LIVE</span></div>
+        <p><a href="https://x.com/StarkWareLtd/status/2066857395528036643" target="_blank" rel="noopener">StarkWare</a>'s own payroll product on the pool.</p>
+      </div>
+      <div class="wp-card">
+        <div class="wp-row"><span class="wp-t">Private KYC</span><span class="pill live">LIVE</span></div>
+        <p>The <a href="https://x.com/StarkWareLtd/status/2069369750942093745" target="_blank" rel="noopener">KYC PoC</a> hardened into a product.</p>
+      </div>
+      <div class="wp-card">
+        <div class="wp-row"><span class="wp-t">OffMarket · on Polymarket</span><span class="pill live">LIVE</span></div>
+        <p>Anonymous trading on Polymarket's liquidity from an EVM wallet; the model expands to more venues next. <a href="https://x.com/StarkWareLtd/status/2076613440873939355" target="_blank" rel="noopener">OffMarket ↗</a></p>
+      </div>
+      <div class="wp-card">
+        <div class="wp-row"><span class="wp-t">Proof of Privacy incubator</span><span class="pill live">COHORT 01</span></div>
+        <p>The Foundation's <a href="https://x.com/StarknetFndn/status/2074783906264727682" target="_blank" rel="noopener">incubator</a> for teams building on the pool.</p>
+      </div>
+      <div class="wp-card">
+        <div class="wp-row"><span class="wp-t">Starknet Enclave</span><span class="pill dev">COMING</span></div>
+        <p>Allowing smart contracts to work with encrypted or hidden information without exposing it publicly onchain.</p>
+      </div>
+      <div class="wp-card">
+        <div class="wp-row"><span class="wp-t">Beam · pay by phone number</span><span class="pill dev">COMING</span></div>
+        <p>Private payments addressed to a phone number, not an 0x address.</p>
+      </div>
+      <div class="wp-card">
+        <div class="wp-row"><span class="wp-t">Solana &amp; EVM wallet integrations</span><span class="pill dev">COMING</span></div>
+        <p>Allowing Phantom, MetaMask, Rabby, and other wallets to use Starknet's privacy pool.</p>
+      </div>
+      <div class="wp-card">
+        <div class="wp-row"><span class="wp-t">Spindle · Solana one-click shielding</span><span class="pill dev">COMING</span></div>
+        <p>One interface for Solana users to shield their assets on Starknet in a few clicks, with bridging, wallet setup, and everything else abstracted away.</p>
+      </div>
+      <div class="wp-card">
+        <div class="wp-row"><span class="wp-t">Sub-accounts</span><span class="pill dev">COMING</span></div>
+        <p>Allowing users to create fresh Starknet accounts for DeFi directly from the privacy pool, with no public link to their main account or other sub-accounts.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="builders th-pm-reveal">
+    <div class="bt">Anyone can now join them.</div>
+    <div class="build-tiles">
+      <a class="btile" href="https://strk20.starknet.io/build" target="_blank" rel="noopener">
+        <div class="be">BUILD</div>
+        <h5>Privacy SDK &amp; Wallet API</h5>
+        <p>The SDK is live and the Wallet API spec is released.</p>
+        <span class="ba">→</span>
+      </a>
+      <a class="btile" href="https://strk20-by-example.org/" target="_blank" rel="noopener">
+        <div class="be">LEARN</div>
+        <h5>STRK20 by Example</h5>
+        <p>How to bring privacy to your specific use case.</p>
+        <span class="ba">→</span>
+      </a>
+      <a class="btile" href="https://strk20.starknet.io/rfp" target="_blank" rel="noopener">
+        <div class="be">SHIP</div>
+        <h5>The STRK20 RFP</h5>
+        <p>What the ecosystem wants built, cataloged.</p>
+        <span class="ba">→</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Live pool metrics. Data comes from the STRK20 dashboard backend
+       (CORS-open; it proxies Starkscan server-side). Cards default to
+       VIEW LIVE fallbacks: readable with JS off, restored on any error. -->
+  <div class="h3d th-pm-reveal">The pool, <span class="em">measured live.</span></div>
+  <div class="pmx th-pm-reveal" id="poolMetrics">
+    <div class="pmx-stats" id="pmxStats"></div>
+    <div class="pmx-updated" id="pmxUpdated"></div>
+    <div class="pmx-grid">
+      <div class="pmx-card pmx-wide" data-pmx="shielded">
+        <div class="pmx-head"><span class="pmx-t">SHIELDED VALUE OVER TIME</span><span class="pmx-sub">USD, STACKED BY ASSET, DAILY</span></div>
+        <div class="pmx-body"><a class="pmx-live" href="https://starkscan.co/privacy-pool" target="_blank" rel="noopener">VIEW LIVE →</a></div>
+        <a class="pmx-src" href="https://starkscan.co/privacy-pool" target="_blank" rel="noopener">SOURCE: STARKSCAN ↗</a>
+      </div>
+      <div class="pmx-card" data-pmx="swaps">
+        <div class="pmx-head"><span class="pmx-t">PRIVATE SWAP VOLUME</span><span class="pmx-sub">USD BY TOKEN, DAILY</span></div>
+        <div class="pmx-body"><a class="pmx-live" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">VIEW LIVE →</a></div>
+        <a class="pmx-src" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">SOURCE: STRK20 DASHBOARD ↗</a>
+      </div>
+      <div class="pmx-card" data-pmx="defi">
+        <div class="pmx-head"><span class="pmx-t">DEFI VOLUME PRIVATELY ROUTED</span><span class="pmx-sub">USD BY PROTOCOL, DAILY</span></div>
+        <div class="pmx-body"><a class="pmx-live" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">VIEW LIVE →</a></div>
+        <a class="pmx-src" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">SOURCE: STRK20 DASHBOARD ↗</a>
+      </div>
+      <div class="pmx-card" data-pmx="txs">
+        <div class="pmx-head"><span class="pmx-t">TRANSACTIONS</span><span class="pmx-sub">COUNT, DAILY</span></div>
+        <div class="pmx-body"><a class="pmx-live" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">VIEW LIVE →</a></div>
+        <a class="pmx-src" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">SOURCE: STRK20 DASHBOARD ↗</a>
+      </div>
+      <div class="pmx-card" data-pmx="users">
+        <div class="pmx-head"><span class="pmx-t">NEW USERS</span><span class="pmx-sub">VIEWING-KEY REGISTRATIONS, DAILY + CUMULATIVE</span></div>
+        <div class="pmx-body"><a class="pmx-live" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">VIEW LIVE →</a></div>
+        <a class="pmx-src" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">SOURCE: STRK20 DASHBOARD ↗</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SECTION 05 ================= -->
+<div class="th-pm-div"></div>
+<section class="th-pm-sec">
+  <div class="th-pm-head th-pm-reveal"><span class="th-pm-marker"></span><span class="th-pm-num">05</span><h2 class="th-pm-title">Private, not invisible</h2></div>
+  <p class="th-pm-eyebrow th-pm-reveal">The law</p>
+  <p class="th-pm-intro th-pm-reveal">Onchain privacy earned its reputation problem: for a decade, private meant nothing to show the regulator. STRK20 was built for the opposite reading, confidential to the market, transparent to the law, and the mechanism is published in full.</p>
+
+  <p class="lead th-pm-reveal">Entry requires escrowing a viewing key, enforced by the proof itself. By default that key does nothing: it sits sealed in hardware, untouched for the overwhelming majority of users. Under a verified lawful request it can unwind one user's trail while the rest of the pool stays sealed. And even then, the key only reads: it cannot <span class="red">freeze</span>, cannot <span class="red">seize</span>, cannot <span class="red">spend</span>.</p>
+
+  <div class="schema th-pm-reveal" id="lawSchema">
+    <div class="snode">
+      <div class="st">THE POOL</div><h6>Protocol-enforced escrow</h6>
+      <p class="sn-sum">No escrowed viewing key, no entry: the proof itself enforces it.</p>
+      <ul><li>· Viewing key escrowed at entry, encrypted to the auditor</li><li>· The escrow is enforced by the proof itself</li><li>· Deposits screened at the edge</li></ul>
+    </div>
+    <div class="slink">→</div>
+    <div class="snode">
+      <div class="st">THE KEY</div><h6>Financial Privacy Inc (FPI)</h6>
+      <p class="sn-sum">Sealed in dual hardware enclaves, governed by StarkWare, FPI, and the Starknet Security Council.</p>
+      <ul><li>· Founded by the QEDIT team</li><li>· Master key sealed in a dual-enclave TEE</li><li>· 3-of-4 multisig: StarkWare + FPI</li><li>· Starknet Security Council backup &amp; upgrade control</li><li>· Never touched for the overwhelming majority of users</li></ul>
+    </div>
+    <div class="slink">→</div>
+    <div class="snode">
+      <div class="st">THE REQUEST</div><h6>Lawful request, defined</h6>
+      <p class="sn-sum">Only an authenticated order from a competent authority, on a verified legal basis.</p>
+      <ul><li>· An authenticated order from a competent authority</li><li>· Acting inside its jurisdiction</li><li>· On a verified legal basis</li><li>· Anything less is refused</li></ul>
+    </div>
+    <div class="slink">→</div>
+    <div class="snode">
+      <div class="st">THE DISCLOSURE</div><h6>Scoped, and nothing more</h6>
+      <p class="sn-sum">The minimum the request covers, re-encrypted to that authority, and nobody else.</p>
+      <ul><li>· Minimum necessary scope: potentially a single transfer in a defined window</li><li>· Re-encrypted inside the enclave</li><li>· Delivered to the requesting authority, and nobody else</li><li>· The rest of the pool stays sealed</li></ul>
+    </div>
+  </div>
+
+  <p class="lead th-pm-reveal">And the whole stack is open source under Apache 2.0.</p>
+</section>
+
+<!-- ================= CLOSING ================= -->
+<div class="th-pm-div"></div>
+<div class="closing">
+  <div class="cd th-pm-reveal">Privacy is probably the last 100x PvE bet in crypto.<br><span class="em">Starknet is building the best ecosystem for it.</span></div>
+</div>
+
+<!-- ================= PRIVACY × STARKNET NEWS ================= -->
+<section class="news-sec">
+  <div class="news-section news-flashy" id="newsSection">
+    <div class="news-admin-bar" id="newsAdminBar">
+      <button type="button" class="news-edit-btn" id="newsEditBtn" aria-expanded="false"><i class="ti ti-pencil" aria-hidden="true"></i> <span id="newsEditBtnLabel">Edit news</span></button>
+    </div>
+    <button class="news-toggle" id="newsToggle" aria-expanded="false">
+      <span class="news-toggle-title"><span class="news-eyebrow">Latest</span> Privacy × Starknet news</span>
+      <i class="ti ti-chevron-down news-chevron" aria-hidden="true"></i>
+    </button>
+    <div class="news-editor" id="newsEditor" hidden></div>
+    <div class="news-grid" id="newsGrid"></div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-top">
+      <div class="foot-brand">
+        <a href="index.html" class="nav-logo">Starknet <b>Thesis</b></a>
+        <p>The independent thesis on how Starknet makes crypto private, quantum-resistant and productive.</p>
+        <a href="https://x.com/Lyskey" target="_blank" rel="noopener" class="btn btn-ghost" style="padding:11px 18px">Made by Lyskey</a>
+      </div>
+      <div class="foot-col"><div class="h">Thesis</div><a href="privacy.html">Privacy</a><a href="quantum.html">Quantum</a><a href="btcfi.html">BTCFi</a><a href="strk.html">STRK</a></div>
+      <div class="foot-col"><div class="h">Ecosystem</div><a href="ecosystem.html">Ecosystem</a><a href="digest.html">Digest</a></div>
+      <div class="foot-col"><div class="h">Links</div><a href="https://x.com/Lyskey" target="_blank" rel="noopener">X / Twitter</a><a href="https://starknetresearch.substack.com/" target="_blank" rel="noopener">Newsletter</a></div>
+    </div>
+    <div class="disclaimer">Website made for educational purposes only. This is not financial advice. Always DYOR. This is also a personal project, not affiliated with or endorsed by StarkWare. All views expressed here are my own.</div>
+    <div class="foot-bottom">
+      <span>© 2026 · Made by <a href="https://x.com/Lyskey" target="_blank" rel="noopener">Lyskey</a></span>
+      <a href="https://status.starknet.io/" target="_blank" rel="noopener noreferrer" style="text-decoration:none;color:inherit;cursor:pointer"><span class="status"><span class="dot"></span> All systems operational</span></a>
+    </div>
+    <div class="foot-mark">Starknet</div>
+  </div>
+</footer>
+
+<script>
+// ============================================================
+// SECTION 01 — shield toggle (leak panels are visible by default)
+// ============================================================
+(function(){
+  var btn = document.getElementById('shieldBtn');
+  if (!btn) return;
+  var r = document.getElementById('reveal');
+  var title = document.getElementById('revealTitle');
+  btn.addEventListener('click', function(){
+    var s = r.classList.toggle('shielded');
+    btn.textContent = s ? 'UNSHIELD' : '[ SHIELD IT ]';
+    title.textContent = s ? 'PRIVACY PROTECTION ON STARKNET' : 'WHAT YOUR ADDRESS REVEALS';
+  });
+})();
+
+// ============================================================
+// SECTION 01 — printer: bills print once on scroll; tap to flip on touch
+// ============================================================
+(function(){
+  var printer = document.getElementById('printer');
+  if (!printer) return;
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function(entries, obs){
+      entries.forEach(function(en){ if (en.isIntersecting) { printer.classList.add('printed'); obs.disconnect(); } });
+    }, { threshold: .35 });
+    io.observe(printer);
+  } else {
+    printer.classList.add('printed');
+  }
+  if (window.matchMedia('(hover: none)').matches) {
+    [].forEach.call(document.querySelectorAll('.flip'), function(f){
+      f.addEventListener('click', function(){ f.classList.toggle('flipped'); });
+    });
+  }
+})();
+
+// ============================================================
+// SECTION 02 — crowd slider (240 dots, live caption)
+// ============================================================
+(function(){
+  var dotsEl = document.getElementById('dots'), cap = document.getElementById('crowdCap'), range = document.getElementById('crowdRange');
+  if (!dotsEl) return;
+  var TOTAL = 240, YOU = 97;
+  for (var i = 0; i < TOTAL; i++) {
+    var d = document.createElement('div');
+    d.className = 'dot' + (i === YOU ? ' you' : '');
+    dotsEl.appendChild(d);
+  }
+  function upd(){
+    var n = +range.value;
+    [].forEach.call(dotsEl.children, function(d, i){
+      if (i === YOU) return;
+      d.classList.toggle('hidden', i >= n);
+    });
+    var odds = n <= 1 ? 'YOU ARE ALONE.' : '1 IN ' + n;
+    cap.innerHTML = n < 20
+      ? 'CROWD: <span class="n">' + n + '</span> — YOU ARE <span class="warn">' + odds + '</span>. EASY TO ISOLATE.'
+      : 'CROWD: <span class="n">' + n + '</span> — YOU ARE <span class="n">' + odds + '</span>. EVERY NEW USER HIDES YOU BETTER.';
+  }
+  range.addEventListener('input', upd); upd();
+})();
+
+// ============================================================
+// SECTION 03 — protocol grid tooltips (hover + keyboard focus)
+// ============================================================
+(function(){
+  [].forEach.call(document.querySelectorAll('.pgrid td[data-tip]'), function(td){
+    var t = document.createElement('span');
+    t.className = 'tipbox';
+    t.textContent = td.dataset.tip;
+    td.appendChild(t);
+  });
+})();
+
+// ============================================================
+// SECTION 04 — shielded state visualizer toggle
+// ============================================================
+(function(){
+  var viz = document.getElementById('viz'), bp = document.getElementById('btnPub'), bs = document.getElementById('btnShd');
+  if (!viz) return;
+  bp.addEventListener('click', function(){ viz.classList.remove('shielded'); bp.classList.add('on'); bs.classList.remove('on'); });
+  bs.addEventListener('click', function(){ viz.classList.add('shielded'); bs.classList.add('on'); bp.classList.remove('on'); });
+})();
+
+// ============================================================
+// SECTION 04 — shield-stamp foundation loop
+// One timeout chain per cycle; timers are cleared and rebuilt each
+// cycle so nothing accumulates or drifts.
+// ============================================================
+(function(){
+  var wrap = document.getElementById('shieldStamp');
+  if (!wrap) return;
+  var TOKENS = [
+    { sym: 'BTC',   amt: '14,532 BTC',       img: 'assets/tokens/btc.png',   color: '#F7931A', fb: '₿' },
+    { sym: 'ETH',   amt: '124,567 ETH',      img: 'assets/tokens/eth.png',   color: '#627EEA', fb: 'Ξ' },
+    { sym: 'STRK',  amt: '345,347,898 STRK', img: 'assets/tokens/strk.png',  color: '#EC796B', fb: 'S' },
+    { sym: 'EKUBO', amt: '243,565 EKUBO',    img: 'assets/tokens/ekubo.png', color: '#6B3FA0', fb: 'E' },
+    { sym: 'HYPE',  amt: '789,654 HYPE',     img: 'assets/tokens/hype.png',  color: '#97FCE4', fb: 'H' }
+  ];
+  var coin = document.getElementById('ssCoin'), logo = document.getElementById('ssLogo'),
+      fb = document.getElementById('ssFb'), ring = document.getElementById('ssRing'),
+      stamp = document.getElementById('ssStamp'), amount = document.getElementById('ssAmount'),
+      chip1 = document.getElementById('ssChip1'), chip2 = document.getElementById('ssChip2'),
+      props = document.getElementById('stampProps'),
+      cards = [].slice.call(props.querySelectorAll('.sp-card'));
+  var failed = {};
+  logo.addEventListener('error', function(){
+    failed[logo.getAttribute('src')] = true;
+    logo.hidden = true; fb.hidden = false;
+  });
+  function applyToken(t){
+    coin.style.borderColor = t.color;
+    fb.textContent = t.fb; fb.style.color = t.color;
+    logo.alt = t.sym + ' logo';
+    if (failed[t.img]) { logo.hidden = true; fb.hidden = false; }
+    else {
+      fb.hidden = true; logo.hidden = false;
+      if (logo.getAttribute('src') !== t.img) logo.setAttribute('src', t.img);
+    }
+    amount.textContent = t.amt;
+    amount.classList.remove('sealed');
+  }
+  function sealAmount(t){
+    amount.textContent = '[ ' + t.sym + ' — AMOUNT HIDDEN ]';
+    amount.classList.add('sealed');
+  }
+  function setProp(i){ cards.forEach(function(c, j){ c.classList.toggle('on', j === i); }); }
+
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    // static sealed BTC state; property hover still works via CSS
+    applyToken(TOKENS[0]);
+    coin.classList.add('sealed');
+    sealAmount(TOKENS[0]);
+    chip1.classList.add('on'); chip2.classList.add('on');
+    setProp(0);
+    return;
+  }
+
+  var ti = 0, pi = 0, paused = false, timers = [];
+  props.addEventListener('mouseenter', function(){
+    paused = true;
+    cards.forEach(function(c){ c.classList.remove('on'); }); // hovered card highlights via :hover
+  });
+  props.addEventListener('mouseleave', function(){ paused = false; setProp(pi); });
+  function later(fn, ms){ timers.push(setTimeout(fn, ms)); }
+  function restart(el, cls){ el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); }
+  function cycle(){
+    timers.forEach(clearTimeout); timers = [];
+    var t = TOKENS[ti];
+    stamp.classList.remove('down');
+    coin.classList.remove('sealed', 'shake');
+    ring.classList.remove('boom');
+    chip1.classList.remove('on'); chip2.classList.remove('on');
+    applyToken(t);
+    restart(coin, 'in');
+    if (!paused) setProp(pi);
+    later(function(){ stamp.classList.add('down'); }, 900);
+    later(function(){
+      restart(coin, 'shake');
+      coin.classList.add('sealed');
+      restart(ring, 'boom');
+      sealAmount(t);
+    }, 1180);
+    later(function(){ chip1.classList.add('on'); }, 1300);
+    later(function(){ chip2.classList.add('on'); }, 1420);
+    later(function(){ stamp.classList.remove('down'); }, 1650);
+    later(function(){
+      ti = (ti + 1) % TOKENS.length;
+      if (!paused) pi = (pi + 1) % cards.length;
+      cycle();
+    }, 3400);
+  }
+  cycle();
+})();
+
+// ============================================================
+// SECTION 04 — live pool metrics
+// Data: STRK20 dashboard backend (CORS-open; proxies Starkscan
+// server-side). Fetched fresh on every load (cache-busted),
+// lazily when the block nears the viewport, then silently
+// refreshed every 60 minutes while the page stays open. Cards
+// keep their VIEW LIVE fallback on any failure. Hover or tap a
+// chart for a crosshair tooltip with that day's values.
+// ============================================================
+(function(){
+  var root = document.getElementById('poolMetrics');
+  if (!root || !window.fetch) return;
+  var API = 'https://strk20-dashboard-production.up.railway.app';
+  var PALETTE = ['#1FCB94', '#7FB4E8', '#E8A33D', '#9A7BF7', '#0E8A63', '#57646B'];
+  var PAD_STD = { l: 44, r: 10, t: 8, b: 18 };
+  var PAD_DUAL = { l: 40, r: 44, t: 8, b: 18 };
+
+  function fmtUsd(v){
+    if (v >= 1e6) return '$' + (v / 1e6).toFixed(v >= 1e7 ? 0 : 1) + 'M';
+    if (v >= 1e3) return '$' + (v / 1e3).toFixed(v >= 1e4 ? 0 : 1) + 'K';
+    return '$' + Math.round(v).toLocaleString('en-US');
+  }
+  function fmtN(v){
+    if (v >= 1e6) return (v / 1e6).toFixed(1) + 'M';
+    if (v >= 1e4) return (v / 1e3).toFixed(0) + 'K';
+    return Math.round(v).toLocaleString('en-US');
+  }
+  function dLabel(iso){
+    return new Date(iso + 'T00:00:00Z')
+      .toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' }).toUpperCase();
+  }
+  function dFull(iso){
+    return new Date(iso + 'T00:00:00Z')
+      .toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' }).toUpperCase();
+  }
+  function nice(v){
+    if (v <= 0) return 1;
+    var p = Math.pow(10, Math.floor(Math.log10(v))), m = v / p;
+    var steps = [1, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 10], s = 10;
+    for (var i = 0; i < steps.length; i++) { if (m <= steps[i]) { s = steps[i]; break; } }
+    return s * p;
+  }
+  function esc(s){ return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;'); }
+
+  // shared frame: gridlines + y labels (left/right) + x date ticks
+  function frame(W, H, P, yMax, fmt, days, yMaxR, fmtR){
+    var s = '', i;
+    for (i = 0; i <= 3; i++) {
+      var y = P.t + (H - P.t - P.b) * i / 3;
+      s += '<line class="pmx-grid-line" x1="' + P.l + '" y1="' + y + '" x2="' + (W - P.r) + '" y2="' + y + '"/>';
+      s += '<text class="pmx-axis" x="' + (P.l - 6) + '" y="' + (y + 3) + '" text-anchor="end">' + fmt(yMax * (1 - i / 3)) + '</text>';
+      if (yMaxR) s += '<text class="pmx-axis" x="' + (W - P.r + 6) + '" y="' + (y + 3) + '" text-anchor="start" fill="#1FCB94">' + fmtR(yMaxR * (1 - i / 3)) + '</text>';
+    }
+    var n = days.length, ticks = n > 1 ? [0, Math.round((n - 1) / 3), Math.round((n - 1) * 2 / 3), n - 1] : [0];
+    ticks.forEach(function(ix){
+      var x = P.l + (W - P.l - P.r) * (n > 1 ? ix / (n - 1) : 0.5);
+      var anchor = ix === 0 ? 'start' : ix === n - 1 ? 'end' : 'middle'; // edge labels stay inside the viewBox
+      s += '<text class="pmx-axis" x="' + x + '" y="' + (H - 4) + '" text-anchor="' + anchor + '">' + dLabel(days[ix].date) + '</text>';
+    });
+    return s;
+  }
+
+  // split a {days:[{date, byX}]} series into top-N named stacks + OTHER
+  function topSeries(days, key, N){
+    var totals = {};
+    days.forEach(function(d){
+      var m = d[key] || {};
+      Object.keys(m).forEach(function(k){ totals[k] = (totals[k] || 0) + m[k]; });
+    });
+    var names = Object.keys(totals).sort(function(a, b){ return totals[b] - totals[a]; });
+    var top = names.slice(0, N);
+    var hasOther = names.length > N;
+    return { names: hasOther ? top.concat(['OTHER']) : top,
+      value: function(d, name){
+        var m = d[key] || {};
+        if (name !== 'OTHER') return m[name] || 0;
+        var v = 0;
+        Object.keys(m).forEach(function(k){ if (top.indexOf(k) === -1) v += m[k]; });
+        return v;
+      } };
+  }
+  function legend(names){
+    return '<div class="pmx-legend">' + names.map(function(n, i){
+      return '<span><i style="background:' + PALETTE[i % PALETTE.length] + '"></i>' + esc(n.toUpperCase()) + '</span>';
+    }).join('') + '</div>';
+  }
+  function stackRows(split, fmt){
+    return function(d){
+      var rows = [], tot = 0;
+      split.names.forEach(function(nm, i){
+        var v = split.value(d, nm);
+        tot += v;
+        rows.push({ label: nm.toUpperCase(), value: fmt(v), color: PALETTE[i % PALETTE.length] });
+      });
+      rows.push({ label: 'TOTAL', value: fmt(tot), total: true });
+      return rows;
+    };
+  }
+
+  function stackedArea(days, split, W, H){
+    var P = PAD_STD, n = days.length;
+    var stackMax = 0;
+    days.forEach(function(d){
+      var t = 0; split.names.forEach(function(nm){ t += split.value(d, nm); });
+      if (t > stackMax) stackMax = t;
+    });
+    var yMax = nice(stackMax);
+    var X = function(i){ return P.l + (W - P.l - P.r) * (n > 1 ? i / (n - 1) : 0.5); };
+    var Y = function(v){ return P.t + (H - P.t - P.b) * (1 - v / yMax); };
+    var base = days.map(function(){ return 0; });
+    var svg = frame(W, H, P, yMax, fmtUsd, days);
+    // draw largest series first (bottom of the stack)
+    split.names.forEach(function(nm, si){
+      var upper = days.map(function(d, i){ return base[i] + split.value(d, nm); });
+      var path = 'M' + X(0) + ',' + Y(base[0]);
+      upper.forEach(function(v, i){ path += 'L' + X(i) + ',' + Y(v); });
+      for (var i = n - 1; i >= 0; i--) path += 'L' + X(i) + ',' + Y(base[i]);
+      path += 'Z';
+      svg += '<path d="' + path + '" fill="' + PALETTE[si % PALETTE.length] + '" fill-opacity="0.55" stroke="' + PALETTE[si % PALETTE.length] + '" stroke-width="1"/>';
+      base = upper;
+    });
+    return '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img">' + svg + '</svg>';
+  }
+
+  function stackedBars(days, split, W, H, fmt){
+    var P = PAD_STD, n = days.length;
+    var stackMax = 0;
+    days.forEach(function(d){
+      var t = 0; split.names.forEach(function(nm){ t += split.value(d, nm); });
+      if (t > stackMax) stackMax = t;
+    });
+    var yMax = nice(stackMax);
+    var plotW = W - P.l - P.r, plotH = H - P.t - P.b;
+    var bw = Math.max(1, plotW / n * 0.72);
+    var svg = frame(W, H, P, yMax, fmt, days);
+    days.forEach(function(d, i){
+      var x = P.l + plotW * (n > 1 ? i / (n - 1) : 0.5) - bw / 2, y0 = 0;
+      split.names.forEach(function(nm, si){
+        var v = split.value(d, nm);
+        if (v <= 0) return;
+        var h = plotH * v / yMax;
+        svg += '<rect x="' + x + '" y="' + (P.t + plotH - y0 - h) + '" width="' + bw + '" height="' + h + '" fill="' + PALETTE[si % PALETTE.length] + '" fill-opacity="0.8"/>';
+        y0 += h;
+      });
+    });
+    return '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img">' + svg + '</svg>';
+  }
+
+  function barsPlusLine(days, barVal, lineVal, W, H){
+    var P = PAD_DUAL, n = days.length;
+    var bMax = 0, lMax = 0;
+    days.forEach(function(d){ bMax = Math.max(bMax, barVal(d)); lMax = Math.max(lMax, lineVal(d)); });
+    var yMax = nice(bMax), yMaxR = nice(lMax);
+    var plotW = W - P.l - P.r, plotH = H - P.t - P.b;
+    var bw = Math.max(1, plotW / n * 0.72);
+    var svg = frame(W, H, P, yMax, fmtN, days, yMaxR, fmtN);
+    days.forEach(function(d, i){
+      var v = barVal(d);
+      if (v <= 0) return;
+      var x = P.l + plotW * (n > 1 ? i / (n - 1) : 0.5) - bw / 2, h = plotH * v / yMax;
+      svg += '<rect x="' + x + '" y="' + (P.t + plotH - h) + '" width="' + bw + '" height="' + h + '" fill="#7FB4E8" fill-opacity="0.75"/>';
+    });
+    var pts = days.map(function(d, i){
+      return (P.l + plotW * (n > 1 ? i / (n - 1) : 0.5)) + ',' + (P.t + plotH * (1 - lineVal(d) / yMaxR));
+    }).join(' ');
+    svg += '<polyline points="' + pts + '" fill="none" stroke="#1FCB94" stroke-width="2" stroke-linejoin="round"/>';
+    return '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img">' + svg + '</svg>';
+  }
+
+  // crosshair + tooltip (pointer events cover mouse and touch taps)
+  function attachHover(plot, meta){
+    var cross = plot.querySelector('.pmx-cross'), tip = plot.querySelector('.pmx-tip');
+    function show(clientX){
+      var rect = plot.getBoundingClientRect();
+      var n = meta.days.length;
+      if (!n || rect.width === 0) return;
+      var vx = (clientX - rect.left) / rect.width * meta.W;
+      var f = (vx - meta.P.l) / (meta.W - meta.P.l - meta.P.r);
+      var i = Math.max(0, Math.min(n - 1, Math.round(f * (n - 1))));
+      var cx = (meta.P.l + (meta.W - meta.P.l - meta.P.r) * (n > 1 ? i / (n - 1) : 0.5)) / meta.W * rect.width;
+      cross.style.display = 'block';
+      cross.style.left = cx + 'px';
+      var d = meta.days[i];
+      tip.innerHTML = '<div class="d">' + dFull(d.date) + '</div>' + meta.rows(d).map(function(r){
+        return '<div class="r' + (r.total ? ' t' : '') + '"><span>' + (r.color ? '<i style="background:' + r.color + '"></i>' : '') + esc(r.label) + '</span><span>' + esc(r.value) + '</span></div>';
+      }).join('');
+      tip.style.display = 'block';
+      var left = cx + 12;
+      if (left + tip.offsetWidth > rect.width - 4) left = cx - tip.offsetWidth - 12;
+      if (left < 4) left = 4;
+      tip.style.left = left + 'px';
+    }
+    function hide(){ cross.style.display = 'none'; tip.style.display = 'none'; }
+    plot.addEventListener('pointermove', function(e){ show(e.clientX); });
+    plot.addEventListener('pointerdown', function(e){ show(e.clientX); });
+    plot.addEventListener('pointerleave', hide);
+  }
+
+  var bodies = {};
+  root.querySelectorAll('.pmx-card').forEach(function(c){
+    bodies[c.getAttribute('data-pmx')] = { el: c.querySelector('.pmx-body'), fallback: c.querySelector('.pmx-body').innerHTML };
+  });
+  function skel(k){ bodies[k].el.innerHTML = '<div class="pmx-skel"></div>'; }
+  function fail(k, silent){ if (!silent) bodies[k].el.innerHTML = bodies[k].fallback; } // silent refresh keeps the last good chart
+  function mount(k, chartHtml, legendHtml, meta){
+    bodies[k].el.innerHTML = '<div class="pmx-plot">' + chartHtml + '<div class="pmx-cross"></div><div class="pmx-tip"></div></div>' + legendHtml;
+    attachHover(bodies[k].el.querySelector('.pmx-plot'), meta);
+  }
+  function get(path){
+    // cache-busting param: every page load and refresh pulls fresh numbers
+    return fetch(API + path + '?_=' + Date.now()).then(function(r){ if (!r.ok) throw new Error(path); return r.json(); });
+  }
+
+  var upEl = document.getElementById('pmxUpdated'), lastUpdate = 0;
+  function stamp(){ lastUpdate = Date.now(); tickUpdated(); }
+  function tickUpdated(){
+    if (!lastUpdate || !upEl) return;
+    var m = Math.floor((Date.now() - lastUpdate) / 60000);
+    upEl.textContent = m < 1 ? 'UPDATED JUST NOW' : m < 60 ? 'UPDATED ' + m + ' MIN AGO' : 'UPDATED ' + Math.floor(m / 60) + ' HR AGO';
+  }
+
+  function load(silent){
+    if (!silent) Object.keys(bodies).forEach(skel);
+    // headline stats
+    get('/agg/pool-summary').then(function(s){
+      var stats = document.getElementById('pmxStats');
+      stats.innerHTML =
+        '<div class="pmx-stat"><div class="l">TOTAL SHIELDED VALUE</div><div class="v"><span class="em">$' + Math.round(s.tvlUsd).toLocaleString('en-US') + '</span></div></div>' +
+        '<div class="pmx-stat"><div class="l">PROTECTED ASSETS</div><div class="v">' + (s.perToken || []).length.toLocaleString('en-US') + '</div></div>' +
+        '<div class="pmx-stat"><div class="l">TOTAL USERS</div><div class="v">' + (s.userCount || 0).toLocaleString('en-US') + '</div></div>';
+      stamp();
+    }).catch(function(){ if (!silent) document.getElementById('pmxStats').innerHTML = ''; });
+
+    get('/agg/shielded-balance').then(function(d){
+      if (!d.days || !d.days.length) throw new Error('empty');
+      var split = topSeries(d.days, 'byToken', 5);
+      mount('shielded', stackedArea(d.days, split, 760, 240), legend(split.names),
+        { days: d.days, W: 760, P: PAD_STD, rows: stackRows(split, fmtUsd) });
+      stamp();
+    }).catch(function(){ fail('shielded', silent); });
+
+    get('/agg/swap-by-token').then(function(d){
+      if (!d.days || !d.days.length) throw new Error('empty');
+      var split = topSeries(d.days, 'byToken', 4);
+      mount('swaps', stackedBars(d.days, split, 380, 200, fmtUsd), legend(split.names),
+        { days: d.days, W: 380, P: PAD_STD, rows: stackRows(split, fmtUsd) });
+      stamp();
+    }).catch(function(){ fail('swaps', silent); });
+
+    get('/agg/routed-volume').then(function(d){
+      if (!d.days || !d.days.length) throw new Error('empty');
+      var split = topSeries(d.days, 'byProtocol', 4);
+      mount('defi', stackedBars(d.days, split, 380, 200, fmtUsd), legend(split.names),
+        { days: d.days, W: 380, P: PAD_STD, rows: stackRows(split, fmtUsd) });
+      stamp();
+    }).catch(function(){ fail('defi', silent); });
+
+    get('/agg/transactions').then(function(d){
+      if (!d.days || !d.days.length) throw new Error('empty');
+      var split = { names: ['TRANSACTIONS'], value: function(day){ return day.count || 0; } };
+      mount('txs', stackedBars(d.days, split, 380, 200, fmtN), '',
+        { days: d.days, W: 380, P: PAD_STD, rows: function(day){ return [{ label: 'TRANSACTIONS', value: fmtN(day.count || 0), color: '#1FCB94' }]; } });
+      stamp();
+    }).catch(function(){ fail('txs', silent); });
+
+    get('/agg/registrations').then(function(d){
+      if (!d.days || !d.days.length) throw new Error('empty');
+      mount('users',
+        barsPlusLine(d.days, function(day){ return day.newUsers || 0; }, function(day){ return day.totalUsers || 0; }, 380, 200),
+        '<div class="pmx-legend"><span><i style="background:#7FB4E8"></i>NEW USERS / DAY</span><span><i style="background:#1FCB94"></i>CUMULATIVE (RIGHT AXIS)</span></div>',
+        { days: d.days, W: 380, P: PAD_DUAL, rows: function(day){
+            return [{ label: 'NEW USERS', value: fmtN(day.newUsers || 0), color: '#7FB4E8' },
+                    { label: 'CUMULATIVE', value: fmtN(day.totalUsers || 0), color: '#1FCB94' }];
+          } });
+      stamp();
+    }).catch(function(){ fail('users', silent); });
+  }
+
+  var loaded = false;
+  function once(){
+    if (loaded) return;
+    loaded = true;
+    load(false);
+    setInterval(function(){ load(true); }, 3600000); // silent hourly refresh
+    setInterval(tickUpdated, 60000);                 // relative "UPDATED" ticker
+  }
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){ if (en.isIntersecting) { io.disconnect(); once(); } });
+    }, { rootMargin: '600px' });
+    io.observe(root);
+  } else {
+    once();
+  }
+})();
+</script>
+
+<!-- PV: privacy videos. Same local-MP4 model as quantum.html's video section:
+     a project-relative path or https URL per slot (seeded with
+     videos/privacy-1.mp4 / videos/privacy-2.mp4), or pick a local file for
+     session-only preview. Persists only the src STRING under privacyVideos_v1.
+     While a seeded file is missing from videos/, the slot gracefully falls
+     back to its mockup placeholder. -->
+<script>
+(function(){
+  if (window.__pvInit) return; window.__pvInit = true;
+  // v2: the section-03 grid uses indices 0-3 (the old v1 indexing differed,
+  // so the version bump keeps stale state from mapping onto the wrong slots)
+  var KEY = 'privacyVideos_v2';
+  var cards = [].slice.call(document.querySelectorAll('.pv-vcard'));
+  if (!cards.length) return;
+  var blobs = {}; // session-only object URLs per index, never persisted
+
+  function load(){ try { var raw = localStorage.getItem(KEY); var a = raw ? JSON.parse(raw) : []; return Array.isArray(a) ? a : []; } catch(e){ return []; } }
+  function save(){ try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){} }
+  var state = load(); // [{ src, title }]
+
+  function idx(c){ return +c.getAttribute('data-pv'); }
+  var defaults = {}; // default titles from the markup, per index
+  cards.forEach(function(c){ defaults[idx(c)] = (c.querySelector('.qv-title').textContent || '').trim(); });
+
+  // one-time prefill; only when the slot has never been saved or cleared
+  var seeds = { 0: { src: 'videos/privacy-1.mp4' }, 1: { src: 'videos/privacy-2.mp4' }, 2: { src: 'videos/privacy-3.mp4' }, 3: { src: 'videos/privacy-4.mp4' } };
+  var seeded = false;
+  Object.keys(seeds).forEach(function(k){ if (state[k] == null) { state[k] = seeds[k]; seeded = true; } });
+  if (seeded) save();
+
+  function applyCard(c){
+    var i = idx(c), st = state[i] || {};
+    var video = c.querySelector('.qv-player'), ph = c.querySelector('.qv-ph');
+    var titleText = (st.title != null && st.title !== '') ? st.title : defaults[i];
+    c.querySelector('.qv-title').textContent = titleText;
+    c.querySelector('.meta').hidden = !titleText; // empty title: no meta bar until filled
+    var live = blobs[i] || (st.src || ''); // prefer session preview, else saved path/URL
+    if (live) { video.src = live; video.hidden = false; ph.hidden = true; c.classList.add('has-video'); }
+    else { video.removeAttribute('src'); try { video.load(); } catch(e){} video.hidden = true; ph.hidden = false; c.classList.remove('has-video'); }
+  }
+  cards.forEach(applyCard);
+
+  // graceful placeholder while the seeded file is not in videos/ yet
+  cards.forEach(function(c){
+    var video = c.querySelector('.qv-player'), ph = c.querySelector('.qv-ph');
+    video.addEventListener('error', function(){
+      if (!video.getAttribute('src')) return;
+      video.hidden = true; ph.hidden = false; c.classList.remove('has-video');
+    });
+  });
+
+  // edit toggle (both buttons control the same editing state)
+  var editBtns = [].slice.call(document.querySelectorAll('.pv-vedit'));
+  var editing = false;
+  function syncButtons(){
+    editBtns.forEach(function(b){
+      b.classList.toggle('active', editing);
+      b.setAttribute('aria-expanded', editing ? 'true' : 'false');
+      b.querySelector('span').textContent = editing ? 'Done editing' : 'Edit videos';
+    });
+  }
+  editBtns.forEach(function(b){
+    b.addEventListener('click', function(){
+      editing = !editing;
+      syncButtons();
+      cards.forEach(function(c){
+        c.querySelector('.qv-editor').hidden = !editing;
+        if (editing) {
+          var st = state[idx(c)] || {};
+          c.querySelector('.qv-src').value = st.src || '';
+          c.querySelector('.qv-ttl').value = (st.title != null && st.title !== '') ? st.title : defaults[idx(c)];
+        }
+      });
+    });
+  });
+
+  // per-card actions
+  cards.forEach(function(c){
+    var i = idx(c);
+    var video = c.querySelector('.qv-player'), ph = c.querySelector('.qv-ph');
+    c.querySelector('.qv-pick').addEventListener('change', function(e){
+      var f = e.target.files && e.target.files[0];
+      if (!f) return;
+      if (blobs[i]) { try { URL.revokeObjectURL(blobs[i]); } catch(e2){} }
+      blobs[i] = URL.createObjectURL(f); // local preview ONLY, not persisted
+      video.src = blobs[i]; video.hidden = false; ph.hidden = true; c.classList.add('has-video');
+    });
+    c.querySelector('.qv-save').addEventListener('click', function(){
+      state[i] = { src: c.querySelector('.qv-src').value.trim(), title: c.querySelector('.qv-ttl').value.trim() };
+      save();
+      applyCard(c);
+    });
+    c.querySelector('.qv-clear').addEventListener('click', function(){
+      state[i] = { src: '', title: '' };
+      save();
+      if (blobs[i]) { try { URL.revokeObjectURL(blobs[i]); } catch(e3){} delete blobs[i]; }
+      c.querySelector('.qv-src').value = ''; c.querySelector('.qv-ttl').value = defaults[i];
+      applyCard(c);
+    });
+  });
+})();
+</script>
+
+<!-- PRIVACY × STARKNET NEWS — collapsible, editable, localStorage
+     (same engine as btcfi.html / quantum.html; STORAGE_KEY namespaced by
+     DEFAULTS_VERSION so stale localStorage can never shadow new defaults) -->
+<script>
+(function() {
+  var grid = document.getElementById('newsGrid');
+  if (!grid) return;
+
+  // ====== EDIT HERE: add Privacy × Starknet posts/sources ======
+  // Each entry: { url, title, date, fallbackText, [name, handle, initials, color, verified] }
+  // X/Twitter status links render as real embeds. Non-tweet links (papers, blogs)
+  // render as a styled fallback card — set name/handle/initials/color for a nicer look.
+  // These in-file defaults render WITHOUT any localStorage; localStorage is only an override.
+  var tweets = [
+    { "url": "https://x.com/Lyskey/status/2077720558616052219", "title": "The privacy vision", "date": "Jul 16, 2026" },
+    { "url": "https://x.com/Starknet/status/2077362949199720450", "title": "Privacy SDK + Wallet API released", "date": "Jul 15, 2026" },
+    { "url": "https://x.com/Starknet/status/2076987212005319079", "title": "STRK20 compliance, explained", "date": "Jul 14, 2026" },
+    { "url": "https://x.com/OffMarketcx/status/2076652614612124018", "title": "Private on top of Polymarket", "date": "Jul 13, 2026" },
+    { "url": "https://x.com/Starknet/status/2075527570775482417", "title": "$500K in the pool", "date": "Jul 10, 2026" },
+    { "url": "https://x.com/StarknetFndn/status/2072317100891537457", "title": "Proof of Privacy: cohort 01", "date": "Jul 1, 2026" },
+    { "url": "https://x.com/USDC/status/2070175190831833264", "title": "Private USDC", "date": "Jun 25, 2026" },
+    { "url": "https://x.com/StarkWareLtd/status/2069369750942093745", "title": "Private KYC use case", "date": "Jun 23, 2026" },
+    { "url": "https://x.com/StarkWareLtd/status/2066857395528036643", "title": "Private Payroll use case", "date": "Jun 16, 2026" },
+    { "url": "https://x.com/Starknet/status/2064375302957289598", "title": "STRK20s launch", "date": "Jun 9, 2026" },
+    { "url": "https://x.com/Starknet/status/2054170013783994832", "title": "strkBTC live", "date": "May 12, 2026" },
+    { "url": "https://x.com/Starknet/status/2047260339176145350", "title": "Private BTC staking", "date": "Apr 23, 2026" },
+    { "url": "https://x.com/Starknet/status/2046232796625068334", "title": "Starknet v0.14.2: native privacy", "date": "Apr 20, 2026" },
+    { "url": "https://x.com/Starknet/status/2032079305363058785", "title": "STRK20 whitepaper", "date": "Mar 12, 2026" },
+    { "url": "https://x.com/Starknet/status/2031339399015804954", "title": "STRK20s announced", "date": "Mar 10, 2026" },
+    { "url": "https://x.com/Starknet/status/2028763127391662139", "title": "Why Starknet is the best privacy stack", "date": "Mar 3, 2026" },
+    { "url": "https://x.com/StarkWareLtd/status/2028763001982005745", "title": "Why Starknet is the best privacy stack (thread)", "date": "Mar 3, 2026" },
+    { "url": "https://x.com/Starknet/status/2027005853488832975", "title": "strkBTC announced", "date": "Feb 26, 2026" },
+    { "url": "https://x.com/StarkWareLtd/status/2023781524382867469", "title": "EY x Starknet privacy", "date": "Feb 17, 2026" },
+    { "url": "https://x.com/Starknet/status/2016421080127185268", "title": "Zypherpunk hackathon: results", "date": "Jan 28, 2026" },
+    { "url": "https://x.com/paradex/status/2000680628329812320", "title": "Private perps on Paradex", "date": "Dec 26, 2025" },
+    { "url": "https://x.com/Starknet/status/1988976091525169513", "title": "Zypherpunk hackathon", "date": "Nov 13, 2025" },
+    { "url": "https://x.com/Starknet/status/1985331381614915971", "title": "Stwo launches", "date": "Nov 3, 2025" },
+    { "url": "https://x.com/StarkWareLtd/status/1977681198425280960", "title": "Privacy becomes the focus", "date": "Oct 13, 2025" },
+    { "url": "https://x.com/StarkWareLtd/status/2058381265884033264", "title": "StarkWare founded, STARKs published", "date": "2018" },
+    { "url": "https://eprint.iacr.org/2014/349", "title": "The Zerocash whitepaper", "date": "2014",
+      "name": "Zerocash", "handle": "eprint.iacr.org", "initials": "ZC", "color": "#0E8A63", "verified": false,
+      "fallbackText": "Zerocash: Decentralized Anonymous Payments from Bitcoin. The note-and-nullifier model every modern shielded system descends from. (IACR ePrint 2014/349)" }
+  ];
+  // =============================================================
+
+  // Bump DEFAULTS_VERSION whenever the in-file `tweets` defaults change in a way
+  // that must override older saved data — it namespaces STORAGE_KEY so a stale
+  // localStorage entry from a previous version can never shadow the new defaults.
+  var DEFAULTS_VERSION = 1;
+  var STORAGE_KEY = 'privacy_news_v' + DEFAULTS_VERSION;
+
+  var DEFAULTS = tweets.map(function(t, i){ var c = {}; for (var k in t) c[k] = t[k]; c.id = 'd' + i; return c; });
+
+  function clone(o){ return JSON.parse(JSON.stringify(o)); }
+  function esc(s){ return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function escA(s){ return esc(s).replace(/"/g,'&quot;'); }
+  function newId(){ return 'u' + Date.now().toString(36) + Math.floor(Math.random()*1e4).toString(36); }
+
+  // ---------- persistence (merge saved cards with defaults) ----------
+  function loadStore(){
+    try { var raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : null; }
+    catch(e){ return null; }
+  }
+  function saveStore(store){ try { localStorage.setItem(STORAGE_KEY, JSON.stringify(store)); } catch(e){} }
+
+  function buildList(){
+    var store = loadStore();
+    if (!store || !Array.isArray(store.list)) return DEFAULTS.map(clone);
+    var list = store.list.map(clone);
+    var removed = store.removedDefaults || [];
+    var present = {};
+    list.forEach(function(c){ if (c.id) present[c.id] = true; });
+    // bring in any NEW defaults added to the code later (unless the user deleted them)
+    DEFAULTS.forEach(function(d){
+      if (!present[d.id] && removed.indexOf(d.id) === -1) list.push(clone(d));
+    });
+    return list;
+  }
+
+  var cards = buildList();
+
+  function persist(){
+    var present = {};
+    cards.forEach(function(c){ present[c.id] = true; });
+    var removedDefaults = DEFAULTS.filter(function(d){ return !present[d.id]; }).map(function(d){ return d.id; });
+    saveStore({ list: cards, removedDefaults: removedDefaults });
+  }
+
+  // ---------- X / Twitter embed helpers ----------
+  function parseTweetId(url){
+    var m = String(url || '').match(/(?:twitter\.com|x\.com)\/[^\/]+\/status(?:es)?\/(\d+)/i);
+    return m ? m[1] : null;
+  }
+  function parseHandle(url){
+    var m = String(url || '').match(/(?:twitter\.com|x\.com)\/(@?[A-Za-z0-9_]{1,15})(?:[\/?]|$)/i);
+    return m ? '@' + m[1].replace(/^@/, '') : '';
+  }
+
+  var widgetsPromise = null;
+  function ensureWidgets(){
+    if (widgetsPromise) return widgetsPromise;
+    widgetsPromise = new Promise(function(resolve, reject){
+      if (window.twttr && window.twttr.widgets) { resolve(window.twttr); return; }
+      var s = document.createElement('script');
+      s.src = 'https://platform.twitter.com/widgets.js';
+      s.async = true; s.charset = 'utf-8';
+      s.onload = function(){
+        if (window.twttr && window.twttr.widgets) {
+          if (window.twttr.ready) window.twttr.ready(function(t){ resolve(t); }); else resolve(window.twttr);
+        } else { reject(new Error('twttr unavailable')); }
+      };
+      s.onerror = function(){ reject(new Error('widgets.js failed to load')); };
+      document.head.appendChild(s);
+    });
+    return widgetsPromise;
+  }
+
+  // ---------- fallback card (graceful when a post can't be embedded) ----------
+  function stat(cls, icon, val){
+    return '<span class="tweet-stat ' + cls + '"><i class="ti ' + icon + '" aria-hidden="true"></i>' + (val != null && val !== '' ? val : '') + '</span>';
+  }
+  function fallbackHTML(c){
+    var handle = c.handle || parseHandle(c.url);
+    var name = c.name || (handle ? handle.replace(/^@/, '') : 'Post on X');
+    var initials = c.initials || (String(name).replace(/[^A-Za-z0-9]/g, '').slice(0, 2) || 'X');
+    var color = c.color || '#0E4A38';
+    var text = c.fallbackText || c.text || 'This post could not load right now. Open it in a new tab.';
+    var meta = esc(handle) + (c.date ? (handle ? ' · ' : '') + esc(c.date) : '');
+    var verified = c.verified === false ? '' : '<i class="ti ti-rosette-discount-check tweet-verified" aria-hidden="true"></i>';
+    return '<a class="tweet-card" href="' + (escA(c.url) || '#') + '" target="_blank" rel="noopener">' +
+      '<div class="tweet-head">' +
+        '<span class="tweet-avatar" style="background:' + escA(color) + '">' + esc(initials) + '</span>' +
+        '<span class="tweet-id">' +
+          '<span class="tweet-name-row"><span class="tweet-name">' + esc(name) + '</span>' + verified +
+          '<span class="tweet-meta">' + meta + '</span></span>' +
+        '</span>' +
+        '<i class="ti ti-brand-x tweet-x" aria-hidden="true"></i>' +
+      '</div>' +
+      '<p class="tweet-body">' + esc(text) + '</p>' +
+      '<div class="tweet-foot">' +
+        stat('reply','ti-message-circle','') + stat('repost','ti-repeat','') + stat('like','ti-heart','') +
+        '<span class="tweet-stat"><i class="ti ti-upload" aria-hidden="true"></i></span>' +
+      '</div>' +
+    '</a>';
+  }
+
+  // ---------- public render: one grid cell per entry, real embeds ----------
+  var publicCells = [];
+  var cellTimers = {};
+  var activated = false;
+
+  var MONTHS = { jan:0, january:0, feb:1, february:1, mar:2, march:2, apr:3, april:3,
+    may:4, jun:5, june:5, jul:6, july:6, aug:7, august:7, sep:8, sept:8, september:8,
+    oct:9, october:9, nov:10, november:10, dec:11, december:11 };
+  function parseDate(s){
+    if (s == null) return null;
+    s = String(s).trim();
+    if (!s) return null;
+    var lower = s.toLowerCase();
+    var ym = lower.match(/\b(\d{4})\b/);
+    var year = ym ? parseInt(ym[1], 10) : null;
+    var month = null;
+    lower.split(/[^a-z]+/).some(function(tok){ if (tok && MONTHS[tok] != null) { month = MONTHS[tok]; return true; } return false; });
+    var day = null;
+    var dm = lower.match(/(?:^|[^\d])(\d{1,2})(?:[^\d]|$)/);
+    if (dm) day = parseInt(dm[1], 10);
+    if (year != null) {
+      var d = new Date(year, month == null ? 0 : month, (day && day >= 1 && day <= 31) ? day : 1);
+      var t = d.getTime();
+      if (!isNaN(t)) return t;
+    }
+    var nat = Date.parse(s);
+    return isNaN(nat) ? null : nat;
+  }
+
+  // Display ranks: newest first; missing/unparseable dates sink to the end; ties keep array order.
+  function displayOrder(){
+    var arr = cards.map(function(c, idx){ return { idx: idx, t: parseDate(c.date) }; });
+    arr.sort(function(a, b){
+      if (a.t == null && b.t == null) return a.idx - b.idx;
+      if (a.t == null) return 1;
+      if (b.t == null) return -1;
+      if (b.t !== a.t) return b.t - a.t;
+      return a.idx - b.idx;
+    });
+    var pos = [];
+    arr.forEach(function(o, rank){ pos[o.idx] = rank; });
+    return pos;
+  }
+  function applyOrder(){
+    var pos = displayOrder();
+    publicCells.forEach(function(cell, i){ if (cell) cell.style.order = pos[i]; });
+  }
+
+  function renderPublic(){
+    grid.innerHTML = '';
+    publicCells = [];
+    var pos = displayOrder();
+    cards.forEach(function(c, i){
+      var cell = document.createElement('div');
+      cell.className = 'news-cell';
+      cell.style.order = pos[i];
+      grid.appendChild(cell);
+      publicCells.push(cell);
+      if (activated) renderCell(cell, c);
+      else cell.innerHTML = headerHTML(c) + fallbackHTML(c);
+    });
+  }
+
+  function headerHTML(c){
+    if (!c.title && !c.date) return '';
+    var t = c.title ? '<div class="news-head-title">' + esc(c.title) + '</div>' : '';
+    var d = c.date ? '<div class="news-head-date">' + esc(c.date) + '</div>' : '';
+    return '<div class="news-head">' + t + d + '</div>';
+  }
+
+  function renderCell(cell, c){
+    var head = headerHTML(c);
+    var id = parseTweetId(c.url);
+    if (!id) { cell.innerHTML = head + fallbackHTML(c); return; }
+    cell.innerHTML = head + '<div class="news-embed"><div class="news-loading"><span class="news-spinner"></span> Loading post…</div></div>';
+    var target = cell.querySelector('.news-embed');
+    ensureWidgets().then(function(twttr){
+      target.innerHTML = '';
+      return twttr.widgets.createTweet(id, target, { theme: 'dark', dnt: true, conversation: 'none', align: 'center' });
+    }).then(function(node){
+      if (!node) cell.innerHTML = headerHTML(c) + fallbackHTML(c);
+    }).catch(function(){
+      cell.innerHTML = headerHTML(c) + fallbackHTML(c);
+    });
+  }
+
+  function updateHeader(i){
+    var cell = publicCells[i];
+    if (!cell || !cards[i]) return;
+    var html = headerHTML(cards[i]);
+    var head = cell.querySelector(':scope > .news-head');
+    if (head) { if (html) head.outerHTML = html; else head.parentNode.removeChild(head); }
+    else if (html) cell.insertAdjacentHTML('afterbegin', html);
+  }
+
+  function scheduleCell(i){
+    clearTimeout(cellTimers[i]);
+    cellTimers[i] = setTimeout(function(){
+      if (publicCells[i] && cards[i]) renderCell(publicCells[i], cards[i]);
+    }, 500);
+  }
+
+  function activate(){
+    if (activated) return;
+    activated = true;
+    publicCells.forEach(function(cell, i){ if (cards[i]) renderCell(cell, cards[i]); });
+  }
+
+  // ---------- collapse toggle ----------
+  var section = document.getElementById('newsSection');
+  var toggle = document.getElementById('newsToggle');
+  toggle.addEventListener('click', function(){
+    var open = section.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    if (open) activate();
+  });
+
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if (en.isIntersecting && section.classList.contains('open')) { activate(); io.disconnect(); }
+      });
+    }, { rootMargin: '200px' });
+    io.observe(grid);
+  } else {
+    activate();
+  }
+
+  // ================= EDITOR =================
+  var editor = document.getElementById('newsEditor');
+  var editBtn = document.getElementById('newsEditBtn');
+  var editBtnLabel = document.getElementById('newsEditBtnLabel');
+  var editing = false;
+
+  function lbl(t){ return '<label>' + t + '</label>'; }
+  function cardSummary(c){
+    if (c.title) return c.title + (c.date ? ' · ' + c.date : '');
+    var h = parseHandle(c.url);
+    if (c.url) return (h || c.url) + (c.date ? ' · ' + c.date : '');
+    return '(paste a post URL)';
+  }
+  function editorCardHTML(c, i){
+    var isDefault = c.id && c.id.charAt(0) === 'd';
+    return '<div class="ne-card" data-i="' + i + '">' +
+      '<div class="ne-card-top">' +
+        '<span class="ne-badge ' + (isDefault ? 'default' : 'custom') + '">' + (isDefault ? 'default' : 'custom') + '</span>' +
+        '<span class="ne-card-title">' + esc(cardSummary(c)) + '</span>' +
+        '<button type="button" class="ne-btn danger ne-del" data-act="del" data-i="' + i + '"><i class="ti ti-trash" aria-hidden="true"></i> Delete</button>' +
+      '</div>' +
+      '<div class="ne-grid">' +
+        '<div class="ne-field full">' + lbl('Post URL <span class="ne-req">required</span>') + '<input type="url" data-i="' + i + '" data-key="url" value="' + escA(c.url || '') + '" placeholder="https://x.com/user/status/123…"><div class="ne-hint">Paste an X/Twitter post link — the real embed renders automatically. Other links (paper, blog, profile) show as a styled card.</div></div>' +
+        '<div class="ne-field full">' + lbl('Title (optional)') + '<input type="text" data-i="' + i + '" data-key="title" value="' + escA(c.title || '') + '" placeholder="e.g. STRK20s launch"></div>' +
+        '<div class="ne-field full">' + lbl('Date (optional)') + '<input type="text" data-i="' + i + '" data-key="date" value="' + escA(c.date || '') + '" placeholder="e.g. Jun 9, 2026"><div class="ne-hint">Title and date show as a header above the embed. Leave both empty for no header.</div></div>' +
+        '<div class="ne-field full">' + lbl('Fallback text (optional — shown only if the post can’t load)') + '<textarea data-i="' + i + '" data-key="fallbackText" placeholder="Short summary shown if the post is deleted, offline, or not embeddable…">' + esc(c.fallbackText || c.text || '') + '</textarea></div>' +
+      '</div>' +
+    '</div>';
+  }
+  function renderEditor(){
+    editor.innerHTML =
+      '<div class="ne-toolbar">' +
+        '<button type="button" class="ne-btn primary" data-act="add"><i class="ti ti-plus" aria-hidden="true"></i> Add card</button>' +
+        '<button type="button" class="ne-btn" data-act="export"><i class="ti ti-file-export" aria-hidden="true"></i> Export</button>' +
+        '<button type="button" class="ne-btn" data-act="import"><i class="ti ti-file-import" aria-hidden="true"></i> Import JSON</button>' +
+        '<span class="ne-spacer"></span>' +
+        '<span class="ne-count">' + cards.length + ' card' + (cards.length === 1 ? '' : 's') + '</span>' +
+        '<button type="button" class="ne-btn danger" data-act="reset"><i class="ti ti-refresh" aria-hidden="true"></i> Reset to defaults</button>' +
+      '</div>' +
+      '<div class="ne-cards">' + cards.map(editorCardHTML).join('') + '</div>';
+  }
+
+  // live edits — update only the affected preview cell, no full reload
+  editor.addEventListener('input', function(e){
+    var t = e.target;
+    var idx = t.getAttribute('data-i'), key = t.getAttribute('data-key');
+    if (idx == null || !key) return;
+    var i = parseInt(idx, 10);
+    var card = cards[i];
+    if (!card) return;
+    card[key] = t.value;
+    var top = t.closest('.ne-card');
+    if (top) { var ttl = top.querySelector('.ne-card-title'); if (ttl) ttl.textContent = cardSummary(card); }
+    if (publicCells[i]) {
+      if (key === 'url') {
+        if (activated) scheduleCell(i);
+        else publicCells[i].innerHTML = headerHTML(card) + fallbackHTML(card);
+      } else if (key === 'title' || key === 'date') {
+        if (parseTweetId(card.url)) updateHeader(i);
+        else publicCells[i].innerHTML = headerHTML(card) + fallbackHTML(card);
+        if (key === 'date') applyOrder();
+      } else if (!parseTweetId(card.url)) {
+        publicCells[i].innerHTML = headerHTML(card) + fallbackHTML(card);
+      }
+    }
+    persist();
+  });
+
+  // buttons
+  editor.addEventListener('click', function(e){
+    var btn = e.target.closest('[data-act]');
+    if (!btn) return;
+    var act = btn.getAttribute('data-act');
+    if (act === 'add') {
+      cards.push({ id:newId(), url:'', title:'', date:'', fallbackText:'' });
+      persist(); renderPublic(); renderEditor();
+      var all = editor.querySelectorAll('.ne-card');
+      if (all.length) all[all.length - 1].scrollIntoView({ behavior:'smooth', block:'center' });
+    } else if (act === 'del') {
+      var i = parseInt(btn.getAttribute('data-i'), 10);
+      if (cards[i] && window.confirm('Delete this card?')) { cards.splice(i, 1); persist(); renderPublic(); renderEditor(); }
+    } else if (act === 'reset') {
+      if (window.confirm('Reset all news cards to the original defaults? Your custom cards and edits will be removed.')) {
+        try { localStorage.removeItem(STORAGE_KEY); } catch(e2){}
+        cards = DEFAULTS.map(clone); renderPublic(); renderEditor();
+      }
+    } else if (act === 'export') {
+      openExport();
+    } else if (act === 'import') {
+      openImport();
+    }
+  });
+
+  // ---------- export / import ----------
+  function publicCards(){
+    return cards.map(function(c){
+      var o = { url: c.url || '' };
+      if (c.title) o.title = c.title;
+      if (c.date) o.date = c.date;
+      var fb = c.fallbackText || c.text;
+      if (fb) o.fallbackText = fb;
+      if (c.name) o.name = c.name;
+      if (c.handle) o.handle = c.handle;
+      if (c.initials) o.initials = c.initials;
+      if (c.color) o.color = c.color;
+      if (c.verified === false) o.verified = false;
+      return o;
+    });
+  }
+  function makeModal(inner){
+    var bd = document.createElement('div');
+    bd.className = 'ne-modal-backdrop';
+    bd.innerHTML = '<div class="ne-modal">' + inner + '</div>';
+    document.body.appendChild(bd);
+    bd.addEventListener('click', function(e){ if (e.target === bd) document.body.removeChild(bd); });
+    return bd;
+  }
+  function copyFrom(bd, sel, msgSel, okText){
+    var ta = bd.querySelector(sel); ta.focus(); ta.select();
+    var ok = false; try { ok = document.execCommand('copy'); } catch(e){}
+    if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(ta.value).catch(function(){}); ok = true; }
+    var m = bd.querySelector(msgSel); m.className = 'ne-msg ok'; m.textContent = ok ? okText : 'Select the text above and copy manually.';
+  }
+  function openExport(){
+    var arr = publicCards();
+    var json = JSON.stringify(arr, null, 2);
+    var tweetsLiteral = 'var tweets = ' + JSON.stringify(arr, null, 2) + ';';
+    var bd = makeModal(
+      '<h3>Export news cards</h3>' +
+      '<p>Copy the JSON to back up or re-import later — or copy the ready-to-paste <code>tweets</code> array to hardcode it permanently into privacy.html.</p>' +
+      '<div class="ne-modal-label">JSON array</div>' +
+      '<textarea id="neExpJson" readonly>' + esc(json) + '</textarea>' +
+      '<div class="ne-modal-actions"><button type="button" class="ne-btn" id="neCopyJson"><i class="ti ti-copy" aria-hidden="true"></i> Copy JSON</button></div>' +
+      '<div class="ne-modal-label">Ready-to-paste tweets array</div>' +
+      '<textarea id="neExpTweets" readonly>' + esc(tweetsLiteral) + '</textarea>' +
+      '<div class="ne-modal-actions">' +
+        '<button type="button" class="ne-btn" id="neCopyTweets"><i class="ti ti-copy" aria-hidden="true"></i> Copy tweets array</button>' +
+        '<button type="button" class="ne-btn" id="neCloseExp">Close</button>' +
+      '</div>' +
+      '<div class="ne-msg" id="neExpMsg"></div>'
+    );
+    bd.querySelector('#neCopyJson').addEventListener('click', function(){ copyFrom(bd, '#neExpJson', '#neExpMsg', 'JSON copied to clipboard.'); });
+    bd.querySelector('#neCopyTweets').addEventListener('click', function(){ copyFrom(bd, '#neExpTweets', '#neExpMsg', 'tweets array copied to clipboard.'); });
+    bd.querySelector('#neCloseExp').addEventListener('click', function(){ document.body.removeChild(bd); });
+  }
+  function openImport(){
+    var bd = makeModal(
+      '<h3>Import news cards</h3>' +
+      '<p>Paste a JSON array of cards (same shape as Export). This replaces all current cards.</p>' +
+      '<textarea id="neImp" placeholder=\'[ { "url": "https://x.com/user/status/123…", "title": "optional headline", "date": "Jun 2026" } ]\'></textarea>' +
+      '<div class="ne-modal-actions">' +
+        '<button type="button" class="ne-btn primary" id="neDoImport"><i class="ti ti-check" aria-hidden="true"></i> Import</button>' +
+        '<button type="button" class="ne-btn" id="neCancelImp">Cancel</button>' +
+      '</div>' +
+      '<div class="ne-msg" id="neImpMsg"></div>'
+    );
+    bd.querySelector('#neCancelImp').addEventListener('click', function(){ document.body.removeChild(bd); });
+    bd.querySelector('#neDoImport').addEventListener('click', function(){
+      var msg = bd.querySelector('#neImpMsg');
+      var raw = bd.querySelector('#neImp').value.trim();
+      var parsed;
+      try { parsed = JSON.parse(raw); } catch(err){ msg.className = 'ne-msg err'; msg.textContent = 'Invalid JSON: ' + err.message; return; }
+      if (!Array.isArray(parsed)) { msg.className = 'ne-msg err'; msg.textContent = 'Expected a JSON array.'; return; }
+      cards = parsed.map(function(c){ c = c || {}; if (!c.id) c.id = newId(); return c; });
+      persist(); renderPublic(); renderEditor();
+      msg.className = 'ne-msg ok'; msg.textContent = 'Imported ' + cards.length + ' card(s).';
+      setTimeout(function(){ if (bd.parentNode) document.body.removeChild(bd); }, 800);
+    });
+  }
+
+  // ---------- editor toggle ----------
+  editBtn.addEventListener('click', function(){
+    editing = !editing;
+    editor.hidden = !editing;
+    editBtn.classList.toggle('active', editing);
+    editBtn.setAttribute('aria-expanded', editing ? 'true' : 'false');
+    editBtnLabel.textContent = editing ? 'Done editing' : 'Edit news';
+    if (editing) {
+      section.classList.add('open');
+      toggle.setAttribute('aria-expanded', 'true');
+      activate();
+      renderEditor();
+    }
+  });
+
+  renderPublic();
+})();
+</script>
+</body>
+</html>

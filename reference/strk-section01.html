@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>STRK — section 01 flywheel mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --black:#0A0A0A;--white:#F5F2EC;--acc:#7C3AED;--acc-2:#A78BFA;
+  --muted:rgba(245,242,236,0.5);--muted-2:rgba(245,242,236,0.64);--line:rgba(245,242,236,0.10);
+  --card:rgba(245,242,236,0.025);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--black);color:var(--white);font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px;margin:0 auto;padding:0 28px}
+.block{padding:90px 0;border-top:1px solid var(--line)}
+.marker{display:flex;align-items:baseline;gap:16px;margin-bottom:40px}
+.marker .num{font-family:'IBM Plex Mono',monospace;font-size:14px;color:var(--acc-2);letter-spacing:.1em}
+.marker h2{font-family:'Archivo';font-weight:800;font-stretch:125%;font-size:clamp(28px,4vw,46px);text-transform:uppercase;letter-spacing:-.01em}
+
+.s01{display:grid;grid-template-columns:1fr 460px;gap:56px;align-items:center}
+.s01 .copy p{color:var(--muted-2);font-size:20px;line-height:1.6;max-width:46ch}
+.s01 .copy strong{color:var(--white);font-weight:600}
+
+/* flywheel */
+.fly{position:relative;width:100%}
+.fly svg{width:100%;height:auto;overflow:visible;display:block}
+.track{fill:none;stroke:rgba(245,242,236,0.08);stroke-width:1.5}
+.track-dash{fill:none;stroke:rgba(124,58,237,0.35);stroke-width:1.5;stroke-dasharray:3 9;
+  transform-box:view-box;transform-origin:200px 200px;animation:spin 26s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spoke{stroke:rgba(245,242,236,0.10);stroke-width:1}
+.travel{fill:#C4B5FD;filter:drop-shadow(0 0 6px rgba(167,139,250,.9))}
+.hub circle{fill:rgba(124,58,237,0.16);stroke:var(--acc);stroke-width:1.6}
+.hub text{fill:var(--white);font-family:'Archivo';font-weight:800;font-stretch:125%;font-size:17px;letter-spacing:.04em}
+
+.stage{cursor:pointer}
+.stage .dot{fill:var(--black);stroke:var(--acc-2);stroke-width:1.8;transition:transform .2s,stroke-width .2s;transform-box:fill-box;transform-origin:center}
+.stage .snum{fill:var(--acc-2);font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:500;text-anchor:middle}
+.stage .slabel{fill:var(--muted-2);font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;text-anchor:middle;transition:fill .2s}
+.stage:hover .dot,.stage.on .dot{stroke-width:3;transform:scale(1.18)}
+.stage:hover .slabel,.stage.on .slabel{fill:var(--white)}
+.stage:hover .snum,.stage.on .snum{fill:var(--white)}
+
+/* hover tooltip */
+.tip{position:absolute;display:none;max-width:260px;background:#101015;border:1px solid var(--accbd,rgba(124,58,237,.4));
+  border-radius:12px;padding:12px 14px;pointer-events:none;z-index:5;box-shadow:0 16px 40px rgba(0,0,0,.55)}
+.tip .tt{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--acc-2)}
+.tip .td{color:var(--muted-2);font-size:13px;line-height:1.5;margin-top:6px}
+
+@media(max-width:880px){
+  .s01{grid-template-columns:1fr;gap:36px}
+  .fly{max-width:420px;margin:0 auto}
+}
+</style>
+</head>
+<body>
+
+<section class="block"><div class="wrap">
+  <div class="marker"><span class="num">— 01</span><h2>What STRK is</h2></div>
+
+  <div class="s01">
+    <div class="copy">
+      <p><strong>STRK is the native asset powering Starknet.</strong> It pays for execution (both gas and privacy fees), secures the network through staking, governs the protocol, and serves as the base collateral across its DeFi. Every part of the thesis playing out, more private flows, more Bitcoin, a quantum-safe chain, routes that activity back to one token.</p>
+    </div>
+
+    <div class="fly" id="fly">
+      <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" aria-label="STRK flywheel">
+        <circle class="track" cx="200" cy="200" r="130"/>
+        <circle class="track-dash" cx="200" cy="200" r="130"/>
+
+        <line class="spoke" x1="200" y1="200" x2="200" y2="70"/>
+        <line class="spoke" x1="200" y1="200" x2="330" y2="200"/>
+        <line class="spoke" x1="200" y1="200" x2="200" y2="330"/>
+        <line class="spoke" x1="200" y1="200" x2="70"  y2="200"/>
+
+        <circle class="travel" r="4.5">
+          <animateMotion dur="9s" repeatCount="indefinite" rotate="auto"
+            path="M200,70 A130,130 0 0,1 330,200 A130,130 0 0,1 200,330 A130,130 0 0,1 70,200 A130,130 0 0,1 200,70"/>
+        </circle>
+
+        <g class="hub">
+          <circle cx="200" cy="200" r="40"/>
+          <text x="200" y="206" text-anchor="middle">STRK</text>
+        </g>
+
+        <g class="stage" data-i="01" data-t="Thesis plays out" data-d="More demand for privacy, more Bitcoin looking for DeFi, more capital seeking quantum-safety, all of it drives activity onto Starknet.">
+          <circle class="dot" cx="200" cy="70" r="13"/>
+          <text class="snum" x="200" y="75">01</text>
+          <text class="slabel" x="200" y="44">Thesis</text>
+        </g>
+        <g class="stage" data-i="02" data-t="Activity needs STRK" data-d="Every transaction pays fees in STRK. As activity and TVS climb, demand to acquire and stake it rises, with BTC staking tied directly to STRK. It also governs the protocol and backs DeFi as base collateral.">
+          <circle class="dot" cx="330" cy="200" r="13"/>
+          <text class="snum" x="330" y="205">02</text>
+          <text class="slabel" x="330" y="234">Utility</text>
+        </g>
+        <g class="stage" data-i="03" data-t="STRK demand rises" data-d="Fees, staking, governance, and collateral all consume and lock up STRK as the chain is used.">
+          <circle class="dot" cx="200" cy="330" r="13"/>
+          <text class="snum" x="200" y="335">03</text>
+          <text class="slabel" x="200" y="360">Demand</text>
+        </g>
+        <g class="stage" data-i="04" data-t="Network strengthens" data-d="More security and value accrual make Starknet more attractive, feeding the next wave of activity.">
+          <circle class="dot" cx="70" cy="200" r="13"/>
+          <text class="snum" x="70" y="205">04</text>
+          <text class="slabel" x="70" y="234">Security</text>
+        </g>
+      </svg>
+
+      <div class="tip" id="tip"><div class="tt" id="tipT"></div><div class="td" id="tipD"></div></div>
+    </div>
+  </div>
+</div></section>
+
+<script>
+const fly=document.getElementById('fly');
+const tip=document.getElementById('tip'),tipT=document.getElementById('tipT'),tipD=document.getElementById('tipD');
+const stages=[...document.querySelectorAll('.stage')];
+stages.forEach(s=>{
+  const dot=s.querySelector('.dot');
+  s.addEventListener('mouseenter',()=>{
+    stages.forEach(x=>x.classList.remove('on')); s.classList.add('on');
+    tipT.textContent=s.dataset.i+' · '+s.dataset.t; tipD.textContent=s.dataset.d;
+    tip.style.display='block';
+    const fr=fly.getBoundingClientRect(), dr=dot.getBoundingClientRect();
+    const cx=dr.left+dr.width/2-fr.left, cy=dr.top+dr.height/2-fr.top;
+    const tw=tip.offsetWidth, th=tip.offsetHeight;
+    let left=Math.max(4,Math.min(cx-tw/2, fr.width-tw-4));
+    let top=cy-th-16;
+    if(top<2) top=cy+22; // not enough room above -> place below
+    tip.style.left=left+'px'; tip.style.top=top+'px';
+  });
+  s.addEventListener('mouseleave',()=>{ s.classList.remove('on'); tip.style.display='none'; });
+});
+</script>
+</body>
+</html>

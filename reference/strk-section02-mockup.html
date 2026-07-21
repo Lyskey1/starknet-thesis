@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>STRK — section 02 utilities explorer mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --black:#0A0A0A;--white:#F5F2EC;--acc:#7C3AED;--acc-2:#A78BFA;
+  --muted:rgba(245,242,236,0.5);--muted-2:rgba(245,242,236,0.64);--line:rgba(245,242,236,0.10);
+  --card:rgba(245,242,236,0.025);--card-2:rgba(245,242,236,0.04);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--black);color:var(--white);font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px;margin:0 auto;padding:0 28px}
+.block{padding:90px 0;border-top:1px solid var(--line)}
+.marker{display:flex;align-items:baseline;gap:16px;margin-bottom:44px}
+.marker .num{font-family:'IBM Plex Mono',monospace;font-size:14px;color:var(--acc-2);letter-spacing:.1em}
+.marker h2{font-family:'Archivo';font-weight:800;font-stretch:125%;font-size:clamp(28px,4vw,46px);text-transform:uppercase;letter-spacing:-.01em}
+
+.util{display:grid;grid-template-columns:340px 1fr;gap:24px;align-items:stretch}
+
+/* left rail */
+.util-list{display:flex;flex-direction:column;gap:10px}
+.util-tab{position:relative;display:flex;align-items:center;gap:14px;text-align:left;cursor:pointer;
+  background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 16px;color:var(--white);
+  transition:border-color .2s,background .2s,transform .2s}
+.util-tab:hover{border-color:rgba(124,58,237,.35);background:var(--card-2)}
+.util-tab.on{border-color:var(--acc);background:rgba(124,58,237,.10)}
+.util-tab .ico{flex:0 0 auto;width:42px;height:42px;border-radius:12px;display:grid;place-items:center;position:relative;overflow:hidden;
+  background:linear-gradient(160deg,rgba(245,242,236,.10),rgba(245,242,236,.02));border:1px solid rgba(245,242,236,.14);backdrop-filter:blur(8px)}
+.util-tab .ico::before{content:"";position:absolute;inset:0;border-radius:12px;background:linear-gradient(160deg,rgba(255,255,255,.18),transparent 45%);pointer-events:none}
+.util-tab.on .ico{border-color:rgba(124,58,237,.45)}
+.util-tab .ico svg{width:22px;height:22px;position:relative;z-index:1}
+.util-tab .tx .nm{font-family:'Inter';font-weight:600;font-size:16px}
+.util-tab .tx .te{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:3px}
+.util-tab.on .tx .te{color:var(--acc-2)}
+.util-tab .idx{margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--muted)}
+
+/* right panel */
+.util-stage{position:relative;border:1px solid var(--line);border-radius:18px;background:var(--card);overflow:hidden}
+.util-panel{display:none;padding:34px 36px}
+.util-panel.show{display:block}
+.util-panel .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--acc-2)}
+.util-panel h3{font-family:'Archivo';font-weight:700;font-stretch:110%;font-size:30px;text-transform:uppercase;letter-spacing:-.01em;margin:12px 0 14px}
+.util-panel p{color:var(--muted-2);font-size:16px;line-height:1.6;max-width:60ch}
+.viz{margin-top:28px;padding-top:26px;border-top:1px solid var(--line)}
+
+/* generic bars */
+.barrow{margin-bottom:18px}
+.barrow .bl{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.bartrack{position:relative;height:14px;border-radius:7px;background:rgba(245,242,236,.06);overflow:hidden;display:flex}
+.barfill{height:100%;width:0;transition:width .9s cubic-bezier(.22,1,.36,1)}
+.barfill.strk{background:linear-gradient(90deg,var(--acc),var(--acc-2))}
+.barfill.btc{background:rgba(247,147,26,.7)}
+.barfill.gas{background:rgba(245,242,236,.22)}
+.barfill.priv{background:linear-gradient(90deg,var(--acc),var(--acc-2))}
+.barfill.meter{background:linear-gradient(90deg,var(--acc),var(--acc-2))}
+.seglbl{display:flex;gap:18px;margin-top:10px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.06em;color:var(--muted-2)}
+.seglbl i{font-style:normal;display:inline-flex;align-items:center;gap:6px}
+.dotc{width:9px;height:9px;border-radius:3px;display:inline-block}
+.dotc.strk{background:var(--acc-2)} .dotc.btc{background:rgba(247,147,26,.8)} .dotc.gas{background:rgba(245,242,236,.4)} .dotc.priv{background:var(--acc-2)}
+
+.bignum{font-family:'Archivo';font-weight:800;font-stretch:115%;font-size:30px;line-height:1}
+.bignum .u{font-size:15px;color:var(--muted-2);margin-left:6px;font-stretch:100%}
+.subt{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-top:6px}
+
+/* governance ticks */
+.ticks{display:flex;gap:7px;align-items:flex-end;height:46px}
+.ticks span{width:10px;height:0;background:linear-gradient(180deg,var(--acc-2),var(--acc));border-radius:3px;
+  transition:height .5s cubic-bezier(.22,1,.36,1)}
+.util-panel.show .ticks span{height:46px}
+.util-panel.show .ticks span:nth-child(1){transition-delay:.02s}
+.util-panel.show .ticks span:nth-child(2){transition-delay:.05s}
+.util-panel.show .ticks span:nth-child(3){transition-delay:.08s}
+.util-panel.show .ticks span:nth-child(4){transition-delay:.11s}
+.util-panel.show .ticks span:nth-child(5){transition-delay:.14s}
+.util-panel.show .ticks span:nth-child(6){transition-delay:.17s}
+.util-panel.show .ticks span:nth-child(7){transition-delay:.20s}
+.util-panel.show .ticks span:nth-child(8){transition-delay:.23s}
+.util-panel.show .ticks span:nth-child(9){transition-delay:.26s}
+.util-panel.show .ticks span:nth-child(10){transition-delay:.29s}
+.util-panel.show .ticks span:nth-child(11){transition-delay:.32s}
+.util-panel.show .ticks span:nth-child(12){transition-delay:.35s}
+.util-panel.show .ticks span:nth-child(13){transition-delay:.38s}
+
+/* collateral chips */
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px}
+.chip{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+  border:1px solid rgba(124,58,237,.4);color:var(--acc-2);border-radius:999px;padding:8px 14px;background:rgba(124,58,237,.06)}
+.basebar{height:40px;border-radius:10px;background:linear-gradient(90deg,rgba(124,58,237,.22),rgba(167,139,250,.12));
+  border:1px solid rgba(124,58,237,.4);display:flex;align-items:center;padding:0 16px;
+  font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--white)}
+
+.vrow{display:flex;gap:46px;flex-wrap:wrap;margin-top:24px}
+
+@media(prefers-reduced-motion:reduce){
+  .barfill,.ticks span{transition:none}
+}
+@media(max-width:880px){
+  .util{grid-template-columns:1fr;gap:16px}
+  .util-list{flex-direction:row;flex-wrap:wrap}
+  .util-tab{flex:1 1 45%}
+  .util-tab .te,.util-tab .idx{display:none}
+}
+</style>
+</head>
+<body>
+
+<section class="block"><div class="wrap">
+  <div class="marker"><span class="num">— 02</span><h2>The utilities</h2></div>
+
+  <svg width="0" height="0" style="position:absolute"><defs>
+    <linearGradient id="gv" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7C3AED"/><stop offset="1" stop-color="#C4B5FD"/></linearGradient>
+  </defs></svg>
+
+  <div class="util">
+    <!-- LEFT RAIL -->
+    <div class="util-list" id="rail">
+      <button class="util-tab on" data-k="fees">
+        <span class="ico"><svg viewBox="0 0 24 24"><path fill="url(#gv)" d="M13 2 4 13h6l-1 9 9-12h-6l1-8z"/></svg></span>
+        <span class="tx"><span class="nm">Fees</span><span class="te">Gas + privacy</span></span>
+        <span class="idx">01</span>
+      </button>
+      <button class="util-tab" data-k="staking">
+        <span class="ico"><svg viewBox="0 0 24 24"><path fill="url(#gv)" d="M12 2 20 5v6c0 5-3.4 7.7-8 9-4.6-1.3-8-4-8-9V5z"/><path fill="none" stroke="#0A0A0A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M9 12l2.2 2.2L15 10.2"/></svg></span>
+        <span class="tx"><span class="nm">Staking</span><span class="te">Secures the network</span></span>
+        <span class="idx">02</span>
+      </button>
+      <button class="util-tab" data-k="gov">
+        <span class="ico"><svg viewBox="0 0 24 24"><path fill="url(#gv)" d="M12 3 21.5 8.2H2.5z"/><rect x="5.4" y="9.3" width="2.4" height="7.6" fill="url(#gv)"/><rect x="10.8" y="9.3" width="2.4" height="7.6" fill="url(#gv)"/><rect x="16.2" y="9.3" width="2.4" height="7.6" fill="url(#gv)"/><rect x="3.2" y="17.6" width="17.6" height="2.4" rx="1" fill="url(#gv)"/></svg></span>
+        <span class="tx"><span class="nm">Governance</span><span class="te">Protocol control</span></span>
+        <span class="idx">03</span>
+      </button>
+      <button class="util-tab" data-k="coll">
+        <span class="ico"><svg viewBox="0 0 24 24"><path fill="url(#gv)" d="M12 2.6 21.5 8 12 13.4 2.5 8z"/><path fill="none" stroke="url(#gv)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" opacity=".6" d="M3 12l9 5.4L21 12M3 16l9 5.4L21 16"/></svg></span>
+        <span class="tx"><span class="nm">DeFi collateral</span><span class="te">Base layer</span></span>
+        <span class="idx">04</span>
+      </button>
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div class="util-stage">
+      <!-- FEES -->
+      <div class="util-panel show" data-k="fees">
+        <div class="eyebrow">Execution</div>
+        <h3>Fees</h3>
+        <p>Every transaction on Starknet is paid in STRK. Beyond standard gas, each private transaction also carries a protocol privacy fee in STRK.</p>
+        <div class="viz">
+          <div class="barrow">
+            <div class="bl">Standard transaction</div>
+            <div class="bartrack"><div class="barfill gas" data-w="46%"></div></div>
+          </div>
+          <div class="barrow">
+            <div class="bl">Private transaction</div>
+            <div class="bartrack"><div class="barfill gas" data-w="46%"></div><div class="barfill priv" data-w="34%"></div></div>
+            <div class="seglbl"><i><span class="dotc gas"></span>Gas</i><i><span class="dotc priv"></span>Privacy fee</i></div>
+          </div>
+          <div class="vrow">
+            <div><div class="bignum">4 STRK</div><div class="subt">Per privacy tx</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STAKING -->
+      <div class="util-panel" data-k="staking">
+        <div class="eyebrow">Security</div>
+        <h3>Staking</h3>
+        <p>Staking STRK secures the network and anchors consensus. Bitcoin staking is tied to it: STRK carries 75% of staking power, BTC a fixed 25%. BTC rewards come from a slight inflation bump, so STRK stakers' APR is untouched.</p>
+        <div class="viz">
+          <div class="barrow">
+            <div class="bl">Staking power</div>
+            <div class="bartrack"><div class="barfill strk" data-w="75%"></div><div class="barfill btc" data-w="25%"></div></div>
+            <div class="seglbl"><i><span class="dotc strk"></span>STRK 75%</i><i><span class="dotc btc"></span>BTC 25%</i></div>
+          </div>
+          <div class="barrow">
+            <div class="bl">Supply staked</div>
+            <div class="bartrack"><div class="barfill meter" data-w="30.9%"></div></div>
+          </div>
+          <div class="vrow">
+            <div><div class="bignum">30.9%</div><div class="subt">Of supply staked</div></div>
+            <div><div class="bignum">75 / 25</div><div class="subt">STRK / BTC power</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- GOVERNANCE -->
+      <div class="util-panel" data-k="gov">
+        <div class="eyebrow">Control</div>
+        <h3>Governance</h3>
+        <p>Governance runs on STRK. Holders vote the direction of the protocol, from upgrades to economic parameters, and it is active, not theoretical.</p>
+        <div class="viz">
+          <div class="bl" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:12px">On-chain votes</div>
+          <div class="ticks"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+          <div class="vrow"><div><div class="bignum">13</div><div class="subt">Votes to date</div></div></div>
+        </div>
+      </div>
+
+      <!-- COLLATERAL -->
+      <div class="util-panel" data-k="coll">
+        <div class="eyebrow">Capital</div>
+        <h3>DeFi collateral</h3>
+        <p>Across Starknet DeFi, STRK is the base collateral: lending, LPs, leverage. That makes it the productive backbone of the ecosystem's money markets.</p>
+        <div class="viz">
+          <div class="bl" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:12px">Used across</div>
+          <div class="chips"><span class="chip">Lending</span><span class="chip">LP</span><span class="chip">Leverage</span></div>
+          <div class="basebar">STRK · base collateral</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<script>
+const tabs=[...document.querySelectorAll('.util-tab')];
+const panels=[...document.querySelectorAll('.util-panel')];
+function animateBars(p){
+  p.querySelectorAll('.barfill').forEach(b=>{
+    b.style.width='0';
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{ b.style.width=b.dataset.w; }));
+  });
+}
+function select(k){
+  tabs.forEach(t=>t.classList.toggle('on',t.dataset.k===k));
+  panels.forEach(p=>{
+    const on=p.dataset.k===k;
+    p.classList.toggle('show',on);
+    if(on) animateBars(p);
+  });
+}
+tabs.forEach(t=>t.addEventListener('click',()=>select(t.dataset.k)));
+// initial bar animation for the default panel
+animateBars(document.querySelector('.util-panel.show'));
+</script>
+</body>
+</html>

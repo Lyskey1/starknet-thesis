@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starknet Thesis — Hero v2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800;900&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#08080A; --ink:#F5F2EC; --muted:rgba(245,242,236,.55); --muted2:rgba(245,242,236,.38);
+    --violet:#8B5CF6; --violet-l:#A78BFA;
+    --q:#3DA9FC; --p:#1FCB94; --b:#F7931A;
+  }
+  body{background:var(--bg);color:var(--ink);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1280px;margin:0 auto;padding:0 40px}
+
+  /* nav */
+  nav{position:sticky;top:0;z-index:20;backdrop-filter:blur(8px);background:linear-gradient(#08080Aee,#08080Aaa);border-bottom:1px solid rgba(245,242,236,.06)}
+  .nav-in{display:flex;align-items:center;justify-content:space-between;height:74px}
+  .brand{font-family:'Archivo',sans-serif;font-weight:800;font-size:19px;letter-spacing:.06em}
+  .brand .t{color:var(--violet-l)}
+  .links{display:flex;gap:34px;font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:1.5px;text-transform:uppercase}
+  .links a{color:var(--muted);text-decoration:none;transition:color .2s}
+  .links a:hover{color:var(--ink)}
+  .cta{font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;background:var(--violet);color:#0b0612;font-weight:500;padding:14px 22px;border-radius:8px;text-decoration:none;transition:transform .15s,background .2s;display:inline-flex;align-items:center;gap:10px}
+  .cta:hover{background:var(--violet-l);transform:translateY(-1px)}
+
+  /* hero */
+  .hero{position:relative;overflow:hidden;padding:120px 0 150px}
+  .hero::before{content:"";position:absolute;inset:0;background:
+     radial-gradient(70% 55% at 50% -5%, rgba(139,92,246,.16), transparent 60%),
+     radial-gradient(50% 40% at 85% 30%, rgba(61,169,252,.05), transparent 70%);
+     pointer-events:none}
+  /* seamless fade into the scene below (same near-black) */
+  .hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:240px;background:linear-gradient(transparent,#05060a);pointer-events:none}
+  .hero-in{position:relative;z-index:1;max-width:1100px}
+  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:3px;text-transform:uppercase;color:var(--violet-l);margin-bottom:26px}
+  h1{font-family:'Archivo',sans-serif;font-weight:800;font-size:clamp(40px,6vw,86px);line-height:1.02;letter-spacing:-.02em;text-transform:uppercase;max-width:16ch}
+  h1 .accent{color:var(--violet-l)}
+  .sub{font-family:'Archivo',sans-serif;font-weight:700;font-size:clamp(18px,2vw,26px);letter-spacing:-.01em;margin-top:22px;color:var(--ink)}
+  .sub b{color:var(--violet-l)}
+  .lead{margin-top:30px;max-width:60ch;color:var(--muted);font-size:clamp(15px,1.3vw,18px);line-height:1.6}
+  .pillars{display:flex;flex-wrap:wrap;gap:10px 10px;margin-top:34px}
+  .pill{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);border:1px solid rgba(245,242,236,.14);border-radius:999px;padding:8px 16px;display:inline-flex;align-items:center;gap:9px;text-decoration:none;cursor:pointer;transition:color .2s,border-color .2s,background .2s}
+  .pill:hover{color:var(--ink);border-color:rgba(245,242,236,.4);background:rgba(245,242,236,.04)}
+  .pill i{width:7px;height:7px;border-radius:2px;display:inline-block}
+  .actions{display:flex;gap:16px;margin-top:42px;flex-wrap:wrap}
+  .btn-primary{font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;background:var(--violet);color:#0b0612;font-weight:500;padding:16px 26px;border-radius:9px;text-decoration:none;display:inline-flex;align-items:center;gap:10px;transition:transform .15s,background .2s}
+  .btn-primary:hover{background:var(--violet-l);transform:translateY(-1px)}
+  .btn-ghost{font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink);font-weight:500;padding:16px 26px;border-radius:9px;text-decoration:none;border:1px solid rgba(245,242,236,.18);display:inline-flex;align-items:center;gap:10px;transition:border-color .2s,background .2s}
+  .btn-ghost:hover{border-color:rgba(245,242,236,.4);background:rgba(245,242,236,.04)}
+
+  /* a strip of near-black to preview the seamless transition into the WebGL scene */
+  .scene-preview{height:60vh;background:#05060a;display:flex;align-items:center;justify-content:center}
+  .scene-preview span{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:rgba(245,242,236,.25)}
+  @media(max-width:760px){.links{display:none}}
+</style>
+</head>
+<body>
+  <nav><div class="wrap nav-in">
+    <div class="brand">STARKNET <span class="t">THESIS</span></div>
+    <div class="links">
+      <a href="#">Quantum</a><a href="#">Privacy</a><a href="#">BTCFi</a><a href="#">STRK</a><a href="#">Ecosystem</a><a href="#">Digest</a>
+    </div>
+    <a href="#" class="cta">Read the thesis →</a>
+  </div></nav>
+
+  <header class="hero"><div class="wrap"><div class="hero-in">
+    <div class="eyebrow">The full thesis</div>
+    <h1>Starknet is the answer to crypto's <span class="accent">three hardest problems.</span></h1>
+    <div class="sub">And <b>STRK</b> is the ticker on the whole thesis.</div>
+    <p class="lead">Quantum resistance by design, real onchain privacy, and Bitcoin turned into productive capital. Three forces converging on a single chain, with STRK capturing the value at every turn.</p>
+    <div class="pillars">
+      <a class="pill" href="quantum.html"><i style="background:var(--q)"></i>Quantum-resistant</a>
+      <a class="pill" href="privacy.html"><i style="background:var(--p)"></i>Private by default</a>
+      <a class="pill" href="btcfi.html"><i style="background:var(--b)"></i>Bitcoin-powered</a>
+      <a class="pill" href="strk.html"><i style="background:var(--violet-l)"></i>Captured by STRK</a>
+    </div>
+    <div class="actions">
+      <a href="#" class="btn-primary">See the convergence →</a>
+      <a href="#" class="btn-ghost">Explore the pillars</a>
+    </div>
+  </div></div></header>
+
+  <section class="scene-preview"><span>↓ the convergence scene begins here (seamless)</span></section>
+</body>
+</html>

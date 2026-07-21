@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quantum × Starknet — mockup</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/dist/tabler-icons.min.css">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --black:#0A0A0A; --white:#F5F2EC; --orange:#F7931A; --stark-purple:#8B5CF6;
+    --red:#E5484D; --green:#1FB68B; --blue:#378ADD;
+    --border:rgba(245,242,236,0.08); --border-p:rgba(139,92,246,0.3);
+    --radius:14px;
+  }
+  html{scroll-behavior:smooth}
+  body{font-family:'DM Sans',sans-serif;background:var(--black);color:var(--white);line-height:1.6;overflow-x:hidden}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 32px}
+  em{font-style:normal;color:var(--stark-purple)}
+  .em-o{color:var(--orange)}
+
+  /* nav */
+  nav{position:sticky;top:0;z-index:50;background:rgba(10,10,10,0.8);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:16px 32px;display:flex;align-items:center;justify-content:space-between}
+  .nav-logo{font-family:'Syne';font-weight:800;font-size:14px;letter-spacing:0.06em;text-transform:uppercase;color:var(--stark-purple)}
+  .nav-tag{font-family:'DM Mono';font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(245,242,236,0.4)}
+
+  /* hero */
+  .hero{padding:100px 32px 60px;max-width:1100px;margin:0 auto;text-align:center;position:relative}
+  .hero::before{content:'';position:absolute;top:-40px;left:50%;transform:translateX(-50%);width:760px;height:420px;max-width:100%;background:radial-gradient(ellipse at center top,rgba(139,92,246,0.16),transparent 70%);pointer-events:none}
+  .hero-eyebrow{font-family:'DM Mono';font-size:12px;letter-spacing:0.22em;text-transform:uppercase;color:var(--stark-purple);margin-bottom:24px;position:relative}
+  .hero-title{font-family:'Syne';font-weight:800;font-size:clamp(40px,6.5vw,76px);line-height:1.0;letter-spacing:-0.02em;margin-bottom:26px;position:relative}
+  .hero-subtitle{font-size:18px;font-weight:300;color:rgba(245,242,236,0.62);max-width:620px;margin:0 auto 8px;line-height:1.7;position:relative}
+
+  /* countdown */
+  .countdown{margin:54px auto 0;max-width:680px;border:1px solid var(--border-p);border-radius:18px;background:linear-gradient(180deg,rgba(139,92,246,0.06),rgba(139,92,246,0.01));padding:28px 24px;position:relative}
+  .countdown-label{font-family:'DM Mono';font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:rgba(245,242,236,0.5);margin-bottom:18px}
+  .countdown-label b{color:var(--stark-purple);font-weight:400}
+  .cd-grid{display:flex;justify-content:center;gap:14px;flex-wrap:wrap}
+  .cd-unit{min-width:92px}
+  .cd-num{font-family:'Syne';font-weight:800;font-size:clamp(34px,5vw,52px);line-height:1;color:var(--white);font-variant-numeric:tabular-nums}
+  .cd-unit .lab{font-family:'DM Mono';font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(245,242,236,0.4);margin-top:8px}
+  .cd-sep{font-family:'Syne';font-weight:800;font-size:clamp(28px,4vw,44px);color:rgba(139,92,246,0.4);align-self:flex-start;line-height:1.2}
+  .countdown-foot{font-size:13px;color:rgba(245,242,236,0.45);margin-top:20px;line-height:1.6}
+
+  /* sections */
+  section{padding:80px 0;border-top:1px solid var(--border)}
+  .marker{font-family:'DM Mono';font-size:12px;letter-spacing:0.16em;text-transform:uppercase;color:rgba(139,92,246,0.7);margin-bottom:18px}
+  .marker.o{color:rgba(247,147,26,0.7)}
+  .marker.r{color:rgba(229,72,77,0.7)}
+  .marker.g{color:rgba(31,182,139,0.8)}
+  .sec-title{font-family:'Syne';font-weight:700;font-size:clamp(30px,4.5vw,52px);line-height:1.05;letter-spacing:-0.02em;margin-bottom:24px}
+  .lead{font-size:18px;font-weight:300;color:rgba(245,242,236,0.7);max-width:760px;line-height:1.75;margin-bottom:18px}
+  .lead.small{font-size:15px;color:rgba(245,242,236,0.55)}
+
+  /* turkey intro callout */
+  .callout{border-left:2px solid var(--stark-purple);padding:6px 0 6px 24px;margin:34px 0;font-size:17px;font-weight:300;color:rgba(245,242,236,0.75);line-height:1.7;max-width:760px}
+  .callout b{color:var(--white);font-weight:500}
+
+  /* 2026 events timeline */
+  .events{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:36px}
+  .ev{border:1px solid var(--border);border-radius:var(--radius);padding:18px;background:rgba(255,255,255,0.014);transition:border-color .2s,transform .2s}
+  .ev:hover{border-color:var(--border-p);transform:translateY(-3px)}
+  .ev .d{font-family:'DM Mono';font-size:11px;letter-spacing:0.06em;color:var(--stark-purple);margin-bottom:8px}
+  .ev .t{font-family:'Syne';font-weight:600;font-size:16px;margin-bottom:6px}
+  .ev .x{font-size:13px;color:rgba(245,242,236,0.5);line-height:1.55}
+  .ev .big{font-family:'Syne';font-weight:800;font-size:24px;color:var(--orange)}
+
+  /* big stat */
+  .bigstat{display:flex;align-items:center;gap:34px;margin:40px 0;padding:34px;border:1px solid rgba(139,92,246,0.2);border-radius:18px;background:linear-gradient(135deg,rgba(139,92,246,0.05),transparent);flex-wrap:wrap}
+  .bigstat .n{font-family:'Syne';font-weight:800;font-size:clamp(56px,9vw,104px);line-height:0.9;color:var(--stark-purple);letter-spacing:-0.03em}
+  .bigstat .x{flex:1;min-width:260px;font-size:16px;color:rgba(245,242,236,0.7);line-height:1.7}
+  .bigstat .x b{color:var(--white);font-weight:600}
+
+  /* resource collapse chart */
+  .chart-card{margin-top:36px;border:1px solid var(--border);border-radius:18px;padding:28px;background:rgba(255,255,255,0.012)}
+  .chart-head{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px;margin-bottom:8px}
+  .chart-head .t{font-family:'Syne';font-weight:700;font-size:20px}
+  .chart-head .s{font-family:'DM Mono';font-size:11px;color:rgba(245,242,236,0.4);letter-spacing:0.06em}
+  .chartbars{display:flex;align-items:flex-end;gap:24px;height:280px;padding:20px 8px 0;position:relative}
+  .bar-col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;cursor:pointer}
+  .bar{width:100%;max-width:120px;border-radius:8px 8px 0 0;background:linear-gradient(180deg,var(--stark-purple),rgba(139,92,246,0.2));transition:filter .2s,transform .2s;position:relative;display:flex;align-items:flex-start;justify-content:center}
+  .bar-col:hover .bar{filter:brightness(1.25)}
+  .bar .v{font-family:'Syne';font-weight:700;font-size:14px;color:var(--white);margin-top:-26px;white-space:nowrap}
+  .bar-col .yr{font-family:'DM Mono';font-size:12px;color:rgba(245,242,236,0.5);margin-top:12px}
+  .bar-col .lb{font-size:12px;color:rgba(245,242,236,0.4);text-align:center;margin-top:4px;line-height:1.4;max-width:130px}
+  .bar.red{background:linear-gradient(180deg,var(--red),rgba(229,72,77,0.2))}
+  .bar.orange{background:linear-gradient(180deg,var(--orange),rgba(247,147,26,0.2))}
+  .chart-note{font-size:13px;color:rgba(245,242,236,0.45);margin-top:18px;text-align:center}
+
+  /* fault line */
+  .fault{display:grid;grid-template-columns:1fr auto 1fr;gap:0;margin-top:36px;align-items:stretch}
+  .fcol{padding:28px;border-radius:18px}
+  .fcol.vuln{border:1px solid rgba(229,72,77,0.25);background:linear-gradient(135deg,rgba(229,72,77,0.05),transparent)}
+  .fcol.safe{border:1px solid rgba(31,182,139,0.3);background:linear-gradient(135deg,rgba(31,182,139,0.06),transparent)}
+  .fcol h4{font-family:'Syne';font-weight:700;font-size:18px;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+  .fcol.vuln h4{color:var(--red)} .fcol.safe h4{color:var(--green)}
+  .fcol .sub{font-size:12px;color:rgba(245,242,236,0.4);margin-bottom:18px;font-family:'DM Mono'}
+  .fcol ul{list-style:none;display:flex;flex-direction:column;gap:10px}
+  .fcol li{font-size:14px;color:rgba(245,242,236,0.7);display:flex;align-items:center;gap:10px}
+  .fcol li i{font-size:15px}
+  .fcol.vuln li i{color:var(--red)} .fcol.safe li i{color:var(--green)}
+  .fault-mid{display:flex;align-items:center;justify-content:center;padding:0 16px}
+  .fault-line{width:2px;height:100%;background:linear-gradient(180deg,transparent,var(--stark-purple),transparent);position:relative}
+  @media(max-width:760px){.fault{grid-template-columns:1fr}.fault-mid{display:none}.fcol{margin-bottom:12px}}
+
+  /* 8 checks scorecard */
+  .scorecard{margin-top:36px;display:flex;flex-direction:column;gap:10px}
+  .check{border:1px solid var(--border);border-radius:var(--radius);background:rgba(255,255,255,0.014);overflow:hidden;transition:border-color .2s}
+  .check:hover{border-color:rgba(139,92,246,0.25)}
+  .check-head{display:flex;align-items:center;gap:16px;padding:18px 20px;cursor:pointer}
+  .check-num{font-family:'DM Mono';font-size:12px;color:rgba(245,242,236,0.35);width:24px;flex-shrink:0}
+  .check-name{font-family:'Syne';font-weight:600;font-size:16px;flex:1}
+  .badge{font-family:'DM Mono';font-size:10px;letter-spacing:0.06em;text-transform:uppercase;padding:5px 10px;border-radius:20px;white-space:nowrap}
+  .badge.cleared{background:rgba(31,182,139,0.14);color:var(--green);border:1px solid rgba(31,182,139,0.3)}
+  .badge.live{background:rgba(139,92,246,0.16);color:#b79cff;border:1px solid rgba(139,92,246,0.35)}
+  .badge.underway{background:rgba(247,147,26,0.14);color:var(--orange);border:1px solid rgba(247,147,26,0.3)}
+  .badge.scoped{background:rgba(55,138,221,0.14);color:var(--blue);border:1px solid rgba(55,138,221,0.3)}
+  .badge.gated{background:rgba(245,242,236,0.06);color:rgba(245,242,236,0.5);border:1px solid var(--border)}
+  .check-chev{color:rgba(245,242,236,0.3);transition:transform .25s}
+  .check.open .check-chev{transform:rotate(180deg)}
+  .check-body{max-height:0;overflow:hidden;transition:max-height .3s ease}
+  .check.open .check-body{max-height:320px}
+  .check-inner{padding:0 20px 20px 60px;display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  .check-inner .blk .h{font-family:'DM Mono';font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(245,242,236,0.35);margin-bottom:6px}
+  .check-inner .blk p{font-size:14px;color:rgba(245,242,236,0.7);line-height:1.6}
+  .check-inner .blk.fix .h{color:var(--green)}
+  @media(max-width:680px){.check-inner{grid-template-columns:1fr;padding-left:20px}}
+
+  /* roadmap */
+  .roadmap{margin-top:36px;display:flex;flex-direction:column;gap:14px}
+  .phase{border:1px solid var(--border);border-radius:18px;padding:24px;background:rgba(255,255,255,0.014);position:relative;cursor:pointer;transition:border-color .2s,transform .2s}
+  .phase:hover{border-color:var(--border-p);transform:translateX(4px)}
+  .phase-top{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .phase-tag{font-family:'DM Mono';font-size:11px;letter-spacing:0.08em;text-transform:uppercase;padding:5px 11px;border-radius:6px;background:rgba(139,92,246,0.12);color:#b79cff}
+  .phase h4{font-family:'Syne';font-weight:700;font-size:19px;flex:1}
+  .phase .dur{font-family:'DM Mono';font-size:12px;color:rgba(245,242,236,0.45)}
+  .phase-body{max-height:0;overflow:hidden;transition:max-height .35s ease}
+  .phase.open .phase-body{max-height:400px}
+  .phase-body ul{list-style:none;margin-top:16px;display:flex;flex-direction:column;gap:9px}
+  .phase-body li{font-size:14px;color:rgba(245,242,236,0.65);display:flex;gap:10px;line-height:1.55}
+  .phase-body li i{color:var(--stark-purple);font-size:15px;margin-top:2px;flex-shrink:0}
+
+  /* migration visual */
+  .mig{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:36px}
+  .mig-card{border-radius:18px;padding:28px}
+  .mig-card.bad{border:1px solid rgba(229,72,77,0.22);background:linear-gradient(135deg,rgba(229,72,77,0.04),transparent)}
+  .mig-card.good{border:1px solid rgba(31,182,139,0.3);background:linear-gradient(135deg,rgba(31,182,139,0.06),transparent)}
+  .mig-card .who{font-family:'DM Mono';font-size:11px;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:12px}
+  .mig-card.bad .who{color:var(--red)} .mig-card.good .who{color:var(--green)}
+  .mig-card h4{font-family:'Syne';font-weight:700;font-size:22px;margin-bottom:10px;line-height:1.15}
+  .mig-card p{font-size:14px;color:rgba(245,242,236,0.6);line-height:1.65}
+  @media(max-width:680px){.mig{grid-template-columns:1fr}}
+
+  /* landscape */
+  .land{margin-top:36px;display:flex;flex-direction:column;gap:14px}
+  .land-group{border:1px solid var(--border);border-radius:18px;padding:24px;background:rgba(255,255,255,0.012)}
+  .land-group.hl{border-color:var(--border-p);background:linear-gradient(135deg,rgba(139,92,246,0.06),transparent)}
+  .land-group .gt{font-family:'Syne';font-weight:700;font-size:18px;margin-bottom:4px}
+  .land-group .gs{font-size:13px;color:rgba(245,242,236,0.45);margin-bottom:14px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{font-family:'DM Mono';font-size:12px;padding:6px 12px;border-radius:8px;background:rgba(245,242,236,0.04);border:1px solid var(--border);color:rgba(245,242,236,0.6)}
+  .land-group.hl .gt{color:var(--stark-purple)}
+
+  /* videos */
+  .videos{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:36px}
+  .vid{border:1px dashed var(--border-p);border-radius:18px;aspect-ratio:16/9;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:rgba(139,92,246,0.03);color:rgba(245,242,236,0.45);text-align:center;padding:20px}
+  .vid i{font-size:38px;color:var(--stark-purple)}
+  .vid .t{font-family:'Syne';font-weight:600;font-size:15px;color:var(--white)}
+  .vid .s{font-size:12px;font-family:'DM Mono'}
+  @media(max-width:680px){.videos{grid-template-columns:1fr}}
+
+  /* conclusion */
+  .concl{text-align:center;padding:90px 0}
+  .concl h2{font-family:'Syne';font-weight:800;font-size:clamp(30px,5vw,56px);line-height:1.05;letter-spacing:-0.02em;max-width:880px;margin:0 auto 22px}
+  .concl p{font-size:17px;color:rgba(245,242,236,0.6);max-width:620px;margin:0 auto;line-height:1.7}
+
+  .note{border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;background:rgba(255,255,255,0.014);margin:50px 0}
+  .note p{font-size:13px;color:rgba(245,242,236,0.5);line-height:1.7}
+  .note b{color:var(--white);font-weight:500}
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-logo">Starknet Thesis</span>
+  <span class="nav-tag">Page 01 — Quantum</span>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <p class="hero-eyebrow">The quantum reckoning</p>
+  <h1 class="hero-title">Most chains will have<br>to rebuild. Starknet<br>only has to <em>finish.</em></h1>
+  <p class="hero-subtitle">Governments, Big Tech and researchers are converging on a single date for when quantum computers could break the cryptography behind nearly every wallet onchain. One network was post-quantum before post-quantum was a deadline.</p>
+
+  <!-- COUNTDOWN -->
+  <div class="countdown">
+    <div class="countdown-label">The industry's converging deadline · <b>Q-Day ≈ 2029</b></div>
+    <div class="cd-grid" id="cd">
+      <div class="cd-unit"><div class="cd-num" id="cd-d">—</div><div class="lab">Days</div></div>
+      <div class="cd-sep">:</div>
+      <div class="cd-unit"><div class="cd-num" id="cd-h">—</div><div class="lab">Hours</div></div>
+      <div class="cd-sep">:</div>
+      <div class="cd-unit"><div class="cd-num" id="cd-m">—</div><div class="lab">Minutes</div></div>
+      <div class="cd-sep">:</div>
+      <div class="cd-unit"><div class="cd-num" id="cd-s">—</div><div class="lab">Seconds</div></div>
+    </div>
+    <p class="countdown-foot">Microsoft, Google and IBM independently pulled their roadmaps to 2029, some from 2033+. The "when" is arriving faster than crypto has priced in, and it could come even sooner.</p>
+  </div>
+</div>
+
+<!-- 01 CATALYST -->
+<section>
+  <div class="wrap">
+    <p class="marker">01 — The Catalyst</p>
+    <h2 class="sec-title">Nation-states became<br>quantum <em>investors.</em></h2>
+    <p class="lead">For decades, government support for quantum computing meant research grants and patient science. In the span of a few weeks in spring 2026, that posture changed in nature: states started taking <b>equity</b>.</p>
+
+    <div class="callout">
+      Picture a Thanksgiving turkey. For 1,000 days the farmer feeds it, life is demonstrably good, the line only goes up. Then comes day 1,001. <b>Crypto, today, is the turkey</b> — except this time, the date is known.
+    </div>
+
+    <div class="events">
+      <div class="ev"><div class="d">May 21, 2026</div><div class="t">US takes equity</div><div class="x"><span class="big">$2B</span><br>across 9 quantum firms — the government became a venture investor in quantum.</div></div>
+      <div class="ev"><div class="d">May 22, 2026</div><div class="t">France responds</div><div class="x"><span class="big">€1.55B</span><br>announced by Macron, citing "the acceleration of the US and China."</div></div>
+      <div class="ev"><div class="d">June 2, 2026</div><div class="t">Microsoft Majorana 2</div><div class="x">Qubit reliability ×1,000. Timeline cut from 2033 → <b>2029</b>.</div></div>
+      <div class="ev"><div class="d">June 2, 2026</div><div class="t">IBM commits</div><div class="x"><span class="big">$10B+</span><br>over 5 years, targeting fault-tolerant quantum by <b>2029</b>.</div></div>
+      <div class="ev"><div class="d">2026</div><div class="t">UK ProQure</div><div class="x"><span class="big">£2B</span><br>plus Canada, China — over $5B in public commitments within weeks.</div></div>
+      <div class="ev"><div class="d">May 2026</div><div class="t">First quantum advantage</div><div class="x">Q-CTRL on IBM hardware: a simulation 3,000× faster than the best classical software.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 THREAT -->
+<section>
+  <div class="wrap">
+    <p class="marker r">02 — The Threat</p>
+    <h2 class="sec-title">Q-Day, and the <em>fault line</em> it draws.</h2>
+    <p class="lead">Picture a giant maze; the exit is your private key. A classical computer walks the corridors one by one — there are more paths than atoms in the universe, so it never escapes. A quantum computer doesn't walk the maze: it notices the maze was built by repeating one pattern, and computes the exit directly. That is Shor's algorithm against elliptic-curve cryptography.</p>
+
+    <div class="bigstat">
+      <div class="n">10,000×</div>
+      <div class="x">The estimated cost of a quantum attack on crypto's cryptography has <b>collapsed roughly 10,000× since 2012</b>, paper after paper, all from the organizations that actually build the hardware.</div>
+    </div>
+
+    <!-- resource collapse chart -->
+    <div class="chart-card">
+      <div class="chart-head">
+        <div class="t">The collapse of the qubit barrier</div>
+        <div class="s">physical qubits required · log scale</div>
+      </div>
+      <div class="chartbars" id="bars">
+        <div class="bar-col"><div class="bar red" style="height:90%"><span class="v">~1,000,000,000</span></div><div class="yr">2012</div><div class="lb">RSA-2048 estimate</div></div>
+        <div class="bar-col"><div class="bar orange" style="height:55%"><span class="v">&lt;1,000,000</span></div><div class="yr">May 2025</div><div class="lb">RSA-2048 (Gidney) — ~1,000× drop</div></div>
+        <div class="bar-col"><div class="bar" style="height:42%"><span class="v">&lt;500,000</span></div><div class="yr">Mar 2026</div><div class="lb">ECDLP-256 (Google×EF) — the curve behind your wallet</div></div>
+      </div>
+      <p class="chart-note">ECC keys are ~10× smaller than RSA keys, so a smaller machine breaks them first. Crypto isn't just exposed, it's at the front of the line.</p>
+    </div>
+
+    <p class="lead small" style="margin-top:40px">The Google–Ethereum Foundation paper (Mar 30, 2026) maps exactly what breaks: ~1,200 logical qubits and 90M Toffoli gates, executable on &lt;500,000 physical qubits. On Bitcoin, ~6.9M BTC is vulnerable. On Ethereum, ~20.5M ETH sits in exposed top accounts, with ~$200B in stablecoins behind admin keys. But the fault line is sharp — everything sorts into two columns:</p>
+
+    <!-- fault line -->
+    <div class="fault">
+      <div class="fcol vuln">
+        <h4><i class="ti ti-alert-triangle"></i> Quantum-vulnerable</h4>
+        <div class="sub">Breaks under Shor's algorithm</div>
+        <ul>
+          <li><i class="ti ti-x"></i> ECDSA signatures (Bitcoin, Ethereum)</li>
+          <li><i class="ti ti-x"></i> BLS consensus signatures</li>
+          <li><i class="ti ti-x"></i> KZG commitments</li>
+          <li><i class="ti ti-x"></i> Pairing-based SNARKs (Groth16, Plonk)</li>
+          <li><i class="ti ti-x"></i> Optimistic rollups, sidechains</li>
+        </ul>
+      </div>
+      <div class="fault-mid"><div class="fault-line"></div></div>
+      <div class="fcol safe">
+        <h4><i class="ti ti-shield-check"></i> Quantum-safe</h4>
+        <div class="sub">Built on hash functions, not curves</div>
+        <ul>
+          <li><i class="ti ti-check"></i> zk-STARK proofs</li>
+          <li><i class="ti ti-check"></i> Hash-based commitments (BLAKE2, Poseidon)</li>
+          <li><i class="ti ti-check"></i> Post-quantum signatures (Falcon, ML-DSA)</li>
+        </ul>
+        <p style="font-size:13px;color:rgba(31,182,139,0.85);margin-top:16px;line-height:1.5">In the paper's own risk chart, <b>zk-STARK is the only proving category in production today not flagged as quantum-vulnerable. Starknet is named explicitly as resistant.</b></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 THE 8 CHECKS -->
+<section>
+  <div class="wrap">
+    <p class="marker o">03 — The Playbook</p>
+    <h2 class="sec-title">What "post-quantum"<br>actually means, in <em>8 checks.</em></h2>
+    <p class="lead">A blockchain is only as quantum-safe as its weakest layer. Most chains that call themselves "post-quantum" have only secured one or two components. To make a credible end-to-end claim, every critical surface must be audited. Tap each to see the risk, the fix, and where Starknet stands.</p>
+
+    <div class="scorecard" id="scorecard"></div>
+  </div>
+</section>
+
+<!-- 04 SOLUTION -->
+<section>
+  <div class="wrap">
+    <p class="marker g">04 — Starknet's Answer</p>
+    <h2 class="sec-title">Born on the right side<br>of the line.</h2>
+    <p class="lead">Starknet enters the post-quantum era from structural strength. STARK proofs — the tech StarkWare invented and has used to secure <b>$1.3T+ in assets and 400M+ transactions</b> since 2021 — rely on collision-resistant hashes, not elliptic curves. The proving layer is inherently quantum-resistant. Check 6 cleared by design.</p>
+
+    <!-- migration visual -->
+    <div class="mig">
+      <div class="mig-card bad">
+        <div class="who"><i class="ti ti-plane"></i> Every other major chain</div>
+        <h4>Swap the engine mid-flight</h4>
+        <p>The signature scheme is baked into the protocol. Changing it means a fork: every validator, client, exchange and app coordinating on a new scheme — years of work, with tail risk if you miss something. While every passenger is still on board.</p>
+      </div>
+      <div class="mig-card good">
+        <div class="who"><i class="ti ti-bolt"></i> Starknet</div>
+        <h4>Migrate in a single transaction</h4>
+        <p>Native account abstraction means every account is a smart contract that defines how its own signatures are verified. Moving to a quantum-safe scheme is just deploying a different account — a change users make in one transaction, when they choose.</p>
+      </div>
+    </div>
+
+    <p class="lead small" style="margin-top:40px"><b style="color:var(--white)">Quantum-safe wallets are already live on Starknet Mainnet today.</b> S2morrow is in production now: a post-quantum wallet using Falcon-512, implemented as a Cairo verifier, signing real transactions — and the chain needed no fork. That's check 1, live. Mainstream wallets (Ready, Braavos, Xverse) haven't migrated because they don't need to yet; when the time comes, they can — in a single transaction.</p>
+
+    <h3 style="font-family:'Syne';font-weight:700;font-size:24px;margin:48px 0 8px">The post-quantum roadmap</h3>
+    <p class="lead small">Two checks cleared, one underway, the rest scoped in months, with only settlement gated on Ethereum's own timeline. Targeting end-to-end post-quantum by ~2027 — two years inside the industry's deadline.</p>
+
+    <div class="roadmap" id="roadmap"></div>
+
+    <div class="note" style="margin-top:30px;border-color:var(--border-p)">
+      <p><b>Prof. Scott Aaronson</b> — one of the world's foremost authorities on the capabilities and limits of quantum computers — joined StarkWare's Scientific Advisory Board in early 2026, advising on the post-quantum properties of STARKs.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 LANDSCAPE -->
+<section>
+  <div class="wrap">
+    <p class="marker">05 — The Landscape</p>
+    <h2 class="sec-title">Who's on which side<br>of the line.</h2>
+    <p class="lead">To position Starknet honestly, the field sorts into three groups.</p>
+
+    <div class="land">
+      <div class="land-group">
+        <div class="gt">Born post-quantum, but niche</div>
+        <div class="gs">Quantum-safe and irrelevant is not a moat — none carries meaningful ecosystem weight, liquidity, or developers.</div>
+        <div class="chips"><span class="chip">Quantum Resistant Ledger</span><span class="chip">Mochimo</span><span class="chip">Abelian</span><span class="chip">Cellframe</span><span class="chip">Naoris</span></div>
+      </div>
+      <div class="land-group">
+        <div class="gt">Majors with a roadmap — and a hard fork ahead</div>
+        <div class="gs">Every path terminates in the same place: a chain-wide cutover and forced user migration. The engine swap mid-flight.</div>
+        <div class="chips"><span class="chip">Ethereum</span><span class="chip">Bitcoin</span><span class="chip">Zcash</span><span class="chip">Algorand</span><span class="chip">XRP</span><span class="chip">Solana</span><span class="chip">Cardano</span><span class="chip">Polkadot</span></div>
+      </div>
+      <div class="land-group">
+        <div class="gt">No published plan</div>
+        <div class="gs">Resting on vulnerable curves with no dated post-quantum commitment.</div>
+        <div class="chips"><span class="chip">Avalanche</span><span class="chip">BNB Chain</span><span class="chip">Stellar</span><span class="chip">Cosmos</span><span class="chip">Tezos</span><span class="chip">Sui</span><span class="chip">Aptos</span></div>
+      </div>
+      <div class="land-group hl">
+        <div class="gt">Starknet — the only one bringing it all together</div>
+        <div class="gs">Mass-scaling + privacy stack · end-to-end PQ roadmap by 2027 · single-transaction user migration · live ecosystem ($200M+ DeFi TVL) · OG team building since 2013.</div>
+        <div class="chips"><span class="chip" style="border-color:var(--border-p);color:#b79cff">STARK-based · post-quantum by design</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VIDEOS -->
+<section>
+  <div class="wrap">
+    <p class="marker">From the source</p>
+    <h2 class="sec-title">Eli Ben-Sasson<br>on the quantum era.</h2>
+    <p class="lead small">StarkWare's co-founder &amp; CEO on why STARKs were built for this moment.</p>
+    <div class="videos">
+      <div class="vid"><i class="ti ti-brand-youtube"></i><div class="t">Video 1 — to embed</div><div class="s">send me the link</div></div>
+      <div class="vid"><i class="ti ti-brand-youtube"></i><div class="t">Video 2 — to embed</div><div class="s">send me the link</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CONCLUSION -->
+<div class="concl">
+  <div class="wrap">
+    <h2>On the day the line is drawn for everyone, most chains will discover which side they were born on. <em>Starknet already knows.</em></h2>
+    <p>The thesis needs only two recognitions: that the quantum-security premium is not yet priced in, and that Starknet holds the structural moat to capture it.</p>
+  </div>
+</div>
+
+<!-- NEWS placeholder -->
+<section>
+  <div class="wrap">
+    <p class="marker">Latest</p>
+    <h2 class="sec-title" style="font-size:clamp(24px,3vw,34px)">Quantum × Starknet news</h2>
+    <p class="lead small">A collapsible news section like the BTCFi page goes here — seeded with the Google×EF paper, the StarkWare PQ roadmap, S2morrow, Scott Aaronson, etc. Editable like your other pages.</p>
+  </div>
+</section>
+
+<div class="wrap">
+  <div class="note">
+    <p><b>This is a preview / mockup</b> to validate structure + interactive direction. Interactive here: the live <b>2029 countdown</b>, the <b>qubit-collapse chart</b> (hover), the <b>8-check scorecard</b> (tap to expand), and the <b>3-phase roadmap</b> (tap to expand). The 2 Eli Ben-Sasson videos are placeholders — send me the links and I'll embed them. Tell me what to adjust, then I'll write the Claude Code prompt.</p>
+  </div>
+</div>
+
+<div style="height:60px"></div>
+
+<script>
+// COUNTDOWN to Jan 1, 2029
+(function(){
+  var target = new Date('2029-01-01T00:00:00Z').getTime();
+  function tick(){
+    var now = Date.now(), d = Math.max(0, target - now);
+    var days = Math.floor(d/86400000),
+        h = Math.floor(d%86400000/3600000),
+        m = Math.floor(d%3600000/60000),
+        s = Math.floor(d%60000/1000);
+    document.getElementById('cd-d').textContent = days.toLocaleString();
+    document.getElementById('cd-h').textContent = String(h).padStart(2,'0');
+    document.getElementById('cd-m').textContent = String(m).padStart(2,'0');
+    document.getElementById('cd-s').textContent = String(s).padStart(2,'0');
+  }
+  tick(); setInterval(tick,1000);
+})();
+
+// 8 CHECKS
+var CHECKS = [
+  {n:'01', name:'Account signatures', status:['live','Live on Mainnet'], risk:"You sign with an elliptic-curve key. Shor's algorithm derives the private key from the exposed public key, then forges the signature and moves your funds.", fix:"Post-quantum signatures (Falcon, ML-DSA). On Starknet: S2morrow is live on Mainnet today with Falcon-512, no fork required."},
+  {n:'02', name:'State commitment', status:['underway','Underway'], risk:"The whole network's data is compressed into one fingerprint. Built with curve-based hashes, a quantum adversary can forge balance proofs for any account.", fix:"Quantum-resistant hashes. Classes trie already uses Poseidon; BLAKE2 is live in production; contracts/storage tries migrating from Pedersen → BLAKE2."},
+  {n:'03', name:'Address derivation', status:['scoped','Scoped · months'], risk:"Addresses are derived by hashing. With a curve-based hash, an attacker finds a collision and slips a malicious contract into an address you were about to fund.", fix:"Derive addresses with a quantum-safe hash (BLAKE2)."},
+  {n:'04', name:'Chain environment', status:['scoped','Scoped · months'], risk:"Every proof is stamped with chain ID, version, fee token. Forge the stamp and an attacker swaps in a fee token they control, skimming every fee.", fix:"Compute the stamp with a quantum-safe hash — the OS config hash moves to BLAKE2 in a literal one-line change."},
+  {n:'05', name:'Consensus signatures', status:['scoped','Scoped · months'], risk:"Block producers sign votes to finalize blocks. Crack a key and you forge votes or impersonate validators, threatening finality.", fix:"Post-quantum consensus signing — made straightforward because staking lives at the application layer; rotate ECDSA → Falcon-512."},
+  {n:'06', name:'The proofs', status:['cleared','Cleared by design'], risk:"For an L2, the entire system's trust rests on the validity proof. Curve-based proofs (KZG, Groth16, Plonk) are quantum-breakable, down to recovering trusted-setup secrets.", fix:"STARK proofs, built purely on quantum-resistant hashes. This is what StarkWare invented — quantum-safe from day one."},
+  {n:'07', name:'Historical state', status:['scoped','Scoped · months'], risk:"A live chain already holds millions of contracts deployed under the old math, holding real value. Doing nothing leaves them exposed.", fix:"A recompilation toolkit over an upgraded Cairo compiler abstracts the migration away — the lightest-friction path available."},
+  {n:'08', name:'Settlement', status:['gated','Gated on Ethereum'], risk:"You inherit the security of whatever you settle on. For every Ethereum L2, the bottleneck is Ethereum's own multi-year, multi-hard-fork PQ migration.", fix:"Monitor & contribute to Ethereum's migration — and preserve a credible fallback: Starknet can become its own L1 if settlement isn't ready in time."}
+];
+(function(){
+  var el = document.getElementById('scorecard');
+  el.innerHTML = CHECKS.map(function(c){
+    return '<div class="check"><div class="check-head">'
+      +'<span class="check-num">'+c.n+'</span>'
+      +'<span class="check-name">'+c.name+'</span>'
+      +'<span class="badge '+c.status[0]+'">'+c.status[1]+'</span>'
+      +'<i class="ti ti-chevron-down check-chev"></i></div>'
+      +'<div class="check-body"><div class="check-inner">'
+      +'<div class="blk"><div class="h">The risk</div><p>'+c.risk+'</p></div>'
+      +'<div class="blk fix"><div class="h">The fix · Starknet</div><p>'+c.fix+'</p></div>'
+      +'</div></div></div>';
+  }).join('');
+  el.querySelectorAll('.check-head').forEach(function(h){
+    h.addEventListener('click',function(){ h.parentNode.classList.toggle('open'); });
+  });
+})();
+
+// ROADMAP
+var PHASES = [
+  {tag:'Phase 1', dur:'≈ 2–4 months', name:'Secure the future', items:[
+    'State-commitment tries migrate Pedersen → BLAKE2 (check 2)',
+    'Address derivation switches to BLAKE2 (check 3)',
+    'OS config hash → BLAKE2, a one-line change (check 4)',
+    'Consensus signing becomes scheme-agnostic, rotates to Falcon-512 (check 5)',
+    'Post-quantum wallets already live (check 1); proofs never the problem (check 6)']},
+  {tag:'Phase 2', dur:'≈ 1–2 months', name:'Migrate what exists', items:[
+    'A recompilation toolkit over an upgraded Cairo compiler abstracts away migration of contracts deployed under Pedersen-derived storage (check 7)',
+    'Goal: make every legacy component quantum-safe — because doing nothing is not viable']},
+  {tag:'Phase 3', dur:'Multi-year · external', name:'Ethereum dependencies', items:[
+    'Stone prover\'s legacy ECDSA disappears as Stwo becomes the sole prover',
+    'secp syscalls validating L1 bridge messages can only be removed once Ethereum migrates (check 8)',
+    'Fallback: if Ethereum isn\'t ready in time, Starknet retains the option to become an L1 itself']}
+];
+(function(){
+  var el = document.getElementById('roadmap');
+  el.innerHTML = PHASES.map(function(p){
+    return '<div class="phase"><div class="phase-top">'
+      +'<span class="phase-tag">'+p.tag+'</span>'
+      +'<h4>'+p.name+'</h4>'
+      +'<span class="dur">'+p.dur+'</span>'
+      +'<i class="ti ti-chevron-down check-chev"></i></div>'
+      +'<div class="phase-body"><ul>'+p.items.map(function(i){return '<li><i class="ti ti-point-filled"></i>'+i+'</li>';}).join('')+'</ul></div></div>';
+  }).join('');
+  el.querySelectorAll('.phase').forEach(function(p){
+    p.addEventListener('click',function(){ p.classList.toggle('open'); });
+  });
+})();
+</script>
+</body>
+</html>

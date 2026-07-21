@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starknet Digest — Weekly Roundups and Research</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+  <link rel="canonical" href="https://starknetthesis.com/digest.html">
+  <meta property="og:title" content="Starknet Digest — Weekly Roundups and Research">
+  <meta property="og:description" content="Weekly roundups, monthly digests and research notes covering what is shipping and changing across the Starknet ecosystem, from the Starknet Research newsletter.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://starknetthesis.com/digest.html">
+  <meta property="og:site_name" content="Starknet Thesis">
+  <meta property="og:image" content="https://starknetthesis.com/assets/og-default.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Starknet Digest — Weekly Roundups and Research">
+  <meta name="twitter:description" content="Weekly roundups, monthly digests and research notes covering what is shipping and changing across the Starknet ecosystem, from the Starknet Research newsletter.">
+  <meta name="twitter:image" content="https://starknetthesis.com/assets/og-default.png">
+<meta name="description" content="Weekly roundups, monthly digests and research notes covering what is shipping and changing across the Starknet ecosystem, from the Starknet Research newsletter.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Expanded:wght@500;600;700;800;900&family=IBM+Plex+Mono:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/dist/tabler-icons.min.css">
+<link rel="stylesheet" href="css/styles.css?v=20260618c">
+<style>
+  /* section headers ported from quantum.html (th-pm- structure), using this page's own accent */
+  .th-pm-head{display:flex;align-items:center;gap:18px;}
+  .th-pm-marker{width:0;height:0;border-left:13px solid var(--accent);border-top:8px solid transparent;border-bottom:8px solid transparent;transform:translateY(2px);filter:drop-shadow(0 0 8px rgba(var(--accent-rgb),.6));}
+  .th-pm-num{font-family:var(--display);font-weight:900;font-size:64px;line-height:1;color:var(--accent);letter-spacing:-.02em;}
+  .th-pm-title{font-family:var(--display);font-weight:800;font-size:52px;line-height:1.02;letter-spacing:-.015em;color:var(--white);max-width:none;}
+  .th-pm-title b, .th-pm-title em{color:var(--accent);font-weight:800;font-style:normal;}
+  .th-pm-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:var(--accent);margin-top:16px;opacity:.85;}
+  @media(max-width:880px){.th-pm-title{font-size:38px;}.th-pm-num{font-size:48px;}}
+</style>
+</head>
+<body class="page-recap">
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo" style="display:inline-flex;align-items:center;gap:11px"><svg width="22" height="22" viewBox="0 0 26 26" fill="none" aria-hidden="true"><path d="M4 7 H22" stroke="#8b7bff" stroke-width="2.6" stroke-linecap="round"/><path d="M4 13 H17" stroke="#8b7bff" stroke-opacity="0.55" stroke-width="2.6" stroke-linecap="round"/><path d="M4 19 H12" stroke="#8b7bff" stroke-opacity="0.3" stroke-width="2.6" stroke-linecap="round"/></svg><span>Starknet <b>Thesis</b></span></a>
+  <div class="nav-links"><a href="privacy.html">Privacy</a><a href="quantum.html">Quantum</a><a href="btcfi.html">BTCFi</a><a href="strk.html">STRK</a><a href="ecosystem.html">Ecosystem</a><a href="digest.html" class="active">Digest</a></div>
+  <a href="index.html" class="btn nav-cta">Read the thesis <i class="ti ti-arrow-right"></i></a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <p class="hero-eyebrow">Digest</p>
+  <h1 class="hero-title">Never miss what's<br>shipping on <em>Starknet</em>.</h1>
+  <p class="hero-subtitle">Because a thesis only holds if the ecosystem actually ships behind it. Starknet is among the very few ecosystems shipping this much, this constantly.</p>
+  <div style="margin-bottom:56px;"><a class="btn-primary" href="https://starknetresearch.substack.com/subscribe" target="_blank" rel="noopener">Subscribe</a></div>
+  <div class="hero-scroll">
+    <div class="scroll-line"></div>
+    <span>Scroll</span>
+  </div>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- RECAPS FEED -->
+<section>
+  <div class="th-pm-head"><span class="th-pm-marker"></span><h2 class="th-pm-title">Latest from the Starknet ecosystem</h2></div>
+  <p class="th-pm-eyebrow">The newsletter</p>
+
+  <div class="chart-toggle" role="tablist" id="recapTabs">
+    <button class="toggle-btn active" data-filter="all" role="tab">All</button>
+    <button class="toggle-btn" data-filter="monthly" role="tab">Monthly</button>
+    <button class="toggle-btn" data-filter="weekly" role="tab">Weekly</button>
+    <button class="toggle-btn" data-filter="research" role="tab">Research</button>
+  </div>
+
+  <div class="recap-grid" id="recapGrid">
+    <!-- The block below is a static pre-render of the 10 latest entries so
+         the page is readable without JS; on load the script replaces the
+         whole grid with the full hydrated archive. Regenerate after
+         updating data/recap.json with: node scripts/build-digest.js -->
+    <!-- STATIC-DIGEST:START -->
+    <!-- Pre-rendered from data/recap.json — regenerate with: node scripts/build-digest.js -->
+    <a class="recap-card" data-cat="weekly" href="https://starknetresearch.substack.com/p/starknet-roundup-222" target="_blank" rel="noopener"><div class="recap-cover"><img src="https://substackcdn.com/image/fetch/$s_!Ahvp!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F291b23a1-2f17-4fba-9345-8414b8e61b2a_1920x1080.png" loading="lazy" alt=""></div><div class="recap-content"><span class="recap-cat weekly">Weekly digest</span><h3 class="recap-title">Starknet roundup 222</h3><time class="recap-date" datetime="2026-06-15">Jun 15, 2026</time><p class="recap-excerpt">Everything you need to know about what happened in the Starknet ecosystem over the past week</p></div></a>
+    <a class="recap-card" data-cat="weekly" href="https://starknetresearch.substack.com/p/starknet-roundup-221" target="_blank" rel="noopener"><div class="recap-cover"><img src="https://substackcdn.com/image/fetch/$s_!Ahvp!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F291b23a1-2f17-4fba-9345-8414b8e61b2a_1920x1080.png" loading="lazy" alt=""></div><div class="recap-content"><span class="recap-cat weekly">Weekly digest</span><h3 class="recap-title">Starknet roundup 221</h3><time class="recap-date" datetime="2026-06-08">Jun 8, 2026</time><p class="recap-excerpt">Everything you need to know about what happened in the Starknet ecosystem over the past week</p></div></a>
+    <a class="recap-card" data-cat="monthly" href="https://starknetresearch.substack.com/p/starknet-monthly-recap-33-may-2026" target="_blank" rel="noopener"><div class="recap-cover"><img src="https://substackcdn.com/image/fetch/$s_!O8DJ!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fafcd5832-6101-43a4-bc83-49349e7b2886_1740x978.webp" loading="lazy" alt=""></div><div class="recap-content"><span class="recap-cat monthly">Monthly digest</span><h3 class="recap-title">Starknet monthly recap #33: May 2026</h3><time class="recap-date" datetime="2026-06-02">Jun 2, 2026</time><p class="recap-excerpt">All you need to know about Starknet in May</p></div></a>
+    <a class="recap-card" data-cat="weekly" href="https://starknetresearch.substack.com/p/starknet-roundup-219-220" target="_blank" rel="noopener"><div class="recap-cover"><img src="https://substackcdn.com/image/fetch/$s_!Ahvp!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F291b23a1-2f17-4fba-9345-8414b8e61b2a_1920x1080.png" loading="lazy" alt=""></div><div class="recap-content"><span class="recap-cat weekly">Weekly digest</span><h3 class="recap-title">Starknet roundup 219-220</h3><time class="recap-date" datetime="2026-06-01">Jun 2, 2026</time><p class="recap-excerpt">Welcome to the 219-220th edition of my weekly comprehensive Starknet summary.</p></div></a>
+    <a class="recap-card" data-cat="weekly" href="https://starknetresearch.substack.com/p/starknet-roundup-218" target="_blank" rel="noopener"><div class="recap-cover"><img src="https://substackcdn.com/image/fetch/$s_!Ahvp!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F291b23a1-2f17-4fba-9345-8414b8e61b2a_1920x1080.png" loading="lazy" alt=""></div><div class="recap-content"><span class="recap-cat weekly">Weekly digest</span><h3 class="recap-title">Starknet roundup 218</h3><time class="recap-date" datetime="2026-05-18">May 18, 2026</time><p class="recap-excerpt">Your Starknet weekly newsletter</p></div></a>
+    <a class="recap-card" data-cat="weekly" href="https://starknetresearch.substack.com/p/starknet-roundup-217" target="_blank" rel="noopener"><div class="recap-cover"><img src="https://substackcdn.com/image/fetch/$s_!Ahvp!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F291b23a1-2f17-4fba-9345-8414b8e61b2a_1920x1080.png" loading="lazy" alt=""></div><div class="recap-content"><span class="recap-cat weekly">Weekly digest</span><h3 class="recap-title">Starknet roundup 217</h3><time class="recap-date" datetime="2026-05-11">May 11, 2026</time><p class="recap-excerpt">Your Starknet weekly newsletter</p></div></a>
+    <a class="recap-card" data-cat="weekly" href="https://starknetresearch.substack.com/p/starknet-roundup-216" target="_blank" rel="noopener"><div class="recap-cover"><img src="https://substackcdn.com/image/fetch/$s_!Ahvp!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F291b23a1-2f17-4fba-9345-8414b8e61b2a_1920x1080.png" loading="lazy" alt=""></div><div class="recap-content"><span class="recap-cat weekly">Weekly digest</span><h3 class="recap-title">Starknet roundup 216</h3><time class="recap-date" datetime="2026-05-04">May 4, 2026</time><p class="recap-excerpt">Your Starknet weekly newsletter</p></div></a>
+    <a class="recap-card" data-cat="monthly" href="https://starknetresearch.substack.com/p/starknet-monthly-recap-32-april-2026" target="_blank" rel="noopener"><div class="recap-cover"><img src="https://substack-post-media.s3.amazonaws.com/public/images/b0175945-c437-4077-a86a-978fe68531ef_736x360.png" loading="lazy" alt=""></div><div class="recap-content"><span class="recap-cat monthly">Monthly digest</span><h3 class="recap-title">Starknet monthly recap #32: April 2026</h3><time class="recap-date" datetime="2026-05-01">May 1, 2026</time><p class="recap-excerpt">All you need to know about Starknet in April</p></div></a>
+    <a class="recap-card" data-cat="research" href="https://starknetresearch.substack.com/p/bringing-privacy-to-bitcoin" target="_blank" rel="noopener"><div class="recap-cover"><img src="https://substackcdn.com/image/fetch/$s_!VMKE!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F0ba5f8fb-74ce-471b-aafb-00dc5ec0b18a_1200x659.jpeg" loading="lazy" alt=""></div><div class="recap-content"><span class="recap-cat research">Research</span><h3 class="recap-title">Bringing Privacy to Bitcoin </h3><time class="recap-date" datetime="2026-04-29">Apr 29, 2026</time><p class="recap-excerpt">From public-by-default Bitcoin to private BTC on Starknet.</p></div></a>
+    <a class="recap-card" data-cat="weekly" href="https://starknetresearch.substack.com/p/starknet-roundup-215" target="_blank" rel="noopener"><div class="recap-cover"><img src="https://substackcdn.com/image/fetch/$s_!Ahvp!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F291b23a1-2f17-4fba-9345-8414b8e61b2a_1920x1080.png" loading="lazy" alt=""></div><div class="recap-content"><span class="recap-cat weekly">Weekly digest</span><h3 class="recap-title">Starknet roundup 215</h3><time class="recap-date" datetime="2026-04-27">Apr 27, 2026</time><p class="recap-excerpt">Your Starknet weekly newsletter</p></div></a>
+    <!-- STATIC-DIGEST:END -->
+  </div>
+  <div class="recap-empty" id="recapEmpty" hidden>No posts in this category yet.</div>
+  <div class="recap-more" id="recapMore" hidden>
+    <p class="recap-count" id="recapCount"></p>
+    <button class="btn-secondary" id="recapMoreBtn" type="button">Load more</button>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- SUBSCRIBE CTA -->
+<section style="padding-top:24px;">
+  <div class="cta-block">
+    <h2>Get every digest in your inbox.</h2>
+    <p>Subscribe to Starknet Research for weekly roundups, monthly digests and original research on the Starknet ecosystem.</p>
+    <div class="cta-buttons">
+      <a class="btn-primary" href="https://starknetresearch.substack.com/subscribe" target="_blank" rel="noopener">Subscribe</a>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-top">
+      <div class="foot-brand">
+        <a href="index.html" class="nav-logo">Starknet <b>Thesis</b></a>
+        <p>The independent thesis on how Starknet makes crypto private, quantum-resistant and productive.</p>
+        <a href="https://x.com/Lyskey" target="_blank" rel="noopener" class="btn btn-ghost" style="padding:11px 18px">Made by Lyskey</a>
+      </div>
+      <div class="foot-col"><div class="h">Thesis</div><a href="privacy.html">Privacy</a><a href="quantum.html">Quantum</a><a href="btcfi.html">BTCFi</a><a href="strk.html">STRK</a></div>
+      <div class="foot-col"><div class="h">Ecosystem</div><a href="ecosystem.html">Ecosystem</a><a href="digest.html">Digest</a></div>
+      <div class="foot-col"><div class="h">Links</div><a href="https://x.com/Lyskey" target="_blank" rel="noopener">X / Twitter</a><a href="https://starknetresearch.substack.com/" target="_blank" rel="noopener">Newsletter</a></div>
+    </div>
+    <div class="disclaimer">Website made for educational purposes only. This is not financial advice. Always DYOR. This is also a personal project, not affiliated with or endorsed by StarkWare. All views expressed here are my own.</div>
+    <div class="foot-bottom">
+      <span>© 2026 · Made by <a href="https://x.com/Lyskey" target="_blank" rel="noopener">Lyskey</a></span>
+      <a href="https://status.starknet.io/" target="_blank" rel="noopener noreferrer" style="text-decoration:none;color:inherit;cursor:pointer"><span class="status"><span class="dot"></span> All systems operational</span></a>
+    </div>
+    <div class="foot-mark">Starknet</div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  // ============================================================
+  // DATA SOURCE — data/recap.json, generated at build time by scripts/fetch-recap.mjs.
+  // That script hits Substack's archive API DIRECTLY (Node has no CORS limit, so no proxy),
+  // paginates the WHOLE history, and writes it here. Loading it is a plain same-origin fetch:
+  // instant, reliable, and it contains the full archive (200+ posts). To refresh after new
+  // posts are published, re-run:  node scripts/fetch-recap.mjs
+  var DATA_URL = 'data/recap.json';
+  var SUBSTACK_URL = 'https://starknetresearch.substack.com/';
+
+  // Display caps (purely visual — ALL fetched posts stay in memory so the filters always
+  // work across the FULL dataset). Show INITIAL_VISIBLE at first, then reveal LOAD_MORE_STEP
+  // more on each "Load more" click. Switching filter resets the visible count to INITIAL_VISIBLE.
+  var INITIAL_VISIBLE = 20;
+  var LOAD_MORE_STEP = 50;
+
+  var grid = document.getElementById('recapGrid');
+  var emptyNote = document.getElementById('recapEmpty');
+  var tabs = document.getElementById('recapTabs');
+  var moreWrap = document.getElementById('recapMore');
+  var moreBtn = document.getElementById('recapMoreBtn');
+  var countEl = document.getElementById('recapCount');
+  var posts = [];            // ALL posts, sorted newest → oldest (never trimmed)
+  var current = 'all';       // active filter
+  var visible = INITIAL_VISIBLE; // how many of the current filtered list are shown
+
+  // ===== CATEGORY CLASSIFIER — adjust here if your title formats change =====
+  //  monthly : "Starknet monthly recap #33: May 2026"  → title contains "monthly recap"
+  //  weekly  : "Starknet roundup 219" / "...219-220"    → title contains "roundup"
+  //  research: everything else
+  function classify(title){
+    var t = (title || '').toLowerCase();
+    if (t.indexOf('monthly recap') !== -1) return 'monthly';
+    if (t.indexOf('roundup') !== -1) return 'weekly';
+    return 'research';
+  }
+  var CAT_LABELS = { monthly: 'Monthly digest', weekly: 'Weekly digest', research: 'Research' };
+
+  // ---------- helpers ----------
+  function esc(s){ return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function escA(s){ return esc(s).replace(/"/g,'&quot;'); }
+  function stripHTML(html){ var d = document.createElement('div'); d.innerHTML = html || ''; return (d.textContent || d.innerText || '').replace(/\s+/g, ' ').trim(); }
+  function excerpt(html, n){
+    var t = stripHTML(html);
+    if (t.length <= n) return t;
+    var cut = t.slice(0, n);
+    var sp = cut.lastIndexOf(' ');
+    if (sp > 60) cut = cut.slice(0, sp);
+    return cut.replace(/[\s,.;:!?\-–—]+$/, '') + '…';
+  }
+  var MN = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  function fmtDate(d){ return MN[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear(); }
+  // ===== UNOFFICIAL SUBSTACK ARCHIVE — field mapping (adjust here if Substack changes it) =====
+  // Maps one archive post object to the card shape the UI expects.
+  function mapArchivePost(post){
+    var d = new Date(post.post_date || post.published_at || post.date || 0);
+    if (isNaN(d.getTime())) d = new Date(0);
+    return {
+      title: post.title || '(untitled)',
+      link: post.canonical_url || (post.slug ? SUBSTACK_URL + 'p/' + post.slug : SUBSTACK_URL),
+      date: d,
+      dateLabel: d.getTime() ? fmtDate(d) : '',
+      excerpt: excerpt(post.description || post.subtitle || post.truncated_body_text, 180),
+      image: post.cover_image || '',
+      cat: classify(post.title)
+    };
+  }
+
+  // ---------- render ----------
+  function cardHTML(p){
+    var cover = p.image ? '<div class="recap-cover"><img src="' + escA(p.image) + '" loading="lazy" alt=""></div>' : '';
+    return '<a class="recap-card" data-cat="' + p.cat + '" href="' + escA(p.link) + '" target="_blank" rel="noopener">' +
+      cover +
+      '<div class="recap-content">' +
+        '<span class="recap-cat ' + p.cat + '">' + CAT_LABELS[p.cat] + '</span>' +
+        '<h3 class="recap-title">' + esc(p.title) + '</h3>' +
+        (p.dateLabel ? '<div class="recap-date">' + esc(p.dateLabel) + '</div>' : '') +
+        (p.excerpt ? '<p class="recap-excerpt">' + esc(p.excerpt) + '</p>' : '') +
+      '</div>' +
+    '</a>';
+  }
+
+  // Posts matching the active filter (across the FULL dataset, not just visible ones).
+  function filteredPosts(){
+    return current === 'all' ? posts : posts.filter(function(p){ return p.cat === current; });
+  }
+
+  // Render the first `visible` cards of the current filter (used on load + tab switch).
+  function renderList(){
+    var list = filteredPosts();
+    grid.innerHTML = list.slice(0, visible).map(cardHTML).join('');
+    if (emptyNote) emptyNote.hidden = list.length !== 0;
+    updateMoreUI(list.length);
+  }
+
+  // Append the next batch without re-rendering (so already-shown images don't reload).
+  function loadMore(){
+    var list = filteredPosts();
+    var prev = visible;
+    visible = Math.min(visible + LOAD_MORE_STEP, list.length);
+    grid.insertAdjacentHTML('beforeend', list.slice(prev, visible).map(cardHTML).join(''));
+    updateMoreUI(list.length);
+  }
+
+  // "Showing X of Y" + show/hide the Load more button.
+  function updateMoreUI(total){
+    if (!moreWrap) return;
+    if (!total) { moreWrap.hidden = true; return; }
+    var shown = Math.min(visible, total);
+    moreWrap.hidden = false;
+    countEl.textContent = 'Showing ' + shown + ' of ' + total;
+    moreBtn.hidden = shown >= total;
+  }
+
+  // The grid ships with a static pre-render of the latest entries (see the
+  // STATIC-DIGEST markers): keep it on screen instead of a spinner while the
+  // archive loads, and keep it if the fetch fails — renderList() replaces the
+  // whole grid once the full dataset is ready, so nothing ever duplicates.
+  function hasStatic(){ return !!grid.querySelector('.recap-card'); }
+  function showLoading(){
+    if (emptyNote) emptyNote.hidden = true;
+    if (moreWrap) moreWrap.hidden = true;
+    if (hasStatic()) return;
+    grid.innerHTML = '<div class="recap-status"><span class="recap-spinner"></span> <span>Loading the archive…</span></div>';
+  }
+  function showError(){
+    if (emptyNote) emptyNote.hidden = true;
+    if (moreWrap) moreWrap.hidden = true;
+    if (hasStatic()) return; // the static 10 stay readable
+    grid.innerHTML = '<div class="recap-status">' +
+      '<p>Couldn’t load the archive right now. You can read everything directly on Substack.</p>' +
+      '<a class="btn-primary" href="' + SUBSTACK_URL + '" target="_blank" rel="noopener">Read on Substack</a>' +
+    '</div>';
+  }
+  function render(list){
+    posts = list.slice().sort(function(a, b){ return b.date - a.date; }); // newest → oldest
+    current = 'all';
+    visible = INITIAL_VISIBLE;
+    tabs.querySelectorAll('.toggle-btn').forEach(function(b){ b.classList.toggle('active', b.getAttribute('data-filter') === 'all'); });
+    renderList();
+  }
+
+  // Load the pre-built archive (data/recap.json) — a plain same-origin fetch, no proxy.
+  // If the file is missing/unreadable, fall back to the "read on Substack" state.
+  function load(){
+    showLoading();
+    fetch(DATA_URL, { cache: 'no-cache' })
+      .then(function(r){ if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(function(list){
+        if (!Array.isArray(list) || !list.length) throw new Error('no posts');
+        render(list.map(mapArchivePost));
+      })
+      .catch(function(){ showError(); });
+  }
+
+  // ---------- filter tabs (reset the visible count for the new filtered list) ----------
+  tabs.addEventListener('click', function(e){
+    var btn = e.target.closest('.toggle-btn');
+    if (!btn) return;
+    current = btn.getAttribute('data-filter');
+    tabs.querySelectorAll('.toggle-btn').forEach(function(b){ b.classList.toggle('active', b === btn); });
+    visible = INITIAL_VISIBLE;
+    renderList();
+  });
+
+  // ---------- load more ----------
+  moreBtn.addEventListener('click', loadMore);
+
+  load();
+})();
+</script>
+
+</body>
+</html>

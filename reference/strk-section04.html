@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>STRK — 04 numbers · Concept A v3</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--black:#0A0A0A;--white:#F5F2EC;--acc:#7C3AED;--acc-2:#A78BFA;--acc-3:#C4B5FD;
+  --up:#34D399;--down:#F0508C;
+  --muted:rgba(245,242,236,0.5);--muted-2:rgba(245,242,236,0.64);--line:rgba(245,242,236,0.10);
+  --card:rgba(245,242,236,0.025);}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--black);color:var(--white);font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px;margin:0 auto;padding:60px 28px 90px}
+.head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.marker{display:flex;align-items:baseline;gap:16px}
+.marker .num{font-family:'IBM Plex Mono',monospace;font-size:14px;color:var(--acc-2);letter-spacing:.1em}
+.marker h2{font-family:'Archivo';font-weight:800;font-stretch:125%;font-size:clamp(28px,4vw,46px);text-transform:uppercase;letter-spacing:-.01em}
+.pill{display:inline-flex;align-items:center;gap:8px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.pill .d{width:7px;height:7px;border-radius:50%;background:var(--acc-2);animation:pulse 2.4s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(167,139,250,.5)}70%{box-shadow:0 0 0 7px rgba(167,139,250,0)}100%{box-shadow:0 0 0 0 rgba(167,139,250,0)}}
+
+.feat{border:1px solid var(--line);border-radius:20px;background:linear-gradient(180deg,rgba(124,58,237,.05),rgba(245,242,236,.02));padding:26px 28px;margin-top:24px}
+.feat-top{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.feat .elabel{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--acc-2)}
+.feat .val{font-family:'Archivo';font-weight:800;font-stretch:115%;font-size:clamp(36px,5vw,54px);line-height:1;margin-top:10px}
+.feat .chgs{display:flex;gap:16px;align-items:center;margin-top:12px;font-family:'IBM Plex Mono',monospace;font-size:12px}
+.feat .chgs span{color:var(--muted)}
+.feat .src a{color:var(--acc-2);text-decoration:none}.feat .src a:hover{text-decoration:underline}
+.up{color:var(--up)}.down{color:var(--down)}
+.ranges{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:rgba(0,0,0,.2)}
+.ranges button{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;padding:8px 12px;background:transparent;color:var(--muted);border:0;cursor:pointer;transition:.15s}
+.ranges button:hover{color:var(--white)}.ranges button.on{background:rgba(124,58,237,.18);color:var(--white)}
+.chartbox{position:relative;margin-top:20px}.chartbox svg{width:100%;height:auto;display:block}
+.tip{position:absolute;pointer-events:none;display:none;background:#101015;border:1px solid rgba(124,58,237,.4);border-radius:10px;padding:8px 11px;transform:translate(-50%,-100%);z-index:4;white-space:nowrap}
+.tip .tv{font-family:'Archivo';font-weight:700;font-size:14px}.tip .tdt{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);margin-top:2px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.chip{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--line);background:var(--card);color:var(--muted-2);border-radius:999px;padding:8px 14px;cursor:pointer;transition:.15s}
+.chip:hover{border-color:rgba(124,58,237,.4);color:var(--white)}.chip.on{background:rgba(124,58,237,.16);border-color:var(--acc);color:var(--white)}
+
+.grp{margin-top:40px}
+.grp.priv{padding-top:34px;border-top:1px solid var(--line)}
+.grp .gl{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.grp.priv .gl{color:var(--acc-2)}
+.cells{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.cells.c3{grid-template-columns:repeat(3,1fr)}
+.cell{position:relative;border:1px solid var(--line);border-radius:16px;overflow:hidden;
+  background:linear-gradient(180deg,rgba(245,242,236,.045),rgba(245,242,236,.012));
+  padding:15px 17px 12px;min-height:140px;display:flex;flex-direction:column;transition:.18s}
+.cell.click{cursor:pointer}
+.cell.click:hover{transform:translateY(-3px);border-color:rgba(124,58,237,.45);box-shadow:0 14px 34px rgba(124,58,237,.13)}
+.cell.active{border-color:var(--acc);background:linear-gradient(180deg,rgba(124,58,237,.13),rgba(124,58,237,.03))}
+.cell-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.cell .cl{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.cell .delta{font-family:'IBM Plex Mono',monospace;font-size:10px;padding:3px 7px;border-radius:999px}
+.cell .delta.up{color:var(--up);background:rgba(52,211,153,.10)}
+.cell .delta.down{color:var(--down);background:rgba(240,80,140,.10)}
+.cell .cv{font-family:'Archivo';font-weight:700;font-stretch:110%;font-size:23px;margin-top:9px;line-height:1}
+.cell .cs{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);margin-top:5px}
+.cell .spark{margin-top:auto;width:100%;height:32px;display:block;opacity:.65;transition:opacity .2s}
+.cell.click:hover .spark{opacity:1}
+.cell .spark path.l{fill:none;stroke:var(--acc-2);stroke-width:2;stroke-linejoin:round;stroke-linecap:round;
+  stroke-dasharray:var(--len);stroke-dashoffset:var(--len);transition:stroke-dashoffset 1.1s cubic-bezier(.22,1,.36,1)}
+.cell.shown .spark path.l{stroke-dashoffset:0}
+
+/* breakdown cards */
+.cell.bd{min-height:auto;cursor:default}
+.bd-list{margin-top:16px;display:flex;flex-direction:column;gap:11px}
+.bd-row{display:grid;grid-template-columns:64px 1fr auto;align-items:center;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:11px}
+.bd-row .bn{color:var(--muted-2);letter-spacing:.04em}
+.bd-row .bar{height:8px;border-radius:4px;background:rgba(245,242,236,.06);overflow:hidden}
+.bd-row .bar i{display:block;height:100%;width:0;border-radius:4px;background:linear-gradient(90deg,var(--acc),var(--acc-2));transition:width .9s cubic-bezier(.22,1,.36,1)}
+.cell.bd.shown .bar i{width:var(--w)}
+.bd-row .bv{color:var(--white)}
+
+@media(prefers-reduced-motion:reduce){.pill .d{animation:none}.cell .spark path.l{transition:none;stroke-dashoffset:0}.bd-row .bar i{transition:none;width:var(--w)}}
+@media(max-width:980px){.cells,.cells.c3{grid-template-columns:repeat(2,1fr)}}
+
+/* metric modal (card click) */
+.modal{position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;padding:24px;background:rgba(5,5,7,.78);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.modal.open{display:flex}
+.mpanel{position:relative;width:min(960px,95vw);max-height:90vh;overflow:auto;border:1px solid rgba(124,58,237,.3);border-radius:20px;background:linear-gradient(180deg,#101015,#0b0b0e);padding:30px 30px 26px;box-shadow:0 30px 80px rgba(0,0,0,.6)}
+.mclose{position:absolute;top:16px;right:16px;width:34px;height:34px;border-radius:10px;border:1px solid var(--line);background:rgba(245,242,236,.04);color:var(--muted-2);font-size:20px;line-height:1;cursor:pointer;transition:.15s;display:flex;align-items:center;justify-content:center}
+.mclose:hover{color:var(--white);border-color:rgba(124,58,237,.5);background:rgba(124,58,237,.12)}
+.mval{font-family:'Archivo';font-weight:800;font-stretch:115%;font-size:clamp(34px,5vw,50px);line-height:1;margin-top:10px}
+.mchartbox{position:relative;margin-top:22px}.mchartbox svg{width:100%;height:auto;display:block}
+@media(prefers-reduced-motion:reduce){.modal{backdrop-filter:none;-webkit-backdrop-filter:none}}
+
+/* ---- supply in circulation (merged) ---- */
+.panel{border:1px solid var(--line);border-radius:20px;background:linear-gradient(180deg,rgba(124,58,237,.05),rgba(245,242,236,.02));padding:26px 28px;margin-top:24px}
+.eyebrow{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--acc-2)}
+.ptitle{font-family:'Archivo';font-weight:700;font-stretch:110%;font-size:24px;text-transform:uppercase;margin:8px 0 4px}
+.supchart{position:relative;margin-top:18px}
+.supchart svg{width:100%;height:auto;display:block;overflow:visible}
+.legend{display:flex;gap:14px 18px;flex-wrap:wrap;margin-top:16px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.04em;color:var(--muted-2)}
+.legend span{display:inline-flex;align-items:center}.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px}
+.stip{position:absolute;pointer-events:none;display:none;background:#0d0d12;border:1px solid rgba(124,58,237,.4);border-radius:12px;padding:12px 14px;z-index:5;width:268px;white-space:normal;box-shadow:0 16px 40px rgba(0,0,0,.6)}
+.stip .brk{margin-top:9px;border-top:1px solid rgba(245,242,236,.1);padding-top:9px;display:flex;flex-direction:column;gap:4px}
+.stip .brow{display:grid;grid-template-columns:9px 1fr auto 34px;gap:8px;align-items:center;font-size:10px;line-height:1.3}
+.stip .brow .bd{width:8px;height:8px;border-radius:2px}
+.stip .brow .bn{color:var(--muted-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stip .brow .bt{font-family:'IBM Plex Mono',monospace;color:#fff}
+.stip .brow .bp{font-family:'IBM Plex Mono',monospace;color:var(--muted);text-align:right}
+.stip .td{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.06em;color:var(--muted);margin-bottom:5px}
+.stip .r{font-family:'IBM Plex Mono',monospace;font-size:11px;display:flex;justify-content:space-between;gap:16px}
+.stip .r b{font-family:'Archivo';font-weight:700}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:22px}
+.kpi{border:1px solid var(--line);border-radius:14px;background:var(--card);padding:16px 18px}
+.kpi .kl{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.kpi .kv{font-family:'Archivo';font-weight:800;font-stretch:110%;font-size:25px;margin-top:8px}
+.kpi .ks{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);margin-top:5px}
+.note{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.03em;color:var(--muted);margin-top:16px;line-height:1.6}
+.note b{color:var(--white)}
+.dist{display:grid;grid-template-columns:1.5fr 1fr;gap:30px;align-items:center;margin-top:18px}
+.donut{position:relative}.donut svg{width:100%;height:auto;display:block;overflow:visible}
+.donut .seg{cursor:pointer;transition:opacity .15s;}
+.donut.dim .seg{opacity:.3}.donut .seg.hot{opacity:1}
+.lab{cursor:pointer;transition:opacity .15s}
+.lab .lname{font-family:'Inter',sans-serif;font-size:12px;font-weight:600;fill:#F5F2EC}
+.lab .lpct{font-family:'IBM Plex Mono',monospace;font-size:11px;fill:rgba(245,242,236,.5)}
+.donut.dim .lab{opacity:.32}.lab.hot{opacity:1}
+.lab.hot .lname{fill:#fff}.lab.hot .lpct{fill:var(--acc-2)}
+.center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;pointer-events:none}
+.center .ct{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.center .cv{font-family:'Archivo';font-weight:800;font-stretch:110%;font-size:26px;margin-top:3px}
+.center .cs{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--acc-2);margin-top:4px;max-width:150px}
+.detail{margin-top:14px;border-top:1px solid var(--line);padding-top:14px;min-height:120px}
+.detail .dt{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.05em;color:var(--muted-2);line-height:1.6}.detail .dt b{color:var(--white);font-family:'Archivo';font-weight:700}
+.detail .dl{font-family:'Archivo';font-weight:700;font-stretch:110%;font-size:15px;text-transform:uppercase;letter-spacing:.01em;margin-bottom:10px}
+.detail .dl span{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.08em;text-transform:uppercase;margin-left:8px;border-radius:999px;padding:1px 6px;vertical-align:middle}
+.detail .dl span.v{color:var(--acc-2);border:1px solid rgba(124,58,237,.4)}
+.detail .dl span.r{color:var(--muted);border:1px solid var(--line)}
+.detail .dg{display:flex;justify-content:space-between;gap:14px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.04em;color:var(--muted);margin-top:6px}
+.detail .dg b{color:var(--white);font-family:'IBM Plex Mono',monospace;font-weight:500}
+@media(max-width:880px){.dist{grid-template-columns:1fr}.kpis{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <div class="marker"><span class="num">— 04</span><h2>The numbers</h2></div>
+    <span class="pill"><span class="d"></span><span id="upd">Updated --:--</span></span>
+  </div>
+
+  <div class="feat">
+    <div class="feat-top">
+      <div>
+        <div class="elabel" id="fLabel">STRK price</div>
+        <div class="val" id="fVal">—</div>
+        <div class="chgs"><span>24H <b id="c24">—</b></span><span>7D <b id="c7">—</b></span><span class="src" id="fSrc"></span></div>
+      </div>
+      <div class="ranges" id="ranges">
+        <button data-r="24H">24H</button><button data-r="7D" class="on">7D</button><button data-r="30D">30D</button><button data-r="1Y">1Y</button><button data-r="ALL">ALL</button>
+      </div>
+    </div>
+    <div class="chartbox" id="chartbox">
+      <svg id="chart" viewBox="0 0 1000 280" preserveAspectRatio="none">
+        <defs><linearGradient id="fill" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#7C3AED" stop-opacity="0.34"/><stop offset="1" stop-color="#7C3AED" stop-opacity="0"/>
+        </linearGradient></defs>
+        <path id="area" fill="url(#fill)"></path>
+        <path id="line" fill="none" stroke="#A78BFA" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"></path>
+        <line id="cross" stroke="rgba(245,242,236,.25)" stroke-width="1" style="display:none"></line>
+        <circle id="cdot" r="4.5" fill="#C4B5FD" style="display:none"></circle>
+      </svg>
+      <div class="tip" id="tip"><div class="tv" id="tipV"></div><div class="tdt" id="tipD"></div></div>
+    </div>
+    <div class="chips" id="chips"></div>
+  </div>
+
+  <div id="groupsTop"></div>
+
+  <div class="grp" id="supply">
+    <div class="gl">Supply in circulation</div>
+    <div class="panel">
+      <div class="eyebrow">Estimated supply in circulation</div>
+      <div class="ptitle">% of STRK on the market over time</div>
+      <div class="supchart" id="ucbox">
+        <svg id="uchart" viewBox="0 0 1000 380"></svg>
+        <div class="stip" id="stip"></div>
+      </div>
+      <div class="legend" id="ulegend"></div>
+      <div class="kpis" id="ukpis"></div>
+      <div class="note">Estimate, calibrated to the reported circulating supply (~65% today). Investors + Early Contributors (38.21% of supply) vest on the published schedule, completing <b>March 15, 2027</b>; the other allocations have no fixed lock-up and are modelled as a gradual release into circulation. Excludes inflation and staking.</div>
+    </div>
+    <div class="panel">
+      <div class="eyebrow">Unlock schedule</div>
+      <div class="ptitle">Tokens entering circulation, month by month</div>
+      <div class="supchart" id="mucbox">
+        <svg id="muchart" viewBox="0 0 1000 300"></svg>
+        <div class="stip" id="mtip2"></div>
+      </div>
+      <div class="legend"><span><i style="background:#A78BFA"></i>Scheduled vesting</span><span><i style="background:#6D4FD0"></i>Estimated release</span><span><i style="background:#F5F2EC"></i>Cumulative supply</span></div>
+      <div class="kpis" id="mukpis"></div>
+      <div class="note">Scheduled vesting (Investors + Early Contributors) is the only contractual monthly unlock: about <b>127M STRK</b> on the 15th of each month until <b>March 15, 2027</b>. The estimated release is the Foundation distributing the remaining allocations over time, with no fixed schedule. Bars show tokens entering circulation each month; the line is cumulative supply reaching 100%.</div>
+    </div>
+    <div class="panel">
+      <div class="ptitle">Planned distribution of STRK</div>
+      <div class="dist">
+        <div class="donut" id="udonut">
+          <svg viewBox="0 0 560 360" id="dsvg"></svg>
+          <div class="center"><div class="ct">Total supply</div><div class="cv">10B</div><div class="cs" id="cHint">Hover a category</div></div>
+        </div>
+        <div class="detail"><div class="dt" id="udetail">Investors and Early Contributors vest until <b>March 15, 2027</b>. The rest is released into circulation as the Foundation allocates it. Hover a category for its unlock detail.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="groupsMid"></div>
+  <div id="privacy"></div>
+  <div id="groupsCapital"></div>
+</div>
+
+<div class="modal" id="modal">
+  <div class="mpanel">
+    <button class="mclose" id="mclose" aria-label="Close">&times;</button>
+    <div class="elabel" id="mLabel">—</div>
+    <div class="mval" id="mVal">—</div>
+    <div class="chgs"><span>24H <b id="mc24">—</b></span><span>7D <b id="mc7">—</b></span><span class="src" id="mSrc"></span></div>
+    <div class="ranges" id="mranges">
+      <button data-r="24H">24H</button><button data-r="7D" class="on">7D</button><button data-r="30D">30D</button><button data-r="1Y">1Y</button><button data-r="ALL">ALL</button>
+    </div>
+    <div class="mchartbox" id="mchartbox">
+      <svg id="mchart" viewBox="0 0 1000 340" preserveAspectRatio="none">
+        <defs><linearGradient id="mfill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7C3AED" stop-opacity="0.34"/><stop offset="1" stop-color="#7C3AED" stop-opacity="0"/></linearGradient></defs>
+        <path id="marea" fill="url(#mfill)"></path>
+        <path id="mline" fill="none" stroke="#A78BFA" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"></path>
+        <line id="mcross" stroke="rgba(245,242,236,.25)" stroke-width="1" style="display:none"></line>
+        <circle id="mcdot" r="4.5" fill="#C4B5FD" style="display:none"></circle>
+      </svg>
+      <div class="tip" id="mtip"><div class="tv" id="mtipV"></div><div class="tdt" id="mtipD"></div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+function walk(seed,n){const r=mulberry32(seed);let v=0;const o=[];for(let i=0;i<n;i++){v+=(r()-0.46)*1;o.push(v);}return o;}
+const RANGES={'24H':{n:24,days:1},'7D':{n:30,days:7},'30D':{n:30,days:30},'1Y':{n:52,days:365},'ALL':{n:60,days:900}};
+
+const M=[
+ {k:'price',label:'STRK price',grp:null,type:'price',value:0.1342,chart:true},
+ {k:'mcap',label:'Market cap',grp:'market',type:'usd',value:512e6,chart:true},
+ {k:'fdv',label:'FDV',grp:'market',type:'usd',value:1.34e9,chart:false},
+ {k:'circ',label:'Circulating',grp:'market',type:'amt',value:3.82e9,chart:false},
+ {k:'supply',label:'Total supply',grp:'market',type:'amt',value:10.0e9,chart:false},
+ {k:'pf',label:'P/F ratio',grp:'market',type:'ratiox',value:38,sub:'circulating',chart:false},
+ {k:'strkstaked',label:'STRK staked',grp:'staking',type:'amtstrk',value:1.18e9,sub:'$158.0M',chart:true},
+ {k:'btcstaked',label:'BTC staked',grp:'staking',type:'btc',value:1400,sub:'$152.0M',chart:true},
+ {k:'valuestaked',label:'Total value staked',grp:'staking',type:'usd',value:310e6,chart:true},
+ {k:'circstaked',label:'% circulating staked',grp:'staking',type:'pct',value:30.9,sub:'of circulating',chart:true},
+ {k:'dailyusers',label:'Daily users',grp:'network',type:'num',value:42000,chart:true},
+ {k:'weeklyusers',label:'Weekly users',grp:'network',type:'num',value:180000,chart:true},
+ {k:'monthlyusers',label:'Monthly users',grp:'network',type:'num',value:520000,chart:true},
+ {k:'totaltx',label:'Total TX',grp:'network',type:'num',value:480e6,chart:true,cumulative:true},
+ {k:'tps',label:'TPS (avg)',grp:'network',type:'tps',value:8.4,chart:true},
+ {k:'peaktps',label:'Peak TPS',grp:'network',type:'tps',value:127,chart:false},
+ {k:'blocktime',label:'Block time',grp:'network',type:'sec',value:30,chart:false},
+ {k:'downloads',label:'StarkZap downloads',grp:'network',type:'num',value:38200,chart:true,cumulative:true,source:{name:'StarkZap',url:'https://welttowelt.github.io/starkzap-stats/'}},
+ {k:'tvl',label:'TVL',grp:'capital',type:'usd',value:340e6,chart:true},
+ {k:'tvs',label:'TVS',grp:'capital',type:'usd',value:610e6,chart:true},
+ {k:'stables',label:'Stablecoins',grp:'capital',type:'usd',value:96e6,chart:true},
+ {k:'netflow',label:'Total netflow (30D)',grp:'capital',type:'usdflow',value:24e6,chart:true,source:{name:'Artemis',url:'https://app.artemis.xyz/'}},
+ {k:'apprev',label:'App revenue (30D)',grp:'capital',type:'usd',value:1.9e6,chart:true},
+ {k:'chainrev',label:'Chain revenue (30D)',grp:'capital',type:'usd',value:3.2e6,chart:true},
+ // privacy scalars
+ {k:'p_tvl',label:'TVL in STRK20 pool',grp:'privacy',type:'usd',value:42e6,chart:true},
+ {k:'p_rev',label:'Revenue from STRK20 (30D)',grp:'privacy',type:'usd',value:280e3,chart:true},
+ {k:'p_tx',label:'Private TX (daily)',grp:'privacy',type:'num',value:6800,chart:true},
+];
+const BREAKDOWNS=[
+ {label:'Private swap volume · by token',items:[['ETH',12.4e6],['USDC',9.1e6],['STRK',5.6e6],['WBTC',3.2e6],['Other',1.8e6]]},
+ {label:'DeFi volume privately routed · by protocol',items:[['Ekubo',8.7e6],['AVNU',6.2e6],['Vesu',4.1e6],['Nostra',2.3e6]]},
+ {label:'Shielded balance · by token',items:[['ETH',18.0e6],['USDC',12.5e6],['STRK',7.4e6],['WBTC',4.1e6]]},
+];
+
+const map={};
+M.forEach((m,i)=>{map[m.k]=m; if(!m.chart) return; m.series={};
+  for(const[rk,rc]of Object.entries(RANGES)){
+    const n=rc.n, spread=rk==='ALL'?0.55:rk==='1Y'?0.42:rk==='30D'?0.18:rk==='7D'?0.09:0.04; let v;
+    if(m.cumulative){const r=mulberry32(i*13+rk.length+3);let acc=0;const arr=[];for(let j=0;j<n;j++){acc+=0.3+r();arr.push(acc);}const mn=arr[0],mx=arr[arr.length-1];v=arr.map(x=>m.value*(1-spread)+(x-mn)/(mx-mn)*m.value*spread);}
+    else{const base=walk(i*9+3,64),seg=base.slice(64-n),mn=Math.min(...seg),mx=Math.max(...seg);const norm=seg.map(x=>mx>mn?(x-mn)/(mx-mn):0.5);v=norm.map(x=>m.value*(1-spread)+x*m.value*spread*1.5);const kk=m.value/v[v.length-1];v=v.map(x=>x*kk);}
+    m.series[rk]=v;
+  }
+});
+function abbr(v){v=Math.abs(v);if(v>=1e9)return (v/1e9).toFixed(2)+'B';if(v>=1e6)return (v/1e6).toFixed(1)+'M';if(v>=1e3)return (v/1e3).toFixed(1)+'K';return Math.round(v).toString();}
+function fmt(m,v){
+  if(m.type==='price')return '$'+v.toFixed(4);
+  if(m.type==='pct')return v.toFixed(1)+'%';
+  if(m.type==='btc')return (v>=1000?(v/1000).toFixed(1)+'K':Math.round(v))+' BTC';
+  if(m.type==='amtstrk')return abbr(v)+' STRK';
+  if(m.type==='amt'||m.type==='num')return abbr(v);
+  if(m.type==='tps')return (v>=100?Math.round(v):v.toFixed(1))+' TPS';
+  if(m.type==='sec')return (v>=10?Math.round(v):v.toFixed(1))+'s';
+  if(m.type==='ratiox')return v.toFixed(1)+'x';
+  if(m.type==='usdflow')return (v>=0?'+':'-')+'$'+abbr(v);
+  return '$'+abbr(v);
+}
+function chg(a){return (a[a.length-1]-a[0])/a[0]*100;}
+function deltaHtml(p){return '<span class="delta '+(p>=0?'up':'down')+'">'+(p>=0?'▲ ':'▼ ')+Math.abs(p).toFixed(1)+'%</span>';}
+function badge(id,p){document.getElementById(id).outerHTML='<b id="'+id+'" class="'+(p>=0?'up':'down')+'">'+(p>=0?'+':'')+p.toFixed(1)+'%</b>';}
+function spark(m){const vals=m.series['30D'],W=120,H=32,p=4,mn=Math.min(...vals),mx=Math.max(...vals),rng=(mx-mn)||1;
+  const d=vals.map((v,i)=>(i?'L':'M')+(i/(vals.length-1)*W).toFixed(1)+','+(H-p-(v-mn)/rng*(H-2*p)).toFixed(1)).join(' ');
+  return `<svg class="spark" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"><path class="l" d="${d}"/></svg>`;}
+function renderCell(m){const click=m.chart?'click':'',dk=m.chart?`data-k="${m.k}"`:'';
+  const delta=m.chart?deltaHtml(chg(m.series['7D'])):'';const sp=m.chart?spark(m):'';
+  return `<div class="cell ${click}" ${dk}><div class="cell-top"><span class="cl">${m.label}</span>${delta}</div><div class="cv">${fmt(m,m.value)}</div>${m.sub?`<div class="cs">${m.sub}</div>`:''}${sp}</div>`;}
+function renderBreakdown(b){const max=Math.max(...b.items.map(x=>x[1]));
+  const rows=b.items.map(([n,v])=>`<div class="bd-row"><span class="bn">${n}</span><span class="bar"><i style="--w:${(v/max*100).toFixed(0)}%"></i></span><span class="bv">$${abbr(v)}</span></div>`).join('');
+  return `<div class="cell bd"><div class="cl">${b.label}</div><div class="bd-list">${rows}</div></div>`;}
+
+let curK='price',curR='7D',PTS=[];
+const chart=document.getElementById('chart'),area=document.getElementById('area'),line=document.getElementById('line');
+const cross=document.getElementById('cross'),cdot=document.getElementById('cdot');
+const tip=document.getElementById('tip'),tipV=document.getElementById('tipV'),tipD=document.getElementById('tipD');
+function labelFor(i,n,days){const now=new Date(),back=(n-1-i)*(days/(n-1)),d=new Date(now.getTime()-back*86400000);
+  if(days<=1)return d.getHours().toString().padStart(2,'0')+':00';return d.getDate()+' '+d.toLocaleString('en',{month:'short'});}
+function draw(){const m=map[curK],vals=m.series[curR],W=1000,H=280,pT=18,pB=18;
+  const mn=Math.min(...vals),mx=Math.max(...vals),rng=(mx-mn)||1;
+  PTS=vals.map((v,i)=>({x:i/(vals.length-1)*W,y:H-pB-(v-mn)/rng*(H-pT-pB),v}));
+  const ln=PTS.map((p,i)=>(i?'L':'M')+p.x.toFixed(1)+','+p.y.toFixed(1)).join(' ');
+  line.setAttribute('d',ln);area.setAttribute('d',ln+` L ${W},${H} L 0,${H} Z`);
+  document.getElementById('fLabel').textContent=m.label;document.getElementById('fVal').textContent=fmt(m,m.value);
+  badge('c24',chg(m.series['24H']));badge('c7',chg(m.series['7D']));
+  document.getElementById('fSrc').innerHTML=m.source?`· Source: <a href="${m.source.url}" target="_blank" rel="noopener noreferrer">${m.source.name} ↗</a>`:'';}
+function setMetric(k){curK=k;document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('on',c.dataset.k===k));
+  document.querySelectorAll('.cell.click').forEach(c=>c.classList.toggle('active',c.dataset.k===k));draw();}
+function setRange(r){curR=r;document.querySelectorAll('#ranges button').forEach(b=>b.classList.toggle('on',b.dataset.r===r));draw();}
+
+const chipKeys=M.filter(m=>m.chart).map(m=>m.k);
+document.getElementById('chips').innerHTML=chipKeys.map((k,i)=>`<button class="chip${i===0?' on':''}" data-k="${k}">${map[k].label}</button>`).join('');
+
+function groupHtml(g,lbl){let cells=M.filter(m=>m.grp===g).map(renderCell).join('');
+  if(g==='market')cells+=renderCell(map['circstaked']); // also show % circulating staked in Market
+  return `<div class="grp"><div class="gl">${lbl}</div><div class="cells">${cells}</div></div>`;}
+document.getElementById('groupsTop').innerHTML=groupHtml('market','Market');
+document.getElementById('groupsMid').innerHTML=[['staking','Staking · secured by STRK and BTC'],['network','Network activity']].map(([g,lbl])=>groupHtml(g,lbl)).join('');
+document.getElementById('groupsCapital').innerHTML=groupHtml('capital','Capital & flows');
+
+const pv=M.filter(m=>m.grp==='privacy').map(renderCell).join('');
+const bd=BREAKDOWNS.map(renderBreakdown).join('');
+document.getElementById('privacy').innerHTML=`<div class="grp priv"><div class="gl">Privacy · STRK20</div><div class="cells c3">${pv}</div><div class="cells c3" style="margin-top:16px">${bd}</div></div>`;
+
+document.querySelectorAll('.chip').forEach(c=>c.onclick=()=>setMetric(c.dataset.k));
+document.querySelectorAll('#ranges button').forEach(b=>b.onclick=()=>setRange(b.dataset.r));
+document.querySelectorAll('.cell.click').forEach(c=>c.onclick=()=>openModal(c.dataset.k));
+
+document.querySelectorAll('.cell .spark path.l').forEach(p=>p.style.setProperty('--len',p.getTotalLength()));
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('shown');io.unobserve(e.target);}}),{threshold:.2});
+document.querySelectorAll('.cell').forEach(c=>io.observe(c));
+
+chart.addEventListener('mousemove',e=>{const r=chart.getBoundingClientRect(),vx=(e.clientX-r.left)/r.width*1000;
+  let i=Math.round(vx/1000*(PTS.length-1));i=Math.max(0,Math.min(PTS.length-1,i));const p=PTS[i];
+  cross.style.display='block';cross.setAttribute('x1',p.x);cross.setAttribute('x2',p.x);cross.setAttribute('y1',0);cross.setAttribute('y2',280);
+  cdot.style.display='block';cdot.setAttribute('cx',p.x);cdot.setAttribute('cy',p.y);
+  const px=p.x/1000*r.width,py=p.y/280*r.height;tip.style.display='block';tip.style.left=px+'px';tip.style.top=(py-12)+'px';
+  tipV.textContent=fmt(map[curK],p.v);tipD.textContent=labelFor(i,PTS.length,RANGES[curR].days);});
+chart.addEventListener('mouseleave',()=>{cross.style.display='none';cdot.style.display='none';tip.style.display='none';});
+
+/* ---- metric modal (card click -> zoomed chart) ---- */
+const modal=document.getElementById('modal');
+const marea=document.getElementById('marea'),mline=document.getElementById('mline');
+const mcross=document.getElementById('mcross'),mcdot=document.getElementById('mcdot');
+const mtip=document.getElementById('mtip'),mtipV=document.getElementById('mtipV'),mtipD=document.getElementById('mtipD');
+const mchart=document.getElementById('mchart');
+let mCurK='price',mCurR='7D',MPTS=[];
+function mDraw(){const m=map[mCurK],vals=m.series[mCurR],W=1000,H=340,pT=18,pB=18;
+  const mn=Math.min(...vals),mx=Math.max(...vals),rng=(mx-mn)||1;
+  MPTS=vals.map((v,i)=>({x:i/(vals.length-1)*W,y:H-pB-(v-mn)/rng*(H-pT-pB),v}));
+  const ln=MPTS.map((p,i)=>(i?'L':'M')+p.x.toFixed(1)+','+p.y.toFixed(1)).join(' ');
+  mline.setAttribute('d',ln);marea.setAttribute('d',ln+` L ${W},${H} L 0,${H} Z`);
+  document.getElementById('mLabel').textContent=m.label;document.getElementById('mVal').textContent=fmt(m,m.value);
+  badge('mc24',chg(m.series['24H']));badge('mc7',chg(m.series['7D']));
+  document.getElementById('mSrc').innerHTML=m.source?`· Source: <a href="${m.source.url}" target="_blank" rel="noopener noreferrer">${m.source.name} ↗</a>`:'';}
+function mSetRange(r){mCurR=r;document.querySelectorAll('#mranges button').forEach(b=>b.classList.toggle('on',b.dataset.r===r));mDraw();}
+function openModal(k){if(!map[k]||!map[k].chart)return;mCurK=k;mSetRange('7D');modal.classList.add('open');document.body.style.overflow='hidden';}
+function closeModal(){modal.classList.remove('open');document.body.style.overflow='';}
+document.getElementById('mclose').onclick=closeModal;
+modal.addEventListener('click',e=>{if(e.target===modal)closeModal();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modal.classList.contains('open'))closeModal();});
+document.querySelectorAll('#mranges button').forEach(b=>b.onclick=()=>mSetRange(b.dataset.r));
+mchart.addEventListener('mousemove',e=>{const r=mchart.getBoundingClientRect(),vx=(e.clientX-r.left)/r.width*1000;
+  let i=Math.round(vx/1000*(MPTS.length-1));i=Math.max(0,Math.min(MPTS.length-1,i));const p=MPTS[i];
+  mcross.style.display='block';mcross.setAttribute('x1',p.x);mcross.setAttribute('x2',p.x);mcross.setAttribute('y1',0);mcross.setAttribute('y2',340);
+  mcdot.style.display='block';mcdot.setAttribute('cx',p.x);mcdot.setAttribute('cy',p.y);
+  const px=p.x/1000*r.width,py=p.y/340*r.height;mtip.style.display='block';mtip.style.left=px+'px';mtip.style.top=(py-12)+'px';
+  mtipV.textContent=fmt(map[mCurK],p.v);mtipD.textContent=labelFor(i,MPTS.length,RANGES[mCurR].days);});
+mchart.addEventListener('mouseleave',()=>{mcross.style.display='none';mcdot.style.display='none';mtip.style.display='none';});
+
+const now=new Date();document.getElementById('upd').textContent='Updated '+now.toLocaleString('en',{hour:'numeric',minute:'2-digit'});
+setMetric('price');setRange('7D');
+
+/* ---- supply in circulation (isolated) ---- */
+(function(){
+const SUPPLY=10e9, INV=18.17, EARLY=20.04, VEST=INV+EARLY;
+function buildVest(){const a=[];let c=0;for(let i=0;i<48;i++){let inc=0;if(i>=3&&i<=14)inc=0.64;else if(i>=15&&i<=38)inc=1.27;c=Math.min(c+inc,VEST);a.push(c);}return a;}
+const VS=buildVest();const MONTHS=96;const KCAL=1.10; /* calibrates non-vesting release so today ~= reported circulating (~65%) */
+function vestOwn(i){return i<48?VS[i]/VEST:1;}
+function fracAt(an,i){if(i<=an[0][0])return an[0][1];for(let k=1;k<an.length;k++){if(i<=an[k][0]){const[a,b]=an[k-1],[c,d]=an[k];return b+(d-b)*(i-a)/(c-a);}}return 1;}
+const CATS=[
+ {n:'StarkWare',p:10.76,c:'#1E2A6B',an:[[0,.10],[12,.35],[24,.60],[36,.80],[48,.95],[60,1]]},
+ {n:'Investors',p:18.17,c:'#4C3A98',vest:true},
+ {n:'Early Contributors',p:20.04,c:'#6D4FD0',vest:true},
+ {n:'Foundation Treasury',p:8.10,c:'#8B5CF6',an:[[0,.05],[12,.16],[24,.32],[36,.48],[48,.62],[72,.86],[84,1]]},
+ {n:'Strategic Reserves',p:10.00,c:'#A78BFA',an:[[0,.05],[12,.16],[24,.32],[36,.48],[48,.62],[60,.76],[72,.90],[84,1]]},
+ {n:'Donations',p:2.00,c:'#C4A0E8',an:[[0,0],[12,.10],[24,.26],[36,.42],[48,.56],[72,.82],[84,1]]},
+ {n:'Grants',p:12.93,c:'#E0719F',an:[[0,.05],[12,.20],[24,.40],[36,.62],[48,.78],[60,.88],[72,.96],[84,1]]},
+ {n:'Rebates',p:9.00,c:'#F0508C',an:[[0,.10],[12,.32],[24,.52],[36,.68],[48,.82],[72,.95],[84,1]]},
+ {n:'Provisions',p:9.00,c:'#F9A8C8',an:[[0,.55],[6,.80],[12,.90],[24,.97],[36,1]]},
+];
+CATS.forEach(c=>{c.cont=[];for(let i=0;i<MONTHS;i++){const f=c.vest?vestOwn(i):Math.min(fracAt(c.an,i)*KCAL,1);c.cont[i]=c.p*Math.min(f,1);}});
+let acc=new Array(MONTHS).fill(0);
+CATS.forEach(c=>{c.lo=acc.slice();acc=acc.map((v,i)=>v+c.cont[i]);c.hi=acc.slice();});
+const TOTAL=acc;
+const now=new Date();const TODAY_I=Math.max(0,Math.min(MONTHS-1,(now.getFullYear()-2024)*12+now.getMonth()));
+function bTok(p){return (p/100*SUPPLY/1e9).toFixed(2)+'B';}
+const uchart=document.getElementById('uchart');
+const PL=46,PR=940,PT=22,PB=320,YMAX=100;
+function X(i){return PL+i/(MONTHS-1)*(PR-PL);}
+function Y(p){return PB-p/YMAX*(PB-PT);}
+function area(lo,hi){let d='M'+X(0).toFixed(1)+','+Y(hi[0]).toFixed(1);
+  for(let i=1;i<MONTHS;i++)d+=' L'+X(i).toFixed(1)+','+Y(hi[i]).toFixed(1);
+  for(let i=MONTHS-1;i>=0;i--)d+=' L'+X(i).toFixed(1)+','+Y(lo[i]).toFixed(1);return d+' Z';}
+function drawChart(){let s='';
+  for(let g=0;g<=100;g+=20){s+=`<line x1="${PL}" y1="${Y(g)}" x2="${PR}" y2="${Y(g)}" stroke="rgba(245,242,236,.07)"/><text x="${PL-10}" y="${Y(g)+4}" text-anchor="end" font-family="IBM Plex Mono" font-size="11" fill="rgba(245,242,236,.4)">${g}%</text>`;}
+  for(let yr=2024;yr<=2031;yr++){const i=(yr-2024)*12;s+=`<text x="${X(i)}" y="${PB+24}" text-anchor="middle" font-family="IBM Plex Mono" font-size="11" fill="rgba(245,242,236,.4)">${yr}</text>`;}
+  CATS.forEach(c=>{s+=`<path d="${area(c.lo,c.hi)}" fill="${c.c}" fill-opacity="0.92"/>`;});
+  let ln='M'+X(0)+','+Y(TOTAL[0]);for(let i=1;i<MONTHS;i++)ln+=' L'+X(i).toFixed(1)+','+Y(TOTAL[i]).toFixed(1);
+  s+=`<path d="${ln}" fill="none" stroke="#F5F2EC" stroke-opacity=".5" stroke-width="1.5"/>`;
+  const tx=X(TODAY_I);
+  s+=`<line x1="${tx}" y1="${PT-6}" x2="${tx}" y2="${PB}" stroke="#F0508C" stroke-width="1.5" stroke-dasharray="3 3"/><text x="${tx}" y="${PT-12}" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" letter-spacing="1.5" fill="#F0508C">TODAY</text><circle cx="${tx}" cy="${Y(TOTAL[TODAY_I])}" r="4.5" fill="#F0508C"/>`;
+  s+=`<line id="ux" stroke="rgba(245,242,236,.3)" stroke-width="1" style="display:none"/><circle id="ud" r="4" fill="#fff" style="display:none"/>`;
+  s+=`<rect id="uover" x="${PL}" y="${PT}" width="${PR-PL}" height="${PB-PT}" fill="transparent"/>`;
+  uchart.innerHTML=s;
+}
+drawChart();
+document.getElementById('ulegend').innerHTML=CATS.map(c=>`<span><i style="background:${c.c}"></i>${c.n}</span>`).join('');
+const tToday=TOTAL[TODAY_I], rem=100-tToday;
+document.getElementById('ukpis').innerHTML=`
+ <div class="kpi"><div class="kl">In circulation today</div><div class="kv">${tToday.toFixed(1)}%</div><div class="ks">${bTok(tToday)} STRK (est.)</div></div>
+ <div class="kpi"><div class="kl">Still to enter</div><div class="kv">${rem.toFixed(1)}%</div><div class="ks">${bTok(rem)} STRK to come</div></div>
+ <div class="kpi"><div class="kl">Near full circulation</div><div class="kv">~2031</div><div class="ks">vesting ends Mar 2027</div></div>`;
+const stip=document.getElementById('stip');
+uchart.addEventListener('mousemove',e=>{const r=uchart.getBoundingClientRect();const vx=(e.clientX-r.left)/r.width*1000;
+  let i=Math.round((vx-PL)/(PR-PL)*(MONTHS-1));i=Math.max(0,Math.min(MONTHS-1,i));
+  const ux=document.getElementById('ux'),ud=document.getElementById('ud');
+  ux.style.display='block';ux.setAttribute('x1',X(i));ux.setAttribute('x2',X(i));ux.setAttribute('y1',PT);ux.setAttribute('y2',PB);
+  ud.style.display='block';ud.setAttribute('cx',X(i));ud.setAttribute('cy',Y(TOTAL[i]));
+  const d=new Date(2024,i,1),tot=TOTAL[i],re=100-tot;
+  const tkf=v=>{const t=v/100*SUPPLY;return t>=1e9?(t/1e9).toFixed(2)+'B':(t/1e6).toFixed(0)+'M';};
+  let rows='';CATS.forEach(c=>{const prog=c.p>0?Math.min(c.cont[i]/c.p*100,100):0;
+    rows+=`<div class="brow"><span class="bd" style="background:${c.c}"></span><span class="bn">${c.n}</span><span class="bt">${tkf(c.cont[i])}</span><span class="bp">${prog.toFixed(0)}%</span></div>`;});
+  stip.style.display='block';
+  const px=X(i)/1000*r.width;
+  stip.style.top='50%';
+  if(px<r.width*0.55){stip.style.left=(px+18)+'px';stip.style.transform='translateY(-50%)';}
+  else{stip.style.left=(px-18)+'px';stip.style.transform='translate(-100%,-50%)';}
+  stip.innerHTML=`<div class="td">${d.toLocaleString('en',{month:'short',year:'numeric'})}</div>
+   <div class="r"><span style="color:var(--acc-2)">In circulation</span><b>${tot.toFixed(1)}% · ${bTok(tot)}</b></div>
+   <div class="r"><span style="color:var(--muted)">Still to enter</span><b>${re.toFixed(1)}% · ${bTok(re)}</b></div>
+   <div class="brk">${rows}</div>`;});
+uchart.addEventListener('mouseleave',()=>{stip.style.display='none';document.getElementById('ux').style.display='none';document.getElementById('ud').style.display='none';});
+
+/* donut */
+const dsvg=document.getElementById('dsvg'),cx=280,cy=180,R=116,Ri=74,RL=150;let a=-Math.PI/2;
+function arc(a0,a1){const pol=(an,rad)=>[cx+rad*Math.cos(an),cy+rad*Math.sin(an)];const lg=(a1-a0)>Math.PI?1:0;
+  const[x0,y0]=pol(a0,R),[x1,y1]=pol(a1,R),[x2,y2]=pol(a1,Ri),[x3,y3]=pol(a0,Ri);
+  return `M${x0.toFixed(1)},${y0.toFixed(1)} A${R},${R} 0 ${lg} 1 ${x1.toFixed(1)},${y1.toFixed(1)} L${x2.toFixed(1)},${y2.toFixed(1)} A${Ri},${Ri} 0 ${lg} 0 ${x3.toFixed(1)},${y3.toFixed(1)} Z`;}
+let segs='',labs='';
+CATS.forEach((c,i)=>{const frac=c.p/100,a1=a+frac*Math.PI*2,mid=a+frac*Math.PI;
+  segs+=`<path class="seg" data-i="${i}" d="${arc(a,a1)}" fill="${c.c}"/>`;
+  const co=Math.cos(mid),si=Math.sin(mid),right=co>=0,anc=right?'start':'end',ox=right?6:-6;
+  const lx1=cx+(R+2)*co,ly1=cy+(R+2)*si,lx2=cx+(RL-12)*co,ly2=cy+(RL-12)*si,tx=cx+RL*co+ox,ty=cy+RL*si;
+  labs+=`<g class="lab" data-i="${i}"><line x1="${lx1.toFixed(1)}" y1="${ly1.toFixed(1)}" x2="${lx2.toFixed(1)}" y2="${ly2.toFixed(1)}" stroke="${c.c}" stroke-width="1.5"/><text x="${tx.toFixed(1)}" y="${(ty-2).toFixed(1)}" text-anchor="${anc}" class="lname">${c.n}</text><text x="${tx.toFixed(1)}" y="${(ty+13).toFixed(1)}" text-anchor="${anc}" class="lpct">${c.p.toFixed(2)}%</text></g>`;
+  a=a1;});
+dsvg.innerHTML=segs+labs;
+function tok(p){const t=p/100*SUPPLY;return t>=1e9?(t/1e9).toFixed(2)+'B':(t/1e6).toFixed(0)+'M';}
+function lastIdx(c){return c.vest?38:c.an[c.an.length-1][0];}
+function relFrac(c,i){return c.vest?vestOwn(i):Math.min(fracAt(c.an,i)*KCAL,1);}
+function dateLbl(c){if(c.vest)return 'March 15, 2027';const d=new Date(2024,lastIdx(c),15);return '~'+d.toLocaleString('en',{month:'short',year:'numeric'});}
+const donut=document.getElementById('udonut'),detail=document.getElementById('udetail'),cHint=document.getElementById('cHint');
+function hot(i){donut.classList.add('dim');document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>s.classList.toggle('hot',+s.dataset.i===i));
+  const c=CATS[i];cHint.textContent=c.n;
+  const rf=Math.min(relFrac(c,TODAY_I),1),unl=rf*100,remn=(1-rf)*100;
+  const tag=c.vest?'<span class="v">vesting</span>':'<span class="r">releasing</span>';
+  detail.innerHTML=`<div class="dt">
+    <div class="dl">${c.n}${tag}</div>
+    <div class="dg"><span>Allocation</span><b>${c.p.toFixed(2)}% of total · ${tok(c.p)} STRK</b></div>
+    <div class="dg"><span>Unlocked so far</span><b>${unl.toFixed(1)}% · ${tok(c.p*rf)} STRK</b></div>
+    <div class="dg"><span>Still to unlock</span><b>${remn.toFixed(1)}% · ${tok(c.p*(1-rf))} STRK</b></div>
+    <div class="dg"><span>Last unlock</span><b>${dateLbl(c)}</b></div>
+  </div>`;}
+function unhot(){donut.classList.remove('dim');document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>s.classList.remove('hot'));cHint.textContent='Hover a category';detail.innerHTML='<div class="dt">Investors and Early Contributors vest until <b>March 15, 2027</b>. The rest is released into circulation as the Foundation allocates it. Hover a category for its unlock detail.</div>';}
+document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{s.addEventListener('mouseenter',()=>hot(+s.dataset.i));s.addEventListener('mouseleave',unhot);});
+
+/* ---- monthly unlock schedule ---- */
+(function(){
+  const muchart=document.getElementById('muchart');if(!muchart)return;
+  const mtip=document.getElementById('mtip2');
+  const start=TODAY_I,end=MONTHS-1,n=end-start+1;
+  const aL=46,aR=948,aT=18,aB=252;
+  const bw=Math.max(3,(aR-aL)/n*0.62);
+  const vAt=i=>i<0?0:(i<48?VS[i]:VS[47]);
+  let maxD=0;const rows=[];
+  for(let k=0;k<n;k++){const i=start+k;
+    const totD=Math.max(0,TOTAL[i]-(TOTAL[i-1]??0));
+    const vD=Math.max(0,vAt(i)-vAt(i-1));
+    const estD=Math.max(0,totD-vD);
+    rows.push({i,totD,vD,estD,cum:TOTAL[i]});if(totD>maxD)maxD=totD;}
+  maxD=(maxD||1)*1.12;
+  const bx=k=>aL+(n>1?k/(n-1):0)*(aR-aL);
+  const byB=v=>aB-v/maxD*(aB-aT);
+  const byC=p=>aB-p/100*(aB-aT);
+  const tok=p=>{const t=p/100*SUPPLY;return t>=1e9?(t/1e9).toFixed(2)+'B':Math.round(t/1e6)+'M';};
+  let s='';
+  [0,50,100].forEach(g=>{s+=`<line x1="${aL}" y1="${byC(g).toFixed(1)}" x2="${aR}" y2="${byC(g).toFixed(1)}" stroke="rgba(245,242,236,.06)"/><text x="${aR+6}" y="${(byC(g)+3).toFixed(1)}" font-family="IBM Plex Mono,monospace" font-size="10" fill="rgba(245,242,236,.35)">${g}%</text>`;});
+  for(let yr=2026;yr<=2031;yr++){const idx=(yr-2024)*12;if(idx>=start&&idx<=end){const k=idx-start;s+=`<line x1="${bx(k).toFixed(1)}" y1="${aT}" x2="${bx(k).toFixed(1)}" y2="${aB}" stroke="rgba(245,242,236,.05)"/><text x="${bx(k).toFixed(1)}" y="${aB+22}" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="10" fill="rgba(245,242,236,.4)">${yr}</text>`;}}
+  rows.forEach((r,k)=>{const x=(bx(k)-bw/2).toFixed(1);const yT=byB(r.totD),yV=byB(r.vD);
+    if(r.totD-r.vD>0.001)s+=`<rect x="${x}" y="${yT.toFixed(1)}" width="${bw.toFixed(1)}" height="${(yV-yT).toFixed(1)}" fill="#6D4FD0" fill-opacity="0.6" rx="1"/>`;
+    if(r.vD>0.001)s+=`<rect x="${x}" y="${yV.toFixed(1)}" width="${bw.toFixed(1)}" height="${(aB-yV).toFixed(1)}" fill="#A78BFA" rx="1"/>`;});
+  let ln='';rows.forEach((r,k)=>{ln+=(k?'L':'M')+bx(k).toFixed(1)+','+byC(r.cum).toFixed(1)+' ';});
+  s+=`<path d="${ln}" fill="none" stroke="#F5F2EC" stroke-opacity=".55" stroke-width="1.5"/>`;
+  s+=`<line id="muhl" x1="0" y1="${aT}" x2="0" y2="${aB}" stroke="rgba(245,242,236,.25)" stroke-width="1" style="display:none"/>`;
+  muchart.innerHTML=s;
+  const now=new Date();let nu=new Date(now.getFullYear(),now.getMonth(),15);if(nu<=now)nu=new Date(now.getFullYear(),now.getMonth()+1,15);
+  document.getElementById('mukpis').innerHTML=
+    `<div class="kpi"><div class="kl">Next unlock</div><div class="kv">~127M</div><div class="ks">${nu.toLocaleString('en',{month:'short',day:'numeric',year:'numeric'})}</div></div>`+
+    `<div class="kpi"><div class="kl">Vesting rate</div><div class="kv">~127M</div><div class="ks">per month · until Mar 2027</div></div>`+
+    `<div class="kpi"><div class="kl">Full circulation</div><div class="kv">~2031</div><div class="ks">remaining via Foundation release</div></div>`;
+  const hl=document.getElementById('muhl');
+  muchart.addEventListener('mousemove',e=>{const r=muchart.getBoundingClientRect();const vx=(e.clientX-r.left)/r.width*1000;
+    let k=Math.round((vx-aL)/(aR-aL)*(n-1));k=Math.max(0,Math.min(n-1,k));const row=rows[k];const d=new Date(2024,row.i,1);
+    hl.style.display='block';hl.setAttribute('x1',bx(k).toFixed(1));hl.setAttribute('x2',bx(k).toFixed(1));
+    mtip.style.display='block';const px=bx(k)/1000*r.width;
+    mtip.style.top='8px';
+    if(px<r.width*0.6){mtip.style.left=(px+14)+'px';mtip.style.transform='translateX(0)';}
+    else{mtip.style.left=(px-14)+'px';mtip.style.transform='translateX(-100%)';}
+    mtip.innerHTML=`<div class="td">${d.toLocaleString('en',{month:'short',year:'numeric'})}</div>
+      <div class="r"><span style="color:#A78BFA">Scheduled vesting</span><b>${row.vD>0.001?tok(row.vD):'—'}</b></div>
+      <div class="r"><span style="color:#A78BFA;opacity:.8">Estimated release</span><b>${row.estD>0.001?tok(row.estD):'—'}</b></div>
+      <div class="r"><span style="color:var(--muted)">This month</span><b>${tok(row.totD)}</b></div>
+      <div class="r"><span style="color:var(--acc-2)">Cumulative</span><b>${row.cum.toFixed(1)}%</b></div>`;});
+  muchart.addEventListener('mouseleave',()=>{mtip.style.display='none';hl.style.display='none';});
+})();
+})();
+</script>
+</body>
+</html>
