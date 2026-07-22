@@ -61,3 +61,11 @@ Video files are served from the Cloudflare R2 bucket `starknet-thesis-videos`
 (public base URL `https://pub-3274162cfa1d48728621d5ec2d0906ad.r2.dev/`), not
 from this repo — `videos/` is gitignored. To update a video, upload the new
 file to the bucket keeping the same filename (names are case-sensitive).
+
+
+## Local preview
+
+Internal links are extensionless (`/privacy`, `/digest`, …) to match Vercel's
+`cleanUrls` serving. A dumb static server (e.g. `python3 -m http.server`) will
+404 those links — preview locally with `npx serve` (clean URLs by default) or
+`vercel dev` instead.
