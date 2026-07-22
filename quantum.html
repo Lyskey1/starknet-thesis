@@ -234,7 +234,7 @@
   .ne-field input::placeholder, .ne-field textarea::placeholder { color: rgba(245,242,236,0.25); }
 
   .ne-modal-backdrop { position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; padding: 24px; }
-  .ne-modal { width: 100%; max-width: 720px; max-height: 86vh; overflow: auto; background: #0D0D0D; border: 1px solid var(--border-orange); border-radius: 12px; padding: 28px; }
+  .ne-modal { width: 100%; max-width: 720px; max-height: 86vh; max-height: 86dvh; overflow: auto; background: #0D0D0D; border: 1px solid var(--border-orange); border-radius: 12px; padding: 28px; }
   .ne-modal h3 { font-family: var(--display); font-size: 22px; font-weight: 700; margin-bottom: 6px; }
   .ne-modal p { font-size: 13px; color: rgba(245,242,236,0.5); margin-bottom: 18px; line-height: 1.6; }
   .ne-modal-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--orange); margin: 18px 0 8px; }
@@ -864,7 +864,17 @@ body.page-quantum{overflow-x:clip;}
   .th-adv-role{margin-top:18px;font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:.08em;color:#8b909c;}
   .th-adv-role b{color:#3DA9FC;font-weight:600;}
   @media(max-width:760px){.th-adv{display:flex;flex-direction:column;}.th-adv-photo{float:none;order:5;margin:24px auto 0;}}
-  </style>
+  
+/* touch targets + narrow-phone stat clamps (phase 2) */
+@media (hover: none) {
+  .th-pq-chip{min-height:44px;}
+  .th-maze-ctrl button,.th-turkey-ctrl button{min-height:44px;}
+}
+@media (max-width:480px){
+  .th-pm-stathero .big{font-size:clamp(40px,13vw,60px);}
+  .th-yr-stat{font-size:clamp(30px,9vw,44px);}
+}
+</style>
 
   <!-- chapter: the referee -->
   <div class="th-q-chapter th-pm-reveal">

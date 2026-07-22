@@ -316,7 +316,8 @@
   .sp-card.on p, .sp-card:hover p { max-height: 160px; margin-top: 8px; }
   @media (max-width: 900px) {
     .stamp-wrap { grid-template-columns: 1fr; }
-    .stamp-stage { border-right: none; border-bottom: 1px solid var(--line); min-height: 460px; }
+    .stamp-stage { border-right: none; border-bottom: 1px solid var(--line); min-height: auto; }
+    .ss-scene { margin-top: 24px; height: 260px; }
   }
   @media (prefers-reduced-motion: reduce) {
     .ss-stamp { display: none; }
@@ -358,6 +359,7 @@
   .wp-card p a { color: var(--em); text-decoration: underline; text-underline-offset: 3px; }
   .wp-card:hover { border-color: var(--em-line); background: rgba(var(--accent-rgb),.05); }
   .wp-card:hover p { max-height: 140px; margin-top: 8px; }
+  .wp-card.tap-open p { max-height: 140px; margin-top: 8px; }
   .wp-row .pill { font-family: var(--mono); font-size: 9px; letter-spacing: .1em; padding: 4px 9px; border-radius: 99px; white-space: nowrap; background: transparent; display: inline-flex; flex-shrink: 0; }
   .wp-row .pill.live { color: var(--em); border: 1px solid var(--em-line); background: var(--em-dim); }
   .wp-row .pill.dev { color: var(--amber); border: 1px solid rgba(232,163,61,.4); background: rgba(232,163,61,.1); }
@@ -424,6 +426,7 @@
   .snode ul { list-style: none; font-size: 11.5px; color: var(--muted); line-height: 1.9; letter-spacing: .03em; max-height: 0; overflow: hidden; margin-top: 0; transition: max-height .4s ease, margin-top .4s ease; }
   .snode:hover { border-color: var(--em-line); background: rgba(var(--accent-rgb),.05); }
   .snode:hover ul { max-height: 280px; margin-top: 10px; }
+  .snode.tap-open ul { max-height: 280px; margin-top: 10px; }
   .slink { display: flex; align-items: center; padding: 0 12px; color: var(--em); font-size: 18px; }
   @media (prefers-reduced-motion: reduce) {
     .snode ul { max-height: none; margin-top: 10px; transition: none; }
@@ -473,7 +476,7 @@
   .ne-field textarea { resize: vertical; min-height: 58px; line-height: 1.5; }
   .ne-field input::placeholder, .ne-field textarea::placeholder { color: rgba(245,242,236,0.25); }
   .ne-modal-backdrop { position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; padding: 24px; }
-  .ne-modal { width: 100%; max-width: 720px; max-height: 86vh; overflow: auto; background: #0D0D0D; border: 1px solid var(--border-orange); border-radius: 12px; padding: 28px; }
+  .ne-modal { width: 100%; max-width: 720px; max-height: 86vh; max-height: 86dvh; overflow: auto; background: #0D0D0D; border: 1px solid var(--border-orange); border-radius: 12px; padding: 28px; }
   .ne-modal h3 { font-family: var(--display); font-size: 22px; font-weight: 700; margin-bottom: 6px; }
   .ne-modal p { font-size: 13px; color: rgba(245,242,236,0.5); margin-bottom: 18px; line-height: 1.6; }
   .ne-modal-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin: 18px 0 8px; }
@@ -534,8 +537,14 @@
     .dots { grid-template-columns: repeat(15,1fr); }
     .forum-post { grid-template-columns: 1fr; }
     .forum-user { border-right: none; border-bottom: 1px solid var(--line); }
-    .lineage { flex-wrap: wrap; gap: 18px; }
-    .lineage::before { display: none; }
+    /* vertical rail: left connector line, dots on the line, year+label right */
+    .lineage { flex-direction: column; flex-wrap: nowrap; gap: 0; max-width: none; }
+    .lineage::before { display: block; left: 4px; right: auto; top: 14px; bottom: 14px; width: 1px; height: auto; }
+    .ln { display: flex; align-items: baseline; gap: 14px; text-align: left; flex: none; padding: 9px 0; }
+    .ln i { margin: 0; flex: 0 0 auto; align-self: center; position: relative; z-index: 1; }
+    .ln .y { margin-top: 0; min-width: 40px; }
+    .ln .l { margin-top: 0; }
+    .ln .l br { display: none; }
     .waves, .build-tiles { grid-template-columns: 1fr; }
     .viz-body, .video-grid { grid-template-columns: 1fr; }
     .viz-col { border-right: none; border-bottom: 1px solid var(--line); }
@@ -556,6 +565,17 @@
     .inner { transition: none; }
     .dot { transition: none; }
     a.ln:hover { transform: none; }
+  }
+
+  /* touch affordances (phase 2): 44px targets + viewport-safe tooltips */
+  @media (hover: none) {
+    .shield-toggle, .switch button { min-height: 44px; }
+    .wp-card, .snode, .sp-card { cursor: pointer; }
+  }
+  @media (max-width: 860px) {
+    .tipbox { width: auto; max-width: calc(100vw - 32px); }
+    .pgrid td:nth-child(-n+3) .tipbox { left: 0; transform: none; }
+    .pgrid td:nth-last-child(-n+3) .tipbox { left: auto; right: 0; transform: none; }
   }
 </style>
 </head>
@@ -2297,6 +2317,24 @@
   });
 
   renderPublic();
+})();
+</script>
+
+<script>
+/* touch tap-to-expand for hover-revealed content (phase 2) */
+(function(){
+  function toggle(sel,cls){
+    document.querySelectorAll(sel).forEach(function(el){
+      el.addEventListener('pointerdown',function(e){
+        if(e.pointerType==='mouse')return;
+        if(e.target.closest('a'))return; /* links inside still navigate */
+        el.classList.toggle(cls);
+      });
+    });
+  }
+  toggle('.wp-card','tap-open');
+  toggle('.snode','tap-open');
+  toggle('.sp-card','on'); /* reuses the auto-cycle's own state class */
 })();
 </script>
 </body>

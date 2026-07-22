@@ -517,8 +517,23 @@ footer.site-footer .foot-bottom a:hover{color:var(--accent)}
   .venn-wrap{grid-template-columns:1fr}
   .util.wide{grid-column:span 1}
 }
-@media(max-width:560px){.wrap{padding:0 16px}}
+@media(max-width:560px){.wrap{padding:0 16px}#numbers .feat .val{font-size:clamp(26px,7.5vw,36px)}}
 @media(max-width:520px){#numbers .cells,#numbers .cells.c3{grid-template-columns:1fr}}
+@media(max-width:600px){
+  /* series pills: single-row scroll strip with right-edge fade */
+  #numbers .chips{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:6px;
+    background:
+      linear-gradient(270deg,var(--black,#0A0A0A) 0,transparent 36px) right center/36px 100% no-repeat local,
+      linear-gradient(270deg,rgba(0,0,0,.65),transparent) right center/28px 100% no-repeat scroll;}
+  #numbers .chips .chip{flex:0 0 auto}
+}
+@media(hover:none){
+  #numbers .ranges button{min-height:44px}
+  #numbers .chips .chip{min-height:44px}
+  /* the VIEW CHART affordance is persistent on touch (hover cannot reveal it) */
+  #numbers .cell.click .cview{opacity:1;transform:none}
+  #numbers .chartbox svg,#numbers .supchart svg{touch-action:pan-y}
+}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -1141,7 +1156,7 @@ if(fly){
   const stages=[...fly.querySelectorAll(".stage")];
   stages.forEach(s=>{
     const dot=s.querySelector(".dot");
-    s.addEventListener("mouseenter",()=>{
+    ["mouseenter","pointerdown"].forEach(evn=>s.addEventListener(evn,()=>{
       stages.forEach(x=>x.classList.remove("on")); s.classList.add("on");
       tipT.textContent=s.dataset.i+" · "+s.dataset.t; tipD.textContent=s.dataset.d;
       tip.style.display="block";
@@ -1152,7 +1167,7 @@ if(fly){
       let top=cy-th-16;
       if(top<2) top=cy+22; /* not enough room above -> place below */
       tip.style.left=left+"px"; tip.style.top=top+"px";
-    });
+    }));
     s.addEventListener("mouseleave",()=>{ s.classList.remove("on"); tip.style.display="none"; });
   });
 }
@@ -1577,8 +1592,14 @@ function draw(){
       stlEl.innerHTML=order.map(b=>'<span data-band="'+b+'"><i style="background:'+STACK_COLORS[b]+'"></i>'+b+'</span>').join('');
       stlEl.querySelectorAll('span').forEach(it=>{
         const bandPaths=()=>stackG.querySelectorAll('path[data-band]');
-        it.addEventListener('mouseenter',()=>{bandPaths().forEach(pp=>{pp.setAttribute('fill-opacity',pp.getAttribute('data-band')===it.getAttribute('data-band')?'0.95':'0.12');});});
-        it.addEventListener('mouseleave',()=>{bandPaths().forEach(pp=>pp.setAttribute('fill-opacity','0.82'));});
+        const hi=()=>bandPaths().forEach(pp=>{pp.setAttribute('fill-opacity',pp.getAttribute('data-band')===it.getAttribute('data-band')?'0.95':'0.12');});
+        const lo=()=>bandPaths().forEach(pp=>pp.setAttribute('fill-opacity','0.82'));
+        it.addEventListener('mouseenter',hi);
+        it.addEventListener('mouseleave',lo);
+        /* touch: tap toggles the band highlight */
+        it.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse')return;
+          if(it.dataset.hl){delete it.dataset.hl;lo();}else{stlEl.querySelectorAll('span').forEach(x=>delete x.dataset.hl);it.dataset.hl='1';hi();}
+        });
       });
     }else{
       const ln=PTS.map((p,i)=>(i?'L':'M')+p.x.toFixed(1)+','+p.y.toFixed(1)).join(' ');
@@ -1831,7 +1852,7 @@ window.__numbersLive={
   set(k,v){const m=map[k];if(!m||!isFinite(v))return;m.value=v;if(curK===k&&!HIST[k])draw();}
 };
 
-chart.addEventListener('mousemove',e=>{
+['pointermove','pointerdown'].forEach(ev=>chart.addEventListener(ev,e=>{
   if(!PTS.length)return;
   const r=chart.getBoundingClientRect(),vx=(e.clientX-r.left)/r.width*1000;
   /* nearest point by x (series can be unevenly sampled) — binary search */
@@ -1848,8 +1869,8 @@ chart.addEventListener('mousemove',e=>{
       .map(b=>'<br><span style="color:'+STACK_COLORS[b]+'">'+b+'</span> $'+abbr(p.bands[b])).join('');
   }else{
     tipD.textContent=((HIST[curK]&&HIST[curK].weeklyBars)?'Week of ':'')+tsLabel(p.ts,curSpan)+(p.daily!=null?' · +'+(HIST[curK]&&HIST[curK].dailyUsd?'$':'')+abbr(p.daily)+'/day':'');
-  }});
-chart.addEventListener('mouseleave',()=>{cross.style.display='none';cdot.style.display='none';tip.style.display='none';});
+  }}));
+['mouseleave','pointerleave','pointercancel'].forEach(ev=>chart.addEventListener(ev,()=>{cross.style.display='none';cdot.style.display='none';tip.style.display='none';}));
 
 setMetric('price');setRange('7D');
 /* #upd (the "Updated" pill) is driven by the live engine at the end of the page */
@@ -1911,7 +1932,16 @@ function hot(i){donut.classList.add('dim');document.querySelectorAll('#udonut .s
     <div class="dg"><span>Last unlock</span><b>${dateLbl(c)}</b></div>
   </div>`;}
 function unhot(){donut.classList.remove('dim');document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>s.classList.remove('hot'));cHint.textContent='Hover a category';detail.innerHTML='<div class="dt">Investors and Early Contributors vest until <b>March 15, 2027</b>. The rest is released into circulation as the Foundation allocates it. Hover a category for its unlock detail.</div>';}
-document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{s.addEventListener('mouseenter',()=>hot(+s.dataset.i));s.addEventListener('mouseleave',unhot);});
+var dhot=-1;
+document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
+  s.addEventListener('mouseenter',()=>hot(+s.dataset.i));
+  s.addEventListener('mouseleave',unhot);
+  /* touch: tap a segment to pin its detail; tap again to clear */
+  s.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse')return;
+    var i=+s.dataset.i;
+    if(dhot===i){dhot=-1;unhot();}else{dhot=i;hot(i);}
+  });
+});
 
 /* ---- monthly unlock schedule: NEXT 12 MONTHS ---- */
 (function(){
@@ -1955,7 +1985,7 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{s.addEventLis
     `<div class="kpi"><div class="kl">Vesting rate</div><div class="kv">~127M</div><div class="ks">per month · until Mar 2027</div></div>`+
     `<div class="kpi"><div class="kl">Full circulation</div><div class="kv">~2031</div><div class="ks">remaining via Foundation release</div></div>`;
   const hl=document.getElementById('muhl');
-  muchart.addEventListener('mousemove',e=>{const r=muchart.getBoundingClientRect();const vx=(e.clientX-r.left)/r.width*1000;
+  ['pointermove','pointerdown'].forEach(ev=>muchart.addEventListener(ev,e=>{const r=muchart.getBoundingClientRect();const vx=(e.clientX-r.left)/r.width*1000;
     let k=Math.round((vx-aL)/(aR-aL)*(n-1));k=Math.max(0,Math.min(n-1,k));const row=rows[k];const d=new Date(2024,row.i,1);
     hl.style.display='block';hl.setAttribute('x1',bx(k).toFixed(1));hl.setAttribute('x2',bx(k).toFixed(1));
     mtip.style.display='block';const px=bx(k)/1000*r.width;
@@ -1966,8 +1996,8 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{s.addEventLis
       <div class="r"><span style="color:#A78BFA">Scheduled vesting</span><b>${row.vD>0.001?tok(row.vD):'—'}</b></div>
       <div class="r"><span style="color:#A78BFA;opacity:.8">Estimated release</span><b>${row.estD>0.001?tok(row.estD):'—'}</b></div>
       <div class="r"><span style="color:var(--muted)">This month</span><b>${tok(row.totD)}</b></div>
-      <div class="r"><span style="color:var(--acc-2)">Cumulative</span><b>${row.cum.toFixed(1)}%</b></div>`;});
-  muchart.addEventListener('mouseleave',()=>{mtip.style.display='none';hl.style.display='none';});
+      <div class="r"><span style="color:var(--acc-2)">Cumulative</span><b>${row.cum.toFixed(1)}%</b></div>`;}));
+  ['mouseleave','pointerleave','pointercancel'].forEach(ev=>muchart.addEventListener(ev,()=>{mtip.style.display='none';hl.style.display='none';}));
 })();
 })();
 })();

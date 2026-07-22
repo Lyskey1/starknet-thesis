@@ -1597,6 +1597,14 @@
     box.addEventListener('pointerenter', function(){ fill(); tip.style.display = 'block'; });
     box.addEventListener('pointerdown', function(){ fill(); tip.style.display = 'block'; });
     box.addEventListener('pointerleave', function(){ tip.style.display = 'none'; });
+    // touch: first tap shows the breakdown, second tap follows the link
+    box.addEventListener('click', function(e){
+      if (!window.matchMedia('(hover: none)').matches) return;
+      if (!box.__tipOpen) { box.__tipOpen = true; e.preventDefault(); fill(); tip.style.display = 'block'; }
+    });
+    document.addEventListener('pointerdown', function(e){
+      if (box.__tipOpen && !box.contains(e.target)) { box.__tipOpen = false; tip.style.display = 'none'; }
+    });
   })();
 
   var upEl = document.getElementById('bmUpdated');
