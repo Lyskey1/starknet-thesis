@@ -50,7 +50,12 @@
     background: transparent; /* the black canvas lives on <html> so the fixed
                                 texture layers below can sit behind page content */
     color: var(--white);
-    overflow-x: hidden;
+    /* clip, NOT hidden: html{overflow-x:clip} below stops this rule from
+       propagating to the viewport, and a non-visible overflow on body would
+       then make body a scroll container — silently breaking every
+       position:sticky on the site (convergence stage, ecosystem subnav).
+       clip gives the same horizontal clipping with no scroll container. */
+    overflow-x: clip;
     line-height: 1.6;
 
     /* Orange-family aliases live HERE (not in :root) so they re-substitute
