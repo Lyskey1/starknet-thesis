@@ -57,7 +57,23 @@ h1,h2,h3{font-family:var(--display),sans-serif;font-weight:800;line-height:1.04;
 .label{font-family:var(--mono),monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
 
 /* nav */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(10,10,10,0.78);backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;gap:24px;padding:16px 40px;background:rgba(10,10,10,0.78);backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+/* mobile nav system — mirrored from css/styles.css (this page is self-styled
+   and does not load the shared stylesheet); keep in sync with styles.css */
+/* ---------- mobile navigation (burger + full-screen overlay; js/nav.js) ---------- */
+.nav-burger { display: none; width: 44px; height: 44px; flex: 0 0 auto; flex-direction: column; align-items: center; justify-content: center; gap: 5px; background: none; border: 0; padding: 0; cursor: pointer; }
+.nav-burger span { display: block; width: 22px; height: 2px; border-radius: 1px; background: var(--white); }
+.nav-overlay { position: fixed; inset: 0; z-index: 300; background: rgba(10,10,11,0.97); backdrop-filter: blur(12px); display: flex; flex-direction: column; padding: 12px 20px calc(24px + env(safe-area-inset-bottom)); overflow-y: auto; }
+.nav-overlay[hidden] { display: none; }
+.nav-ov-top { display: flex; align-items: center; justify-content: flex-end; min-height: 64px; }
+.nav-ov-close { width: 44px; height: 44px; background: none; border: 1px solid var(--border); border-radius: 10px; color: var(--white); font-size: 22px; line-height: 1; cursor: pointer; }
+.nav-ov-links { display: flex; flex-direction: column; margin-top: 20px; }
+.nav-ov-links a { display: flex; align-items: center; gap: 14px; min-height: 48px; padding: 4px 6px; font-family: var(--mono); font-size: 15px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--white); text-decoration: none; border-bottom: 1px solid rgba(245,242,236,0.08); }
+.nav-ov-links a::before { content: ""; width: 7px; height: 7px; border-radius: 50%; flex: 0 0 auto; background: transparent; }
+.nav-ov-links a.active::before { background: var(--accent, #8b7bff); box-shadow: 0 0 10px rgba(139,123,255,0.6); }
+.nav-ov-cta { margin-top: auto; display: flex; justify-content: center; width: 100%; padding-top: 28px; }
+.nav-ov-cta .btn { width: 100%; justify-content: center; text-align: center; display: inline-flex; align-items: center; gap: 8px; }
+html.nav-locked, html.nav-locked body { overflow: hidden; }
 /* shared wordmark — copied verbatim from css/styles.css so it matches every other page */
 .nav-logo{font-family:var(--display);font-weight:800;font-size:18px;letter-spacing:0.02em;text-transform:uppercase;color:var(--white);white-space:nowrap}
 .nav-logo b{color:var(--accent);font-weight:800}
@@ -513,7 +529,10 @@ footer.site-footer .foot-bottom a:hover{color:var(--accent)}
 
 
 @media(max-width:860px){
+  nav{height:64px;padding:0 16px}
   .nav-links{display:none}
+  nav > .nav-cta{display:none}
+  .nav-burger{display:flex}
   .venn-wrap{grid-template-columns:1fr}
   .util.wide{grid-column:span 1}
 }
