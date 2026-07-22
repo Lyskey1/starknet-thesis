@@ -1127,7 +1127,23 @@ function render(d){
 }
 async function load(){try{const r=await fetch("/api/metrics",{cache:"no-store"});if(!r.ok)throw 0;render(await r.json());}
   catch(e){render(MOCK);}}
-load(); setInterval(load,60000);
+/* phase 4: engines start when their section approaches the viewport,
+   skip work while the tab is hidden, and poll 3x wider on mobile */
+window.deferEngine=deferEngine;
+function deferEngine(anchor, boot){
+  var el=typeof anchor==='string'?document.querySelector(anchor):anchor;
+  if(!el||!('IntersectionObserver' in window)){boot();return;}
+  var io=new IntersectionObserver(function(en){
+    for(var i=0;i<en.length;i++)if(en[i].isIntersecting){io.disconnect();boot();return;}
+  },{rootMargin:'800px'});
+  io.observe(el);
+}
+var ENGINE_X=window.matchMedia&&window.matchMedia('(max-width:860px)').matches?3:1;
+window.deferEngine=deferEngine;window.ENGINE_X=ENGINE_X;
+deferEngine('#numbers',function(){
+  load();
+  setInterval(function(){ if(!document.hidden) load(); },60000*ENGINE_X);
+});
 
 /* ---------- Venn focus interaction ---------- */
 const stage=document.getElementById("vennStage");
@@ -2364,9 +2380,16 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
     });
   }
 
-  refresh();
-  setInterval(refresh, 3600000); // silent hourly refresh
-  setInterval(tickUpdated, 60000);
+  // deferred boot: staking panel (mid-page) or the numbers section, whichever nears first
+  var bootDone=false;
+  function bootEngine(){
+    if(bootDone)return; bootDone=true;
+    refresh();
+    setInterval(function(){ if(!document.hidden) refresh(); }, 3600000*(window.ENGINE_X||1));
+    setInterval(function(){ if(!document.hidden) tickUpdated(); }, 60000*(window.ENGINE_X||1));
+  }
+  deferEngine('.util-panel[data-k="staking"]',bootEngine);
+  deferEngine('#numbers',bootEngine);
 })();
 </script>
 
@@ -2507,9 +2530,11 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
     }).catch(function(){ renderAll(); }); // keep the whole previous set + timestamp
   }
 
-  refresh();
-  setInterval(refresh, 3600000); // silent hourly refresh — same TTL as the other CoinGecko calls
-  setInterval(tickUpdated, 60000);
+  deferEngine('#vennStage',function(){
+    refresh();
+    setInterval(function(){ if(!document.hidden) refresh(); }, 3600000*(window.ENGINE_X||1));
+    setInterval(function(){ if(!document.hidden) tickUpdated(); }, 60000*(window.ENGINE_X||1));
+  });
 })();
 </script>
 </body>
