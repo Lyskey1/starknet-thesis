@@ -1567,3 +1567,7 @@ html.nav-locked, html.nav-locked body { overflow: hidden; }
   .pill { min-height: 44px; align-items: center; }
   .toggle-btn { min-height: 44px; }
 }
+
+/* horizontal-overflow guard (mobile remediation, phase 3): clip, not hidden,
+   so no scroll container is created and position:sticky keeps working */
+html { overflow-x: clip; }
