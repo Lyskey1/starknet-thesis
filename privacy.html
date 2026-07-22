@@ -198,6 +198,14 @@
 
   /* ============ 03: protocol grid ============ */
   .gridwrap { margin: 56px 0 0; overflow-x: auto; }
+  /* mobile: right-edge fade + sticky protocol column (the symbol matrix cannot
+     restack cleanly — its td pseudo-elements already carry the check marks) */
+  @media (max-width: 860px) {
+    .gridwrap { background:
+      linear-gradient(270deg, #0A0A0A 0, transparent 44px) right center/44px 100% no-repeat local,
+      linear-gradient(270deg, rgba(0,0,0,.6), transparent) right center/36px 100% no-repeat scroll; }
+    .pgrid td.pname, .pgrid th.pname { position: sticky; left: 0; z-index: 2; }
+  }
   .pgrid { width: 100%; border-collapse: collapse; font-family: var(--mono); min-width: 860px; }
   .pgrid th { font-size: 10px; letter-spacing: .08em; color: var(--ink); padding: 14px 10px; border: 1px solid var(--line); background: #0D1114; font-weight: 600; line-height: 1.5; }
   .pgrid th span { display: block; color: var(--muted); font-weight: 400; margin-top: 5px; text-transform: lowercase; letter-spacing: .04em; }

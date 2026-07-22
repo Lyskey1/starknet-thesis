@@ -1541,3 +1541,23 @@ html.nav-locked, html.nav-locked body { overflow: hidden; }
   .foot-mark { font-family: var(--display); font-weight: 900; font-size: clamp(60px,16vw,200px); text-transform: uppercase; text-align: center; line-height: 0.8; letter-spacing: -0.02em; color: rgba(245,242,236,0.04); padding: 30px 0 20px; user-select: none; }
   .disclaimer { font-family: var(--sans); font-size: 12px; color: rgba(245,242,236,0.35); line-height: 1.7; max-width: 880px; margin: 8px auto 0; text-align: center; }
   @media (max-width: 760px) { footer.site-footer .foot-top { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 520px) {
+    /* footer: single column — brand first, then link groups as touch rows */
+    footer.site-footer .foot-top { grid-template-columns: 1fr; gap: 28px; }
+    footer.site-footer .foot-brand p { max-width: none; }
+    footer.site-footer .foot-col .h { margin-bottom: 8px; }
+    footer.site-footer .foot-col a { padding: 11px 0; margin-bottom: 0; }
+  }
+  @media (max-width: 560px) { .foot-mark { font-size: clamp(36px, 12vw, 60px); } }
+
+/* ---------- narrow-phone additions (mobile remediation, phase 1) ---------- */
+@media (max-width: 480px) {
+  .metrics-row { grid-template-columns: 1fr; }
+}
+@media (max-width: 768px) {
+  .big-stat-num { font-size: clamp(34px, 9vw, 56px); white-space: normal; }
+}
+@media (max-width: 420px) {
+  .chart-toggle { flex-wrap: wrap; }
+  .chart-toggle .toggle-btn { flex: 1 1 40%; }
+}

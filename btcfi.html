@@ -209,6 +209,12 @@
   /* per-token breakdown tooltip on the network aggregate card (same style as the privacy metrics tooltips) */
   .metric-box { position: relative; }
   .bm-tip { position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%); background: #10161A; border: 1px solid rgba(var(--accent-rgb),.35); border-radius: 8px; padding: 8px 10px; font-family: var(--mono); font-size: 10px; letter-spacing: .04em; color: #D6DAD6; pointer-events: none; display: none; z-index: 5; white-space: nowrap; text-align: left; box-shadow: 0 8px 20px rgba(0,0,0,.5); }
+  /* mobile: keep the breakdown inside the viewport — clamp per grid column */
+  @media (max-width: 860px) {
+    .bm-tip { white-space: normal; max-width: calc(100vw - 16px); min-width: 180px; }
+    .metrics-row .metric-box:nth-child(odd) .bm-tip { left: 0; transform: none; }
+    .metrics-row .metric-box:nth-child(even) .bm-tip { left: auto; right: 0; transform: none; }
+  }
   .bm-tip .d { color: var(--accent); margin-bottom: 5px; letter-spacing: .1em; }
   .bm-tip .r { display: flex; justify-content: space-between; gap: 14px; line-height: 1.7; }
   .bm-tip .r.t { border-top: 1px solid rgba(245,242,236,.09); margin-top: 4px; padding-top: 4px; }

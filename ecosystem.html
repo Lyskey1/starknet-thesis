@@ -131,6 +131,10 @@
   .eco-accounts.featured .eco-name { font-size: 18px; }
   .eco-verified { color: #1D9BF0; font-size: 14px; flex-shrink: 0; }
   .eco-handle { font-family: var(--mono); font-size: 12px; color: rgba(245,242,236,0.45); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .eco-desc { font-family: var(--mono); font-size: 12px; color: rgba(245,242,236,0.45); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  @media (max-width: 860px) {
+    .eco-desc { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; line-height: 1.45; }
+  }
   .eco-x { color: rgba(245,242,236,0.3); font-size: 17px; flex-shrink: 0; transition: color 0.2s; }
   .eco-card:hover .eco-x { color: var(--accent); }
 
@@ -202,10 +206,17 @@
   .eco-modal-msg { font-family: var(--mono); font-size: 11px; margin-top: 10px; min-height: 14px; color: #68D391; }
 
   @media (max-width: 768px) {
-    .eco-subnav { padding: 10px 16px; top: 92px; overflow-x: auto; }
+    /* subnav sits under the 64px mobile nav; the PILLS row scrolls (with a
+       right-edge fade), while the Edit button wraps onto its own row */
+    .eco-subnav { padding: 10px 16px; top: 64px; overflow: visible; flex-wrap: wrap; }
+    .eco-pills { flex: 1 1 100%; max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch;
+      background:
+        linear-gradient(270deg, var(--black, #0A0A0A) 0, transparent 36px) right center/36px 100% no-repeat local,
+        linear-gradient(270deg, rgba(0,0,0,.65), transparent) right center/28px 100% no-repeat scroll; }
     .eco-pill-set { flex-wrap: nowrap; }
     .eco-pill-glabel { width: 48px; }
-    .eco-section { padding: 48px 24px 0; scroll-margin-top: 210px; }
+    .eco-admin { flex: 0 0 auto; margin-left: auto; padding-top: 8px; }
+    .eco-section { padding: 48px 24px 0; scroll-margin-top: 215px; }
     .eco-group-head { padding: 56px 24px 4px; }
     .eco-accounts, .eco-accounts.featured { grid-template-columns: 1fr; }
   }
@@ -1480,7 +1491,7 @@
       av +
       '<div class="eco-card-id">' +
         '<div class="eco-name-row"><span class="eco-name">@' + esc(acc.handle) + '</span>' + verified + '</div>' +
-        (acc.description ? '<span class="eco-handle">' + esc(acc.description) + '</span>' : '') +
+        (acc.description ? '<span class="eco-desc">' + esc(acc.description) + '</span>' : '') +
       '</div>' +
       '<i class="ti ti-brand-x eco-x" aria-hidden="true"></i>' + del + nophoto;
     if (editing) {

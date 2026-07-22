@@ -377,7 +377,7 @@ a.chip:hover{background:var(--acc);border-color:var(--acc);color:#0A0A0A}
 #numbers .cell.click{cursor:pointer}
 #numbers .cell.click:hover{transform:translateY(-3px);border-color:rgba(124,58,237,.45);box-shadow:0 14px 34px rgba(124,58,237,.13)}
 #numbers .cell.active{border-color:var(--acc);background:linear-gradient(180deg,rgba(124,58,237,.13),rgba(124,58,237,.03))}
-#numbers .cell-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+#numbers .cell-top{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;row-gap:4px}#numbers .cell-top .cl{min-width:0}
 #numbers .cell .cl{font-family:var(--mono),monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
 #numbers .cell .delta{font-family:var(--mono),monospace;font-size:10px;padding:3px 7px;border-radius:999px}
 #numbers .cell .delta.up{color:var(--up);background:rgba(52,211,153,.10)}
@@ -406,7 +406,7 @@ a.chip:hover{background:var(--acc);border-color:var(--acc);color:#0A0A0A}
 #numbers .supchart svg{width:100%;height:auto;display:block;overflow:visible}
 #numbers .legend{display:flex;gap:14px 18px;flex-wrap:wrap;margin-top:16px;font-family:var(--mono),monospace;font-size:11px;letter-spacing:.04em;color:var(--muted-2)}
 #numbers .legend span{display:inline-flex;align-items:center}#numbers .legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px}
-#numbers .stip{position:absolute;pointer-events:none;display:none;width:268px;background:#101015;border:1px solid rgba(124,58,237,.4);border-radius:10px;padding:11px 13px;z-index:5;box-shadow:0 12px 30px rgba(0,0,0,.5)}
+#numbers .stip{position:absolute;pointer-events:none;display:none;width:268px;max-width:calc(100vw - 32px);background:#101015;border:1px solid rgba(124,58,237,.4);border-radius:10px;padding:11px 13px;z-index:5;box-shadow:0 12px 30px rgba(0,0,0,.5)}
 #numbers .stip .td{font-family:var(--mono),monospace;font-size:10px;letter-spacing:.06em;color:var(--muted);margin-bottom:5px}
 #numbers .stip .r{font-family:var(--mono),monospace;font-size:11px;display:flex;justify-content:space-between;gap:16px}
 #numbers .stip .r b{font-family:var(--display);font-weight:700}
@@ -517,9 +517,8 @@ footer.site-footer .foot-bottom a:hover{color:var(--accent)}
   .venn-wrap{grid-template-columns:1fr}
   .util.wide{grid-column:span 1}
 }
-@media(max-width:768px){
-  
-}
+@media(max-width:560px){.wrap{padding:0 16px}}
+@media(max-width:520px){#numbers .cells,#numbers .cells.c3{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
