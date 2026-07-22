@@ -205,6 +205,11 @@
   .eco-mbtn.danger:hover { border-color: rgba(229,62,62,0.5); background: rgba(229,62,62,0.08); }
   .eco-modal-msg { font-family: var(--mono); font-size: 11px; margin-top: 10px; min-height: 14px; color: #68D391; }
 
+  /* the mobile nav bar (64px) starts at 860px — the subnav offset must
+     follow it there, not at 768px, or a 22px float gap opens in between */
+  @media (max-width: 860px) {
+    .eco-subnav { top: 64px; }
+  }
   @media (max-width: 768px) {
     /* subnav sits under the 64px mobile nav; the PILLS row scrolls (with a
        right-edge fade), while the Edit button wraps onto its own row */
