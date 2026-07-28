@@ -1588,11 +1588,20 @@
       return '<span><i style="background:' + PALETTE[i % PALETTE.length] + '"></i>' + esc(n.toUpperCase()) + '</span>';
     }).join('') + '</div>';
   }
+  // numeric value at the precision the formatter displays, so a TOTAL row
+  // always equals the hand-sum of the component rows shown above it (full
+  // precision stays in the charts, which plot the raw values)
+  function dispVal(fmt, v){
+    var p;
+    if (fmt === fmtUsd) p = v >= 1e7 ? 1e6 : v >= 1e6 ? 1e5 : v >= 1e4 ? 1e3 : v >= 1e3 ? 1e2 : 1;
+    else p = v >= 1e6 ? 1e5 : v >= 1e4 ? 1e3 : 1;
+    return Math.round(v / p) * p;
+  }
   function stackRows(split, fmt){
     return function(d){
       var rows = [], tot = 0;
       split.names.forEach(function(nm, i){
-        var v = split.value(d, nm);
+        var v = dispVal(fmt, split.value(d, nm));
         tot += v;
         rows.push({ label: nm.toUpperCase(), value: fmt(v), color: PALETTE[i % PALETTE.length] });
       });
@@ -1671,13 +1680,16 @@
     return '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img">' + svg + '</svg>';
   }
 
-  // crosshair + tooltip (pointer events cover mouse and touch taps)
-  function attachHover(plot, meta){
+  // crosshair + tooltip (pointer events cover mouse and touch taps); hover
+  // state is remembered per card so a re-mounted chart can re-show an open
+  // tooltip in place with the fresh data
+  function attachHover(plot, meta, k){
     var cross = plot.querySelector('.pmx-cross'), tip = plot.querySelector('.pmx-tip');
     function show(clientX){
       var rect = plot.getBoundingClientRect();
       var n = meta.days.length;
       if (!n || rect.width === 0) return;
+      bodies[k].hv = { open: true, x: clientX };
       var vx = (clientX - rect.left) / rect.width * meta.W;
       var f = (vx - meta.P.l) / (meta.W - meta.P.l - meta.P.r);
       var i = Math.max(0, Math.min(n - 1, Math.round(f * (n - 1))));
@@ -1694,10 +1706,14 @@
       if (left < 4) left = 4;
       tip.style.left = left + 'px';
     }
-    function hide(){ cross.style.display = 'none'; tip.style.display = 'none'; }
+    function hide(){
+      cross.style.display = 'none'; tip.style.display = 'none';
+      if (bodies[k].hv) bodies[k].hv.open = false;
+    }
     plot.addEventListener('pointermove', function(e){ show(e.clientX); });
     plot.addEventListener('pointerdown', function(e){ show(e.clientX); });
     plot.addEventListener('pointerleave', hide);
+    return show;
   }
 
   var bodies = {};
@@ -1705,79 +1721,101 @@
     bodies[c.getAttribute('data-pmx')] = { el: c.querySelector('.pmx-body'), fallback: c.querySelector('.pmx-body').innerHTML };
   });
   function skel(k){ bodies[k].el.innerHTML = '<div class="pmx-skel"></div>'; }
-  function fail(k, silent){ if (!silent) bodies[k].el.innerHTML = bodies[k].fallback; } // silent refresh keeps the last good chart
   function mount(k, chartHtml, legendHtml, meta){
     bodies[k].el.innerHTML = '<div class="pmx-plot">' + chartHtml + '<div class="pmx-cross"></div><div class="pmx-tip"></div></div>' + legendHtml;
-    attachHover(bodies[k].el.querySelector('.pmx-plot'), meta);
+    var show = attachHover(bodies[k].el.querySelector('.pmx-plot'), meta, k);
+    var hv = bodies[k].hv;
+    if (hv && hv.open) show(hv.x); // an open tooltip re-renders in place from the fresh data
   }
   function get(path){
     // cache-busting param: every page load and refresh pulls fresh numbers
     return fetch(API + path + '?_=' + Date.now()).then(function(r){ if (!r.ok) throw new Error(path); return r.json(); });
   }
 
-  var upEl = document.getElementById('pmxUpdated'), lastUpdate = 0;
-  function stamp(){ lastUpdate = Date.now(); tickUpdated(); }
+  var upEl = document.getElementById('pmxUpdated');
+  // per-card provenance: when each card's on-screen data was actually fetched
+  // (0 = the card shows no fetched data, e.g. the VIEW LIVE fallback). The
+  // label reports the OLDEST data on screen, so a partially failed silent
+  // refresh can never claim "just now" over a chart it did not update.
+  var prov = { stats: 0, shielded: 0, swaps: 0, defi: 0, txs: 0, users: 0 };
   function tickUpdated(){
-    if (!lastUpdate || !upEl) return;
-    var m = Math.floor((Date.now() - lastUpdate) / 60000);
+    if (!upEl) return;
+    var oldest = Infinity;
+    Object.keys(prov).forEach(function(k){ if (prov[k] > 0 && prov[k] < oldest) oldest = prov[k]; });
+    if (!isFinite(oldest)) { upEl.textContent = ''; return; }
+    var m = Math.floor((Date.now() - oldest) / 60000);
     upEl.textContent = m < 1 ? 'UPDATED JUST NOW' : m < 60 ? 'UPDATED ' + m + ' MIN AGO' : 'UPDATED ' + Math.floor(m / 60) + ' HR AGO';
+  }
+
+  // one candidate per cycle: every endpoint stages its payload off-screen and
+  // the whole block commits in a single pass, so no two fetch vintages can
+  // paint side by side within a cycle
+  function commit(next, silent){
+    var stats = document.getElementById('pmxStats');
+    if (next.stats) { stats.innerHTML = next.stats.html; prov.stats = next.stats.at; }
+    else if (!silent) { stats.innerHTML = ''; prov.stats = 0; }
+    Object.keys(bodies).forEach(function(k){
+      var p = next[k];
+      if (p) { mount(k, p.chart, p.legend, p.meta); prov[k] = p.at; }
+      else if (!silent) { bodies[k].el.innerHTML = bodies[k].fallback; prov[k] = 0; }
+      // silent refresh + failed source: the card keeps its last good chart AND
+      // its old provenance, so the label keeps reporting that older time
+    });
+    tickUpdated();
   }
 
   function load(silent){
     if (!silent) Object.keys(bodies).forEach(skel);
-    // headline stats
-    get('/agg/pool-summary').then(function(s){
-      var stats = document.getElementById('pmxStats');
-      stats.innerHTML =
-        '<div class="pmx-stat"><div class="l">TOTAL SHIELDED VALUE</div><div class="v"><span class="em">$' + Math.round(s.tvlUsd).toLocaleString('en-US') + '</span></div></div>' +
-        '<div class="pmx-stat"><div class="l">PROTECTED ASSETS</div><div class="v">' + (s.perToken || []).length.toLocaleString('en-US') + '</div></div>' +
-        '<div class="pmx-stat"><div class="l">TOTAL USERS</div><div class="v">' + (s.userCount || 0).toLocaleString('en-US') + '</div></div>';
-      stamp();
-    }).catch(function(){ if (!silent) document.getElementById('pmxStats').innerHTML = ''; });
+    var next = { stats: null, shielded: null, swaps: null, defi: null, txs: null, users: null };
+    function stage(k, chartHtml, legendHtml, meta){ next[k] = { chart: chartHtml, legend: legendHtml, meta: meta, at: Date.now() }; }
+    var jobs = [
+      get('/agg/pool-summary').then(function(s){
+        next.stats = { at: Date.now(), html:
+          '<div class="pmx-stat"><div class="l">TOTAL SHIELDED VALUE</div><div class="v"><span class="em">$' + Math.round(s.tvlUsd).toLocaleString('en-US') + '</span></div></div>' +
+          '<div class="pmx-stat"><div class="l">PROTECTED ASSETS</div><div class="v">' + (s.perToken || []).length.toLocaleString('en-US') + '</div></div>' +
+          '<div class="pmx-stat"><div class="l">TOTAL USERS</div><div class="v">' + (s.userCount || 0).toLocaleString('en-US') + '</div></div>' };
+      }).catch(function(){}),
 
-    get('/agg/shielded-balance').then(function(d){
-      if (!d.days || !d.days.length) throw new Error('empty');
-      var split = topSeries(d.days, 'byToken', 5);
-      mount('shielded', stackedArea(d.days, split, 760, 240), legend(split.names),
-        { days: d.days, W: 760, P: PAD_STD, rows: stackRows(split, fmtUsd) });
-      stamp();
-    }).catch(function(){ fail('shielded', silent); });
+      get('/agg/shielded-balance').then(function(d){
+        if (!d.days || !d.days.length) throw new Error('empty');
+        var split = topSeries(d.days, 'byToken', 5);
+        stage('shielded', stackedArea(d.days, split, 760, 240), legend(split.names),
+          { days: d.days, W: 760, P: PAD_STD, rows: stackRows(split, fmtUsd) });
+      }).catch(function(){}),
 
-    get('/agg/swap-by-token').then(function(d){
-      if (!d.days || !d.days.length) throw new Error('empty');
-      var split = topSeries(d.days, 'byToken', 4);
-      mount('swaps', stackedBars(d.days, split, 380, 200, fmtUsd), legend(split.names),
-        { days: d.days, W: 380, P: PAD_STD, rows: stackRows(split, fmtUsd) });
-      stamp();
-    }).catch(function(){ fail('swaps', silent); });
+      get('/agg/swap-by-token').then(function(d){
+        if (!d.days || !d.days.length) throw new Error('empty');
+        var split = topSeries(d.days, 'byToken', 4);
+        stage('swaps', stackedBars(d.days, split, 380, 200, fmtUsd), legend(split.names),
+          { days: d.days, W: 380, P: PAD_STD, rows: stackRows(split, fmtUsd) });
+      }).catch(function(){}),
 
-    get('/agg/routed-volume').then(function(d){
-      if (!d.days || !d.days.length) throw new Error('empty');
-      var split = topSeries(d.days, 'byProtocol', 4);
-      mount('defi', stackedBars(d.days, split, 380, 200, fmtUsd), legend(split.names),
-        { days: d.days, W: 380, P: PAD_STD, rows: stackRows(split, fmtUsd) });
-      stamp();
-    }).catch(function(){ fail('defi', silent); });
+      get('/agg/routed-volume').then(function(d){
+        if (!d.days || !d.days.length) throw new Error('empty');
+        var split = topSeries(d.days, 'byProtocol', 4);
+        stage('defi', stackedBars(d.days, split, 380, 200, fmtUsd), legend(split.names),
+          { days: d.days, W: 380, P: PAD_STD, rows: stackRows(split, fmtUsd) });
+      }).catch(function(){}),
 
-    get('/agg/transactions').then(function(d){
-      if (!d.days || !d.days.length) throw new Error('empty');
-      var split = { names: ['TRANSACTIONS'], value: function(day){ return day.count || 0; } };
-      mount('txs', stackedBars(d.days, split, 380, 200, fmtN), '',
-        { days: d.days, W: 380, P: PAD_STD, rows: function(day){ return [{ label: 'TRANSACTIONS', value: fmtN(day.count || 0), color: '#1FCB94' }]; } });
-      stamp();
-    }).catch(function(){ fail('txs', silent); });
+      get('/agg/transactions').then(function(d){
+        if (!d.days || !d.days.length) throw new Error('empty');
+        var split = { names: ['TRANSACTIONS'], value: function(day){ return day.count || 0; } };
+        stage('txs', stackedBars(d.days, split, 380, 200, fmtN), '',
+          { days: d.days, W: 380, P: PAD_STD, rows: function(day){ return [{ label: 'TRANSACTIONS', value: fmtN(day.count || 0), color: '#1FCB94' }]; } });
+      }).catch(function(){}),
 
-    get('/agg/registrations').then(function(d){
-      if (!d.days || !d.days.length) throw new Error('empty');
-      mount('users',
-        barsPlusLine(d.days, function(day){ return day.newUsers || 0; }, function(day){ return day.totalUsers || 0; }, 380, 200),
-        '<div class="pmx-legend"><span><i style="background:#7FB4E8"></i>NEW USERS / DAY</span><span><i style="background:#1FCB94"></i>CUMULATIVE (RIGHT AXIS)</span></div>',
-        { days: d.days, W: 380, P: PAD_DUAL, rows: function(day){
-            return [{ label: 'NEW USERS', value: fmtN(day.newUsers || 0), color: '#7FB4E8' },
-                    { label: 'CUMULATIVE', value: fmtN(day.totalUsers || 0), color: '#1FCB94' }];
-          } });
-      stamp();
-    }).catch(function(){ fail('users', silent); });
+      get('/agg/registrations').then(function(d){
+        if (!d.days || !d.days.length) throw new Error('empty');
+        stage('users',
+          barsPlusLine(d.days, function(day){ return day.newUsers || 0; }, function(day){ return day.totalUsers || 0; }, 380, 200),
+          '<div class="pmx-legend"><span><i style="background:#7FB4E8"></i>NEW USERS / DAY</span><span><i style="background:#1FCB94"></i>CUMULATIVE (RIGHT AXIS)</span></div>',
+          { days: d.days, W: 380, P: PAD_DUAL, rows: function(day){
+              return [{ label: 'NEW USERS', value: fmtN(day.newUsers || 0), color: '#7FB4E8' },
+                      { label: 'CUMULATIVE', value: fmtN(day.totalUsers || 0), color: '#1FCB94' }];
+            } });
+      }).catch(function(){})
+    ];
+    Promise.all(jobs).then(function(){ commit(next, silent); });
   }
 
   var loaded = false;
