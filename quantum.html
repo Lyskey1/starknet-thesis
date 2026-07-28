@@ -210,6 +210,11 @@
   .ne-btn.danger:hover { border-color: rgba(229,62,62,0.5); background: rgba(229,62,62,0.08); color: #FC8181; }
   .ne-btn i { font-size: 15px; }
   .ne-count { font-family: var(--mono); font-size: 11px; color: rgba(245,242,236,0.4); }
+  .ne-draft-pill { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #E8A33D; border: 1px solid rgba(232,163,61,0.4); background: rgba(232,163,61,0.08); border-radius: 40px; padding: 7px 12px; }
+  .ne-draft-pill[hidden] { display: none; }
+  .ne-draft-pill i { font-size: 13px; }
+  .ne-badge.draft { color: #E8A33D; border-color: rgba(232,163,61,0.4); background: rgba(232,163,61,0.08); }
+  .ne-badge.draft[hidden] { display: none; }
 
   .ne-cards { display: flex; flex-direction: column; gap: 14px; }
   .ne-card { border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; background: rgba(10,10,10,0.5); position: relative; }
@@ -1011,6 +1016,7 @@ body.page-quantum{overflow-x:clip;}
   <div class="wrap">
     <div class="news-section news-flashy th-pm-reveal" id="newsSection">
       <div class="news-admin-bar" id="newsAdminBar">
+        <span class="ne-draft-pill" id="newsDraftPill" hidden><i class="ti ti-alert-triangle" aria-hidden="true"></i> Unsaved local draft</span>
         <button type="button" class="news-edit-btn" id="newsEditBtn" aria-expanded="false"><i class="ti ti-pencil" aria-hidden="true"></i> <span id="newsEditBtnLabel">Edit news</span></button>
       </div>
       <button class="news-toggle" id="newsToggle" aria-expanded="false">
@@ -1234,11 +1240,26 @@ var VIDEOS = [
 
   var cards = buildList();
 
+  // ---------- local draft state ----------
+  // The committed `tweets` array above is the published source of truth on
+  // every device. localStorage only holds this browser's UNSAVED LOCAL DRAFT,
+  // flagged in the UI until it is committed to the file (Copy JSON) or
+  // discarded (Reset to published).
+  var draftPill = document.getElementById('newsDraftPill');
+  function hasDraft(){ return !!loadStore(); }
+  function syncDraftUI(){
+    var d = hasDraft();
+    if (draftPill) draftPill.hidden = !d;
+    var badge = document.getElementById('neDraftBadge');
+    if (badge) badge.hidden = !d;
+  }
+
   function persist(){
     var present = {};
     cards.forEach(function(c){ present[c.id] = true; });
     var removedDefaults = DEFAULTS.filter(function(d){ return !present[d.id]; }).map(function(d){ return d.id; });
     saveStore({ list: cards, removedDefaults: removedDefaults });
+    syncDraftUI();
   }
 
   // ---------- X / Twitter embed helpers ----------
@@ -1463,12 +1484,14 @@ var VIDEOS = [
     editor.innerHTML =
       '<div class="ne-toolbar">' +
         '<button type="button" class="ne-btn primary" data-act="add"><i class="ti ti-plus" aria-hidden="true"></i> Add card</button>' +
-        '<button type="button" class="ne-btn" data-act="export"><i class="ti ti-file-export" aria-hidden="true"></i> Export</button>' +
+        '<button type="button" class="ne-btn" data-act="copyjson"><i class="ti ti-copy" aria-hidden="true"></i> Copy JSON</button>' +
         '<button type="button" class="ne-btn" data-act="import"><i class="ti ti-file-import" aria-hidden="true"></i> Import JSON</button>' +
         '<span class="ne-spacer"></span>' +
+        '<span class="ne-badge draft" id="neDraftBadge"' + (hasDraft() ? '' : ' hidden') + '>Unsaved local draft</span>' +
         '<span class="ne-count">' + cards.length + ' card' + (cards.length === 1 ? '' : 's') + '</span>' +
-        '<button type="button" class="ne-btn danger" data-act="reset"><i class="ti ti-refresh" aria-hidden="true"></i> Reset to defaults</button>' +
+        '<button type="button" class="ne-btn danger" data-act="reset"><i class="ti ti-refresh" aria-hidden="true"></i> Reset to published</button>' +
       '</div>' +
+      '<div class="ne-hint" style="margin:-6px 0 16px">Edits live only in this browser as an unsaved local draft. To publish for everyone, <b>Copy JSON</b> and commit it into the <code>tweets</code> array in quantum.html — or <b>Reset to published</b> to discard the draft.</div>' +
       '<div class="ne-cards">' + cards.map(editorCardHTML).join('') + '</div>';
   }
 
@@ -1512,12 +1535,12 @@ var VIDEOS = [
       var i = parseInt(btn.getAttribute('data-i'), 10);
       if (cards[i] && window.confirm('Delete this card?')) { cards.splice(i, 1); persist(); renderPublic(); renderEditor(); }
     } else if (act === 'reset') {
-      if (window.confirm('Reset all news cards to the original defaults? Your custom cards and edits will be removed.')) {
+      if (window.confirm('Discard the unsaved local draft in this browser and go back to the published list committed in the repo?')) {
         try { localStorage.removeItem(STORAGE_KEY); } catch(e){}
-        cards = DEFAULTS.map(clone); renderPublic(); renderEditor();
+        cards = DEFAULTS.map(clone); renderPublic(); renderEditor(); syncDraftUI();
       }
-    } else if (act === 'export') {
-      openExport();
+    } else if (act === 'copyjson') {
+      copyJson(btn);
     } else if (act === 'import') {
       openImport();
     }
@@ -1547,38 +1570,36 @@ var VIDEOS = [
     bd.addEventListener('click', function(e){ if (e.target === bd) document.body.removeChild(bd); });
     return bd;
   }
-  function copyFrom(bd, sel, msgSel, okText){
-    var ta = bd.querySelector(sel); ta.focus(); ta.select();
-    var ok = false; try { ok = document.execCommand('copy'); } catch(e){}
-    if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(ta.value).catch(function(){}); ok = true; }
-    var m = bd.querySelector(msgSel); m.className = 'ne-msg ok'; m.textContent = ok ? okText : 'Select the text above and copy manually.';
-  }
-  function openExport(){
-    var arr = publicCards();
-    var json = JSON.stringify(arr, null, 2);
-    var tweetsLiteral = 'var tweets = ' + JSON.stringify(arr, null, 2) + ';';
-    var bd = makeModal(
-      '<h3>Export news cards</h3>' +
-      '<p>Copy the JSON to back up or re-import later — or copy the ready-to-paste <code>tweets</code> array to hardcode it permanently into quantum.html.</p>' +
-      '<div class="ne-modal-label">JSON array</div>' +
-      '<textarea id="neExpJson" readonly>' + esc(json) + '</textarea>' +
-      '<div class="ne-modal-actions"><button type="button" class="ne-btn" id="neCopyJson"><i class="ti ti-copy" aria-hidden="true"></i> Copy JSON</button></div>' +
-      '<div class="ne-modal-label">Ready-to-paste tweets array</div>' +
-      '<textarea id="neExpTweets" readonly>' + esc(tweetsLiteral) + '</textarea>' +
-      '<div class="ne-modal-actions">' +
-        '<button type="button" class="ne-btn" id="neCopyTweets"><i class="ti ti-copy" aria-hidden="true"></i> Copy tweets array</button>' +
-        '<button type="button" class="ne-btn" id="neCloseExp">Close</button>' +
-      '</div>' +
-      '<div class="ne-msg" id="neExpMsg"></div>'
-    );
-    bd.querySelector('#neCopyJson').addEventListener('click', function(){ copyFrom(bd, '#neExpJson', '#neExpMsg', 'JSON copied to clipboard.'); });
-    bd.querySelector('#neCopyTweets').addEventListener('click', function(){ copyFrom(bd, '#neExpTweets', '#neExpMsg', 'tweets array copied to clipboard.'); });
-    bd.querySelector('#neCloseExp').addEventListener('click', function(){ document.body.removeChild(bd); });
+  // ---------- copy JSON (publish path) ----------
+  // Copies the full current list so it can be committed into the `tweets`
+  // array in quantum.html — the only way an edit becomes visible on other devices.
+  function copyJson(btn){
+    var json = JSON.stringify(publicCards(), null, 2);
+    var orig = btn.innerHTML;
+    function done(ok){
+      btn.innerHTML = ok ? '<i class="ti ti-check" aria-hidden="true"></i> Copied — commit it to quantum.html'
+                         : '<i class="ti ti-alert-triangle" aria-hidden="true"></i> Copy failed — JSON logged to console';
+      if (!ok) { try { console.log(json); } catch(e){} }
+      setTimeout(function(){ btn.innerHTML = orig; }, 2400);
+    }
+    function legacyCopy(){
+      var ta = document.createElement('textarea');
+      ta.value = json; ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.focus(); ta.select();
+      var ok = false; try { ok = document.execCommand('copy'); } catch(e){}
+      document.body.removeChild(ta);
+      return ok;
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(json).then(function(){ done(true); }, function(){ done(legacyCopy()); });
+    } else {
+      done(legacyCopy());
+    }
   }
   function openImport(){
     var bd = makeModal(
       '<h3>Import news cards</h3>' +
-      '<p>Paste a JSON array of cards (same shape as Export). This replaces all current cards.</p>' +
+      '<p>Paste a JSON array of cards (same shape as Copy JSON). This replaces all current cards, as a local draft.</p>' +
       '<textarea id="neImp" placeholder=\'[ { "url": "https://x.com/user/status/123…", "title": "optional headline", "date": "Mar 2026" } ]\'></textarea>' +
       '<div class="ne-modal-actions">' +
         '<button type="button" class="ne-btn primary" id="neDoImport"><i class="ti ti-check" aria-hidden="true"></i> Import</button>' +
@@ -1616,6 +1637,7 @@ var VIDEOS = [
   });
 
   renderPublic();
+  syncDraftUI();
 })();
 </script>
 

@@ -299,10 +299,14 @@
   .ss-tick.bl { left: 27px; bottom: 27px; border-left-width: 2px; border-bottom-width: 2px; transform: translate(-10px,10px); }
   .ss-tick.br { right: 27px; bottom: 27px; border-right-width: 2px; border-bottom-width: 2px; transform: translate(10px,10px); }
   .ss-coin.sealed .ss-tick { opacity: 1; transform: translate(0,0); }
-  .ss-amount { margin-top: 24px; font-family: var(--mono); font-size: 14px; letter-spacing: .08em; color: var(--ink); min-height: 22px; text-align: center; transition: color .2s; }
+  /* fixed line: "14,532 BTC" and "[ EKUBO — AMOUNT HIDDEN ]" (25ch, the longest
+     string) swap inside the same reserved box — it can never wrap or resize */
+  .ss-amount { margin-top: 24px; font-family: var(--mono); font-size: 14px; letter-spacing: .08em; color: var(--ink); height: 22px; line-height: 22px; white-space: nowrap; min-width: 26ch; text-align: center; transition: color .2s; }
   .ss-amount.sealed { color: var(--em); }
-  .ss-chips { display: flex; gap: 10px; margin-top: auto; padding-top: 30px; flex-wrap: wrap; justify-content: center; }
-  .ss-chip { font-family: var(--mono); font-size: 12px; letter-spacing: .1em; color: var(--em); border: 1px solid var(--em-line); background: rgba(var(--accent-rgb),.07); padding: 8px 14px; border-radius: 99px; opacity: 0; transform: translateY(8px); transition: opacity .35s, transform .35s; white-space: nowrap; }
+  /* chips stay in flow permanently and fade via opacity/transform only, so
+     their row height is reserved once and never changes during the loop */
+  .ss-chips { display: flex; gap: 10px; margin-top: auto; padding-top: 30px; flex-wrap: wrap; justify-content: center; min-height: 30px; }
+  .ss-chip { font-family: var(--mono); font-size: 12px; line-height: 1; letter-spacing: .1em; color: var(--em); border: 1px solid var(--em-line); background: rgba(var(--accent-rgb),.07); padding: 9px 14px; border-radius: 99px; opacity: 0; transform: translateY(8px); transition: opacity .35s, transform .35s; white-space: nowrap; }
   .ss-chip.on { opacity: 1; transform: none; }
   .stamp-props { padding: 26px; display: flex; flex-direction: column; gap: 10px; }
   .sp-head { font-family: var(--mono); font-size: 11px; letter-spacing: .16em; color: var(--muted); margin-bottom: 6px; }
@@ -316,8 +320,19 @@
   .sp-card.on p, .sp-card:hover p { max-height: 160px; margin-top: 8px; }
   @media (max-width: 900px) {
     .stamp-wrap { grid-template-columns: 1fr; }
-    .stamp-stage { border-right: none; border-bottom: 1px solid var(--line); min-height: auto; }
+    /* fixed stage height: 46 pad + 24+260 scene + 24+22 amount + 30+72 chips + 30 pad
+       = 508, plus slack swallowed by the scene's auto margin. Nothing in the loop
+       (stamp descent, ring, text swap, chips) can change it. */
+    .stamp-stage { border-right: none; border-bottom: 1px solid var(--line); min-height: 0; height: 512px; }
     .ss-scene { margin-top: 24px; height: 260px; }
+    /* stacked chips: two fixed 32px rows at every phone width, reserved permanently */
+    .ss-chips { flex-direction: column; align-items: center; gap: 8px; min-height: 72px; }
+    /* property descriptions are always open on mobile: the auto-cycle and taps only
+       recolor the card, so the panel height is constant and nothing below moves */
+    .sp-card p, .sp-card.on p, .sp-card:hover p { max-height: none; overflow: visible; margin-top: 8px; }
+  }
+  @media (max-width: 380px) {
+    .ss-amount { font-size: 12px; letter-spacing: .05em; } /* keeps the 26ch line inside the stage; height stays 22px */
   }
   @media (prefers-reduced-motion: reduce) {
     .ss-stamp { display: none; }
@@ -459,6 +474,11 @@
   .ne-btn.danger:hover { border-color: rgba(229,62,62,0.5); background: rgba(229,62,62,0.08); color: #FC8181; }
   .ne-btn i { font-size: 15px; }
   .ne-count { font-family: var(--mono); font-size: 11px; color: rgba(245,242,236,0.4); }
+  .ne-draft-pill { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #E8A33D; border: 1px solid rgba(232,163,61,0.4); background: rgba(232,163,61,0.08); border-radius: 40px; padding: 7px 12px; }
+  .ne-draft-pill[hidden] { display: none; }
+  .ne-draft-pill i { font-size: 13px; }
+  .ne-badge.draft { color: #E8A33D; border-color: rgba(232,163,61,0.4); background: rgba(232,163,61,0.08); }
+  .ne-badge.draft[hidden] { display: none; }
   .ne-cards { display: flex; flex-direction: column; gap: 14px; }
   .ne-card { border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; background: rgba(10,10,10,0.5); position: relative; }
   .ne-card-top { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
@@ -1236,6 +1256,7 @@
 <section class="news-sec">
   <div class="news-section news-flashy" id="newsSection">
     <div class="news-admin-bar" id="newsAdminBar">
+      <span class="ne-draft-pill" id="newsDraftPill" hidden><i class="ti ti-alert-triangle" aria-hidden="true"></i> Unsaved local draft</span>
       <button type="button" class="news-edit-btn" id="newsEditBtn" aria-expanded="false"><i class="ti ti-pencil" aria-hidden="true"></i> <span id="newsEditBtnLabel">Edit news</span></button>
     </div>
     <button class="news-toggle" id="newsToggle" aria-expanded="false">
@@ -1396,6 +1417,43 @@
     amount.classList.add('sealed');
   }
   function setProp(i){ cards.forEach(function(c, j){ c.classList.toggle('on', j === i); }); }
+
+  // Desktop: the wrap's height is driven by the props column, so reserve the
+  // tallest single description expansion up front — cycling the open card can
+  // then never change the component's outer height. Mobile (≤900px) keeps all
+  // descriptions open via CSS, so no reserve is needed there.
+  var narrow = window.matchMedia('(max-width: 900px)');
+  function reserveProps(){
+    props.style.minHeight = '';
+    if (narrow.matches) return;
+    // measure with every card collapsed and transitions off (a card may be mid-cycle),
+    // and with alignSelf:start so we get content height, not the grid-stretched height
+    var ps = [];
+    cards.forEach(function(c){ var p = c.querySelector('p'); if (p) { ps.push(p); p.style.transition = 'none'; } });
+    var open = [];
+    cards.forEach(function(c){ if (c.classList.contains('on')) { open.push(c); c.classList.remove('on'); } });
+    props.style.alignSelf = 'start';
+    void props.offsetWidth;
+    // reserve the TWO largest expansions: while the open card hands off (cycle
+    // or hover), the closing one is still mid-collapse as the next one grows,
+    // so the column transiently holds two partially-open descriptions
+    var h1 = 0, h2 = 0;
+    ps.forEach(function(p){
+      var h = Math.min(p.scrollHeight, 160);
+      if (h > h1) { h2 = h1; h1 = h; } else if (h > h2) { h2 = h; }
+    });
+    props.style.minHeight = (props.offsetHeight + h1 + h2 + 16) + 'px';
+    props.style.alignSelf = '';
+    open.forEach(function(c){ c.classList.add('on'); });
+    void props.offsetWidth;
+    ps.forEach(function(p){ p.style.transition = ''; });
+  }
+  reserveProps();
+  // fonts change the collapsed column's height — re-reserve once they're in
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(reserveProps);
+  window.addEventListener('load', reserveProps);
+  var rpT;
+  window.addEventListener('resize', function(){ clearTimeout(rpT); rpT = setTimeout(reserveProps, 150); });
 
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     // static sealed BTC state; property hover still works via CSS
@@ -1935,11 +1993,26 @@
 
   var cards = buildList();
 
+  // ---------- local draft state ----------
+  // The committed `tweets` array above is the published source of truth on
+  // every device. localStorage only holds this browser's UNSAVED LOCAL DRAFT,
+  // flagged in the UI until it is committed to the file (Copy JSON) or
+  // discarded (Reset to published).
+  var draftPill = document.getElementById('newsDraftPill');
+  function hasDraft(){ return !!loadStore(); }
+  function syncDraftUI(){
+    var d = hasDraft();
+    if (draftPill) draftPill.hidden = !d;
+    var badge = document.getElementById('neDraftBadge');
+    if (badge) badge.hidden = !d;
+  }
+
   function persist(){
     var present = {};
     cards.forEach(function(c){ present[c.id] = true; });
     var removedDefaults = DEFAULTS.filter(function(d){ return !present[d.id]; }).map(function(d){ return d.id; });
     saveStore({ list: cards, removedDefaults: removedDefaults });
+    syncDraftUI();
   }
 
   // ---------- X / Twitter embed helpers ----------
@@ -2164,12 +2237,14 @@
     editor.innerHTML =
       '<div class="ne-toolbar">' +
         '<button type="button" class="ne-btn primary" data-act="add"><i class="ti ti-plus" aria-hidden="true"></i> Add card</button>' +
-        '<button type="button" class="ne-btn" data-act="export"><i class="ti ti-file-export" aria-hidden="true"></i> Export</button>' +
+        '<button type="button" class="ne-btn" data-act="copyjson"><i class="ti ti-copy" aria-hidden="true"></i> Copy JSON</button>' +
         '<button type="button" class="ne-btn" data-act="import"><i class="ti ti-file-import" aria-hidden="true"></i> Import JSON</button>' +
         '<span class="ne-spacer"></span>' +
+        '<span class="ne-badge draft" id="neDraftBadge"' + (hasDraft() ? '' : ' hidden') + '>Unsaved local draft</span>' +
         '<span class="ne-count">' + cards.length + ' card' + (cards.length === 1 ? '' : 's') + '</span>' +
-        '<button type="button" class="ne-btn danger" data-act="reset"><i class="ti ti-refresh" aria-hidden="true"></i> Reset to defaults</button>' +
+        '<button type="button" class="ne-btn danger" data-act="reset"><i class="ti ti-refresh" aria-hidden="true"></i> Reset to published</button>' +
       '</div>' +
+      '<div class="ne-hint" style="margin:-6px 0 16px">Edits live only in this browser as an unsaved local draft. To publish for everyone, <b>Copy JSON</b> and commit it into the <code>tweets</code> array in privacy.html — or <b>Reset to published</b> to discard the draft.</div>' +
       '<div class="ne-cards">' + cards.map(editorCardHTML).join('') + '</div>';
   }
 
@@ -2213,12 +2288,12 @@
       var i = parseInt(btn.getAttribute('data-i'), 10);
       if (cards[i] && window.confirm('Delete this card?')) { cards.splice(i, 1); persist(); renderPublic(); renderEditor(); }
     } else if (act === 'reset') {
-      if (window.confirm('Reset all news cards to the original defaults? Your custom cards and edits will be removed.')) {
+      if (window.confirm('Discard the unsaved local draft in this browser and go back to the published list committed in the repo?')) {
         try { localStorage.removeItem(STORAGE_KEY); } catch(e2){}
-        cards = DEFAULTS.map(clone); renderPublic(); renderEditor();
+        cards = DEFAULTS.map(clone); renderPublic(); renderEditor(); syncDraftUI();
       }
-    } else if (act === 'export') {
-      openExport();
+    } else if (act === 'copyjson') {
+      copyJson(btn);
     } else if (act === 'import') {
       openImport();
     }
@@ -2248,38 +2323,36 @@
     bd.addEventListener('click', function(e){ if (e.target === bd) document.body.removeChild(bd); });
     return bd;
   }
-  function copyFrom(bd, sel, msgSel, okText){
-    var ta = bd.querySelector(sel); ta.focus(); ta.select();
-    var ok = false; try { ok = document.execCommand('copy'); } catch(e){}
-    if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(ta.value).catch(function(){}); ok = true; }
-    var m = bd.querySelector(msgSel); m.className = 'ne-msg ok'; m.textContent = ok ? okText : 'Select the text above and copy manually.';
-  }
-  function openExport(){
-    var arr = publicCards();
-    var json = JSON.stringify(arr, null, 2);
-    var tweetsLiteral = 'var tweets = ' + JSON.stringify(arr, null, 2) + ';';
-    var bd = makeModal(
-      '<h3>Export news cards</h3>' +
-      '<p>Copy the JSON to back up or re-import later — or copy the ready-to-paste <code>tweets</code> array to hardcode it permanently into privacy.html.</p>' +
-      '<div class="ne-modal-label">JSON array</div>' +
-      '<textarea id="neExpJson" readonly>' + esc(json) + '</textarea>' +
-      '<div class="ne-modal-actions"><button type="button" class="ne-btn" id="neCopyJson"><i class="ti ti-copy" aria-hidden="true"></i> Copy JSON</button></div>' +
-      '<div class="ne-modal-label">Ready-to-paste tweets array</div>' +
-      '<textarea id="neExpTweets" readonly>' + esc(tweetsLiteral) + '</textarea>' +
-      '<div class="ne-modal-actions">' +
-        '<button type="button" class="ne-btn" id="neCopyTweets"><i class="ti ti-copy" aria-hidden="true"></i> Copy tweets array</button>' +
-        '<button type="button" class="ne-btn" id="neCloseExp">Close</button>' +
-      '</div>' +
-      '<div class="ne-msg" id="neExpMsg"></div>'
-    );
-    bd.querySelector('#neCopyJson').addEventListener('click', function(){ copyFrom(bd, '#neExpJson', '#neExpMsg', 'JSON copied to clipboard.'); });
-    bd.querySelector('#neCopyTweets').addEventListener('click', function(){ copyFrom(bd, '#neExpTweets', '#neExpMsg', 'tweets array copied to clipboard.'); });
-    bd.querySelector('#neCloseExp').addEventListener('click', function(){ document.body.removeChild(bd); });
+  // ---------- copy JSON (publish path) ----------
+  // Copies the full current list so it can be committed into the `tweets`
+  // array in privacy.html — the only way an edit becomes visible on other devices.
+  function copyJson(btn){
+    var json = JSON.stringify(publicCards(), null, 2);
+    var orig = btn.innerHTML;
+    function done(ok){
+      btn.innerHTML = ok ? '<i class="ti ti-check" aria-hidden="true"></i> Copied — commit it to privacy.html'
+                         : '<i class="ti ti-alert-triangle" aria-hidden="true"></i> Copy failed — JSON logged to console';
+      if (!ok) { try { console.log(json); } catch(e){} }
+      setTimeout(function(){ btn.innerHTML = orig; }, 2400);
+    }
+    function legacyCopy(){
+      var ta = document.createElement('textarea');
+      ta.value = json; ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.focus(); ta.select();
+      var ok = false; try { ok = document.execCommand('copy'); } catch(e){}
+      document.body.removeChild(ta);
+      return ok;
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(json).then(function(){ done(true); }, function(){ done(legacyCopy()); });
+    } else {
+      done(legacyCopy());
+    }
   }
   function openImport(){
     var bd = makeModal(
       '<h3>Import news cards</h3>' +
-      '<p>Paste a JSON array of cards (same shape as Export). This replaces all current cards.</p>' +
+      '<p>Paste a JSON array of cards (same shape as Copy JSON). This replaces all current cards, as a local draft.</p>' +
       '<textarea id="neImp" placeholder=\'[ { "url": "https://x.com/user/status/123…", "title": "optional headline", "date": "Jun 2026" } ]\'></textarea>' +
       '<div class="ne-modal-actions">' +
         '<button type="button" class="ne-btn primary" id="neDoImport"><i class="ti ti-check" aria-hidden="true"></i> Import</button>' +
@@ -2317,6 +2390,7 @@
   });
 
   renderPublic();
+  syncDraftUI();
 })();
 </script>
 
@@ -2334,7 +2408,18 @@
   }
   toggle('.wp-card','tap-open');
   toggle('.snode','tap-open');
-  toggle('.sp-card','on'); /* reuses the auto-cycle's own state class */
+  /* sp-card taps are exclusive (one open at a time): the stamp component only
+     reserves space for a single expanded description, so two open cards would
+     overflow it and shift the page */
+  document.querySelectorAll('.sp-card').forEach(function(el){
+    el.addEventListener('pointerdown',function(e){
+      if(e.pointerType==='mouse')return;
+      if(e.target.closest('a'))return;
+      var was = el.classList.contains('on');
+      document.querySelectorAll('.sp-card').forEach(function(x){ x.classList.remove('on'); });
+      if(!was) el.classList.add('on');
+    });
+  });
 })();
 </script>
 </body>
