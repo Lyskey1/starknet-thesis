@@ -1583,7 +1583,7 @@
   var SEED_AT = Date.parse(SEED_RAW.verified);
   var SEED = makeSnapshot({ updated: SEED_AT, btcUsd: SEED_RAW.btcUsd, supplies: SEED_RAW.supplies,
     stakedTokens: SEED_RAW.stakedTokens, stakedOther: SEED_RAW.stakedOther, encryptedStrkBtc: SEED_RAW.encryptedStrkBtc, prov: provAll('seed', SEED_AT) });
-  var CACHE_KEY = 'btcfiMetrics_v4'; // v4: snapshot carries provenance; older cache shapes are ignored and rewritten on the next good fetch
+  var CACHE_KEY = 'btcfiMetrics_v5'; // v5: staked group carries its per-token breakdown; older cache shapes are ignored and rewritten on the next good fetch
 
   var RPCS = ['https://rpc.starknet.lava.build', 'https://api.cartridge.gg/x/starknet/mainnet', 'https://1rpc.io/starknet'];
   var SEL_TOTAL_SUPPLY = '0x80aa9fdbfaf9615e4afc7f5f722e265daca5ccc655360fa5ccacf9c267936d';
