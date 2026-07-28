@@ -1088,64 +1088,18 @@ footer.site-footer .foot-bottom a:hover{color:var(--accent)}
 
 
 <script>
-/* =========================================================================
-   DATA CONTRACT (what /api/metrics returns). MOCK below for standalone preview.
-   Sources for step 2:
-     CoinGecko  → price/change/marketCap/fdv/supply, category ranks,
-                  category market caps (/coins/categories) for the Venn
-     Starknet RPC (staking contract) → strk/btc staked
-     DefiLlama  → tvl, tvs(proxy), stablecoins, chain revenue (+ history)
-     growthepie → daily users, app revenue (+ history)
-     static     → unlock schedule
-   Time series for the click-to-zoom charts: /api/series?metric=tvl&range=30
-   ========================================================================= */
-const MOCK = {
-  meta:{updatedAt:new Date().toISOString()},
-  price:{usd:0.1342,change24h:3.8,change7d:-2.1},
-  marketCap:512e6, fdv:1.34e9, circulatingSupply:3.82e9, totalSupply:10e9,
-  staking:{strkStaked:1.18e9,btcStaked:1450,totalUsd:310e6,pct:30.9,strkUsd:158e6,btcUsd:152e6},
-  rank:{zk:{r:2,n:48},privacy:{r:7,n:61},quantum:{r:3,n:19},bitcoinL2:{r:5,n:54}},
-  eco:{tvl:340e6,tvs:610e6,stables:96e6,appRev:1.9e6,users:78000,revenue:540000},
-  unlocks:{nextDate:"2026-07-15",nextAmount:127e6,nextPctOfSupply:1.27,circPct:38.2,
-    schedule:[ ["Jul 26",127e6],["Aug 26",98e6],["Sep 26",98e6],["Oct 26",112e6],
-               ["Nov 26",98e6],["Dec 26",98e6],["Jan 27",140e6],["Feb 27",98e6] ]},
-  cex:[{name:"Binance",url:"https://www.binance.com/en/trade/STRK_USDT"},
-       {name:"Coinbase",url:"https://www.coinbase.com/price/starknet"},
-       {name:"OKX",url:"https://www.okx.com"},{name:"Bybit",url:"https://www.bybit.com"},
-       {name:"Kraken",url:"https://www.kraken.com"},{name:"KuCoin",url:"https://www.kucoin.com"},
-       {name:"Gate",url:"https://www.gate.io"},{name:"MEXC",url:"https://www.mexc.com"},
-       {name:"Bitget",url:"https://www.bitget.com"},{name:"Bithumb",url:"https://www.bithumb.com"},
-       {name:"Backpack",url:"https://backpack.exchange"}]
-};
-
-const fmtUsd=n=>n==null?"—":"$"+(+n).toLocaleString("en-US",{minimumFractionDigits:n<1?4:2,maximumFractionDigits:n<1?4:2});
-const fmtBig=n=>{if(n==null)return"—";const a=Math.abs(n);
-  if(a>=1e9)return"$"+(n/1e9).toFixed(2)+"B"; if(a>=1e6)return"$"+(n/1e6).toFixed(1)+"M";
-  if(a>=1e3)return"$"+(n/1e3).toFixed(0)+"K"; return"$"+(+n).toFixed(0);};
-const fmtCount=n=>{if(n==null)return"—";const a=Math.abs(n);
-  if(a>=1e9)return(n/1e9).toFixed(2)+"B"; if(a>=1e6)return(n/1e6).toFixed(1)+"M";
-  if(a>=1e3)return(n/1e3).toFixed(1)+"K"; return(+n).toLocaleString("en-US");};
-const fmtPct=n=>n==null?"—":(n>0?"+":"")+n.toFixed(1)+"%";
-const chgClass=n=>n==null?"":(n>=0?"up":"down");
-function set(sel,val,cls){const el=document.querySelector(`[data-metric="${sel}"]`);if(!el)return;
-  el.textContent=val; if(cls!==undefined){el.className="";el.classList.add(cls);}}
-function setAll(sel,val){document.querySelectorAll(`[data-metric="${sel}"]`).forEach(e=>e.textContent=val);}
-
-let DATA=MOCK;
-/* render() now only feeds elements that still exist outside section 04:
-   the % circulating staked figure reused in section 02 and the CEX list
-   (section 05 / where-to-get). The section 03 Venn caps have their own
-   live CoinGecko engine at the end of the page (single source of truth
-   for both the SVG labels and the legend rows) — never fed from MOCK. */
-function render(d){
-  DATA=d;
-  setAll("staking.pct",d.staking.pct.toFixed(1)+"%");
-  const cex=document.querySelector('[data-list="cex"]');
-  if(cex&&d.cex)cex.innerHTML=d.cex.map(c=>{let dom="";try{dom=new URL(c.url).hostname.replace(/^www\./,"");}catch(e){}
-    return `<a class="buy-item" href="${c.url}" target="_blank" rel="noopener noreferrer"><span class="bi-name"><span class="bi-logo"><img src="https://www.google.com/s2/favicons?domain=${dom}&sz=64" alt="" onerror="this.remove()"><i>${c.name[0]}</i></span>${c.name}</span> <span class="badge">${c.tag||'CEX'}</span></a>`;}).join("");
-}
-async function load(){try{const r=await fetch("/api/metrics",{cache:"no-store"});if(!r.ok)throw 0;render(await r.json());}
-  catch(e){render(MOCK);}}
+/* Section 05 CEX directory — static link-list content, no metrics. The legacy
+   MOCK metrics renderer that used to live here is retired: every number on
+   the page renders from its live engine (section 02 staking figures come from
+   the unified numbers engine at the end of the page, the same snapshot and
+   render pass the section 04 accordion reads). */
+const CEX=[{name:"Binance",url:"https://www.binance.com/en/trade/STRK_USDT"},
+     {name:"Coinbase",url:"https://www.coinbase.com/price/starknet"},
+     {name:"OKX",url:"https://www.okx.com"},{name:"Bybit",url:"https://www.bybit.com"},
+     {name:"Kraken",url:"https://www.kraken.com"},{name:"KuCoin",url:"https://www.kucoin.com"},
+     {name:"Gate",url:"https://www.gate.io"},{name:"MEXC",url:"https://www.mexc.com"},
+     {name:"Bitget",url:"https://www.bitget.com"},{name:"Bithumb",url:"https://www.bithumb.com"},
+     {name:"Backpack",url:"https://backpack.exchange"}];
 /* phase 4: engines start when their section approaches the viewport,
    skip work while the tab is hidden, and poll 3x wider on mobile */
 window.deferEngine=deferEngine;
@@ -1159,9 +1113,11 @@ function deferEngine(anchor, boot){
 }
 var ENGINE_X=window.matchMedia&&window.matchMedia('(max-width:860px)').matches?3:1;
 window.deferEngine=deferEngine;window.ENGINE_X=ENGINE_X;
-deferEngine('#numbers',function(){
-  load();
-  setInterval(function(){ if(!document.hidden) load(); },60000*ENGINE_X);
+deferEngine('[data-list="cex"]',function(){
+  const cex=document.querySelector('[data-list="cex"]');
+  if(!cex)return;
+  cex.innerHTML=CEX.map(c=>{let dom="";try{dom=new URL(c.url).hostname.replace(/^www\./,"");}catch(e){}
+    return `<a class="buy-item" href="${c.url}" target="_blank" rel="noopener noreferrer"><span class="bi-name"><span class="bi-logo"><img src="https://www.google.com/s2/favicons?domain=${dom}&sz=64" alt="" onerror="this.remove()"><i>${c.name[0]}</i></span>${c.name}</span> <span class="badge">${c.tag||'CEX'}</span></a>`;}).join("");
 });
 
 /* ---------- Venn focus interaction ---------- */
@@ -1254,10 +1210,10 @@ if(govVotes){
 /* =========================================================================
    04 NUMBERS — interactive dashboard (ported from reference/strk-section04.html)
    Isolated in its own IIFE; all DOM queries scoped to #numbers (root).
-   MOCK data + seeded RNG engine for now. Each metric in M keeps {k,type,value,
-   optional source} grouped by grp, so live CoinGecko / DefiLlama / RPC / Artemis
-   values can replace the mock `value` (and `series`) in a later phase without
-   touching the markup. Real source links: StarkZap + Artemis (placeholder).
+   Each metric in M keeps {k,type,value,optional source} grouped by grp. The
+   headline `value` fields are seed readings that the live numbers engine at
+   the end of the page overwrites via window.__numbersLive; every plotted
+   curve is REAL fetched history (see HIST below).
    ========================================================================= */
 (function(){
 const root=document.getElementById('numbers'); if(!root) return;
