@@ -1172,42 +1172,45 @@ var VIDEOS = [
   // render as a styled fallback card — set name/handle/initials/color for a nicer look.
   // These in-file defaults render WITHOUT any localStorage; localStorage is only an override.
   var tweets = [
-    {
-      "url": "https://research.google/blog/",
-      "title": "Google × Ethereum Foundation: how much quantum hardware it actually takes to break the curve behind your wallet",
-      "date": "March 2026",
-      "name": "Google Research × Ethereum Foundation",
-      "handle": "research.google",
-      "initials": "GR",
-      "color": "#4285F4",
-      "verified": false,
-      "fallbackText": "New estimate maps ECDLP-256 to ~1,200 logical qubits / 90M Toffoli gates, executable on <500,000 physical qubits, and names zk-STARKs among the quantum-resistant approaches. (Confirm exact post link.)"
-    },
-    {
-      "url": "https://x.com/StarkWareLtd",
-      "title": "StarkWare's post-quantum roadmap: end-to-end PQ targeted by ~2027",
-      "date": "2026",
-      "fallbackText": "StarkWare lays out the path to a fully post-quantum Starknet, with STARK proofs already quantum-safe by design and the remaining layers scoped in months. (Confirm exact post link.)"
-    },
-    {
-      "url": "https://x.com/Starknet",
-      "title": "S2morrow: a post-quantum wallet live on Starknet Mainnet, signing real transactions with Falcon-512, no fork required",
-      "date": "2026",
-      "fallbackText": "The first quantum-safe account on Starknet, implemented as a Cairo verifier. Migration is one transaction, not a chain-wide hard fork. (Confirm exact post link.)"
-    },
-    {
-      "url": "https://x.com/avihu28",
-      "title": "Avihu Levy (StarkWare) on why Starknet was post-quantum before post-quantum was a deadline",
-      "date": "2026",
-      "fallbackText": "On Starknet's structural advantage: STARKs rely on hashes not curves, and native account abstraction makes the migration a single user transaction. (Confirm exact post link.)"
-    }
+    { "url": "https://x.com/StarkWareLtd/status/2079955780019864015",
+      "title": "A post-quantum Starknet account, built according to the full Falcon-512 specification, executed a real transaction on Mainnet.",
+      "date": "July 2026",
+      "fallbackText": "A post-quantum Starknet account built to the full Falcon-512 specification executed a real transaction on Starknet Mainnet." },
+    { "url": "https://x.com/StarkWareLtd/status/2071935303963861074",
+      "title": "StarkWare unveils its roadmap to make Starknet fully post-quantum secure, end-to-end",
+      "date": "June 2026",
+      "fallbackText": "StarkWare's roadmap to make Starknet fully post-quantum secure, end to end." },
+    { "url": "https://x.com/StarkWareLtd/status/2039336873982599426",
+      "title": "The first post-quantum-secure wallet is now live on Starknet Mainnet.",
+      "date": "April 2026",
+      "fallbackText": "The first post-quantum-secure wallet is now live on Starknet Mainnet." },
+    { "url": "https://x.com/Starknet/status/2044669627834261693",
+      "title": "Google recognizes Starknet's proving tech as post-quantum secure",
+      "date": "April 2026",
+      "fallbackText": "Google recognizes Starknet's proving technology as post-quantum secure." },
+    { "url": "https://x.com/avihu28/status/2042287457530478720",
+      "title": "StarkWare CPO Avihu proposes a concrete way to make Bitcoin post-quantum secure today, without a soft fork: QSB.",
+      "date": "April 2026",
+      "fallbackText": "StarkWare CPO Avihu Levy proposes QSB, a concrete way to make Bitcoin post-quantum secure today without a soft fork." },
+    { "url": "https://x.com/StarkWareLtd/status/2019411010377908602",
+      "title": "StarkWare hires Prof. Scott Aaronson, one of the world's leading minds in quantum computing",
+      "date": "February 2026",
+      "fallbackText": "StarkWare hires Prof. Scott Aaronson, one of the world's leading minds in quantum computing." },
+    { "url": "https://x.com/StarkWareLtd/status/1869392150062039076",
+      "title": "Starknet's answer to Google's latest breakthrough accelerating the quantum threat",
+      "date": "December 2024",
+      "fallbackText": "Starknet's answer to Google's latest quantum computing breakthrough accelerating the quantum threat." },
+    { "url": "https://x.com/StarkWareLtd/status/2058381265884033264",
+      "title": "The STARK Whitepaper: a new post-quantum-secure technology bringing scalability and privacy to blockchains.",
+      "date": "2018",
+      "fallbackText": "The STARK whitepaper introduced a post-quantum-secure technology bringing scalability and privacy to blockchains." }
   ];
   // =============================================================
 
   // Bump DEFAULTS_VERSION whenever the in-file `tweets` defaults change in a way
   // that must override older saved data — it namespaces STORAGE_KEY so a stale
   // localStorage entry from a previous version can never shadow the new defaults.
-  var DEFAULTS_VERSION = 1;
+  var DEFAULTS_VERSION = 2;
   var STORAGE_KEY = 'quantum_news_v' + DEFAULTS_VERSION;
 
   var DEFAULTS = tweets.map(function(t, i){ var c = {}; for (var k in t) c[k] = t[k]; c.id = 'd' + i; return c; });
