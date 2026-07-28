@@ -663,8 +663,8 @@
     </div>
     <div class="metrics-row" style="margin-top:36px;" id="btcMetrics">
       <div class="metric-box">
-        <a class="metric-val metric-link" data-bm="network" data-fmt="dec1" href="https://www.bitcoinlayers.org/layers/starknet" target="_blank" rel="noopener">1,000.3</a>
-        <div class="metric-sub" data-bm-sub="network">≈ $64.1M</div>
+        <a class="metric-val metric-link" data-bm="network" data-fmt="dec1" href="https://www.bitcoinlayers.org/layers/starknet" target="_blank" rel="noopener">1,098.6</a>
+        <div class="metric-sub" data-bm-sub="network">≈ $70.4M</div>
         <div class="metric-label">BTC on Starknet network</div>
       </div>
       <div class="metric-box">
@@ -1508,21 +1508,26 @@
   var row = document.getElementById('btcMetrics');
   if (!row || !window.fetch) return;
 
-  // mirrors assets/data/btc-metrics-seed.json — initial fallback, never breaks
-  var SEED = { updated: '2026-07-20T06:20:00Z', btcUsd: 64081, networkBtc: 1000.27, stakedBtc: 708.35, strkBtcSupply: 98.34, encryptedStrkBtc: 2.48,
-    networkBreakdown: { WBTC: 491.898, tBTC: 53.528, SolvBTC: 449.978, LBTC: 4.867 } };
-  var CACHE_KEY = 'btcfiMetrics_v1';
+  // committed initial fallback, never breaks (assets/data/btc-metrics-seed.json
+  // is a mirror of this literal and lags it; this literal is authoritative)
+  var SEED = { updated: '2026-07-20T06:20:00Z', btcUsd: 64081, networkBtc: 1098.61, stakedBtc: 708.35, strkBtcSupply: 98.34, encryptedStrkBtc: 2.48,
+    networkBreakdown: { strkBTC: 98.34, WBTC: 491.898, tBTC: 53.528, SolvBTC: 449.978, LBTC: 4.867 } };
+  var CACHE_KEY = 'btcfiMetrics_v2'; // v2: network aggregate now includes strkBTC (drop v1 caches computed without it)
 
   var RPCS = ['https://rpc.starknet.lava.build', 'https://api.cartridge.gg/x/starknet/mainnet', 'https://1rpc.io/starknet'];
   var SEL_TOTAL_SUPPLY = '0x80aa9fdbfaf9615e4afc7f5f722e265daca5ccc655360fa5ccacf9c267936d';
-  // BTC representations counted in "BTC on Starknet network" (matches bitcoinlayers):
-  // WBTC + tBTC + SolvBTC + LBTC. strkBTC is intentionally EXCLUDED from the
-  // aggregate: it wraps BTC that is already counted, and including it overshoots
-  // the bitcoinlayers reference.
-  // Exclusions, deliberate: strkBTC (re-wraps BTC already counted here), Endur/vault
-  // receipts (xWBTC, xtBTC, xLBTC, xstrkBTC, xsBTC, fyWBTC, mRe7BTC — all wrap the same
-  // underlying), and BTC-named memecoins. bitcoinlayers' page lists the same bridged
-  // set; small gaps vs their figure are supply drift between snapshots, not methodology.
+  // BTC representations counted in "BTC on Starknet network":
+  // strkBTC + WBTC + tBTC + SolvBTC + LBTC. strkBTC is INCLUDED: it is native
+  // BTC bridged to Starknet and backed 1:1, not a wrapper of the other four,
+  // so it adds real BTC to the network total. Its totalSupply covers shielded
+  // balances too (shielded strkBTC is regular minted supply held by the STRK20
+  // pool contract), which is also why "Encrypted strkBTC" is NOT added on top:
+  // it is a subset of strkBTC supply and would double count. "BTC staked" is a
+  // subset view of assets already inside the total, not an additional line.
+  // Exclusions, deliberate: Endur/vault receipts (xWBTC, xtBTC, xLBTC, xstrkBTC,
+  // xsBTC, fyWBTC, mRe7BTC, all wrapping underlying counted here) and BTC-named
+  // memecoins. bitcoinlayers lists only the bridged set without strkBTC, so this
+  // figure reads higher than their page by design, not by drift.
   var NETWORK_TOKENS = [
     { name: 'WBTC',    addr: '0x3fe2b97c1fd336e750087d68b9b867997fd64a2661ff3ca5a7c771641e8e7ac', dec: 8 },
     { name: 'tBTC',    addr: '0x4daa17763b286d1e59b97c283c0b8c949994c361e426a28f743c67bdfe9a32f', dec: 18 },
@@ -1645,21 +1650,25 @@
     var pPrice = getJson('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd')
       .then(function(d){ if (d.bitcoin && d.bitcoin.usd) { state.btcUsd = d.bitcoin.usd; stamp(); } })
       .catch(function(){});
-    // All-or-nothing: if ANY of the four supplies fails or returns a non-positive /
+    // strkBTC totalSupply is fetched ONCE and shared: the same value feeds both
+    // the "strkBTC supply" card and the network aggregate, so the two can never
+    // disagree within a refresh.
+    var pStrk = rpcTotalSupply(STRKBTC.addr, STRKBTC.dec);
+    var pSupply = pStrk
+      .then(function(v){ state.strkBtcSupply = v; stamp(); })
+      .catch(function(){});
+    // All-or-nothing: if ANY of the five supplies fails or returns a non-positive /
     // non-finite value, the whole aggregate is discarded and the last known GOOD
     // full sum stays on screen. A partial sum would read as a real (wrong) number.
-    var pNetwork = Promise.all(NETWORK_TOKENS.map(function(t){ return rpcTotalSupply(t.addr, t.dec); }))
+    var pNetwork = Promise.all([pStrk].concat(NETWORK_TOKENS.map(function(t){ return rpcTotalSupply(t.addr, t.dec); })))
       .then(function(v){
         if (!v.every(function(x){ return isFinite(x) && x > 0; })) throw new Error('bad supply in aggregate');
-        var bd = {};
-        NETWORK_TOKENS.forEach(function(t, i){ bd[t.name] = v[i]; });
+        var bd = { strkBTC: v[0] }; // Starknet-native asset first in the breakdown
+        NETWORK_TOKENS.forEach(function(t, i){ bd[t.name] = v[i + 1]; });
         state.networkBreakdown = bd;
         state.networkBtc = v.reduce(function(a, b){ return a + b; }, 0);
         stamp();
       })
-      .catch(function(){});
-    var pSupply = rpcTotalSupply(STRKBTC.addr, STRKBTC.dec)
-      .then(function(v){ state.strkBtcSupply = v; stamp(); })
       .catch(function(){});
     var pStaked = getJson('https://api.dashboard.endur.fi/api/query/network/overview')
       .then(function(d){ if (d.total_stake_btc != null) { state.stakedBtc = parseFloat(d.total_stake_btc) / 1e8; stamp(); } })
