@@ -1539,27 +1539,41 @@
     { name: 'LBTC',    addr: '0x36834a40984312f7f7de8d31e3f6305b325389eaeea5b1c0664b2fb936461a4', dec: 8 }
   ];
 
+  // Provenance travels inside the snapshot, per source group, so the freshness
+  // label can never disagree with the numbers it sits under. origin is one of
+  // 'seed' (committed fallback), 'cache' (a previous session's fetch, loaded
+  // from localStorage) or 'live' (fetched in this session); at is the time the
+  // group's values were actually obtained.
+  var GROUPS = ['supplies', 'staked', 'shielded', 'price'];
+  function provAll(origin, at){
+    var p = {};
+    GROUPS.forEach(function(k){ p[k] = { origin: origin, at: at }; });
+    return p;
+  }
+
   // makeSnapshot is the ONLY place the network total is computed: always the
   // sum of the five supplies inside the same snapshot, so the card number,
   // the tooltip TOTAL and the sum of the displayed rows are one number by
   // construction.
   function makeSnapshot(f){
-    var s = { updated: f.updated, btcUsd: f.btcUsd, supplies: f.supplies, stakedBtc: f.stakedBtc, encryptedStrkBtc: f.encryptedStrkBtc };
+    var s = { updated: f.updated, btcUsd: f.btcUsd, supplies: f.supplies, stakedBtc: f.stakedBtc, encryptedStrkBtc: f.encryptedStrkBtc, prov: f.prov };
     s.networkBtc = TOKENS.reduce(function(a, t){ return a + s.supplies[t.name]; }, 0);
     return s;
   }
   function validSnapshot(s){
     return !!(s && s.updated && s.supplies
       && TOKENS.every(function(t){ return isFinite(s.supplies[t.name]) && s.supplies[t.name] > 0; })
-      && isFinite(s.btcUsd) && s.btcUsd > 0 && isFinite(s.stakedBtc) && isFinite(s.encryptedStrkBtc));
+      && isFinite(s.btcUsd) && s.btcUsd > 0 && isFinite(s.stakedBtc) && isFinite(s.encryptedStrkBtc)
+      && s.prov && GROUPS.every(function(k){ return s.prov[k] && s.prov[k].origin && s.prov[k].at; }));
   }
 
   // committed fallback snapshot, never breaks (assets/data/btc-metrics-seed.json
   // is a lagging mirror of this literal; this literal is authoritative)
-  var SEED = makeSnapshot({ updated: Date.parse('2026-07-20T06:20:00Z'), btcUsd: 64081,
+  var SEED_AT = Date.parse('2026-07-20T06:20:00Z');
+  var SEED = makeSnapshot({ updated: SEED_AT, btcUsd: 64081,
     supplies: { strkBTC: 98.34, WBTC: 491.898, tBTC: 53.528, SolvBTC: 449.978, LBTC: 4.867 },
-    stakedBtc: 708.35, encryptedStrkBtc: 2.48 });
-  var CACHE_KEY = 'btcfiMetrics_v3'; // v3: snapshot shape; older cache shapes are ignored and rewritten on the next good fetch
+    stakedBtc: 708.35, encryptedStrkBtc: 2.48, prov: provAll('seed', SEED_AT) });
+  var CACHE_KEY = 'btcfiMetrics_v4'; // v4: snapshot carries provenance; older cache shapes are ignored and rewritten on the next good fetch
 
   var RPCS = ['https://rpc.starknet.lava.build', 'https://api.cartridge.gg/x/starknet/mainnet', 'https://1rpc.io/starknet'];
   var SEL_TOTAL_SUPPLY = '0x80aa9fdbfaf9615e4afc7f5f722e265daca5ccc655360fa5ccacf9c267936d';
@@ -1608,17 +1622,41 @@
   function saveCache(s){ try { localStorage.setItem(CACHE_KEY, JSON.stringify(s)); } catch(e){} }
 
   // the one committed snapshot everything renders from; replaced wholesale,
-  // never mutated in place (an invalid or old-shape cache falls back to SEED)
-  var snap = (function(){ var c = loadCache(); return validSnapshot(c) ? makeSnapshot(c) : SEED; })();
+  // never mutated in place (an invalid or old-shape cache falls back to SEED).
+  // Loading from cache demotes 'live' provenance to 'cache': a fetch from a
+  // previous session is not live data on this load.
+  var snap = (function(){
+    var c = loadCache();
+    if (!validSnapshot(c)) return SEED;
+    GROUPS.forEach(function(k){ if (c.prov[k].origin === 'live') c.prov[k].origin = 'cache'; });
+    return makeSnapshot(c);
+  })();
+
+  // A reader must be able to sum the rows they see and land exactly on the
+  // total shown beside them, so every DISPLAYED total is the sum of the
+  // DISPLAYED (rounded) components. Full precision stays inside the snapshot,
+  // the cache and all comparison logic.
+  function rnd(v, places){ var m = Math.pow(10, places); return Math.round(v * m) / m; }
+  function displayedSupplies(){
+    var d = {};
+    TOKENS.forEach(function(t){ d[t.name] = rnd(snap.supplies[t.name], 1); });
+    return d;
+  }
+  function displayedTotal(){
+    var d = displayedSupplies(), tot = 0;
+    TOKENS.forEach(function(t){ tot += d[t.name]; });
+    return rnd(tot, 1);
+  }
 
   // hover/tap breakdown tooltip on the network aggregate card (auditable sum)
   var tip = null;
   function tipOpen(){ return !!(tip && tip.style.display === 'block'); }
   function fillTip(){
     if (!tip) return;
+    var d = displayedSupplies();
     tip.innerHTML = '<div class="d">BTC ON STARKNET, BY TOKEN</div>' + TOKENS.map(function(t){
-      return '<div class="r"><span>' + t.name.toUpperCase() + '</span><span>' + fmtDec1(snap.supplies[t.name]) + '</span></div>';
-    }).join('') + '<div class="r t"><span>TOTAL</span><span>' + fmtDec1(snap.networkBtc) + '</span></div>';
+      return '<div class="r"><span>' + t.name.toUpperCase() + '</span><span>' + fmtDec1(d[t.name]) + '</span></div>';
+    }).join('') + '<div class="r t"><span>TOTAL</span><span>' + fmtDec1(displayedTotal()) + '</span></div>';
   }
   (function(){
     var box = els.network && els.network.val ? els.network.val.closest('.metric-box') : null;
@@ -1640,22 +1678,48 @@
   })();
 
   var upEl = document.getElementById('bmUpdated');
+  // The label reflects the WORST provenance and the OLDEST fetch time among
+  // the groups on screen, so it never overstates: 'live' only when everything
+  // shown was fetched in this session, 'cache' wording with the real cached
+  // fetch time, and a non-live wording when any SEED value is showing.
+  function blockProv(){
+    var rank = { seed: 0, cache: 1, live: 2 };
+    var worst = 'live', oldest = Infinity;
+    GROUPS.forEach(function(k){
+      var p = snap.prov[k];
+      if (rank[p.origin] < rank[worst]) worst = p.origin;
+      if (p.at < oldest) oldest = p.at;
+    });
+    return { origin: worst, at: oldest };
+  }
   function tickUpdated(){
-    if (!upEl || !snap.updated) return;
-    var m = Math.floor((Date.now() - snap.updated) / 60000);
-    upEl.textContent = m < 1 ? 'LIVE DATA, UPDATED JUST NOW' : m < 60 ? 'LIVE DATA, UPDATED ' + m + ' MIN AGO'
-      : m < 2880 ? 'LIVE DATA, UPDATED ' + Math.floor(m / 60) + ' HR AGO' : 'LIVE DATA, UPDATED ' + Math.floor(m / 1440) + ' DAYS AGO';
+    if (!upEl) return;
+    var p = blockProv();
+    if (p.origin === 'seed') {
+      upEl.textContent = 'REFERENCE DATA, LAST VERIFIED ' +
+        new Date(p.at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase();
+      return;
+    }
+    var m = Math.floor((Date.now() - p.at) / 60000);
+    var age = m < 1 ? 'JUST NOW' : m < 60 ? m + ' MIN AGO' : m < 2880 ? Math.floor(m / 60) + ' HR AGO' : Math.floor(m / 1440) + ' DAYS AGO';
+    upEl.textContent = p.origin === 'live' ? 'LIVE DATA, UPDATED ' + age : 'CACHED DATA, FETCHED ' + age;
   }
   // THE single render: four cards, fiat subs, timestamp, and the tooltip when
   // it is open, all from the committed snapshot. An open tooltip re-renders in
   // place and the two cards it audits update instantly instead of tweening, so
   // no element in the block can show a different vintage than its neighbors.
+  // Every card renders its DISPLAYED (rounded) value and derives its fiat sub
+  // from that same displayed value, so all visible pairs reconcile by hand.
   function renderAll(){
     var auditing = tipOpen();
-    setStat('network', snap.networkBtc, snap.networkBtc * snap.btcUsd, auditing);
-    setStat('staked', snap.stakedBtc, snap.stakedBtc * snap.btcUsd);
-    setStat('supply', snap.supplies.strkBTC, snap.supplies.strkBTC * snap.btcUsd, auditing);
-    setStat('shielded', snap.encryptedStrkBtc, snap.encryptedStrkBtc * snap.btcUsd);
+    var shownTotal = displayedTotal();
+    var shownStaked = Math.round(snap.stakedBtc);
+    var shownSupply = rnd(snap.supplies.strkBTC, 1);
+    var shownShielded = rnd(snap.encryptedStrkBtc, 2);
+    setStat('network', shownTotal, shownTotal * snap.btcUsd, auditing);
+    setStat('staked', shownStaked, shownStaked * snap.btcUsd);
+    setStat('supply', shownSupply, shownSupply * snap.btcUsd, auditing);
+    setStat('shielded', shownShielded, shownShielded * snap.btcUsd);
     if (auditing) fillTip();
     tickUpdated();
   }
@@ -1684,11 +1748,17 @@
   function refresh(){
     // build a candidate off-screen, starting from the current snapshot; nothing
     // on screen changes until the candidate is committed wholesale at the end
-    var next = { updated: snap.updated, btcUsd: snap.btcUsd, supplies: snap.supplies, stakedBtc: snap.stakedBtc, encryptedStrkBtc: snap.encryptedStrkBtc };
+    var next = { updated: snap.updated, btcUsd: snap.btcUsd, supplies: snap.supplies, stakedBtc: snap.stakedBtc, encryptedStrkBtc: snap.encryptedStrkBtc,
+      prov: { supplies: snap.prov.supplies, staked: snap.prov.staked, shielded: snap.prov.shielded, price: snap.prov.price } };
     var stamped = false;
-    function stamp(){ next.updated = Date.now(); stamped = true; }
+    function stamp(group){
+      var now = Date.now();
+      next.updated = now;
+      next.prov[group] = { origin: 'live', at: now }; // failed groups keep their previous provenance
+      stamped = true;
+    }
     var pPrice = getJson('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd')
-      .then(function(d){ if (d.bitcoin && d.bitcoin.usd) { next.btcUsd = d.bitcoin.usd; stamp(); } })
+      .then(function(d){ if (d.bitcoin && d.bitcoin.usd) { next.btcUsd = d.bitcoin.usd; stamp('price'); } })
       .catch(function(){});
     // All-or-nothing for the aggregate group: the five supplies land together
     // or not at all, so the total always equals the sum of the rows shown next
@@ -1701,16 +1771,16 @@
         var sup = {};
         TOKENS.forEach(function(t, i){ sup[t.name] = v[i]; });
         next.supplies = sup;
-        stamp();
+        stamp('supplies');
       })
       .catch(function(){}); // the WHOLE group keeps the previous vintage
     var pStaked = getJson('https://api.dashboard.endur.fi/api/query/network/overview')
-      .then(function(d){ if (d.total_stake_btc != null) { next.stakedBtc = parseFloat(d.total_stake_btc) / 1e8; stamp(); } })
+      .then(function(d){ if (d.total_stake_btc != null) { next.stakedBtc = parseFloat(d.total_stake_btc) / 1e8; stamp('staked'); } })
       .catch(function(){});
     var pShielded = getJson('https://strk20-dashboard-production.up.railway.app/agg/pool-summary')
       .then(function(d){
         var t = (d.perToken || []).filter(function(x){ return x.symbol === 'strkBTC'; })[0];
-        if (t && t.balanceHuman != null) { next.encryptedStrkBtc = t.balanceHuman; stamp(); }
+        if (t && t.balanceHuman != null) { next.encryptedStrkBtc = t.balanceHuman; stamp('shielded'); }
       })
       .catch(function(){});
     Promise.all([pPrice, pSupplies, pStaked, pShielded]).then(function(){
