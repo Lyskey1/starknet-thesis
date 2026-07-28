@@ -2031,9 +2031,11 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
 (function(){
   if (!window.fetch) return;
 
-  // mirrors assets/data/strk-numbers-seed.json — today's REAL readings, never mock
+  // mirrors assets/data/strk-numbers-seed.json (real readings, never mock).
+  // RULE: whoever edits these seed values updates `verified` in the same
+  // commit; the fallback label derives from it.
   var SEED = {
-    updated: '2026-07-20T08:15:00Z',
+    verified: '2026-07-21T05:14:15Z',
     price: 0.02832224, chg24: -1.81, chg7: -4.95, mcap: 191008881, fdv: 282999565, circ: 6746937561, unlockedPct: 67.47, btcUsd: 64246,
     strkStaked: 1428664556, strkStakedUsd: 40462980, stakePct: 21.175, btcStaked: 708.36, btcStakedUsd: 45509277, valueStaked: 85972257,
     tvl: 173097155, tvs: 388942978, netflow: -25499197, stables: 164973460, apprev: 12568, chainrev: 120744,
@@ -2126,15 +2128,15 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
   }
   function saveCache(s){ try { localStorage.setItem(CACHE_KEY, JSON.stringify(s)); } catch(e){} }
   var state = loadCache();
-  if (!state) { state = {}; for (var k in SEED) state[k] = SEED[k]; state.updated = Date.parse(SEED.updated); }
-  else for (var sk in SEED) if (state[sk] == null && sk !== 'updated') state[sk] = SEED[sk]; // backfill fields added after a visitor's cache was written
+  if (!state) { state = {}; for (var k in SEED) if (k !== 'verified') state[k] = SEED[k]; state.updated = Date.parse(SEED.verified); }
+  else for (var sk in SEED) if (state[sk] == null && sk !== 'verified') state[sk] = SEED[sk]; // backfill fields added after a visitor's cache was written
 
   // Per-cluster provenance: which fetch cluster produced the values on screen
   // ('seed' | 'cache' | 'live') and when they were actually obtained. It rides
   // inside state (and the cache), so freshness labels can never disagree with
   // the numbers they sit under. Loading from cache demotes 'live' to 'cache':
   // a previous session's fetch is not live data on this load.
-  var SEED_AT = Date.parse(SEED.updated);
+  var SEED_AT = Date.parse(SEED.verified);
   var PROV_KEYS = ['cg', 'stakeStrk', 'stakeBtc', 'tvl', 'tvs', 'stables', 'apprev', 'chainrev', 'gtp', 'act', 'npm', 's20tx', 's20tvl'];
   if (!state.prov) state.prov = {};
   PROV_KEYS.forEach(function(pk){
@@ -2452,8 +2454,10 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
   var stage = document.getElementById('vennStage');
   if (!stage || !window.fetch) return;
 
-  // mirrors assets/data/strk-venn-seed.json — initial fallback, never breaks
-  var SEED = { updated: '2026-07-20T07:48:00Z', btcfi: 618879927, quantum: 10114594898, privacy: 10429460807, starknet: 190938039 };
+  // mirrors assets/data/strk-venn-seed.json (initial fallback, never breaks).
+  // RULE: whoever edits these seed values updates `verified` in the same
+  // commit; the fallback label derives from it.
+  var SEED = { verified: '2026-07-21T05:14:15Z', btcfi: 618879927, quantum: 10114594898, privacy: 10429460807, starknet: 190938039 };
   var CACHE_KEY = 'strkVennMetrics_v1';
   var KEYS = ['btcfi', 'quantum', 'privacy', 'starknet'];
 
@@ -2507,7 +2511,7 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
   var origin = 'seed';
   var state = loadCache();
   if (state) origin = 'cache';
-  else state = { updated: Date.parse(SEED.updated), btcfi: SEED.btcfi, quantum: SEED.quantum, privacy: SEED.privacy, starknet: SEED.starknet };
+  else state = { updated: Date.parse(SEED.verified), btcfi: SEED.btcfi, quantum: SEED.quantum, privacy: SEED.privacy, starknet: SEED.starknet };
 
   var upEl = document.getElementById('vennUpdated');
   function tickUpdated(){

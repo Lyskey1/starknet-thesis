@@ -1568,11 +1568,15 @@
   }
 
   // committed fallback snapshot, never breaks (assets/data/btc-metrics-seed.json
-  // is a lagging mirror of this literal; this literal is authoritative)
-  var SEED_AT = Date.parse('2026-07-20T06:20:00Z');
-  var SEED = makeSnapshot({ updated: SEED_AT, btcUsd: 64081,
+  // is a lagging mirror of this literal; this literal is authoritative).
+  // RULE: whoever edits these seed values updates `verified` in the same
+  // commit; the fallback label derives from it.
+  var SEED_RAW = { verified: '2026-07-28T13:05:52Z', btcUsd: 64081,
     supplies: { strkBTC: 98.34, WBTC: 491.898, tBTC: 53.528, SolvBTC: 449.978, LBTC: 4.867 },
-    stakedBtc: 708.35, encryptedStrkBtc: 2.48, prov: provAll('seed', SEED_AT) });
+    stakedBtc: 708.35, encryptedStrkBtc: 2.48 };
+  var SEED_AT = Date.parse(SEED_RAW.verified);
+  var SEED = makeSnapshot({ updated: SEED_AT, btcUsd: SEED_RAW.btcUsd, supplies: SEED_RAW.supplies,
+    stakedBtc: SEED_RAW.stakedBtc, encryptedStrkBtc: SEED_RAW.encryptedStrkBtc, prov: provAll('seed', SEED_AT) });
   var CACHE_KEY = 'btcfiMetrics_v4'; // v4: snapshot carries provenance; older cache shapes are ignored and rewritten on the next good fetch
 
   var RPCS = ['https://rpc.starknet.lava.build', 'https://api.cartridge.gg/x/starknet/mainnet', 'https://1rpc.io/starknet'];
