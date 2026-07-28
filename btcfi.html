@@ -1498,7 +1498,7 @@
 <!-- LIVE BTC METRICS — same zero-cost client-side architecture as the
      privacy page metrics block: cache-busted fetches on load + silent
      hourly refresh, localStorage last-known cache, committed seed
-     fallback (assets/data/btc-metrics-seed.json mirrors SEED below).
+     fallback (the SEED literal below is the authoritative committed reading).
      Sources: token supplies via free public Starknet RPCs (Lava primary,
      Cartridge + 1RPC fallbacks), BTC staked via the Endur dashboard API,
      encrypted strkBTC via the STRK20 backend (proxies Starkscan),
@@ -1572,8 +1572,7 @@
       && s.prov && GROUPS.every(function(k){ return s.prov[k] && s.prov[k].origin && s.prov[k].at; }));
   }
 
-  // committed fallback snapshot, never breaks (assets/data/btc-metrics-seed.json
-  // is a lagging mirror of this literal; this literal is authoritative).
+  // committed fallback snapshot, never breaks; this literal is authoritative.
   // RULE: `verified` is the date the values were read on-chain, not the
   // commit date; update it in the same commit as any value edit. The
   // fallback label derives from it.

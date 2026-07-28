@@ -2007,7 +2007,8 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
      calls per source). Same architecture as the btcfi/privacy/venn blocks:
      cache-busted fetches on load + silent hourly refresh, localStorage
      last-known cache, committed seed fallback (assets/data/
-     strk-numbers-seed.json mirrors SEED below), count-up, UPDATED tickers.
+     the SEED literal below is the authoritative committed reading), count-up,
+     UPDATED tickers.
 
      Sources: CoinGecko /coins/starknet (price, mcap, 24h/7d change,
      circulating supply, BTC cross-rate) · Endur dashboard API (STRK + BTC
@@ -2031,7 +2032,7 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
 (function(){
   if (!window.fetch) return;
 
-  // mirrors assets/data/strk-numbers-seed.json (real readings, never mock).
+  // committed fallback readings (real, never mock); this literal is authoritative.
   // RULE: `verified` is the date the values were read on-chain, not the
   // commit date; update it in the same commit as any value edit. The
   // fallback label derives from it.
@@ -2437,8 +2438,8 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
 <!-- LIVE CONVERGENCE METRICS (section 03 Venn) — same zero-cost
      client-side engine as the staking/btcfi/privacy blocks: cache-busted
      fetches on load + silent hourly refresh, localStorage last-known
-     cache, committed seed fallback (assets/data/strk-venn-seed.json
-     mirrors SEED below). Exactly TWO CoinGecko keyless calls per
+     cache, committed seed fallback (the SEED literal below is the
+     authoritative committed reading). Exactly TWO CoinGecko keyless calls per
      refresh: one /coins/categories (all three category caps) + one
      /coins/markets?ids=starknet (STRK market cap). Categories are
      matched by exact id first ('bitcoin-layer-2' is still the id behind
@@ -2455,7 +2456,7 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
   var stage = document.getElementById('vennStage');
   if (!stage || !window.fetch) return;
 
-  // mirrors assets/data/strk-venn-seed.json (initial fallback, never breaks).
+  // committed fallback readings (initial fallback, never breaks); this literal is authoritative.
   // RULE: `verified` is the date the values were read on-chain, not the
   // commit date; update it in the same commit as any value edit. The
   // fallback label derives from it.
