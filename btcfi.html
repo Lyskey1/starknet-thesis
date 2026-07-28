@@ -1574,8 +1574,9 @@
 
   // committed fallback snapshot, never breaks (assets/data/btc-metrics-seed.json
   // is a lagging mirror of this literal; this literal is authoritative).
-  // RULE: whoever edits these seed values updates `verified` in the same
-  // commit; the fallback label derives from it.
+  // RULE: `verified` is the date the values were read on-chain, not the
+  // commit date; update it in the same commit as any value edit. The
+  // fallback label derives from it.
   var SEED_RAW = { verified: '2026-07-28T14:52:00Z', btcUsd: 63421,
     supplies: { strkBTC: 102.6318, WBTC: 483.6358, tBTC: 56.5315, SolvBTC: 449.9252, LBTC: 9.7699 },
     stakedTokens: { strkBTC: 8.2802, WBTC: 242.0493, tBTC: 18.2813, SolvBTC: 416.6693, LBTC: 1.5134 },

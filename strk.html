@@ -2032,10 +2032,11 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
   if (!window.fetch) return;
 
   // mirrors assets/data/strk-numbers-seed.json (real readings, never mock).
-  // RULE: whoever edits these seed values updates `verified` in the same
-  // commit; the fallback label derives from it.
+  // RULE: `verified` is the date the values were read on-chain, not the
+  // commit date; update it in the same commit as any value edit. The
+  // fallback label derives from it.
   var SEED = {
-    verified: '2026-07-21T05:14:15Z',
+    verified: '2026-07-20T08:15:00Z',
     price: 0.02832224, chg24: -1.81, chg7: -4.95, mcap: 191008881, fdv: 282999565, circ: 6746937561, unlockedPct: 67.47, btcUsd: 64246,
     strkStaked: 1428664556, strkStakedUsd: 40462980, stakePct: 21.175, btcStaked: 708.36, btcStakedUsd: 45509277, valueStaked: 85972257,
     tvl: 173097155, tvs: 388942978, netflow: -25499197, stables: 164973460, apprev: 12568, chainrev: 120744,
@@ -2455,9 +2456,10 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
   if (!stage || !window.fetch) return;
 
   // mirrors assets/data/strk-venn-seed.json (initial fallback, never breaks).
-  // RULE: whoever edits these seed values updates `verified` in the same
-  // commit; the fallback label derives from it.
-  var SEED = { verified: '2026-07-21T05:14:15Z', btcfi: 618879927, quantum: 10114594898, privacy: 10429460807, starknet: 190938039 };
+  // RULE: `verified` is the date the values were read on-chain, not the
+  // commit date; update it in the same commit as any value edit. The
+  // fallback label derives from it.
+  var SEED = { verified: '2026-07-20T07:48:00Z', btcfi: 618879927, quantum: 10114594898, privacy: 10429460807, starknet: 190938039 };
   var CACHE_KEY = 'strkVennMetrics_v1';
   var KEYS = ['btcfi', 'quantum', 'privacy', 'starknet'];
 
