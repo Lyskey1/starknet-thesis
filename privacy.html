@@ -2276,6 +2276,7 @@
       '<div class="ne-toolbar">' +
         '<button type="button" class="ne-btn primary" data-act="add"><i class="ti ti-plus" aria-hidden="true"></i> Add card</button>' +
         '<button type="button" class="ne-btn" data-act="copyjson"><i class="ti ti-copy" aria-hidden="true"></i> Copy JSON</button>' +
+        '<button type="button" class="ne-btn" data-act="publish"><i class="ti ti-cloud-upload" aria-hidden="true"></i> Publish</button>' +
         '<button type="button" class="ne-btn" data-act="import"><i class="ti ti-file-import" aria-hidden="true"></i> Import JSON</button>' +
         '<span class="ne-spacer"></span>' +
         '<span class="ne-badge draft" id="neDraftBadge"' + (hasDraft() ? '' : ' hidden') + '>Unsaved local draft</span>' +
@@ -2332,6 +2333,8 @@
       }
     } else if (act === 'copyjson') {
       copyJson(btn);
+    } else if (act === 'publish') {
+      doPublish(btn);
     } else if (act === 'import') {
       openImport();
     }
@@ -2361,9 +2364,54 @@
     bd.addEventListener('click', function(e){ if (e.target === bd) document.body.removeChild(bd); });
     return bd;
   }
-  // ---------- copy JSON (publish path) ----------
-  // Copies the full current list so it can be committed into the `tweets`
-  // array in privacy.html — the only way an edit becomes visible on other devices.
+  // ---------- publish (commits data/news.json via /api/publish) ----------
+  // The key lives under its OWN localStorage key; the news draft keys are
+  // never renamed, cleared, or migrated by this flow. Only after a confirmed
+  // successful publish is THIS page's draft override removed, because the
+  // published file has just become the source of truth for it.
+  var PUBLISH_KEY_STORE = 'news_publish_key';
+  function doPublish(btn){
+    var key = '';
+    try { key = localStorage.getItem(PUBLISH_KEY_STORE) || ''; } catch(e){}
+    if (!key) {
+      key = window.prompt('Publish key:') || '';
+      if (!key) return;
+      try { localStorage.setItem(PUBLISH_KEY_STORE, key); } catch(e){}
+    }
+    var published = publicCards(); // exactly the merged list shown in this panel
+    var payload = {};
+    payload['privacy'] = published;
+    var orig = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="ti ti-cloud-upload" aria-hidden="true"></i> Publishing…';
+    fetch('/api/publish', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Publish-Key': key },
+      body: JSON.stringify(payload)
+    })
+      .then(function(r){ return r.json().then(function(d){ return { status: r.status, d: d }; }, function(){ return { status: r.status, d: null }; }); })
+      .then(function(res){
+        if (res.status === 200 && res.d && res.d.ok) {
+          try { localStorage.removeItem(STORAGE_KEY); } catch(e){}
+          adoptDefaults(published); // the panel keeps showing exactly what was published
+          window.alert('Published (commit ' + String(res.d.commit || '').slice(0, 7) + '). The change will be live in about a minute.');
+        } else {
+          var msg = (res.d && res.d.error) || ('HTTP ' + res.status);
+          if (res.status === 401) {
+            try { localStorage.removeItem(PUBLISH_KEY_STORE); } catch(e){}
+            window.alert('Publish failed: ' + msg + '\nNothing was published; your local list is intact. You will be asked for the key again on the next attempt.');
+          } else {
+            window.alert('Publish failed: ' + msg + '\nNothing was published; your local list is intact.');
+          }
+        }
+      })
+      .catch(function(){ window.alert('Publish failed: network error.\nNothing was published; your local list is intact.'); })
+      .then(function(){ btn.disabled = false; btn.innerHTML = orig; });
+  }
+
+  // ---------- copy JSON ----------
+  // Copies the full current list as JSON, handy for committing by hand;
+  // the Publish button is the normal path to make edits visible everywhere.
   function copyJson(btn){
     var json = JSON.stringify(publicCards(), null, 2);
     var orig = btn.innerHTML;
