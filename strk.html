@@ -1878,6 +1878,13 @@ root.querySelectorAll('.cell').forEach(c=>io.observe(c));
     });
   };
   root.querySelectorAll('.nacc-item.open').forEach(it=>window.__drawSparks(it));
+  /* live-engine hook: clear the one-shot guard on visible cells so an hourly
+     refresh redraws sparklines and delta badges from the fresh series (the
+     series cache TTL for 30D equals the refresh cadence) */
+  window.__refreshSparks=function(){
+    root.querySelectorAll('.nacc-item.open .cell[data-chart-series]').forEach(c=>{delete c.dataset.sparked;});
+    root.querySelectorAll('.nacc-item.open').forEach(it=>window.__drawSparks(it));
+  };
 })();
 
 /* hook for the live engine (end of page): keep headline values current —
@@ -2077,7 +2084,7 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
     dau: 13221, wau: 43443, totaltx: 307714287, tps: 0.737, downloads: 7356,
     p_tvl: 528903, p_tx: 36, p_rev: 2590
   };
-  var CACHE_KEY = 'strkNumbers_v1';
+  var CACHE_KEY = 'strkNumbers_v2'; // v2: state carries per-cluster provenance; older cache shapes are dropped
   var NPM_FIRST_PUBLISH = '2026-02-24'; // starkzap first npm release
 
   var RPCS = ['https://rpc.starknet.lava.build', 'https://api.cartridge.gg/x/starknet/mainnet', 'https://1rpc.io/starknet'];
@@ -2166,6 +2173,20 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
   if (!state) { state = {}; for (var k in SEED) state[k] = SEED[k]; state.updated = Date.parse(SEED.updated); }
   else for (var sk in SEED) if (state[sk] == null && sk !== 'updated') state[sk] = SEED[sk]; // backfill fields added after a visitor's cache was written
 
+  // Per-cluster provenance: which fetch cluster produced the values on screen
+  // ('seed' | 'cache' | 'live') and when they were actually obtained. It rides
+  // inside state (and the cache), so freshness labels can never disagree with
+  // the numbers they sit under. Loading from cache demotes 'live' to 'cache':
+  // a previous session's fetch is not live data on this load.
+  var SEED_AT = Date.parse(SEED.updated);
+  var PROV_KEYS = ['cg', 'stakeStrk', 'stakeBtc', 'tvl', 'tvs', 'stables', 'apprev', 'chainrev', 'gtp', 'act', 'npm', 's20tx', 's20tvl'];
+  if (!state.prov) state.prov = {};
+  PROV_KEYS.forEach(function(pk){
+    var p = state.prov[pk];
+    if (p && isFinite(p.at)) { if (p.o === 'live') p.o = 'cache'; }
+    else state.prov[pk] = { o: 'seed', at: SEED_AT };
+  });
+
   /* ---------- DOM hooks ---------- */
   var statEls = {};
   document.querySelectorAll('[data-stat]').forEach(function(el){
@@ -2180,18 +2201,51 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
   var updPill = document.getElementById('upd');
   var tkBar = document.getElementById('tkBar');
 
+  function ageLabel(at){
+    var m = Math.floor((Date.now() - at) / 60000);
+    return m < 1 ? 'JUST NOW' : m < 60 ? m + ' MIN AGO' : m < 2880 ? Math.floor(m / 60) + ' HR AGO' : Math.floor(m / 1440) + ' DAYS AGO';
+  }
+  function seedDate(at, caps){
+    var d = new Date(at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    return caps ? d.toUpperCase() : d;
+  }
+  // worst origin + oldest fetch time across the given clusters: a label never
+  // claims more freshness than the stalest number it covers
+  function provOf(keys){
+    var rank = { seed: 0, cache: 1, live: 2 };
+    var worst = 'live', oldest = Infinity;
+    keys.forEach(function(pk){
+      var p = state.prov[pk];
+      if (rank[p.o] < rank[worst]) worst = p.o;
+      if (p.at < oldest) oldest = p.at;
+    });
+    return { o: worst, at: oldest };
+  }
   function tickUpdated(){
-    if (!state.updated) return;
-    var m = Math.floor((Date.now() - state.updated) / 60000);
-    var label = m < 1 ? 'UPDATED JUST NOW' : m < 60 ? 'UPDATED ' + m + ' MIN AGO'
-      : m < 2880 ? 'UPDATED ' + Math.floor(m / 60) + ' HR AGO' : 'UPDATED ' + Math.floor(m / 1440) + ' DAYS AGO';
-    if (updPill) updPill.textContent = label.charAt(0) + label.slice(1).toLowerCase();
-    if (spUp) spUp.textContent = 'LIVE DATA, ' + label;
+    var pAll = provOf(PROV_KEYS);
+    if (updPill) {
+      updPill.textContent = pAll.o === 'seed' ? 'Reference data, ' + seedDate(pAll.at, false)
+        : (pAll.o === 'live' ? 'Updated ' : 'Cached, fetched ') + ageLabel(pAll.at).toLowerCase();
+    }
+    if (spUp) {
+      var pS = provOf(['stakeStrk']); // the staking panel shows the STRK leg only
+      spUp.textContent = pS.o === 'seed' ? 'REFERENCE DATA, LAST VERIFIED ' + seedDate(pS.at, true)
+        : (pS.o === 'live' ? 'LIVE DATA, UPDATED ' : 'CACHED DATA, FETCHED ') + ageLabel(pS.at);
+    }
   }
 
+  // numeric value at abbr()'s display precision, so a total rendered next to
+  // its abbr-formatted components equals their hand-sum exactly
+  function dispAbbr(v){
+    var a = Math.abs(v), p = a >= 1e9 ? 1e7 : a >= 1e6 ? 1e5 : a >= 1e3 ? 1e2 : 1;
+    return Math.round(v / p) * p;
+  }
   function renderAll(){
+    // total value staked renders as the sum of its two DISPLAYED legs; full
+    // precision stays in state and the cache
+    var shownValueStaked = dispAbbr(state.strkStakedUsd) + dispAbbr(state.btcStakedUsd);
     Object.keys(BIND).forEach(function(k){
-      var v = state[BIND[k]];
+      var v = k === 'valuestaked' ? shownValueStaked : state[BIND[k]];
       (statEls[k] || []).forEach(function(el){ tween(el, v, FMT[k]); });
     });
     // netflow is the site's only signed stat — its card value takes the sign color
@@ -2227,7 +2281,10 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
     // keep the chart registry's headline values current (charts themselves
     // plot real fetched history; these values drive the no-history metrics)
     if (window.__numbersLive) {
-      Object.keys(CHART_KEYS).forEach(function(sk){ if (isFinite(state[sk])) window.__numbersLive.set(CHART_KEYS[sk], state[sk]); });
+      Object.keys(CHART_KEYS).forEach(function(sk){
+        var vv = sk === 'valueStaked' ? shownValueStaked : state[sk];
+        if (isFinite(vv)) window.__numbersLive.set(CHART_KEYS[sk], vv);
+      });
     }
     tickUpdated();
   }
@@ -2349,7 +2406,12 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
       var cg = r[0], endur = r[1], tvl = r[2], tvs = r[3], stables = r[4], apprev = r[5],
           chainrev = r[6], gtp = r[7], act = r[8], npm = r[9], s20tx = r[10], s20tvl = r[11];
       var stamped = false;
-      function stamp(){ state.updated = Date.now(); stamped = true; }
+      function stamp(pk){
+        var now = Date.now();
+        state.updated = now;
+        state.prov[pk] = { o: 'live', at: now }; // failed clusters keep their previous provenance
+        stamped = true;
+      }
 
       // CG cluster — internally coherent (one response)
       if (cg) {
@@ -2359,7 +2421,7 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
         if (isFinite(cg.chg24)) state.chg24 = cg.chg24;
         if (isFinite(cg.chg7)) state.chg7 = cg.chg7;
         if (ok(cg.btcUsd)) state.btcUsd = cg.btcUsd;
-        stamp();
+        stamp('cg');
       }
       // staking legs — each commits only with SAME-ROUND CoinGecko inputs,
       // so staked%, USD legs and totals never mix fresh and stale
@@ -2369,33 +2431,34 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
         state.strkStaked = endur.strk;
         state.stakePct = endur.strk / cg.circ * 100;
         state.strkStakedUsd = endur.strk * cg.price;
-        stamp();
+        stamp('stakeStrk');
       }
       if (btcFresh) {
         state.btcStaked = endur.btc;
         state.btcStakedUsd = endur.btc * cg.btcUsd;
-        stamp();
+        stamp('stakeBtc');
       }
       if (strkFresh && btcFresh) state.valueStaked = state.strkStakedUsd + state.btcStakedUsd;
       // independent single-source clusters
-      if (tvl) { state.tvl = tvl; stamp(); }
-      if (tvs) { state.tvs = tvs.tvs; state.netflow = tvs.netflow; stamp(); }
-      if (stables) { state.stables = stables; stamp(); }
-      if (apprev) { state.apprev = apprev; stamp(); }
-      if (chainrev) { state.chainrev = chainrev; stamp(); }
-      if (gtp) { state.dau = gtp.dau; state.wau = gtp.wau; stamp(); }
-      if (act) { state.totaltx = act.totaltx; state.tps = act.tps; stamp(); }
-      if (npm) { state.downloads = npm; stamp(); }
-      if (s20tvl) { state.p_tvl = s20tvl; stamp(); }
+      if (tvl) { state.tvl = tvl; stamp('tvl'); }
+      if (tvs) { state.tvs = tvs.tvs; state.netflow = tvs.netflow; stamp('tvs'); }
+      if (stables) { state.stables = stables; stamp('stables'); }
+      if (apprev) { state.apprev = apprev; stamp('apprev'); }
+      if (chainrev) { state.chainrev = chainrev; stamp('chainrev'); }
+      if (gtp) { state.dau = gtp.dau; state.wau = gtp.wau; stamp('gtp'); }
+      if (act) { state.totaltx = act.totaltx; state.tps = act.tps; stamp('act'); }
+      if (npm) { state.downloads = npm; stamp('npm'); }
+      if (s20tvl) { state.p_tvl = s20tvl; stamp('s20tvl'); }
       // STRK20 revenue derives from the flat 4-STRK privacy fee × 30d private
       // TX × spot price — only committed when TX sum and price are same-round
       if (s20tx) {
-        state.p_tx = s20tx.p_tx; stamp();
+        state.p_tx = s20tx.p_tx; stamp('s20tx');
         if (cg) state.p_rev = s20tx.sum30 * 4 * cg.price;
       }
 
       if (stamped) saveCache(state);
-      renderAll(); // stats whose source failed keep their last good value + timestamp
+      renderAll(); // stats whose source failed keep their last good value + provenance
+      if (window.__refreshSparks) window.__refreshSparks(); // sparklines and delta badges follow the refresh instead of freezing at open-time
     });
   }
 
@@ -2482,14 +2545,25 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
   }
   function saveCache(s){ try { localStorage.setItem(CACHE_KEY, JSON.stringify(s)); } catch(e){} }
 
-  var state = loadCache() || { updated: Date.parse(SEED.updated), btcfi: SEED.btcfi, quantum: SEED.quantum, privacy: SEED.privacy, starknet: SEED.starknet };
+  // provenance of what is on screen: 'seed' (committed fallback), 'cache'
+  // (a previous session's fetch) or 'live' (fetched in this session) — the
+  // label wording follows it, so it never claims live data over a fallback
+  var origin = 'seed';
+  var state = loadCache();
+  if (state) origin = 'cache';
+  else state = { updated: Date.parse(SEED.updated), btcfi: SEED.btcfi, quantum: SEED.quantum, privacy: SEED.privacy, starknet: SEED.starknet };
 
   var upEl = document.getElementById('vennUpdated');
   function tickUpdated(){
     if (!upEl || !state.updated) return;
+    if (origin === 'seed') {
+      upEl.textContent = 'REFERENCE DATA, LAST VERIFIED ' +
+        new Date(state.updated).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase();
+      return;
+    }
     var m = Math.floor((Date.now() - state.updated) / 60000);
-    upEl.textContent = m < 1 ? 'LIVE DATA, UPDATED JUST NOW' : m < 60 ? 'LIVE DATA, UPDATED ' + m + ' MIN AGO'
-      : m < 2880 ? 'LIVE DATA, UPDATED ' + Math.floor(m / 60) + ' HR AGO' : 'LIVE DATA, UPDATED ' + Math.floor(m / 1440) + ' DAYS AGO';
+    var age = m < 1 ? 'JUST NOW' : m < 60 ? m + ' MIN AGO' : m < 2880 ? Math.floor(m / 60) + ' HR AGO' : Math.floor(m / 1440) + ' DAYS AGO';
+    upEl.textContent = (origin === 'live' ? 'LIVE DATA, UPDATED ' : 'CACHED DATA, FETCHED ') + age;
   }
 
   var R_BASE = 155; // matches the r shipped in the SVG markup
@@ -2544,9 +2618,10 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
     Promise.all([pCats, pStrk]).then(function(v){
       state.btcfi = v[0].btcfi; state.quantum = v[0].quantum; state.privacy = v[0].privacy;
       state.starknet = v[1]; state.updated = Date.now();
+      origin = 'live';
       saveCache(state);
       renderAll();
-    }).catch(function(){ renderAll(); }); // keep the whole previous set + timestamp
+    }).catch(function(){ renderAll(); }); // keep the whole previous set + its provenance
   }
 
   deferEngine('#vennStage',function(){
