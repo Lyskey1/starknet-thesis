@@ -286,6 +286,7 @@
   .th-cd-num{font-size:clamp(34px,11vw,56px);}
 }
 </style>
+<script src="js/admin-gate.js"></script>
 </head>
 <body class="page-quantum">
 
@@ -947,7 +948,6 @@ body.page-quantum{overflow-x:clip;}
   <p class="th-pm-eyebrow th-pm-reveal">From the source</p>
   <p class="th-pm-intro th-pm-reveal">StarkWare's co-founder and CEO on why STARKs were built for this moment.</p>
 
-  <div class="th-pm-vid-admin"><button type="button" class="news-edit-btn" id="qvEditBtn" aria-expanded="false"><i class="ti ti-pencil" aria-hidden="true"></i> <span id="qvEditBtnLabel">Edit videos</span></button></div>
 
   <div class="th-pm-video" id="qvVideos">
     <div class="th-pm-vcard th-pm-reveal" data-qv="0">
@@ -956,12 +956,6 @@ body.page-quantum{overflow-x:clip;}
         <video class="qv-player" controls preload="metadata" playsinline hidden></video>
       </div>
       <div class="meta"><h4 class="qv-title">Starknet's strength against the quantum threat, and what are the missing pieces</h4></div>
-      <div class="qv-editor" hidden>
-        <div class="qv-fld"><label>Video source (path or URL)</label><input type="text" class="qv-src" placeholder="https://pub-3274162cfa1d48728621d5ec2d0906ad.r2.dev/eli-1.mp4 or a local path"></div>
-        <div class="qv-fld"><label>Title</label><input type="text" class="qv-ttl" placeholder="Video title"></div>
-        <div class="qv-fld qv-file"><label>Pick a local file (preview only)</label><input type="file" accept="video/*" class="qv-pick"><div class="qv-note">Local preview only. To publish, add the file to the project and set its path above.</div></div>
-        <div class="qv-actions"><button type="button" class="qv-btn primary qv-save">Save</button><button type="button" class="qv-btn qv-clear">Clear</button></div>
-      </div>
     </div>
     <div class="th-pm-vcard th-pm-reveal" data-qv="1">
       <div class="frame">
@@ -969,12 +963,6 @@ body.page-quantum{overflow-x:clip;}
         <video class="qv-player" controls preload="metadata" playsinline hidden></video>
       </div>
       <div class="meta"><h4 class="qv-title">Starknet's seamless migration to post-quantum security</h4></div>
-      <div class="qv-editor" hidden>
-        <div class="qv-fld"><label>Video source (path or URL)</label><input type="text" class="qv-src" placeholder="https://pub-3274162cfa1d48728621d5ec2d0906ad.r2.dev/eli-2.mp4 or a local path"></div>
-        <div class="qv-fld"><label>Title</label><input type="text" class="qv-ttl" placeholder="Video title"></div>
-        <div class="qv-fld qv-file"><label>Pick a local file (preview only)</label><input type="file" accept="video/*" class="qv-pick"><div class="qv-note">Local preview only. To publish, add the file to the project and set its path above.</div></div>
-        <div class="qv-actions"><button type="button" class="qv-btn primary qv-save">Save</button><button type="button" class="qv-btn qv-clear">Clear</button></div>
-      </div>
     </div>
     <div class="th-pm-vcard th-pm-reveal" data-qv="2">
       <div class="frame">
@@ -982,12 +970,6 @@ body.page-quantum{overflow-x:clip;}
         <video class="qv-player" controls preload="metadata" playsinline hidden></video>
       </div>
       <div class="meta"><h4 class="qv-title">Post-quantum by design: the ZK-STARK white paper called it eight years ago</h4></div>
-      <div class="qv-editor" hidden>
-        <div class="qv-fld"><label>Video source (path or URL)</label><input type="text" class="qv-src" placeholder="https://pub-3274162cfa1d48728621d5ec2d0906ad.r2.dev/Eli-3.mp4 or a local path"></div>
-        <div class="qv-fld"><label>Title</label><input type="text" class="qv-ttl" placeholder="Video title"></div>
-        <div class="qv-fld qv-file"><label>Pick a local file (preview only)</label><input type="file" accept="video/*" class="qv-pick"><div class="qv-note">Local preview only. To publish, add the file to the project and set its path above.</div></div>
-        <div class="qv-actions"><button type="button" class="qv-btn primary qv-save">Save</button><button type="button" class="qv-btn qv-clear">Clear</button></div>
-      </div>
     </div>
     <div class="th-pm-vcard th-pm-reveal" data-qv="3">
       <div class="frame">
@@ -995,12 +977,6 @@ body.page-quantum{overflow-x:clip;}
         <video class="qv-player" controls preload="metadata" playsinline hidden></video>
       </div>
       <div class="meta"><h4 class="qv-title">How little Starknet needs to change to go post-quantum</h4></div>
-      <div class="qv-editor" hidden>
-        <div class="qv-fld"><label>Video source (path or URL)</label><input type="text" class="qv-src" placeholder="https://pub-3274162cfa1d48728621d5ec2d0906ad.r2.dev/eli-4.mp4 or a local path"></div>
-        <div class="qv-fld"><label>Title</label><input type="text" class="qv-ttl" placeholder="Video title"></div>
-        <div class="qv-fld qv-file"><label>Pick a local file (preview only)</label><input type="file" accept="video/*" class="qv-pick"><div class="qv-note">Local preview only. To publish, add the file to the project and set its path above.</div></div>
-        <div class="qv-actions"><button type="button" class="qv-btn primary qv-save">Save</button><button type="button" class="qv-btn qv-clear">Clear</button></div>
-      </div>
     </div>
   </div>
 </section>
@@ -1015,15 +991,10 @@ body.page-quantum{overflow-x:clip;}
 <section>
   <div class="wrap">
     <div class="news-section news-flashy th-pm-reveal" id="newsSection">
-      <div class="news-admin-bar" id="newsAdminBar">
-        <span class="ne-draft-pill" id="newsDraftPill" hidden><i class="ti ti-alert-triangle" aria-hidden="true"></i> Unsaved local draft</span>
-        <button type="button" class="news-edit-btn" id="newsEditBtn" aria-expanded="false"><i class="ti ti-pencil" aria-hidden="true"></i> <span id="newsEditBtnLabel">Edit news</span></button>
-      </div>
       <button class="news-toggle" id="newsToggle" aria-expanded="false">
         <span class="news-toggle-title"><span class="news-eyebrow">Latest</span> Quantum × Starknet news</span>
         <i class="ti ti-chevron-down news-chevron" aria-hidden="true"></i>
       </button>
-      <div class="news-editor" id="newsEditor" hidden></div>
       <div class="news-grid" id="newsGrid"></div>
     </div>
   </div>
@@ -1165,6 +1136,18 @@ var VIDEOS = [
 (function() {
   var grid = document.getElementById('newsGrid');
   if (!grid) return;
+
+  // Admin affordances are built ONLY when the admin gate is on: nothing
+  // admin is served in the page source or present in a reader's DOM.
+  if (window.ADMIN_GATE) {
+    var newsSec = document.getElementById('newsSection');
+    if (newsSec) newsSec.insertAdjacentHTML('afterbegin',
+      '<div class="news-admin-bar" id="newsAdminBar">' +
+        '<span class="ne-draft-pill" id="newsDraftPill" hidden><i class="ti ti-alert-triangle" aria-hidden="true"></i> Unsaved local draft</span>' +
+        '<button type="button" class="news-edit-btn" id="newsEditBtn" aria-expanded="false"><i class="ti ti-pencil" aria-hidden="true"></i> <span id="newsEditBtnLabel">Edit news</span></button>' +
+      '</div>');
+    grid.insertAdjacentHTML('beforebegin', '<div class="news-editor" id="newsEditor" hidden></div>');
+  }
 
   // ====== EDIT HERE: add Quantum × Starknet posts/sources ======
   // Each entry: { url, title, date, fallbackText, [name, handle, initials, color, verified] }
@@ -1500,7 +1483,7 @@ var VIDEOS = [
   }
 
   // live edits — update only the affected preview cell, no full reload
-  editor.addEventListener('input', function(e){
+  if (editor) editor.addEventListener('input', function(e){
     var t = e.target;
     var idx = t.getAttribute('data-i'), key = t.getAttribute('data-key');
     if (idx == null || !key) return;
@@ -1526,7 +1509,7 @@ var VIDEOS = [
   });
 
   // buttons
-  editor.addEventListener('click', function(e){
+  if (editor) editor.addEventListener('click', function(e){
     var btn = e.target.closest('[data-act]');
     if (!btn) return;
     var act = btn.getAttribute('data-act');
@@ -1673,7 +1656,7 @@ var VIDEOS = [
   }
 
   // ---------- editor toggle ----------
-  editBtn.addEventListener('click', function(){
+  if (editBtn) editBtn.addEventListener('click', function(){
     editing = !editing;
     editor.hidden = !editing;
     editBtn.classList.toggle('active', editing);
@@ -1736,6 +1719,19 @@ var VIDEOS = [
   var grid = document.getElementById('qvVideos');
   if(!grid) return;
   var cards = [].slice.call(grid.querySelectorAll('.th-pm-vcard'));
+
+  // Video editor UI exists ONLY when the admin gate is on
+  if (window.ADMIN_GATE) {
+    var qvEd = function(ph){ return '<div class="qv-editor" hidden>' +
+      '<div class="qv-fld"><label>Video source (path or URL)</label><input type="text" class="qv-src" placeholder="https://pub-3274162cfa1d48728621d5ec2d0906ad.r2.dev/' + ph + ' or a local path"></div>' +
+      '<div class="qv-fld"><label>Title</label><input type="text" class="qv-ttl" placeholder="Video title"></div>' +
+      '<div class="qv-fld qv-file"><label>Pick a local file (preview only)</label><input type="file" accept="video/*" class="qv-pick"><div class="qv-note">Local preview only. To publish, add the file to the project and set its path above.</div></div>' +
+      '<div class="qv-actions"><button type="button" class="qv-btn primary qv-save">Save</button><button type="button" class="qv-btn qv-clear">Clear</button></div>' +
+    '</div>'; };
+    var qvPh = ['eli-1.mp4', 'eli-2.mp4', 'Eli-3.mp4', 'eli-4.mp4'];
+    grid.insertAdjacentHTML('beforebegin', '<div class="th-pm-vid-admin"><button type="button" class="news-edit-btn" id="qvEditBtn" aria-expanded="false"><i class="ti ti-pencil" aria-hidden="true"></i> <span id="qvEditBtnLabel">Edit videos</span></button></div>');
+    cards.forEach(function(c, i){ c.insertAdjacentHTML('beforeend', qvEd(qvPh[i] || '')); });
+  }
   var defaults = cards.map(function(c){ return (c.querySelector('.qv-title').textContent || '').trim(); });
   var blobs = {}; // session-only object URLs per index, never persisted
 
@@ -1771,7 +1767,7 @@ var VIDEOS = [
 
   // edit toggle
   var editBtn = document.getElementById('qvEditBtn'), editLabel = document.getElementById('qvEditBtnLabel'), editing = false;
-  editBtn.addEventListener('click', function(){
+  if (editBtn) editBtn.addEventListener('click', function(){
     editing = !editing;
     editBtn.classList.toggle('active', editing);
     editBtn.setAttribute('aria-expanded', editing ? 'true' : 'false');
@@ -1786,9 +1782,10 @@ var VIDEOS = [
     });
   });
 
-  // per-card actions
+  // per-card actions (editor controls exist only when the admin gate is on)
   cards.forEach(function(c,i){
     var video = c.querySelector('.qv-player'), ph = c.querySelector('.qv-ph');
+    if (!c.querySelector('.qv-editor')) return;
     c.querySelector('.qv-pick').addEventListener('change', function(e){
       var f = e.target.files && e.target.files[0];
       if(!f) return;

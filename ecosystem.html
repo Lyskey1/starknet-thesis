@@ -232,6 +232,7 @@
     .eco-admin button { min-height: 44px; }
   }
 </style>
+<script src="js/admin-gate.js"></script>
 </head>
 <body class="page-ecosystem">
 
@@ -255,14 +256,9 @@
 
 <div class="section-divider"></div>
 
-<!-- STICKY CATEGORY NAV + EDIT CONTROLS -->
+<!-- STICKY CATEGORY NAV (admin edit controls are injected when the admin gate is on) -->
 <div class="eco-subnav">
   <div class="eco-pills" id="ecoPills"></div>
-  <div class="eco-admin">
-    <button class="eco-edit-btn" id="ecoEditBtn"><i class="ti ti-pencil" aria-hidden="true"></i> <span id="ecoEditLabel">Edit</span></button>
-    <button class="eco-edit-only" id="ecoExport"><i class="ti ti-file-export" aria-hidden="true"></i> Export JSON</button>
-    <button class="eco-edit-only" id="ecoReset"><i class="ti ti-refresh" aria-hidden="true"></i> Reset</button>
-  </div>
 </div>
 
 <!-- SECTIONS (rendered from data) -->
@@ -1582,9 +1578,20 @@
   }
 
   // ----- edit toggle -----
+  // Admin controls exist ONLY when the admin gate is on: nothing admin is
+  // served in the page source or present in a reader's DOM.
+  if (window.ADMIN_GATE) {
+    var ecoSubnav = document.querySelector('.eco-subnav');
+    if (ecoSubnav) ecoSubnav.insertAdjacentHTML('beforeend',
+      '<div class="eco-admin">' +
+        '<button class="eco-edit-btn" id="ecoEditBtn"><i class="ti ti-pencil" aria-hidden="true"></i> <span id="ecoEditLabel">Edit</span></button>' +
+        '<button class="eco-edit-only" id="ecoExport"><i class="ti ti-file-export" aria-hidden="true"></i> Export JSON</button>' +
+        '<button class="eco-edit-only" id="ecoReset"><i class="ti ti-refresh" aria-hidden="true"></i> Reset</button>' +
+      '</div>');
+  }
   var editBtn = document.getElementById('ecoEditBtn');
   var editLabel = document.getElementById('ecoEditLabel');
-  editBtn.addEventListener('click', function(){
+  if (editBtn) editBtn.addEventListener('click', function(){
     editing = !editing;
     document.body.classList.toggle('eco-editing', editing);
     editBtn.classList.toggle('active', editing);
@@ -1796,7 +1803,8 @@
       };
     });
   }
-  document.getElementById('ecoExport').addEventListener('click', function(){
+  var ecoExportBtn = document.getElementById('ecoExport');
+  if (ecoExportBtn) ecoExportBtn.addEventListener('click', function(){
     var json = JSON.stringify(cleanData(), null, 2);
     var bd = document.createElement('div');
     bd.className = 'eco-modal-backdrop';
@@ -1816,7 +1824,8 @@
       bd.querySelector('#ecoExpMsg').textContent = ok ? 'Copied to clipboard.' : 'Select the text and copy manually.';
     });
   });
-  document.getElementById('ecoReset').addEventListener('click', function(){
+  var ecoResetBtn = document.getElementById('ecoReset');
+  if (ecoResetBtn) ecoResetBtn.addEventListener('click', function(){
     if (!window.confirm('Reset all accounts to the original defaults? Your edits will be lost.')) return;
     try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
     data = normalize(buildDefaults());

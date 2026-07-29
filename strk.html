@@ -555,6 +555,18 @@ footer.site-footer .foot-bottom a:hover{color:var(--accent)}
 }
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
+<script>
+/* Inline copy of js/admin-gate.js (this page stays self-contained; keep in
+   sync). Visibility control only, NOT a security boundary: publish
+   authorization is server side. */
+(function(){'use strict';var FLAG='admin_gate_on';var h=location.hash;
+if(h==='#admin-on'||h==='#admin-off'){try{if(h==='#admin-on')localStorage.setItem(FLAG,'1');
+else{localStorage.removeItem(FLAG);localStorage.removeItem('news_publish_key');}}catch(e){}
+try{history.replaceState(null,'',location.pathname+location.search);}catch(e){}}
+var on=location.hostname==='localhost'||location.hostname==='127.0.0.1';
+if(!on){try{on=localStorage.getItem(FLAG)==='1';}catch(e){}}
+window.ADMIN_GATE=on;})();
+</script>
 </head>
 <body>
 

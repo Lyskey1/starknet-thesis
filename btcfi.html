@@ -233,6 +233,7 @@
   .th-pm-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:var(--accent);margin-top:16px;opacity:.85;}
   @media(max-width:880px){.th-pm-title{font-size:38px;}.th-pm-num{font-size:48px;}}
 </style>
+<script src="js/admin-gate.js"></script>
 </head>
 <body class="page-btcfi">
 
@@ -687,15 +688,10 @@
 
     <!-- Bitcoin news (collapsible) -->
     <div class="news-section news-flashy" id="newsSection">
-      <div class="news-admin-bar">
-        <span class="ne-draft-pill" id="newsDraftPill" hidden><i class="ti ti-alert-triangle" aria-hidden="true"></i> Unsaved local draft</span>
-        <button type="button" class="news-edit-btn" id="newsEditBtn" aria-expanded="false"><i class="ti ti-pencil" aria-hidden="true"></i> <span id="newsEditBtnLabel">Edit news</span></button>
-      </div>
       <button class="news-toggle" id="newsToggle" aria-expanded="false">
         <span class="news-toggle-title"><span class="news-eyebrow">Latest</span> Bitcoin × Starknet news</span>
         <i class="ti ti-chevron-down news-chevron" aria-hidden="true"></i>
       </button>
-      <div class="news-editor" id="newsEditor" hidden></div>
       <div class="news-grid" id="newsGrid"></div>
     </div>
 
@@ -974,6 +970,18 @@
 (function() {
   var grid = document.getElementById('newsGrid');
   if (!grid) return;
+
+  // Admin affordances are built ONLY when the admin gate is on: nothing
+  // admin is served in the page source or present in a reader's DOM.
+  if (window.ADMIN_GATE) {
+    var newsSec = document.getElementById('newsSection');
+    if (newsSec) newsSec.insertAdjacentHTML('afterbegin',
+      '<div class="news-admin-bar">' +
+        '<span class="ne-draft-pill" id="newsDraftPill" hidden><i class="ti ti-alert-triangle" aria-hidden="true"></i> Unsaved local draft</span>' +
+        '<button type="button" class="news-edit-btn" id="newsEditBtn" aria-expanded="false"><i class="ti ti-pencil" aria-hidden="true"></i> <span id="newsEditBtnLabel">Edit news</span></button>' +
+      '</div>');
+    grid.insertAdjacentHTML('beforebegin', '<div class="news-editor" id="newsEditor" hidden></div>');
+  }
 
   // ====== EDIT HERE: add Bitcoin-related tweets ======
   // Each entry: { url, title, date, fallbackText }
@@ -1352,7 +1360,7 @@
   }
 
   // live edits — update only the affected preview cell, no full reload
-  editor.addEventListener('input', function(e){
+  if (editor) editor.addEventListener('input', function(e){
     var t = e.target;
     var idx = t.getAttribute('data-i'), key = t.getAttribute('data-key');
     if (idx == null || !key) return;
@@ -1381,7 +1389,7 @@
   });
 
   // buttons
-  editor.addEventListener('click', function(e){
+  if (editor) editor.addEventListener('click', function(e){
     var btn = e.target.closest('[data-act]');
     if (!btn) return;
     var act = btn.getAttribute('data-act');
@@ -1523,7 +1531,7 @@
   }
 
   // ---------- editor toggle ----------
-  editBtn.addEventListener('click', function(){
+  if (editBtn) editBtn.addEventListener('click', function(){
     editing = !editing;
     editor.hidden = !editing;
     editBtn.classList.toggle('active', editing);

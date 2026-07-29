@@ -598,6 +598,7 @@
     .pgrid td:nth-last-child(-n+3) .tipbox { left: auto; right: 0; transform: none; }
   }
 </style>
+<script src="js/admin-gate.js"></script>
 </head>
 <body class="page-privacy">
 
@@ -885,7 +886,6 @@
   <div class="video-grid-wrap th-pm-reveal">
     <div class="vg-head">
       <div class="vg-title">The core of <span class="em">Starknet's architecture.</span></div>
-      <div class="pv-vadmin"><button type="button" class="news-edit-btn pv-vedit" aria-expanded="false"><i class="ti ti-pencil" aria-hidden="true"></i> <span>Edit videos</span></button></div>
     </div>
     <div class="video-grid">
       <div class="video-slot pv-vcard" data-pv="0">
@@ -894,12 +894,6 @@
           <video class="qv-player" controls preload="metadata" playsinline hidden></video>
         </div>
         <div class="meta"><h4 class="qv-title">How Starknet's ZK architecture works in practice</h4></div>
-        <div class="qv-editor" hidden>
-          <div class="qv-fld"><label>Video source (path or URL)</label><input type="text" class="qv-src" placeholder="https://pub-3274162cfa1d48728621d5ec2d0906ad.r2.dev/privacy-1.mp4 or a local path"></div>
-          <div class="qv-fld"><label>Title</label><input type="text" class="qv-ttl" placeholder="Video title"></div>
-          <div class="qv-fld qv-file"><label>Pick a local file (preview only)</label><input type="file" accept="video/*" class="qv-pick"><div class="qv-note">Local preview only. To publish, add the file to the project and set its path above.</div></div>
-          <div class="qv-actions"><button type="button" class="qv-btn primary qv-save">Save</button><button type="button" class="qv-btn qv-clear">Clear</button></div>
-        </div>
       </div>
       <div class="video-slot pv-vcard" data-pv="1">
         <div class="frame">
@@ -907,12 +901,6 @@
           <video class="qv-player" controls preload="metadata" playsinline hidden></video>
         </div>
         <div class="meta"><h4 class="qv-title">ZK-STARK Under the Hood: Starknet's Sequencer</h4></div>
-        <div class="qv-editor" hidden>
-          <div class="qv-fld"><label>Video source (path or URL)</label><input type="text" class="qv-src" placeholder="https://pub-3274162cfa1d48728621d5ec2d0906ad.r2.dev/privacy-2.mp4 or a local path"></div>
-          <div class="qv-fld"><label>Title</label><input type="text" class="qv-ttl" placeholder="Video title"></div>
-          <div class="qv-fld qv-file"><label>Pick a local file (preview only)</label><input type="file" accept="video/*" class="qv-pick"><div class="qv-note">Local preview only. To publish, add the file to the project and set its path above.</div></div>
-          <div class="qv-actions"><button type="button" class="qv-btn primary qv-save">Save</button><button type="button" class="qv-btn qv-clear">Clear</button></div>
-        </div>
       </div>
       <div class="video-slot pv-vcard" data-pv="2">
         <div class="frame">
@@ -920,12 +908,6 @@
           <video class="qv-player" controls preload="metadata" playsinline hidden></video>
         </div>
         <div class="meta"><h4 class="qv-title">ZK-STARK Under the Hood: Starknet's Prover</h4></div>
-        <div class="qv-editor" hidden>
-          <div class="qv-fld"><label>Video source (path or URL)</label><input type="text" class="qv-src" placeholder="https://pub-3274162cfa1d48728621d5ec2d0906ad.r2.dev/privacy-3.mp4 or a local path"></div>
-          <div class="qv-fld"><label>Title</label><input type="text" class="qv-ttl" placeholder="Video title"></div>
-          <div class="qv-fld qv-file"><label>Pick a local file (preview only)</label><input type="file" accept="video/*" class="qv-pick"><div class="qv-note">Local preview only. To publish, add the file to the project and set its path above.</div></div>
-          <div class="qv-actions"><button type="button" class="qv-btn primary qv-save">Save</button><button type="button" class="qv-btn qv-clear">Clear</button></div>
-        </div>
       </div>
       <div class="video-slot pv-vcard" data-pv="3">
         <div class="frame">
@@ -933,12 +915,6 @@
           <video class="qv-player" controls preload="metadata" playsinline hidden></video>
         </div>
         <div class="meta"><h4 class="qv-title">ZK-STARK Under the Hood: Proof Verification on Ethereum</h4></div>
-        <div class="qv-editor" hidden>
-          <div class="qv-fld"><label>Video source (path or URL)</label><input type="text" class="qv-src" placeholder="https://pub-3274162cfa1d48728621d5ec2d0906ad.r2.dev/privacy-4.mp4 or a local path"></div>
-          <div class="qv-fld"><label>Title</label><input type="text" class="qv-ttl" placeholder="Video title"></div>
-          <div class="qv-fld qv-file"><label>Pick a local file (preview only)</label><input type="file" accept="video/*" class="qv-pick"><div class="qv-note">Local preview only. To publish, add the file to the project and set its path above.</div></div>
-          <div class="qv-actions"><button type="button" class="qv-btn primary qv-save">Save</button><button type="button" class="qv-btn qv-clear">Clear</button></div>
-        </div>
       </div>
     </div>
     <a class="vg-written" href="https://x.com/StarkWareLtd/status/2055266920136425728" target="_blank" rel="noopener">PREFER IT WRITTEN? THE FULL ARCHITECTURE BEHIND STARKNET AND STARK PROOFS <span class="arr">→</span></a>
@@ -1255,15 +1231,10 @@
 <!-- ================= PRIVACY × STARKNET NEWS ================= -->
 <section class="news-sec">
   <div class="news-section news-flashy" id="newsSection">
-    <div class="news-admin-bar" id="newsAdminBar">
-      <span class="ne-draft-pill" id="newsDraftPill" hidden><i class="ti ti-alert-triangle" aria-hidden="true"></i> Unsaved local draft</span>
-      <button type="button" class="news-edit-btn" id="newsEditBtn" aria-expanded="false"><i class="ti ti-pencil" aria-hidden="true"></i> <span id="newsEditBtnLabel">Edit news</span></button>
-    </div>
     <button class="news-toggle" id="newsToggle" aria-expanded="false">
       <span class="news-toggle-title"><span class="news-eyebrow">Latest</span> Privacy × Starknet news</span>
       <i class="ti ti-chevron-down news-chevron" aria-hidden="true"></i>
     </button>
-    <div class="news-editor" id="newsEditor" hidden></div>
     <div class="news-grid" id="newsGrid"></div>
   </div>
 </section>
@@ -1850,6 +1821,20 @@
   // so the version bump keeps stale state from mapping onto the wrong slots)
   var KEY = 'privacyVideos_v2';
   var cards = [].slice.call(document.querySelectorAll('.pv-vcard'));
+
+  // Video editor UI exists ONLY when the admin gate is on
+  if (window.ADMIN_GATE) {
+    var pvEd = function(ph){ return '<div class="qv-editor" hidden>' +
+      '<div class="qv-fld"><label>Video source (path or URL)</label><input type="text" class="qv-src" placeholder="https://pub-3274162cfa1d48728621d5ec2d0906ad.r2.dev/' + ph + ' or a local path"></div>' +
+      '<div class="qv-fld"><label>Title</label><input type="text" class="qv-ttl" placeholder="Video title"></div>' +
+      '<div class="qv-fld qv-file"><label>Pick a local file (preview only)</label><input type="file" accept="video/*" class="qv-pick"><div class="qv-note">Local preview only. To publish, add the file to the project and set its path above.</div></div>' +
+      '<div class="qv-actions"><button type="button" class="qv-btn primary qv-save">Save</button><button type="button" class="qv-btn qv-clear">Clear</button></div>' +
+    '</div>'; };
+    var pvPh = ['privacy-1.mp4', 'privacy-2.mp4', 'privacy-3.mp4', 'privacy-4.mp4'];
+    var vgHead = document.querySelector('.vg-head');
+    if (vgHead) vgHead.insertAdjacentHTML('beforeend', '<div class="pv-vadmin"><button type="button" class="news-edit-btn pv-vedit" aria-expanded="false"><i class="ti ti-pencil" aria-hidden="true"></i> <span>Edit videos</span></button></div>');
+    cards.forEach(function(c, i){ c.insertAdjacentHTML('beforeend', pvEd(pvPh[i] || '')); });
+  }
   if (!cards.length) return;
   var blobs = {}; // session-only object URLs per index, never persisted
 
@@ -1926,6 +1911,7 @@
   cards.forEach(function(c){
     var i = idx(c);
     var video = c.querySelector('.qv-player'), ph = c.querySelector('.qv-ph');
+    if (!c.querySelector('.qv-editor')) return;
     c.querySelector('.qv-pick').addEventListener('change', function(e){
       var f = e.target.files && e.target.files[0];
       if (!f) return;
@@ -1957,6 +1943,18 @@
 (function() {
   var grid = document.getElementById('newsGrid');
   if (!grid) return;
+
+  // Admin affordances are built ONLY when the admin gate is on: nothing
+  // admin is served in the page source or present in a reader's DOM.
+  if (window.ADMIN_GATE) {
+    var newsSec = document.getElementById('newsSection');
+    if (newsSec) newsSec.insertAdjacentHTML('afterbegin',
+      '<div class="news-admin-bar" id="newsAdminBar">' +
+        '<span class="ne-draft-pill" id="newsDraftPill" hidden><i class="ti ti-alert-triangle" aria-hidden="true"></i> Unsaved local draft</span>' +
+        '<button type="button" class="news-edit-btn" id="newsEditBtn" aria-expanded="false"><i class="ti ti-pencil" aria-hidden="true"></i> <span id="newsEditBtnLabel">Edit news</span></button>' +
+      '</div>');
+    grid.insertAdjacentHTML('beforebegin', '<div class="news-editor" id="newsEditor" hidden></div>');
+  }
 
   // ====== EDIT HERE: add Privacy × Starknet posts/sources ======
   // Each entry: { url, title, date, fallbackText, [name, handle, initials, color, verified] }
@@ -2288,7 +2286,7 @@
   }
 
   // live edits — update only the affected preview cell, no full reload
-  editor.addEventListener('input', function(e){
+  if (editor) editor.addEventListener('input', function(e){
     var t = e.target;
     var idx = t.getAttribute('data-i'), key = t.getAttribute('data-key');
     if (idx == null || !key) return;
@@ -2314,7 +2312,7 @@
   });
 
   // buttons
-  editor.addEventListener('click', function(e){
+  if (editor) editor.addEventListener('click', function(e){
     var btn = e.target.closest('[data-act]');
     if (!btn) return;
     var act = btn.getAttribute('data-act');
@@ -2461,7 +2459,7 @@
   }
 
   // ---------- editor toggle ----------
-  editBtn.addEventListener('click', function(){
+  if (editBtn) editBtn.addEventListener('click', function(){
     editing = !editing;
     editor.hidden = !editing;
     editBtn.classList.toggle('active', editing);
