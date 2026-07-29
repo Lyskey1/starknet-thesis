@@ -94,8 +94,24 @@ Optional overrides: `GITHUB_REPO` (default `Lyskey1/starknet-thesis`) and
   Contents write permission on the repo.
 - `502 GitHub API rate limit reached`: wait and retry.
 
-The admin gate (hiding the panel from public visitors) is deliberately a
-separate, later task; authorization is enforced server side.
+## Admin gate
+
+All author affordances (news editors, video editors, the ecosystem edit
+cluster, Publish and Copy JSON controls) are gated: a normal reader gets a
+page with no admin element in the DOM at all, and none in the served HTML.
+
+- **Turn on**: visit any page with `#admin-on` appended to the URL (for
+  example `/quantum#admin-on`). This sets a local flag that persists across
+  pages and reloads on that browser. The hash is stripped from the address bar
+  immediately.
+- **Turn off**: visit any page with `#admin-off`. This clears the flag AND
+  deletes the stored publish key, so no secret stays behind on the device.
+- On `localhost` / `127.0.0.1` the gate is always on (author preview).
+
+The gate is a visibility control only, NOT a security boundary: anyone could
+recreate the admin UI in devtools. Authorization for publishing is enforced
+server side by `ADMIN_PUBLISH_KEY`; without that key the publish endpoint
+rejects every request.
 
 ## Design tokens (css/styles.css → :root)
 - `--black #0A0A0A`, `--white #F5F2EC`
