@@ -4,7 +4,19 @@
    seam into the convergence scene stay CSS-owned. Vanilla canvas 2D, no
    dependencies, loaded deferred so it never touches the critical path.
    Palette is locked to the landing accent family: hue 232 to 290,
-   saturation near 78, lightness near 64. */
+   saturation near 78, lightness near 64.
+
+   Scroll coupling: canvas opacity runs from 1 at the top of the page to 0
+   at the exact moment the hero's bottom edge reaches the top of the
+   viewport, which is the same moment the convergence stage sticks and
+   takes over. Scroll position is cached from a passive listener; the loop
+   never reads layout.
+
+   Pausing: an IntersectionObserver stops the loop the moment the hero
+   leaves the viewport (the same moment opacity reaches 0), and
+   visibilitychange stops it while the tab is hidden, so the field and the
+   convergence scene do not share frames while the scene is being watched.
+   prefers-reduced-motion gets one settled frame and no loop, ever. */
 (function () {
   'use strict';
 
@@ -15,11 +27,17 @@
   if (!ctx) return;
 
   var MOBILE = window.matchMedia('(max-width:860px)');
+  var REDUCE = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   var W = 0, H = 0;
   var parts = [];
   var raf = 0;
   var last = 0;
+  var running = false;
+  var heroVisible = true;
+  var heroTop = 0;
+  var lastScrollY = window.scrollY || 0;
+  var lastOpacity = '';
 
   function targetCount() {
     var n = (W * H) / 4300;
@@ -33,22 +51,6 @@
     p.sp = 12 + Math.random() * 14;   /* px per second: weather, not spectacle */
     p.life = 6 + Math.random() * 9;   /* seconds until reseed elsewhere */
     return p;
-  }
-
-  function resize() {
-    var r = hero.getBoundingClientRect();
-    W = Math.max(1, Math.round(r.width));
-    H = Math.max(1, Math.round(r.height));
-    var dpr = Math.min(window.devicePixelRatio || 1, 2);
-    canvas.width = Math.round(W * dpr);
-    canvas.height = Math.round(H * dpr);
-    /* setTransform, never ctx.scale: scale compounds on every resize and
-       the field drifts off-canvas after a few viewport changes */
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.lineCap = 'round';
-    var n = targetCount();
-    while (parts.length < n) parts.push(spawn({}));
-    parts.length = n;
   }
 
   /* Field direction at a point. t is seconds; the coefficients are slow on
@@ -85,20 +87,86 @@
     }
   }
 
+  /* Opacity from cached scroll state only: no layout reads in the loop. */
+  function applyOpacity() {
+    var o = (heroTop + H - lastScrollY) / H;
+    o = o < 0 ? 0 : o > 1 ? 1 : o;
+    var v = o.toFixed(3);
+    if (v !== lastOpacity) {
+      lastOpacity = v;
+      canvas.style.opacity = v;
+    }
+    return o;
+  }
+
+  function settle() {
+    /* One pre-warmed static frame for prefers-reduced-motion. */
+    for (var i = 0; i < 360; i++) step(1 / 60, i / 60);
+  }
+
+  function resize() {
+    var r = hero.getBoundingClientRect();
+    W = Math.max(1, Math.round(r.width));
+    H = Math.max(1, Math.round(r.height));
+    heroTop = r.top + (window.scrollY || 0);
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.round(W * dpr);
+    canvas.height = Math.round(H * dpr);
+    /* setTransform, never ctx.scale: scale compounds on every resize and
+       the field drifts off-canvas after a few viewport changes */
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.lineCap = 'round';
+    var n = targetCount();
+    while (parts.length < n) parts.push(spawn({}));
+    parts.length = n;
+    if (REDUCE) settle();
+    applyOpacity();
+  }
+
   function frame(now) {
     raf = requestAnimationFrame(frame);
     var dt = Math.min((now - last) / 1000, 0.05);
     last = now;
+    if (applyOpacity() <= 0) return;   /* invisible: keep the frame free */
     step(dt, now / 1000);
   }
 
+  function sync() {
+    var want = heroVisible && !document.hidden && !REDUCE;
+    if (want && !running) {
+      running = true;
+      last = performance.now();
+      raf = requestAnimationFrame(frame);
+    } else if (!want && running) {
+      running = false;
+      cancelAnimationFrame(raf);
+    }
+  }
+
+  /* Debounced, and driven by the hero's own box, not just the window:
+     the hero grows when the display fonts finish loading, and the canvas
+     and the opacity math must follow. */
   var resizeT = 0;
-  window.addEventListener('resize', function () {
+  function queueResize() {
     clearTimeout(resizeT);
     resizeT = setTimeout(resize, 150);
-  });
+  }
+  window.addEventListener('resize', queueResize);
+  if ('ResizeObserver' in window) new ResizeObserver(queueResize).observe(hero);
+
+  window.addEventListener('scroll', function () {
+    lastScrollY = window.scrollY || 0;
+    if (!running) applyOpacity();   /* loop applies it itself while running */
+  }, { passive: true });
+
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(function (entries) {
+      heroVisible = entries[entries.length - 1].isIntersecting;
+      sync();
+    }, { threshold: 0 }).observe(hero);
+  }
+  document.addEventListener('visibilitychange', sync);
 
   resize();
-  last = performance.now();
-  raf = requestAnimationFrame(frame);
+  sync();
 })();
