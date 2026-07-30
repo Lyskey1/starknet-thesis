@@ -33,6 +33,74 @@ const ECO_MAX_PER_CAT = 200;
 const ECO_FIELD_CAPS = { handle: 64, name: 160, url: 2048, description: 600, avatar: 150000 };
 const ECO_MAX_ENTRY_CHARS = 160000;
 
+// ---------- btcfi ecosystem target ----------
+// Writes data/btcfi-ecosystem.json: { wallets|bridges|defi: [items] }. The
+// three categories are fixed and code-owned on the page; only items publish.
+// Chip categories (wallets, bridges) carry { name, logo, url }; the defi card
+// category additionally carries { tags, description }. Logos may be base64
+// data URLs (96px JPEG uploads), so this target shares the 2MB cap rationale.
+const BTCFI_ECO_FILE = 'data/btcfi-ecosystem.json';
+const BTCFI_CATS = ['wallets', 'bridges', 'defi'];
+const BTCFI_MAX_PER_CAT = 100;
+const BTCFI_FIELD_CAPS = { name: 120, logo: 150000, url: 2048, description: 400 };
+const BTCFI_MAX_TAGS = 8;
+const BTCFI_TAG_CAP = 40;
+const BTCFI_MAX_ENTRY_CHARS = 160000;
+
+// btcfi ecosystem payload validation; returns null if valid, else a message
+function validateBtcfiEco(eco) {
+  if (!eco || typeof eco !== 'object' || Array.isArray(eco)) {
+    return 'btcfi-ecosystem must be an object of the form { "<categoryId>": [items] }';
+  }
+  const keys = Object.keys(eco);
+  if (!keys.length) return 'btcfi-ecosystem has no category keys; expected one or more of: ' + BTCFI_CATS.join(', ');
+  let total = 0;
+  for (const k of keys) {
+    if (!BTCFI_CATS.includes(k)) return 'unknown btcfi-ecosystem category "' + k + '"; allowed: ' + BTCFI_CATS.join(', ');
+    const list = eco[k];
+    if (!Array.isArray(list)) return 'btcfi-ecosystem category "' + k + '" must be an array of items';
+    if (list.length > BTCFI_MAX_PER_CAT) {
+      return 'btcfi-ecosystem category "' + k + '" has ' + list.length + ' items; the cap is ' + BTCFI_MAX_PER_CAT;
+    }
+    total += list.length;
+    const isCard = k === 'defi';
+    const allowedList = isCard ? 'name, logo, url, tags, description' : 'name, logo, url';
+    for (let i = 0; i < list.length; i++) {
+      const a = list[i];
+      const where = 'btcfi-ecosystem category "' + k + '" item ' + (i + 1);
+      if (!a || typeof a !== 'object' || Array.isArray(a)) return where + ' must be an object';
+      if (typeof a.name !== 'string' || !a.name.trim()) return where + ' is missing its required "name" string';
+      for (const f of Object.keys(a)) {
+        if (f === 'tags') {
+          if (!isCard) return where + ' has field "tags", which chip categories cannot render; allowed: ' + allowedList;
+          if (!Array.isArray(a.tags)) return where + ' field "tags" must be an array of strings';
+          if (a.tags.length > BTCFI_MAX_TAGS) return where + ' has ' + a.tags.length + ' tags; the cap is ' + BTCFI_MAX_TAGS;
+          for (const tg of a.tags) {
+            if (typeof tg !== 'string') return where + ' has a non-string tag';
+            if (tg.length > BTCFI_TAG_CAP) return where + ' tag "' + tg.slice(0, 20) + '..." is ' + tg.length + ' chars; the cap is ' + BTCFI_TAG_CAP;
+          }
+          continue;
+        }
+        if (!(f in BTCFI_FIELD_CAPS) || (f === 'description' && !isCard)) {
+          return where + ' has unexpected field "' + f + '"; allowed: ' + allowedList;
+        }
+        if (typeof a[f] !== 'string') return where + ' field "' + f + '" must be a string';
+        if (a[f].length > BTCFI_FIELD_CAPS[f]) {
+          return where + ' field "' + f + '" is ' + a[f].length + ' chars; the cap is ' + BTCFI_FIELD_CAPS[f];
+        }
+      }
+      if (a.logo && !/^(assets\/|https:\/\/|http:\/\/|data:image\/)/.test(a.logo)) {
+        return where + ' field "logo" must be an assets/ path, an http(s) URL, or a data:image URL';
+      }
+      if (JSON.stringify(a).length > BTCFI_MAX_ENTRY_CHARS) {
+        return where + ' exceeds the ' + BTCFI_MAX_ENTRY_CHARS + ' character per-entry cap';
+      }
+    }
+  }
+  if (total === 0) return 'every provided btcfi-ecosystem category is empty; refusing to publish an empty block';
+  return null;
+}
+
 function send(res, status, obj) {
   res.status(status).setHeader('Content-Type', 'application/json');
   res.json(obj);
@@ -161,19 +229,21 @@ module.exports = async function handler(req, res) {
 
   // target routing: the ecosystem writes its own file and must not be mixed
   // with news pages in one request (each publish is atomic per file)
-  const isEco = body && typeof body === 'object' && !Array.isArray(body) && 'ecosystem' in body;
-  if (isEco && Object.keys(body).length > 1) {
-    return send(res, 400, { error: 'payload mixes the ecosystem target with news pages; publish them separately' });
+  const isObj = body && typeof body === 'object' && !Array.isArray(body);
+  const isEco = isObj && 'ecosystem' in body;
+  const isBtcfiEco = isObj && 'btcfi-ecosystem' in body;
+  if ((isEco || isBtcfiEco) && Object.keys(body).length > 1) {
+    return send(res, 400, { error: 'payload mixes publish targets; publish news, ecosystem, and btcfi-ecosystem separately' });
   }
-  const bodyCap = isEco ? ECO_MAX_BODY_BYTES : MAX_BODY_BYTES;
+  const bodyCap = (isEco || isBtcfiEco) ? ECO_MAX_BODY_BYTES : MAX_BODY_BYTES;
   if (Buffer.byteLength(JSON.stringify(body), 'utf8') > bodyCap) {
     return send(res, 413, { error: 'payload exceeds the ' + (bodyCap / 1024) + 'KB cap for this target' });
   }
 
-  const problem = isEco ? validateEco(body.ecosystem) : validate(body);
+  const problem = isBtcfiEco ? validateBtcfiEco(body['btcfi-ecosystem']) : isEco ? validateEco(body.ecosystem) : validate(body);
   if (problem) return send(res, 400, { error: 'validation failed: ' + problem + '; nothing was published' });
 
-  const filePath = isEco ? ECO_FILE : FILE_PATH;
+  const filePath = isBtcfiEco ? BTCFI_ECO_FILE : isEco ? ECO_FILE : FILE_PATH;
 
   // read the current file (content + sha) so a concurrent change conflicts
   // instead of being silently overwritten
@@ -200,7 +270,14 @@ module.exports = async function handler(req, res) {
   }
 
   let merged, message, pages;
-  if (isEco) {
+  if (isBtcfiEco) {
+    const eco = body['btcfi-ecosystem'];
+    pages = Object.keys(eco);
+    merged = Object.assign({}, current);
+    for (const k of pages) merged[k] = eco[k];
+    const total = pages.reduce((s, k) => s + eco[k].length, 0);
+    message = 'content: publish btcfi ecosystem (' + total + ' items across ' + pages.length + ' categories)';
+  } else if (isEco) {
     pages = Object.keys(body.ecosystem);
     merged = Object.assign({}, current);
     for (const k of pages) merged[k] = body.ecosystem[k];

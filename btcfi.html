@@ -2226,6 +2226,7 @@
   function renderEditor(){
     var html = '<div class="ne-toolbar">' +
       '<button type="button" class="ne-btn" data-act="copyjson"><i class="ti ti-copy" aria-hidden="true"></i> Copy JSON</button>' +
+      '<button type="button" class="ne-btn" data-act="publish"><i class="ti ti-cloud-upload" aria-hidden="true"></i> Publish</button>' +
       '<span class="ne-spacer"></span>' +
       '<span class="ne-badge draft" id="btcfiEcoDraftBadge"' + (loadDraft() ? '' : ' hidden') + '>Unsaved local draft</span>' +
       '<span class="ne-count">' + totalCount() + ' items</span>' +
@@ -2247,6 +2248,68 @@
     saveDraft();
     renderBlock();
     syncPill();
+  }
+
+  // ---------- publish (commits data/btcfi-ecosystem.json via /api/publish) ----------
+  // Same discipline as the news and ecosystem flows: the shared key stored
+  // under news_publish_key, in-flight disable, verbatim server errors, a
+  // pre-publish confirmation listing each category's item count, and only
+  // after a confirmed success is the local draft key removed.
+  function publishPayload(){
+    var o = {};
+    CATS.forEach(function(k){
+      o[k] = work[k].map(function(a){
+        var e = { name: a.name || '' };
+        if (a.logo) e.logo = a.logo;
+        if (a.url) e.url = a.url;
+        if (CAT_META[k].form === 'card') {
+          if (Array.isArray(a.tags) && a.tags.length) e.tags = a.tags;
+          if (a.description) e.description = a.description;
+        }
+        return e;
+      });
+    });
+    return o;
+  }
+  function doPublishEco(btn){
+    var payload = publishPayload();
+    var lines = CATS.map(function(k){ return '  ' + CAT_META[k].label + ': ' + payload[k].length; });
+    if (!window.confirm('About to publish the BTCFi ecosystem block:\n\n' + lines.join('\n') + '\n\nTotal: ' + totalCount() + ' items. Continue?')) return;
+    var key = '';
+    try { key = localStorage.getItem('news_publish_key') || ''; } catch (e) {}
+    if (!key) {
+      key = window.prompt('Publish key:') || '';
+      if (!key) return;
+      try { localStorage.setItem('news_publish_key', key); } catch (e) {}
+    }
+    var orig = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="ti ti-cloud-upload" aria-hidden="true"></i> Publishing…';
+    fetch('/api/publish', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Publish-Key': key },
+      body: JSON.stringify({ 'btcfi-ecosystem': payload })
+    })
+      .then(function(r){ return r.json().then(function(d){ return { status: r.status, d: d }; }, function(){ return { status: r.status, d: null }; }); })
+      .then(function(res){
+        if (res.status === 200 && res.d && res.d.ok) {
+          try { localStorage.removeItem(DRAFT_KEY); } catch (e) {}
+          PUBLISHED = payload; // the block keeps showing exactly what was published
+          work = currentItems();
+          renderBlock(); renderEditor(); syncPill();
+          window.alert('Published (commit ' + String(res.d.commit || '').slice(0, 7) + '). The change will be live in about a minute.');
+        } else {
+          var msg = (res.d && res.d.error) || ('HTTP ' + res.status);
+          if (res.status === 401) {
+            try { localStorage.removeItem('news_publish_key'); } catch (e) {}
+            window.alert('Publish failed: ' + msg + '\nNothing was published; your local list is intact. You will be asked for the key again on the next attempt.');
+          } else {
+            window.alert('Publish failed: ' + msg + '\nNothing was published; your local list is intact.');
+          }
+        }
+      })
+      .catch(function(){ window.alert('Publish failed: network error.\nNothing was published; your local list is intact.'); })
+      .then(function(){ btn.disabled = false; btn.innerHTML = orig; });
   }
 
   // same downscale treatment the ecosystem editor uses for uploads
@@ -2315,6 +2378,8 @@
         work = currentItems();
         renderBlock(); renderEditor(); syncPill();
       }
+    } else if (act === 'publish') {
+      doPublishEco(btn);
     } else if (act === 'copyjson') {
       var json = JSON.stringify(work, null, 2);
       var done = function(ok){
