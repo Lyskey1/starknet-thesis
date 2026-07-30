@@ -23,6 +23,7 @@
 <meta name="description" content="An independent thesis on Starknet's three differentiators: private transfers via STRK20, a post-quantum proving system, and Bitcoin staking and DeFi (BTCFi).">
 <script defer src="https://cloud.umami.is/script.js" data-website-id="45f11859-9fc2-49ae-a59e-4826e0f1e174"></script>
 <script defer src="js/nav.js"></script>
+<script defer src="js/landing-field.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Expanded:wght@500;600;700;800;900&family=IBM+Plex+Mono:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -31,12 +32,17 @@
 <style>
   /* ===== Landing hero v2 (thesis-wide, violet accent) - index.html only ===== */
   .lh-hero{position:relative;overflow:hidden;background:#08080A;padding:150px 0 160px}
-  .lh-hero::before{content:"";position:absolute;inset:0;pointer-events:none;background:
+  /* flow-field canvas: the animated hero background. The glow (::before) and
+     the bottom fade (::after) sit ABOVE it via z-index, so legibility and the
+     seam stay CSS-owned and the hero renders identically when the field is
+     transparent or absent. */
+  .lh-field{position:absolute;inset:0;z-index:0;width:100%;height:100%;display:block;pointer-events:none}
+  .lh-hero::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:
      radial-gradient(70% 55% at 50% -5%, rgba(139,92,246,.16), transparent 60%),
      radial-gradient(50% 40% at 85% 30%, rgba(61,169,252,.05), transparent 70%)}
   /* seamless fade into the convergence scene below (its bg is #05060a) */
-  .lh-hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:240px;background:linear-gradient(transparent,#05060a);pointer-events:none}
-  .lh-wrap{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:0 48px;text-align:center}
+  .lh-hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:240px;z-index:1;background:linear-gradient(transparent,#05060a);pointer-events:none}
+  .lh-wrap{position:relative;z-index:2;max-width:1100px;margin:0 auto;padding:0 48px;text-align:center}
   .lh-eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:#A78BFA;margin-bottom:24px}
   .lh-h1{font-family:var(--display);font-weight:800;font-size:clamp(40px,6.5vw,76px);line-height:1.0;letter-spacing:-.01em;text-transform:uppercase;color:var(--white);max-width:none;margin-left:auto;margin-right:auto}
   .lh-h1 .lh-accent{color:#A78BFA}
@@ -62,6 +68,7 @@
   <a href="https://starknetresearch.substack.com" target="_blank" rel="noopener" class="btn nav-cta" data-umami-event="cta-subscribe">Subscribe <i class="ti ti-arrow-right"></i></a>
 </nav>
 <header class="lh-hero">
+  <canvas class="lh-field" id="lh-field" aria-hidden="true"></canvas>
   <div class="lh-wrap">
     <p class="lh-eyebrow">The full thesis</p>
     <h1 class="lh-h1">Starknet is the answer to crypto's <span class="lh-accent">three hardest problems.</span></h1>
