@@ -402,6 +402,64 @@
 .th-pm-note p{font-size:15px;line-height:1.6;color:var(--th-muted);}
 .th-pm-note b{color:var(--th-ink);font-weight:600;}
 .th-pm-note>.chart-card{margin:0;border:0;background:transparent;padding:0;}
+
+/* ===== Tiered liquid glass (qg- prefix). backdrop-filter on the listed
+   card elements ONLY: never on a section wrapper, never on an ancestor of
+   the sticky phase rail, the sticky table column, any chart, table, or
+   interactive component. No SVG refraction anywhere. Tier B surfaces are
+   named in no selector below. */
+.qg-card{position:relative;z-index:1;--qa:var(--th-q);background:rgba(245,242,236,.032);border:1px solid rgba(245,242,236,.07);
+  -webkit-backdrop-filter:blur(16px) saturate(112%);
+  backdrop-filter:blur(16px) saturate(112%);
+  box-shadow:
+    inset -1px -1px 0 rgba(255,255,255,.42),
+    inset 1px 1px 0 rgba(255,255,255,.10),
+    inset 0 1px 0 rgba(255,255,255,.26),
+    inset 0 -1px 0 rgba(255,255,255,.22),
+    inset 0 0 24px rgba(255,255,255,.05),
+    0 18px 50px -30px rgba(0,0,0,.9);}
+.th-pm-side.qg-card{--qa:var(--c);}
+/* top light: replaces the per-card halo; ambient accent moves to the
+   blooms behind the cards so glows never stack */
+.qg-card::before{content:"";position:absolute;top:0;left:0;right:0;bottom:auto;width:auto;height:42%;border-radius:inherit;
+  background:linear-gradient(180deg,rgba(255,255,255,.062),transparent);opacity:1;transition:none;pointer-events:none;}
+.qg-card:hover::before,.qg-card:focus-visible::before{opacity:1;}
+/* standard glass hover for the non-link panels */
+.qg-card:hover{transform:translateY(-3px);
+  border-color:color-mix(in srgb,var(--qa) 30%,transparent);
+  box-shadow:
+    inset -1px -1px 0 rgba(255,255,255,.42),
+    inset 1px 1px 0 rgba(255,255,255,.10),
+    inset 0 1px 0 rgba(255,255,255,.26),
+    inset 0 -1px 0 rgba(255,255,255,.22),
+    inset 0 0 30px color-mix(in srgb,var(--qa) 12%,transparent),
+    0 18px 50px -30px rgba(0,0,0,.9),
+    0 22px 60px -30px color-mix(in srgb,var(--qa) 50%,transparent);}
+/* THE SELECTED STATE: hover/focus is this page's only selection affordance
+   on the link cards, and glass gives every card a rim and a glow, so the
+   signal is strengthened on three axes at once: a 7 percent accent surface
+   (a real luminance lift, not only a hue shift), a 60 percent accent
+   border, and a markedly stronger outer glow. The title color change the
+   cards already had is preserved. */
+a.qg-card:hover,a.qg-card:focus-visible{transform:translateY(-3px);
+  background:color-mix(in srgb,var(--qa) 7%,rgba(245,242,236,.03));
+  border-color:color-mix(in srgb,var(--qa) 60%,transparent);
+  box-shadow:
+    inset -1px -1px 0 rgba(255,255,255,.42),
+    inset 1px 1px 0 rgba(255,255,255,.10),
+    inset 0 1px 0 rgba(255,255,255,.26),
+    inset 0 -1px 0 rgba(255,255,255,.22),
+    inset 0 0 34px color-mix(in srgb,var(--qa) 18%,transparent),
+    0 18px 50px -30px rgba(0,0,0,.9),
+    0 28px 74px -24px color-mix(in srgb,var(--qa) 85%,transparent);}
+a.qg-card:focus-visible{outline:2px solid var(--qa);outline-offset:3px;}
+/* fallback for engines without backdrop-filter: deliberate solid surface */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))){
+  .qg-card{background:#0b0d13;}
+}
+@media (prefers-reduced-motion: reduce){
+  .qg-card,.qg-card:hover,a.qg-card:hover,a.qg-card:focus-visible{transform:none;transition:none;}
+}
 .th-pm-video{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:40px;}
 .th-pm-vcard{border-radius:14px;overflow:hidden;border:1px solid var(--th-hair);background:#0b0d13;}
 .th-pm-vcard .frame{position:relative;aspect-ratio:16/9;background:#0a0c12;}
@@ -447,12 +505,12 @@
   </div>
 
   <div class="th-pm-grid">
-    <a class="th-pm-card th-pm-reveal" href="https://www.govconwire.com/articles/ionq-skywater-technology-quantum-tech" target="_blank" rel="noopener noreferrer"><span class="th-pm-date">January 26, 2026</span><h3>IonQ buys its supply chain</h3><span class="th-pm-stat">$1.8B</span><p>IonQ moves to acquire US chip foundry SkyWater, a pure-play quantum company vertically integrating its own hardware supply chain.</p></a>
-    <a class="th-pm-card th-pm-reveal" href="https://www.techuk.org/resource/uk-government-announces-up-to-2-billion-for-quantum-technologies.html" target="_blank" rel="noopener noreferrer"><span class="th-pm-date">March 17, 2026</span><h3>UK ProQure</h3><span class="th-pm-stat">GBP 2B</span><p>The UK's national quantum program, part of a broader wave of sovereign quantum funding.</p></a>
-    <a class="th-pm-card th-pm-reveal" href="https://news.crunchbase.com/venture/quantum-computing-startup-investment-data-quantinuum-ipo/" target="_blank" rel="noopener noreferrer"><span class="th-pm-date">May 2026</span><h3>Photonic's record round</h3><span class="th-pm-stat">$200M</span><p>The largest quantum funding round of 2026. Vancouver's Photonic, a photonic quantum-computing company, raises $200 million at a $2 billion valuation.</p></a>
-    <a class="th-pm-card th-pm-reveal" href="https://www.nist.gov/news-events/news/2026/05/department-commerce-announces-letters-intent-9-companies-2-billion" target="_blank" rel="noopener noreferrer"><span class="th-pm-date">May 21, 2026</span><h3>US takes equity</h3><span class="th-pm-stat">$2B</span><p>Letters of intent across 9 quantum firms, in exchange for minority equity. The federal government became, structurally, a venture investor in quantum.</p></a>
-    <a class="th-pm-card th-pm-reveal" href="https://thequantuminsider.com/2026/05/25/emmanuel-macron-announces-1-55-billion-euros-more-for-quantum-and-semiconductors/" target="_blank" rel="noopener noreferrer"><span class="th-pm-date">May 22, 2026</span><h3>France responds</h3><span class="th-pm-stat">EUR 1B</span><p>Announced by Macron from the CEA for the national quantum plan, citing the acceleration of the US and China.</p></a>
-    <a class="th-pm-card th-pm-reveal" href="https://newsroom.ibm.com/2026-06-02-ibm-commits-more-than-10-billion-to-quantum-computing,-funding-its-roadmap-from-todays-leading-systems-to-the-worlds-first-fault-tolerant-quantum-computers" target="_blank" rel="noopener noreferrer"><span class="th-pm-date">June 2, 2026</span><h3>IBM commits</h3><span class="th-pm-stat">$10B+</span><p>Over 5 years, targeting its first large-scale fault-tolerant quantum computer by 2029.</p></a>
+    <a class="th-pm-card qg-card th-pm-reveal" href="https://www.govconwire.com/articles/ionq-skywater-technology-quantum-tech" target="_blank" rel="noopener noreferrer"><span class="th-pm-date">January 26, 2026</span><h3>IonQ buys its supply chain</h3><span class="th-pm-stat">$1.8B</span><p>IonQ moves to acquire US chip foundry SkyWater, a pure-play quantum company vertically integrating its own hardware supply chain.</p></a>
+    <a class="th-pm-card qg-card th-pm-reveal" href="https://www.techuk.org/resource/uk-government-announces-up-to-2-billion-for-quantum-technologies.html" target="_blank" rel="noopener noreferrer"><span class="th-pm-date">March 17, 2026</span><h3>UK ProQure</h3><span class="th-pm-stat">GBP 2B</span><p>The UK's national quantum program, part of a broader wave of sovereign quantum funding.</p></a>
+    <a class="th-pm-card qg-card th-pm-reveal" href="https://news.crunchbase.com/venture/quantum-computing-startup-investment-data-quantinuum-ipo/" target="_blank" rel="noopener noreferrer"><span class="th-pm-date">May 2026</span><h3>Photonic's record round</h3><span class="th-pm-stat">$200M</span><p>The largest quantum funding round of 2026. Vancouver's Photonic, a photonic quantum-computing company, raises $200 million at a $2 billion valuation.</p></a>
+    <a class="th-pm-card qg-card th-pm-reveal" href="https://www.nist.gov/news-events/news/2026/05/department-commerce-announces-letters-intent-9-companies-2-billion" target="_blank" rel="noopener noreferrer"><span class="th-pm-date">May 21, 2026</span><h3>US takes equity</h3><span class="th-pm-stat">$2B</span><p>Letters of intent across 9 quantum firms, in exchange for minority equity. The federal government became, structurally, a venture investor in quantum.</p></a>
+    <a class="th-pm-card qg-card th-pm-reveal" href="https://thequantuminsider.com/2026/05/25/emmanuel-macron-announces-1-55-billion-euros-more-for-quantum-and-semiconductors/" target="_blank" rel="noopener noreferrer"><span class="th-pm-date">May 22, 2026</span><h3>France responds</h3><span class="th-pm-stat">EUR 1B</span><p>Announced by Macron from the CEA for the national quantum plan, citing the acceleration of the US and China.</p></a>
+    <a class="th-pm-card qg-card th-pm-reveal" href="https://newsroom.ibm.com/2026-06-02-ibm-commits-more-than-10-billion-to-quantum-computing,-funding-its-roadmap-from-todays-leading-systems-to-the-worlds-first-fault-tolerant-quantum-computers" target="_blank" rel="noopener noreferrer"><span class="th-pm-date">June 2, 2026</span><h3>IBM commits</h3><span class="th-pm-stat">$10B+</span><p>Over 5 years, targeting its first large-scale fault-tolerant quantum computer by 2029.</p></a>
   </div>
   <!-- chapter 2: the state -->
   <div class="th-q-chapter th-pm-reveal">
@@ -461,8 +519,8 @@
   </div>
 
   <div class="th-eo-panels th-pm-reveal">
-    <a class="th-eo-panel" href="https://www.whitehouse.gov/presidential-actions/2026/06/ushering-in-the-next-frontier-of-quantum-innovation/" target="_blank" rel="noopener noreferrer"><span class="th-eo-label">Executive order</span><h4>Ushering in the Next Frontier of Quantum Innovation</h4></a>
-    <a class="th-eo-panel" href="https://www.whitehouse.gov/presidential-actions/2026/06/securing-the-nation-against-advanced-cryptographic-attacks/" target="_blank" rel="noopener noreferrer"><span class="th-eo-label">Executive order</span><h4>Securing the Nation Against Advanced Cryptographic Attacks</h4></a>
+    <a class="th-eo-panel qg-card" href="https://www.whitehouse.gov/presidential-actions/2026/06/ushering-in-the-next-frontier-of-quantum-innovation/" target="_blank" rel="noopener noreferrer"><span class="th-eo-label">Executive order</span><h4>Ushering in the Next Frontier of Quantum Innovation</h4></a>
+    <a class="th-eo-panel qg-card" href="https://www.whitehouse.gov/presidential-actions/2026/06/securing-the-nation-against-advanced-cryptographic-attacks/" target="_blank" rel="noopener noreferrer"><span class="th-eo-label">Executive order</span><h4>Securing the Nation Against Advanced Cryptographic Attacks</h4></a>
   </div>
   <!-- chapter 3: the convergence -->
   <div class="th-q-chapter th-pm-reveal">
@@ -471,9 +529,9 @@
   </div>
 
   <div class="th-yr-panels th-pm-reveal">
-      <a class="th-yr-panel" href="https://www.hpcwire.com/off-the-wire/microsoft-unveils-majorana-2-quantum-chip-targets-commercial-scale-quantum-computing-by-2029/" target="_blank" rel="noopener noreferrer"><span class="th-yr-name">Microsoft</span><span class="th-yr-stat">2029</span><p>After its Majorana 2 chip, Microsoft pulled its timeline for a scalable quantum computer forward from 2033 to 2029.</p></a>
-      <a class="th-yr-panel" href="https://blog.google/innovation-and-ai/technology/safety-security/cryptography-migration-timeline/" target="_blank" rel="noopener noreferrer"><span class="th-yr-name">Google</span><span class="th-yr-stat">2029</span><p>Google set an internal deadline of 2029 to migrate its own infrastructure to post-quantum cryptography.</p></a>
-      <a class="th-yr-panel" href="https://newsroom.ibm.com/2026-06-02-ibm-commits-more-than-10-billion-to-quantum-computing,-funding-its-roadmap-from-todays-leading-systems-to-the-worlds-first-fault-tolerant-quantum-computers" target="_blank" rel="noopener noreferrer"><span class="th-yr-name">IBM</span><span class="th-yr-stat">2029</span><p>IBM committed more than $10 billion over five years, targeting its first large-scale fault-tolerant quantum computer by 2029.</p></a>
+      <a class="th-yr-panel qg-card" href="https://www.hpcwire.com/off-the-wire/microsoft-unveils-majorana-2-quantum-chip-targets-commercial-scale-quantum-computing-by-2029/" target="_blank" rel="noopener noreferrer"><span class="th-yr-name">Microsoft</span><span class="th-yr-stat">2029</span><p>After its Majorana 2 chip, Microsoft pulled its timeline for a scalable quantum computer forward from 2033 to 2029.</p></a>
+      <a class="th-yr-panel qg-card" href="https://blog.google/innovation-and-ai/technology/safety-security/cryptography-migration-timeline/" target="_blank" rel="noopener noreferrer"><span class="th-yr-name">Google</span><span class="th-yr-stat">2029</span><p>Google set an internal deadline of 2029 to migrate its own infrastructure to post-quantum cryptography.</p></a>
+      <a class="th-yr-panel qg-card" href="https://newsroom.ibm.com/2026-06-02-ibm-commits-more-than-10-billion-to-quantum-computing,-funding-its-roadmap-from-todays-leading-systems-to-the-worlds-first-fault-tolerant-quantum-computers" target="_blank" rel="noopener noreferrer"><span class="th-yr-name">IBM</span><span class="th-yr-stat">2029</span><p>IBM committed more than $10 billion over five years, targeting its first large-scale fault-tolerant quantum computer by 2029.</p></a>
   </div>
 
   <p class="th-q-flow th-pm-reveal">When governments take equity in quantum companies, race to build the machine, and order their own defenses against it, the risk profile has changed. Meanwhile, the three biggest quantum players converged, days apart, on the same year: 2029. <b class="acc">That year is now a deadline.</b></p>
@@ -539,7 +597,7 @@
     <h3 class="scale-title">The cost of the attack <span>is collapsing.</span></h3>
   </div>
 
-  <div class="th-pm-stathero th-pm-reveal"><span class="big">10,000&times;</span>
+  <div class="th-pm-stathero qg-card th-pm-reveal"><span class="big">10,000&times;</span>
   <p>The estimated cost of a quantum attack on crypto's cryptography has <b>collapsed roughly 10,000x since 2012</b>, paper after paper, all from the organizations that actually build the hardware.</p></div>
 
   <!-- resource collapse chart (component preserved, only wrapped + labels de-em-dashed) -->
@@ -570,9 +628,9 @@
   <p class="th-q-flow th-pm-reveal">The paper draws a sharp line between what a quantum computer breaks and what it cannot touch:</p>
 
   <div class="th-pm-compare th-pm-reveal">
-    <div class="th-pm-side" style="--c:var(--th-red)"><h4>Quantum-vulnerable</h4>
+    <div class="th-pm-side qg-card" style="--c:var(--th-red)"><h4>Quantum-vulnerable</h4>
       <ul><li>ECDSA signatures (Bitcoin, Ethereum)</li><li>BLS consensus signatures</li><li>KZG commitments</li><li>Pairing-based SNARKs (Groth16, Plonk)</li><li>Optimistic rollups, sidechains</li></ul></div>
-    <div class="th-pm-side" style="--c:var(--th-green)"><h4>Quantum-safe</h4>
+    <div class="th-pm-side qg-card" style="--c:var(--th-green)"><h4>Quantum-safe</h4>
       <ul><li>zk-STARK proofs</li><li>Hash-based commitments (BLAKE2)</li><li>Post-quantum signatures (Falcon, ML-DSA)</li></ul>
       <p class="note">In <a href="https://arxiv.org/abs/2603.28846" target="_blank" rel="noopener noreferrer">the paper's own risk chart</a>, zk-STARK is the only proving category in production today not flagged as quantum-vulnerable by Google. Starknet's proving system is named explicitly as resistant.</p></div>
   </div>
