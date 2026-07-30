@@ -232,6 +232,87 @@
   .th-pm-title b, .th-pm-title em{color:var(--accent);font-weight:800;font-style:normal;}
   .th-pm-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:var(--accent);margin-top:16px;opacity:.85;}
   @media(max-width:880px){.th-pm-title{font-size:38px;}.th-pm-num{font-size:48px;}}
+
+  /* ===== Tiered liquid glass (btcg- prefix). backdrop-filter lives on the
+     listed Tier A cards ONLY: the 001-004 problem cards, the five risk
+     cards, the deeper-risk panel, the three strkBTC mode cards and the
+     timeline detail card. It is NEVER applied to the live BTC metrics
+     block (#btcMetrics), its four cards, their tooltips, or any ancestor
+     of them, and no overflow, filter, transform or containment property is
+     introduced on that chain: the hover tooltips must keep overflowing
+     their card. Tier B (metrics, ecosystem, news, charts) appears in no
+     selector below. No SVG refraction anywhere. Existing radius, padding,
+     grid, gap and type scale are all inherited untouched. */
+  .page-btcfi .btcg-card{position:relative;z-index:1;--ba:var(--accent);
+    background:rgba(245,242,236,.032);
+    border:1px solid rgba(245,242,236,.07);
+    -webkit-backdrop-filter:blur(16px) saturate(112%);
+    backdrop-filter:blur(16px) saturate(112%);
+    box-shadow:
+      inset -1px -1px 0 rgba(255,255,255,.42),
+      inset 1px 1px 0 rgba(255,255,255,.10),
+      inset 0 1px 0 rgba(255,255,255,.26),
+      inset 0 -1px 0 rgba(255,255,255,.22),
+      inset 0 0 24px rgba(255,255,255,.05),
+      0 18px 50px -30px rgba(0,0,0,.9);
+    transition:transform .2s,border-color .2s,box-shadow .2s,background .25s;}
+  .page-btcfi .btcg-coral{--ba:#E0524A;}
+  .page-btcfi .btcg-violet{--ba:#8B5CF6;}
+  /* top light over the upper 42 percent. ::after, because the risk cards'
+     coral rail already owns ::before and must stay untouched. */
+  .page-btcfi .btcg-card::after{content:"";position:absolute;top:0;left:0;right:0;height:42%;
+    border-radius:inherit;pointer-events:none;
+    background:linear-gradient(180deg,rgba(255,255,255,.062),transparent);}
+  /* hover: lift, accent border at 30 percent, accent inner bloom, outer
+     accent glow. No specular sweep. */
+  .page-btcfi .btcg-card:hover{transform:translateY(-3px);
+    border-color:color-mix(in srgb,var(--ba) 30%,transparent);
+    box-shadow:
+      inset -1px -1px 0 rgba(255,255,255,.42),
+      inset 1px 1px 0 rgba(255,255,255,.10),
+      inset 0 1px 0 rgba(255,255,255,.26),
+      inset 0 -1px 0 rgba(255,255,255,.22),
+      inset 0 0 30px color-mix(in srgb,var(--ba) 12%,transparent),
+      0 18px 50px -30px rgba(0,0,0,.9),
+      0 22px 60px -30px color-mix(in srgb,var(--ba) 50%,transparent);}
+  /* the deeper-risk panel's 3px coral rail is a real border edge: it stays
+     crisp, full height and coral in every state, hover included */
+  .page-btcfi .risk-quote.btcg-card,
+  .page-btcfi .risk-quote.btcg-card:hover{border-left:3px solid #E0524A;}
+  /* THE EMPHASIZED CARD: glass gives every card a rim and a glow, which
+     weakens the highlight the quantum-security card used to carry via its
+     violet tint. Strengthened on three axes at once: a 7 percent accent
+     surface, a 60 percent accent border, and a markedly stronger outer
+     glow. Its existing accent text color (inline on title and dot) is
+     preserved in the markup. */
+  .page-btcfi .btcg-emph{
+    background:color-mix(in srgb,var(--ba) 7%,rgba(245,242,236,.03));
+    border-color:color-mix(in srgb,var(--ba) 60%,transparent);
+    box-shadow:
+      inset -1px -1px 0 rgba(255,255,255,.42),
+      inset 1px 1px 0 rgba(255,255,255,.10),
+      inset 0 1px 0 rgba(255,255,255,.26),
+      inset 0 -1px 0 rgba(255,255,255,.22),
+      inset 0 0 24px rgba(255,255,255,.05),
+      0 18px 50px -30px rgba(0,0,0,.9),
+      0 26px 80px -22px color-mix(in srgb,var(--ba) 85%,transparent);}
+  .page-btcfi .btcg-emph:hover{
+    background:color-mix(in srgb,var(--ba) 7%,rgba(245,242,236,.03));
+    border-color:color-mix(in srgb,var(--ba) 60%,transparent);
+    box-shadow:
+      inset -1px -1px 0 rgba(255,255,255,.42),
+      inset 1px 1px 0 rgba(255,255,255,.10),
+      inset 0 1px 0 rgba(255,255,255,.26),
+      inset 0 -1px 0 rgba(255,255,255,.22),
+      inset 0 0 30px color-mix(in srgb,var(--ba) 18%,transparent),
+      0 18px 50px -30px rgba(0,0,0,.9),
+      0 30px 90px -20px color-mix(in srgb,var(--ba) 95%,transparent);}
+  /* fallback for engines without backdrop-filter: a slightly more opaque
+     deliberate solid surface */
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))){
+    .page-btcfi .btcg-card{background:#0B0D13;}
+    .page-btcfi .btcg-emph{background:color-mix(in srgb,var(--ba) 9%,#0B0D13);}
+  }
 </style>
 <script src="js/admin-gate.js"></script>
 </head>
@@ -267,22 +348,22 @@
   <p class="th-pm-eyebrow">Problem</p>
 
   <div class="problem-grid">
-    <div class="problem-item">
+    <div class="problem-item btcg-card">
       <span class="problem-num">001</span>
       <h3>Not expressive</h3>
       <p>Bitcoin's scripting layer was intentionally limited. No smart contracts, no lending markets, no automated strategies. Everything advanced must be built elsewhere.</p>
     </div>
-    <div class="problem-item">
+    <div class="problem-item btcg-card">
       <span class="problem-num">002</span>
       <h3>Not private</h3>
       <p>Every transaction leaves a permanent trace. Balances, counterparties, and strategies are visible to anyone. As Satoshi himself noted in 2010: ZK proofs could make Bitcoin "much better."</p>
     </div>
-    <div class="problem-item">
+    <div class="problem-item btcg-card">
       <span class="problem-num">003</span>
       <h3>Not scalable enough</h3>
       <p>Slow block times. Fee spikes. A handful of transactions per second. Bitcoin's base layer was never designed for global financial activity at scale.</p>
     </div>
-    <div class="problem-item">
+    <div class="problem-item btcg-card">
       <span class="problem-num">004</span>
       <h3>Not quantum-resistant</h3>
       <p>Google researchers warn the cryptographic risk could be relevant as early as 2029. For an asset built to last centuries, this is an urgent short-term concern.</p>
@@ -338,34 +419,34 @@
   <p class="th-pm-eyebrow">Threat</p>
 
   <div class="threat-grid">
-    <div class="threat-card">
+    <div class="threat-card btcg-card btcg-coral">
       <span class="idx">Risk 01</span>
       <h3>Centralized wrappers dominate</h3>
       <p>WBTC and its alternatives control most Bitcoin in DeFi. These rely on custodians, legal agreements, and institutional trust, the exact model Bitcoin was built to replace.</p>
     </div>
-    <div class="threat-card">
+    <div class="threat-card btcg-card btcg-coral">
       <span class="idx">Risk 02</span>
       <h3>Trust assumptions everywhere</h3>
       <p>Bridges introduce layers of custodial risk. Without a trustless settlement path, "Bitcoin DeFi" remains a marketing claim built on the same fragile infrastructure as traditional finance.</p>
     </div>
-    <div class="threat-card">
+    <div class="threat-card btcg-card btcg-coral">
       <span class="idx">Risk 03</span>
       <h3>Fragmented liquidity</h3>
       <p>Bitcoin's capital is scattered across dozens of chains with no unified DeFi layer. This reduces efficiency, increases friction, and splits ecosystems that should compound on each other.</p>
     </div>
-    <div class="threat-card">
+    <div class="threat-card btcg-card btcg-coral">
       <span class="idx">Risk 04</span>
       <h3>The quantum clock is ticking</h3>
       <p>As quantum computing advances, today's cryptographic assumptions may no longer hold, with researchers flagging the risk as early as 2029. Bitcoin is famously slow to upgrade, so an asset meant to last for decades is exposed precisely where it can react the slowest.</p>
     </div>
-    <div class="threat-card">
+    <div class="threat-card btcg-card btcg-coral">
       <span class="idx">Risk 05</span>
       <h3>Full transparency is a liability</h3>
       <p>Bitcoin is public by default: every balance, counterparty and transaction is permanently traceable. Once an address is linked to an identity, an entire financial history follows. For an asset meant to be used, not just held, this lack of privacy makes real-world spending, payroll, and DeFi positions impossible to keep private.</p>
     </div>
   </div>
 
-  <div class="risk-quote">
+  <div class="risk-quote btcg-card btcg-coral">
     <span class="tag">The deeper risk</span>
     <p>The deeper risk is that Satoshi's original vision never gets fulfilled. Bitcoin was never meant to be only digital gold. The whitepaper described a <span class="em">peer-to-peer electronic cash system</span>, a decentralized currency. And the people who need that most, by sheer numbers, are the unbanked and those in emerging economies: precisely those most sensitive to gas fees, speed, and friction. If Bitcoin's execution layer stays unsolved or gets captured by opaque intermediaries, <b>the asset survives, but its founding promise to billions of people quietly dies.</b></p>
   </div>
@@ -411,21 +492,21 @@
         <h3 class="scale-title">Public by default. <span>Private by choice.</span></h3>
         <p class="scale-intro">strkBTC is the first Bitcoin-backed asset with optional privacy, built on STRK20s, Starknet's protocol-level privacy primitive. Same asset, two modes: access the full Starknet DeFi stack (lend, borrow, trade, stake) without broadcasting your positions, strategies and net worth to the entire world.</p>
         <div class="modes">
-          <div class="mode-item">
+          <div class="mode-item btcg-card">
             <div class="mode-dot public"></div>
             <div>
               <div class="mode-item-title">Public strkBTC</div>
               <div class="mode-item-desc">Behaves like a standard ERC-20. Fully composable across all of Starknet DeFi: swaps, lending, LPing, staking, and everything built next.</div>
             </div>
           </div>
-          <div class="mode-item">
+          <div class="mode-item btcg-card btcg-violet">
             <div class="mode-dot private"></div>
             <div>
               <div class="mode-item-title">Shielded strkBTC</div>
               <div class="mode-item-desc">Balances and transfers are hidden from public view, with DeFi still accessible from inside the shielded state. Users prove validity without revealing sensitive financial information. Powered by STARK proofs.</div>
             </div>
           </div>
-          <div class="mode-item" style="border-color:rgba(139,92,246,0.25); background:rgba(139,92,246,0.04);">
+          <div class="mode-item btcg-card btcg-violet btcg-emph">
             <div class="mode-dot" style="background:#C4B5FD;"></div>
             <div>
               <div class="mode-item-title" style="color:#C4B5FD;">End-to-end quantum security by 2027</div>
@@ -448,7 +529,7 @@
           </div>
         </div>
 
-        <div class="tl-detail" id="tlDetail">
+        <div class="tl-detail btcg-card" id="tlDetail">
           <div class="tl-detail-year" id="tlDYear"></div>
           <div class="tl-detail-title" id="tlDTitle"></div>
           <div class="tl-detail-desc" id="tlDDesc"></div>
