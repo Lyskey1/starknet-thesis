@@ -304,7 +304,9 @@
   <p class="hero-subtitle">Governments, Big Tech, and researchers are increasingly converging on the same timeline for when quantum breaks today's cryptography. When it arrives, nearly every onchain wallet is exposed. For most of crypto, this is a threat. For Starknet, it highlights the strength of its architecture.</p>
 
   <!-- COUNTDOWN -->
-  <div class="countdown">
+  <div class="countdown qg-cd">
+    <div class="qg-bloom" aria-hidden="true"><i style="--bc:var(--accent);left:8%;top:10%;width:32%;height:80%"></i></div>
+    <div class="qg-cd-glass" aria-hidden="true"></div>
     <div class="th-cd">
       <div class="th-cd-eyebrow">
         <span class="lbl">The industry's converging deadline</span>
@@ -481,6 +483,36 @@ a.qg-card:focus-visible{outline:2px solid var(--qa);outline-offset:3px;}
 @media (max-width:880px){
   .th-pm-compare .qg-bloom i:nth-child(1){left:10%;top:3%;width:80%;height:44%;}
   .th-pm-compare .qg-bloom i:nth-child(2){left:10%;top:53%;width:80%;height:44%;}
+}
+
+/* ===== Countdown panel glass. The seconds digit rewrites every second, so
+   backdrop-filter must NOT live on the panel container: a DOM write inside
+   a backdrop-filtered element would repaint and recomposite the blurred
+   region on every tick, forever. The glass is an absolutely positioned
+   sibling layer behind the content; digit updates never touch it. The
+   panel keeps its own 1px border and 18px radius; its old blue wash
+   gradient is replaced by this surface plus one static bloom. Not a link,
+   not interactive: no hover, no lift. */
+.qg-cd{background:none;}
+.qg-cd>:not(.qg-cd-glass):not(.qg-bloom){position:relative;z-index:1;}
+.qg-cd-glass{position:absolute;inset:0;z-index:0;border-radius:inherit;pointer-events:none;
+  background:rgba(245,242,236,.032);
+  -webkit-backdrop-filter:blur(16px) saturate(112%);
+  backdrop-filter:blur(16px) saturate(112%);
+  box-shadow:
+    inset -1px -1px 0 rgba(255,255,255,.42),
+    inset 1px 1px 0 rgba(255,255,255,.10),
+    inset 0 1px 0 rgba(255,255,255,.26),
+    inset 0 -1px 0 rgba(255,255,255,.22),
+    inset 0 0 24px rgba(255,255,255,.05),
+    0 18px 50px -30px rgba(0,0,0,.9);}
+.qg-cd-glass::before{content:"";position:absolute;top:0;left:0;right:0;height:42%;border-radius:inherit;
+  background:linear-gradient(180deg,rgba(255,255,255,.062),transparent);pointer-events:none;}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))){
+  .qg-cd-glass{background:#0b0d13;}
+}
+@media (max-width:980px){
+  .qg-cd-glass{-webkit-backdrop-filter:none;backdrop-filter:none;background:#0b0d13;}
 }
 .th-pm-video{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:40px;}
 .th-pm-vcard{border-radius:14px;overflow:hidden;border:1px solid var(--th-hair);background:#0b0d13;}
@@ -1148,7 +1180,26 @@ body.page-quantum{overflow-x:clip;}
     var fill = document.getElementById('cd-fill'); if (fill) fill.style.width = pct + '%';
     var mark = document.getElementById('cd-mark'); if (mark) mark.style.left = pct + '%';
   }
-  tick(); setInterval(tick,1000);
+  // The interval used to run forever, including for readers who could not
+  // see the panel and in hidden tabs. Same discipline as the hero field and
+  // the convergence scene: pause off screen and on document.hidden, resume
+  // on return. tick() always recomputes from the real date, so the first
+  // tick after resume corrects the display and it can never show a stale
+  // countdown for more than one second.
+  var timer = 0, visible = true;
+  function sync(){
+    var want = visible && !document.hidden;
+    if (want && !timer) { tick(); timer = setInterval(tick, 1000); }
+    else if (!want && timer) { clearInterval(timer); timer = 0; }
+  }
+  var elD0 = document.getElementById('cd-days');
+  var host = elD0 && elD0.closest ? elD0.closest('.countdown') : null;
+  if (host && 'IntersectionObserver' in window) {
+    visible = false;
+    new IntersectionObserver(function(en){ visible = en[en.length-1].isIntersecting; sync(); }).observe(host);
+  }
+  document.addEventListener('visibilitychange', sync);
+  tick(); sync();
 })();
 
 // ============================================================
