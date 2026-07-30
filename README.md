@@ -69,7 +69,20 @@ URLs; the news cap stays 512KB). Category metadata (labels, colors, grouping)
 stays code-owned in ecosystem.html; only the accounts are published. On
 success the local ecosystem draft (`eco_data_v2`) is cleared, because the
 published file is now the source of truth. Publishing the ecosystem never
-touches `data/news.json`, and the two targets cannot be mixed in one request.
+touches `data/news.json`, and targets cannot be mixed in one request.
+
+**BTCFi ecosystem block** (btcfi.html, wallets / bridges / DeFi protocols):
+`data/btcfi-ecosystem.json` is the source of truth once published. The three
+categories are code-owned (order, labels, descriptions, eyebrows, the closing
+"Much more to come" card); only items publish. Item shapes: chip categories
+(wallets, bridges) carry `{ name, logo, url }`; the DeFi card category carries
+`{ name, logo, tags: [], description, url }`. Caps: required name (120 chars),
+logo 150K chars (assets/ path preferred; uploads become 96px JPEG data URLs),
+url 2048, description 400, 8 tags of 40 chars, 100 items per category, 160K
+chars per entry, 2MB total. Edit via the gated "Edit ecosystem" control on the
+block, publish via its Publish button (per-category count confirmation first);
+success clears only the `btcfi_ecosystem_v1` draft key. Publishing this target
+never touches `data/news.json` or `data/ecosystem.json`.
 
 **Publishing**: open a page's news admin panel ("Edit news"), curate the list,
 press **Publish**. The first use prompts for the publish key (remembered in
