@@ -233,7 +233,25 @@
   .th-sec{position:relative;}
   .lg-bloom{position:absolute;inset:0;z-index:0;pointer-events:none;filter:blur(46px);}
   .lg-bloom i{position:absolute;border-radius:50%;background:radial-gradient(closest-side,var(--bc),transparent 72%);opacity:.09;}
+
+  /* ===== Refraction, progressive enhancement only. url() inside
+     backdrop-filter is Chromium-only in practice; the html.lg-refract class
+     is added at runtime by a CSS.supports check, desktop widths only, and
+     the design is complete without it. */
+  @media (min-width:981px){
+    html.lg-refract .lg-card{
+      -webkit-backdrop-filter:blur(16px) saturate(150%) url('#lg-refract');
+      backdrop-filter:blur(16px) saturate(150%) url('#lg-refract');}
+  }
 </style>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="lg-refract"><feTurbulence type="fractalNoise" baseFrequency="0.008 0.012" numOctaves="2" result="lgn"/><feGaussianBlur in="lgn" stdDeviation="2.4" result="lgb"/><feDisplacementMap in="SourceGraphic" in2="lgb" scale="22"/></filter></svg>
+<script>
+/* Glass refraction gate: apply the SVG displacement inside backdrop-filter
+   only where the engine actually supports url() there. */
+if (window.CSS && CSS.supports && CSS.supports('backdrop-filter', 'blur(1px) url("#lg-refract")')) {
+  document.documentElement.classList.add('lg-refract');
+}
+</script>
 <div class="th-sections">
   <section class="th-sec">
     <div class="th-pm-head"><span class="th-pm-marker"></span><span class="th-pm-num">01</span><h2 class="th-pm-title">The fundamentals</h2></div>
