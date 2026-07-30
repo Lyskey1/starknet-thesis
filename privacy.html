@@ -119,27 +119,109 @@
   .printer-bar span { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); width: 38%; height: 4px; border-radius: 99px; background: #03110C; box-shadow: inset 0 0 6px rgba(var(--accent-rgb),.5); }
   .bills { display: grid; grid-template-columns: repeat(3,1fr); gap: 22px; padding: 0 2%; margin-top: -2px; }
   .slot { overflow: hidden; padding: 14px 6px 26px; }
-  .flip { perspective: 1400px; transform: translateY(-108%); transition: transform 1.1s cubic-bezier(.22,.9,.3,1); }
-  .printer.printed .slot:nth-child(1) .flip { transform: translateY(0) rotate(-.6deg); transition-delay: .05s; }
-  .printer.printed .slot:nth-child(2) .flip { transform: translateY(0) rotate(.35deg); transition-delay: .45s; }
-  .printer.printed .slot:nth-child(3) .flip { transform: translateY(0) rotate(-.3deg); transition-delay: .85s; }
-  .inner { position: relative; transform-style: preserve-3d; transition: transform .7s cubic-bezier(.3,.8,.3,1); }
-  .flip:hover .inner, .flip.flipped .inner { transform: rotateY(180deg); }
-  .bill { background: #F2F1EA; color: #15181A; font-family: var(--mono); border-radius: 3px 3px 0 0; padding: 22px 20px 16px; box-shadow: 0 14px 30px rgba(0,0,0,.45); }
-  .face { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
-  .bill.back { position: absolute; inset: 0; transform: rotateY(180deg); background: #EBEAE1; display: flex; flex-direction: column; overflow: auto; }
-  .bill.back .b-head { padding-bottom: 12px; border-bottom: 1px dashed #B9B7AC; }
-  .bp-t { font-family: var(--sans); font-size: 15.5px; line-height: 1.8; color: #2E3336; margin: auto 0; padding: 14px 0; }
-  .bp-t b { color: #B3261E; }
-  .bill::after { content: ''; display: block; height: 12px; margin: 14px -20px -16px; background: linear-gradient(45deg,transparent 33.33%,#F2F1EA 33.33%,#F2F1EA 66.66%,transparent 66.66%),linear-gradient(-45deg,transparent 33.33%,#F2F1EA 33.33%,#F2F1EA 66.66%,transparent 66.66%); background-size: 14px 24px; background-position: 0 -12px; filter: drop-shadow(0 3px 3px rgba(0,0,0,.25)); }
-  .bill.back::after { background: linear-gradient(45deg,transparent 33.33%,#EBEAE1 33.33%,#EBEAE1 66.66%,transparent 66.66%),linear-gradient(-45deg,transparent 33.33%,#EBEAE1 33.33%,#EBEAE1 66.66%,transparent 66.66%); background-size: 14px 24px; background-position: 0 -12px; margin-top: auto; }
-  .b-head { font-weight: 600; font-size: 12.5px; letter-spacing: .12em; }
-  .b-sub { font-size: 10px; letter-spacing: .1em; color: #6B7075; margin-top: 5px; padding-bottom: 12px; border-bottom: 1px dashed #B9B7AC; }
-  .b-line { display: flex; justify-content: space-between; gap: 12px; font-size: 11px; line-height: 1.5; padding: 10px 0; border-bottom: 1px dashed #D8D6CB; }
-  .b-line .amt { white-space: nowrap; font-weight: 600; color: #B3261E; }
-  .b-total { display: flex; justify-content: space-between; font-size: 11px; font-weight: 600; letter-spacing: .1em; padding-top: 12px; }
-  .b-total span:last-child { color: #0B7A57; }
-  .b-barcode { height: 26px; margin-top: 14px; background: repeating-linear-gradient(90deg,#15181A 0 2px,transparent 2px 5px,#15181A 5px 6px,transparent 6px 11px); }
+  /* Engraved certificate treatment, pb- prefix (collides with nothing).
+     Colors come exclusively from the page's existing variables.
+     Height: JS fits --pbh to the tallest natural face at the current
+     width (both faces are absolutely positioned, so the card must carry
+     an explicit height). The values below are the no-JS fallback only. */
+  .pb-card { perspective: 2000px; height: var(--pbh, 700px); cursor: pointer; position: relative;
+    transform: translateY(-108%); transition: transform 1.1s cubic-bezier(.22,.9,.3,1); }
+  @media (max-width: 980px) { .pb-card { height: var(--pbh, 560px); } }
+  @media (max-width: 480px)  { .pb-card { height: var(--pbh, 700px); } }
+  @media (max-width: 420px)  { .pb-card { height: var(--pbh, 820px); } }
+  .printer.printed .slot:nth-child(1) .pb-card { transform: translateY(0) rotate(-.6deg); transition-delay: .05s; }
+  .printer.printed .slot:nth-child(2) .pb-card { transform: translateY(0) rotate(.35deg); transition-delay: .45s; }
+  .printer.printed .slot:nth-child(3) .pb-card { transform: translateY(0) rotate(-.3deg); transition-delay: .85s; }
+  .pb-card:focus-visible { outline: 2px solid var(--em); outline-offset: 4px; border-radius: 10px; }
+  .pb-inner { position: relative; width: 100%; height: 100%; transform-style: preserve-3d;
+    transition: transform .62s cubic-bezier(.77,0,.175,1); }
+  .pb-card[aria-expanded="true"] .pb-inner { transform: rotateY(180deg); }
+  @media (hover: hover) and (pointer: fine) {
+    .pb-card:hover .pb-inner { transform: rotateY(180deg); }
+    .pb-card:hover .pb-seal { transform: rotate(90deg); }
+  }
+  .pb-face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden;
+    border: 1px solid var(--em-line); border-radius: 10px; overflow: hidden;
+    background:
+      repeating-linear-gradient(58deg, rgba(var(--accent-rgb), .05) 0 .5px, transparent .5px 8px),
+      repeating-linear-gradient(-58deg, rgba(var(--accent-rgb), .05) 0 .5px, transparent .5px 8px),
+      linear-gradient(180deg, var(--bg-raise), #07090A);
+    box-shadow: 0 14px 30px rgba(0,0,0,.45); }
+  .pb-face::before { content: ''; position: absolute; inset: 8px; border: 1px solid rgba(var(--accent-rgb), .16);
+    border-radius: 6px; pointer-events: none; }
+  .pb-front { display: flex; flex-direction: column; padding: 34px 24px 30px; }
+  .pb-back { transform: rotateY(180deg); display: flex; flex-direction: column; padding: 34px 26px 28px; }
+  .pb-micro { position: absolute; left: 14px; right: 14px; top: 11px; font-family: var(--mono); font-size: 6px;
+    letter-spacing: .34em; color: var(--muted); opacity: .34; white-space: nowrap; overflow: hidden; pointer-events: none; }
+  .pb-micro-b { top: auto; bottom: 11px; }
+  .pb-top { display: flex; justify-content: space-between; align-items: flex-start; position: relative; z-index: 1; }
+  .pb-serial { font-family: var(--mono); font-size: 10px; letter-spacing: .18em; color: var(--muted); }
+  .pb-seal { width: 20px; height: 20px; border: 1px solid var(--em-line); position: relative; flex: none;
+    transition: transform .5s cubic-bezier(.3,.8,.3,1); }
+  .pb-seal::after { content: ''; position: absolute; inset: 4px; border: 1px solid var(--em); opacity: .7;
+    transform: rotate(45deg); }
+  .pb-rosette { position: absolute; top: 50%; right: -110px; width: 320px; height: 320px;
+    transform: translateY(-50%); pointer-events: none; }
+  .pb-low { margin-top: auto; position: relative; z-index: 1; }
+  .pb-kicker { font-family: var(--mono); font-size: 11px; letter-spacing: .18em; color: var(--em); }
+  .pb-status { font-family: var(--mono); font-size: 9px; letter-spacing: .3em; color: var(--muted); margin-top: 18px; }
+  .pb-value { font-family: var(--display); font-weight: 800; font-size: clamp(24px, 2.2vw, 30px); line-height: 1.06;
+    letter-spacing: -.01em; color: var(--ink); margin-top: 8px; }
+  .pb-rule { height: 1px; background: var(--line); margin: 16px 0 12px; }
+  .pb-label { font-family: var(--mono); font-size: 10px; letter-spacing: .12em; line-height: 1.6; color: var(--muted); }
+  .pb-cue { font-family: var(--mono); font-size: 9px; letter-spacing: .26em; color: var(--em); opacity: .75;
+    margin-top: 20px; position: relative; z-index: 1; }
+  .pb-bhead { font-family: var(--display); font-weight: 800; font-size: 16px; letter-spacing: .02em;
+    color: var(--ink); position: relative; z-index: 1; }
+  .pb-body { font-family: var(--sans); font-size: 13.5px; line-height: 1.62; color: var(--muted);
+    margin-top: 14px; position: relative; z-index: 1; }
+  .pb-body b { color: var(--danger); font-weight: 600; }
+  .pb-list { list-style: none; margin: auto 0 0; padding: 0 0 2px; position: relative; z-index: 1; }
+  .pb-li { display: flex; align-items: baseline; gap: 10px; font-size: 11px; line-height: 1.5;
+    padding: 8px 0; border-top: 1px solid var(--line); font-family: var(--mono); }
+  .pb-li .pb-idx { color: var(--em); flex: none; }
+  .pb-li .pb-lt { color: var(--ink); }
+  .pb-li .pb-amt { margin-left: auto; white-space: nowrap; font-weight: 600; color: var(--danger); }
+  .pb-foot { display: flex; justify-content: space-between; border-top: 1px solid var(--line);
+    padding-top: 12px; margin-top: 12px; font-family: var(--mono); font-size: 9px; letter-spacing: .22em;
+    position: relative; z-index: 1; }
+  .pb-foot .pb-pos { color: var(--muted); }
+  .pb-foot .pb-cue2 { color: var(--em); opacity: .75; }
+  /* list stagger: items surface as the back face rotates toward the viewer */
+  .pb-li { opacity: 0; transform: translateX(-8px); }
+  .pb-card[aria-expanded="true"] .pb-li { opacity: 1; transform: none; transition: opacity .35s ease, transform .35s ease; }
+  .pb-card[aria-expanded="true"] .pb-li:nth-child(1) { transition-delay: .30s; }
+  .pb-card[aria-expanded="true"] .pb-li:nth-child(2) { transition-delay: .36s; }
+  .pb-card[aria-expanded="true"] .pb-li:nth-child(3) { transition-delay: .42s; }
+  .pb-card[aria-expanded="true"] .pb-li:nth-child(4) { transition-delay: .48s; }
+  @media (hover: hover) and (pointer: fine) {
+    .pb-card:hover .pb-li { opacity: 1; transform: none; transition: opacity .35s ease, transform .35s ease; }
+    .pb-card:hover .pb-li:nth-child(1) { transition-delay: .30s; }
+    .pb-card:hover .pb-li:nth-child(2) { transition-delay: .36s; }
+    .pb-card:hover .pb-li:nth-child(3) { transition-delay: .42s; }
+    .pb-card:hover .pb-li:nth-child(4) { transition-delay: .48s; }
+  }
+  /* reduced motion: no 3D at all, faces cross-fade, stagger dropped */
+  @media (prefers-reduced-motion: reduce) {
+    .pb-card { transform: none !important; transition: none; }
+    .pb-inner { transition: none; }
+    .pb-card[aria-expanded="true"] .pb-inner { transform: none; }
+    .pb-face { transition: opacity .3s ease; }
+    .pb-back { transform: none; opacity: 0; pointer-events: none; }
+    .pb-card[aria-expanded="true"] .pb-front { opacity: 0; }
+    .pb-card[aria-expanded="true"] .pb-back { opacity: 1; pointer-events: auto; }
+    .pb-li, .pb-card[aria-expanded="true"] .pb-li { opacity: 1; transform: none; transition: none; }
+    .pb-seal { transition: none; }
+  }
+  @media (prefers-reduced-motion: reduce) and (hover: hover) and (pointer: fine) {
+    .pb-card:hover .pb-inner { transform: none; }
+    .pb-card:hover .pb-front { opacity: 0; }
+    .pb-card:hover .pb-back { opacity: 1; }
+    .pb-card:hover .pb-li { transition: none; }
+  }
+  @media (max-width: 980px) {
+    .bills { grid-template-columns: 1fr; max-width: 560px; margin: -2px auto 0; }
+  }
 
   /* ============ 01: what your address reveals ============ */
   .reveal-lead { margin-top: 80px; }
@@ -574,15 +656,12 @@
     .closing { padding: 90px 32px 80px; }
   }
   @media (max-width: 860px) {
-    .bills { grid-template-columns: 1fr; }
     .leaks { grid-template-columns: 1fr; }
   }
   @media (prefers-reduced-motion: reduce) {
     .shield-wrap .bk { animation: none; opacity: 1; transform: none; }
     .shield-wrap .word { animation: none; }
     .hero .turn { animation: none; opacity: 1; transform: none; }
-    .flip { transform: none !important; transition: none; }
-    .inner { transition: none; }
     .dot { transition: none; }
     a.ln:hover { transform: none; }
   }
@@ -639,50 +718,89 @@
   <div class="printer" id="printer">
     <div class="printer-bar"><span></span></div>
     <div class="bills">
-      <div class="slot"><div class="flip"><div class="inner">
-        <div class="bill face b1">
-          <div class="b-head">BILL Nº 01 — EXTRACTION</div>
-          <div class="b-sub">CHARGED ON EVERY VISIBLE TRADE</div>
-          <div class="b-line"><span>MEV extracted on Ethereum since the Merge</span><span class="amt">$B+</span></div>
-          <div class="b-line"><span>Sandwich bots on Solana in 16 months</span><span class="amt">$370–500M</span></div>
-          <div class="b-total"><span>STATUS</span><span>A STANDING TAX</span></div>
-          <div class="b-barcode"></div>
+      <div class="slot"><div class="pb-card" role="button" tabindex="0" aria-expanded="false">
+        <div class="pb-inner">
+          <div class="pb-face pb-front">
+            <div class="pb-micro" aria-hidden="true"></div>
+            <div class="pb-top"><span class="pb-serial"></span><span class="pb-seal" aria-hidden="true"></span></div>
+            <svg class="pb-rosette" aria-hidden="true"></svg>
+            <div class="pb-low">
+              <div class="pb-kicker">BILL Nº 01 — EXTRACTION</div>
+              <div class="pb-status">STATUS</div>
+              <div class="pb-value">A STANDING TAX</div>
+              <div class="pb-rule"></div>
+              <div class="pb-label">CHARGED ON EVERY VISIBLE TRADE</div>
+            </div>
+            <div class="pb-cue">TURN OVER</div>
+            <div class="pb-micro pb-micro-b" aria-hidden="true"></div>
+          </div>
+          <div class="pb-face pb-back">
+            <h4 class="pb-bhead">FINE PRINT — EXTRACTION</h4>
+            <p class="pb-body">Every pending transaction in the public mempool announces what you are about to do to the parties best equipped to charge you for it. Billions extracted on Ethereum since the Merge; $370 to $500 million taken by Solana's sandwich bots in barely a year and a half; the same extraction runs on every transparent chain. A standing tax on anyone who interacts where everyone can watch.</p>
+            <ul class="pb-list">
+              <li class="pb-li"><span class="pb-idx">01</span><span class="pb-lt">MEV extracted on Ethereum since the Merge</span><span class="pb-amt">$B+</span></li>
+              <li class="pb-li"><span class="pb-idx">02</span><span class="pb-lt">Sandwich bots on Solana in 16 months</span><span class="pb-amt">$370–500M</span></li>
+            </ul>
+            <div class="pb-foot"><span class="pb-pos">01 / 03</span><span class="pb-cue2">TURN BACK</span></div>
+          </div>
         </div>
-        <div class="bill face back">
-          <div class="b-head">FINE PRINT — EXTRACTION</div>
-          <p class="bp-t">Every pending transaction in the public mempool announces what you are about to do to the parties best equipped to charge you for it. Billions extracted on Ethereum since the Merge; $370 to $500 million taken by Solana's sandwich bots in barely a year and a half; the same extraction runs on every transparent chain. A standing tax on anyone who interacts where everyone can watch.</p>
+      </div></div>
+      <div class="slot"><div class="pb-card" role="button" tabindex="0" aria-expanded="false">
+        <div class="pb-inner">
+          <div class="pb-face pb-front">
+            <div class="pb-micro" aria-hidden="true"></div>
+            <div class="pb-top"><span class="pb-serial"></span><span class="pb-seal" aria-hidden="true"></span></div>
+            <svg class="pb-rosette" aria-hidden="true"></svg>
+            <div class="pb-low">
+              <div class="pb-kicker">BILL Nº 02 — STRATEGY</div>
+              <div class="pb-status">STATUS</div>
+              <div class="pb-value">BAIT, ACCEPTED</div>
+              <div class="pb-rule"></div>
+              <div class="pb-label">YOUR LIQUIDATION LEVELS, PUBLISHED TRANSPARENTLY TO THE ENTIRE WORLD</div>
+            </div>
+            <div class="pb-cue">TURN OVER</div>
+            <div class="pb-micro pb-micro-b" aria-hidden="true"></div>
+          </div>
+          <div class="pb-face pb-back">
+            <h4 class="pb-bhead">FINE PRINT — STRATEGY</h4>
+            <p class="pb-body">May 2025: James Wynn runs the largest publicly visible leveraged position in crypto history, $1.25B at 40x leverage on Hyperliquid. His liquidation price was known to everyone, down to the penny. The position got liquidated, and the account ended the month at $23. <b>"They are hunting me,"</b> he posted, reopening a $100M position, which got liquidated too. The reality is that everything was public; nobody needed to conspire. A year earlier, the market got Egorov's levels the same way, in his borrowing strategy against his own CRV, and left $10M of bad debt across several lending markets. And this is no isolated event: it happens every day, across every DeFi vertical.</p>
+            <ul class="pb-list">
+              <li class="pb-li"><span class="pb-idx">01</span><span class="pb-lt">J. Wynn, $1.25B position, liq. price public</span><span class="pb-amt">LIQUIDATED</span></li>
+              <li class="pb-li"><span class="pb-idx">02</span><span class="pb-lt">M. Egorov, $96M in loans against his own CRV</span><span class="pb-amt">LIQUIDATED</span></li>
+              <li class="pb-li"><span class="pb-idx">03</span><span class="pb-lt">Bad debt left to the lending markets</span><span class="pb-amt">$10M</span></li>
+            </ul>
+            <div class="pb-foot"><span class="pb-pos">02 / 03</span><span class="pb-cue2">TURN BACK</span></div>
+          </div>
         </div>
-      </div></div></div>
-      <div class="slot"><div class="flip"><div class="inner">
-        <div class="bill face b2">
-          <div class="b-head">BILL Nº 02 — STRATEGY</div>
-          <div class="b-sub">YOUR LIQUIDATION LEVELS, PUBLISHED TRANSPARENTLY TO THE ENTIRE WORLD</div>
-          <div class="b-line"><span>J. Wynn, $1.25B position, liq. price public</span><span class="amt">LIQUIDATED</span></div>
-          <div class="b-line"><span>M. Egorov, $96M in loans against his own CRV</span><span class="amt">LIQUIDATED</span></div>
-          <div class="b-line"><span>Bad debt left to the lending markets</span><span class="amt">$10M</span></div>
-          <div class="b-total"><span>STATUS</span><span>BAIT, ACCEPTED</span></div>
-          <div class="b-barcode"></div>
+      </div></div>
+      <div class="slot"><div class="pb-card" role="button" tabindex="0" aria-expanded="false">
+        <div class="pb-inner">
+          <div class="pb-face pb-front">
+            <div class="pb-micro" aria-hidden="true"></div>
+            <div class="pb-top"><span class="pb-serial"></span><span class="pb-seal" aria-hidden="true"></span></div>
+            <svg class="pb-rosette" aria-hidden="true"></svg>
+            <div class="pb-low">
+              <div class="pb-kicker">BILL Nº 03 — ABSENCE</div>
+              <div class="pb-status">STATUS</div>
+              <div class="pb-value">WAITING OUTSIDE</div>
+              <div class="pb-rule"></div>
+              <div class="pb-label">THE CAPITAL THAT NEVER ARRIVES</div>
+            </div>
+            <div class="pb-cue">TURN OVER</div>
+            <div class="pb-micro pb-micro-b" aria-hidden="true"></div>
+          </div>
+          <div class="pb-face pb-back">
+            <h4 class="pb-bhead">FINE PRINT — ABSENCE</h4>
+            <p class="pb-body">Institutions do not publish supplier lists, treasuries do not broadcast rebalances, and sovereigns do not accumulate in daylight. The spot Bitcoin ETFs launched in January 2024 with every issuer declining to publish its addresses; it took Arkham <b>twelve days</b> to map BlackRock's and Fidelity's wallets anyway, over 58,000 BTC exposed before either firm had said a word. That is why the capital stays away: on transparent rails, showing up means being mapped. This is the bill nobody sees getting paid, and it is the biggest of the three.</p>
+            <ul class="pb-list">
+              <li class="pb-li"><span class="pb-idx">01</span><span class="pb-lt">BTC in use in DeFi vs total value</span><span class="pb-amt">$14B / $1.5T</span></li>
+              <li class="pb-li"><span class="pb-idx">02</span><span class="pb-lt">Tokenized RWAs parked as registry entries, usage kept off</span><span class="pb-amt">$30B+</span></li>
+              <li class="pb-li"><span class="pb-idx">03</span><span class="pb-lt">B2B stablecoins vs the market they can't attract</span><span class="pb-amt">$226B / $89T</span></li>
+            </ul>
+            <div class="pb-foot"><span class="pb-pos">03 / 03</span><span class="pb-cue2">TURN BACK</span></div>
+          </div>
         </div>
-        <div class="bill face back">
-          <div class="b-head">FINE PRINT — STRATEGY</div>
-          <p class="bp-t">May 2025: James Wynn runs the largest publicly visible leveraged position in crypto history, $1.25B at 40x leverage on Hyperliquid. His liquidation price was known to everyone, down to the penny. The position got liquidated, and the account ended the month at $23. <b>"They are hunting me,"</b> he posted, reopening a $100M position, which got liquidated too. The reality is that everything was public; nobody needed to conspire. A year earlier, the market got Egorov's levels the same way, in his borrowing strategy against his own CRV, and left $10M of bad debt across several lending markets. And this is no isolated event: it happens every day, across every DeFi vertical.</p>
-        </div>
-      </div></div></div>
-      <div class="slot"><div class="flip"><div class="inner">
-        <div class="bill face b3">
-          <div class="b-head">BILL Nº 03 — ABSENCE</div>
-          <div class="b-sub">THE CAPITAL THAT NEVER ARRIVES</div>
-          <div class="b-line"><span>BTC in use in DeFi vs total value</span><span class="amt">$14B / $1.5T</span></div>
-          <div class="b-line"><span>Tokenized RWAs parked as registry entries, usage kept off</span><span class="amt">$30B+</span></div>
-          <div class="b-line"><span>B2B stablecoins vs the market they can't attract</span><span class="amt">$226B / $89T</span></div>
-          <div class="b-total"><span>STATUS</span><span>WAITING OUTSIDE</span></div>
-          <div class="b-barcode"></div>
-        </div>
-        <div class="bill face back">
-          <div class="b-head">FINE PRINT — ABSENCE</div>
-          <p class="bp-t">Institutions do not publish supplier lists, treasuries do not broadcast rebalances, and sovereigns do not accumulate in daylight. The spot Bitcoin ETFs launched in January 2024 with every issuer declining to publish its addresses; it took Arkham <b>twelve days</b> to map BlackRock's and Fidelity's wallets anyway, over 58,000 BTC exposed before either firm had said a word. That is why the capital stays away: on transparent rails, showing up means being mapped. This is the bill nobody sees getting paid, and it is the biggest of the three.</p>
-        </div>
-      </div></div></div>
+      </div></div>
     </div>
   </div>
 
@@ -1277,24 +1395,95 @@
 })();
 
 // ============================================================
-// SECTION 01 — printer: bills print once on scroll; tap to flip on touch
+// SECTION 01 — printer + engraved bills. Bills print once on scroll.
+// Flip state lives on aria-expanded; click, Enter and Space toggle,
+// Escape closes; hover flips only on fine pointers (CSS). The serial,
+// micro-text and guilloche are decorative structure derived from the
+// bill index, the accent variable and copy already on the page.
 // ============================================================
 (function(){
   var printer = document.getElementById('printer');
   if (!printer) return;
   if ('IntersectionObserver' in window) {
+    // threshold must stay low: the single-column stack is ~3 viewports tall
+    // on phones, so a tall ratio like .35 can never be reached there and the
+    // bills would never print.
     var io = new IntersectionObserver(function(entries, obs){
       entries.forEach(function(en){ if (en.isIntersecting) { printer.classList.add('printed'); obs.disconnect(); } });
-    }, { threshold: .35 });
+    }, { threshold: .12 });
     io.observe(printer);
   } else {
     printer.classList.add('printed');
   }
-  if (window.matchMedia('(hover: none)').matches) {
-    [].forEach.call(document.querySelectorAll('.flip'), function(f){
-      f.addEventListener('click', function(){ f.classList.toggle('flipped'); });
+
+  var em = getComputedStyle(document.body).getPropertyValue('--em').trim() || '#1FCB94';
+  var hex = em.replace('#','').toUpperCase();
+  var MICRO = 'THE COST OF BEING VISIBLE';   // the section's own title, no new phrase
+
+  [].forEach.call(printer.querySelectorAll('.pb-card'), function(card, i){
+    var sn = card.querySelector('.pb-serial');
+    if (sn) sn.textContent = 'SN 0' + (i + 1) + ' / ' + hex;
+
+    [].forEach.call(card.querySelectorAll('.pb-micro'), function(m){
+      m.textContent = new Array(21).join(MICRO + '   ');
     });
+
+    var svg = card.querySelector('.pb-rosette');
+    if (svg) {
+      var NS = 'http://www.w3.org/2000/svg', N = 22;
+      svg.setAttribute('viewBox', '0 0 320 320');
+      for (var k = 0; k < N; k++) {
+        var e = document.createElementNS(NS, 'ellipse');
+        e.setAttribute('cx', '160'); e.setAttribute('cy', '160');
+        e.setAttribute('rx', '150'); e.setAttribute('ry', '58');
+        e.setAttribute('transform', 'rotate(' + (k * 180 / N).toFixed(2) + ' 160 160)');
+        e.setAttribute('fill', 'none');
+        e.setAttribute('stroke', em);
+        e.setAttribute('stroke-opacity', '.13');
+        e.setAttribute('stroke-width', '.5');
+        svg.appendChild(e);
+      }
+    }
+
+    var kick = card.querySelector('.pb-kicker');
+    card.setAttribute('aria-label', (kick ? kick.textContent : 'Bill') + '. Turn over.');
+    function setFlip(on){ card.setAttribute('aria-expanded', on ? 'true' : 'false'); }
+    function isFlip(){ return card.getAttribute('aria-expanded') === 'true'; }
+    card.addEventListener('click', function(){ setFlip(!isFlip()); });
+    card.addEventListener('keydown', function(ev){
+      if (ev.key === 'Enter' || ev.key === ' ' || ev.key === 'Spacebar') { ev.preventDefault(); setFlip(!isFlip()); }
+      else if (ev.key === 'Escape') { setFlip(false); }
+    });
+  });
+
+  // Shared card height: both faces are absolutely positioned, so measure
+  // the natural height of every face at the current width and give all
+  // three cards the worst case plus a small buffer. Re-run on resize and
+  // once fonts settle, so no face ever clips and no card ever scrolls.
+  function fitHeights(){
+    var cards = printer.querySelectorAll('.pb-card');
+    if (!cards.length) return;
+    var probe = document.createElement('div');
+    probe.style.cssText = 'position:absolute;visibility:hidden;left:-9999px;top:0;width:' + cards[0].clientWidth + 'px';
+    document.body.appendChild(probe);
+    var max = 0;
+    [].forEach.call(cards, function(card){
+      [].forEach.call(card.querySelectorAll('.pb-face'), function(f){
+        var cl = f.cloneNode(true);
+        cl.style.position = 'static'; cl.style.height = 'auto'; cl.style.transform = 'none';
+        probe.appendChild(cl);
+        max = Math.max(max, cl.getBoundingClientRect().height);
+        probe.removeChild(cl);
+      });
+    });
+    probe.remove();
+    var h = Math.max(460, Math.ceil(max) + 24);
+    [].forEach.call(cards, function(card){ card.style.setProperty('--pbh', h + 'px'); });
   }
+  fitHeights();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitHeights);
+  var pbT;
+  window.addEventListener('resize', function(){ clearTimeout(pbT); pbT = setTimeout(fitHeights, 150); });
 })();
 
 // ============================================================
