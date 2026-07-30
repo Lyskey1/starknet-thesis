@@ -525,7 +525,7 @@
             <span class="eco-row-cat">Wallets</span>
             <span class="eco-row-desc">Native BTC onboarding. Shield / unshield strkBTC directly in-app.</span>
           </div>
-          <div class="eco-chips">
+          <div class="eco-chips" id="btcfiWallets">
             <a class="eco-chip" href="https://x.com/ready_co" target="_blank" rel="noopener">
               <span class="eco-logo"><img alt="" loading="lazy" decoding="async" src="assets/logos/ready.png" onerror="this.style.display='none';this.parentNode.querySelector('.eco-mono').style.display='flex'"><span class="eco-mono" style="display:none">R</span></span><span>Ready</span>
             </a>
@@ -544,7 +544,7 @@
             <span class="eco-row-cat">Bridges</span>
             <span class="eco-row-desc">Move BTC and assets into Starknet from Bitcoin, Lightning, EVM chains, Solana, and all chains, with near-instant routing.</span>
           </div>
-          <div class="eco-chips">
+          <div class="eco-chips" id="btcfiBridges">
             <a class="eco-chip" href="https://x.com/StarkWareLtd" target="_blank" rel="noopener">
               <span class="eco-logo"><img alt="" loading="lazy" decoding="async" src="assets/logos/starkgate.png" onerror="this.style.display='none';this.parentNode.querySelector('.eco-mono').style.display='flex'"><span class="eco-mono" style="display:none">S</span></span><span>StarkGate</span>
             </a>
@@ -577,7 +577,7 @@
 
         <!-- DeFi project cards -->
         <p class="eco-block-label">DeFi protocols</p>
-        <div class="eco-cards">
+        <div class="eco-cards" id="btcfiDefi">
           <a class="eco-card" href="https://x.com/EkuboProtocol" target="_blank" rel="noopener">
             <div class="eco-card-head">
               <span class="eco-card-logo"><img alt="" loading="lazy" decoding="async" src="assets/logos/ek.png" onerror="this.style.display='none';this.parentNode.querySelector('.eco-mono').style.display='flex'"><span class="eco-mono" style="display:none">Ek</span></span>
@@ -1928,6 +1928,238 @@
   refresh();
   setInterval(refresh, 3600000); // silent hourly refresh while the page stays open
   setInterval(tickUpdated, 60000);
+})();
+</script>
+
+<!-- BTCFI ECOSYSTEM ITEMS (wallets / bridges / defi protocols): items render
+     from data/btcfi-ecosystem.json once published; the static markup above is
+     the committed fallback (seeded verbatim into the file), so a fetch failure
+     never empties the block and a fresh visitor's first paint is the untouched
+     static markup. A local admin draft (btcfi_ecosystem_v1, a NEW key) wins for
+     the author. Categories are code-owned: labels, descriptions, eyebrows, the
+     row order and the closing "Much more to come" card never come from data. -->
+<script>
+(function(){
+  'use strict';
+  var CATS = ['wallets', 'bridges', 'defi'];
+  var els = {
+    wallets: document.getElementById('btcfiWallets'),
+    bridges: document.getElementById('btcfiBridges'),
+    defi: document.getElementById('btcfiDefi')
+  };
+  if (!els.wallets || !els.bridges || !els.defi) return;
+  var DRAFT_KEY = 'btcfi_ecosystem_v1';
+
+  var DEFAULTS = {
+  "wallets": [
+    {
+      "name": "Ready",
+      "logo": "assets/logos/ready.png",
+      "url": "https://x.com/ready_co"
+    },
+    {
+      "name": "Xverse",
+      "logo": "assets/logos/xverse.png",
+      "url": "https://x.com/xverse"
+    },
+    {
+      "name": "Braavos",
+      "logo": "assets/logos/braavos.png",
+      "url": "https://x.com/myBraavos"
+    }
+  ],
+  "bridges": [
+    {
+      "name": "StarkGate",
+      "logo": "assets/logos/starkgate.png",
+      "url": "https://x.com/StarkWareLtd"
+    },
+    {
+      "name": "Atomiq Labs",
+      "logo": "assets/logos/atomiq-labs.png",
+      "url": "https://x.com/atomiqlabs"
+    },
+    {
+      "name": "Layerswap",
+      "logo": "assets/logos/layerswap.png",
+      "url": "https://x.com/layerswap"
+    },
+    {
+      "name": "Near Intents",
+      "logo": "assets/logos/near-intents.png",
+      "url": "https://x.com/near_intents"
+    },
+    {
+      "name": "Rhino.fi",
+      "logo": "assets/logos/rhino-fi.png",
+      "url": "https://x.com/rhinofi"
+    },
+    {
+      "name": "RocketX",
+      "logo": "assets/logos/rocketx.png",
+      "url": "https://x.com/RocketXexchange"
+    },
+    {
+      "name": "Stargate Finance",
+      "logo": "assets/logos/stargate-finance.png",
+      "url": "https://x.com/StargateFinance"
+    },
+    {
+      "name": "LayerZero",
+      "logo": "assets/logos/layerzero.png",
+      "url": "https://x.com/LayerZero_Core"
+    },
+    {
+      "name": "Hyperlane",
+      "logo": "assets/logos/hyperlane.png",
+      "url": "https://x.com/hyperlane"
+    }
+  ],
+  "defi": [
+    {
+      "name": "Ekubo",
+      "logo": "assets/logos/ek.png",
+      "tags": [
+        "Swap",
+        "Liquidity provision"
+      ],
+      "description": "Most capital-efficient AMM on the market.",
+      "url": "https://x.com/EkuboProtocol"
+    },
+    {
+      "name": "Vesu",
+      "logo": "assets/logos/ve.png",
+      "tags": [
+        "Lending",
+        "Borrowing"
+      ],
+      "description": "Lend BTC, borrow stablecoins, one-click loop strategies.",
+      "url": "https://x.com/vesuxyz"
+    },
+    {
+      "name": "avnu",
+      "logo": "assets/logos/av.png",
+      "tags": [
+        "Swap",
+        "DCA"
+      ],
+      "description": "Best trading execution across Starknet. Private fee payments via Paymaster for strkBTC swaps.",
+      "url": "https://x.com/avnu_fi"
+    },
+    {
+      "name": "Endur Finance",
+      "logo": "assets/logos/en.png",
+      "tags": [
+        "Stake",
+        "Liquid stake"
+      ],
+      "description": "Liquid BTC staking. Earn staking yield while staying liquid for DeFi.",
+      "url": "https://x.com/endurfi"
+    },
+    {
+      "name": "Extended",
+      "logo": "assets/logos/ex.png",
+      "tags": [
+        "Perp trading",
+        "Liquidity provision"
+      ],
+      "description": "Trade perps with WBTC as collateral, or use stablecoins borrowed against BTC to generate yield.",
+      "url": "https://x.com/extendedapp"
+    },
+    {
+      "name": "Troves",
+      "logo": "assets/logos/tr.png",
+      "tags": [
+        "Yield farming"
+      ],
+      "description": "Advanced one-click DeFi strategies for Bitcoiners. Private vaults are live.",
+      "url": "https://x.com/trovesfi"
+    },
+    {
+      "name": "Forge Yields",
+      "logo": "assets/logos/fo.png",
+      "tags": [
+        "Yield farming"
+      ],
+      "description": "Cross-chain yield strategies from Starknet, powered by Hyperlane.",
+      "url": "https://x.com/ForgeYields"
+    }
+  ]
+};
+
+  var SOON_CARD = '<div class="eco-card eco-card-soon" aria-hidden="true"><span class="eco-card-name">Much more to come</span><p class="eco-card-desc">New protocols launching on Starknet</p></div>';
+
+  function esc(s){ return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function escA(s){ return esc(s).replace(/"/g,'&quot;'); }
+  // logo slot: an asset path / URL / data URL with the site's monogram fallback,
+  // or the monogram directly when an item has no logo (never an empty slot)
+  function logoInner(it, n){
+    var m = esc(String(it.name || '').slice(0, n));
+    if (it.logo) {
+      return '<img alt="" loading="lazy" decoding="async" src="' + escA(it.logo) + '" onerror="this.style.display=\'none\';this.parentNode.querySelector(\'.eco-mono\').style.display=\'flex\'"><span class="eco-mono" style="display:none">' + m + '</span>';
+    }
+    return '<span class="eco-mono" style="display:flex">' + m + '</span>';
+  }
+  function chipHTML(it){
+    return '<a class="eco-chip" href="' + escA(it.url || '#') + '" target="_blank" rel="noopener">' +
+      '<span class="eco-logo">' + logoInner(it, 1) + '</span><span>' + esc(it.name) + '</span></a>';
+  }
+  function cardHTML(it){
+    var tags = Array.isArray(it.tags) ? it.tags : [];
+    return '<a class="eco-card" href="' + escA(it.url || '#') + '" target="_blank" rel="noopener">' +
+      '<div class="eco-card-head">' +
+        '<span class="eco-card-logo">' + logoInner(it, 2) + '</span>' +
+        '<span class="eco-card-name">' + esc(it.name) + '</span>' +
+        '<i class="ti ti-brand-x eco-card-ext"></i>' +
+      '</div>' +
+      (tags.length ? '<div class="eco-tags">' + tags.map(function(tg){ return '<span class="eco-tag">' + esc(tg) + '</span>'; }).join('') + '</div>' : '') +
+      (it.description ? '<p class="eco-card-desc">' + esc(it.description) + '</p>' : '') +
+    '</a>';
+  }
+
+  var PUBLISHED = null;
+  function loadDraft(){
+    try {
+      var raw = localStorage.getItem(DRAFT_KEY);
+      if (!raw) return null;
+      var d = JSON.parse(raw);
+      return (d && typeof d === 'object' && !Array.isArray(d)) ? d : null;
+    } catch (e) { return null; }
+  }
+  // precedence per category: local draft, then the published file, then the
+  // in-code defaults (which mirror the static markup)
+  function currentItems(){
+    var draft = loadDraft();
+    var out = {};
+    CATS.forEach(function(k){
+      var src = (draft && Array.isArray(draft[k])) ? draft[k]
+        : (PUBLISHED && Array.isArray(PUBLISHED[k])) ? PUBLISHED[k]
+        : DEFAULTS[k];
+      out[k] = src.map(function(a){ var o = {}; for (var f in a) o[f] = a[f]; return o; });
+    });
+    return out;
+  }
+  function renderBlock(){
+    var items = currentItems();
+    els.wallets.innerHTML = items.wallets.map(chipHTML).join('');
+    els.bridges.innerHTML = items.bridges.map(chipHTML).join('');
+    els.defi.innerHTML = items.defi.map(cardHTML).join('') + SOON_CARD;
+  }
+
+  // the static markup IS the defaults render: only re-render when a draft
+  // exists or the published file differs, so a fresh visitor's first paint
+  // stays byte-identical
+  if (loadDraft()) renderBlock();
+  fetch('/data/btcfi-ecosystem.json?_=' + Date.now())
+    .then(function(r){ if (!r.ok) throw new Error('btcfi-ecosystem.json ' + r.status); return r.json(); })
+    .then(function(file){
+      if (!file || typeof file !== 'object' || Array.isArray(file)) return;
+      PUBLISHED = file;
+      var sameAsDefaults = CATS.every(function(k){ return JSON.stringify(file[k]) === JSON.stringify(DEFAULTS[k]); });
+      if (!loadDraft() && sameAsDefaults) return;
+      renderBlock();
+    })
+    .catch(function(){});
 })();
 </script>
 </body>
