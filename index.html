@@ -179,21 +179,81 @@
   .th-feat-right{display:flex;align-items:center;gap:22px;flex-shrink:0;}
   .th-feat-desc{font-size:14px;color:#8b909c;max-width:24ch;text-align:right;}
   @media(max-width:820px){.th-grid-3,.th-grid-2{grid-template-columns:1fr;}.th-feature{flex-direction:column;align-items:flex-start;gap:24px;}.th-feat-right{align-items:flex-start;}.th-feat-desc{text-align:left;}}
+
+  /* ===== Liquid glass surface for the six section cards (lg- prefix) =====
+     backdrop-filter creates a stacking context and containing block, so it
+     lives ONLY on the card elements themselves. Never on an ancestor of
+     .conv-stage or of these sections. */
+  .lg-card{position:relative;z-index:1;background:rgba(245,242,236,.035);border:1px solid rgba(245,242,236,.075);
+    -webkit-backdrop-filter:blur(16px) saturate(150%);
+    backdrop-filter:blur(16px) saturate(150%);
+    box-shadow:
+      inset -1px -1px 0 rgba(255,255,255,.44),
+      inset 1px 1px 0 rgba(255,255,255,.10),
+      inset 0 1px 0 rgba(255,255,255,.28),
+      inset 0 -1px 0 rgba(255,255,255,.24),
+      inset 0 0 26px rgba(255,255,255,.055),
+      0 18px 50px -28px rgba(0,0,0,.9);}
+  /* top light: replaces the per-card radial halo (ambient accent moved to
+     the backdrop blooms behind the cards, so glows never stack) */
+  .lg-card::before{content:"";position:absolute;top:0;left:0;right:0;bottom:auto;width:auto;height:44%;
+    border-radius:14px 14px 0 0;background:linear-gradient(180deg,rgba(255,255,255,.075),transparent);
+    opacity:1;transition:none;pointer-events:none;}
+  .lg-card:hover::before,.lg-card:focus-visible::before{opacity:1;}
+  .lg-card:hover,.lg-card:focus-visible{transform:translateY(-4px);
+    border-color:color-mix(in srgb,var(--ac) 34%,transparent);
+    box-shadow:
+      inset -1px -1px 0 rgba(255,255,255,.44),
+      inset 1px 1px 0 rgba(255,255,255,.10),
+      inset 0 1px 0 rgba(255,255,255,.28),
+      inset 0 -1px 0 rgba(255,255,255,.24),
+      inset 0 0 34px color-mix(in srgb,var(--ac) 13%,transparent),
+      0 18px 50px -28px rgba(0,0,0,.9),
+      0 24px 64px -30px color-mix(in srgb,var(--ac) 55%,transparent);}
+  .lg-card:hover .th-arrow,.lg-card:focus-visible .th-arrow{color:var(--ac);transform:translateX(5px);}
+  .lg-card:focus-visible{outline:2px solid var(--ac);outline-offset:3px;}
+  /* specular sweep: ::after on the five th-cards (free slot there); the
+     feature card keeps its violet edge bar on ::after and carries a span */
+  .lg-card:not(.th-feature)::after,.lg-card .lg-sweep{content:"";position:absolute;top:-30%;bottom:-30%;left:0;width:38%;
+    background:linear-gradient(105deg,transparent 10%,rgba(255,255,255,.11) 50%,transparent 90%);
+    opacity:0;transform:translateX(-130%);pointer-events:none;
+    transition:transform .65s cubic-bezier(.3,.7,.3,1),opacity .3s;}
+  .lg-card:not(.th-feature):hover::after,.lg-card:hover .lg-sweep{opacity:1;transform:translateX(330%);}
+  /* fallback: engines without backdrop-filter get the original opaque
+     surfaces, so the card reads deliberate rather than nearly invisible */
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))){
+    .lg-card{background:#0b0d13;}
+    .lg-card.th-feature{background:linear-gradient(90deg,#0d0a18 0%,#0b0d13 70%);}
+  }
+
+  /* ===== Static backdrop blooms: the color the glass refracts. Blurred,
+     childless, pointer-inert siblings BELOW the cards. The blur filter is
+     on the bloom layer itself, never on a section ancestor, and nothing
+     here animates. */
+  .th-sec{position:relative;}
+  .lg-bloom{position:absolute;inset:0;z-index:0;pointer-events:none;filter:blur(46px);}
+  .lg-bloom i{position:absolute;border-radius:50%;background:radial-gradient(closest-side,var(--bc),transparent 72%);opacity:.09;}
 </style>
 <div class="th-sections">
   <section class="th-sec">
     <div class="th-pm-head"><span class="th-pm-marker"></span><span class="th-pm-num">01</span><h2 class="th-pm-title">The fundamentals</h2></div>
     <p class="th-pm-eyebrow">The three hardest problems in crypto, answered on Starknet.</p>
+    <div class="lg-bloom" aria-hidden="true">
+      <i style="--bc:#1FCB94;left:2%;top:26%;width:32%;height:76%"></i>
+      <i style="--bc:#3DA9FC;left:35%;top:22%;width:32%;height:80%"></i>
+      <i style="--bc:#F7931A;left:68%;top:26%;width:32%;height:76%"></i>
+      <i style="--bc:#A78BFA;left:22%;top:74%;width:56%;height:44%"></i>
+    </div>
     <div class="th-grid-3">
-      <a class="th-card" href="/privacy" style="--ac:#1FCB94">
+      <a class="th-card lg-card" href="/privacy" style="--ac:#1FCB94">
         <div class="th-card-top"><span class="th-idx"><span class="th-dot"></span>01</span><span class="th-arrow">&rarr;</span></div>
         <div class="th-card-body"><h3>Privacy</h3><span class="th-uline"></span><p>Real onchain privacy for any token and any use case, powered by ZK.</p></div>
       </a>
-      <a class="th-card" href="/quantum" style="--ac:#3DA9FC">
+      <a class="th-card lg-card" href="/quantum" style="--ac:#3DA9FC">
         <div class="th-card-top"><span class="th-idx"><span class="th-dot"></span>02</span><span class="th-arrow">&rarr;</span></div>
         <div class="th-card-body"><h3>Quantum resistance</h3><span class="th-uline"></span><p>The quantum era will break today's cryptography. Starknet is built on post-quantum proofs, with a committed roadmap to full end-to-end post-quantum security.</p></div>
       </a>
-      <a class="th-card" href="/btcfi" style="--ac:#F7931A">
+      <a class="th-card lg-card" href="/btcfi" style="--ac:#F7931A">
         <div class="th-card-top"><span class="th-idx"><span class="th-dot"></span>03</span><span class="th-arrow">&rarr;</span></div>
         <div class="th-card-body"><h3>BTCFi</h3><span class="th-uline"></span><p>Turning idle BTC into productive, programmable capital on Starknet.</p></div>
       </a>
@@ -202,24 +262,31 @@
   <section class="th-sec">
     <div class="th-pm-head"><span class="th-pm-marker"></span><span class="th-pm-num">02</span><h2 class="th-pm-title">The ticker</h2></div>
     <p class="th-pm-eyebrow">Where the whole thesis accrues value.</p>
-    <a class="th-feature" href="/strk" style="--ac:#A78BFA">
+    <div class="lg-bloom" aria-hidden="true">
+      <i style="--bc:#A78BFA;left:6%;top:14%;width:46%;height:100%"></i>
+    </div>
+    <a class="th-feature lg-card" href="/strk" style="--ac:#A78BFA">
       <div class="th-feat-left">
         <span class="th-feat-idx"><span class="th-dot"></span>04</span>
         <span class="th-feat-title">STRK</span>
         <span class="th-feat-tag">The ticker on the whole thesis.</span>
       </div>
-      <div class="th-feat-right"><span class="th-feat-desc">What the STRK token does across the network.</span><span class="th-arrow">&rarr;</span></div>
+      <div class="th-feat-right"><span class="th-feat-desc">What the STRK token does across the network.</span><span class="th-arrow">&rarr;</span></div><span class="lg-sweep" aria-hidden="true"></span>
     </a>
   </section>
   <section class="th-sec">
     <div class="th-pm-head"><span class="th-pm-marker"></span><span class="th-pm-num">03</span><h2 class="th-pm-title">The ecosystem</h2></div>
     <p class="th-pm-eyebrow">Who and what to follow.</p>
+    <div class="lg-bloom" aria-hidden="true">
+      <i style="--bc:#EC7B6B;left:4%;top:24%;width:40%;height:78%"></i>
+      <i style="--bc:#F2978A;left:56%;top:28%;width:40%;height:74%"></i>
+    </div>
     <div class="th-grid-2">
-      <a class="th-card" href="/ecosystem" style="--ac:#EC7B6B">
+      <a class="th-card lg-card" href="/ecosystem" style="--ac:#EC7B6B">
         <div class="th-card-top"><span class="th-idx"><span class="th-dot"></span>05</span><span class="th-arrow">&rarr;</span></div>
         <div class="th-card-body"><h3>Ecosystem</h3><span class="th-uline"></span><p>The builders and projects worth following.</p></div>
       </a>
-      <a class="th-card" href="/digest" style="--ac:#F2978A">
+      <a class="th-card lg-card" href="/digest" style="--ac:#F2978A">
         <div class="th-card-top"><span class="th-idx"><span class="th-dot"></span>06</span><span class="th-arrow">&rarr;</span></div>
         <div class="th-card-body"><h3>Digest</h3><span class="th-uline"></span><p>Starknet's shipping, recapped every week and every month.</p></div>
       </a>
