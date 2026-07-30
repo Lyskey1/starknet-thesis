@@ -338,6 +338,14 @@
   var DEFAULTS_VERSION = 2;
   var STORAGE_KEY = 'eco_data_v' + DEFAULTS_VERSION;
 
+  // ---------- published data file ----------
+  // data/ecosystem.json is the published source of truth for the ACCOUNTS in
+  // each category (category meta stays code-owned in DEFAULTS below, which
+  // also remain the committed fallback if the fetch fails, so a network error
+  // never empties the directory). Precedence: a local admin draft still wins
+  // for the author, otherwise the published file wins, otherwise DEFAULTS.
+  var PUBLISHED = null; // { <categoryId>: [accounts] } once the file is adopted
+
   // ===== AVATAR SOURCE — swap this helper to self-host avatars later =====
   // Real X avatars via unavatar.io (lazy-loaded). If the image fails to load,
   // the card gracefully falls back to a monogram of the handle's initials.
@@ -1397,6 +1405,11 @@
       var accounts = Array.isArray(c.accounts)
         ? c.accounts.map(function(a){ var o = {}; for (var k in a) o[k] = a[k]; return o; })
         : c.handles.map(function(h){ return { handle: h }; });
+      // the published data file (data/ecosystem.json) overrides the in-code
+      // accounts once adopted; category meta stays code-owned either way
+      if (PUBLISHED && Array.isArray(PUBLISHED[c.id])) {
+        accounts = PUBLISHED[c.id].map(function(a){ var o = {}; for (var k in a) o[k] = a[k]; return o; });
+      }
       return {
         id: c.id, group: c.group || 'projects', label: c.label, monogram: c.monogram,
         accent: c.accent, accent2: c.accent2 || c.accent,
@@ -1834,6 +1847,27 @@
 
   // ----- init -----
   render();
+
+  // fetch the published file; adopt it only when it differs from the in-code
+  // fallback so the first paint stays untouched for a fresh visitor
+  function defaultsAccountsById(){
+    var o = {};
+    DEFAULTS.forEach(function(c){ o[c.id] = c.accounts || []; });
+    return o;
+  }
+  function adoptPublished(byId){
+    PUBLISHED = byId;
+    data = loadData(); // a local draft still wins: stored accounts overlay the file
+    renderSections();  // pills and category meta are code-owned and unchanged
+  }
+  fetch('/data/ecosystem.json?_=' + Date.now())
+    .then(function(r){ if (!r.ok) throw new Error('ecosystem.json ' + r.status); return r.json(); })
+    .then(function(byId){
+      if (!byId || typeof byId !== 'object' || Array.isArray(byId)) return;
+      if (JSON.stringify(byId) === JSON.stringify(defaultsAccountsById())) return;
+      adoptPublished(byId);
+    })
+    .catch(function(){});
 })();
 </script>
 
