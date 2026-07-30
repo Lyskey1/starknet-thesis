@@ -1599,6 +1599,7 @@
       '<div class="eco-admin">' +
         '<button class="eco-edit-btn" id="ecoEditBtn"><i class="ti ti-pencil" aria-hidden="true"></i> <span id="ecoEditLabel">Edit</span></button>' +
         '<button class="eco-edit-only" id="ecoExport"><i class="ti ti-file-export" aria-hidden="true"></i> Export JSON</button>' +
+        '<button class="eco-edit-only" id="ecoPublish"><i class="ti ti-cloud-upload" aria-hidden="true"></i> Publish</button>' +
         '<button class="eco-edit-only" id="ecoReset"><i class="ti ti-refresh" aria-hidden="true"></i> Reset</button>' +
       '</div>');
   }
@@ -1836,6 +1837,64 @@
       if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(ta.value).catch(function(){}); ok = true; }
       bd.querySelector('#ecoExpMsg').textContent = ok ? 'Copied to clipboard.' : 'Select the text and copy manually.';
     });
+  });
+  // ---------- publish (commits data/ecosystem.json via /api/publish) ----------
+  // Same discipline as the news publish flow: the shared key stored under
+  // news_publish_key, in-flight disable, verbatim server errors, and only
+  // after a confirmed success is the local draft key removed, because the
+  // published file has just become the source of truth. Before posting, the
+  // author confirms the per-category counts so a stray test entry is caught.
+  function accountsById(){
+    var o = {};
+    data.forEach(function(c){
+      o[c.id] = c.accounts.map(function(a){
+        var e = { name: a.name, handle: a.handle, url: a.url };
+        if (a.description) e.description = a.description;
+        if (a.avatar) e.avatar = a.avatar;
+        return e;
+      });
+    });
+    return o;
+  }
+  var ecoPublishBtn = document.getElementById('ecoPublish');
+  if (ecoPublishBtn) ecoPublishBtn.addEventListener('click', function(){
+    var payload = accountsById();
+    var lines = data.map(function(c){ return '  ' + c.label + ': ' + c.accounts.length; });
+    var total = data.reduce(function(s, c){ return s + c.accounts.length; }, 0);
+    if (!window.confirm('About to publish the ecosystem directory:\n\n' + lines.join('\n') + '\n\nTotal: ' + total + ' accounts. Continue?')) return;
+    var key = '';
+    try { key = localStorage.getItem('news_publish_key') || ''; } catch (e) {}
+    if (!key) {
+      key = window.prompt('Publish key:') || '';
+      if (!key) return;
+      try { localStorage.setItem('news_publish_key', key); } catch (e) {}
+    }
+    var btn = ecoPublishBtn, orig = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="ti ti-cloud-upload" aria-hidden="true"></i> Publishing…';
+    fetch('/api/publish', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Publish-Key': key },
+      body: JSON.stringify({ ecosystem: payload })
+    })
+      .then(function(r){ return r.json().then(function(d){ return { status: r.status, d: d }; }, function(){ return { status: r.status, d: null }; }); })
+      .then(function(res){
+        if (res.status === 200 && res.d && res.d.ok) {
+          try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+          adoptPublished(payload); // the directory keeps showing exactly what was published
+          window.alert('Published (commit ' + String(res.d.commit || '').slice(0, 7) + '). The change will be live in about a minute.');
+        } else {
+          var msg = (res.d && res.d.error) || ('HTTP ' + res.status);
+          if (res.status === 401) {
+            try { localStorage.removeItem('news_publish_key'); } catch (e) {}
+            window.alert('Publish failed: ' + msg + '\nNothing was published; your local list is intact. You will be asked for the key again on the next attempt.');
+          } else {
+            window.alert('Publish failed: ' + msg + '\nNothing was published; your local list is intact.');
+          }
+        }
+      })
+      .catch(function(){ window.alert('Publish failed: network error.\nNothing was published; your local list is intact.'); })
+      .then(function(){ btn.disabled = false; btn.innerHTML = orig; });
   });
   var ecoResetBtn = document.getElementById('ecoReset');
   if (ecoResetBtn) ecoResetBtn.addEventListener('click', function(){

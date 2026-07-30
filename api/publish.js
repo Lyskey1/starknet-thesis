@@ -14,11 +14,24 @@ const REPO = process.env.GITHUB_REPO || 'Lyskey1/starknet-thesis';
 const BRANCH = process.env.GITHUB_BRANCH || 'main';
 const FILE_PATH = 'data/news.json';
 
-const MAX_BODY_BYTES = 512 * 1024; // total payload cap
+const MAX_BODY_BYTES = 512 * 1024; // total payload cap for the news target
 const MAX_ENTRIES_PER_PAGE = 100;
 // entry shape as inventoried from the news engines (publicCards output);
 // values are per-field string length caps
 const FIELD_CAPS = { url: 2048, title: 400, date: 64, fallbackText: 2000, name: 160, handle: 160, initials: 8, color: 16 };
+
+// ---------- ecosystem target ----------
+// Writes data/ecosystem.json: { <categoryId>: [accounts] }. Custom avatars can
+// be base64 data URLs (the editor downscales uploads to 96px JPEG, typically
+// 3 to 10KB each), so this target gets its own caps: 2MB total (room for a
+// couple hundred accounts each carrying a generous data URL; the news cap
+// stays 512KB), 150K chars per avatar, 160K chars per entry.
+const ECO_FILE = 'data/ecosystem.json';
+const ECO_CATS = ['official', 'defi', 'consumer', 'nft', 'appchains', 'tooling', 'starkware', 'snf', 'builders', 'shitposter'];
+const ECO_MAX_BODY_BYTES = 2 * 1024 * 1024;
+const ECO_MAX_PER_CAT = 200;
+const ECO_FIELD_CAPS = { handle: 64, name: 160, url: 2048, description: 600, avatar: 150000 };
+const ECO_MAX_ENTRY_CHARS = 160000;
 
 function send(res, status, obj) {
   res.status(status).setHeader('Content-Type', 'application/json');
@@ -30,6 +43,48 @@ function keyMatches(given, expected) {
   const a = crypto.createHash('sha256').update(String(given || ''), 'utf8').digest();
   const b = crypto.createHash('sha256').update(String(expected || ''), 'utf8').digest();
   return crypto.timingSafeEqual(a, b);
+}
+
+// ecosystem payload validation; returns null if valid, else a specific message
+function validateEco(eco) {
+  if (!eco || typeof eco !== 'object' || Array.isArray(eco)) {
+    return 'ecosystem must be an object of the form { "<categoryId>": [accounts] }';
+  }
+  const keys = Object.keys(eco);
+  if (!keys.length) return 'ecosystem has no category keys; expected one or more of: ' + ECO_CATS.join(', ');
+  let total = 0;
+  for (const k of keys) {
+    if (!ECO_CATS.includes(k)) return 'unknown ecosystem category "' + k + '"; allowed: ' + ECO_CATS.join(', ');
+    const list = eco[k];
+    if (!Array.isArray(list)) return 'ecosystem category "' + k + '" must be an array of accounts';
+    if (list.length > ECO_MAX_PER_CAT) {
+      return 'ecosystem category "' + k + '" has ' + list.length + ' accounts; the cap is ' + ECO_MAX_PER_CAT;
+    }
+    total += list.length;
+    for (let i = 0; i < list.length; i++) {
+      const a = list[i];
+      const where = 'ecosystem category "' + k + '" account ' + (i + 1);
+      if (!a || typeof a !== 'object' || Array.isArray(a)) return where + ' must be an object';
+      if (typeof a.handle !== 'string' || !a.handle.trim()) return where + ' is missing its required "handle" string';
+      for (const f of Object.keys(a)) {
+        if (!(f in ECO_FIELD_CAPS)) {
+          return where + ' has unexpected field "' + f + '"; allowed: handle, name, url, description, avatar';
+        }
+        if (typeof a[f] !== 'string') return where + ' field "' + f + '" must be a string';
+        if (a[f].length > ECO_FIELD_CAPS[f]) {
+          return where + ' field "' + f + '" is ' + a[f].length + ' chars; the cap is ' + ECO_FIELD_CAPS[f];
+        }
+      }
+      if (a.avatar && !/^(assets\/|https:\/\/|http:\/\/|data:image\/)/.test(a.avatar)) {
+        return where + ' field "avatar" must be an assets/ path, an http(s) URL, or a data:image URL';
+      }
+      if (JSON.stringify(a).length > ECO_MAX_ENTRY_CHARS) {
+        return where + ' exceeds the ' + ECO_MAX_ENTRY_CHARS + ' character per-entry cap';
+      }
+    }
+  }
+  if (total === 0) return 'every provided ecosystem category is empty; refusing to publish an empty directory';
+  return null;
 }
 
 // returns null if valid, otherwise a specific actionable message
@@ -103,19 +158,29 @@ module.exports = async function handler(req, res) {
     try { body = JSON.parse(body); } catch (e) { return send(res, 400, { error: 'body is not valid JSON' }); }
   }
   if (body === undefined || body === null) return send(res, 400, { error: 'body is not valid JSON (send Content-Type: application/json)' });
-  if (Buffer.byteLength(JSON.stringify(body), 'utf8') > MAX_BODY_BYTES) {
-    return send(res, 413, { error: 'payload exceeds the ' + (MAX_BODY_BYTES / 1024) + 'KB cap' });
+
+  // target routing: the ecosystem writes its own file and must not be mixed
+  // with news pages in one request (each publish is atomic per file)
+  const isEco = body && typeof body === 'object' && !Array.isArray(body) && 'ecosystem' in body;
+  if (isEco && Object.keys(body).length > 1) {
+    return send(res, 400, { error: 'payload mixes the ecosystem target with news pages; publish them separately' });
+  }
+  const bodyCap = isEco ? ECO_MAX_BODY_BYTES : MAX_BODY_BYTES;
+  if (Buffer.byteLength(JSON.stringify(body), 'utf8') > bodyCap) {
+    return send(res, 413, { error: 'payload exceeds the ' + (bodyCap / 1024) + 'KB cap for this target' });
   }
 
-  const problem = validate(body);
+  const problem = isEco ? validateEco(body.ecosystem) : validate(body);
   if (problem) return send(res, 400, { error: 'validation failed: ' + problem + '; nothing was published' });
+
+  const filePath = isEco ? ECO_FILE : FILE_PATH;
 
   // read the current file (content + sha) so a concurrent change conflicts
   // instead of being silently overwritten
   let sha = null;
   let current = {};
   try {
-    const getRes = await gh('/repos/' + REPO + '/contents/' + FILE_PATH + '?ref=' + BRANCH, ghToken);
+    const getRes = await gh('/repos/' + REPO + '/contents/' + filePath + '?ref=' + BRANCH, ghToken);
     if (getRes.status === 401 || getRes.status === 403) {
       const limited = getRes.headers.get('x-ratelimit-remaining') === '0';
       return send(res, 502, { error: limited ? 'GitHub API rate limit reached; try again later' : 'GitHub token was rejected (bad, revoked, or missing repo permission)' });
@@ -134,25 +199,35 @@ module.exports = async function handler(req, res) {
     return send(res, 502, { error: 'could not reach the GitHub API' });
   }
 
-  const pages = Object.keys(body);
-  const merged = Object.assign({}, current);
-  for (const k of pages) merged[k] = body[k];
+  let merged, message, pages;
+  if (isEco) {
+    pages = Object.keys(body.ecosystem);
+    merged = Object.assign({}, current);
+    for (const k of pages) merged[k] = body.ecosystem[k];
+    const total = pages.reduce((s, k) => s + body.ecosystem[k].length, 0);
+    message = 'content: publish ecosystem (' + total + ' accounts across ' + pages.length + ' categories)';
+  } else {
+    pages = Object.keys(body);
+    merged = Object.assign({}, current);
+    for (const k of pages) merged[k] = body[k];
+    message = 'content: publish news (' + pages.join(', ') + ')';
+  }
 
   const putPayload = {
-    message: 'content: publish news (' + pages.join(', ') + ')',
+    message: message,
     content: Buffer.from(JSON.stringify(merged, null, 2) + '\n', 'utf8').toString('base64'),
     branch: BRANCH
   };
   if (sha) putPayload.sha = sha;
 
   try {
-    const putRes = await gh('/repos/' + REPO + '/contents/' + FILE_PATH, ghToken, {
+    const putRes = await gh('/repos/' + REPO + '/contents/' + filePath, ghToken, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(putPayload)
     });
     if (putRes.status === 409) {
-      return send(res, 409, { error: 'conflict: ' + FILE_PATH + ' changed while publishing; retry to pick up the latest version' });
+      return send(res, 409, { error: 'conflict: ' + filePath + ' changed while publishing; retry to pick up the latest version' });
     }
     if (putRes.status === 401 || putRes.status === 403) {
       const limited = putRes.headers.get('x-ratelimit-remaining') === '0';
