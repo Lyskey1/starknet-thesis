@@ -558,6 +558,13 @@
   @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))){
     .gx-card{background:#0B0F10;}
   }
+  /* mobile, decided up front: no blur at all on this page below 981px,
+     solid surfaces, blooms dropped. Fifteen glass panes on the longest page
+     is not worth the composite cost, and no reader compares the renderings. */
+  @media (max-width:980px){
+    .gx-card{-webkit-backdrop-filter:none;backdrop-filter:none;background:#0B0F10;}
+    .gx-bloom{display:none;}
+  }
   @media (prefers-reduced-motion: reduce){
     .gx-card{transition:none;}
     .gx-card:hover,.gx-card:focus-visible{transform:none;}
