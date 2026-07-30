@@ -12,11 +12,12 @@
    takes over. Scroll position is cached from a passive listener; the loop
    never reads layout.
 
-   Pausing: an IntersectionObserver stops the loop the moment the hero
-   leaves the viewport (the same moment opacity reaches 0), and
-   visibilitychange stops it while the tab is hidden, so the field and the
-   convergence scene do not share frames while the scene is being watched.
-   prefers-reduced-motion gets one settled frame and no loop, ever. */
+   Pausing: an IntersectionObserver stops the loop once the hero's bottom
+   edge rises into the top quarter of the viewport, the exact line where
+   the convergence scene's loop starts, so the two render loops hand off
+   and never share frames. visibilitychange stops it while the tab is
+   hidden. prefers-reduced-motion and viewports below 861px get one
+   settled frame and no loop, ever. */
 (function () {
   'use strict';
 
@@ -28,6 +29,12 @@
 
   var MOBILE = window.matchMedia('(max-width:860px)');
   var REDUCE = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* Below 861px the density target is a couple dozen particles, which is
+     imperceptible while a loop would still burn battery. Mobile therefore
+     gets the settled static frame and no loop, exactly like
+     prefers-reduced-motion. */
+  function isStatic() { return REDUCE || MOBILE.matches; }
 
   var W = 0, H = 0;
   var parts = [];
@@ -100,7 +107,7 @@
   }
 
   function settle() {
-    /* One pre-warmed static frame for prefers-reduced-motion. */
+    /* One pre-warmed static frame for reduced motion and mobile. */
     for (var i = 0; i < 360; i++) step(1 / 60, i / 60);
   }
 
@@ -119,7 +126,7 @@
     var n = targetCount();
     while (parts.length < n) parts.push(spawn({}));
     parts.length = n;
-    if (REDUCE) settle();
+    if (isStatic()) settle();
     applyOpacity();
   }
 
@@ -132,7 +139,7 @@
   }
 
   function sync() {
-    var want = heroVisible && !document.hidden && !REDUCE;
+    var want = heroVisible && !document.hidden && !isStatic();
     if (want && !running) {
       running = true;
       last = performance.now();
@@ -159,13 +166,19 @@
     if (!running) applyOpacity();   /* loop applies it itself while running */
   }, { passive: true });
 
+  /* Pause boundary: the hero counts as gone once its bottom edge rises
+     into the top quarter of the viewport. The convergence scene's loop
+     starts at that same line (its complementary rootMargin), so the two
+     render loops hand off instead of sharing frames. The canvas opacity
+     keeps following scroll through the handoff via the scroll listener. */
   if ('IntersectionObserver' in window) {
     new IntersectionObserver(function (entries) {
       heroVisible = entries[entries.length - 1].isIntersecting;
       sync();
-    }, { threshold: 0 }).observe(hero);
+    }, { rootMargin: '-25% 0px 0px 0px' }).observe(hero);
   }
   document.addEventListener('visibilitychange', sync);
+  if (MOBILE.addEventListener) MOBILE.addEventListener('change', function () { queueResize(); sync(); });
 
   resize();
   sync();

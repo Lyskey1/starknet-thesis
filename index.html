@@ -899,16 +899,33 @@ window.__initConvergence = function(){
     neb.rotation.z=time*0.004;
   }
 
-  let t0=performance.now();
+  let accMs=0,lastNow=0,rafId=0,looping=false;
   function frame(now){
-    const time=(now-t0)*0.001;
+    rafId=requestAnimationFrame(frame);
+    accMs+=Math.min(now-lastNow,50);lastNow=now;
     resize();readProgress();
-    update(P_,time);
+    update(P_,accMs*0.001);
     renderer.render(scene,camera);
-    requestAnimationFrame(frame);
   }
+  function startLoop(){if(looping)return;looping=true;lastNow=performance.now();rafId=requestAnimationFrame(frame);}
+  function stopLoop(){if(!looping)return;looping=false;cancelAnimationFrame(rafId);}
   readProgress();resize();
-  if(REDUCE){update(1,0);renderer.render(scene,camera);} else requestAnimationFrame(frame);
+  if(REDUCE){update(1,0);renderer.render(scene,camera);}
+  else{
+    /* One static render so the pre-engagement peek below the hero stays
+       populated, then per-frame work only while the scene top sits in the
+       top quarter of the viewport or the stage is engaged. The hero flow
+       field pauses at the same boundary (its complementary rootMargin), so
+       the two loops never share frames. Animation time accumulates only
+       while looping, so nothing jumps on resume, and the loop also stops
+       once the scene has scrolled past instead of running below the fold. */
+    update(P_,0);renderer.render(scene,camera);
+    if('IntersectionObserver' in window){
+      new IntersectionObserver(function(en){
+        en[en.length-1].isIntersecting?startLoop():stopLoop();
+      },{rootMargin:'0px 0px -75% 0px'}).observe(sceneEl);
+    }else{startLoop();}
+  }
 };
 </script>
 </body>
