@@ -313,6 +313,60 @@
     .page-btcfi .btcg-card{background:#0B0D13;}
     .page-btcfi .btcg-emph{background:color-mix(in srgb,var(--ba) 9%,#0B0D13);}
   }
+
+  /* ===== Narrative blooms: one bloom per card, behind that card only,
+     never extending under a neighbour. Static: no animation, no
+     transition. blur lives on the bloom layer itself, never on an
+     ancestor. Blob footprints are inset well inside each grid cell so the
+     58px blur spill dies out before the next card: an orange bloom
+     bleeding under a violet card produced brown mud on the landing, and
+     the strkBTC row mixes both hues. In-grid layers are absolutely
+     positioned, so they occupy no grid cell. */
+  .page-btcfi .problem-grid,.page-btcfi .threat-grid,.page-btcfi .modes{position:relative;}
+  .page-btcfi .btcg-bloom{position:absolute;inset:0;z-index:0;pointer-events:none;filter:blur(58px);}
+  .page-btcfi .btcg-bloom i{position:absolute;border-radius:50%;background:radial-gradient(closest-side,var(--bc),transparent 70%);opacity:.05;}
+  /* the two single panels carry their bloom inside the card, so it can
+     never reach a neighbour; their content lifts above it */
+  .page-btcfi .btcg-card>:not(.btcg-bloom){position:relative;z-index:1;}
+  /* orange behind the 001-004 cards */
+  .page-btcfi .btcg-bloom-problem i{--bc:#F7931A;}
+  .page-btcfi .btcg-bloom-problem i:nth-child(1){left:7%;top:9%;width:36%;height:33%;}
+  .page-btcfi .btcg-bloom-problem i:nth-child(2){left:57%;top:9%;width:36%;height:33%;}
+  .page-btcfi .btcg-bloom-problem i:nth-child(3){left:7%;top:58%;width:36%;height:33%;}
+  .page-btcfi .btcg-bloom-problem i:nth-child(4){left:57%;top:58%;width:36%;height:33%;}
+  /* coral behind the five risk cards; the sixth grid cell is empty and
+     deliberately gets no blob */
+  .page-btcfi .btcg-bloom-threat i{--bc:#E0524A;}
+  .page-btcfi .btcg-bloom-threat i:nth-child(1){left:4.5%;top:8%;width:24%;height:32%;}
+  .page-btcfi .btcg-bloom-threat i:nth-child(2){left:38%;top:8%;width:24%;height:32%;}
+  .page-btcfi .btcg-bloom-threat i:nth-child(3){left:71.5%;top:8%;width:24%;height:32%;}
+  .page-btcfi .btcg-bloom-threat i:nth-child(4){left:4.5%;top:56%;width:24%;height:32%;}
+  .page-btcfi .btcg-bloom-threat i:nth-child(5){left:38%;top:56%;width:24%;height:32%;}
+  /* coral inside the deeper-risk panel */
+  .page-btcfi .btcg-bloom-quote i{--bc:#E0524A;left:8%;top:12%;width:45%;height:76%;}
+  /* strkBTC row: orange, violet, violet — the third blob is stronger so
+     the bloom reinforces the emphasized quantum-security card */
+  .page-btcfi .btcg-bloom-modes i:nth-child(1){--bc:#F7931A;left:6%;top:16%;width:20%;height:68%;}
+  .page-btcfi .btcg-bloom-modes i:nth-child(2){--bc:#8B5CF6;left:39.5%;top:16%;width:20%;height:68%;}
+  .page-btcfi .btcg-bloom-modes i:nth-child(3){--bc:#8B5CF6;left:73%;top:16%;width:20%;height:68%;opacity:.10;}
+  /* orange inside the STRK20 timeline detail card */
+  .page-btcfi .btcg-bloom-tl i{--bc:#F7931A;left:6%;top:14%;width:40%;height:72%;}
+  /* ===== Mobile, decided up front: below 981px no backdrop-filter on
+     this page — a solid surface plus a barely perceptible accent tint on
+     the card itself, consistent with the other pages. The blooms are
+     removed outright (the privacy page's approach): measured at 390px,
+     keeping them as dimmed blur layers cost MORE paint and composite
+     time than the backdrop-filter they replace, and hiding them also
+     removes any mixed-hue risk when the grids collapse to one column. */
+  @media (max-width:980px){
+    .page-btcfi .btcg-card{-webkit-backdrop-filter:none;backdrop-filter:none;
+      background:color-mix(in srgb,var(--ba) 2.5%,#0B0D13);}
+    .page-btcfi .btcg-emph{background:color-mix(in srgb,var(--ba) 9%,#0B0D13);}
+    .page-btcfi .btcg-bloom{display:none;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .page-btcfi .btcg-card,.page-btcfi .btcg-card:hover{transform:none;transition:none;}
+  }
 </style>
 <script src="js/admin-gate.js"></script>
 </head>
@@ -368,6 +422,7 @@
       <h3>Not quantum-resistant</h3>
       <p>Google researchers warn the cryptographic risk could be relevant as early as 2029. For an asset built to last centuries, this is an urgent short-term concern.</p>
     </div>
+    <div class="btcg-bloom btcg-bloom-problem" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
   </div>
 
   <div class="big-stat">
@@ -444,9 +499,11 @@
       <h3>Full transparency is a liability</h3>
       <p>Bitcoin is public by default: every balance, counterparty and transaction is permanently traceable. Once an address is linked to an identity, an entire financial history follows. For an asset meant to be used, not just held, this lack of privacy makes real-world spending, payroll, and DeFi positions impossible to keep private.</p>
     </div>
+    <div class="btcg-bloom btcg-bloom-threat" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
   </div>
 
   <div class="risk-quote btcg-card btcg-coral">
+    <div class="btcg-bloom btcg-bloom-quote" aria-hidden="true"><i></i></div>
     <span class="tag">The deeper risk</span>
     <p>The deeper risk is that Satoshi's original vision never gets fulfilled. Bitcoin was never meant to be only digital gold. The whitepaper described a <span class="em">peer-to-peer electronic cash system</span>, a decentralized currency. And the people who need that most, by sheer numbers, are the unbanked and those in emerging economies: precisely those most sensitive to gas fees, speed, and friction. If Bitcoin's execution layer stays unsolved or gets captured by opaque intermediaries, <b>the asset survives, but its founding promise to billions of people quietly dies.</b></p>
   </div>
@@ -492,6 +549,7 @@
         <h3 class="scale-title">Public by default. <span>Private by choice.</span></h3>
         <p class="scale-intro">strkBTC is the first Bitcoin-backed asset with optional privacy, built on STRK20s, Starknet's protocol-level privacy primitive. Same asset, two modes: access the full Starknet DeFi stack (lend, borrow, trade, stake) without broadcasting your positions, strategies and net worth to the entire world.</p>
         <div class="modes">
+          <div class="btcg-bloom btcg-bloom-modes" aria-hidden="true"><i></i><i></i><i></i></div>
           <div class="mode-item btcg-card">
             <div class="mode-dot public"></div>
             <div>
@@ -530,6 +588,7 @@
         </div>
 
         <div class="tl-detail btcg-card" id="tlDetail">
+          <div class="btcg-bloom btcg-bloom-tl" aria-hidden="true"><i></i></div>
           <div class="tl-detail-year" id="tlDYear"></div>
           <div class="tl-detail-title" id="tlDTitle"></div>
           <div class="tl-detail-desc" id="tlDDesc"></div>
