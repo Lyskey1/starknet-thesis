@@ -53,12 +53,23 @@ Ask Claude Code: *"deploy this folder to Vercel"* and it will handle git + confi
 - **Metrics**: edit the numbers directly in the HTML (`.metric-val`).
 - **Colors / fonts**: all in `css/styles.css` under `:root`.
 
-## News publish pipeline
+## Publish pipeline (news + ecosystem)
 
-Published news lives in `data/news.json`; pages fetch it at load and fall back
-to their in-code arrays if the fetch fails. A local draft (the news admin
-panel's edits, stored in localStorage) always wins on the browser that made it,
-flagged UNSAVED LOCAL DRAFT, until it is published.
+Published news lives in `data/news.json`; the published ecosystem directory
+(accounts per category) lives in `data/ecosystem.json`. Pages fetch these at
+load and fall back to their in-code arrays if the fetch fails. A local draft
+(admin panel edits, stored in localStorage) always wins on the browser that
+made it until it is published.
+
+**Ecosystem**: open ecosystem.html with the admin gate on, press Edit, then
+Publish (beside Export JSON). A confirmation lists the per-category account
+counts before anything is sent. The endpoint writes `data/ecosystem.json`
+(2MB payload cap for this target, because custom avatars can be base64 data
+URLs; the news cap stays 512KB). Category metadata (labels, colors, grouping)
+stays code-owned in ecosystem.html; only the accounts are published. On
+success the local ecosystem draft (`eco_data_v2`) is cleared, because the
+published file is now the source of truth. Publishing the ecosystem never
+touches `data/news.json`, and the two targets cannot be mixed in one request.
 
 **Publishing**: open a page's news admin panel ("Edit news"), curate the list,
 press **Publish**. The first use prompts for the publish key (remembered in
