@@ -513,6 +513,56 @@
     .pmx-skel { animation: none; }
   }
 
+  /* ===== Tiered liquid glass (gx- prefix). backdrop-filter lives on the
+     card elements ONLY: never on a section wrapper, never on an ancestor of
+     the sticky protocol column, the metrics block, or the charts. No SVG
+     refraction anywhere, blur plus the specular stack only. Tier B surfaces
+     (item rows, accordion, charts, terminal panels, crowd panel, flip
+     bills, news, admin) are deliberately not listed in any selector here. */
+  .gx-card{position:relative;z-index:1;--gc:var(--em);background:rgba(245,242,236,.032);border:1px solid rgba(245,242,236,.07);
+    -webkit-backdrop-filter:blur(16px) saturate(112%);
+    backdrop-filter:blur(16px) saturate(112%);
+    box-shadow:
+      inset -1px -1px 0 rgba(255,255,255,.42),
+      inset 1px 1px 0 rgba(255,255,255,.10),
+      inset 0 1px 0 rgba(255,255,255,.26),
+      inset 0 -1px 0 rgba(255,255,255,.22),
+      inset 0 0 24px rgba(255,255,255,.05),
+      0 18px 50px -30px rgba(0,0,0,.9);
+    transition:transform .25s ease,border-color .25s,box-shadow .25s;}
+  .gx-coral{--gc:var(--danger);}
+  .gx-card::before{content:"";position:absolute;top:0;left:0;right:0;height:42%;border-radius:inherit;
+    background:linear-gradient(180deg,rgba(255,255,255,.062),transparent);pointer-events:none;}
+  .gx-card:hover,.gx-card:focus-visible{transform:translateY(-3px);
+    border-color:color-mix(in srgb,var(--gc) 30%,transparent);
+    box-shadow:
+      inset -1px -1px 0 rgba(255,255,255,.42),
+      inset 1px 1px 0 rgba(255,255,255,.10),
+      inset 0 1px 0 rgba(255,255,255,.26),
+      inset 0 -1px 0 rgba(255,255,255,.22),
+      inset 0 0 30px color-mix(in srgb,var(--gc) 12%,transparent),
+      0 18px 50px -30px rgba(0,0,0,.9),
+      0 22px 60px -30px color-mix(in srgb,var(--gc) 50%,transparent);}
+  a.gx-card:focus-visible{outline:2px solid var(--gc);outline-offset:3px;}
+  /* the case files keep their coral top rail through every state */
+  .case.gx-card,.case.gx-card:hover{border-top:2px solid var(--danger);}
+
+  /* Narrative blooms: one blob per card, behind that card only. Static,
+     childless, pointer-inert; the blur is on the bloom layer itself, never
+     on an ancestor. */
+  .leaks,.cases,.island,.waves,.build-tiles,.pmx-stats,.schema{position:relative;}
+  .gx-bloom{position:absolute;inset:0;z-index:0;pointer-events:none;filter:blur(58px);}
+  .gx-bloom i{position:absolute;border-radius:50%;background:radial-gradient(closest-side,var(--bc),transparent 70%);opacity:.05;}
+
+  /* fallback for engines without backdrop-filter: deliberate solid surface */
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))){
+    .gx-card{background:#0B0F10;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .gx-card{transition:none;}
+    .gx-card:hover,.gx-card:focus-visible{transform:none;}
+  }
+
   /* ============ 05: compliance ============ */
   .lead .red { color: var(--danger); }
   .schema { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr; gap: 0; align-items: stretch; margin-top: 56px; font-family: var(--mono); }
@@ -814,10 +864,16 @@
     <div class="reveal-body">
       <div class="addr">0x7f3a…c92e</div>
       <div class="leaks">
-        <div class="leak"><div class="k">SALARY DETECTED</div><div class="v">4,200 USDC / month</div><div class="d">Same counterparty, same amount, first business day. Your employer, your paycheck, your raise history.</div></div>
-        <div class="leak"><div class="k">LIQUIDATION PRICE</div><div class="v">$52,534</div><div class="d">Your loan's exact breaking point, published to everyone able to push price toward it.</div></div>
-        <div class="leak"><div class="k">COUNTERPARTIES</div><div class="v">142 addresses linked</div><div class="d">Who you pay, who pays you, how often, and since when. Your entire commercial graph.</div></div>
-        <div class="leak"><div class="k">STRATEGY READ</div><div class="v">DCA + rotation pattern</div><div class="d">Timing and sizing across venues. Anyone can position ahead of your next move.</div></div>
+        <div class="gx-bloom" aria-hidden="true">
+          <i style="--bc:var(--danger);left:12%;top:6%;width:26%;height:38%"></i>
+          <i style="--bc:var(--danger);left:62%;top:6%;width:26%;height:38%"></i>
+          <i style="--bc:var(--danger);left:12%;top:56%;width:26%;height:38%"></i>
+          <i style="--bc:var(--danger);left:62%;top:56%;width:26%;height:38%"></i>
+        </div>
+        <div class="leak gx-card gx-coral"><div class="k">SALARY DETECTED</div><div class="v">4,200 USDC / month</div><div class="d">Same counterparty, same amount, first business day. Your employer, your paycheck, your raise history.</div></div>
+        <div class="leak gx-card gx-coral"><div class="k">LIQUIDATION PRICE</div><div class="v">$52,534</div><div class="d">Your loan's exact breaking point, published to everyone able to push price toward it.</div></div>
+        <div class="leak gx-card gx-coral"><div class="k">COUNTERPARTIES</div><div class="v">142 addresses linked</div><div class="d">Who you pay, who pays you, how often, and since when. Your entire commercial graph.</div></div>
+        <div class="leak gx-card gx-coral"><div class="k">STRATEGY READ</div><div class="v">DCA + rotation pattern</div><div class="d">Timing and sizing across venues. Anyone can position ahead of your next move.</div></div>
       </div>
     </div>
   </div>
@@ -834,13 +890,17 @@
     <h3><span class="wall-tag">WALL Nº 01</span>Compliance: a privacy system with no disclosure path <span class="em">is a mixer with better branding.</span></h3>
     <p>Tornado Cash was the category's most used product until OFAC sanctioned it in 2022. What put it on the list was not the hiding itself; it was the absence of any mechanism, for anyone, ever, to answer a court. The human cost of that design choice fell on the people who wrote it.</p>
     <div class="cases">
-      <div class="case">
+      <div class="gx-bloom" aria-hidden="true">
+        <i style="--bc:var(--danger);left:11%;top:16%;width:28%;height:68%"></i>
+        <i style="--bc:var(--danger);left:61%;top:16%;width:28%;height:68%"></i>
+      </div>
+      <div class="case gx-card gx-coral">
         <div class="ch">CASE FILE — NL</div>
         <div class="cn">ALEXEY PERTSEV</div>
         <div class="cd th-pm-reveal">Arrested in the Netherlands days after the sanctions. Sentenced May 2024: five years and four months of jail, money laundering.</div>
         <div class="cs">STATUS: APPEALING</div>
       </div>
-      <div class="case">
+      <div class="case gx-card gx-coral">
         <div class="ch">CASE FILE — US</div>
         <div class="cn">ROMAN STORM</div>
         <div class="cd th-pm-reveal">Arrested near Seattle, 2023. Convicted August 2025: unlicensed money transmitting. Jury hung on counts carrying forty more years.</div>
@@ -854,9 +914,13 @@
     <h3><span class="wall-tag">WALL Nº 02</span>Composability: privacy kept being built as a destination, <span class="em">and destinations empty out.</span></h3>
     <p>Zcash and Monero put real cryptography on dedicated chains and paid two prices: isolation and no programmability. Aztec rebuilt privacy as its own L2, but applications cannot be connected, they have to be rebuilt, and reaching real liquidity means bridging out in public and bridging back in public. Railgun stayed on the EVM chains but takes a 0.25% cut each way, on every shield and on every unshield. Do the math: shielding then unshielding a $100M treasury costs $500,000, for privacy alone.</p>
     <div class="island">
-      <div class="landmass iso"><div class="lt">PRIVACY ISLAND</div><div class="ls">ZCASH · MONERO · AZTEC<br>REAL PRIVACY, NO ECONOMY</div></div>
+      <div class="gx-bloom" aria-hidden="true">
+        <i style="--bc:var(--em);left:5%;top:12%;width:24%;height:76%"></i>
+        <i style="--bc:var(--danger);left:71%;top:12%;width:24%;height:76%"></i>
+      </div>
+      <div class="landmass iso gx-card"><div class="lt">PRIVACY ISLAND</div><div class="ls">ZCASH · MONERO · AZTEC<br>REAL PRIVACY, NO ECONOMY</div></div>
       <div class="bridge"><div class="rail-line"></div><div class="bl">EVERY CROSSING IS PUBLIC</div></div>
-      <div class="landmass"><div class="lt">DEFI MAINLAND</div><div class="ls">LIQUIDITY · LENDING · MARKETS<br>REAL ECONOMY, NO PRIVACY</div></div>
+      <div class="landmass gx-card gx-coral"><div class="lt">DEFI MAINLAND</div><div class="ls">LIQUIDITY · LENDING · MARKETS<br>REAL ECONOMY, NO PRIVACY</div></div>
     </div>
   </div>
 
@@ -1142,7 +1206,12 @@
 
   <div class="h3d th-pm-reveal">Three fronts are building <span class="em">on top of it.</span></div>
   <div class="waves th-pm-reveal">
-    <div class="wave">
+      <div class="gx-bloom" aria-hidden="true">
+        <i style="--bc:var(--em);left:5.5%;top:4%;width:22%;height:34%"></i>
+        <i style="--bc:var(--em);left:39.3%;top:4%;width:22%;height:34%"></i>
+        <i style="--bc:var(--em);left:73.1%;top:4%;width:22%;height:34%"></i>
+      </div>
+    <div class="wave gx-card">
       <div class="wn">STARKNET DEFI</div><h5>Starknet DeFi grafts itself onto the pool</h5>
       <div class="wp-card">
         <div class="wp-row"><span class="wp-t">Wallet-native shielding · Ready &amp; Xverse</span><span class="pill live">LIVE</span></div>
@@ -1189,7 +1258,7 @@
         <p>Private payments on Starknet. <a href="https://x.com/DashXHQ" target="_blank" rel="noopener">DashX ↗</a></p>
       </div>
     </div>
-    <div class="wave">
+    <div class="wave gx-card">
       <div class="wn">OTHER ECOSYSTEMS</div><h5>The confidentiality layer for other ecosystems</h5>
       <div class="wp-card">
         <div class="wp-row"><span class="wp-t">OffMarket · on Polymarket</span><span class="pill live">LIVE</span></div>
@@ -1200,7 +1269,7 @@
         <p>Additional ecosystems and apps connecting to the pool over the coming months.</p>
       </div>
     </div>
-    <div class="wave">
+    <div class="wave gx-card">
       <div class="wn">FIRST-PARTY PIPELINE</div><h5>Nine first-party projects by StarkWare &amp; the Foundation</h5>
       <div class="wp-card">
         <div class="wp-row"><span class="wp-t">Private Payroll</span><span class="pill live">LIVE</span></div>
@@ -1244,19 +1313,24 @@
   <div class="builders th-pm-reveal">
     <div class="bt">Anyone can now join them.</div>
     <div class="build-tiles">
-      <a class="btile" href="https://strk20.starknet.io/build" target="_blank" rel="noopener">
+      <div class="gx-bloom" aria-hidden="true">
+        <i style="--bc:var(--em);left:5.5%;top:16%;width:22%;height:68%"></i>
+        <i style="--bc:var(--em);left:39.3%;top:16%;width:22%;height:68%"></i>
+        <i style="--bc:var(--em);left:73.1%;top:16%;width:22%;height:68%"></i>
+      </div>
+      <a class="btile gx-card" href="https://strk20.starknet.io/build" target="_blank" rel="noopener">
         <div class="be">BUILD</div>
         <h5>Privacy SDK &amp; Wallet API</h5>
         <p>The SDK is live and the Wallet API spec is released.</p>
         <span class="ba">→</span>
       </a>
-      <a class="btile" href="https://strk20-by-example.org/" target="_blank" rel="noopener">
+      <a class="btile gx-card" href="https://strk20-by-example.org/" target="_blank" rel="noopener">
         <div class="be">LEARN</div>
         <h5>STRK20 by Example</h5>
         <p>How to bring privacy to your specific use case.</p>
         <span class="ba">→</span>
       </a>
-      <a class="btile" href="https://strk20.starknet.io/rfp" target="_blank" rel="noopener">
+      <a class="btile gx-card" href="https://strk20.starknet.io/rfp" target="_blank" rel="noopener">
         <div class="be">SHIP</div>
         <h5>The STRK20 RFP</h5>
         <p>What the ecosystem wants built, cataloged.</p>
@@ -1312,25 +1386,31 @@
   <p class="lead th-pm-reveal">Entry requires escrowing a viewing key, enforced by the proof itself. By default that key does nothing: it sits sealed in hardware, untouched for the overwhelming majority of users. Under a verified lawful request it can unwind one user's trail while the rest of the pool stays sealed. And even then, the key only reads: it cannot <span class="red">freeze</span>, cannot <span class="red">seize</span>, cannot <span class="red">spend</span>.</p>
 
   <div class="schema th-pm-reveal" id="lawSchema">
-    <div class="snode">
+      <div class="gx-bloom" aria-hidden="true">
+        <i style="--bc:var(--em);left:2%;top:18%;width:17%;height:64%"></i>
+        <i style="--bc:var(--em);left:28%;top:18%;width:17%;height:64%"></i>
+        <i style="--bc:var(--em);left:54%;top:18%;width:17%;height:64%"></i>
+        <i style="--bc:var(--em);left:80%;top:18%;width:17%;height:64%"></i>
+      </div>
+    <div class="snode gx-card">
       <div class="st">THE POOL</div><h6>Protocol-enforced escrow</h6>
       <p class="sn-sum">No escrowed viewing key, no entry: the proof itself enforces it.</p>
       <ul><li>· Viewing key escrowed at entry, encrypted to the auditor</li><li>· The escrow is enforced by the proof itself</li><li>· Deposits screened at the edge</li></ul>
     </div>
     <div class="slink">→</div>
-    <div class="snode">
+    <div class="snode gx-card">
       <div class="st">THE KEY</div><h6>Financial Privacy Inc (FPI)</h6>
       <p class="sn-sum">Sealed in dual hardware enclaves, governed by StarkWare, FPI, and the Starknet Security Council.</p>
       <ul><li>· Founded by the QEDIT team</li><li>· Master key sealed in a dual-enclave TEE</li><li>· 3-of-4 multisig: StarkWare + FPI</li><li>· Starknet Security Council backup &amp; upgrade control</li><li>· Never touched for the overwhelming majority of users</li></ul>
     </div>
     <div class="slink">→</div>
-    <div class="snode">
+    <div class="snode gx-card">
       <div class="st">THE REQUEST</div><h6>Lawful request, defined</h6>
       <p class="sn-sum">Only an authenticated order from a competent authority, on a verified legal basis.</p>
       <ul><li>· An authenticated order from a competent authority</li><li>· Acting inside its jurisdiction</li><li>· On a verified legal basis</li><li>· Anything less is refused</li></ul>
     </div>
     <div class="slink">→</div>
-    <div class="snode">
+    <div class="snode gx-card">
       <div class="st">THE DISCLOSURE</div><h6>Scoped, and nothing more</h6>
       <p class="sn-sum">The minimum the request covers, re-encrypted to that authority, and nobody else.</p>
       <ul><li>· Minimum necessary scope: potentially a single transfer in a defined window</li><li>· Re-encrypted inside the enclave</li><li>· Delivered to the requesting authority, and nobody else</li><li>· The rest of the pool stays sealed</li></ul>
@@ -1931,9 +2011,10 @@
     var jobs = [
       get('/agg/pool-summary').then(function(s){
         next.stats = { at: Date.now(), html:
-          '<div class="pmx-stat"><div class="l">TOTAL SHIELDED VALUE</div><div class="v"><span class="em">$' + Math.round(s.tvlUsd).toLocaleString('en-US') + '</span></div></div>' +
-          '<div class="pmx-stat"><div class="l">PROTECTED ASSETS</div><div class="v">' + (s.perToken || []).length.toLocaleString('en-US') + '</div></div>' +
-          '<div class="pmx-stat"><div class="l">TOTAL USERS</div><div class="v">' + (s.userCount || 0).toLocaleString('en-US') + '</div></div>' };
+          '<div class="gx-bloom" aria-hidden="true"><i style="--bc:var(--em);left:5.5%;top:16%;width:22%;height:68%"></i><i style="--bc:var(--em);left:39.3%;top:16%;width:22%;height:68%"></i><i style="--bc:var(--em);left:73.1%;top:16%;width:22%;height:68%"></i></div>' +
+          '<div class="pmx-stat gx-card"><div class="l">TOTAL SHIELDED VALUE</div><div class="v"><span class="em">$' + Math.round(s.tvlUsd).toLocaleString('en-US') + '</span></div></div>' +
+          '<div class="pmx-stat gx-card"><div class="l">PROTECTED ASSETS</div><div class="v">' + (s.perToken || []).length.toLocaleString('en-US') + '</div></div>' +
+          '<div class="pmx-stat gx-card"><div class="l">TOTAL USERS</div><div class="v">' + (s.userCount || 0).toLocaleString('en-US') + '</div></div>' };
       }).catch(function(){}),
 
       get('/agg/shielded-balance').then(function(d){
