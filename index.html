@@ -243,6 +243,25 @@
       -webkit-backdrop-filter:blur(16px) saturate(150%) url('#lg-refract');
       backdrop-filter:blur(16px) saturate(150%) url('#lg-refract');}
   }
+
+  /* ===== Section 01 alignment: fixed top spacer instead of the inherited
+     bottom anchor, so the three titles start on the same line. */
+  .th-grid-3 .lg-card .th-card-body{margin-top:44px;}
+
+  /* ===== Mobile tuning: six stacked glass panes is where this gets
+     expensive, so lighter blur, lighter blooms, and (via the min-width
+     gate above) no refraction below 981px. */
+  @media (max-width:980px){
+    .lg-card{-webkit-backdrop-filter:blur(10px) saturate(135%);backdrop-filter:blur(10px) saturate(135%);}
+    .lg-bloom{filter:blur(26px);}
+  }
+
+  /* ===== Reduced motion: no lift, no sweep, no arrow motion. */
+  @media (prefers-reduced-motion: reduce){
+    .lg-card:hover,.lg-card:focus-visible{transform:none;}
+    .lg-card:not(.th-feature)::after,.lg-card .lg-sweep{display:none;}
+    .lg-card:hover .th-arrow,.lg-card:focus-visible .th-arrow{transform:none;}
+  }
 </style>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="lg-refract"><feTurbulence type="fractalNoise" baseFrequency="0.008 0.012" numOctaves="2" result="lgn"/><feGaussianBlur in="lgn" stdDeviation="2.4" result="lgb"/><feDisplacementMap in="SourceGraphic" in2="lgb" scale="22"/></filter></svg>
 <script>
