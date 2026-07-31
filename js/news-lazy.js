@@ -93,13 +93,18 @@
       skel.className = 'news-embed news-skel';
       cell.appendChild(skel);
       if (facade) facade.style.display = 'none';
+      /* two-tier loading state (js/news-loading.js): block ring + skeleton
+         bones; both are told when this card settles, whatever the outcome */
+      if (window.NewsLoading) window.NewsLoading.cardPending(cell, skel, grid);
       ensureWidgets().then(function(twttr){
         return twttr.widgets.createTweet(id, skel, { theme: 'dark', dnt: true, conversation: 'none', align: 'center' });
       }).then(function(node){
         if (!node) throw new Error('embed unavailable');
         skel.classList.remove('news-skel');
         if (facade && facade.parentNode) facade.parentNode.removeChild(facade);
+        if (window.NewsLoading) window.NewsLoading.cardResolved(cell, skel);
       }).catch(function(){
+        if (window.NewsLoading) window.NewsLoading.cardResolved(cell, skel);
         if (skel.parentNode) skel.parentNode.removeChild(skel);
         if (facade) facade.style.display = ''; // keep the linked static card
       });
