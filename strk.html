@@ -83,6 +83,50 @@ a.nav-logo{text-decoration:none}
 .nav-links a:hover{color:var(--white)} .nav-links a.active{color:var(--acc-2)}
 /* CTA uses the shared .btn style (solid accent fill); see .btn rules below */
 .nav-cta{white-space:nowrap;padding:11px 20px}
+/* Specular glass coating on the nav CTA — verbatim mirror of the
+   .btn.nav-cta rules in css/styles.css (this page never loads that file):
+   keep the two in sync. Opaque accent fill, shading layered on top only. */
+.btn.nav-cta {
+  --cta-glow: var(--accent-rgb); /* per-page overrides recolor the glow, never the stack */
+  position: relative;
+  overflow: hidden; /* clips the sheen; the outer glow is a shadow, not a child, so it survives */
+  box-shadow:
+    0 0 34px rgba(var(--cta-glow),0.4),
+    inset -1px -1px 0 rgba(255,255,255,.45),
+    inset 1px 1px 0 rgba(255,255,255,.18),
+    inset 0 1px 0 rgba(255,255,255,.30),
+    inset 0 -1px 0 rgba(255,255,255,.22),
+    inset 0 -4px 6px rgba(0,0,0,.18);
+}
+.btn.nav-cta:hover {
+  box-shadow:
+    0 0 48px rgba(var(--cta-glow),0.6),
+    inset -1px -1px 0 rgba(255,255,255,.45),
+    inset 1px 1px 0 rgba(255,255,255,.18),
+    inset 0 1px 0 rgba(255,255,255,.30),
+    inset 0 -1px 0 rgba(255,255,255,.22),
+    inset 0 -4px 6px rgba(0,0,0,.18);
+}
+/* top light over the upper 45 percent, layered over the fill */
+.btn.nav-cta::before {
+  content: ""; position: absolute; top: 0; left: 0; right: 0; height: 45%;
+  background: linear-gradient(180deg, rgba(255,255,255,.16), transparent);
+  pointer-events: none;
+}
+/* hover sheen: one diagonal white band crossing the button */
+.btn.nav-cta::after {
+  content: ""; position: absolute; top: -20%; bottom: -20%; left: 0; width: 36%;
+  background: linear-gradient(105deg, transparent, rgba(255,255,255,.38) 50%, transparent);
+  transform: translateX(-140%) skewX(-18deg); opacity: 0;
+  pointer-events: none;
+  transition: transform .7s ease, opacity .7s ease;
+}
+.btn.nav-cta:hover::after { transform: translateX(340%) skewX(-18deg); opacity: 1; }
+.btn.nav-cta:active { transform: scale(.97); }
+@media (prefers-reduced-motion: reduce) {
+  .btn.nav-cta::after { transition: none; opacity: 0; }
+  .btn.nav-cta:active { transform: none; }
+}
 
 /* hero */
 .hero{position:relative;display:flex;flex-direction:column;align-items:center;padding:128px 0 60px;overflow:hidden;text-align:center}

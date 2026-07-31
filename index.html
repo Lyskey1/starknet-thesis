@@ -28,7 +28,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Expanded:wght@500;600;700;800;900&family=IBM+Plex+Mono:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/dist/tabler-icons.min.css">
-<link rel="stylesheet" href="css/styles.css?v=20260618c">
+<link rel="stylesheet" href="css/styles.css?v=20260731a">
 <style>
   /* ===== Landing hero v2 (thesis-wide, violet accent) - index.html only ===== */
   .lh-hero{position:relative;overflow:hidden;background:#08080A;padding:150px 0 160px}
@@ -51,8 +51,10 @@
   .lh-lead{margin:30px auto 0;max-width:620px;color:rgba(245,242,236,.62);font-size:18px;font-weight:300;line-height:1.7;font-family:var(--sans)}
   /* nav accents → violet on the landing only (scoped so other pages keep orange; footer wordmark untouched) */
   body.page-landing nav .nav-logo b{color:#A78BFA}
-  body.page-landing nav .nav-cta{background:#8B5CF6;box-shadow:0 0 34px rgba(139,92,246,.4)}
-  body.page-landing nav .nav-cta:hover{box-shadow:0 0 48px rgba(139,92,246,.6)}
+  /* the landing CTA keeps its deliberate violet fill; the glow color rides
+     the shared coating's --cta-glow hook so the specular inset stack from
+     styles.css is never displaced (a box-shadow here would replace it) */
+  body.page-landing nav .nav-cta{background:#8B5CF6;--cta-glow:139,92,246}
   /* landing footer accent -> violet (scoped; matches the hero/nav, overrides the shared orange) */
   body.page-landing footer.site-footer .nav-logo b{color:#A78BFA}
   body.page-landing footer.site-footer .status{color:#A78BFA}
