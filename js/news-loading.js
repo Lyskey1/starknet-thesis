@@ -28,8 +28,8 @@
        inserting an in-flow element above the grid shifted every card down
        and back up on removal, which is exactly the layout shift this
        component exists to avoid */
-    '.nl-loader{position:absolute;left:50%;top:96px;transform:translateX(-50%);z-index:6;pointer-events:none;display:flex;flex-direction:column;align-items:center;gap:6px;padding:22px 30px 18px;text-align:center;background:#0D0E13;border:1px solid rgba(245,242,236,.1);border-radius:16px;box-shadow:0 18px 50px -20px rgba(0,0,0,.8);max-width:min(420px,86vw)}',
-    '.nl-rings{position:relative;width:72px;height:72px;margin-bottom:10px;animation:nlBreathe 4s ease-in-out infinite}',
+    '.nl-loader{position:absolute;left:50%;top:96px;transform:translateX(-50%);z-index:6;pointer-events:none;display:flex;flex-direction:column;align-items:center;gap:6px;padding:22px 30px 19px;text-align:center;background:#0D0E13;border:1px solid rgba(245,242,236,.1);border-radius:16px;box-shadow:0 18px 50px -20px rgba(0,0,0,.8);max-width:min(420px,86vw)}',
+    '.nl-rings{position:relative;width:72px;height:72px;margin-bottom:6px;animation:nlBreathe 4s ease-in-out infinite}',
     '.nl-rings i{position:absolute;inset:0;border-radius:50%;will-change:transform}',
     '.nl-rings .nlr1{background:conic-gradient(from 0deg,transparent 0deg,rgba(245,242,236,.5) 90deg,transparent 200deg);-webkit-mask:radial-gradient(closest-side,transparent 34.5%,#000 35% 41%,transparent 41.5%);mask:radial-gradient(closest-side,transparent 34.5%,#000 35% 41%,transparent 41.5%);animation:nlSpin 3s linear infinite}',
     '.nl-rings .nlr2{background:conic-gradient(from 140deg,transparent 0deg,rgba(var(--accent-rgb,167,139,250),.85) 100deg,transparent 220deg);-webkit-mask:radial-gradient(closest-side,transparent 41.5%,#000 42% 50%,transparent 50.5%);mask:radial-gradient(closest-side,transparent 41.5%,#000 42% 50%,transparent 50.5%);animation:nlSpin 2.5s linear infinite}',
@@ -41,7 +41,6 @@
     '.nl-text{animation:nlPulse 2.8s ease-in-out infinite}',
     '@keyframes nlPulse{0%,100%{opacity:.9}50%{opacity:.5}}',
     '.nl-title{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:rgba(245,242,236,.75)}',
-    '.nl-sub{font-family:Inter,system-ui,sans-serif;font-size:12px;color:rgba(245,242,236,.45);margin-top:5px}',
     /* ---- skeleton bones inside the existing .news-skel shimmer box ---- */
     '.nl-bones{position:absolute;inset:0;z-index:2;background:#0D0E13;padding:16px 18px;display:flex;flex-direction:column;gap:10px;border:1px solid rgba(245,242,236,.09);border-radius:12px}',
     '.nl-bones .nlb-head{display:flex;align-items:center;gap:10px}',
@@ -56,7 +55,7 @@
     '.nl-paused .nl-rings,.nl-paused .nl-rings i,.nl-paused .nl-text{animation-play-state:paused}',
     '.nl-paused-section .news-skel::after{animation-play-state:paused}',
     /* ---- reduced motion: static state, still communicated ---- */
-    '@media(max-width:600px){.nl-loader{top:120px;padding:16px 18px 14px;max-width:80vw}.nl-rings{width:48px;height:48px;margin-bottom:6px}.nl-sub{font-size:11px}}',
+    '@media(max-width:600px){.nl-loader{top:120px;padding:16px 18px 14px;max-width:80vw}.nl-rings{width:48px;height:48px;margin-bottom:6px}}',
     '@media(prefers-reduced-motion:reduce){',
     '.nl-rings,.nl-rings i,.nl-text{animation:none}',
     '}'
@@ -81,8 +80,7 @@
     el.setAttribute('aria-live', 'polite');
     el.innerHTML =
       '<div class="nl-rings" aria-hidden="true"><i class="nlr1"></i><i class="nlr2"></i><i class="nlr3"></i><i class="nlr4"></i></div>' +
-      '<div class="nl-text"><div class="nl-title">Loading posts from X</div>' +
-      '<div class="nl-sub">Live embeds are on the way. Each card keeps a readable static version if X is slow.</div></div>';
+      '<div class="nl-text"><div class="nl-title">Loading posts from X</div></div>';
     return el;
   }
 
