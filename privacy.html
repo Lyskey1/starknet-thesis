@@ -1969,8 +1969,14 @@
   root.querySelectorAll('.pmx-card').forEach(function(c){
     bodies[c.getAttribute('data-pmx')] = { el: c.querySelector('.pmx-body'), fallback: c.querySelector('.pmx-body').innerHTML };
   });
-  function skel(k){ bodies[k].el.innerHTML = '<div class="pmx-skel"></div>'; }
+  function skel(k){
+    bodies[k].el.innerHTML = '<div class="pmx-skel"></div>';
+    // first-load-empty ONLY: silent refreshes never reach this path, so the
+    // ring can never flash over a chart that already has good data
+    if (window.ChartLoading) window.ChartLoading.pending(bodies[k].el, { fallback: bodies[k].fallback, size: k === 'shielded' ? 56 : 44 });
+  }
   function mount(k, chartHtml, legendHtml, meta){
+    if (window.ChartLoading) window.ChartLoading.resolved(bodies[k].el);
     bodies[k].el.innerHTML = '<div class="pmx-plot">' + chartHtml + '<div class="pmx-cross"></div><div class="pmx-tip"></div></div>' + legendHtml;
     var show = attachHover(bodies[k].el.querySelector('.pmx-plot'), meta, k);
     var hv = bodies[k].hv;
@@ -2006,7 +2012,7 @@
     Object.keys(bodies).forEach(function(k){
       var p = next[k];
       if (p) { mount(k, p.chart, p.legend, p.meta); prov[k] = p.at; }
-      else if (!silent) { bodies[k].el.innerHTML = bodies[k].fallback; prov[k] = 0; }
+      else if (!silent) { if (window.ChartLoading) window.ChartLoading.resolved(bodies[k].el); bodies[k].el.innerHTML = bodies[k].fallback; prov[k] = 0; }
       // silent refresh + failed source: the card keeps its last good chart AND
       // its old provenance, so the label keeps reporting that older time
     });
