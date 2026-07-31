@@ -141,6 +141,7 @@ const CARD_SPECS = {
   quantum: [
     { cls: 'th-pm-card', kind: 'card' },
     { cls: 'bar-col', kind: 'chart label' },
+    { cls: 'countdown', kind: 'card' },
   ],
   btcfi: [
     { cls: 'problem-item', kind: 'card' },
@@ -163,7 +164,7 @@ const CARD_SPECS = {
   ecosystem: [],
   digest: [],
 };
-const TITLE_CLASSES = ['mode-item-title', 'metric-label', 'step-name', 'catalyst-tag', 'wp-t', 'cl', 'ptitle', 'bh-title', 'tx', 'k', 'lt', 'lb'];
+const TITLE_CLASSES = ['mode-item-title', 'metric-label', 'step-name', 'catalyst-tag', 'wp-t', 'cl', 'ptitle', 'bh-title', 'tx', 'k', 'lt', 'lb', 'lbl'];
 
 function titleFor(node) {
   const h = find(node, n => HEADINGS.has(n.tag))[0];
@@ -184,10 +185,12 @@ function extractPage(pg, src, idPlan) {
   const seenNodes = new Set();
 
   const planned = new Map();
-  function ensureAnchor(node, title) {
+  function ensureAnchor(node, title, selfOnly) {
     /* nearest existing id on self or ancestors wins; otherwise plan one.
-       A node is planned at most once, even if two specs match it. */
-    for (let x = node; x; x = x.parent) {
+       A node is planned at most once, even if two specs match it.
+       selfOnly (expandable rows): the row itself must carry the anchor,
+       or the deep link cannot open it. */
+    for (let x = node; x; x = selfOnly ? null : x.parent) {
       if (x.attrs && x.attrs.id) return x.attrs.id;
       if (planned.has(x)) return planned.get(x);
     }
@@ -223,7 +226,7 @@ function extractPage(pg, src, idPlan) {
       const i = sibs.indexOf(row);
       if (i >= 0 && sibs[i + 1] && hasClass(sibs[i + 1], 'th-detailrow')) detail = textOf(sibs[i + 1]);
       const body = cap([cells.slice(1).join(' · '), detail].filter(Boolean).join(' — '));
-      if (title) entries.push({ page: pg.page, anchor: ensureAnchor(row, title), title, body, kind: 'table row' });
+      if (title) entries.push({ page: pg.page, anchor: ensureAnchor(row, title, true), title, body, kind: 'table row' });
       walk(row, n => seenNodes.add(n));
     });
   }
@@ -238,7 +241,7 @@ function extractPage(pg, src, idPlan) {
       const title = clean(textOf(name));
       const tips = find(row, n => n.attrs && n.attrs['data-tip']).map(n => decode(n.attrs['data-tip']));
       if (!title || !tips.length) continue;
-      entries.push({ page: pg.page, anchor: ensureAnchor(row, title), title, body: cap(tips.join(' · ')), kind: 'table row' });
+      entries.push({ page: pg.page, anchor: ensureAnchor(row, title, true), title, body: cap(tips.join(' · ')), kind: 'table row' });
       walk(row, n => seenNodes.add(n));
     }
   }
@@ -303,12 +306,11 @@ function strkCex(src) {
     body: 'Centralized exchange listing STRK · Where to get STRK', kind: 'card' }));
 }
 function ecosystemCategories(src) {
-  const m = src.match(/var CATS\s*=\s*\[([\s\S]*?)\];/) || src.match(/CATS\s*=\s*\[([\s\S]*?)\];/);
-  if (!m) return [];
+  /* category ids/labels live in the embedded DEFAULTS JSON */
   const out = [];
-  const re = /\{\s*id:\s*'([^']+)'[^}]*?label:\s*'((?:\\'|[^'])*)'/g;
+  const re = /"id":\s*"([^"]+)",\s*"group":\s*"[^"]*",\s*"label":\s*"([^"]+)"/g;
   let x;
-  while ((x = re.exec(m[1]))) out.push({ id: x[1], label: x[2].replace(/\\'/g, "'") });
+  while ((x = re.exec(src))) out.push({ id: x[1], label: x[2] });
   return out;
 }
 
@@ -373,6 +375,11 @@ function main() {
       else throw new Error(`${pg.file}: ${idPlan.add.length} sections lack ids (` +
         idPlan.add.slice(0, 5).map(a => a.slug).join(', ') + '…). Run with --write-ids and commit.');
     }
+    /* one page-level entry so the page name itself is a first-class hit */
+    const metaDesc = (src.match(/<meta name="description" content="([^"]*)"/) || [])[1] || '';
+    const firstAnchored = pageEntries[0];
+    if (firstAnchored) pageEntries.unshift({ page: pg.page, anchor: firstAnchored.anchor,
+      title: pg.label, body: cap(decode(metaDesc)), kind: 'page' });
     entries = entries.concat(pageEntries);
     if (pg.page === 'btcfi') entries = entries.concat(btcfiMilestones(src));
     if (pg.page === 'strk') entries = entries.concat(strkCex(src));
