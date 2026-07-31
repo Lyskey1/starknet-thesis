@@ -231,6 +231,49 @@
     .eco-pill { min-height: 44px; display: inline-flex; align-items: center; }
     .eco-admin button { min-height: 44px; }
   }
+
+  /* ===== Liquid glass on the follow CTA panel (ecg- prefix; same recipe as
+     the other pages). The panel's existing violet bloom (.cta-block::before)
+     stays exactly as it is: the glass surface paints beneath it and no
+     second bloom is added. The top light uses ::after because ::before is
+     the bloom. Container, not a link: static surface, no lift, no hover; the
+     Follow here button keeps its own coral fill, glow and hover untouched.
+     backdrop-filter goes on the panel itself: its content is static (no
+     live DOM writes inside) and it contains no tooltip, chart or overflowing
+     positioned child (its overflow hidden and its ::before pre-date this).
+     Existing radius (none), padding and type scale kept. */
+  .cta-block.ecg-glass {
+    background: rgba(245,242,236,.032);
+    border-color: rgba(245,242,236,.07);
+    -webkit-backdrop-filter: blur(16px) saturate(112%);
+    backdrop-filter: blur(16px) saturate(112%);
+    box-shadow:
+      inset -1px -1px 0 rgba(255,255,255,.42),
+      inset 1px 1px 0 rgba(255,255,255,.10),
+      inset 0 1px 0 rgba(255,255,255,.26),
+      inset 0 -1px 0 rgba(255,255,255,.22),
+      inset 0 0 24px rgba(255,255,255,.05),
+      0 18px 50px -30px rgba(0,0,0,.9);
+  }
+  .cta-block.ecg-glass::after {
+    content: ""; position: absolute; top: 0; left: 0; right: 0; height: 42%;
+    pointer-events: none;
+    background: linear-gradient(180deg, rgba(255,255,255,.062), transparent);
+  }
+  /* fallback for engines without backdrop-filter: a slightly more opaque
+     deliberate solid surface */
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .cta-block.ecg-glass { background: #0B0D13; }
+  }
+  /* mobile, consistent with the rest of the site: no backdrop-filter below
+     981px, a solid surface with a barely perceptible accent tint. The
+     panel's own bloom is part of its existing design and stays. */
+  @media (max-width: 980px) {
+    .cta-block.ecg-glass {
+      -webkit-backdrop-filter: none; backdrop-filter: none;
+      background: color-mix(in srgb, var(--accent) 2.5%, #0B0D13);
+    }
+  }
 </style>
 <script src="js/admin-gate.js"></script>
 </head>
@@ -266,7 +309,7 @@
 
 <!-- CLOSING CTA -->
 <section style="padding-top:88px;">
-  <div class="cta-block">
+  <div class="cta-block ecg-glass">
     <h2>Don't want to follow them one by one?</h2>
     <p>Follow entire Starknet lists in one click, curated on X.</p>
     <div class="cta-buttons">
