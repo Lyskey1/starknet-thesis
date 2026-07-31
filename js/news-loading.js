@@ -193,8 +193,29 @@
         bodyEl.appendChild(h.ring);
         syncChartPause();
       }
-      h.onScreen = true;
-      mount();
+      if ('IntersectionObserver' in window) {
+        /* the main saving: a panel far down the page never starts a ring */
+        h.io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (en) {
+            h.onScreen = en.isIntersecting;
+            if (en.isIntersecting) mount();
+          });
+          syncChartPause();
+        }, { rootMargin: '120px 0px' });
+        h.io.observe(bodyEl);
+      } else {
+        h.onScreen = true;
+        mount();
+      }
+      /* bounded wait, the same 12s budget the news embeds use: on timeout
+         the panel resolves to the consumer's existing failure state (the
+         static fallback with its VIEW LIVE affordance). A later successful
+         commit simply mounts the real chart in its place. */
+      h.timer = setTimeout(function () {
+        if (!chartHosts.has(bodyEl)) return;
+        window.ChartLoading.resolved(bodyEl);
+        if (opts.fallback != null) bodyEl.innerHTML = opts.fallback;
+      }, opts.timeoutMs || 12000);
     },
     resolved: function (bodyEl) {
       var h = chartHosts.get(bodyEl);
