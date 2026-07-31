@@ -24,6 +24,7 @@
 
 <script defer src="https://cloud.umami.is/script.js" data-website-id="45f11859-9fc2-49ae-a59e-4826e0f1e174"></script>
 <script defer src="js/nav.js"></script>
+<script defer src="js/search.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <!-- shared type system (matches css/styles.css / the rest of the site) -->
@@ -127,6 +128,26 @@ a.nav-logo{text-decoration:none}
   .btn.nav-cta::after { transition: none; opacity: 0; }
   .btn.nav-cta:active { transform: none; }
 }
+  /* Nav search trigger (the only other rules in this file the search
+   feature is allowed to own). Visible label + shortcut hint on desktop,
+   icon-only below 860px; the palette itself is styled by js/search.js.
+   Mirrored in strk.html's inline styles: keep in sync. */
+.nav-search {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase;
+  color: rgba(245,242,236,.62); background: rgba(245,242,236,.04);
+  border: 1px solid var(--border); border-radius: 8px; padding: 9px 12px; cursor: pointer;
+  transition: color .2s, border-color .2s, background .2s;
+  }
+.nav-search:hover { color: var(--white); border-color: rgba(245,242,236,.28); background: rgba(245,242,236,.07); }
+.nav-search:focus-visible { outline: 2px solid rgba(var(--accent-rgb), .8); outline-offset: 2px; }
+.nav-search svg { flex: none; }
+.nav-search .ns-kbd { font-family: var(--mono); font-size: 9px; color: rgba(245,242,236,.4); border: 1px solid rgba(245,242,236,.16); border-radius: 4px; padding: 2px 5px; }
+@media (max-width: 860px) {
+  .nav-search .ns-label, .nav-search .ns-kbd { display: none; }
+  nav .nav-search { min-width: 44px; min-height: 44px; justify-content: center; padding: 0; }
+  }
+
 
 /* hero */
 .hero{position:relative;display:flex;flex-direction:column;align-items:center;padding:128px 0 60px;overflow:hidden;text-align:center}
@@ -691,6 +712,7 @@ window.ADMIN_GATE=on;})();
     <a href="/privacy" data-umami-event="nav-click" data-umami-event-page="privacy">Privacy</a><a href="/quantum" data-umami-event="nav-click" data-umami-event-page="quantum">Quantum</a><a href="/btcfi" data-umami-event="nav-click" data-umami-event-page="btcfi">BTCFi</a>
     <a href="/strk" class="active" data-umami-event="nav-click" data-umami-event-page="strk">STRK</a><a href="/ecosystem" data-umami-event="nav-click" data-umami-event-page="ecosystem">Ecosystem</a><a href="/digest" data-umami-event="nav-click" data-umami-event-page="digest">Digest</a>
   </div>
+  <button type="button" class="nav-search" aria-label="Search the site" data-umami-event="nav-search"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.8-3.8"/></svg><span class="ns-label">Search</span><kbd class="ns-kbd">&#8984;K</kbd></button>
   <a class="btn nav-cta" href="/" data-umami-event="cta-read-thesis">Read the thesis <i class="ti ti-arrow-right"></i></a>
 </nav>
 
