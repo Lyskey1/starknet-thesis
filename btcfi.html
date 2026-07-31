@@ -279,39 +279,10 @@
      crisp, full height and coral in every state, hover included */
   .page-btcfi .risk-quote.btcg-card,
   .page-btcfi .risk-quote.btcg-card:hover{border-left:3px solid #E0524A;}
-  /* THE EMPHASIZED CARD: glass gives every card a rim and a glow, which
-     weakens the highlight the quantum-security card used to carry via its
-     violet tint. Strengthened on three axes at once: a 7 percent accent
-     surface, a 60 percent accent border, and a markedly stronger outer
-     glow. Its existing accent text color (inline on title and dot) is
-     preserved in the markup. */
-  .page-btcfi .btcg-emph{
-    background:color-mix(in srgb,var(--ba) 7%,rgba(245,242,236,.03));
-    border-color:color-mix(in srgb,var(--ba) 60%,transparent);
-    box-shadow:
-      inset -1px -1px 0 rgba(255,255,255,.42),
-      inset 1px 1px 0 rgba(255,255,255,.10),
-      inset 0 1px 0 rgba(255,255,255,.26),
-      inset 0 -1px 0 rgba(255,255,255,.22),
-      inset 0 0 24px rgba(255,255,255,.05),
-      0 18px 50px -30px rgba(0,0,0,.9),
-      0 26px 80px -22px color-mix(in srgb,var(--ba) 85%,transparent);}
-  .page-btcfi .btcg-emph:hover{
-    background:color-mix(in srgb,var(--ba) 7%,rgba(245,242,236,.03));
-    border-color:color-mix(in srgb,var(--ba) 60%,transparent);
-    box-shadow:
-      inset -1px -1px 0 rgba(255,255,255,.42),
-      inset 1px 1px 0 rgba(255,255,255,.10),
-      inset 0 1px 0 rgba(255,255,255,.26),
-      inset 0 -1px 0 rgba(255,255,255,.22),
-      inset 0 0 30px color-mix(in srgb,var(--ba) 18%,transparent),
-      0 18px 50px -30px rgba(0,0,0,.9),
-      0 30px 90px -20px color-mix(in srgb,var(--ba) 95%,transparent);}
   /* fallback for engines without backdrop-filter: a slightly more opaque
      deliberate solid surface */
   @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))){
     .page-btcfi .btcg-card{background:#0B0D13;}
-    .page-btcfi .btcg-emph{background:color-mix(in srgb,var(--ba) 9%,#0B0D13);}
   }
 
   /* ===== Narrative blooms: one bloom per card, behind that card only,
@@ -344,11 +315,11 @@
   .page-btcfi .btcg-bloom-threat i:nth-child(5){left:38%;top:56%;width:24%;height:32%;}
   /* coral inside the deeper-risk panel */
   .page-btcfi .btcg-bloom-quote i{--bc:#E0524A;left:8%;top:12%;width:45%;height:76%;}
-  /* strkBTC row: orange, violet, violet — the third blob is stronger so
-     the bloom reinforces the emphasized quantum-security card */
+  /* strkBTC row: orange, violet, violet — the three cards read as equals,
+     so all three blobs share the same intensity */
   .page-btcfi .btcg-bloom-modes i:nth-child(1){--bc:#F7931A;left:6%;top:16%;width:20%;height:68%;}
   .page-btcfi .btcg-bloom-modes i:nth-child(2){--bc:#8B5CF6;left:39.5%;top:16%;width:20%;height:68%;}
-  .page-btcfi .btcg-bloom-modes i:nth-child(3){--bc:#8B5CF6;left:73%;top:16%;width:20%;height:68%;opacity:.10;}
+  .page-btcfi .btcg-bloom-modes i:nth-child(3){--bc:#8B5CF6;left:73%;top:16%;width:20%;height:68%;}
   /* orange inside the STRK20 timeline detail card */
   .page-btcfi .btcg-bloom-tl i{--bc:#F7931A;left:6%;top:14%;width:40%;height:72%;}
   /* ===== Mobile, decided up front: below 981px no backdrop-filter on
@@ -361,7 +332,6 @@
   @media (max-width:980px){
     .page-btcfi .btcg-card{-webkit-backdrop-filter:none;backdrop-filter:none;
       background:color-mix(in srgb,var(--ba) 2.5%,#0B0D13);}
-    .page-btcfi .btcg-emph{background:color-mix(in srgb,var(--ba) 9%,#0B0D13);}
     .page-btcfi .btcg-bloom{display:none;}
   }
   @media (prefers-reduced-motion: reduce){
@@ -564,10 +534,10 @@
               <div class="mode-item-desc">Balances and transfers are hidden from public view, with DeFi still accessible from inside the shielded state. Users prove validity without revealing sensitive financial information. Powered by STARK proofs.</div>
             </div>
           </div>
-          <div class="mode-item btcg-card btcg-violet btcg-emph">
+          <div class="mode-item btcg-card btcg-violet">
             <div class="mode-dot" style="background:#C4B5FD;"></div>
             <div>
-              <div class="mode-item-title" style="color:#C4B5FD;">End-to-end quantum security by 2027</div>
+              <div class="mode-item-title">End-to-end quantum security by 2027</div>
               <div class="mode-item-desc">Starknet has <a href="https://x.com/StarkWareLtd/status/2071935303963861074" target="_blank" rel="noopener noreferrer" class="inline-accent-link">published a roadmap</a> to end-to-end quantum security by 2027. When migration is needed, native account abstraction upgrades any wallet to quantum-safe signatures in a single transaction, while the push on Bitcoin's own quantum security continues through <a href="https://x.com/avihu28/status/2042287457530478720" target="_blank" rel="noopener noreferrer" class="inline-accent-link">QSB</a> and strkBTC.</div>
             </div>
           </div>
