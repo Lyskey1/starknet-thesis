@@ -1084,7 +1084,7 @@ window.ADMIN_GATE=on;})();
         <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="TVS" data-chart-series="tvs"><div class="cell-top"><span class="cl">TVS</span></div><div class="cv" data-stat="tvs">$388.9M</div><div class="cs">Total value secured</div></div>
         <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="Stablecoins" data-chart-series="stables"><div class="cell-top"><span class="cl">Stablecoins</span></div><div class="cv" data-stat="stables">$165.0M</div><div class="cs">On-chain stablecoin cap</div></div>
         <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="Total netflow (30D)" data-chart-series="netflow"><div class="cell-top"><span class="cl">Total netflow (30D)</span></div><div class="cv" data-stat="netflow">-$25.5M</div><div class="cs">TVS 30d change, incl. price moves</div></div>
-        <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="App revenue (30D)" data-chart-series="apprev"><div class="cell-top"><span class="cl">App revenue (30D)</span></div><div class="cv" data-stat="apprev">$12.6K</div><div class="cs">Apps on Starknet</div></div>
+        <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="App revenue (30D)" data-chart-series="apprev"><div class="cell-top"><span class="cl">App revenue (30D)</span></div><div class="cv" data-stat="apprev">$2.1M</div><div class="cs">Apps on Starknet</div></div>
         <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="Chain revenue (30D)" data-chart-series="chainrev"><div class="cell-top"><span class="cl">Chain revenue (30D)</span></div><div class="cv" data-stat="chainrev">$120.7K</div><div class="cs">Sequencer revenue</div></div>
       </div></div></div>
     </div>
@@ -1327,7 +1327,7 @@ const M=[
  {k:'tvs',label:'TVS',type:'usd',value:388942978,source:{name:'L2Beat',url:'https://l2beat.com/scaling/projects/starknet'}},
  {k:'stables',label:'Stablecoins',type:'usd',value:164973460,source:{name:'DefiLlama',url:'https://defillama.com/stablecoins/Starknet'}},
  {k:'netflow',label:'Total netflow (30D)',type:'usdflow',value:-25499197,source:{name:'L2Beat',url:'https://l2beat.com/scaling/projects/starknet'}},
- {k:'apprev',label:'App revenue',type:'usd',value:12568,source:{name:'DefiLlama',url:'https://defillama.com/chain/starknet'}},
+ {k:'apprev',label:'App revenue',type:'usd',value:2124918,source:{name:'growthepie',url:'https://www.growthepie.com'}},
  {k:'chainrev',label:'Chain revenue',type:'usd',value:120744,source:{name:'DefiLlama',url:'https://defillama.com/chain/starknet'}},
  {k:'p_tvl',label:'TVL in STRK20 pool',type:'usd',value:528903},
  {k:'p_rev',label:'Revenue from STRK20',type:'usd',value:3045},
@@ -1384,8 +1384,14 @@ const SRC={
     .then(d=>{const ci=d.data.chart.types.indexOf('count');return d.data.chart.data.map(r=>[r[0]*1000,r[ci]]);}));},
   stables(){return cached('stables',TTL['30D'],()=>gj('https://stablecoins.llama.fi/stablecoincharts/Starknet')
     .then(a=>a.map(r=>[(+r.date)*1000,r.totalCirculatingUSD.peggedUSD]).filter(p=>isFinite(p[1]))));},
-  apprev(){return cached('apprev',TTL['30D'],()=>gj('https://api.llama.fi/overview/fees/starknet?excludeTotalDataChartBreakdown=true&dataType=dailyAppRevenue')
-    .then(d=>d.totalDataChart.map(r=>[r[0]*1000,r[1]])));},
+  /* chain-level app revenue from growthepie (CC BY 4.0): the full-history
+     export, filtered to Starknet USD rows. The daily row shape matches the
+     old DefiLlama series, so the weekly-bars pipeline is unchanged. The
+     cache key moved to apprev_gtp so a stale DefiLlama series can never
+     render under the growthepie source line. */
+  apprev(){return cached('apprev_gtp',TTL['30D'],()=>gj('https://api.growthepie.com/v1/export/app_revenue.json')
+    .then(a=>a.filter(r=>r.origin_key==='starknet'&&r.metric_key==='app_fees_usd'&&isFinite(r.value))
+      .map(r=>[Date.parse(r.date),r.value]).sort((x,y)=>x[0]-y[0])));},
   chainrev(){return cached('chainrev',TTL['30D'],()=>gj('https://api.llama.fi/summary/fees/starknet?dataType=dailyRevenue')
     .then(d=>d.totalDataChart.map(r=>[r[0]*1000,r[1]])));},
   gtp(){return cached('gtp',TTL['1Y'],()=>gj('https://api.growthepie.xyz/v1/fundamentals.json')
@@ -2104,10 +2110,11 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
      Sources: CoinGecko /coins/starknet (price, mcap, 24h/7d change,
      circulating supply, BTC cross-rate) · Endur dashboard API (STRK + BTC
      staked; staking-contract get_total_stake over rotating free RPCs as the
-     STRK fallback) · DefiLlama (chain TVL, stablecoins, app revenue 30d,
+     STRK fallback) · DefiLlama (chain TVL, stablecoins,
      chain revenue 30d) · L2Beat (TVS + 30d netflow proxy from one response;
      activity history summed = total TX + avg TPS) · growthepie
-     fundamentals_7d (daily + weekly active addresses) · npm registry
+     fundamentals_7d (daily + weekly active addresses) and fundamentals
+     (chain-level app revenue 30d, CC BY 4.0) · npm registry
      (StarkZap downloads, chunked from first publish) · STRK20 backend
      (pool TVL, private TX; 30d revenue derived at the flat 4-STRK fee).
 
@@ -2128,12 +2135,12 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
   // commit date; update it in the same commit as any value edit. The
   // fallback label derives from it.
   var SEED = {
-    verified: '2026-07-20T08:15:00Z',
-    price: 0.02832224, chg24: -1.81, chg7: -4.95, mcap: 191008881, fdv: 282999565, circ: 6746937561, unlockedPct: 67.47, btcUsd: 64246,
-    strkStaked: 1428664556, strkStakedUsd: 40462980, stakePct: 21.175, btcStaked: 708.36, btcStakedUsd: 45509277, valueStaked: 85972257,
-    tvl: 173097155, tvs: 388942978, netflow: -25499197, stables: 164973460, apprev: 12568, chainrev: 120744,
-    dau: 13221, wau: 43443, totaltx: 307714287, tps: 0.737, downloads: 7356,
-    p_tvl: 528903, p_tx: 36, p_rev: 2590
+    verified: '2026-07-31T09:50:04Z',
+    price: 0.02525706, chg24: -2.19, chg7: -13.00, mcap: 170488255, fdv: 252689837, circ: 6746937561, unlockedPct: 67.47, btcUsd: 63945,
+    strkStaked: 1430248556, strkStakedUsd: 36123874, stakePct: 21.198, btcStaked: 692.25, btcStakedUsd: 44266227, valueStaked: 80390101,
+    tvl: 169146064, tvs: 375481582, netflow: -9893561, stables: 162419648, apprev: 2124918, chainrev: 127790,
+    dau: 15295, wau: 45166, totaltx: 309219399, tps: 1.748, downloads: 7609,
+    p_tvl: 587068, p_tx: 168, p_rev: 319
   };
   var CACHE_KEY = 'strkNumbers_v2'; // v2: state carries per-cluster provenance; older cache shapes are dropped
   var NPM_FIRST_PUBLISH = '2026-02-24'; // starkzap first npm release
@@ -2416,8 +2423,24 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
         var v = row && row.totalCirculatingUSD && row.totalCirculatingUSD.peggedUSD;
         if (!ok(v)) throw 0; return v;
       }));
-    var pAppRev = wrap(getJson('https://api.llama.fi/overview/fees/starknet?excludeTotalDataChart=true&excludeTotalDataChartBreakdown=true&dataType=dailyAppRevenue')
-      .then(function(d){ if (!ok(d.total30d)) throw 0; return d.total30d; }));
+    // chain-level app revenue for Starknet from growthepie (CC BY 4.0),
+    // summed over the last 30 full days. fundamentals.json carries a ~90 day
+    // rolling window, enough for the card; the chart's all-time series pulls
+    // the full export separately, each cached, so the rate limit (10/min) is
+    // never approached. Own guard: a growthepie failure degrades nothing else.
+    var pAppRev = wrap(getJson('https://api.growthepie.com/v1/fundamentals.json')
+      .then(function(a){
+        var rows = [];
+        a.forEach(function(r){
+          if (r.origin_key === 'starknet' && r.metric_key === 'app_fees_usd' && isFinite(r.value)) rows.push([String(r.date), r.value]);
+        });
+        if (rows.length < 30) throw 0;
+        rows.sort(function(x, y){ return x[0] < y[0] ? -1 : 1; });
+        var sum = 0;
+        rows.slice(-30).forEach(function(x){ sum += x[1]; });
+        if (!ok(sum)) throw 0;
+        return sum;
+      }));
     var pChainRev = wrap(getJson('https://api.llama.fi/summary/fees/starknet?dataType=dailyRevenue')
       .then(function(d){ if (!ok(d.total30d)) throw 0; return d.total30d; }));
     var pGtp = wrap(getJson('https://api.growthepie.xyz/v1/fundamentals_7d.json')
