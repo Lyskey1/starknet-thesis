@@ -1952,7 +1952,12 @@ window.__numbersLive={
     tipD.innerHTML=tsLabel(p.ts,curSpan)+STACK_BANDS.concat(['OTHER']).filter(b=>(p.bands[b]||0)>=1)
       .map(b=>'<br><span style="color:'+STACK_COLORS[b]+'">'+b+'</span> $'+abbr(p.bands[b])).join('');
   }else{
-    tipD.textContent=((HIST[curK]&&HIST[curK].weeklyBars)?'Week of ':'')+tsLabel(p.ts,curSpan)+(p.daily!=null?' · +'+(HIST[curK]&&HIST[curK].dailyUsd?'$':'')+abbr(p.daily)+'/day':'');
+    /* per-day figure is sign-aware: positive in the site's up green,
+       negative in the down color, zero neutral. The date part stays
+       unstyled. abbr() strips the sign, so the prefix carries it. */
+    const dSign=p.daily>0?'+':p.daily<0?'-':'';
+    const dCol=p.daily>0?'var(--up)':p.daily<0?'var(--down)':'';
+    tipD.innerHTML=((HIST[curK]&&HIST[curK].weeklyBars)?'Week of ':'')+tsLabel(p.ts,curSpan)+(p.daily!=null?' · <span'+(dCol?' style="color:'+dCol+'"':'')+'>'+dSign+(HIST[curK]&&HIST[curK].dailyUsd?'$':'')+abbr(p.daily)+'/day</span>':'');
   }}));
 ['mouseleave','pointerleave','pointercancel'].forEach(ev=>chart.addEventListener(ev,()=>{cross.style.display='none';cdot.style.display='none';tip.style.display='none';}));
 
