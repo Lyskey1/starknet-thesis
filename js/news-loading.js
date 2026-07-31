@@ -23,7 +23,12 @@
 
   var CSS = [
     /* ---- ring loader: 4 concentric conic rings clipped to annuli ---- */
-    '.nl-loader{display:flex;flex-direction:column;align-items:center;gap:6px;padding:26px 0 14px;text-align:center}',
+    '.nl-anchor{position:relative}',
+    /* the loader OVERLAYS the skeleton grid instead of displacing it:
+       inserting an in-flow element above the grid shifted every card down
+       and back up on removal, which is exactly the layout shift this
+       component exists to avoid */
+    '.nl-loader{position:absolute;left:50%;top:96px;transform:translateX(-50%);z-index:6;pointer-events:none;display:flex;flex-direction:column;align-items:center;gap:6px;padding:22px 30px 18px;text-align:center;background:#0D0E13;border:1px solid rgba(245,242,236,.1);border-radius:16px;box-shadow:0 18px 50px -20px rgba(0,0,0,.8);max-width:min(420px,86vw)}',
     '.nl-rings{position:relative;width:72px;height:72px;margin-bottom:10px;animation:nlBreathe 4s ease-in-out infinite}',
     '.nl-rings i{position:absolute;inset:0;border-radius:50%;will-change:transform}',
     '.nl-rings .nlr1{background:conic-gradient(from 0deg,transparent 0deg,rgba(245,242,236,.5) 90deg,transparent 200deg);-webkit-mask:radial-gradient(closest-side,transparent 34.5%,#000 35% 41%,transparent 41.5%);mask:radial-gradient(closest-side,transparent 34.5%,#000 35% 41%,transparent 41.5%);animation:nlSpin 3s linear infinite}',
@@ -47,7 +52,11 @@
     /* shimmer: the ::after sweep already defined by news-lazy is staggered
        per card through a custom property */
     '.news-skel::after{animation-delay:var(--nl-d,0s)!important}',
+    /* ---- visibility gating: pause, never run hidden work ---- */
+    '.nl-paused .nl-rings,.nl-paused .nl-rings i,.nl-paused .nl-text{animation-play-state:paused}',
+    '.nl-paused-section .news-skel::after{animation-play-state:paused}',
     /* ---- reduced motion: static state, still communicated ---- */
+    '@media(max-width:600px){.nl-loader{top:120px;padding:16px 18px 14px;max-width:80vw}.nl-rings{width:48px;height:48px;margin-bottom:6px}.nl-sub{font-size:11px}}',
     '@media(prefers-reduced-motion:reduce){',
     '.nl-rings,.nl-rings i,.nl-text{animation:none}',
     '}'
@@ -63,6 +72,7 @@
 
   var pending = new Set();
   var loader = null, sectionEl = null, gridEl = null;
+  var io = null, hardCap = null;
 
   function buildLoader() {
     var el = document.createElement('div');
@@ -76,17 +86,40 @@
     return el;
   }
 
+  function syncPause() {
+    if (!loader) return;
+    var hidden = document.hidden || !onScreen;
+    loader.classList.toggle('nl-paused', hidden);
+    if (sectionEl) sectionEl.classList.toggle('nl-paused-section', hidden);
+  }
+  var onScreen = true;
+  document.addEventListener('visibilitychange', syncPause);
+
   function showLoader() {
     if (loader || !gridEl) return;
     injectCss();
     loader = buildLoader();
-    gridEl.parentNode.insertBefore(loader, gridEl);
     sectionEl = gridEl.closest('.news-section') || gridEl.parentNode;
+    sectionEl.classList.add('nl-anchor'); /* positioning context only */
+    sectionEl.appendChild(loader);
     sectionEl.setAttribute('aria-busy', 'true');
+    if ('IntersectionObserver' in window) {
+      io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) { onScreen = en.isIntersecting; });
+        syncPause();
+      }, { rootMargin: '80px 0px' });
+      io.observe(loader);
+    }
+    syncPause();
+    /* hard cap: whatever happens per card, the block-level loader never
+       spins forever (per-card work is itself timeboxed by news-lazy) */
+    hardCap = setTimeout(removeLoader, 15000);
   }
 
   function removeLoader() {
-    if (sectionEl) sectionEl.removeAttribute('aria-busy');
+    if (hardCap) { clearTimeout(hardCap); hardCap = null; }
+    if (io) { io.disconnect(); io = null; }
+    if (sectionEl) { sectionEl.removeAttribute('aria-busy'); sectionEl.classList.remove('nl-paused-section'); sectionEl.classList.remove('nl-anchor'); }
     if (loader && loader.parentNode) loader.parentNode.removeChild(loader); /* removed, not hidden */
     loader = null;
   }

@@ -96,9 +96,16 @@
       /* two-tier loading state (js/news-loading.js): block ring + skeleton
          bones; both are told when this card settles, whatever the outcome */
       if (window.NewsLoading) window.NewsLoading.cardPending(cell, skel, grid);
-      ensureWidgets().then(function(twttr){
+      /* bounded wait: if widgets.js stalls or an embed never hydrates, the
+         card resolves to its readable static fallback instead of spinning.
+         12s covers widgets.js plus embed render on a slow connection while
+         keeping the worst case tolerable. */
+      var timeout = new Promise(function(_, reject){
+        setTimeout(function(){ reject(new Error('embed timeout')); }, 12000);
+      });
+      Promise.race([ensureWidgets().then(function(twttr){
         return twttr.widgets.createTweet(id, skel, { theme: 'dark', dnt: true, conversation: 'none', align: 'center' });
-      }).then(function(node){
+      }), timeout]).then(function(node){
         if (!node) throw new Error('embed unavailable');
         skel.classList.remove('news-skel');
         if (facade && facade.parentNode) facade.parentNode.removeChild(facade);
