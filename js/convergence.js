@@ -38,12 +38,16 @@
   var beats = [0, 1, 2, 3, 4].map(function (i) { return document.getElementById('conv-b' + i); });
   var mark = document.getElementById('conv-mark');
   var shint = document.getElementById('conv-shint');
+  var coreLogo = document.getElementById('conv-corelogo');
   var beatWin = [[0.10, 0.27], [0.28, 0.45], [0.46, 0.61], [0.63, 0.80], [0.88, 1.001]];
 
   /* ---------------- scroll progress (unchanged model) ---------------- */
   var P_ = 0;
   function readProgress() {
-    if (REDUCE) { P_ = 1; return; }
+    /* reduced motion settles at 0.96, not 1.0: the final beat window is
+       still open there, so the settled frame keeps the closing copy AND
+       the mark readable instead of showing an already-faded beat */
+    if (REDUCE) { P_ = 0.96; return; }
     var r = sceneEl.getBoundingClientRect();
     var denom = r.height - window.innerHeight;
     P_ = denom > 0 ? Math.max(0, Math.min(1, -r.top / denom)) : 0;
@@ -284,6 +288,15 @@
     }
     if (mark) mark.style.opacity = smooth(0.88, 0.985, p).toFixed(3);
     if (shint) shint.style.opacity = (1 - smooth(0.03, 0.12, p)).toFixed(3);
+    if (coreLogo) {
+      /* the mark arrives as the core opens (uMarkIn recedes the hot spot
+         into an annular halo, so the centre is legible, not blown out) */
+      var mo = m.markIn;
+      coreLogo.style.opacity = mo.toFixed(3);
+      coreLogo.style.transform = REDUCE
+        ? 'translate(-50%,-50%) scale(1)'
+        : 'translate(-50%,-50%) scale(' + (0.62 + 0.38 * mo).toFixed(3) + ')';
+    }
     if (glOk) {
       gl.uniform2f(uni.uRes, canvas.width, canvas.height);
       gl.uniform1f(uni.uTime, time);
@@ -314,7 +327,7 @@
   document.addEventListener('visibilitychange', sync);
 
   readProgress(); resize();
-  if (REDUCE) { update(1, 0); }
+  if (REDUCE) { update(0.96, 0); }
   else if (!glOk) {
     /* no WebGL at all: static #05060a backdrop, beats and mark still run
        from scroll (no animation frame loop at all) */

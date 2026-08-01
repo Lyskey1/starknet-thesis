@@ -97,6 +97,10 @@
   .conv-anchored{background:radial-gradient(58% 96% at 50% 50%,rgba(5,6,10,.85),rgba(5,6,10,0) 80%);padding:26px 34px;border-radius:20px}
   .conv-anchored .eb{text-shadow:0 1px 12px rgba(0,0,0,.95),0 0 4px rgba(0,0,0,.9)}
   .conv-anchored p{text-shadow:0 2px 16px rgba(0,0,0,.95),0 0 6px rgba(0,0,0,.85)}
+  /* centre mark: the same Starknet asset the previous scene used, now the
+     single end-of-scene mark, repositioned to the core and retimed to the
+     closing window (driven by js/convergence.js, transform-only) */
+  .conv-corelogo{position:absolute;left:50%;top:50%;width:clamp(96px,14vmin,150px);height:auto;opacity:0;transform:translate(-50%,-50%) scale(.62);will-change:opacity,transform;filter:drop-shadow(0 0 26px rgba(139,92,246,.55));pointer-events:none}
   .conv-scrollhint{position:absolute;left:50%;bottom:5%;transform:translateX(-50%);font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:rgba(245,242,236,.35)}
   .conv-vig{position:absolute;inset:0;pointer-events:none;z-index:1;background:radial-gradient(120% 90% at 50% 45%,transparent 55%,rgba(0,0,0,.55) 100%)}
   /* seamless fade at the BOTTOM of the scene into the section below (which is set to the same #05060a) */
@@ -110,7 +114,7 @@
   /* ---------- <=860px: native mobile treatment (no WebGL, no scroll-jack) ----------
      The scene script never runs here, so nothing below depends on JS-set styles. */
   @media(max-width:860px){
-    #conv-gl,.conv-vig,.conv-bottomfade,.conv-scrollhint{display:none}
+    #conv-gl,.conv-vig,.conv-bottomfade,.conv-scrollhint,.conv-corelogo{display:none}
     .conv-scene{height:auto;width:100%;margin-left:0}
     .conv-stage{position:static;height:auto;overflow:visible;padding:40px 0 24px}
     .conv-overlay{position:static;inset:auto;pointer-events:auto}
@@ -135,6 +139,7 @@
         <div class="conv-beat" id="conv-b2"><div class="eb" style="color:#F7931A">03 &middot; Bitcoin</div><p>Bitcoin is crypto's flagship, the most capitalized asset of all. But it still needs scale and real DeFi use cases to fulfill Satoshi's vision.</p></div>
         <div class="conv-beat" id="conv-b3"><div class="eb" style="color:#A78BFA">Convergence</div><p>One chain is bringing an answer to all of it.</p></div>
         <div class="conv-beat" id="conv-b4"><p>And STRK is the ticker on the whole thesis.</p></div>
+        <img class="conv-corelogo" id="conv-corelogo" src="assets/img/stark-logo.png" alt="Starknet logo arriving at the convergence core" width="224" height="224" loading="lazy" decoding="async">
         <div class="conv-mark" id="conv-mark">STARKNET</div>
         <div class="conv-scrollhint" id="conv-shint">↓ Scroll</div>
       </div>
