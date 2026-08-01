@@ -38,14 +38,14 @@
   var BAND_HEIGHT = 0.46;    /* ribbon centreline, fraction of hero height from top */
   var SPREAD = 0.15;         /* bloom half-width, fraction of hero height */
   var CORE_WIDTH = 0.016;    /* bright spine half-width, same units */
-  var BRIGHTNESS = 1.05;     /* overall ribbon energy into the tone map */
+  var BRIGHTNESS = 0.95;     /* overall ribbon energy into the tone map */
   var SPEED = 0.045;         /* undulation drift, cycles per second-ish */
   var SCALE = 1.55;          /* noise frequency along the width */
   var DISPLACE = 0.10;       /* vertical undulation amplitude, fraction of height */
   var OCTAVES = 2;           /* noise octaves: two, per the cost budget */
   var RENDER_SCALE = 0.6;    /* fraction of devicePixelRatio; low-frequency ribbon hides upscaling */
   var DPR_CAP = 2;
-  var LEGIBILITY_DIM = 0.52; /* local dimming strength behind the hero copy block */
+  var LEGIBILITY_DIM = 0.985; /* local dimming strength behind the hero copy block */
 
   var canvas = document.getElementById('lh-field');
   if (!canvas) return;
@@ -190,7 +190,7 @@
       var wr = wrap.getBoundingClientRect();
       var cx = (wr.left + wr.width / 2 - r.left) / W;
       var cy = 1 - (wr.top + wr.height / 2 - r.top) / H;
-      gl.uniform4f(uni.uText, cx, cy, (wr.width / 2) / W * 0.86, (wr.height / 2) / H * 0.92);
+      gl.uniform4f(uni.uText, cx, cy, (wr.width / 2) / W * 1.02, (wr.height / 2) / H * 1.0);
     }
     applyOpacity();
     if (isStatic()) draw(12.0); /* one settled frame, fixed phase */
