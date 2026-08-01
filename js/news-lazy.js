@@ -112,6 +112,9 @@
         if (window.NewsLoading) window.NewsLoading.cardResolved(cell, skel);
       }).catch(function(){
         if (window.NewsLoading) window.NewsLoading.cardResolved(cell, skel);
+        // an X embed iframe may hold focus: removing it must not bounce
+        // focus onto the accordion toggle
+        if (window.NewsLoading) window.NewsLoading.guardFocus(skel);
         if (skel.parentNode) skel.parentNode.removeChild(skel);
         if (facade) facade.style.display = ''; // keep the linked static card
       });

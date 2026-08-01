@@ -131,6 +131,10 @@
     .ne-grid { grid-template-columns: 1fr; }
   }
 
+  /* keyboard focus on the news accordion header: page accent, not the
+     browser default blue */
+  .news-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 12px; }
+  .news-toggle:focus:not(:focus-visible) { outline: none; }
   /* ===== News embeds (real X/Twitter widgets + fallback) ===== */
   .news-cell { min-width: 0; align-self: start; }
   .news-head { margin-bottom: 12px; }
@@ -1342,6 +1346,9 @@
   }
 
   function renderPublic(){
+    // a hydrated X embed iframe may hold focus; wiping the grid must not
+    // bounce focus onto the accordion toggle
+    if (window.NewsLoading) window.NewsLoading.guardFocus(grid);
     grid.innerHTML = '';
     publicCells = [];
     var pos = displayOrder();

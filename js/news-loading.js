@@ -34,10 +34,14 @@
     '@keyframes nlSpin{to{transform:rotate(360deg)}}',
     '@keyframes nlSpinRev{to{transform:rotate(-360deg)}}',
     '@keyframes nlBreathe{0%,100%{transform:scale(1)}50%{transform:scale(1.02)}}',
-    /* ---- loader shell: always an overlay inside a placeholder box, so it
-       occupies no flow space (zero layout shift) and covers no content ---- */
+    /* ---- loader shells. Charts: an overlay inside the empty plot area.
+       News: ONE block-level row in normal flow ABOVE the skeleton grid,
+       never inside a card and covering nothing ---- */
     '.nl-host{position:relative}',
     '.nl-loader{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;pointer-events:none;text-align:center}',
+    '.nl-done{opacity:0;visibility:hidden}',
+    '.nl-done .nl-rings,.nl-done .nl-rings i,.nl-done .nl-text{animation:none!important}',
+    '.nl-block{position:static;inset:auto;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;pointer-events:none;text-align:center;padding:10px 0 26px}',
     '.nl-text{animation:nlPulse 2.8s ease-in-out infinite}',
     '@keyframes nlPulse{0%,100%{opacity:.9}50%{opacity:.5}}',
     '.nl-title{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:rgba(245,242,236,.75)}',
@@ -53,6 +57,7 @@
     '.news-skel::after{animation-delay:var(--nl-d,0s)!important}',
     /* ---- visibility gating: pause, never run hidden work ---- */
     '.nl-paused .nl-rings,.nl-paused .nl-rings i,.nl-paused .nl-text{animation-play-state:paused}',
+    '.nl-block .nl-rings{margin-bottom:2px}',
     '.nl-paused-section .news-skel::after{animation-play-state:paused}',
     /* ---- reduced motion: static ring, state still communicated ---- */
     '@media(prefers-reduced-motion:reduce){',
@@ -84,8 +89,17 @@
   /* ================= NEWS: block ring + per-card bones ================= */
 
   var pending = new Set();
-  var loader = null, sectionEl = null, hostSkel = null, hardCap = null, io = null;
+  var loader = null, sectionEl = null, gridEl = null, hardCap = null, io = null;
   var onScreen = true;
+
+  /* never let a subtree removal bounce focus onto the accordion toggle: if
+     focus is inside the node about to be removed (an X embed iframe can
+     take it during hydration), park it nowhere, exactly where it was for
+     a reader who never focused anything */
+  function guardFocus(node) {
+    var ae = document.activeElement;
+    if (node && ae && ae !== document.body && node.contains(ae) && ae.blur) ae.blur();
+  }
 
   function syncPause() {
     if (loader) {
@@ -97,35 +111,26 @@
   }
   document.addEventListener('visibilitychange', syncPause);
 
-  /* the block ring lives INSIDE a pending card's skeleton box: a placeholder
-     region, so the ring never covers a headline or any other real content */
-  function mountRing() {
-    var target = null;
-    pending.forEach(function (cell) {
-      if (!target) {
-        var sk = cell.querySelector('.news-skel');
-        if (sk && cell.style.display !== 'none') target = sk;
-      }
-    });
-    if (!target) { removeLoader(); return; }
-    if (!loader) {
-      injectCss();
-      loader = buildRing(48, 'Loading posts from X', '');
-      sectionEl = target.closest('.news-section');
-      if (sectionEl) sectionEl.setAttribute('aria-busy', 'true');
-      if ('IntersectionObserver' in window) {
-        io = new IntersectionObserver(function (entries) {
-          entries.forEach(function (en) { onScreen = en.isIntersecting; });
-          syncPause();
-        }, { rootMargin: '80px 0px' });
-      }
-      hardCap = setTimeout(removeLoader, 15000);
+  /* ONE ring for the whole block, in normal flow ABOVE the skeleton grid:
+     never inside a card, never covering the cards it announces */
+  function mountRing(cell) {
+    if (loader) return;
+    injectCss();
+    gridEl = cell.closest('.news-grid') || cell.parentNode;
+    loader = buildRing(48, 'Loading posts from X', '');
+    loader.classList.remove('nl-loader');
+    loader.classList.add('nl-block');
+    gridEl.parentNode.insertBefore(loader, gridEl);
+    sectionEl = gridEl.closest('.news-section');
+    if (sectionEl) sectionEl.setAttribute('aria-busy', 'true');
+    if ('IntersectionObserver' in window) {
+      io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) { onScreen = en.isIntersecting; });
+        syncPause();
+      }, { rootMargin: '80px 0px' });
+      io.observe(loader);
     }
-    if (hostSkel !== target) {
-      hostSkel = target;
-      target.appendChild(loader); /* moves the node when re-anchoring */
-      if (io) { io.disconnect(); io.observe(loader); }
-    }
+    hardCap = setTimeout(removeLoader, 15000);
     syncPause();
   }
 
@@ -133,8 +138,37 @@
     if (hardCap) { clearTimeout(hardCap); hardCap = null; }
     if (io) { io.disconnect(); io = null; }
     if (sectionEl) { sectionEl.removeAttribute('aria-busy'); sectionEl.classList.remove('nl-paused-section'); }
-    if (loader && loader.parentNode) loader.parentNode.removeChild(loader); /* removed, not hidden */
-    loader = null; hostSkel = null;
+    if (!loader) { gridEl = null; return; }
+    /* Two-step removal. Removing an in-flow row reflows everything below
+       it, which scores as layout shift if the reader is just watching. So
+       the loader finishes INSTANTLY (invisible, zero running animations,
+       aria-busy cleared) and its empty row is dropped from the DOM at the
+       first moment that cannot shift anything the reader sees: the next
+       real input (shift windows after input are excluded by design), or
+       the moment the row leaves the viewport, or a final safety cap. */
+    var el = loader;
+    loader = null; gridEl = null;
+    el.classList.add('nl-done');
+    var dropped = false;
+    var dropIo = null, capT = null;
+    function drop() {
+      if (dropped) return;
+      dropped = true;
+      ['pointerdown', 'keydown', 'touchstart'].forEach(function (ev) { document.removeEventListener(ev, drop, true); });
+      if (dropIo) dropIo.disconnect();
+      if (capT) clearTimeout(capT);
+      if (el.parentNode) { guardFocus(el); el.parentNode.removeChild(el); } /* removed, not hidden */
+    }
+    var r = el.getBoundingClientRect();
+    if (r.bottom <= 0 || r.top >= (window.innerHeight || 0)) { drop(); return; } /* off screen: nothing visible can shift */
+    ['pointerdown', 'keydown', 'touchstart'].forEach(function (ev) { document.addEventListener(ev, drop, true); });
+    if ('IntersectionObserver' in window) {
+      dropIo = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) { if (!en.isIntersecting) drop(); });
+      });
+      dropIo.observe(el);
+    }
+    capT = setTimeout(drop, 30000);
   }
 
   window.NewsLoading = {
@@ -150,7 +184,7 @@
       skel.appendChild(bones);
       var rank = typeof cell.__newsRank === 'number' ? cell.__newsRank : pending.size;
       skel.style.setProperty('--nl-d', ((rank % 12) * 0.12).toFixed(2) + 's');
-      mountRing();
+      mountRing(cell);
     },
     cardResolved: function (cell, skel) {
       pending.delete(cell);
@@ -159,8 +193,8 @@
         if (bones && bones.parentNode) bones.parentNode.removeChild(bones);
       }
       if (!pending.size) removeLoader();
-      else if (skel && hostSkel === skel) mountRing(); /* re-anchor to a still-pending card */
     },
+    guardFocus: guardFocus,
   };
 
   /* ================= CHARTS: one ring per plot area ================= */

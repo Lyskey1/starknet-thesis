@@ -734,6 +734,10 @@
     .pgrid td:nth-child(-n+3) .tipbox { left: 0; transform: none; }
     .pgrid td:nth-last-child(-n+3) .tipbox { left: auto; right: 0; transform: none; }
   }
+  /* keyboard focus on the news accordion header: page accent, not the
+     browser default blue */
+  .news-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 12px; }
+  .news-toggle:focus:not(:focus-visible) { outline: none; }
 </style>
 <script src="js/admin-gate.js"></script>
 </head>
@@ -2446,6 +2450,9 @@
   }
 
   function renderPublic(){
+    // a hydrated X embed iframe may hold focus; wiping the grid must not
+    // bounce focus onto the accordion toggle
+    if (window.NewsLoading) window.NewsLoading.guardFocus(grid);
     grid.innerHTML = '';
     publicCells = [];
     var pos = displayOrder();

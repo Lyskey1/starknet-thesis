@@ -265,6 +265,10 @@
   .news-loading { display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 140px; border: 1px solid var(--border); border-radius: 12px; background: rgba(255,255,255,0.012); font-family: var(--mono); font-size: 12px; letter-spacing: 0.04em; color: rgba(245,242,236,0.4); }
   .news-spinner { width: 15px; height: 15px; border-radius: 50%; border: 2px solid rgba(var(--accent-rgb),0.25); border-top-color: var(--orange); animation: newsSpin 0.8s linear infinite; flex-shrink: 0; }
   @keyframes newsSpin { to { transform: rotate(360deg); } }
+  /* keyboard focus on the news accordion header: page accent, not the
+     browser default blue */
+  .news-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 12px; }
+  .news-toggle:focus:not(:focus-visible) { outline: none; }
 </style>
 <style>
 .th-cd{--q:#3DA9FC;--ink:#F5F2EC;--muted:#8b909c;--hair:rgba(245,242,236,.08);max-width:1000px;margin:0 auto;}
@@ -1515,6 +1519,9 @@ var VIDEOS = [
   }
 
   function renderPublic(){
+    // a hydrated X embed iframe may hold focus; wiping the grid must not
+    // bounce focus onto the accordion toggle
+    if (window.NewsLoading) window.NewsLoading.guardFocus(grid);
     grid.innerHTML = '';
     publicCells = [];
     var pos = displayOrder();
