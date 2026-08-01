@@ -94,6 +94,7 @@
     'uniform vec3 uEmph;',
     'uniform float uMerge; uniform float uForm; uniform float uMarkIn;',
     'uniform vec4 uClear; uniform float uClearA;',
+    'uniform float uRamp;',
     /* existing CSS accents only: #F7931A, #3DA9FC, #1FCB94, #A78BFA, #8B5CF6 */
     'const vec3 ORANGE = vec3(0.969, 0.576, 0.102);',
     'const vec3 BLUE   = vec3(0.239, 0.663, 0.988);',
@@ -124,7 +125,9 @@
     '}',
     'void main(){',
     '  vec2 p = (gl_FragCoord.xy - 0.5 * uRes) / min(uRes.x, uRes.y);',
-    '  vec3 col = vec3(0.008, 0.010, 0.016);',
+    /* LIGHT ONLY: the page background is added back after tone mapping as
+       the exact page value, so unlit canvas equals the page to the byte */
+    '  vec3 col = vec3(0.0);',
     /* sparse static stars */
     '  vec2 sp = floor(gl_FragCoord.xy / 2.0);',
     '  float st = step(0.9987, h21(sp));',
@@ -160,13 +163,18 @@
     '  col = 1.0 - exp(-col * 1.4);',
     '  col = pow(col, vec3(1.0 / 2.2));',
     '  col += (h21(gl_FragCoord.xy + fract(uTime) * 61.0) - 0.5) / 255.0;',
-    '  gl_FragColor = vec4(col, 1.0);',
+    /* byte-exact page background under the light (#05060a) */
+    '  col += vec3(5.0, 6.0, 10.0) / 255.0;',
+    /* entry ramp rides the alpha: at progress 0 the canvas is fully
+       transparent and the scene EMERGES from the page black instead of
+       switching on */
+    '  gl_FragColor = vec4(col, uRamp);',
     '}',
   ].join('\n');
   var VERT = 'attribute vec2 aP; void main(){ gl_Position = vec4(aP, 0.0, 1.0); }';
 
-  var gl = canvas.getContext('webgl2', { antialias: false, alpha: false, depth: false, stencil: false, powerPreference: 'high-performance' }) ||
-           canvas.getContext('webgl', { antialias: false, alpha: false, depth: false, stencil: false });
+  var GLATTRS = { antialias: false, alpha: true, premultipliedAlpha: false, depth: false, stencil: false, powerPreference: 'high-performance' };
+  var gl = canvas.getContext('webgl2', GLATTRS) || canvas.getContext('webgl', GLATTRS);
   var glOk = false, uni = {};
   if (gl) {
     try {
@@ -185,7 +193,7 @@
       var loc = gl.getAttribLocation(prog, 'aP');
       gl.enableVertexAttribArray(loc);
       gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
-      ['uRes', 'uTime', 'uC0', 'uC1', 'uC2', 'uEmph', 'uMerge', 'uForm', 'uMarkIn', 'uClear', 'uClearA'].forEach(function (n) { uni[n] = gl.getUniformLocation(prog, n); });
+      ['uRes', 'uTime', 'uC0', 'uC1', 'uC2', 'uEmph', 'uMerge', 'uForm', 'uMarkIn', 'uClear', 'uClearA', 'uRamp'].forEach(function (n) { uni[n] = gl.getUniformLocation(prog, n); });
       glOk = true;
     } catch (e) { glOk = false; }
   }
@@ -309,6 +317,9 @@
       gl.uniform1f(uni.uMarkIn, m.markIn);
       gl.uniform4f(uni.uClear, clear.x, clear.y, clear.hw, clear.hh);
       gl.uniform1f(uni.uClearA, clear.a);
+      gl.uniform1f(uni.uRamp, smooth(0.0, 0.05, p));
+      gl.clearColor(0.0, 0.0, 0.0, 0.0);
+      gl.clear(gl.COLOR_BUFFER_BIT);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
     }
   }

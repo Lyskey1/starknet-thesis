@@ -105,6 +105,9 @@
   .conv-vig{position:absolute;inset:0;pointer-events:none;z-index:1;background:radial-gradient(120% 90% at 50% 45%,transparent 55%,rgba(0,0,0,.55) 100%)}
   /* seamless fade at the BOTTOM of the scene into the section below (which is set to the same #05060a) */
   .conv-bottomfade{position:absolute;left:0;right:0;bottom:0;height:220px;background:linear-gradient(transparent,#05060a);pointer-events:none;z-index:1}
+  /* matching fade at the TOP edge, from the page background to transparent,
+     so the reader meets the stage with no brightness step */
+  .conv-topfade{position:absolute;left:0;right:0;top:0;height:150px;background:linear-gradient(#05060a,transparent);pointer-events:none;z-index:1}
   /* full-bleed base so the region below the scene is ONE uniform #05060a edge to edge (the
      width-constrained .landing would leave the lighter page base showing on the flanks). The
      fixed grain layer (body::after) still lays on top of this, uniformly across the full width. */
@@ -114,7 +117,7 @@
   /* ---------- <=860px: native mobile treatment (no WebGL, no scroll-jack) ----------
      The scene script never runs here, so nothing below depends on JS-set styles. */
   @media(max-width:860px){
-    #conv-gl,.conv-vig,.conv-bottomfade,.conv-scrollhint,.conv-corelogo{display:none}
+    #conv-gl,.conv-vig,.conv-topfade,.conv-bottomfade,.conv-scrollhint,.conv-corelogo{display:none}
     .conv-scene{height:auto;width:100%;margin-left:0}
     .conv-stage{position:static;height:auto;overflow:visible;padding:40px 0 24px}
     .conv-overlay{position:static;inset:auto;pointer-events:auto}
@@ -132,6 +135,7 @@
     <div class="conv-stage">
       <canvas id="conv-gl"></canvas>
       <div class="conv-vig"></div>
+      <div class="conv-topfade" aria-hidden="true"></div>
       <div class="conv-bottomfade"></div>
       <div class="conv-overlay">
         <div class="conv-beat" id="conv-b0"><div class="eb" style="color:#1FCB94">01 &middot; Privacy</div><p>Onchain privacy is the only way to take blockchains to a real, planetary scale.</p></div>
