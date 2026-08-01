@@ -89,6 +89,7 @@
     'uniform vec2 uC0; uniform vec2 uC1; uniform vec2 uC2;',
     'uniform vec3 uEmph;',
     'uniform float uMerge; uniform float uForm; uniform float uMarkIn;',
+    'uniform vec4 uClear; uniform float uClearA;',
     /* existing CSS accents only: #F7931A, #3DA9FC, #1FCB94, #A78BFA, #8B5CF6 */
     'const vec3 ORANGE = vec3(0.969, 0.576, 0.102);',
     'const vec3 BLUE   = vec3(0.239, 0.663, 0.988);',
@@ -142,6 +143,14 @@
     '    core += (vec3(0.93, 0.90, 1.0) * hot * 1.7 + VIOLET * halo * 1.05) * uForm;',
     '    col += core;',
     '  }',
+    /* a soft clearing behind the active beat: copy carves its own dark
+       space out of the rings, so contrast holds wherever the text travels */
+    '  if (uClearA > 0.001){',
+    '    vec2 dq = abs(p - uClear.xy) - uClear.zw;',
+    '    float dbox = length(max(dq, 0.0)) + min(max(dq.x, dq.y), 0.0);',
+    '    float m = 1.0 - smoothstep(0.0, 0.13, dbox);',
+    '    col *= 1.0 - uClearA * 0.95 * m;',
+    '  }',
     /* filmic tone map, gamma, one-step dither: additive rings clip to flat
        white without the tone map; wide dark gradients band without dither */
     '  col = 1.0 - exp(-col * 1.4);',
@@ -172,7 +181,7 @@
       var loc = gl.getAttribLocation(prog, 'aP');
       gl.enableVertexAttribArray(loc);
       gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
-      ['uRes', 'uTime', 'uC0', 'uC1', 'uC2', 'uEmph', 'uMerge', 'uForm', 'uMarkIn'].forEach(function (n) { uni[n] = gl.getUniformLocation(prog, n); });
+      ['uRes', 'uTime', 'uC0', 'uC1', 'uC2', 'uEmph', 'uMerge', 'uForm', 'uMarkIn', 'uClear', 'uClearA'].forEach(function (n) { uni[n] = gl.getUniformLocation(prog, n); });
       glOk = true;
     } catch (e) { glOk = false; }
   }
@@ -185,17 +194,93 @@
     if (canvas.width !== W || canvas.height !== H) {
       canvas.width = W; canvas.height = H;
       if (glOk) gl.viewport(0, 0, W, H);
+      measureBeats();
     }
   }
   window.addEventListener('resize', resize);
+  /* text metrics change when the web fonts land: re-measure then */
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { measureBeats(); });
+
+  /* ---------------- beats: first three anchored to their system ----------------
+     Positioned with transform ONLY; sizes are read on resize, never during
+     scroll, so beat movement cannot reflow. */
+  var beatBox = [];
+  function measureBeats() {
+    for (var i = 0; i < 3; i++) {
+      var el = beats[i];
+      if (!el) continue;
+      if (!el.__anchored) {
+        el.__anchored = true;
+        el.classList.add('conv-anchored');
+        el.style.left = '0';
+        el.style.bottom = 'auto';
+        el.style.top = '0';
+        el.style.width = 'min(460px, 36vw)';
+      }
+      beatBox[i] = { w: el.offsetWidth, h: el.offsetHeight };
+    }
+  }
+
+  function placeBeat(i, o) {
+    var el = beats[i];
+    var sys = BEAT_SYS[i];
+    var c = centers[sys];
+    var W = canvas.clientWidth, H = canvas.clientHeight;
+    var m = Math.min(W, H); /* shader p spans -0.5..0.5 across the SHORTER edge */
+    var cx = W / 2 + c.x * m;
+    var cy = H / 2 - c.y * m;
+    /* clear of the brightest ring band: below the system, past max radius */
+    var box = beatBox[i] || { w: 400, h: 120 };
+    var ringMax = 0.38 * m; /* (0.045 + 0.335) in p units */
+    var x = cx - box.w / 2;
+    var y = cy + ringMax * 0.62 + 16;
+    /* clamp the whole text box inside the stage with padding */
+    var PAD = 22;
+    x = Math.max(PAD, Math.min(W - box.w - PAD, x));
+    y = Math.max(PAD, Math.min(H - box.h - PAD, y));
+    el.style.opacity = o.toFixed(3);
+    el.style.transform = 'translate3d(' + x.toFixed(1) + 'px,' + (y + (1 - o) * 16).toFixed(1) + 'px,0)';
+    return { x: x, y: y, w: box.w, h: box.h, o: o };
+  }
+
+  /* bottom-positioned beats (3, 4): geometry from CSS, read cheaply */
+  var bottomRect = [null, null];
+  function beatBottomRect(i) {
+    var idx = i - 3;
+    if (!bottomRect[idx]) {
+      var el = beats[i];
+      bottomRect[idx] = { w: el.offsetWidth, h: el.offsetHeight };
+    }
+    var W = canvas.clientWidth, H = canvas.clientHeight;
+    var b = bottomRect[idx];
+    return { x: W / 2 - b.w / 2, y: H * 0.87 - b.h, w: b.w, h: b.h };
+  }
+  window.addEventListener('resize', function () { bottomRect = [null, null]; });
 
   /* ---------------- per-frame update ---------------- */
   function update(p, time) {
     var m = model(p);
+    var clear = { a: 0, x: 0, y: 0, hw: 0, hh: 0 };
+    var W = canvas.clientWidth, H = canvas.clientHeight, MIN = Math.min(W, H);
     for (var i = 0; i < 5; i++) {
       var o = bump(p, beatWin[i][0], beatWin[i][1]);
-      beats[i].style.opacity = o.toFixed(3);
-      beats[i].style.transform = 'translateX(-50%) translateY(' + ((1 - o) * 16).toFixed(1) + 'px)';
+      var rect = null;
+      if (i < 3) rect = placeBeat(i, o);
+      else {
+        beats[i].style.opacity = o.toFixed(3);
+        beats[i].style.transform = 'translateX(-50%) translateY(' + ((1 - o) * 16).toFixed(1) + 'px)';
+        if (o > 0.01) {
+          var br = beats[i].getBoundingClientRect ? beatBottomRect(i) : null;
+          rect = br;
+        }
+      }
+      if (rect && o > clear.a) {
+        clear.a = o;
+        clear.x = (rect.x + rect.w / 2 - W / 2) / MIN;
+        clear.y = (H / 2 - (rect.y + rect.h / 2)) / MIN;
+        clear.hw = (rect.w / 2) / MIN;
+        clear.hh = (rect.h / 2) / MIN;
+      }
     }
     if (mark) mark.style.opacity = smooth(0.88, 0.985, p).toFixed(3);
     if (shint) shint.style.opacity = (1 - smooth(0.03, 0.12, p)).toFixed(3);
@@ -209,6 +294,8 @@
       gl.uniform1f(uni.uMerge, m.merge);
       gl.uniform1f(uni.uForm, m.form);
       gl.uniform1f(uni.uMarkIn, m.markIn);
+      gl.uniform4f(uni.uClear, clear.x, clear.y, clear.hw, clear.hh);
+      gl.uniform1f(uni.uClearA, clear.a);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
     }
   }
