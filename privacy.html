@@ -215,6 +215,10 @@
     transform: rotate(45deg); }
   .pb-rosette { position: absolute; top: 50%; right: -110px; width: 320px; height: 320px;
     transform: translateY(-50%); pointer-events: none; }
+  .pb-rosette-b { top: auto; right: auto; bottom: -78px; left: -78px; width: 210px; height: 210px; transform: none; }
+  .pb-denom { position: absolute; top: 58px; right: 22px; font-family: var(--mono); font-size: 42px;
+    font-weight: 600; line-height: 1; color: transparent; -webkit-text-stroke: 1px rgba(var(--accent-rgb), .38);
+    letter-spacing: .04em; pointer-events: none; }
   .pb-low { margin-top: auto; position: relative; z-index: 1; }
   .pb-kicker { font-family: var(--mono); font-size: 11px; letter-spacing: .18em; color: var(--em); }
   .pb-status { font-family: var(--mono); font-size: 9px; letter-spacing: .3em; color: var(--muted); margin-top: 18px; }
@@ -542,15 +546,15 @@
   .pmx-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
   .pmx-t { font-family: var(--mono); font-size: 11px; letter-spacing: .14em; color: var(--ink); }
   .pmx-sub { font-family: var(--mono); font-size: 9.5px; letter-spacing: .1em; color: var(--muted); }
-  .pmx-body { margin-top: 14px; min-height: 150px; display: flex; flex-direction: column; justify-content: center; }
+  .pmx-body { margin-top: 14px; min-height: 190px; display: flex; flex-direction: column; justify-content: center; }
   .pmx-body svg { width: 100%; height: auto; display: block; }
   .pmx-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 10px; }
   .pmx-legend span { font-family: var(--mono); font-size: 9.5px; letter-spacing: .08em; color: var(--muted); display: inline-flex; align-items: center; gap: 6px; }
   .pmx-legend i { width: 9px; height: 9px; border-radius: 2px; display: inline-block; }
   .pmx-src { font-family: var(--mono); font-size: 10px; letter-spacing: .1em; color: var(--em); text-decoration: underline; text-underline-offset: 3px; margin-top: 14px; align-self: flex-start; }
-  .pmx-live { display: flex; align-items: center; justify-content: center; min-height: 150px; border: 1px dashed var(--line); border-radius: 10px; font-family: var(--mono); font-size: 12px; letter-spacing: .14em; color: var(--em); text-decoration: none; transition: border-color .2s, background .2s; }
+  .pmx-live { display: flex; align-items: center; justify-content: center; min-height: 190px; border: 1px dashed var(--line); border-radius: 10px; font-family: var(--mono); font-size: 12px; letter-spacing: .14em; color: var(--em); text-decoration: none; transition: border-color .2s, background .2s; }
   .pmx-live:hover { border-color: var(--em-line); background: rgba(var(--accent-rgb),.05); }
-  .pmx-skel { min-height: 150px; border-radius: 10px; background: linear-gradient(100deg, #0B0F10 40%, #131A1D 50%, #0B0F10 60%); background-size: 200% 100%; animation: pmxShimmer 1.4s linear infinite; }
+  .pmx-skel { min-height: 190px; border-radius: 10px; background: linear-gradient(100deg, #0B0F10 40%, #131A1D 50%, #0B0F10 60%); background-size: 200% 100%; animation: pmxShimmer 1.4s linear infinite; }
   @keyframes pmxShimmer { to { background-position: -200% 0; } }
   .pmx-axis { font-family: var(--mono); font-size: 9px; fill: #6B7478; letter-spacing: .06em; }
   .pmx-grid-line { stroke: rgba(245,242,236,.06); stroke-width: 1; }
@@ -1615,9 +1619,8 @@
       m.textContent = new Array(21).join(MICRO + '   ');
     });
 
-    var svg = card.querySelector('.pb-rosette');
-    if (svg) {
-      var NS = 'http://www.w3.org/2000/svg', N = 22;
+    var NS = 'http://www.w3.org/2000/svg';
+    function lathe(svg, N, op){
       svg.setAttribute('viewBox', '0 0 320 320');
       for (var k = 0; k < N; k++) {
         var e = document.createElementNS(NS, 'ellipse');
@@ -1626,10 +1629,27 @@
         e.setAttribute('transform', 'rotate(' + (k * 180 / N).toFixed(2) + ' 160 160)');
         e.setAttribute('fill', 'none');
         e.setAttribute('stroke', em);
-        e.setAttribute('stroke-opacity', '.13');
+        e.setAttribute('stroke-opacity', op);
         e.setAttribute('stroke-width', '.5');
         svg.appendChild(e);
       }
+    }
+    var svg = card.querySelector('.pb-rosette');
+    if (svg) lathe(svg, 22, '.13');
+    /* engraving density: a second, smaller lathe rosette bottom-left and a
+       denomination-style corner numeral (the bill's own number, no new copy) */
+    var front = card.querySelector('.pb-front');
+    if (front) {
+      var svg2 = document.createElementNS(NS, 'svg');
+      svg2.setAttribute('class', 'pb-rosette pb-rosette-b');
+      svg2.setAttribute('aria-hidden', 'true');
+      lathe(svg2, 16, '.10');
+      front.appendChild(svg2);
+      var dn = document.createElement('div');
+      dn.className = 'pb-denom';
+      dn.setAttribute('aria-hidden', 'true');
+      dn.textContent = '0' + (i + 1);
+      front.appendChild(dn);
     }
 
     var kick = card.querySelector('.pb-kicker');
@@ -2140,30 +2160,30 @@
       get('/agg/swap-by-token').then(function(d){
         if (!d.days || !d.days.length) throw new Error('empty');
         var split = topSeries(d.days, 'byToken', 4);
-        stage('swaps', stackedBars(d.days, split, 380, 200, fmtUsd), legend(split.names),
-          { days: d.days, W: 380, P: PAD_STD, rows: stackRows(split, fmtUsd) });
+        stage('swaps', stackedBars(d.days, split, 520, 250, fmtUsd), legend(split.names),
+          { days: d.days, W: 520, P: PAD_STD, rows: stackRows(split, fmtUsd) });
       }).catch(function(){}),
 
       get('/agg/routed-volume').then(function(d){
         if (!d.days || !d.days.length) throw new Error('empty');
         var split = topSeries(d.days, 'byProtocol', 4);
-        stage('defi', stackedBars(d.days, split, 380, 200, fmtUsd), legend(split.names),
-          { days: d.days, W: 380, P: PAD_STD, rows: stackRows(split, fmtUsd) });
+        stage('defi', stackedBars(d.days, split, 520, 250, fmtUsd), legend(split.names),
+          { days: d.days, W: 520, P: PAD_STD, rows: stackRows(split, fmtUsd) });
       }).catch(function(){}),
 
       get('/agg/transactions').then(function(d){
         if (!d.days || !d.days.length) throw new Error('empty');
         var split = { names: ['TRANSACTIONS'], value: function(day){ return day.count || 0; } };
-        stage('txs', stackedBars(d.days, split, 380, 200, fmtN), '',
-          { days: d.days, W: 380, P: PAD_STD, rows: function(day){ return [{ label: 'TRANSACTIONS', value: fmtN(day.count || 0), color: '#1FCB94' }]; } });
+        stage('txs', stackedBars(d.days, split, 520, 250, fmtN), '',
+          { days: d.days, W: 520, P: PAD_STD, rows: function(day){ return [{ label: 'TRANSACTIONS', value: fmtN(day.count || 0), color: '#1FCB94' }]; } });
       }).catch(function(){}),
 
       get('/agg/registrations').then(function(d){
         if (!d.days || !d.days.length) throw new Error('empty');
         stage('users',
-          barsPlusLine(d.days, function(day){ return day.newUsers || 0; }, function(day){ return day.totalUsers || 0; }, 380, 200),
+          barsPlusLine(d.days, function(day){ return day.newUsers || 0; }, function(day){ return day.totalUsers || 0; }, 520, 250),
           '<div class="pmx-legend"><span><i style="background:#7FB4E8"></i>NEW USERS / DAY</span><span><i style="background:#1FCB94"></i>CUMULATIVE (RIGHT AXIS)</span></div>',
-          { days: d.days, W: 380, P: PAD_DUAL, rows: function(day){
+          { days: d.days, W: 520, P: PAD_DUAL, rows: function(day){
               return [{ label: 'NEW USERS', value: fmtN(day.newUsers || 0), color: '#7FB4E8' },
                       { label: 'CUMULATIVE', value: fmtN(day.totalUsers || 0), color: '#1FCB94' }];
             } });
