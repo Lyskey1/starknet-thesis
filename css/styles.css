@@ -218,6 +218,18 @@
     background: radial-gradient(ellipse at center top, rgba(var(--accent-rgb),0.10) 0%, transparent 70%);
     pointer-events: none;
   }
+  /* Static accent bloom, low in the hero: soft radials in the page accent
+     that read as ambient light under the copy. Decoration only - the markup
+     is aria-hidden, nothing animates or transitions, and there is no
+     backdrop-filter. The blur sits on the leaf <i> elements and the
+     wrapper's own overflow clips the smear, so the bloom cannot bleed into
+     the section below and no ancestor of hero content carries a filter.
+     z-index -1 paints it beneath all hero content without touching any
+     page's stacking. Per-page position and opacity ride inline styles on
+     the <i> elements, color rides var(--accent). Mirrored in strk.html's
+     inline styles (that page never loads this file): keep in sync. */
+  .hero-bloom { position: absolute; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
+  .hero-bloom i { position: absolute; border-radius: 50%; filter: blur(70px); background: radial-gradient(closest-side, var(--accent), transparent 72%); }
   .hero-eyebrow {
     font-family: var(--mono);
     font-size: 12px;
