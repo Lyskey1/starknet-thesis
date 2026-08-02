@@ -38,11 +38,15 @@
      seam stay CSS-owned and the hero renders identically when the field is
      transparent or absent. */
   .lh-field{position:absolute;inset:0;z-index:0;width:100%;height:100%;display:block;pointer-events:none}
+  /* faint violet lift anchored LOW, where the ribbon crosses: the upper frame
+     stays near black so the ribbon reads as the hero's only light source.
+     Doubles as the no-WebGL fallback treatment, matching the composition. */
   .lh-hero::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:
-     radial-gradient(70% 55% at 50% -5%, rgba(139,92,246,.16), transparent 60%),
-     radial-gradient(50% 40% at 85% 30%, rgba(61,169,252,.05), transparent 70%)}
-  /* seamless fade into the convergence scene below (its bg is #05060a) */
-  .lh-hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:240px;z-index:1;background:linear-gradient(transparent,#05060a);pointer-events:none}
+     radial-gradient(48% 24% at 50% 94%, rgba(139,92,246,.08), transparent 68%)}
+  /* seamless fade into the convergence scene below (its bg is #05060a).
+     Short (was 240px): the ribbon now lives in the bottom strip and a tall
+     fade would swallow it; 110px still lands byte-exact on the scene color. */
+  .lh-hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:110px;z-index:1;background:linear-gradient(transparent,#05060a);pointer-events:none}
   .lh-wrap{position:relative;z-index:2;max-width:1100px;margin:0 auto;padding:0 48px;text-align:center}
   .lh-eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:#A78BFA;margin-bottom:24px}
   .lh-h1{font-family:var(--display);font-weight:800;font-size:clamp(40px,6.5vw,76px);line-height:1.0;letter-spacing:-.01em;text-transform:uppercase;color:var(--white);max-width:none;margin-left:auto;margin-right:auto}

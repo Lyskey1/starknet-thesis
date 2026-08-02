@@ -1,8 +1,9 @@
-/* Landing hero aurora ribbon. One soft ribbon crossing the full width at
-   mid height: bright thin core, wide bloom, hue drifting along its length.
-   Raw WebGL2 fragment shader on one full-screen triangle, no library
-   (WebGL1 compiles the same GLSL 100 source as a free fallback). Replaces
-   the canvas 2D particle flow field (js/landing-field.js, removed).
+/* Landing hero aurora ribbon. One undulating ribbon crossing the full width
+   LOW in the frame, below the copy block: bright thin core, soft bloom, hue
+   drifting along its length, near-black everywhere else. Raw WebGL2 fragment
+   shader on one full-screen triangle, no library (WebGL1 compiles the same
+   GLSL 100 source as a free fallback). Replaces the canvas 2D particle flow
+   field (js/landing-field.js, removed).
 
    Inherited couplings, unchanged from the field it replaces:
    - canvas.style.opacity runs 1 -> 0 across hero scroll, reaching 0 the
@@ -18,10 +19,11 @@
      bottom fade) renders unchanged, exactly as it always did when the
      field was absent.
 
-   Legibility: the ribbon passes behind the headline, so a soft local
-   dimming (LEGIBILITY_DIM over the copy block) keeps every hero text
-   element above 4.5:1 without flattening the ribbon's core with a full
-   scrim. Measured, see the commit. */
+   Legibility is solved by PLACEMENT, not by dimming: the band centreline
+   sits below the copy block (BAND_HEIGHT), so no hero text ever crosses the
+   spine and no local scrim exists to cut the ribbon. Contrast is measured
+   against the brightest background pixel under each text element across
+   several animation phases; see the commit. */
 (function () {
   'use strict';
 
@@ -35,17 +37,30 @@
   var C_INDIGO = [109 / 255, 79 / 255, 208 / 255];   /* #6D4FD0, existing deep violet-indigo */
   var C_MAGENTA = [214 / 255, 92 / 255, 190 / 255];  /* the lean, reachable only via MAGENTA_WEIGHT */
 
-  var BAND_HEIGHT = 0.46;    /* ribbon centreline, fraction of hero height from top */
-  var SPREAD = 0.15;         /* bloom half-width, fraction of hero height */
-  var CORE_WIDTH = 0.016;    /* bright spine half-width, same units */
-  var BRIGHTNESS = 0.95;     /* overall ribbon energy into the tone map */
+  var BAND_HEIGHT = 0.88;    /* ribbon centreline, fraction of hero height from top.
+                                The copy block (lede included) reaches 0.81 at 1440,
+                                so the spine lives in the bottom strip and the swells
+                                rise toward 0.20-from-bottom only at the flanks where
+                                no copy sits (the "lift" envelope in the shader) */
+  var SPREAD_UP = 0.022;     /* bloom half-width ABOVE the spine (toward the copy):
+                                tight, so the upper edge is defined and the frame
+                                above returns to near black (was a symmetric 0.15) */
+  var SPREAD_DOWN = 0.065;   /* bloom half-width BELOW the spine, into the empty
+                                bottom of the frame: wide and soft */
+  var BLOOM_WEIGHT = 0.16;   /* bloom energy relative to the core's 1.0 (was 0.30) */
+  var CORE_WIDTH = 0.012;    /* bright spine half-width, same units (was 0.016) */
+  var BRIGHTNESS = 0.92;     /* overall ribbon energy into the tone map (was 0.95) */
   var SPEED = 0.045;         /* undulation drift, cycles per second-ish */
-  var SCALE = 1.55;          /* noise frequency along the width */
-  var DISPLACE = 0.10;       /* vertical undulation amplitude, fraction of height */
+  var SCALE = 2.8;           /* noise frequency along the width (was 1.55): two-plus
+                                full swells cross the frame instead of a lone drift,
+                                so no time slice reads as a straight line */
+  var DISPLACE = 0.06;       /* vertical undulation amplitude, fraction of height,
+                                applied to SIGNED noise remapped to roughly -1..1
+                                (the old 0.10 rode raw 0..1 noise centred on 0.5,
+                                which left the band visually flat) */
   var OCTAVES = 2;           /* noise octaves: two, per the cost budget */
   var RENDER_SCALE = 0.6;    /* fraction of devicePixelRatio; low-frequency ribbon hides upscaling */
   var DPR_CAP = 2;
-  var LEGIBILITY_DIM = 0.985; /* local dimming strength behind the hero copy block */
 
   var canvas = document.getElementById('lh-field');
   if (!canvas) return;
@@ -62,12 +77,10 @@
     'precision highp float;',
     'uniform vec2 uRes;',
     'uniform float uTime;',
-    'uniform float uAspect;',   /* hero w/h, for portrait composition */
-    'uniform vec4 uText;',      /* copy block: cx, cy, halfW, halfH in uv units */
     'uniform vec3 uCV; uniform vec3 uCI; uniform vec3 uCM;',
     'uniform float uMag;',
-    'uniform float uBand; uniform float uSpread; uniform float uCore;',
-    'uniform float uBright; uniform float uScale; uniform float uDisp; uniform float uDim;',
+    'uniform float uBand; uniform float uSprUp; uniform float uSprDn; uniform float uCore; uniform float uBloomW;',
+    'uniform float uBright; uniform float uScale; uniform float uDisp; uniform float uLiftHi;',
     'float h21(vec2 p){ p = fract(p * vec2(123.34, 456.21)); p += dot(p, p + 45.32); return fract(p.x * p.y); }',
     'float vnoise(vec2 p){',
     '  vec2 i = floor(p), f = fract(p);',
@@ -81,16 +94,37 @@
     'void main(){',
     '  vec2 uv = gl_FragCoord.xy / uRes;',           /* 0..1, y up */
     '  float x = uv.x;',
-    /* Perlin-driven vertical displacement along the horizontal axis */
-    '  float w1 = fbm2(vec2(x * uScale, uTime * 0.9));',
-    '  float w2 = fbm2(vec2(x * uScale * 0.53 + 31.0, uTime * 0.6));',
-    '  float center = (1.0 - uBand) + (w1 - 0.5) * uDisp + (w2 - 0.5) * uDisp * 0.6;',
-    '  float d = abs(uv.y - center);',
-    /* a defined spine and a wide bloom, separated: the core is a narrow
-       gaussian, the bloom a broad exponential at low weight */
+    /* noise-driven vertical displacement along the horizontal axis; the fbm
+       concentrates around 0.5, so remap to a signed value at doubled
+       contrast or the undulation flattens into a straight band */
+    /* the pattern also drifts sideways (x advection), so the swells travel
+       across the frame instead of breathing in place */
+    '  float s1 = (fbm2(vec2(x * uScale + uTime * 0.22, uTime * 0.9)) - 0.5) * 2.0;',
+    '  float s2 = (fbm2(vec2(x * uScale * 0.53 + 31.0 - uTime * 0.15, uTime * 0.6)) - 0.5) * 2.0;',
+    /* the fbm crowds small values, which reads as a flat band at quiet
+       phases: expand the small excursions (x1.7 near zero, x1.0 at the
+       extremes) so the ribbon always visibly rises and falls */
+    '  s1 *= 1.7 - 0.7 * abs(s1);',
+    '  s2 *= 1.7 - 0.7 * abs(s2);',
+    '  float disp = s1 * uDisp + s2 * uDisp * 0.5;',
+    /* soft saturation on the excursion (odd, slope 1 at zero, so typical
+       undulation passes through unchanged): the RISE is bounded tighter in
+       the middle of the frame, where the spine must stay clear of the lede
+       above it, and looser at the flanks, which carry the tall swells */
+    '  float lift = smoothstep(0.30, 0.46, abs(x - 0.5));',
+    '  float m = disp > 0.0 ? uDisp * mix(0.55, uLiftHi, lift) : 0.075;',
+    '  float t = disp / m;',
+    '  disp = m * t / sqrt(1.0 + t * t);',
+    '  float center = (1.0 - uBand) + disp;',
+    '  float dy = uv.y - center;',
+    '  float d = abs(dy);',
+    /* a defined spine and a soft bloom, separated: the core is a narrow
+       gaussian; the bloom is a broad exponential at low weight, asymmetric,
+       tight above the spine (toward the copy) and wide below it (into the
+       empty bottom of the frame) */
     '  float core = exp(-(d * d) / (uCore * uCore * 2.0));',
-    '  float bloom = exp(-d / uSpread);',
-    '  float ribbon = core * 1.0 + bloom * 0.30;',
+    '  float bloom = exp(-d / (dy > 0.0 ? uSprUp : uSprDn));',
+    '  float ribbon = core + bloom * uBloomW;',
     /* brightness breathes gently along the length */
     '  ribbon *= 0.82 + 0.36 * fbm2(vec2(x * uScale * 1.7 + 7.0, uTime * 0.5));',
     /* bounded lerp across named palette values, never a cosine gradient:
@@ -101,13 +135,6 @@
     '  float edge = smoothstep(0.55, 1.0, abs(x - 0.5) * 2.0);',
     '  hue = mix(hue, uCM, edge * uMag);',
     '  vec3 col = hue * ribbon * uBright;',
-    /* local dimming confined behind the copy block: keeps the headline at
-       4.5:1 without a hero-wide scrim that would flatten the core */
-    '  if (uDim > 0.001){',
-    '    vec2 dq = abs(uv - uText.xy) - uText.zw;',
-    '    float dbox = length(max(dq, 0.0)) + min(max(dq.x, dq.y), 0.0);',
-    '    col *= 1.0 - uDim * (1.0 - smoothstep(0.0, 0.18, dbox));',
-    '  }',
     /* filmic tone map, gamma, one-step dither, then the hero base color so
        unlit pixels equal the CSS background to the byte */
     '  col = 1.0 - exp(-col * 1.25);',
@@ -136,17 +163,18 @@
     var loc = gl.getAttribLocation(prog, 'aP');
     gl.enableVertexAttribArray(loc);
     gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
-    ['uRes', 'uTime', 'uAspect', 'uText', 'uCV', 'uCI', 'uCM', 'uMag', 'uBand', 'uSpread', 'uCore', 'uBright', 'uScale', 'uDisp', 'uDim']
+    ['uRes', 'uTime', 'uCV', 'uCI', 'uCM', 'uMag', 'uBand', 'uSprUp', 'uSprDn', 'uCore', 'uBloomW', 'uBright', 'uScale', 'uDisp', 'uLiftHi']
       .forEach(function (n) { uni[n] = gl.getUniformLocation(prog, n); });
     gl.uniform3f(uni.uCV, C_VIOLET[0], C_VIOLET[1], C_VIOLET[2]);
     gl.uniform3f(uni.uCI, C_INDIGO[0], C_INDIGO[1], C_INDIGO[2]);
     gl.uniform3f(uni.uCM, C_MAGENTA[0], C_MAGENTA[1], C_MAGENTA[2]);
     gl.uniform1f(uni.uMag, MAGENTA_WEIGHT);
-    gl.uniform1f(uni.uSpread, SPREAD);
+    gl.uniform1f(uni.uSprUp, SPREAD_UP);
+    gl.uniform1f(uni.uSprDn, SPREAD_DOWN);
     gl.uniform1f(uni.uCore, CORE_WIDTH);
+    gl.uniform1f(uni.uBloomW, BLOOM_WEIGHT);
     gl.uniform1f(uni.uBright, BRIGHTNESS);
     gl.uniform1f(uni.uScale, SCALE);
-    gl.uniform1f(uni.uDim, LEGIBILITY_DIM);
   } catch (e) { return; }
 
   var W = 0, H = 0, heroTop = 0;
@@ -179,19 +207,12 @@
     gl.viewport(0, 0, canvas.width, canvas.height);
     gl.uniform2f(uni.uRes, canvas.width, canvas.height);
     var portrait = W < H;
-    gl.uniform1f(uni.uAspect, W / H);
-    /* portrait: the band sits a little lower with a wider spread, so the
-       horizontal ribbon composes behind a tall headline */
-    gl.uniform1f(uni.uBand, portrait ? BAND_HEIGHT + 0.06 : BAND_HEIGHT);
-    gl.uniform1f(uni.uDisp, portrait ? DISPLACE * 0.8 : DISPLACE);
-    /* the copy block, in uv (y up), for the local dimming */
-    var wrap = hero.querySelector('.lh-wrap');
-    if (wrap) {
-      var wr = wrap.getBoundingClientRect();
-      var cx = (wr.left + wr.width / 2 - r.left) / W;
-      var cy = 1 - (wr.top + wr.height / 2 - r.top) / H;
-      gl.uniform4f(uni.uText, cx, cy, (wr.width / 2) / W * 1.02, (wr.height / 2) / H * 1.0);
-    }
+    /* portrait: the copy block runs taller and spans nearly the full width,
+       so the band sits slightly lower, undulates less, and loses the tall
+       flank swells (the lede's corners reach the flanks there) */
+    gl.uniform1f(uni.uBand, portrait ? BAND_HEIGHT + 0.03 : BAND_HEIGHT);
+    gl.uniform1f(uni.uDisp, portrait ? DISPLACE * 0.7 : DISPLACE);
+    gl.uniform1f(uni.uLiftHi, portrait ? 0.8 : 1.6);
     applyOpacity();
     if (isStatic()) draw(12.0); /* one settled frame, fixed phase */
   }
