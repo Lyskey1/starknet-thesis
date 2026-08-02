@@ -115,6 +115,44 @@
   .kicker { font-family: var(--display); font-weight: 700; font-size: 21px; color: var(--ink); max-width: 30ch; line-height: 1.4; }
   .kicker .em { color: var(--em); }
 
+  /* ============ EDITORIAL DUO (pv-duo): prose and its component face each
+     other in two columns; --flip swaps sides on desktop only. DOM order is
+     always prose first, so the sub-981px single column reads prose before
+     component regardless of desktop side. minmax(0,1fr) so wide children
+     (tables, sliders) can never min-content-overflow the grid. ============ */
+  .pv-duo { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 28px 56px; align-items: start; }
+  .pv-duo--flip > *:nth-child(1) { grid-column: 2; grid-row: 1; }
+  .pv-duo--flip > *:nth-child(2) { grid-column: 1; grid-row: 1; }
+  /* section intro rows: header block left, lede right, bottom-aligned */
+  .pv-duo--intro { align-items: end; }
+  .pv-duo--intro .th-pm-intro { margin-top: 0; margin-bottom: 6px; max-width: none; }
+  /* components lose their solo-column caps inside a duo cell */
+  .pv-duo .cases { grid-template-columns: 1fr; max-width: none; margin: 0; }
+  .pv-duo .island, .pv-duo .crowd { max-width: none; margin: 0; }
+  .pv-duo .bridge { flex: 0 0 118px; }
+  .pv-duo .forum { max-width: none; margin: 0; }
+  .pv-duo .lineage { max-width: none; margin: 30px 0 0; }
+  /* the Eli reply, moved out of the forum card into the prose column,
+     reads as its own emerald-edged card */
+  .pv-duo .forum-reply { border: 1px solid var(--em-line); border-radius: 12px; margin-top: 28px; }
+  /* walls: hairline separators + moderate padding replace the old 84px gaps */
+  .pv-walls { margin-top: 56px; }
+  .pv-wall { margin-top: 0; border-top: 1px solid var(--th-hair); padding: 52px 0 56px; }
+  .pv-wall .kicker { margin-top: 26px; }
+  .pv-wall h3 { margin-bottom: 20px; }
+  .wall-out { margin-top: 0; padding: 52px 0 8px; border-top: 1px solid var(--th-hair); }
+  /* schema as a 2x2 inside its duo cell: arrows give way to counter labels */
+  .pv-duo .schema { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 14px; margin-top: 0; counter-reset: sn; }
+  .pv-duo .schema .slink { display: none; }
+  .pv-duo .snode .st::before { counter-increment: sn; content: "0" counter(sn) " · "; color: var(--em); opacity: .8; }
+  @media (max-width: 980px) {
+    .pv-duo { grid-template-columns: minmax(0,1fr); gap: 30px; }
+    .pv-duo--flip > *:nth-child(1) { grid-column: auto; grid-row: auto; }
+    .pv-duo--flip > *:nth-child(2) { grid-column: auto; grid-row: auto; }
+    .pv-duo--intro .th-pm-intro { margin-bottom: 0; }
+    .pv-wall { padding: 44px 0 46px; }
+  }
+
   /* ============ 01: the three bills (printed receipts, hover to flip) ============ */
   .printer { margin-top: 56px; }
   .printer-bar { height: 14px; border-radius: 99px; background: linear-gradient(180deg,#181D20,#0C0F11); border: 1px solid var(--line); position: relative; margin: 0 6%; box-shadow: 0 6px 18px rgba(0,0,0,.5); }
@@ -290,11 +328,14 @@
       linear-gradient(270deg, rgba(0,0,0,.6), transparent) right center/36px 100% no-repeat scroll; }
     .pgrid td.pname, .pgrid th.pname { position: sticky; left: 0; z-index: 2; }
   }
+  /* full-width centerpiece scale: cell padding and type stepped up
+     proportionally from the annex-sized original (th 10->11.5, rows 56->66,
+     names 12.5->14); every row, column, state and tooltip untouched */
   .pgrid { width: 100%; border-collapse: collapse; font-family: var(--mono); min-width: 860px; }
-  .pgrid th { font-size: 10px; letter-spacing: .08em; color: var(--ink); padding: 14px 10px; border: 1px solid var(--line); background: #0D1114; font-weight: 600; line-height: 1.5; }
-  .pgrid th span { display: block; color: var(--muted); font-weight: 400; margin-top: 5px; text-transform: lowercase; letter-spacing: .04em; }
-  .pgrid td { border: 1px solid var(--line); text-align: center; padding: 0; height: 56px; position: relative; }
-  .pgrid td.pname, .pgrid th.pname { text-align: left; padding: 14px 16px; font-size: 12.5px; letter-spacing: .1em; font-weight: 600; background: #0D1114; }
+  .pgrid th { font-size: 11.5px; letter-spacing: .08em; color: var(--ink); padding: 17px 12px; border: 1px solid var(--line); background: #0D1114; font-weight: 600; line-height: 1.5; }
+  .pgrid th span { display: block; font-size: 10px; color: var(--muted); font-weight: 400; margin-top: 6px; text-transform: lowercase; letter-spacing: .04em; }
+  .pgrid td { border: 1px solid var(--line); text-align: center; padding: 0; height: 66px; position: relative; }
+  .pgrid td.pname, .pgrid th.pname { text-align: left; padding: 16px 18px; font-size: 14px; letter-spacing: .1em; font-weight: 600; background: #0D1114; }
   .hero-row td { background: rgba(var(--accent-rgb),.05); }
   .hero-row td.pname { color: var(--em); background: rgba(var(--accent-rgb),.08); }
   .pgrid td.y::before { content: ''; display: inline-block; width: 18px; height: 18px; border-radius: 50%; background: var(--em-dim); border: 1px solid var(--em); box-shadow: 0 0 8px rgba(var(--accent-rgb),.25); }
@@ -334,11 +375,12 @@
   .ln .y { font-size: 12px; margin-top: 12px; color: var(--ink); }
   .ln .l { font-size: 10px; color: var(--muted); letter-spacing: .06em; margin-top: 4px; line-height: 1.6; }
 
-  .rail { max-width: 820px; margin: 80px auto 0; position: relative; padding-left: 44px; }
-  .rail::before { content: ''; position: absolute; left: 11px; top: 14px; bottom: 14px; width: 2px; background: linear-gradient(180deg,var(--em-line),var(--em)); }
-  .rnode { position: relative; padding: 0 0 54px; }
-  .rnode:last-child { padding-bottom: 0; }
-  .rnode::before { content: ''; position: absolute; left: -40px; top: 6px; width: 20px; height: 20px; border-radius: 50%; background: var(--black); border: 2px solid var(--em); box-shadow: 0 0 12px rgba(var(--accent-rgb),.4); }
+  /* four properties: a 2x2 card grid at full container width (the old
+     vertical rail with its spine line); the connected-rail accent lives
+     on as each card's left border */
+  .rail { max-width: none; margin: 64px 0 0; display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 18px; }
+  .rnode { position: relative; padding: 26px 28px; border: 1px solid var(--line); border-left: 3px solid var(--em); border-radius: 12px; background: var(--bg-raise); box-shadow: 0 0 24px rgba(var(--accent-rgb),.05); }
+  @media (max-width: 980px) { .rail { grid-template-columns: minmax(0,1fr); } }
   .rnode .rn { font-family: var(--mono); font-size: 11px; letter-spacing: .16em; color: var(--em); }
   .rnode h4 { font-family: var(--display); font-weight: 700; font-size: 23px; margin: 8px 0 10px; }
   .rnode p { color: #C9CFCB; font-size: 15.5px; max-width: 62ch; }
@@ -779,9 +821,13 @@
 <!-- ================= SECTION 01 ================= -->
 <div class="th-pm-div"></div>
 <section class="th-pm-sec">
-  <div class="th-pm-head th-pm-reveal"><span class="th-pm-marker"></span><span class="th-pm-num">01</span><h2 id="the-cost-of-being-visible" class="th-pm-title">The cost of being visible</h2></div>
-  <p class="th-pm-eyebrow th-pm-reveal">The problem</p>
-  <p class="th-pm-intro th-pm-reveal">Transparency is not free. The invoice arrives on <b>three separate bills: extraction, strategy, and absence</b>.</p>
+  <div class="pv-duo pv-duo--intro">
+    <div>
+      <div class="th-pm-head th-pm-reveal"><span class="th-pm-marker"></span><span class="th-pm-num">01</span><h2 id="the-cost-of-being-visible" class="th-pm-title">The cost of being visible</h2></div>
+      <p class="th-pm-eyebrow th-pm-reveal">The problem</p>
+    </div>
+    <p class="th-pm-intro th-pm-reveal">Transparency is not free. The invoice arrives on <b>three separate bills: extraction, strategy, and absence</b>.</p>
+  </div>
 
   <!-- The three bills (hover to flip) -->
   <div class="printer" id="printer">
@@ -905,13 +951,18 @@
   <p class="th-pm-eyebrow th-pm-reveal">The precedent</p>
   <p class="th-pm-intro th-pm-reveal">Crypto has attempted privacy for a decade. Every attempt hit at least one of <b>three walls</b>.</p>
 
-  <div class="chapter th-pm-reveal">
+  <div class="pv-walls">
+  <div class="chapter pv-wall th-pm-reveal">
+    <div class="pv-duo">
+    <div>
     <h3 id="wall-n-01compliance-a-privacy-system"><span class="wall-tag">WALL Nº 01</span>Compliance: a privacy system with no disclosure path <span class="em">is a mixer with better branding.</span></h3>
     <p>Tornado Cash was the category's most used product until OFAC sanctioned it in 2022. What put it on the list was not the hiding itself; it was the absence of any mechanism, for anyone, ever, to answer a court. The human cost of that design choice fell on the people who wrote it.</p>
+    <p class="kicker">The sanctions were eventually struck down. <span class="em">But without a disclosure path, privacy is not a system a regulator can accept, and TradFi capital cannot touch it.</span></p>
+    </div>
     <div class="cases">
       <div class="gx-bloom" aria-hidden="true">
-        <i style="--bc:var(--danger);left:11%;top:16%;width:28%;height:68%"></i>
-        <i style="--bc:var(--danger);left:61%;top:16%;width:28%;height:68%"></i>
+        <i style="--bc:var(--danger);left:12%;top:4%;width:76%;height:42%"></i>
+        <i style="--bc:var(--danger);left:12%;top:54%;width:76%;height:42%"></i>
       </div>
       <div id="case-file-nl-alexey-pertsev-arrested" class="case gx-card gx-coral">
         <div class="ch">CASE FILE — NL</div>
@@ -926,12 +977,15 @@
         <div class="cs">STATUS: POST-TRIAL MOTIONS</div>
       </div>
     </div>
-    <p class="kicker">The sanctions were eventually struck down. <span class="em">But without a disclosure path, privacy is not a system a regulator can accept, and TradFi capital cannot touch it.</span></p>
+    </div>
   </div>
 
-  <div class="chapter th-pm-reveal">
+  <div class="chapter pv-wall th-pm-reveal">
+    <div class="pv-duo pv-duo--flip">
+    <div>
     <h3 id="wall-n-02composability-privacy-kept-being"><span class="wall-tag">WALL Nº 02</span>Composability: privacy kept being built as a destination, <span class="em">and destinations empty out.</span></h3>
     <p>Zcash and Monero put real cryptography on dedicated chains and paid two prices: isolation and no programmability. Aztec rebuilt privacy as its own L2, but applications cannot be connected, they have to be rebuilt, and reaching real liquidity means bridging out in public and bridging back in public. Railgun stayed on the EVM chains but takes a 0.25% cut each way, on every shield and on every unshield. Do the math: shielding then unshielding a $100M treasury costs $500,000, for privacy alone.</p>
+    </div>
     <div class="island">
       <div class="gx-bloom" aria-hidden="true">
         <i style="--bc:var(--em);left:5%;top:12%;width:24%;height:76%"></i>
@@ -941,11 +995,15 @@
       <div class="bridge"><div class="rail-line"></div><div class="bl">EVERY CROSSING IS PUBLIC</div></div>
       <div id="defi-mainland" class="landmass gx-card gx-coral"><div class="lt">DEFI MAINLAND</div><div class="ls">LIQUIDITY · LENDING · MARKETS<br>REAL ECONOMY, NO PRIVACY</div></div>
     </div>
+    </div>
   </div>
 
-  <div class="chapter th-pm-reveal">
+  <div class="chapter pv-wall th-pm-reveal">
+    <div class="pv-duo">
+    <div>
     <h3 id="wall-n-03scale-anonymity-is-headcount"><span class="wall-tag">WALL Nº 03</span>Scale: anonymity is headcount. <span class="em">You are only as hidden as the crowd is large.</span></h3>
     <p>If a thousand users shield similar amounts at similar times, you are lost in the crowd; if three do, you are one of three. Tornado split its users into fixed denominations and thinned each crowd. UCL researchers showed in 2018 that simple timing-and-amount heuristics collapsed much of Zcash's effective anonymity set.</p>
+    </div>
     <div class="crowd">
       <div class="crowd-top">
         <span class="t">HOW HIDDEN ARE YOU? DRAG THE CROWD.</span>
@@ -954,6 +1012,8 @@
       <div class="dots" id="dots"></div>
       <div class="crowd-cap" id="crowdCap"></div>
     </div>
+    </div>
+  </div>
   </div>
 
   <p class="wall-out th-pm-reveal">Compliance. Composability. Scale. Three walls, a decade of failed attempts. <span class="em">Starknet is the first design to clear all three at once.</span></p>
@@ -962,9 +1022,13 @@
 <!-- ================= SECTION 03 ================= -->
 <div class="th-pm-div"></div>
 <section class="th-pm-sec">
-  <div class="th-pm-head th-pm-reveal"><span class="th-pm-marker"></span><span class="th-pm-num">03</span><h2 id="why-starknet-structurally" class="th-pm-title">Why Starknet, structurally</h2></div>
-  <p class="th-pm-eyebrow th-pm-reveal">The architecture</p>
-  <p class="th-pm-intro th-pm-reveal">Strip away the branding and it comes down to architecture: <b>Starknet is, structurally, the strongest privacy platform in production today.</b> Not on one criterion. On all of them.</p>
+  <div class="pv-duo pv-duo--intro">
+    <div>
+      <div class="th-pm-head th-pm-reveal"><span class="th-pm-marker"></span><span class="th-pm-num">03</span><h2 id="why-starknet-structurally" class="th-pm-title">Why Starknet, structurally</h2></div>
+      <p class="th-pm-eyebrow th-pm-reveal">The architecture</p>
+    </div>
+    <p class="th-pm-intro th-pm-reveal">Strip away the branding and it comes down to architecture: <b>Starknet is, structurally, the strongest privacy platform in production today.</b> Not on one criterion. On all of them.</p>
+  </div>
 
   <div class="gridwrap th-pm-reveal">
     <table class="pgrid">
@@ -1055,30 +1119,35 @@
     </table>
   </div>
 
-  <div class="chapter th-pm-reveal" style="margin-top:88px">
-    <h3 id="so-how-does-one-chain-check">So how does one chain <span class="em">check every box at once?</span></h3>
-    <p>The answer starts fifteen years back, with Satoshi himself naming the tool.</p>
-  </div>
-
-  <div class="forum th-pm-reveal">
+  <div class="pv-duo th-pm-reveal" style="margin-top:88px">
+    <div>
+      <div class="chapter" style="margin-top:0">
+        <h3 id="so-how-does-one-chain-check">So how does one chain <span class="em">check every box at once?</span></h3>
+        <p>The answer starts fifteen years back, with Satoshi himself naming the tool.</p>
+      </div>
+      <div class="forum-reply">
+        <div class="rt">Sixteen years later, <span class="em">the answer shipped.</span></div>
+        <div class="rd">Eli Ben-Sasson presented ZK as the fix for Bitcoin's privacy and scaling at the San Jose conference in 2013. He co-authored the 2014 Zerocash paper, the note-and-nullifier model every modern shielded system descends from, and became a founding scientist of Zcash to fix privacy in crypto. Then he co-founded StarkWare to fix scaling with ZK-STARKs. In 2026, the circle closed: ZK-STARK on Starknet switched on its second property, privacy coupled with scaling.</div>
+      </div>
+    </div>
+    <div>
+  <div class="forum">
     <div class="forum-bar"><a href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/174/" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;text-underline-offset:3px">BITCOINTALK.ORG — THREAD Nº 770</a><span>AUGUST 11, 2010</span></div>
     <div class="forum-post">
       <div class="forum-user"><span class="u">satoshi</span><br><span class="r">FOUNDER<br>ACTIVITY: 364</span></div>
       <div class="forum-body">This is a very interesting topic. If a solution was found, <span class="hl">a much better, easier, more convenient implementation of Bitcoin would be possible</span>. [...] It's hard to think of how to apply zero-knowledge-proofs in this case.</div>
     </div>
-    <div class="forum-reply">
-      <div class="rt">Sixteen years later, <span class="em">the answer shipped.</span></div>
-      <div class="rd">Eli Ben-Sasson presented ZK as the fix for Bitcoin's privacy and scaling at the San Jose conference in 2013. He co-authored the 2014 Zerocash paper, the note-and-nullifier model every modern shielded system descends from, and became a founding scientist of Zcash to fix privacy in crypto. Then he co-founded StarkWare to fix scaling with ZK-STARKs. In 2026, the circle closed: ZK-STARK on Starknet switched on its second property, privacy coupled with scaling.</div>
-    </div>
   </div>
 
-  <div class="lineage th-pm-reveal">
+  <div class="lineage">
     <a class="ln on" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/174/" target="_blank" rel="noopener"><i></i><div class="y">2010</div><div class="l">SATOSHI'S<br>OPEN QUESTION</div></a>
     <a class="ln on" href="https://www.youtube.com/watch?v=kLueWNsYRno" target="_blank" rel="noopener"><i></i><div class="y">2013</div><div class="l">SAN JOSE<br>TALK</div></a>
     <a class="ln on" href="http://zerocash-project.org/paper" target="_blank" rel="noopener"><i></i><div class="y">2014</div><div class="l">ZEROCASH<br>PAPER</div></a>
     <a class="ln on" href="https://en.wikipedia.org/wiki/Eli_Ben-Sasson" target="_blank" rel="noopener"><i></i><div class="y">2016</div><div class="l">ZCASH<br>FOUNDING SCIENTIST</div></a>
     <a class="ln on" href="https://starkware.co" target="_blank" rel="noopener"><i></i><div class="y">2018</div><div class="l">STARKWARE<br>FOUNDED</div></a>
     <a class="ln on" href="https://x.com/Starknet/status/2064375302957289598" target="_blank" rel="noopener"><i></i><div class="y">2026</div><div class="l">STRK20<br>LIVE</div></a>
+  </div>
+    </div>
   </div>
 
   <p class="grid-lead th-pm-reveal">The main strength of ZK-STARKs is the verification model itself. Chains that verify by re-execution cannot retrofit privacy: strip out the inputs and there is nothing left for validators to check. Starknet, based on ZK-STARKs, verifies proofs instead, and <b>checking a proof requires none of the underlying data</b>. And this was the plan from the very beginning.</p>
@@ -1398,18 +1467,25 @@
 <!-- ================= SECTION 05 ================= -->
 <div class="th-pm-div"></div>
 <section class="th-pm-sec">
-  <div class="th-pm-head th-pm-reveal"><span class="th-pm-marker"></span><span class="th-pm-num">05</span><h2 id="private-not-invisible" class="th-pm-title">Private, not invisible</h2></div>
-  <p class="th-pm-eyebrow th-pm-reveal">The law</p>
-  <p class="th-pm-intro th-pm-reveal">Onchain privacy earned its reputation problem: for a decade, private meant nothing to show the regulator. STRK20 was built for the opposite reading, confidential to the market, transparent to the law, and the mechanism is published in full.</p>
+  <div class="pv-duo pv-duo--intro">
+    <div>
+      <div class="th-pm-head th-pm-reveal"><span class="th-pm-marker"></span><span class="th-pm-num">05</span><h2 id="private-not-invisible" class="th-pm-title">Private, not invisible</h2></div>
+      <p class="th-pm-eyebrow th-pm-reveal">The law</p>
+    </div>
+    <p class="th-pm-intro th-pm-reveal">Onchain privacy earned its reputation problem: for a decade, private meant nothing to show the regulator. STRK20 was built for the opposite reading, confidential to the market, transparent to the law, and the mechanism is published in full.</p>
+  </div>
 
-  <p class="lead th-pm-reveal">Entry requires escrowing a viewing key, enforced by the proof itself. By default that key does nothing: it sits sealed in hardware, untouched for the overwhelming majority of users. Under a verified lawful request it can unwind one user's trail while the rest of the pool stays sealed. And even then, the key only reads: it cannot <span class="red">freeze</span>, cannot <span class="red">seize</span>, cannot <span class="red">spend</span>.</p>
+  <div class="pv-duo th-pm-reveal" style="margin-top:64px">
+    <div>
+  <p class="lead" style="margin-top:0">Entry requires escrowing a viewing key, enforced by the proof itself. By default that key does nothing: it sits sealed in hardware, untouched for the overwhelming majority of users. Under a verified lawful request it can unwind one user's trail while the rest of the pool stays sealed. And even then, the key only reads: it cannot <span class="red">freeze</span>, cannot <span class="red">seize</span>, cannot <span class="red">spend</span>.</p>
+    </div>
 
-  <div class="schema th-pm-reveal" id="lawSchema">
+  <div class="schema" id="lawSchema">
       <div class="gx-bloom" aria-hidden="true">
-        <i style="--bc:var(--em);left:2%;top:18%;width:17%;height:64%"></i>
-        <i style="--bc:var(--em);left:28%;top:18%;width:17%;height:64%"></i>
-        <i style="--bc:var(--em);left:54%;top:18%;width:17%;height:64%"></i>
-        <i style="--bc:var(--em);left:80%;top:18%;width:17%;height:64%"></i>
+        <i style="--bc:var(--em);left:6%;top:4%;width:40%;height:42%"></i>
+        <i style="--bc:var(--em);left:54%;top:4%;width:40%;height:42%"></i>
+        <i style="--bc:var(--em);left:6%;top:54%;width:40%;height:42%"></i>
+        <i style="--bc:var(--em);left:54%;top:54%;width:40%;height:42%"></i>
       </div>
     <div class="snode gx-card">
       <div class="st">THE POOL</div><h6>Protocol-enforced escrow</h6>
@@ -1434,6 +1510,7 @@
       <p class="sn-sum">The minimum the request covers, re-encrypted to that authority, and nobody else.</p>
       <ul><li>· Minimum necessary scope: potentially a single transfer in a defined window</li><li>· Re-encrypted inside the enclave</li><li>· Delivered to the requesting authority, and nobody else</li><li>· The rest of the pool stays sealed</li></ul>
     </div>
+  </div>
   </div>
 
   <p class="lead th-pm-reveal">And the whole stack is open source under Apache 2.0.</p>
