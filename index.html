@@ -32,6 +32,19 @@
 <link rel="stylesheet" href="css/styles.css?v=20260731b">
 <style>
   /* ===== Landing hero v2 (thesis-wide, violet accent) - index.html only ===== */
+  /* Per-page accent: violet. Overrides the shared body.page-landing token
+     (orange) from css/styles.css — declared here, after the shared sheet,
+     at equal specificity, so it wins without touching the shared file.
+     Same pattern as privacy.html's emerald override. Everything reading
+     var(--accent)/var(--accent-rgb) (nav CTA fill and glow, ghost hovers,
+     search focus ring, footer status) now resolves violet with no local
+     overrides. */
+  body.page-landing{
+    --accent:#A78BFA;
+    --accent-rgb:167,139,250;
+    --accent-dim:#7E5BD6;
+    --bg-glow:rgba(var(--accent-rgb),.11);
+  }
   .lh-hero{position:relative;overflow:hidden;background:#08080A;padding:150px 0 160px}
   /* flow-field canvas: the animated hero background. The glow (::before) and
      the bottom fade (::after) sit ABOVE it via z-index, so legibility and the
@@ -54,16 +67,9 @@
   .lh-sub{font-family:var(--display);font-weight:700;font-size:clamp(18px,2vw,26px);letter-spacing:-.01em;margin-top:22px;color:var(--white)}
   .lh-sub b{color:#A78BFA;font-weight:700}
   .lh-lead{margin:30px auto 0;max-width:620px;color:rgba(245,242,236,.62);font-size:18px;font-weight:300;line-height:1.7;font-family:var(--sans)}
-  /* nav accents → violet on the landing only (scoped so other pages keep orange; footer wordmark untouched) */
-  body.page-landing nav .nav-logo b{color:#A78BFA}
-  /* the landing CTA keeps its deliberate violet fill; the glow color rides
-     the shared coating's --cta-glow hook so the specular inset stack from
-     styles.css is never displaced (a box-shadow here would replace it) */
-  body.page-landing nav .nav-cta{background:#8B5CF6;--cta-glow:139,92,246}
-  /* landing footer accent -> violet (scoped; matches the hero/nav, overrides the shared orange) */
-  body.page-landing footer.site-footer .nav-logo b{color:#A78BFA}
-  body.page-landing footer.site-footer .status{color:#A78BFA}
-  body.page-landing footer.site-footer .status .dot{background:#A78BFA;box-shadow:0 0 8px #A78BFA}
+  /* nav, CTA fill and glow, and footer accents all ride var(--accent) from
+     the body.page-landing override above; the old scoped violet workarounds
+     (nav .nav-cta fill, footer .nav-logo b, footer .status) are gone */
   @media(max-width:768px){.lh-wrap{padding:0 24px}.lh-hero{padding:120px 0 120px}}
 </style>
 <script src="js/admin-gate.js"></script>
@@ -355,7 +361,7 @@
      no rAF, no backdrop-filter; overflow:hidden on the section clips the
      blur so it cannot bleed across the footer hairline below. */
   .lc-bloom{position:absolute;inset:0;z-index:0;pointer-events:none;filter:blur(70px)}
-  .lc-bloom i{position:absolute;border-radius:50%;background:radial-gradient(closest-side,#8B5CF6,transparent 72%)}
+  .lc-bloom i{position:absolute;border-radius:50%;background:radial-gradient(closest-side,var(--accent),transparent 72%)}
   .lc-wrap{position:relative;z-index:1;max-width:820px;margin:0 auto}
   .lc-eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:#A78BFA;margin-bottom:22px}
   .lc-h2{font-family:var(--display);font-weight:800;font-size:clamp(32px,4.6vw,56px);line-height:1.06;letter-spacing:-.015em;color:var(--white);max-width:none}
@@ -363,12 +369,10 @@
   .lc-lede{margin:24px auto 0;max-width:640px;color:rgba(245,242,236,.62);font-size:17px;font-weight:300;line-height:1.7;font-family:var(--sans)}
   .lc-actions{display:flex;justify-content:center;align-items:center;gap:14px;flex-wrap:wrap;margin-top:38px}
   .lc-actions .btn{padding:15px 26px}
-  /* the same violet fill and glow the landing nav CTA carries: the landing
-     --accent is orange, so the shared coating needs the explicit violet
-     here exactly as it does in the nav (see the nav rule above) */
-  .lc-close .nav-cta{background:#8B5CF6;--cta-glow:139,92,246}
-  .lc-close .btn-ghost:hover{border-color:rgba(167,139,250,.5)}
-  .lc-close a:focus-visible{outline:2px solid #A78BFA;outline-offset:3px}
+  /* fill, glow, and ghost hover all resolve from var(--accent): the
+     body.page-landing override in the hero style block makes the shared
+     .btn/.btn.nav-cta rules violet here with nothing pinned locally */
+  .lc-close a:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
   /* supporting note: the existing card surface at low intensity, not glass */
   .lc-note{margin:54px auto 0;max-width:600px;background:#0b0d13;border:1px solid rgba(245,242,236,.07);border-radius:10px;padding:18px 26px}
   .lc-note .h{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#A78BFA;margin-bottom:8px}
