@@ -230,6 +230,17 @@
      inline styles (that page never loads this file): keep in sync. */
   .hero-bloom { position: absolute; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
   .hero-bloom i { position: absolute; border-radius: 50%; filter: blur(70px); background: radial-gradient(closest-side, var(--accent), transparent 72%); }
+  /* Aurora curtain container (js/curtain.js fills it with a WebGL2 canvas
+     in the page accent): hangs from the hero top with room to undulate,
+     clipped here so it cannot bleed into the section below. z-index -1
+     keeps it beneath all hero content. When a context exists the script
+     adds .hero-curtain-on and the curtain REPLACES the static CSS top glow
+     (no WebGL2 / no JS keeps the glow, hero unchanged). Mirrored in
+     strk.html's inline styles (that page never loads this file). */
+  .hero-curtain { position: absolute; top: 0; left: 0; right: 0; height: min(64%, 560px); z-index: -1; overflow: hidden; pointer-events: none; }
+  .hero-curtain canvas { display: block; width: 100%; height: 100%; }
+  .hero.hero-curtain-on::before { display: none; }
+  .hero-curtain-on .hero-glow { display: none; }
   .hero-eyebrow {
     font-family: var(--mono);
     font-size: 12px;
