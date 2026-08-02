@@ -68,23 +68,36 @@
   body.page-privacy ::selection { background: var(--em); color: #03110C; }
 
   /* ============ HERO (quantum pattern: centered, eyebrow, uppercase display, accent glow) ============ */
-  .hero { min-height: auto; display: block; overflow: visible; padding: 128px 32px 60px; max-width: 1100px; margin: 0 auto; text-align: center; position: relative; }
+  .hero { min-height: auto; display: block; overflow: visible; padding: 112px 32px 56px; max-width: 1100px; margin: 0 auto; text-align: center; position: relative; }
   .hero::before { top: -40px; width: 760px; height: 420px; max-width: 100%; background: radial-gradient(ellipse at center top, rgba(var(--accent-rgb),0.16), transparent 70%); }
-  .hero-eyebrow { color: var(--accent); opacity: 1; margin-bottom: 24px; position: relative; }
-  .hero-title { font-size: clamp(40px,6.5vw,76px); line-height: 1.0; margin-bottom: 26px; max-width: none; position: relative; }
-  /* the bracket-sealed fragments cannot wrap internally (white-space:nowrap),
-     so below ~526px the 40px floor would overflow: step the size down with
-     the viewport so the longest fragment always fits */
-  @media (max-width: 560px) { .hero-title { font-size: clamp(21px,6.8vw,40px); } }
-  .shield-wrap { position: relative; display: inline-block; white-space: nowrap; margin-right: .3ch; }
-  .shield-wrap .bk { color: var(--em); font-weight: 800; display: inline-block; opacity: 0; transform: translateX(var(--from,-12px)); animation: bkin .5s cubic-bezier(.2,.9,.25,1) var(--t,1.15s) forwards; }
-  .shield-wrap .bk.r { --from: 12px; }
-  .shield-wrap .word { display: inline-block; animation: seal .6s ease var(--t,1.15s) forwards; }
-  .sw2 { --t: 1.5s; } .sw3 { --t: 1.85s; }
+  .hero-eyebrow { color: var(--accent); opacity: 1; margin-bottom: 22px; position: relative; }
+  /* Three-level hierarchy: setup (mono label line, sealed fragments),
+     premise (one display step down, softened), payoff (dominant, accent).
+     All words unchanged; only the levels changed. */
+  .hero-title { font-size: clamp(30px,3.9vw,46px); line-height: 1.08; margin-bottom: 24px; max-width: none; position: relative; }
+  .hero-setup { display: block; font-family: var(--mono); font-weight: 500; font-size: 14.5px; letter-spacing: .2em; line-height: 2; color: var(--muted); margin-bottom: 22px; }
+  .shield-wrap { position: relative; display: inline-block; white-space: nowrap; margin: 0 .55ch; }
+  .shield-wrap .bk { color: var(--em); font-weight: 700; display: inline-block; opacity: 0; transform: translateX(var(--from,-8px)); animation: bkin .5s cubic-bezier(.2,.9,.25,1) var(--t,.9s) forwards; }
+  .shield-wrap .bk.r { --from: 8px; }
+  /* the fragment text starts SHARP and blurs in once, softly (1.8px) */
+  .shield-wrap .word { display: inline-block; animation: seal .7s ease var(--t,.9s) forwards; }
+  .sw2 { --t: 1.2s; } .sw3 { --t: 1.5s; }
   @keyframes bkin { to { opacity: 1; transform: translateX(0); } }
-  @keyframes seal { to { filter: blur(6px); opacity: .5; } }
-  .hero .turn { display: block; margin-top: .35em; color: var(--em); opacity: 0; transform: translateY(10px); animation: turnin .6s ease 2.4s forwards; }
+  @keyframes seal { to { filter: blur(1.8px); opacity: .6; } }
+  .hero-mid { display: block; color: rgba(245,242,236,.78); }
+  .hero .turn { display: block; margin-top: .3em; font-size: clamp(44px,6.6vw,86px); line-height: 1.0; letter-spacing: -.01em; color: var(--em); opacity: 0; transform: translateY(10px); animation: turnin .6s ease 2s forwards; }
   @keyframes turnin { to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) {
+    .shield-wrap .bk { animation: none; opacity: 1; transform: none; }
+    .shield-wrap .word { animation: none; filter: blur(1.8px); opacity: .6; }
+    .hero .turn { animation: none; opacity: 1; transform: none; }
+  }
+  @media (max-width: 560px) {
+    .hero-title { font-size: clamp(22px,6vw,30px); }
+    .hero-setup { font-size: 12px; letter-spacing: .16em; }
+    .shield-wrap { display: block; margin: 0; }
+    .hero .turn { font-size: clamp(30px,8.6vw,44px); }
+  }
   .hero-subtitle { font-size: 18px; color: rgba(245,242,236,0.62); max-width: 620px; margin: 0 auto 8px; line-height: 1.7; position: relative; }
   .hero-subtitle b { color: var(--white); font-weight: 600; }
   .status-row { display: flex; gap: 14px; margin-top: 42px; flex-wrap: wrap; justify-content: center; position: relative; }
@@ -803,10 +816,8 @@
   </div>
   <p class="hero-eyebrow">The privacy flip</p>
   <h1 id="your-savings-your-strategy-your-next" class="hero-title">
-    <span class="shield-wrap sw1"><span class="bk">[</span><span class="word">Your savings.</span><span class="bk r">]</span></span>
-    <span class="shield-wrap sw2"><span class="bk">[</span><span class="word">Your strategy.</span><span class="bk r">]</span></span>
-    <span class="shield-wrap sw3"><span class="bk">[</span><span class="word">Your next trade.</span><span class="bk r">]</span></span><br>
-    Onchain, anyone can read all of it. Forever.
+    <span class="hero-setup"><span class="shield-wrap sw1"><span class="bk">[</span><span class="word">Your savings.</span><span class="bk r">]</span></span><span class="shield-wrap sw2"><span class="bk">[</span><span class="word">Your strategy.</span><span class="bk r">]</span></span><span class="shield-wrap sw3"><span class="bk">[</span><span class="word">Your next trade.</span><span class="bk r">]</span></span></span>
+    <span class="hero-mid">Onchain, anyone can read all of it. Forever.</span>
     <span class="turn">Starknet just made that optional.</span>
   </h1>
   <p class="hero-subtitle">Crypto built the most surveilled financial system in history, <b>by accident</b>. Starknet shipped the layer that ends it: private to the market, transparent to the law, <b>and live today</b>.</p>
