@@ -45,8 +45,10 @@
   var SPREAD_UP = 0.022;     /* bloom half-width ABOVE the spine (toward the copy):
                                 tight, so the upper edge is defined and the frame
                                 above returns to near black (was a symmetric 0.15) */
-  var SPREAD_DOWN = 0.065;   /* bloom half-width BELOW the spine, into the empty
-                                bottom of the frame: wide and soft */
+  var SPREAD_DOWN = 0.10;    /* bloom half-width BELOW the spine, into the empty
+                                bottom of the frame: wide and soft, reaching the
+                                hero's bottom edge so the handoff into the
+                                convergence scene carries light, not black */
   var BLOOM_WEIGHT = 0.16;   /* bloom energy relative to the core's 1.0 (was 0.30) */
   var CORE_WIDTH = 0.012;    /* bright spine half-width, same units (was 0.016) */
   var BRIGHTNESS = 0.92;     /* overall ribbon energy into the tone map (was 0.95) */

@@ -43,12 +43,27 @@
 
   /* ---------------- scroll progress (unchanged model) ---------------- */
   var P_ = 0;
+  var lastEntry = '';
+  /* Entry ramp: driven by HOW MUCH OF THE STAGE IS ON SCREEN, not by the
+     620vh timeline progress (which stays 0 until the stage top reaches the
+     viewport top, a full viewport AFTER the stage becomes visible; ramping
+     on it left the scene dark while already in view, a dead zone between
+     the hero ribbon and the first ring light). The ramp lives on the
+     canvas's CSS opacity, applied from the scroll listener: pure compositor
+     work over the statically painted frame, zero draw calls, so the hero
+     loop keeps the frame budget until the IO handoff line, unchanged. */
+  function applyEntry(r) {
+    var vis = Math.max(0, Math.min(1, (window.innerHeight - r.top) / window.innerHeight));
+    var v = smooth(0.03, 0.90, vis).toFixed(3);
+    if (v !== lastEntry) { lastEntry = v; canvas.style.opacity = v; }
+  }
   function readProgress() {
+    var r = sceneEl.getBoundingClientRect();
+    applyEntry(r);
     /* reduced motion settles at 0.96, not 1.0: the final beat window is
        still open there, so the settled frame keeps the closing copy AND
        the mark readable instead of showing an already-faded beat */
     if (REDUCE) { P_ = 0.96; return; }
-    var r = sceneEl.getBoundingClientRect();
     var denom = r.height - window.innerHeight;
     P_ = denom > 0 ? Math.max(0, Math.min(1, -r.top / denom)) : 0;
   }
@@ -94,7 +109,6 @@
     'uniform vec3 uEmph;',
     'uniform float uMerge; uniform float uForm; uniform float uMarkIn;',
     'uniform vec4 uClear; uniform float uClearA;',
-    'uniform float uRamp;',
     /* existing CSS accents only: #F7931A, #3DA9FC, #1FCB94, #A78BFA, #8B5CF6 */
     'const vec3 ORANGE = vec3(0.969, 0.576, 0.102);',
     'const vec3 BLUE   = vec3(0.239, 0.663, 0.988);',
@@ -165,10 +179,10 @@
     '  col += (h21(gl_FragCoord.xy + fract(uTime) * 61.0) - 0.5) / 255.0;',
     /* byte-exact page background under the light (#05060a) */
     '  col += vec3(5.0, 6.0, 10.0) / 255.0;',
-    /* entry ramp rides the alpha: at progress 0 the canvas is fully
-       transparent and the scene EMERGES from the page black instead of
-       switching on */
-    '  gl_FragColor = vec4(col, uRamp);',
+    /* entry is NOT in the shader: the canvas's CSS opacity carries the
+       visibility-driven ramp, so the statically painted frame emerges as
+       the stage rises into view, without the render loop running */
+    '  gl_FragColor = vec4(col, 1.0);',
     '}',
   ].join('\n');
   var VERT = 'attribute vec2 aP; void main(){ gl_Position = vec4(aP, 0.0, 1.0); }';
@@ -193,7 +207,7 @@
       var loc = gl.getAttribLocation(prog, 'aP');
       gl.enableVertexAttribArray(loc);
       gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
-      ['uRes', 'uTime', 'uC0', 'uC1', 'uC2', 'uEmph', 'uMerge', 'uForm', 'uMarkIn', 'uClear', 'uClearA', 'uRamp'].forEach(function (n) { uni[n] = gl.getUniformLocation(prog, n); });
+      ['uRes', 'uTime', 'uC0', 'uC1', 'uC2', 'uEmph', 'uMerge', 'uForm', 'uMarkIn', 'uClear', 'uClearA'].forEach(function (n) { uni[n] = gl.getUniformLocation(prog, n); });
       glOk = true;
     } catch (e) { glOk = false; }
   }
@@ -317,7 +331,6 @@
       gl.uniform1f(uni.uMarkIn, m.markIn);
       gl.uniform4f(uni.uClear, clear.x, clear.y, clear.hw, clear.hh);
       gl.uniform1f(uni.uClearA, clear.a);
-      gl.uniform1f(uni.uRamp, smooth(0.0, 0.05, p));
       gl.clearColor(0.0, 0.0, 0.0, 0.0);
       gl.clear(gl.COLOR_BUFFER_BIT);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
@@ -345,12 +358,16 @@
     update(P_, 0);
     window.addEventListener('scroll', function () { readProgress(); update(P_, 0); }, { passive: true });
   } else {
-    /* One static render so the pre-engagement peek below the hero stays
-       populated, then per-frame work only while the scene top sits in the
-       top quarter of the viewport or the stage is engaged. The hero flow
-       field pauses at that same boundary (its complementary rootMargin),
-       so the two loops never share frames. Animation time accumulates only
-       while looping, so nothing jumps on resume. */
+    /* One static render at full alpha: while the stage scrolls into view,
+       this painted frame is what the visibility-driven CSS opacity ramp
+       reveals, so the scene's light overlaps the fading hero ribbon with
+       NO render loop running. Per-frame work starts only when the scene
+       top sits in the top quarter of the viewport or the stage is engaged.
+       The hero flow field pauses at that same boundary (its complementary
+       rootMargin), so the two loops never share frames. Animation time
+       accumulates only while looping, and the first live frame resumes at
+       time 0, identical to this painted frame, so the takeover is
+       seamless. */
     update(P_, 0);
     if ('IntersectionObserver' in window) {
       new IntersectionObserver(function (en) {
