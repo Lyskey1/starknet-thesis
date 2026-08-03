@@ -30,6 +30,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Expanded:wght@500;600;700;800;900&family=IBM+Plex+Mono:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/dist/tabler-icons.min.css">
 <link rel="stylesheet" href="css/styles.css?v=20260802b">
+<link rel="stylesheet" href="css/glass-chips.css">
 <style>
   /* ============================================================ */
   /* PRIVACY PAGE — page-specific components (emerald-themed).     */
@@ -101,70 +102,25 @@
   .hero-subtitle { font-size: 18px; color: rgba(245,242,236,0.62); max-width: 620px; margin: 0 auto 8px; line-height: 1.7; position: relative; }
   .hero-subtitle b { color: var(--white); font-weight: 600; }
   .status-row { display: flex; gap: 14px; margin-top: 42px; flex-wrap: wrap; justify-content: center; position: relative; }
-  .status-row .pill { font-family: var(--mono); font-size: 12px; letter-spacing: .1em; border: 1px solid var(--em-line); background: transparent; color: var(--em); padding: 9px 16px; border-radius: 99px; display: inline-flex; }
-  /* Liquid glass coating on the hero chips. Specular vocabulary from the
-     nav CTA tier (css/styles.css .btn.nav-cta), replicated here because
-     that recipe lives in the shared file this page does not modify and its
-     selector is CTA-scoped. Values are tuned UP from the CTA's: the chips
-     sit over the darkest part of the hero (the aurora fades out well above
-     the row), so the material must read on flat dark without relying on
-     backdrop content. The chips keep their accent border and label; the
-     glass sits under them. Blur stepped down from the 16px card tier since
-     the pills are small. Not nested glass: no ancestor of .status-row
-     carries backdrop-filter. */
-  .status-row .pill.pv-chip--glass {
-    position: relative; overflow: hidden;
-    background: rgba(245,242,236,.07);
-    -webkit-backdrop-filter: blur(12px) saturate(112%);
-    backdrop-filter: blur(12px) saturate(112%);
-    box-shadow:
-      inset 0 1px 0 rgba(255,255,255,.5),
-      inset -1px -1px 0 rgba(255,255,255,.30),
-      inset 1px 1px 0 rgba(255,255,255,.12),
-      inset 0 10px 18px -8px rgba(255,255,255,.18),
-      inset 0 -1px 0 rgba(0,0,0,.6),
-      inset 0 -3px 5px rgba(0,0,0,.22),
-      0 0 28px rgba(var(--accent-rgb),.30);
-    transition: background .15s ease, box-shadow .15s ease;
-  }
-  .status-row .pill.pv-chip--glass::before {
-    content: ""; position: absolute; top: 0; left: 0; right: 0; height: 45%; border-radius: inherit;
-    background: linear-gradient(180deg, rgba(255,255,255,.22), transparent);
-    pointer-events: none;
-  }
-  /* hover follows the nav CTA convention: the inset stack holds, only the
-     fill and the outer glow step up */
-  .status-row .pill.pv-chip--glass:hover {
-    background: rgba(245,242,236,.10);
-    box-shadow:
-      inset 0 1px 0 rgba(255,255,255,.5),
-      inset -1px -1px 0 rgba(255,255,255,.30),
-      inset 1px 1px 0 rgba(255,255,255,.12),
-      inset 0 10px 18px -8px rgba(255,255,255,.18),
-      inset 0 -1px 0 rgba(0,0,0,.6),
-      inset 0 -3px 5px rgba(0,0,0,.22),
-      0 0 40px rgba(var(--accent-rgb),.45);
-  }
+  /* hero chips: dark glass coating from the shared css/glass-chips.css
+     (.chip-glass on the pills). No background declared here so the shared
+     class's fill and solid fallback win; the accent border and label stay
+     page-owned. The pill rule must not out-specify .chip-glass on
+     background. */
+  .status-row .pill { font-family: var(--mono); font-size: 12px; letter-spacing: .1em; border: 1px solid var(--em-line); color: var(--em); padding: 9px 16px; border-radius: 99px; display: inline-flex; }
   /* one diffuse accent bloom behind the chip row: the aurora ends far
-     above it, so this gives the backdrop-filter visible variation to
-     distort. Same treatment as the sibling .hero-bloom blobs (their base
-     rule in styles.css carries the radial and the 70px blur); positioned
-     via this class instead of an inline style because it hides together
-     with the glass fallbacks below. Static, aria-hidden parent, inert. */
+     above it, so this gives the chips' backdrop-filter visible variation
+     to distort. Same treatment as the sibling .hero-bloom blobs (their
+     base rule in styles.css carries the radial and the 70px blur);
+     positioned via this class instead of an inline style because it hides
+     together with the glass fallbacks below. Static, aria-hidden parent,
+     inert. */
   .hero-bloom .pv-chip-bloom { left: 18%; bottom: -34%; width: 64%; height: 64%; opacity: .30; }
-  /* fallback for engines without backdrop-filter: deliberate solid surface */
   @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-    .status-row .pill.pv-chip--glass { background: #0B0F10; }
     .hero-bloom .pv-chip-bloom { display: none; }
   }
-  /* mobile, same rule as every glass surface on this page: no blur below
-     981px, solid surface */
   @media (max-width: 980px) {
-    .status-row .pill.pv-chip--glass { -webkit-backdrop-filter: none; backdrop-filter: none; background: #0B0F10; }
     .hero-bloom .pv-chip-bloom { display: none; }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .status-row .pill.pv-chip--glass { transition: none; }
   }
 
   /* ============ SECTION SHELL (quantum th-pm design system, emerald) ============ */
@@ -891,10 +847,10 @@
   </h1>
   <p class="hero-subtitle">Crypto built the most surveilled financial system in history, <b>by accident</b>. Starknet shipped the layer that ends it: private to the market, transparent to the law, <b>and live today</b>.</p>
   <div class="status-row">
-    <div class="pill pv-chip--glass">ZK-STARK</div>
-    <div class="pill pv-chip--glass">PROTOCOL-LEVEL PRIVACY</div>
-    <div class="pill pv-chip--glass">STRK20s</div>
-    <div class="pill pv-chip--glass">PRIVATE DEFI</div>
+    <div class="pill chip-glass">ZK-STARK</div>
+    <div class="pill chip-glass">PROTOCOL-LEVEL PRIVACY</div>
+    <div class="pill chip-glass">STRK20s</div>
+    <div class="pill chip-glass">PRIVATE DEFI</div>
   </div>
 </div>
 

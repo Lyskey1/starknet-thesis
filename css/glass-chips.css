@@ -1,0 +1,64 @@
+/* ===== Dark glass chip coating (shared, opt-in per element) =====
+   Extracted from privacy.html's hero chips (the "final dark glass
+   intensity" recipe). Specular vocabulary from the nav CTA tier in
+   css/styles.css (.btn.nav-cta), tuned for a transparent pill over a
+   dark backdrop: dark fill, crisp top rim, wide inner top glow, dark
+   bottom edge for thickness, accent outer glow.
+
+   Usage: add class="chip-glass" to a small pill/chip element. The
+   element keeps its own border, label styles, radius and padding; the
+   glass sits under them.
+   - Accent-tinted layers read --chip-accent-rgb ("R, G, B" triplet),
+     falling back to the page accent --accent-rgb, so each page's glow
+     renders in its own accent. No color is hardcoded here.
+   - The solid fallback surface reads --chip-solid (default #0B0F10).
+   Rules of use: never apply inside another glass surface (no nested
+   glass), never on an ancestor of animated content, and give the chip
+   backdrop variation to sample (a static bloom behind the row) where
+   the backdrop is near-flat. */
+.chip-glass {
+  --chip-solid: #0B0F10;
+  position: relative; overflow: hidden;
+  background: rgba(245,242,236,.07);
+  -webkit-backdrop-filter: blur(12px) saturate(112%);
+  backdrop-filter: blur(12px) saturate(112%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.5),
+    inset -1px -1px 0 rgba(255,255,255,.30),
+    inset 1px 1px 0 rgba(255,255,255,.12),
+    inset 0 10px 18px -8px rgba(255,255,255,.18),
+    inset 0 -1px 0 rgba(0,0,0,.6),
+    inset 0 -3px 5px rgba(0,0,0,.22),
+    0 0 28px rgba(var(--chip-accent-rgb, var(--accent-rgb)), .30);
+  transition: background .15s ease, box-shadow .15s ease;
+}
+.chip-glass::before {
+  content: ""; position: absolute; top: 0; left: 0; right: 0; height: 45%; border-radius: inherit;
+  background: linear-gradient(180deg, rgba(255,255,255,.22), transparent);
+  pointer-events: none;
+}
+/* hover follows the nav CTA convention: the inset stack holds, only the
+   fill and the outer glow step up */
+.chip-glass:hover {
+  background: rgba(245,242,236,.10);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.5),
+    inset -1px -1px 0 rgba(255,255,255,.30),
+    inset 1px 1px 0 rgba(255,255,255,.12),
+    inset 0 10px 18px -8px rgba(255,255,255,.18),
+    inset 0 -1px 0 rgba(0,0,0,.6),
+    inset 0 -3px 5px rgba(0,0,0,.22),
+    0 0 40px rgba(var(--chip-accent-rgb, var(--accent-rgb)), .45);
+}
+/* fallback for engines without backdrop-filter: deliberate solid surface */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .chip-glass { background: var(--chip-solid); }
+}
+/* mobile, same rule as every glass surface on the site: no blur below
+   981px, solid surface */
+@media (max-width: 980px) {
+  .chip-glass { -webkit-backdrop-filter: none; backdrop-filter: none; background: var(--chip-solid); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .chip-glass { transition: none; }
+}
