@@ -30,6 +30,18 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/dist/tabler-icons.min.css">
 <link rel="stylesheet" href="css/styles.css?v=20260802b">
 <style>
+  /* Sub-380px nav fit: at 320px the nav row (205px logo + 44px search
+     + 44px burger + two 24px gaps + 32px padding = 373px) leaves the
+     burger a 7px sliver, clipped by html overflow-x. Page-scoped
+     because the root cause lives in css/styles.css; candidate to move
+     there later. Mirrored on every page that loads styles.css and in
+     strk.html's inline nav styles. */
+  @media (max-width: 380px) {
+    nav { gap: 10px; padding-left: 12px; padding-right: 12px; }
+    .nav-logo { font-size: 15px; }
+  }
+</style>
+<style>
   /* section headers ported from quantum.html (th-pm- structure), using this page's own accent */
   .th-pm-head{display:flex;align-items:center;gap:18px;}
   .th-pm-marker{width:0;height:0;border-left:13px solid var(--accent);border-top:8px solid transparent;border-bottom:8px solid transparent;transform:translateY(2px);filter:drop-shadow(0 0 8px rgba(var(--accent-rgb),.6));}

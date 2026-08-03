@@ -31,6 +31,18 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/dist/tabler-icons.min.css">
 <link rel="stylesheet" href="css/styles.css?v=20260802b">
 <style>
+  /* Sub-380px nav fit: at 320px the nav row (205px logo + 44px search
+     + 44px burger + two 24px gaps + 32px padding = 373px) leaves the
+     burger a 7px sliver, clipped by html overflow-x. Page-scoped
+     because the root cause lives in css/styles.css; candidate to move
+     there later. Mirrored on every page that loads styles.css and in
+     strk.html's inline nav styles. */
+  @media (max-width: 380px) {
+    nav { gap: 10px; padding-left: 12px; padding-right: 12px; }
+    .nav-logo { font-size: 15px; }
+  }
+</style>
+<style>
   /* ============================================================ */
   /* QUANTUM PAGE — page-specific components (purple-themed).      */
   /* Inline so it never touches the shared stylesheet / other      */

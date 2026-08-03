@@ -594,6 +594,9 @@ footer.site-footer .foot-bottom a:hover{color:var(--accent)}
 .status .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent);animation:statusPulse 2s infinite}
 @keyframes statusPulse{0%,100%{opacity:1}50%{opacity:0.3}}
 .foot-mark{font-family:var(--display);font-weight:900;font-size:clamp(60px,16vw,200px);text-transform:uppercase;text-align:center;line-height:0.8;letter-spacing:-0.02em;color:rgba(245,242,236,0.04);padding:30px 0 20px;user-select:none}
+/* mirrored from css/styles.css (missing from the verbatim copy): the
+   60px clamp floor makes the mark ~353px wide below 560px viewports */
+@media(max-width:560px){.foot-mark{font-size:clamp(36px,12vw,60px)}}
 .disclaimer{font-family:var(--sans);font-size:12px;color:rgba(245,242,236,0.35);line-height:1.7;max-width:880px;margin:8px auto 0;text-align:center}
 .btn{font-family:var(--mono);text-transform:uppercase;letter-spacing:0.12em;font-size:13px;font-weight:500;padding:16px 30px;background:var(--accent);color:#0A0A0A;border:none;border-radius:3px;box-shadow:0 0 34px rgba(var(--accent-rgb),0.4);cursor:pointer;display:inline-flex;align-items:center;gap:10px;text-decoration:none;transition:filter .2s,box-shadow .2s,transform .2s}
 .btn:hover{filter:brightness(1.08);box-shadow:0 0 48px rgba(var(--accent-rgb),0.6);transform:translateY(-1px)}
@@ -601,6 +604,15 @@ footer.site-footer .foot-bottom a:hover{color:var(--accent)}
 .btn-ghost{background:transparent;color:var(--white);border:1px solid var(--border);box-shadow:none}
 .btn-ghost:hover{border-color:rgba(var(--accent-rgb),0.5);box-shadow:none;filter:none;transform:translateY(-1px)}
 @media(max-width:760px){footer.site-footer .foot-top{grid-template-columns:1fr 1fr}}
+/* single-column footer below 520px: mirrored from css/styles.css (this
+   block was missing from the verbatim copy; the two-column grid cannot
+   shrink below its longest link and widened the document at 320px) */
+@media(max-width:520px){
+  footer.site-footer .foot-top{grid-template-columns:1fr;gap:28px}
+  footer.site-footer .foot-brand p{max-width:none}
+  footer.site-footer .foot-col .h{margin-bottom:8px}
+  footer.site-footer .foot-col a{padding:11px 0;margin-bottom:0}
+}
 
 
 @media(max-width:860px){
@@ -610,6 +622,15 @@ footer.site-footer .foot-bottom a:hover{color:var(--accent)}
   .nav-burger{display:flex}
   .venn-wrap{grid-template-columns:1fr}
   .util.wide{grid-column:span 1}
+}
+/* Sub-380px nav fit: at 320px the nav row (logo + search + burger + gaps
+   + padding = 373px) overflows the viewport and widens the document.
+   Mirrored from the override carried by every styles.css page; keep in
+   sync. The footer .foot-brand .nav-logo rule out-specifies this and
+   keeps its own size. */
+@media(max-width:380px){
+  nav{gap:10px;padding-left:12px;padding-right:12px}
+  .nav-logo{font-size:15px}
 }
 @media(max-width:560px){.wrap{padding:0 16px}#numbers .feat .val{font-size:clamp(26px,7.5vw,36px)}}
 @media(max-width:520px){#numbers .cells,#numbers .cells.c3{grid-template-columns:1fr}}
