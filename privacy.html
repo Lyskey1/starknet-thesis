@@ -102,51 +102,65 @@
   .hero-subtitle b { color: var(--white); font-weight: 600; }
   .status-row { display: flex; gap: 14px; margin-top: 42px; flex-wrap: wrap; justify-content: center; position: relative; }
   .status-row .pill { font-family: var(--mono); font-size: 12px; letter-spacing: .1em; border: 1px solid var(--em-line); background: transparent; color: var(--em); padding: 9px 16px; border-radius: 99px; display: inline-flex; }
-  /* Liquid glass coating on the hero chips. The specular stack is the nav
-     CTA tier (css/styles.css .btn.nav-cta), replicated here because that
-     recipe lives in the shared file this page does not modify and its
-     selector is CTA-scoped; keep in sync with the source. Unlike the CTA
-     the fill is not opaque accent: the chips keep their accent border and
-     label, with the page glass fill under them and a blur stepped down
-     from the 16px card tier since the pills are small. The dark bottom
-     shade is scaled from -4px 6px to -3px 5px for the pill radius. Not
-     nested glass: no ancestor of .status-row carries backdrop-filter. */
+  /* Liquid glass coating on the hero chips. Specular vocabulary from the
+     nav CTA tier (css/styles.css .btn.nav-cta), replicated here because
+     that recipe lives in the shared file this page does not modify and its
+     selector is CTA-scoped. Values are tuned UP from the CTA's: the chips
+     sit over the darkest part of the hero (the aurora fades out well above
+     the row), so the material must read on flat dark without relying on
+     backdrop content. The chips keep their accent border and label; the
+     glass sits under them. Blur stepped down from the 16px card tier since
+     the pills are small. Not nested glass: no ancestor of .status-row
+     carries backdrop-filter. */
   .status-row .pill.pv-chip--glass {
     position: relative; overflow: hidden;
-    background: rgba(245,242,236,.032);
+    background: rgba(245,242,236,.065);
     -webkit-backdrop-filter: blur(12px) saturate(112%);
     backdrop-filter: blur(12px) saturate(112%);
     box-shadow:
-      inset -1px -1px 0 rgba(255,255,255,.45),
-      inset 1px 1px 0 rgba(255,255,255,.18),
-      inset 0 1px 0 rgba(255,255,255,.30),
-      inset 0 -1px 0 rgba(255,255,255,.22),
-      inset 0 -3px 5px rgba(0,0,0,.18);
+      inset 0 1px 0 rgba(255,255,255,.25),
+      inset -1px -1px 0 rgba(255,255,255,.30),
+      inset 1px 1px 0 rgba(255,255,255,.12),
+      inset 0 10px 18px -8px rgba(255,255,255,.07),
+      inset 0 -1px 0 rgba(0,0,0,.38),
+      inset 0 -3px 5px rgba(0,0,0,.22),
+      0 0 24px rgba(var(--accent-rgb),.14);
     transition: background .15s ease, box-shadow .15s ease;
   }
   .status-row .pill.pv-chip--glass::before {
     content: ""; position: absolute; top: 0; left: 0; right: 0; height: 45%; border-radius: inherit;
-    background: linear-gradient(180deg, rgba(255,255,255,.16), transparent);
+    background: linear-gradient(180deg, rgba(255,255,255,.22), transparent);
     pointer-events: none;
   }
   /* hover: fill alpha and rim intensity step up, nothing moves */
   .status-row .pill.pv-chip--glass:hover {
-    background: rgba(245,242,236,.06);
+    background: rgba(245,242,236,.095);
     box-shadow:
-      inset -1px -1px 0 rgba(255,255,255,.55),
-      inset 1px 1px 0 rgba(255,255,255,.24),
-      inset 0 1px 0 rgba(255,255,255,.38),
-      inset 0 -1px 0 rgba(255,255,255,.28),
-      inset 0 -3px 5px rgba(0,0,0,.18);
+      inset 0 1px 0 rgba(255,255,255,.34),
+      inset -1px -1px 0 rgba(255,255,255,.40),
+      inset 1px 1px 0 rgba(255,255,255,.16),
+      inset 0 10px 18px -8px rgba(255,255,255,.10),
+      inset 0 -1px 0 rgba(0,0,0,.38),
+      inset 0 -3px 5px rgba(0,0,0,.22),
+      0 0 34px rgba(var(--accent-rgb),.22);
   }
+  /* one diffuse accent bloom behind the chip row: the aurora ends far
+     above it, so this gives the backdrop-filter visible variation to
+     distort. Same treatment as the sibling .hero-bloom blobs (their base
+     rule in styles.css carries the radial and the 70px blur); positioned
+     via this class instead of an inline style because it hides together
+     with the glass fallbacks below. Static, aria-hidden parent, inert. */
+  .hero-bloom .pv-chip-bloom { left: 18%; bottom: -34%; width: 64%; height: 64%; opacity: .16; }
   /* fallback for engines without backdrop-filter: deliberate solid surface */
   @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
     .status-row .pill.pv-chip--glass { background: #0B0F10; }
+    .hero-bloom .pv-chip-bloom { display: none; }
   }
   /* mobile, same rule as every glass surface on this page: no blur below
      981px, solid surface */
   @media (max-width: 980px) {
     .status-row .pill.pv-chip--glass { -webkit-backdrop-filter: none; backdrop-filter: none; background: #0B0F10; }
+    .hero-bloom .pv-chip-bloom { display: none; }
   }
   @media (prefers-reduced-motion: reduce) {
     .status-row .pill.pv-chip--glass { transition: none; }
@@ -866,6 +880,7 @@
   <div class="hero-bloom" aria-hidden="true">
     <i style="left:12%;bottom:-20%;width:44%;height:50%;opacity:.10"></i>
     <i style="left:52%;bottom:-24%;width:42%;height:54%;opacity:.09"></i>
+    <i class="pv-chip-bloom"></i>
   </div>
   <p class="hero-eyebrow">The privacy flip</p>
   <h1 id="your-savings-your-strategy-your-next" class="hero-title">
