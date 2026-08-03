@@ -102,6 +102,55 @@
   .hero-subtitle b { color: var(--white); font-weight: 600; }
   .status-row { display: flex; gap: 14px; margin-top: 42px; flex-wrap: wrap; justify-content: center; position: relative; }
   .status-row .pill { font-family: var(--mono); font-size: 12px; letter-spacing: .1em; border: 1px solid var(--em-line); background: transparent; color: var(--em); padding: 9px 16px; border-radius: 99px; display: inline-flex; }
+  /* Liquid glass coating on the hero chips. The specular stack is the nav
+     CTA tier (css/styles.css .btn.nav-cta), replicated here because that
+     recipe lives in the shared file this page does not modify and its
+     selector is CTA-scoped; keep in sync with the source. Unlike the CTA
+     the fill is not opaque accent: the chips keep their accent border and
+     label, with the page glass fill under them and a blur stepped down
+     from the 16px card tier since the pills are small. The dark bottom
+     shade is scaled from -4px 6px to -3px 5px for the pill radius. Not
+     nested glass: no ancestor of .status-row carries backdrop-filter. */
+  .status-row .pill.pv-chip--glass {
+    position: relative; overflow: hidden;
+    background: rgba(245,242,236,.032);
+    -webkit-backdrop-filter: blur(12px) saturate(112%);
+    backdrop-filter: blur(12px) saturate(112%);
+    box-shadow:
+      inset -1px -1px 0 rgba(255,255,255,.45),
+      inset 1px 1px 0 rgba(255,255,255,.18),
+      inset 0 1px 0 rgba(255,255,255,.30),
+      inset 0 -1px 0 rgba(255,255,255,.22),
+      inset 0 -3px 5px rgba(0,0,0,.18);
+    transition: background .15s ease, box-shadow .15s ease;
+  }
+  .status-row .pill.pv-chip--glass::before {
+    content: ""; position: absolute; top: 0; left: 0; right: 0; height: 45%; border-radius: inherit;
+    background: linear-gradient(180deg, rgba(255,255,255,.16), transparent);
+    pointer-events: none;
+  }
+  /* hover: fill alpha and rim intensity step up, nothing moves */
+  .status-row .pill.pv-chip--glass:hover {
+    background: rgba(245,242,236,.06);
+    box-shadow:
+      inset -1px -1px 0 rgba(255,255,255,.55),
+      inset 1px 1px 0 rgba(255,255,255,.24),
+      inset 0 1px 0 rgba(255,255,255,.38),
+      inset 0 -1px 0 rgba(255,255,255,.28),
+      inset 0 -3px 5px rgba(0,0,0,.18);
+  }
+  /* fallback for engines without backdrop-filter: deliberate solid surface */
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .status-row .pill.pv-chip--glass { background: #0B0F10; }
+  }
+  /* mobile, same rule as every glass surface on this page: no blur below
+     981px, solid surface */
+  @media (max-width: 980px) {
+    .status-row .pill.pv-chip--glass { -webkit-backdrop-filter: none; backdrop-filter: none; background: #0B0F10; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .status-row .pill.pv-chip--glass { transition: none; }
+  }
 
   /* ============ SECTION SHELL (quantum th-pm design system, emerald) ============ */
   .th-pm-sec { --th-q: var(--accent); --th-ink: var(--white); --th-muted: #8b909c; --th-hair: rgba(245,242,236,.08); --th-hair-soft: rgba(245,242,236,.05); position: relative; max-width: 1160px; margin: 0 auto; padding: 90px 32px 0; overflow: visible; }
@@ -826,10 +875,10 @@
   </h1>
   <p class="hero-subtitle">Crypto built the most surveilled financial system in history, <b>by accident</b>. Starknet shipped the layer that ends it: private to the market, transparent to the law, <b>and live today</b>.</p>
   <div class="status-row">
-    <div class="pill">ZK-STARK</div>
-    <div class="pill">PROTOCOL-LEVEL PRIVACY</div>
-    <div class="pill">STRK20s</div>
-    <div class="pill">PRIVATE DEFI</div>
+    <div class="pill pv-chip--glass">ZK-STARK</div>
+    <div class="pill pv-chip--glass">PROTOCOL-LEVEL PRIVACY</div>
+    <div class="pill pv-chip--glass">STRK20s</div>
+    <div class="pill pv-chip--glass">PRIVATE DEFI</div>
   </div>
 </div>
 
