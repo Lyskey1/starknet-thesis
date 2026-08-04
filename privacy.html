@@ -377,47 +377,7 @@
   .wall-out .em { color: var(--em); }
 
   /* ============ 03: protocol grid ============ */
-  /* champion bar: the STRK20 row extracted above the field table. Both
-     tables share table-layout: fixed and the same <colgroup>, so the bar
-     and field columns align exactly at any width. The bar carries the
-     shared dark glass values (the glass-chips recipe scaled to a bar)
-     with an inset ring instead of a border so its inner geometry stays
-     identical to the field wrapper's. No overflow clip: its tooltips
-     escape the bar and open downward via the tr:first-child rule. */
-  .champ { margin: 56px 0 0; position: relative; border-radius: 12px;
-    background: rgba(245,242,236,.07);
-    -webkit-backdrop-filter: blur(12px) saturate(112%);
-    backdrop-filter: blur(12px) saturate(112%);
-    box-shadow:
-      inset 0 0 0 1px rgba(var(--accent-rgb),.35),
-      inset 0 1px 0 rgba(255,255,255,.5),
-      inset -1px -1px 0 rgba(255,255,255,.30),
-      inset 1px 1px 0 rgba(255,255,255,.12),
-      inset 0 10px 18px -8px rgba(255,255,255,.18),
-      inset 0 -1px 0 rgba(0,0,0,.6),
-      inset 0 -3px 5px rgba(0,0,0,.22),
-      0 0 28px rgba(var(--chip-accent-rgb, var(--accent-rgb)), .30); }
-  .champ::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 45%; border-radius: inherit;
-    background: linear-gradient(180deg, rgba(255,255,255,.22), transparent); pointer-events: none; }
-  .champ-compact { display: none; }
-  .pgrid-champ { min-width: 0; }
-  .pgrid-champ td { border: none; background: transparent; height: 64px; }
-  .pgrid-champ td.pname { background: transparent; color: var(--em); }
-  .pgrid-champ td.y::before { width: 14px; height: 14px; background: var(--em); border: 0; opacity: 1;
-    box-shadow: 0 0 8px var(--em), 0 0 18px rgba(var(--accent-rgb),.4); }
-  .pgrid-champ td.score { color: var(--em); font-size: 14px; font-weight: 600; letter-spacing: .08em; }
-  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-    .champ { background: #0B0F10; -webkit-backdrop-filter: none; backdrop-filter: none; }
-  }
-  @media (max-width: 980px) {
-    /* the bar never scrolls horizontally: solid surface, collapsed to
-       the protocol and its score (the criteria live in the table below) */
-    .champ { background: #0B0F10; -webkit-backdrop-filter: none; backdrop-filter: none; }
-    .champ .pgrid-champ { display: none; }
-    .champ-compact { display: flex; justify-content: space-between; align-items: center; padding: 16px 18px; font-family: var(--mono); }
-    .champ-compact .cn, .champ-compact .cs { color: var(--em); font-size: 14px; letter-spacing: .1em; font-weight: 600; }
-  }
-  .gridwrap { margin: 10px 0 0; overflow-x: auto; }
+  .gridwrap { margin: 56px 0 0; overflow-x: auto; }
   /* mobile: right-edge fade + sticky protocol column (the symbol matrix cannot
      restack cleanly — its td pseudo-elements already carry the check marks) */
   @media (max-width: 860px) {
@@ -437,6 +397,14 @@
   .pgrid th span { display: block; font-size: 10px; color: var(--muted); font-weight: 400; margin-top: 6px; text-transform: lowercase; letter-spacing: .04em; }
   .pgrid td { border: 1px solid var(--line); text-align: center; padding: 0; height: 66px; position: relative; }
   .pgrid td.pname, .pgrid th.pname { text-align: left; padding: 16px 18px; font-size: 14px; letter-spacing: .1em; font-weight: 600; background: #0D1114; }
+  /* champion row: STRK20 distinguished with in-table means only, no
+     backdrop-filter, no specular stack: accent tint, 2px accent left
+     edge, larger glowing dots, accent label and score, full opacity */
+  .pgrid tr.champ-row td { background: rgba(var(--accent-rgb),.05); }
+  .pgrid tr.champ-row td.pname { color: var(--em); background: rgba(var(--accent-rgb),.08); border-left: 2px solid var(--em); }
+  .pgrid tbody tr.champ-row { opacity: 1; }
+  .pgrid tr.champ-row td.y::before { width: 14px; height: 14px; background: var(--em); opacity: 1; border: 0; box-shadow: 0 0 8px var(--em), 0 0 18px rgba(var(--accent-rgb),.4); }
+  .pgrid tr.champ-row td.score { color: var(--em); font-size: 13px; font-weight: 600; }
   /* dot system: full accent = yes, half amber = partial, faint = no */
   .pgrid td.y::before { content: ''; display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: var(--em); opacity: .75; }
   .pgrid td.p::before { content: ''; display: inline-block; width: 12px; height: 12px; border-radius: 50%; border: 1px solid #E8A33D; background: linear-gradient(90deg, #E8A33D 0 50%, transparent 50%); }
@@ -444,7 +412,7 @@
   .pgrid td.score { font-size: 12px; letter-spacing: .08em; color: var(--muted); }
   /* field rows rest dimmed, lift on hover or keyboard focus */
   .pgrid tbody tr { opacity: .78; transition: opacity .12s; }
-  .pgrid tbody tr:hover, .pgrid tbody tr:focus-within, .pgrid-champ tbody tr { opacity: 1; }
+  .pgrid tbody tr:hover, .pgrid tbody tr:focus-within { opacity: 1; }
   @media (prefers-reduced-motion: reduce) { .pgrid tbody tr { transition: none; } }
   .pgrid td.p:hover, .pgrid td.p:focus { background: rgba(232,163,61,.08); outline: none; cursor: help; }
   .pgrid td.y:hover, .pgrid td.n:hover, .pgrid td.y:focus, .pgrid td.n:focus { background: rgba(var(--accent-rgb),.09); outline: none; cursor: help; }
@@ -1297,25 +1265,6 @@
   <p class="th-pm-eyebrow th-pm-reveal">The architecture</p>
   <p class="th-pm-intro th-pm-reveal">Strip away the branding and it comes down to architecture: <b>Starknet is, structurally, the strongest privacy platform in production today.</b> Not on one criterion. On all of them.</p>
 
-  <div class="champ th-pm-reveal">
-    <table class="pgrid pgrid-champ">
-      <colgroup><col class="c-name"><col class="c-crit" span="7"><col class="c-score"></colgroup>
-      <tbody>
-        <tr id="strk20">
-          <td class="pname">STRK20</td>
-          <td class="y" tabindex="0" data-tip="One shared pool for every ERC-20: BTC, USDC, STRK, memecoins. Every asset deepens the same crowd."></td>
-          <td class="y" tabindex="0" data-tip="Notes are discovered through the protocol itself. Nothing to back up, nothing to lose."></td>
-          <td class="y" tabindex="0" data-tip="Viewing-key escrow enforced by the proof itself. Scoped, lawful disclosure without exposing anyone else in the pool."></td>
-          <td class="y" tabindex="0" data-tip="One click in Ready or Xverse, settled in seconds, flat 4 STRK fee whatever the amount."></td>
-          <td class="y" tabindex="0" data-tip="Full Cairo expressivity: private flows inside real applications, not a fixed transfer circuit."></td>
-          <td class="y" tabindex="0" data-tip="The whole Starknet DeFi stack plugs into the pool: swaps, lending, staking, yield, all atomic with no intermediate public state, and cross-chain flows from other ecosystems are next."></td>
-          <td class="y" tabindex="0" data-tip="Live on Starknet mainnet DeFi since June 2026."></td>
-          <td class="score">7/7</td>
-        </tr>
-      </tbody>
-    </table>
-    <div class="champ-compact"><span class="cn">STRK20</span><span class="cs">7/7</span></div>
-  </div>
   <div class="gridwrap th-pm-reveal">
     <table class="pgrid">
       <colgroup><col class="c-name"><col class="c-crit" span="7"><col class="c-score"></colgroup>
@@ -1333,6 +1282,17 @@
         </tr>
       </thead>
       <tbody>
+        <tr id="strk20" class="champ-row">
+          <td class="pname">STRK20</td>
+          <td class="y" tabindex="0" data-tip="One shared pool for every ERC-20: BTC, USDC, STRK, memecoins. Every asset deepens the same crowd."></td>
+          <td class="y" tabindex="0" data-tip="Notes are discovered through the protocol itself. Nothing to back up, nothing to lose."></td>
+          <td class="y" tabindex="0" data-tip="Viewing-key escrow enforced by the proof itself. Scoped, lawful disclosure without exposing anyone else in the pool."></td>
+          <td class="y" tabindex="0" data-tip="One click in Ready or Xverse, settled in seconds, flat 4 STRK fee whatever the amount."></td>
+          <td class="y" tabindex="0" data-tip="Full Cairo expressivity: private flows inside real applications, not a fixed transfer circuit."></td>
+          <td class="y" tabindex="0" data-tip="The whole Starknet DeFi stack plugs into the pool: swaps, lending, staking, yield, all atomic with no intermediate public state, and cross-chain flows from other ecosystems are next."></td>
+          <td class="y" tabindex="0" data-tip="Live on Starknet mainnet DeFi since June 2026."></td>
+          <td class="score">7/7</td>
+        </tr>
         <tr id="zcash">
           <td class="pname">ZCASH</td>
           <td class="n" tabindex="0" data-tip="Single asset. The pool only ever hides ZEC."></td>
