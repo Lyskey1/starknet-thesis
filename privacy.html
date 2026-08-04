@@ -208,10 +208,8 @@
   .pv-duo .island, .pv-duo .crowd { max-width: none; margin: 0; }
   .pv-duo .bridge { flex: 0 0 118px; }
   .pv-duo .forum { max-width: none; margin: 0; }
-  .pv-duo .lineage { max-width: none; margin: 30px 0 0; }
-  /* the Eli reply, moved out of the forum card into the prose column,
-     reads as its own emerald-edged card */
-  .pv-duo .forum-reply { border: 1px solid var(--em-line); border-radius: 12px; margin-top: 28px; }
+  /* question row: heading centered against the taller forum post */
+  .pv-duo--center { align-items: center; }
   /* walls: hairline separators + moderate padding replace the old 84px gaps */
   .pv-walls { margin-top: 56px; }
   .pv-wall { margin-top: 0; border-top: 1px solid var(--th-hair); padding: 52px 0 56px; }
@@ -449,13 +447,31 @@
   .forum-user .r { color: var(--muted); font-size: 10.5px; letter-spacing: .06em; }
   .forum-body { padding: 20px 24px; font-size: 14px; line-height: 1.8; color: #D6DAD6; }
   .forum-body .hl { background: var(--em-dim); color: var(--em); padding: 1px 4px; }
-  .forum-reply { border-top: 1px solid var(--em-line); background: linear-gradient(180deg,rgba(var(--accent-rgb),.06),transparent); padding: 22px 24px; font-family: var(--sans); }
-  .forum-reply .rt { font-family: var(--display); font-weight: 700; font-size: 22px; }
-  .forum-reply .rt .em { color: var(--em); }
-  .forum-reply .rd { font-size: 14.5px; color: var(--muted); margin-top: 10px; line-height: 1.7; }
+  /* the reply, unboxed: plain prose columns for the answer row (same
+     typography the old .forum-reply card carried, minus the box; the
+     Satoshi post is the only boxed element of this sub-block) */
+  .sat-answer .rt { font-family: var(--display); font-weight: 700; font-size: 22px; }
+  .sat-answer .rt .em { color: var(--em); }
+  .sat-answer .rd { font-size: 14.5px; color: var(--muted); margin-top: 10px; line-height: 1.7; }
+  .sat-answer .grid-lead { margin-top: 12px; }
 
   .lineage { display: flex; justify-content: space-between; max-width: 760px; margin: 36px auto 0; font-family: var(--mono); position: relative; }
   .lineage::before { content: ''; position: absolute; left: 4%; right: 4%; top: 5px; height: 1px; background: var(--line); }
+  /* the lineage as the narrative bridge: a full-width band between the
+     question row and the answer row, hairline-edged. Emphasis grows
+     toward 2026: the connecting line is an accent gradient (low alpha
+     at 2010, full accent at 2026), the endpoints outsize the middle
+     nodes, and the 2026 dot carries the page glow. Negative top margins
+     keep every dot centered on the 2px line at y = 55px. */
+  .lineage--band { max-width: none; margin: 64px 0 0; padding: 46px 3% 42px; border-top: 1px solid var(--th-hair); border-bottom: 1px solid var(--th-hair); }
+  .lineage--band::before { left: calc(3% + 94% / 12); right: calc(3% + 94% / 12); top: 54px; height: 2px; background: linear-gradient(90deg, rgba(var(--accent-rgb), .15), var(--accent)); }
+  .lineage--band .ln i { width: 14px; height: 14px; }
+  .lineage--band .ln .y { font-size: 13px; margin-top: 16px; }
+  .lineage--band .ln .l { font-size: 10.5px; margin-top: 6px; letter-spacing: .08em; }
+  .lineage--band .ln:first-child i { width: 18px; height: 18px; margin-top: -2px; }
+  .lineage--band .ln:first-child .y { margin-top: 14px; }
+  .lineage--band .ln:last-child i { width: 20px; height: 20px; margin-top: -3px; box-shadow: 0 0 12px var(--em), 0 0 36px rgba(var(--accent-rgb), .5); }
+  .lineage--band .ln:last-child .y { margin-top: 13px; }
   .ln { text-align: center; position: relative; flex: 1; text-decoration: none; color: inherit; transition: transform .2s; }
   a.ln:hover { transform: translateY(-3px); }
   a.ln:hover .y { color: var(--em); }
@@ -838,6 +854,13 @@
     .ln .y { margin-top: 0; min-width: 40px; }
     .ln .l { margin-top: 0; }
     .ln .l br { display: none; }
+    /* band variant on the vertical rail: uniform dots (the size emphasis
+       is a desktop read), gradient rotated to run down toward 2026 */
+    .lineage--band { padding: 22px 0 18px; margin-top: 48px; }
+    .lineage--band::before { left: 8px; right: auto; top: 20px; bottom: 20px; width: 2px; height: auto; background: linear-gradient(180deg, rgba(var(--accent-rgb), .15), var(--accent)); }
+    .lineage--band .ln i, .lineage--band .ln:first-child i, .lineage--band .ln:last-child i { width: 14px; height: 14px; margin: 0; }
+    .lineage--band .ln .y, .lineage--band .ln:first-child .y, .lineage--band .ln:last-child .y { margin-top: 0; }
+    .lineage--band .ln .l { margin-top: 0; }
     .waves, .build-tiles { grid-template-columns: 1fr; }
     .viz-body, .video-grid { grid-template-columns: 1fr; }
     .viz-col { border-right: none; border-bottom: 1px solid var(--line); }
@@ -1210,38 +1233,50 @@
     </table>
   </div>
 
-  <div class="pv-duo th-pm-reveal" style="margin-top:88px">
+  <!-- Satoshi narrative: three rows. Row 1 asks (question + the post),
+       row 2 bridges (the lineage as a full-width band), row 3 answers
+       (two plain prose columns). The post is the only boxed element. -->
+  <div class="pv-duo pv-duo--center th-pm-reveal" style="margin-top:88px">
     <div>
       <div class="chapter" style="margin-top:0">
         <h3 id="so-how-does-one-chain-check">So how does one chain <span class="em">check every box at once?</span></h3>
         <p>The answer starts fifteen years back, with Satoshi himself naming the tool.</p>
       </div>
-      <div class="forum-reply">
+    </div>
+    <div>
+      <div class="forum">
+        <div class="forum-bar"><a href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/174/" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;text-underline-offset:3px">BITCOINTALK.ORG — THREAD Nº 770</a><span>AUGUST 11, 2010</span></div>
+        <div class="forum-post">
+          <div class="forum-user"><span class="u">satoshi</span><br><span class="r">FOUNDER<br>ACTIVITY: 364</span></div>
+          <div class="forum-body">This is a very interesting topic. If a solution was found, <span class="hl">a much better, easier, more convenient implementation of Bitcoin would be possible</span>. [...] It's hard to think of how to apply zero-knowledge-proofs in this case.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="lineage lineage--band th-pm-reveal">
+    <a class="ln on" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/174/" target="_blank" rel="noopener"><i></i><div class="y">2010</div><div class="l">SATOSHI'S <br>OPEN QUESTION</div></a>
+    <a class="ln on" href="https://www.youtube.com/watch?v=kLueWNsYRno" target="_blank" rel="noopener"><i></i><div class="y">2013</div><div class="l">SAN JOSE <br>TALK</div></a>
+    <a class="ln on" href="http://zerocash-project.org/paper" target="_blank" rel="noopener"><i></i><div class="y">2014</div><div class="l">ZEROCASH <br>PAPER</div></a>
+    <a class="ln on" href="https://en.wikipedia.org/wiki/Eli_Ben-Sasson" target="_blank" rel="noopener"><i></i><div class="y">2016</div><div class="l">ZCASH <br>FOUNDING SCIENTIST</div></a>
+    <a class="ln on" href="https://starkware.co" target="_blank" rel="noopener"><i></i><div class="y">2018</div><div class="l">STARKWARE <br>FOUNDED</div></a>
+    <a class="ln on" href="https://x.com/Starknet/status/2064375302957289598" target="_blank" rel="noopener"><i></i><div class="y">2026</div><div class="l">STRK20 <br>LIVE</div></a>
+  </div>
+
+  <div class="pv-duo th-pm-reveal" style="margin-top:56px">
+    <div>
+      <div class="sat-answer">
         <div class="rt">Sixteen years later, <span class="em">the answer shipped.</span></div>
         <div class="rd">Eli Ben-Sasson presented ZK as the fix for Bitcoin's privacy and scaling at the San Jose conference in 2013. He co-authored the 2014 Zerocash paper, the note-and-nullifier model every modern shielded system descends from, and became a founding scientist of Zcash to fix privacy in crypto. Then he co-founded StarkWare to fix scaling with ZK-STARKs. In 2026, the circle closed: ZK-STARK on Starknet switched on its second property, privacy coupled with scaling.</div>
       </div>
     </div>
     <div>
-  <div class="forum">
-    <div class="forum-bar"><a href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/174/" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;text-underline-offset:3px">BITCOINTALK.ORG — THREAD Nº 770</a><span>AUGUST 11, 2010</span></div>
-    <div class="forum-post">
-      <div class="forum-user"><span class="u">satoshi</span><br><span class="r">FOUNDER<br>ACTIVITY: 364</span></div>
-      <div class="forum-body">This is a very interesting topic. If a solution was found, <span class="hl">a much better, easier, more convenient implementation of Bitcoin would be possible</span>. [...] It's hard to think of how to apply zero-knowledge-proofs in this case.</div>
+      <div class="sat-answer">
+        <div class="rt">And the mechanism <span class="em">was the point.</span></div>
+        <p class="grid-lead">The main strength of ZK-STARKs is the verification model itself. Chains that verify by re-execution cannot retrofit privacy: strip out the inputs and there is nothing left for validators to check. Starknet, based on ZK-STARKs, verifies proofs instead, and <b>checking a proof requires none of the underlying data</b>. And this was the plan from the very beginning.</p>
+      </div>
     </div>
   </div>
-
-  <div class="lineage">
-    <a class="ln on" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/174/" target="_blank" rel="noopener"><i></i><div class="y">2010</div><div class="l">SATOSHI'S<br>OPEN QUESTION</div></a>
-    <a class="ln on" href="https://www.youtube.com/watch?v=kLueWNsYRno" target="_blank" rel="noopener"><i></i><div class="y">2013</div><div class="l">SAN JOSE<br>TALK</div></a>
-    <a class="ln on" href="http://zerocash-project.org/paper" target="_blank" rel="noopener"><i></i><div class="y">2014</div><div class="l">ZEROCASH<br>PAPER</div></a>
-    <a class="ln on" href="https://en.wikipedia.org/wiki/Eli_Ben-Sasson" target="_blank" rel="noopener"><i></i><div class="y">2016</div><div class="l">ZCASH<br>FOUNDING SCIENTIST</div></a>
-    <a class="ln on" href="https://starkware.co" target="_blank" rel="noopener"><i></i><div class="y">2018</div><div class="l">STARKWARE<br>FOUNDED</div></a>
-    <a class="ln on" href="https://x.com/Starknet/status/2064375302957289598" target="_blank" rel="noopener"><i></i><div class="y">2026</div><div class="l">STRK20<br>LIVE</div></a>
-  </div>
-    </div>
-  </div>
-
-  <p class="grid-lead th-pm-reveal">The main strength of ZK-STARKs is the verification model itself. Chains that verify by re-execution cannot retrofit privacy: strip out the inputs and there is nothing left for validators to check. Starknet, based on ZK-STARKs, verifies proofs instead, and <b>checking a proof requires none of the underlying data</b>. And this was the plan from the very beginning.</p>
 
   <!-- Videos: 2x2 grid (same qv mechanism as quantum.html) -->
   <div class="video-grid-wrap th-pm-reveal">
