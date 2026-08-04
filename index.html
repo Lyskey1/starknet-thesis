@@ -259,9 +259,9 @@
   /* specular sweep: ::after on the five th-cards (free slot there); the
      feature card keeps its violet edge bar on ::after and carries a span */
   .lg-card:not(.th-feature)::after,.lg-card .lg-sweep{content:"";position:absolute;top:-30%;bottom:-30%;left:0;width:38%;
-    background:linear-gradient(105deg,transparent 10%,rgba(255,255,255,.11) 50%,transparent 90%);
+    background:var(--sweep-grad);
     opacity:0;transform:translateX(-130%);pointer-events:none;
-    transition:transform .65s cubic-bezier(.3,.7,.3,1),opacity .3s;}
+    transition:transform var(--sweep-dur) var(--sweep-ease),opacity .3s;}
   .lg-card:not(.th-feature):hover::after,.lg-card:hover .lg-sweep{opacity:1;transform:translateX(330%);}
   /* fallback: engines without backdrop-filter get the original opaque
      surfaces, so the card reads deliberate rather than nearly invisible */

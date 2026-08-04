@@ -858,6 +858,29 @@
   a.gx-card:focus-visible{outline:2px solid var(--gc);outline-offset:3px;}
   /* the case files keep their coral top rail through every state */
   .case.gx-card,.case.gx-card:hover{border-top:2px solid var(--danger);}
+  /* specular hover sweep, ported from the landing (index.html .lg-sweep
+     block, geometry/timing shared via css/glass-cards.css vars; keep in
+     sync with the landing's rules). Card-level interactive surfaces only:
+     bento cells, case files, build tiles, schema cards, beam nodes.
+     Deliberately excluded: chart cards and stat tiles (non-interactive,
+     a sweep would imply clickability), the banknote flip cards (a sweep
+     firing mid-flip reads as glitch), and chips/filters/rows/timeline
+     nodes (their own hover language). The band is pointer-inert so links
+     and marquee interactions underneath stay live; it is static at rest
+     (transform held, no idle animation). */
+  .wave.gx-card, .case.gx-card, .btile.gx-card, .snode.gx-card, .pcore-node { overflow: hidden; }
+  .wave.gx-card::after, .case.gx-card::after, .btile.gx-card::after, .snode.gx-card::after, .pcore-node::after {
+    content: ""; position: absolute; top: -30%; bottom: -30%; left: 0; width: 38%;
+    background: var(--sweep-grad);
+    opacity: 0; transform: translateX(-130%); pointer-events: none;
+    transition: transform var(--sweep-dur) var(--sweep-ease), opacity .3s;
+  }
+  .wave.gx-card:hover::after, .case.gx-card:hover::after, .btile.gx-card:hover::after, .snode.gx-card:hover::after, .pcore-node:hover::after {
+    opacity: 1; transform: translateX(330%);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .wave.gx-card::after, .case.gx-card::after, .btile.gx-card::after, .snode.gx-card::after, .pcore-node::after { display: none; }
+  }
 
   /* Narrative blooms: one blob per card, behind that card only. Static,
      childless, pointer-inert; the blur is on the bloom layer itself, never
