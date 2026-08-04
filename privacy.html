@@ -377,7 +377,47 @@
   .wall-out .em { color: var(--em); }
 
   /* ============ 03: protocol grid ============ */
-  .gridwrap { margin: 56px 0 0; overflow-x: auto; }
+  /* champion bar: the STRK20 row extracted above the field table. Both
+     tables share table-layout: fixed and the same <colgroup>, so the bar
+     and field columns align exactly at any width. The bar carries the
+     shared dark glass values (the glass-chips recipe scaled to a bar)
+     with an inset ring instead of a border so its inner geometry stays
+     identical to the field wrapper's. No overflow clip: its tooltips
+     escape the bar and open downward via the tr:first-child rule. */
+  .champ { margin: 56px 0 0; position: relative; border-radius: 12px;
+    background: rgba(245,242,236,.07);
+    -webkit-backdrop-filter: blur(12px) saturate(112%);
+    backdrop-filter: blur(12px) saturate(112%);
+    box-shadow:
+      inset 0 0 0 1px rgba(var(--accent-rgb),.35),
+      inset 0 1px 0 rgba(255,255,255,.5),
+      inset -1px -1px 0 rgba(255,255,255,.30),
+      inset 1px 1px 0 rgba(255,255,255,.12),
+      inset 0 10px 18px -8px rgba(255,255,255,.18),
+      inset 0 -1px 0 rgba(0,0,0,.6),
+      inset 0 -3px 5px rgba(0,0,0,.22),
+      0 0 28px rgba(var(--chip-accent-rgb, var(--accent-rgb)), .30); }
+  .champ::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 45%; border-radius: inherit;
+    background: linear-gradient(180deg, rgba(255,255,255,.22), transparent); pointer-events: none; }
+  .champ-compact { display: none; }
+  .pgrid-champ { min-width: 0; }
+  .pgrid-champ td { border: none; background: transparent; height: 64px; }
+  .pgrid-champ td.pname { background: transparent; color: var(--em); }
+  .pgrid-champ td.y::before { width: 14px; height: 14px; background: var(--em); border: 0; opacity: 1;
+    box-shadow: 0 0 8px var(--em), 0 0 18px rgba(var(--accent-rgb),.4); }
+  .pgrid-champ td.score { color: var(--em); font-size: 14px; font-weight: 600; letter-spacing: .08em; }
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .champ { background: #0B0F10; -webkit-backdrop-filter: none; backdrop-filter: none; }
+  }
+  @media (max-width: 980px) {
+    /* the bar never scrolls horizontally: solid surface, collapsed to
+       the protocol and its score (the criteria live in the table below) */
+    .champ { background: #0B0F10; -webkit-backdrop-filter: none; backdrop-filter: none; }
+    .champ .pgrid-champ { display: none; }
+    .champ-compact { display: flex; justify-content: space-between; align-items: center; padding: 16px 18px; font-family: var(--mono); }
+    .champ-compact .cn, .champ-compact .cs { color: var(--em); font-size: 14px; letter-spacing: .1em; font-weight: 600; }
+  }
+  .gridwrap { margin: 10px 0 0; overflow-x: auto; }
   /* mobile: right-edge fade + sticky protocol column (the symbol matrix cannot
      restack cleanly — its td pseudo-elements already carry the check marks) */
   @media (max-width: 860px) {
@@ -389,18 +429,23 @@
   /* full-width centerpiece scale: cell padding and type stepped up
      proportionally from the annex-sized original (th 10->11.5, rows 56->66,
      names 12.5->14); every row, column, state and tooltip untouched */
-  .pgrid { width: 100%; border-collapse: collapse; font-family: var(--mono); min-width: 860px; }
+  .pgrid { width: 100%; table-layout: fixed; border-collapse: collapse; font-family: var(--mono); min-width: 860px; }
+  .pgrid col.c-name { width: 15%; }
+  .pgrid col.c-crit { width: 10.4%; }
+  .pgrid col.c-score { width: 12.2%; }
   .pgrid th { font-size: 11.5px; letter-spacing: .08em; color: var(--ink); padding: 17px 12px; border: 1px solid var(--line); background: #0D1114; font-weight: 600; line-height: 1.5; }
   .pgrid th span { display: block; font-size: 10px; color: var(--muted); font-weight: 400; margin-top: 6px; text-transform: lowercase; letter-spacing: .04em; }
   .pgrid td { border: 1px solid var(--line); text-align: center; padding: 0; height: 66px; position: relative; }
   .pgrid td.pname, .pgrid th.pname { text-align: left; padding: 16px 18px; font-size: 14px; letter-spacing: .1em; font-weight: 600; background: #0D1114; }
-  .hero-row td { background: rgba(var(--accent-rgb),.05); }
-  .hero-row td.pname { color: var(--em); background: rgba(var(--accent-rgb),.08); }
-  .pgrid td.y::before { content: ''; display: inline-block; width: 18px; height: 18px; border-radius: 50%; background: var(--em-dim); border: 1px solid var(--em); box-shadow: 0 0 8px rgba(var(--accent-rgb),.25); }
-  .pgrid td.y::after { content: '✓'; position: absolute; left: 50%; top: 50%; transform: translate(-50%,-52%); color: var(--em); font-size: 11px; font-weight: 600; }
-  .pgrid td.n::before { content: '—'; color: #394247; font-size: 13px; }
-  .pgrid td.p::before { content: ''; display: inline-block; width: 18px; height: 18px; border-radius: 50%; background: rgba(232,163,61,.12); border: 1px solid #E8A33D; box-shadow: 0 0 8px rgba(232,163,61,.2); }
-  .pgrid td.p::after { content: '~'; position: absolute; left: 50%; top: 50%; transform: translate(-50%,-54%); color: #E8A33D; font-size: 13px; font-weight: 600; }
+  /* dot system: full accent = yes, half amber = partial, faint = no */
+  .pgrid td.y::before { content: ''; display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: var(--em); opacity: .75; }
+  .pgrid td.p::before { content: ''; display: inline-block; width: 12px; height: 12px; border-radius: 50%; border: 1px solid #E8A33D; background: linear-gradient(90deg, #E8A33D 0 50%, transparent 50%); }
+  .pgrid td.n::before { content: ''; display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: rgba(245,242,236,.08); border: 1px solid rgba(245,242,236,.16); }
+  .pgrid td.score { font-size: 12px; letter-spacing: .08em; color: var(--muted); }
+  /* field rows rest dimmed, lift on hover or keyboard focus */
+  .pgrid tbody tr { opacity: .78; transition: opacity .12s; }
+  .pgrid tbody tr:hover, .pgrid tbody tr:focus-within, .pgrid-champ tbody tr { opacity: 1; }
+  @media (prefers-reduced-motion: reduce) { .pgrid tbody tr { transition: none; } }
   .pgrid td.p:hover, .pgrid td.p:focus { background: rgba(232,163,61,.08); outline: none; cursor: help; }
   .pgrid td.y:hover, .pgrid td.n:hover, .pgrid td.y:focus, .pgrid td.n:focus { background: rgba(var(--accent-rgb),.09); outline: none; cursor: help; }
   .pgrid td[data-tip]:hover .tipbox, .pgrid td[data-tip]:focus .tipbox { opacity: 1; visibility: visible; }
@@ -409,11 +454,17 @@
      gridwrap's overflow-x clip at desktop widths (the sub-860px rules
      further down already handle narrow viewports). Anchor it to the
      cell's right edge so it opens leftward over the table. */
-  .pgrid td:last-child .tipbox { left: auto; right: 0; transform: none; }
+  .pgrid td:last-child .tipbox, .pgrid td:nth-last-child(2) .tipbox { left: auto; right: 0; transform: none; }
   /* first data row: a tall tip opening upward clears the thead and pokes
      past the wrapper's top edge, where overflow-x: auto clips it (top
      overflow is not scrollable). Open downward over the rows instead. */
   .pgrid tbody tr:first-child td .tipbox { bottom: auto; top: calc(100% + 10px); }
+  .pgrid-legend { margin-top: 12px; font-family: var(--mono); font-size: 10px; letter-spacing: .1em; color: var(--muted); }
+  .pgrid-legend i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; vertical-align: -1px; margin-right: 6px; }
+  .pgrid-legend .lg-y { background: var(--em); opacity: .75; }
+  .pgrid-legend .lg-p { border: 1px solid #E8A33D; background: linear-gradient(90deg, #E8A33D 0 50%, transparent 50%); }
+  .pgrid-legend .lg-n { background: rgba(245,242,236,.08); border: 1px solid rgba(245,242,236,.16); }
+  .pgrid-legend b { color: var(--muted); font-weight: 400; margin: 0 10px 0 0; }
   .grid-lead { max-width: 68ch; color: #C9CFCB; margin-top: 64px; font-size: 17px; }
   .grid-lead b { color: var(--ink); }
 
@@ -1246,8 +1297,28 @@
   <p class="th-pm-eyebrow th-pm-reveal">The architecture</p>
   <p class="th-pm-intro th-pm-reveal">Strip away the branding and it comes down to architecture: <b>Starknet is, structurally, the strongest privacy platform in production today.</b> Not on one criterion. On all of them.</p>
 
+  <div class="champ th-pm-reveal" id="strk20">
+    <table class="pgrid pgrid-champ">
+      <colgroup><col class="c-name"><col class="c-crit" span="7"><col class="c-score"></colgroup>
+      <tbody>
+        <tr>
+          <td class="pname">STRK20</td>
+          <td class="y" tabindex="0" data-tip="One shared pool for every ERC-20: BTC, USDC, STRK, memecoins. Every asset deepens the same crowd."></td>
+          <td class="y" tabindex="0" data-tip="Notes are discovered through the protocol itself. Nothing to back up, nothing to lose."></td>
+          <td class="y" tabindex="0" data-tip="Viewing-key escrow enforced by the proof itself. Scoped, lawful disclosure without exposing anyone else in the pool."></td>
+          <td class="y" tabindex="0" data-tip="One click in Ready or Xverse, settled in seconds, flat 4 STRK fee whatever the amount."></td>
+          <td class="y" tabindex="0" data-tip="Full Cairo expressivity: private flows inside real applications, not a fixed transfer circuit."></td>
+          <td class="y" tabindex="0" data-tip="The whole Starknet DeFi stack plugs into the pool: swaps, lending, staking, yield, all atomic with no intermediate public state, and cross-chain flows from other ecosystems are next."></td>
+          <td class="y" tabindex="0" data-tip="Live on Starknet mainnet DeFi since June 2026."></td>
+          <td class="score">7/7</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="champ-compact"><span class="cn">STRK20</span><span class="cs">7/7</span></div>
+  </div>
   <div class="gridwrap th-pm-reveal">
     <table class="pgrid">
+      <colgroup><col class="c-name"><col class="c-crit" span="7"><col class="c-score"></colgroup>
       <thead>
         <tr>
           <th class="pname">PROTOCOL</th>
@@ -1258,19 +1329,10 @@
           <th>PROGRAMMABLE<br><span>private app logic</span></th>
           <th>DEFI<br>COMPOSABILITY<br><span>existing protocols</span></th>
           <th>EXISTING<br>ECOSYSTEM<br><span>real users, liquidity</span></th>
+          <th>SCORE</th>
         </tr>
       </thead>
       <tbody>
-        <tr id="strk20" class="hero-row">
-          <td class="pname">STRK20</td>
-          <td class="y" tabindex="0" data-tip="One shared pool for every ERC-20: BTC, USDC, STRK, memecoins. Every asset deepens the same crowd."></td>
-          <td class="y" tabindex="0" data-tip="Notes are discovered through the protocol itself. Nothing to back up, nothing to lose."></td>
-          <td class="y" tabindex="0" data-tip="Viewing-key escrow enforced by the proof itself. Scoped, lawful disclosure without exposing anyone else in the pool."></td>
-          <td class="y" tabindex="0" data-tip="One click in Ready or Xverse, settled in seconds, flat 4 STRK fee whatever the amount."></td>
-          <td class="y" tabindex="0" data-tip="Full Cairo expressivity: private flows inside real applications, not a fixed transfer circuit."></td>
-          <td class="y" tabindex="0" data-tip="The whole Starknet DeFi stack plugs into the pool: swaps, lending, staking, yield, all atomic with no intermediate public state, and cross-chain flows from other ecosystems are next."></td>
-          <td class="y" tabindex="0" data-tip="Live on Starknet mainnet DeFi since June 2026."></td>
-        </tr>
         <tr id="zcash">
           <td class="pname">ZCASH</td>
           <td class="n" tabindex="0" data-tip="Single asset. The pool only ever hides ZEC."></td>
@@ -1280,6 +1342,7 @@
           <td class="n" tabindex="0" data-tip="No smart contracts. Privacy without programmability."></td>
           <td class="n" tabindex="0" data-tip="A dedicated chain: no lending, no AMMs, no shared liquidity."></td>
           <td class="y" tabindex="0" data-tip="A decade of real monetary usage and holders."></td>
+          <td class="score">1 of 7</td>
         </tr>
         <tr id="monero">
           <td class="pname">MONERO</td>
@@ -1290,6 +1353,7 @@
           <td class="n" tabindex="0" data-tip="No programmability. Digital cash, not a platform."></td>
           <td class="n" tabindex="0" data-tip="Isolated by design, and repeatedly delisted from major venues."></td>
           <td class="y" tabindex="0" data-tip="The longest-running privacy money in crypto."></td>
+          <td class="score">2 of 7</td>
         </tr>
         <tr id="railgun">
           <td class="pname">RAILGUN</td>
@@ -1300,6 +1364,7 @@
           <td class="n" tabindex="0" data-tip="A shielding layer, not a private programming environment."></td>
           <td class="y" tabindex="0" data-tip="Relay Adapt reaches EVM DeFi from inside the pool."></td>
           <td class="y" tabindex="0" data-tip="Live on Ethereum and other EVM chains."></td>
+          <td class="score">3 of 7</td>
         </tr>
         <tr id="aztec">
           <td class="pname">AZTEC</td>
@@ -1310,6 +1375,7 @@
           <td class="y" tabindex="0" data-tip="Noir enables genuinely private applications."></td>
           <td class="y" tabindex="0" data-tip="Composable inside Aztec; reaching outside liquidity means bridging out in public."></td>
           <td class="n" tabindex="0" data-tip="Alpha-stage network with minimal liquidity: privacy with little to use it on."></td>
+          <td class="score">4 of 7</td>
         </tr>
         <tr id="canton">
           <td class="pname">CANTON</td>
@@ -1320,6 +1386,7 @@
           <td class="n" tabindex="0" data-tip="Programmable, but inside permissioned domains, not open crypto."></td>
           <td class="y" tabindex="0" data-tip="Composability across Canton's connected institutional applications."></td>
           <td class="y" tabindex="0" data-tip="Real institutional users: the SWIFT-equivalent path, not Web3."></td>
+          <td class="score">3 of 7</td>
         </tr>
         <tr id="zama">
           <td class="pname">ZAMA</td>
@@ -1330,10 +1397,12 @@
           <td class="y" tabindex="0" data-tip="Encrypted smart contracts are the whole point."></td>
           <td class="n" tabindex="0" data-tip="Confidential tokens do not yet compose with live DeFi at scale."></td>
           <td class="y" tabindex="0" data-tip="Deploys onto existing EVM ecosystems."></td>
+          <td class="score">4 of 7</td>
         </tr>
       </tbody>
     </table>
   </div>
+  <div class="pgrid-legend"><i class="lg-y"></i><b>YES</b> <i class="lg-p"></i><b>PARTIAL, NOT COUNTED</b> <i class="lg-n"></i><b>NO</b></div>
 
   <!-- Satoshi narrative: three rows. Row 1 asks (question + the post),
        row 2 bridges (the lineage as a full-width band), row 3 answers
