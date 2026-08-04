@@ -71,12 +71,12 @@
     --danger: #E4574B;
     --amber: #E8A33D;
     --ink: var(--white);
-    --muted: #9AA3A7;
+    --muted: #8b909c;   /* landing muted tier */
     --line: rgba(255,255,255,.07);
     --bg-raise: #0A0D0F;
 
-    font-size: 17px;
-    line-height: 1.65;
+    font-size: 16px;  /* landing base; was 17px page drift */
+    line-height: 1.6;
     overflow-x: clip;
   }
   body.page-privacy ::selection { background: var(--em); color: #03110C; }
@@ -178,7 +178,8 @@
   .th-pm-num { font-family: var(--display); font-weight: 900; font-size: 64px; line-height: 1; color: var(--accent); letter-spacing: -.02em; }
   .th-pm-title { font-family: var(--display); font-weight: 800; font-size: 52px; line-height: 1.02; letter-spacing: -.015em; color: var(--white); max-width: none; }
   .th-pm-title b { color: var(--accent); font-weight: 800; }
-  .th-pm-eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: var(--accent); margin-top: 16px; opacity: .85; }
+  /* eyebrow: the landing's spec (13px, .04em, sentence case, opacity .9) */
+  .th-pm-eyebrow { font-family: var(--mono); font-size: 13px; letter-spacing: .04em; color: var(--accent); margin-top: 16px; opacity: .9; }
   .th-pm-intro { font-size: 17px; line-height: 1.6; color: #8b909c; max-width: 62ch; margin-top: 34px; }
   .th-pm-intro b { color: var(--white); font-weight: 600; }
   @media (max-width: 880px) { .th-pm-title { font-size: 38px; } .th-pm-num { font-size: 48px; } }
@@ -188,7 +189,7 @@
   .chapter h3 { font-family: var(--display); font-weight: 700; font-size: clamp(23px,2.6vw,31px); line-height: 1.2; max-width: 28ch; margin-bottom: 22px; }
   .chapter h3 .em { color: var(--em); }
   .chapter h3 .wall-tag { display: block; font-family: var(--mono); font-size: 12px; letter-spacing: .16em; color: var(--muted); font-weight: 500; margin-bottom: 12px; }
-  .chapter p { max-width: 68ch; color: #C9CFCB; margin-bottom: 18px; }
+  .chapter p { max-width: 68ch; color: rgba(245,242,236,.78); margin-bottom: 18px; }
   .chapter p b { color: var(--ink); }
   .kicker { font-family: var(--display); font-weight: 700; font-size: 21px; color: var(--ink); max-width: 30ch; line-height: 1.4; }
   .kicker .em { color: var(--em); }
@@ -380,7 +381,7 @@
   /* ============ 03: protocol grid ============ */
   .gridwrap { margin: 56px 0 0; overflow-x: auto; }
   /* mobile: right-edge fade + sticky protocol column (the symbol matrix cannot
-     restack cleanly — its td pseudo-elements already carry the check marks) */
+     restack cleanly — its td pseudo-elements already carry the state dots) */
   @media (max-width: 860px) {
     .gridwrap { background:
       linear-gradient(270deg, #0A0A0A 0, transparent 44px) right center/44px 100% no-repeat local,
@@ -418,7 +419,7 @@
   .pgrid td.p:hover, .pgrid td.p:focus { background: rgba(232,163,61,.08); outline: none; cursor: help; }
   .pgrid td.y:hover, .pgrid td.n:hover, .pgrid td.y:focus, .pgrid td.n:focus { background: rgba(var(--accent-rgb),.09); outline: none; cursor: help; }
   .pgrid td[data-tip]:hover .tipbox, .pgrid td[data-tip]:focus .tipbox { opacity: 1; visibility: visible; }
-  .tipbox { position: absolute; bottom: calc(100% + 10px); left: 50%; transform: translateX(-50%); width: 250px; background: #10161A; border: 1px solid var(--em-line); border-radius: 8px; padding: 12px 14px; font-family: var(--sans); font-size: 12.5px; line-height: 1.55; color: #D6DAD6; text-align: left; opacity: 0; visibility: hidden; transition: opacity .18s; z-index: 20; pointer-events: none; box-shadow: 0 10px 26px rgba(0,0,0,.5); }
+  .tipbox { position: absolute; bottom: calc(100% + 10px); left: 50%; transform: translateX(-50%); width: 250px; background: #10161A; border: 1px solid var(--em-line); border-radius: 8px; padding: 12px 14px; font-family: var(--sans); font-size: 12.5px; line-height: 1.55; color: rgba(245,242,236,.78); text-align: left; opacity: 0; visibility: hidden; transition: opacity .18s; z-index: 20; pointer-events: none; box-shadow: 0 10px 26px rgba(0,0,0,.5); }
   /* last column: the 250px box centered on a ~134px cell escapes the
      gridwrap's overflow-x clip at desktop widths (the sub-860px rules
      further down already handle narrow viewports). Anchor it to the
@@ -434,7 +435,7 @@
   .pgrid-legend .lg-p { border: 1px solid #E8A33D; background: linear-gradient(90deg, #E8A33D 0 50%, transparent 50%); }
   .pgrid-legend .lg-n { background: rgba(245,242,236,.08); border: 1px solid rgba(245,242,236,.16); }
   .pgrid-legend b { color: var(--muted); font-weight: 400; margin: 0 10px 0 0; }
-  .grid-lead { max-width: 68ch; color: #C9CFCB; margin-top: 64px; font-size: 17px; }
+  .grid-lead { max-width: 68ch; color: rgba(245,242,236,.78); margin-top: 64px; font-size: 17px; }
   .grid-lead b { color: var(--ink); }
 
   /* ============ 03: forum post / lineage / rail ============ */
@@ -444,16 +445,16 @@
   .forum-user { padding: 20px; border-right: 1px solid var(--line); font-size: 12px; line-height: 1.8; }
   .forum-user .u { color: var(--em); font-weight: 600; }
   .forum-user .r { color: var(--muted); font-size: 10.5px; letter-spacing: .06em; }
-  .forum-body { padding: 20px 24px; font-size: 14px; line-height: 1.8; color: #D6DAD6; }
+  .forum-body { padding: 20px 24px; font-size: 14px; line-height: 1.8; color: rgba(245,242,236,.78); }
   .forum-body .hl { background: var(--em-dim); color: var(--em); padding: 1px 4px; }
   /* the reply, unboxed: plain prose columns for the answer row (same
-     typography the old .forum-reply card carried, minus the box; the
+     typography the old boxed reply card carried, minus the box; the
      Satoshi post is the only boxed element of this sub-block) */
   .sat-answer .rt { font-family: var(--display); font-weight: 700; font-size: 22px; margin-bottom: 12px; }
   .sat-answer .rt .em { color: var(--em); }
   /* body copy mirrors .chapter p / .chapter p b exactly (the section 02
      wall paragraphs): same class values, size and leading from body */
-  .sat-answer p { max-width: 68ch; color: #C9CFCB; margin-bottom: 18px; }
+  .sat-answer p { max-width: 68ch; color: rgba(245,242,236,.78); margin-bottom: 18px; }
   .sat-answer p b { color: var(--ink); }
 
   .lineage { display: flex; justify-content: space-between; max-width: 760px; margin: 36px auto 0; font-family: var(--mono); position: relative; }
@@ -498,7 +499,7 @@
   .pcore-node + .pcore-node { margin-top: 18px; }
   .pcore-node .rn { font-family: var(--mono); font-size: 11px; letter-spacing: .16em; color: var(--em); }
   .pcore-node h4 { font-family: var(--display); font-weight: 700; font-size: 23px; margin: 8px 0 10px; }
-  .pcore-node p { color: #C9CFCB; font-size: 15.5px; max-width: 62ch; }
+  .pcore-node p { color: rgba(245,242,236,.78); font-size: 15.5px; max-width: 62ch; }
   .pcore-node .elim { font-family: var(--mono); font-size: 11px; letter-spacing: .12em; color: var(--danger); margin-top: 12px; }
   .pcore-beams, .pcore-hub, .pcore-panel { display: none; }
   @media (min-width: 981px) {
@@ -547,7 +548,7 @@
     .pcore-pitem { grid-area: 1 / 1; visibility: hidden; }
     .pcore-pitem.on { visibility: visible; }
     .pcore-pitem .ph { font-family: var(--mono); font-size: 11px; letter-spacing: .16em; color: var(--em); text-transform: uppercase; margin-bottom: 10px; }
-    .pcore-pitem .pb { color: #C9CFCB; font-size: 15.5px; max-width: 74ch; }
+    .pcore-pitem .pb { color: rgba(245,242,236,.78); font-size: 15.5px; max-width: 74ch; }
   }
   @media (prefers-reduced-motion: reduce) {
     /* static rails with one fixed accent segment mid-beam, no flow */
@@ -557,7 +558,7 @@
   .rail-out .em { color: var(--em); }
 
   /* ============ 04: rollout timeline / foundation / visualizer / waves ============ */
-  .lead { max-width: 68ch; color: #C9CFCB; margin: 56px 0 0; font-size: 17px; font-weight: 400; line-height: 1.65; }
+  .lead { max-width: 68ch; color: rgba(245,242,236,.78); margin: 56px 0 0; font-size: 17px; font-weight: 400; line-height: 1.65; }
   .lead b { color: var(--ink); font-weight: 600; }
   .h3d { font-family: var(--display); font-weight: 700; font-size: clamp(22px,2.6vw,30px); line-height: 1.25; margin: 84px 0 24px; max-width: 30ch; }
   .h3d .em { color: var(--em); }
@@ -805,7 +806,7 @@
   .pmx-updated:empty { display: none; }
   .pmx-plot { position: relative; touch-action: pan-y; }
   .pmx-cross { position: absolute; top: 0; bottom: 0; width: 1px; background: rgba(var(--accent-rgb),.55); pointer-events: none; display: none; }
-  .pmx-tip { position: absolute; top: 6px; background: #10161A; border: 1px solid var(--em-line); border-radius: 8px; padding: 8px 10px; font-family: var(--mono); font-size: 10px; letter-spacing: .04em; color: #D6DAD6; pointer-events: none; display: none; z-index: 5; white-space: nowrap; box-shadow: 0 8px 20px rgba(0,0,0,.5); }
+  .pmx-tip { position: absolute; top: 6px; background: #10161A; border: 1px solid var(--em-line); border-radius: 8px; padding: 8px 10px; font-family: var(--mono); font-size: 10px; letter-spacing: .04em; color: rgba(245,242,236,.78); pointer-events: none; display: none; z-index: 5; white-space: nowrap; box-shadow: 0 8px 20px rgba(0,0,0,.5); }
   .pmx-tip .d { color: var(--em); margin-bottom: 5px; letter-spacing: .1em; }
   .pmx-tip .r { display: flex; justify-content: space-between; gap: 14px; line-height: 1.7; }
   .pmx-tip .r i { width: 8px; height: 8px; border-radius: 2px; display: inline-block; margin-right: 6px; }
@@ -889,13 +890,18 @@
   @media (prefers-reduced-motion: reduce) {
     .snode ul { max-height: none; margin-top: 10px; transition: none; }
   }
-  /* ============ closing ============ */
-  .closing { max-width: 1160px; margin: 0 auto; padding: 110px 32px 120px; text-align: center; }
-  .closing .cd { font-family: var(--display); font-weight: 800; font-size: clamp(38px,5.6vw,72px); line-height: 1.08; letter-spacing: -.01em; }
+  /* ============ closing: the landing's lc- grammar (hairline top, static
+     accent bloom, 56px display scale, .62-white lede) with this page's
+     copy. Bloom values mirror index.html's .lc-bloom; keep in sync. */
+  .closing { position: relative; overflow: hidden; max-width: none; margin: 40px 0 0; padding: 130px 48px 140px; border-top: 1px solid var(--border); text-align: center; }
+  .closing-bloom { position: absolute; inset: 0; z-index: 0; pointer-events: none; filter: blur(70px); }
+  .closing-bloom i { position: absolute; border-radius: 50%; background: radial-gradient(closest-side, var(--accent), transparent 72%); }
+  .closing > :not(.closing-bloom) { position: relative; z-index: 1; max-width: 820px; margin-left: auto; margin-right: auto; }
+  .closing .cd { font-family: var(--display); font-weight: 800; font-size: clamp(32px,4.6vw,56px); line-height: 1.06; letter-spacing: -.015em; }
   .closing .cd .em { color: var(--em); }
-  /* the quiet factual recap under the display: the page's lede voice
-     (size and muted color from .th-pm-intro), centered and measured */
-  .closing .cd-recap { font-size: 17px; line-height: 1.65; color: #8b909c; max-width: 64ch; margin: 30px auto 0; }
+  .closing .cd-recap { margin-top: 24px; max-width: 640px; color: rgba(245,242,236,.62); font-size: 17px; font-weight: 300; line-height: 1.7; font-family: var(--sans); }
+  @media (max-width: 980px) { .closing-bloom { filter: blur(40px); } }
+  @media (max-width: 768px) { .closing { padding: 96px 24px 110px; } }
 
   /* ============ news section (same engine as btcfi/quantum) ============ */
   .news-sec { max-width: 1160px; margin: 0 auto; padding: 0 32px 100px; }
@@ -1814,8 +1820,12 @@
 </section>
 
 <!-- ================= CLOSING ================= -->
-<div class="th-pm-div"></div>
 <div class="closing">
+  <div class="closing-bloom" aria-hidden="true">
+    <i style="left:24%;top:26%;width:52%;height:56%;opacity:.11"></i>
+    <i style="left:6%;top:58%;width:30%;height:44%;opacity:.08"></i>
+    <i style="left:64%;top:56%;width:30%;height:46%;opacity:.08"></i>
+  </div>
   <div class="cd th-pm-reveal">Privacy is probably the last 100x PvE bet in crypto.<br><span class="em">Starknet is building the best ecosystem for it.</span></div>
   <p class="cd-recap th-pm-reveal">One pool for every asset, at the lowest fees of any privacy system with real DeFi access: shielded in seconds, straight from the wallet, composable across DeFi, and secured by audits and machine-checked formal proofs.</p>
 </div>
