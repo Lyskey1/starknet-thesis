@@ -489,15 +489,18 @@
     .pcore-stage { position: relative; height: 460px; }
     .pcore-beams { display: block; position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
     .pc-rail { fill: none; stroke: rgba(245,242,236,.10); stroke-width: 1.5; }
-    .pc-pulse { fill: none; stroke: var(--em); stroke-width: 2; stroke-linecap: round; opacity: .85; }
+    /* the four pulses are deliberately IDENTICAL at all times (color,
+       width, opacity, dash); only the stagger delay differs. Selection
+       is signaled by the node highlight and the rail shade, never by
+       pulse disparity. */
+    .pc-pulse { fill: none; stroke: var(--em); stroke-width: 3; stroke-linecap: round; opacity: 1; }
     /* pulse: pathLength is normalized to 1 in JS, so one dashoffset
        period per iteration flows node -> hub and loops seamlessly */
     .pcore.pc-anim .pc-pulse { stroke-dasharray: .14 .86; stroke-dashoffset: 1; animation: pcflow 3.8s linear infinite; }
     @keyframes pcflow { to { stroke-dashoffset: 0; } }
     .pcore.pc-off .pc-pulse { animation-play-state: paused; }
-    /* selection: the active beam brightens and widens, the rest dim */
-    .pcore-beams g.dim .pc-pulse { opacity: .2; }
-    .pcore-beams g.on .pc-pulse { opacity: 1; stroke-width: 3; }
+    /* selection on the rail: the active beam's underlying rail steps one
+       subtle shade up */
     .pcore-beams g.on .pc-rail { stroke: rgba(var(--accent-rgb),.30); }
     .pcore-node { position: absolute; margin: 0; width: min(320px, 31%); padding: 20px 22px; cursor: pointer; transition: border-color .2s, background .2s; }
     .pcore-node + .pcore-node { margin-top: 0; }
@@ -508,12 +511,20 @@
     .pc-right { right: 0; text-align: right; }
     .pc-top { top: 20px; }
     .pc-bot { bottom: 20px; }
-    .pcore-node.on { background: rgba(var(--accent-rgb),.06); border-color: color-mix(in srgb, var(--em) 45%, transparent); }
+    /* selection on the node: brighter borders plus a subtle glow, the
+       one clear active signal of the diagram */
+    .pcore-node.on { background: rgba(var(--accent-rgb),.07); border-color: color-mix(in srgb, var(--em) 55%, transparent);
+      box-shadow: 0 0 24px rgba(var(--accent-rgb),.22), 0 0 60px rgba(var(--accent-rgb),.10); }
     .pc-left.on { border-right-color: var(--em); }
     .pc-right.on { border-left-color: var(--em); }
     .pcore-node:focus-visible { outline: 2px solid var(--em); outline-offset: 3px; }
+    /* the hub's outer glow lives on stage::before, painted BEFORE the
+       svg in tree order, so the beams pass over the glow untinted and
+       under the opaque disc itself (hub z-index 1) */
+    .pcore-stage::before { content: ""; position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); width: 176px; height: 176px; border-radius: 50%; pointer-events: none;
+      box-shadow: 0 0 24px rgba(var(--accent-rgb),.18), 0 0 80px rgba(var(--accent-rgb),.12); }
     .pcore-hub { display: flex; position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); width: 176px; height: 176px; border-radius: 50%; border: 1px solid rgba(var(--accent-rgb),.55); background: radial-gradient(circle at 50% 36%, #101614, #0A0D0C); align-items: center; justify-content: center; text-align: center; z-index: 1;
-      box-shadow: 0 0 24px rgba(var(--accent-rgb),.18), 0 0 80px rgba(var(--accent-rgb),.12), inset 0 0 30px rgba(var(--accent-rgb),.08); }
+      box-shadow: inset 0 0 30px rgba(var(--accent-rgb),.08); }
     .pcore-hub span { font-family: var(--mono); font-size: 12px; letter-spacing: .18em; color: var(--em); max-width: 118px; line-height: 1.9; }
     .pcore-panel { display: block; margin-top: 26px; border-top: 1px solid var(--th-hair); padding-top: 22px; }
     .pcore-pgrid { display: grid; }
@@ -1905,7 +1916,6 @@
     active = i;
     groups.forEach(function(gr, j){
       gr.g.classList.toggle('on', j === i);
-      gr.g.classList.toggle('dim', j !== i);
       gr.item.classList.toggle('on', j === i);
       nodes[j].classList.toggle('on', j === i);
     });
