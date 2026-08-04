@@ -1598,6 +1598,7 @@
       </div>
       </div>
       <div class="bnt-sum bnt-filter" role="group" aria-label="Filter Starknet DeFi items by status">
+        <button type="button" class="chip-glass bnt-fbtn" aria-pressed="true">ALL</button>
         <button type="button" class="chip-glass bnt-fbtn" data-f="LIVE" aria-pressed="false">6 LIVE</button>
         <button type="button" class="chip-glass bnt-fbtn" data-f="TESTNET" aria-pressed="false">1 TESTNET</button>
         <button type="button" class="chip-glass bnt-fbtn" data-f="COMING" aria-pressed="false">4 COMING</button>
@@ -1621,6 +1622,7 @@
       <div class="bnt-pipe-head">
         <div><span class="wn">FIRST-PARTY PIPELINE</span><h5 id="nine-first-party-projects-by-starkware">Nine first-party projects by StarkWare &amp; the Foundation</h5></div>
         <div class="bnt-sum bnt-filter" role="group" aria-label="Filter first-party pipeline projects by status">
+          <button type="button" class="chip-glass bnt-fbtn" aria-pressed="true">ALL</button>
           <button type="button" class="chip-glass bnt-fbtn" data-f="LIVE" aria-pressed="false">3 LIVE</button>
           <button type="button" class="chip-glass bnt-fbtn" data-f="COHORT 01" aria-pressed="false">1 COHORT</button>
           <button type="button" class="chip-glass bnt-fbtn" data-f="COMING" aria-pressed="false">5 COMING</button>
@@ -2194,11 +2196,17 @@
     var btns = [].slice.call(bar.querySelectorAll('.bnt-fbtn'));
     btns.forEach(function(b){
       b.addEventListener('click', function(){
+        // the ALL button carries no data-f; clicking it, or re-clicking
+        // the active status, both resolve to the unfiltered state, and
+        // exactly one button is pressed per card at all times
+        var f = b.getAttribute('data-f');
         var wasOn = b.getAttribute('aria-pressed') === 'true';
-        btns.forEach(function(x){ x.setAttribute('aria-pressed', 'false'); });
-        if (wasOn){ applyFilter(cell, null); return; }
-        b.setAttribute('aria-pressed', 'true');
-        applyFilter(cell, b.getAttribute('data-f'));
+        var target = (!f || wasOn) ? null : f;
+        btns.forEach(function(x){
+          var on = (target === null) ? !x.hasAttribute('data-f') : x === b;
+          x.setAttribute('aria-pressed', String(on));
+        });
+        applyFilter(cell, target);
       });
     });
   });
