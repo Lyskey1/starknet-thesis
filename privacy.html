@@ -640,10 +640,67 @@
   .viz-foot { padding: 16px 26px; border-top: 1px solid var(--line); font-family: var(--mono); font-size: 11px; letter-spacing: .08em; color: var(--muted); }
   .viz-foot .em { color: var(--em); }
 
-  .waves { display: grid; grid-template-columns: repeat(3,1fr); gap: 18px; margin-top: 36px; }
+  /* three fronts: asymmetric bento. Mobile-first the three cells stack
+     and every list renders fully and statically (the wp-cards ARE the
+     content, single source); the marquee chrome (duplicate sets, chip
+     strip) is hidden and never built below 981px. At >=981px row 1 is
+     13fr/7fr, row 2 spans, the DeFi list scrolls vertically and the
+     pipeline renders as a chip strip built by JS from its own cards.
+     Duplicate sets exist only for the seamless -50% loop and are
+     aria-hidden with unfocusable links. */
+  .pv-bento { position: relative; display: grid; grid-template-columns: minmax(0,1fr); gap: 18px; margin-top: 36px; }
   .wave { border: 1px solid var(--line); background: var(--bg-raise); border-radius: 14px; padding: 26px; }
   .wave .wn { font-family: var(--mono); font-size: 10.5px; letter-spacing: .16em; color: var(--em); }
   .wave h5 { font-family: var(--display); font-weight: 700; font-size: 19px; margin: 10px 0 16px; line-height: 1.3; }
+  .bnt { display: flex; flex-direction: column; min-width: 0; }
+  .bnt-eyebrow { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+  .bnt-n, .bnt-sum { font-family: var(--mono); font-size: 10.5px; letter-spacing: .12em; color: var(--muted); }
+  .bnt-sum { margin-top: 14px; }
+  .bnt-win { position: relative; margin-top: 2px; }
+  .bnt-set { display: flex; flex-direction: column; gap: 8px; }
+  .bnt-set .wp-card { margin-top: 0; }
+  .bnt-set[data-dup], .bnt-chipset[data-dup] { display: none; }
+  .bnt-chipwin { display: none; position: relative; }
+  .bnt-pos { font-family: var(--mono); font-size: 10.5px; letter-spacing: .14em; color: var(--muted); line-height: 1.7; margin-top: auto; padding-top: 22px; }
+  .bnt-posline { height: 1px; background: var(--th-hair); margin-top: 10px; }
+  @media (min-width: 981px) {
+    .pv-bento { grid-template-columns: minmax(0,13fr) minmax(0,7fr); }
+    .bnt-pipe { grid-column: 1 / -1; }
+    .bnt-win { height: 400px; overflow: hidden;
+      -webkit-mask-image: linear-gradient(180deg, #000 78%, transparent);
+              mask-image: linear-gradient(180deg, #000 78%, transparent); }
+    .bnt-track { display: flex; flex-direction: column; }
+    .bnt-set { padding-bottom: 8px; }
+    .pv-bento.run .bnt-track { animation: bntv 28s linear infinite; }
+    .bnt-defi:hover .bnt-track, .bnt-defi.focus-hold .bnt-track { animation-play-state: paused; }
+    .bnt-cards { display: none; }
+    .bnt-pipe-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 18px; }
+    .bnt-pipe-head h5 { margin-bottom: 0; }
+    .bnt-pipe-head .bnt-sum { margin: 0 0 2px; flex-shrink: 0; }
+    .bnt-chipwin { display: block; overflow: hidden; margin-top: 18px;
+      -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+              mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent); }
+    .bnt-chiptrack { display: flex; width: max-content; }
+    .bnt-chipset { display: flex; gap: 10px; padding-right: 10px; }
+    /* the two marquees start desynchronized via the negative delay */
+    .pv-bento.run .bnt-chiptrack { animation: bnth 25s linear infinite; animation-delay: -9s; }
+    .bnt-pipe:hover .bnt-chiptrack, .bnt-pipe.focus-hold .bnt-chiptrack { animation-play-state: paused; }
+    .bnt-chip { display: inline-flex; align-items: center; gap: 10px; border: 1px solid var(--line); border-radius: 99px; padding: 9px 16px; background: #0B0F10; font-family: var(--display); font-weight: 600; font-size: 13px; color: var(--ink); white-space: nowrap; text-decoration: none; transition: border-color .2s, background .2s; }
+    a.bnt-chip:hover, a.bnt-chip:focus-visible { border-color: var(--em-line); background: rgba(var(--accent-rgb),.06); }
+  }
+  @media (min-width: 981px) and (prefers-reduced-motion: no-preference) {
+    .bnt-set[data-dup], .bnt-chipset[data-dup] { display: flex; }
+  }
+  @keyframes bntv { to { transform: translateY(-50%); } }
+  @keyframes bnth { to { transform: translateX(-50%); } }
+  @media (prefers-reduced-motion: reduce) {
+    .bnt-track, .bnt-chiptrack { animation: none !important; }
+    /* DeFi window becomes a plain scrollable list, chips wrap statically */
+    .bnt-win { overflow-y: auto; -webkit-mask-image: none; mask-image: none; }
+    .bnt-chipwin { -webkit-mask-image: none; mask-image: none; }
+    .bnt-chiptrack { width: auto; flex-wrap: wrap; gap: 10px; }
+    .bnt-chipset { flex-wrap: wrap; padding-right: 0; }
+  }
   /* project cards inside the fronts (same interaction pattern as the properties panel) */
   .wp-card { border: 1px solid var(--line); border-radius: 10px; padding: 11px 14px; background: #0B0F10; transition: border-color .25s, background .25s; margin-top: 8px; }
   .wp-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
@@ -653,10 +710,10 @@
   .wp-card:hover { border-color: var(--em-line); background: rgba(var(--accent-rgb),.05); }
   .wp-card:hover p { max-height: 140px; margin-top: 8px; }
   .wp-card.tap-open p { max-height: 140px; margin-top: 8px; }
-  .wp-row .pill { font-family: var(--mono); font-size: 9px; letter-spacing: .1em; padding: 4px 9px; border-radius: 99px; white-space: nowrap; background: transparent; display: inline-flex; flex-shrink: 0; }
-  .wp-row .pill.live { color: var(--em); border: 1px solid var(--em-line); background: var(--em-dim); }
-  .wp-row .pill.dev { color: var(--amber); border: 1px solid rgba(232,163,61,.4); background: rgba(232,163,61,.1); }
-  .wp-row .pill.test { color: #7FB4E8; border: 1px solid rgba(127,180,232,.4); background: rgba(127,180,232,.1); }
+  .wp-row .pill, .bnt-chip .pill { font-family: var(--mono); font-size: 9px; letter-spacing: .1em; padding: 4px 9px; border-radius: 99px; white-space: nowrap; background: transparent; display: inline-flex; flex-shrink: 0; }
+  .wp-row .pill.live, .bnt-chip .pill.live { color: var(--em); border: 1px solid var(--em-line); background: var(--em-dim); }
+  .wp-row .pill.dev, .bnt-chip .pill.dev { color: var(--amber); border: 1px solid rgba(232,163,61,.4); background: rgba(232,163,61,.1); }
+  .wp-row .pill.test, .bnt-chip .pill.test { color: #7FB4E8; border: 1px solid rgba(127,180,232,.4); background: rgba(127,180,232,.1); }
   .builders { margin-top: 44px; border: 1px solid var(--em-line); border-radius: 14px; padding: 28px 30px; background: linear-gradient(180deg,rgba(var(--accent-rgb),.05),transparent); }
   .builders .bt { font-family: var(--display); font-weight: 700; font-size: 21px; margin-bottom: 14px; }
   .build-tiles { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-top: 18px; }
@@ -746,7 +803,7 @@
   /* Narrative blooms: one blob per card, behind that card only. Static,
      childless, pointer-inert; the blur is on the bloom layer itself, never
      on an ancestor. */
-  .cases,.island,.waves,.build-tiles,.pmx-stats,.schema{position:relative;}
+  .cases,.island,.pv-bento,.build-tiles,.pmx-stats,.schema{position:relative;}
   .gx-bloom{position:absolute;inset:0;z-index:0;pointer-events:none;filter:blur(58px);}
   .gx-bloom i{position:absolute;border-radius:50%;background:radial-gradient(closest-side,var(--bc),transparent 70%);opacity:.05;}
 
@@ -907,7 +964,7 @@
     .lineage--band .ln i, .lineage--band .ln:first-child i, .lineage--band .ln:last-child i { width: 14px; height: 14px; margin: 0; }
     .lineage--band .ln .y, .lineage--band .ln:first-child .y, .lineage--band .ln:last-child .y { margin-top: 0; }
     .lineage--band .ln .l { margin-top: 0; }
-    .waves, .build-tiles { grid-template-columns: 1fr; }
+    .build-tiles { grid-template-columns: 1fr; }
     .viz-body, .video-grid { grid-template-columns: 1fr; }
     .viz-col { border-right: none; border-bottom: 1px solid var(--line); }
     .viz-col:last-child { border-bottom: none; }
@@ -1448,14 +1505,18 @@
   </div>
 
   <div class="h3d th-pm-reveal">Three fronts are building <span class="em">on top of it.</span></div>
-  <div class="waves th-pm-reveal">
+  <div class="pv-bento th-pm-reveal">
       <div class="gx-bloom" aria-hidden="true">
-        <i style="--bc:var(--em);left:5.5%;top:4%;width:22%;height:34%"></i>
-        <i style="--bc:var(--em);left:39.3%;top:4%;width:22%;height:34%"></i>
-        <i style="--bc:var(--em);left:73.1%;top:4%;width:22%;height:34%"></i>
+        <i style="--bc:var(--em);left:8%;top:4%;width:32%;height:34%"></i>
+        <i style="--bc:var(--em);left:70%;top:4%;width:22%;height:30%"></i>
+        <i style="--bc:var(--em);left:34%;top:66%;width:30%;height:28%"></i>
       </div>
-    <div class="wave gx-card">
-      <div class="wn">STARKNET DEFI</div><h5 id="starknet-defi-grafts-itself-onto-the">Starknet DeFi grafts itself onto the pool</h5>
+    <div class="wave gx-card bnt bnt-defi">
+      <div class="bnt-eyebrow"><span class="wn">STARKNET DEFI</span><span class="bnt-n">12 INTEGRATIONS</span></div>
+      <h5 id="starknet-defi-grafts-itself-onto-the">Starknet DeFi grafts itself onto the pool</h5>
+      <div class="bnt-win">
+      <div class="bnt-track">
+      <div class="bnt-set">
       <div id="wallet-native-shielding-ready-xverse" class="wp-card">
         <div class="wp-row"><span class="wp-t">Wallet-native shielding · Ready &amp; Xverse</span><span class="pill live">LIVE</span></div>
         <p>The privacy pool built directly into the Ready and Xverse wallet UI, one toggle away.</p>
@@ -1500,8 +1561,12 @@
         <div class="wp-row"><span class="wp-t">Private payments · DashX</span><span class="pill dev">COMING</span></div>
         <p>Private payments on Starknet. <a href="https://x.com/DashXHQ" target="_blank" rel="noopener">DashX ↗</a></p>
       </div>
+      </div>
+      </div>
+      </div>
+      <div class="bnt-sum">6 LIVE · 1 TESTNET · 4 COMING</div>
     </div>
-    <div class="wave gx-card">
+    <div class="wave gx-card bnt bnt-eco">
       <div class="wn">OTHER ECOSYSTEMS</div><h5 id="the-confidentiality-layer-for-other-ecosystems">The confidentiality layer for other ecosystems</h5>
       <div id="offmarket-on-polymarket" class="wp-card">
         <div class="wp-row"><span class="wp-t">OffMarket · on Polymarket</span><span class="pill live">LIVE</span></div>
@@ -1511,9 +1576,15 @@
         <div class="wp-row"><span class="wp-t">More integrations</span><span class="pill dev">COMING</span></div>
         <p>Additional ecosystems and apps connecting to the pool over the coming months.</p>
       </div>
+      <div class="bnt-pos">STRK20 AS A SERVICE: PRIVACY FOR CHAINS THAT CANNOT BUILD IT</div>
+      <div class="bnt-posline" aria-hidden="true"></div>
     </div>
-    <div class="wave gx-card">
-      <div class="wn">FIRST-PARTY PIPELINE</div><h5 id="nine-first-party-projects-by-starkware">Nine first-party projects by StarkWare &amp; the Foundation</h5>
+    <div class="wave gx-card bnt bnt-pipe">
+      <div class="bnt-pipe-head">
+        <div><span class="wn">FIRST-PARTY PIPELINE</span><h5 id="nine-first-party-projects-by-starkware">Nine first-party projects by StarkWare &amp; the Foundation</h5></div>
+        <div class="bnt-sum">3 LIVE · 1 COHORT · 5 COMING</div>
+      </div>
+      <div class="bnt-cards">
       <div id="private-payroll" class="wp-card">
         <div class="wp-row"><span class="wp-t">Private Payroll</span><span class="pill live">LIVE</span></div>
         <p><a href="https://x.com/StarkWareLtd/status/2066857395528036643" target="_blank" rel="noopener">StarkWare</a>'s own payroll product on the pool.</p>
@@ -1550,6 +1621,8 @@
         <div class="wp-row"><span class="wp-t">Sub-accounts</span><span class="pill dev">COMING</span></div>
         <p>Allowing users to create fresh Starknet accounts for DeFi directly from the privacy pool, with no public link to their main account or other sub-accounts.</p>
       </div>
+      </div>
+      <div class="bnt-chipwin"><div class="bnt-chiptrack"></div></div>
     </div>
   </div>
 
@@ -1966,6 +2039,87 @@
     if (Date.now() - lastAct < 15000) return;
     setActive((active + 1) % nodes.length);
   }, 6000);
+})();
+
+// ============================================================
+// SECTION 04 — three fronts bento marquees. The wp-cards are the
+// single source: the pipeline chips are built from them and the
+// marquee duplicate sets are cloned from them at init (desktop
+// only; below 981px nothing is built and CSS shows the plain
+// stacked lists). Duplicates are aria-hidden with tabindex -1
+// links and stripped ids. Hover pauses each marquee (CSS); a
+// keyboard focus inside a marquee pauses it and jumps the track
+// so the focused item is inside the window. Animations run only
+// while the section is in the viewport.
+// ============================================================
+(function(){
+  var root = document.querySelector('.pv-bento');
+  if (!root) return;
+  var mq = window.matchMedia('(min-width: 981px)');
+  var defi = root.querySelector('.bnt-defi'), pipe = root.querySelector('.bnt-pipe');
+  var defiTrack = defi.querySelector('.bnt-track');
+  var defiSet = defiTrack.querySelector('.bnt-set');
+  var chipTrack = pipe.querySelector('.bnt-chiptrack');
+  var pipeCards = [].slice.call(pipe.querySelectorAll('.bnt-cards .wp-card'));
+  var built = false;
+
+  function stripDup(el){
+    el.setAttribute('data-dup', '');
+    el.setAttribute('aria-hidden', 'true');
+    [].forEach.call(el.querySelectorAll('a'), function(a){ a.tabIndex = -1; });
+    [].forEach.call(el.querySelectorAll('[id]'), function(n){ n.removeAttribute('id'); });
+    if (el.id) el.removeAttribute('id');
+    return el;
+  }
+  function build(){
+    if (built) return; built = true;
+    var set = document.createElement('div');
+    set.className = 'bnt-chipset';
+    pipeCards.forEach(function(card){
+      var link = card.querySelector('p a');
+      var chip = document.createElement(link ? 'a' : 'span');
+      chip.className = 'bnt-chip';
+      if (link){ chip.href = link.href; chip.target = '_blank'; chip.rel = 'noopener'; }
+      var nm = document.createElement('span');
+      nm.textContent = card.querySelector('.wp-t').textContent;
+      chip.appendChild(nm);
+      chip.appendChild(card.querySelector('.pill').cloneNode(true));
+      set.appendChild(chip);
+    });
+    chipTrack.appendChild(set);
+    defiTrack.appendChild(stripDup(defiSet.cloneNode(true)));
+    chipTrack.appendChild(stripDup(set.cloneNode(true)));
+    hookFocus(defi, defiTrack, true);
+    hookFocus(pipe, chipTrack, false);
+  }
+  function hookFocus(cell, track, vertical){
+    cell.addEventListener('focusin', function(e){
+      cell.classList.add('focus-hold');
+      var fv = false;
+      try { fv = e.target.matches(':focus-visible'); } catch (err) {}
+      var t = e.target.closest && e.target.closest('.wp-card, .bnt-chip');
+      if (fv && t && track.contains(t)){
+        var setEl = track.firstElementChild;
+        var max = vertical ? setEl.offsetHeight : setEl.offsetWidth;
+        var off = Math.max(0, Math.min((vertical ? t.offsetTop : t.offsetLeft) - 16, max));
+        track.style.animation = 'none';
+        track.style.transform = vertical ? 'translateY(-' + off + 'px)' : 'translateX(-' + off + 'px)';
+      }
+    });
+    cell.addEventListener('focusout', function(e){
+      if (!cell.contains(e.relatedTarget)){
+        cell.classList.remove('focus-hold');
+        track.style.animation = '';
+        track.style.transform = '';
+      }
+    });
+  }
+  function onMq(){ if (mq.matches) build(); }
+  onMq();
+  (mq.addEventListener ? mq.addEventListener.bind(mq, 'change') : mq.addListener.bind(mq))(onMq);
+  new IntersectionObserver(function(es){
+    root.classList.toggle('run', es[0].isIntersecting);
+  }, { threshold: 0.05 }).observe(root);
 })();
 
 // ============================================================
