@@ -25,6 +25,7 @@
 <script defer src="js/nav.js"></script>
 <script defer src="js/search.js"></script>
 <script defer src="js/curtain.js"></script>
+<script defer src="js/fee-config.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Expanded:wght@500;600;700;800;900&family=IBM+Plex+Mono:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -797,6 +798,8 @@
   .pmx-skel { min-height: 190px; border-radius: 10px; background: linear-gradient(100deg, #0B0F10 40%, #131A1D 50%, #0B0F10 60%); background-size: 200% 100%; animation: pmxShimmer 1.4s linear infinite; }
   @keyframes pmxShimmer { to { background-position: -200% 0; } }
   .pmx-axis { font-family: var(--mono); font-size: 9px; fill: #6B7478; letter-spacing: .06em; }
+  /* revenue callout pill: skipped on narrow plots where it would crowd */
+  @media (max-width: 980px) { .pmx-callout { display: none; } }
   .pmx-grid-line { stroke: rgba(245,242,236,.06); stroke-width: 1; }
   .pmx-updated { font-family: var(--mono); font-size: 10px; letter-spacing: .12em; color: var(--muted); text-align: right; margin-top: 10px; }
   .pmx-updated:empty { display: none; }
@@ -1750,6 +1753,11 @@
         <div class="pmx-body"><a class="pmx-live" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">VIEW LIVE →</a></div>
         <a class="pmx-src" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">SOURCE: STRK20 DASHBOARD ↗</a>
       </div>
+      <div class="pmx-card pmx-wide" data-pmx="revenue">
+        <div class="pmx-head"><span class="pmx-t">REVENUE</span><span class="pmx-sub">ESTIMATED: FLAT FEE x DAILY TX</span></div>
+        <div class="pmx-body"><a class="pmx-live" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">VIEW LIVE →</a></div>
+        <a class="pmx-src" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">SOURCE: DERIVED FROM STRK20 DASHBOARD (DAILY TX x ~$0.12) ↗</a>
+      </div>
     </div>
   </div>
 </section>
@@ -2541,6 +2549,43 @@
     return '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img">' + svg + '</svg>';
   }
 
+  // REVENUE (ESTIMATED): daily fees as accent bars at reduced opacity,
+  // cumulative fees as a full-accent line on the right axis, plus a
+  // callout pill with a dashed leader at the line's last point (hidden
+  // below 981px via .pmx-callout). Consumes {days:[{date, feesUsd,
+  // cumUsd}]} — see the derivation note at the staging site.
+  function feeBarsLine(days, W, H){
+    var P = PAD_DUAL, n = days.length;
+    var bMax = 0, lMax = 0;
+    days.forEach(function(d){ bMax = Math.max(bMax, d.feesUsd); lMax = Math.max(lMax, d.cumUsd); });
+    var yMax = nice(bMax), yMaxR = nice(lMax);
+    var plotW = W - P.l - P.r, plotH = H - P.t - P.b;
+    var bw = Math.max(1, plotW / n * 0.72);
+    var svg = frame(W, H, P, yMax, fmtUsd, days, yMaxR, fmtUsd);
+    days.forEach(function(d, i){
+      if (d.feesUsd <= 0) return;
+      var x = P.l + plotW * (n > 1 ? i / (n - 1) : 0.5) - bw / 2, h = plotH * d.feesUsd / yMax;
+      svg += '<rect x="' + x + '" y="' + (P.t + plotH - h) + '" width="' + bw + '" height="' + h + '" fill="#1FCB94" fill-opacity="0.45"/>';
+    });
+    var pts = days.map(function(d, i){
+      return (P.l + plotW * (n > 1 ? i / (n - 1) : 0.5)) + ',' + (P.t + plotH * (1 - d.cumUsd / yMaxR));
+    }).join(' ');
+    svg += '<polyline points="' + pts + '" fill="none" stroke="#1FCB94" stroke-width="2" stroke-linejoin="round"/>';
+    if (n) {
+      var lx = P.l + plotW, ly = P.t + plotH * (1 - days[n - 1].cumUsd / yMaxR);
+      var label = fmtUsd(days[n - 1].cumUsd);
+      var pw = label.length * 6.6 + 16, ph = 18;
+      var px = lx - pw - 30, py = Math.max(P.t + 2, ly - 26);
+      svg += '<g class="pmx-callout">' +
+        '<line x1="' + (px + pw) + '" y1="' + (py + ph / 2) + '" x2="' + lx + '" y2="' + ly + '" stroke="#1FCB94" stroke-width="1" stroke-dasharray="3 3" opacity="0.55"/>' +
+        '<circle cx="' + lx + '" cy="' + ly + '" r="3" fill="#1FCB94"/>' +
+        '<rect x="' + px + '" y="' + py + '" width="' + pw + '" height="' + ph + '" rx="9" fill="#0B0F10" stroke="rgba(31,203,148,.5)"/>' +
+        '<text x="' + (px + pw / 2) + '" y="' + (py + 12.5) + '" text-anchor="middle" class="pmx-axis" style="fill:#1FCB94">' + label + '</text>' +
+        '</g>';
+    }
+    return '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img">' + svg + '</svg>';
+  }
+
   // crosshair + tooltip (pointer events cover mouse and touch taps); hover
   // state is remembered per card so a re-mounted chart can re-show an open
   // tooltip in place with the fresh data
@@ -2585,7 +2630,7 @@
     bodies[k].el.innerHTML = '<div class="pmx-skel"></div>';
     // first-load-empty ONLY: silent refreshes never reach this path, so the
     // ring can never flash over a chart that already has good data
-    if (window.ChartLoading) window.ChartLoading.pending(bodies[k].el, { fallback: bodies[k].fallback, size: k === 'shielded' ? 56 : 44 });
+    if (window.ChartLoading) window.ChartLoading.pending(bodies[k].el, { fallback: bodies[k].fallback, size: (k === 'shielded' || k === 'revenue') ? 56 : 44 });
   }
   function mount(k, chartHtml, legendHtml, meta){
     if (window.ChartLoading) window.ChartLoading.resolved(bodies[k].el);
@@ -2604,7 +2649,7 @@
   // (0 = the card shows no fetched data, e.g. the VIEW LIVE fallback). The
   // label reports the OLDEST data on screen, so a partially failed silent
   // refresh can never claim "just now" over a chart it did not update.
-  var prov = { stats: 0, shielded: 0, swaps: 0, defi: 0, txs: 0, users: 0 };
+  var prov = { stats: 0, shielded: 0, swaps: 0, defi: 0, txs: 0, users: 0, revenue: 0 };
   function tickUpdated(){
     if (!upEl) return;
     var oldest = Infinity;
@@ -2633,7 +2678,7 @@
 
   function load(silent){
     if (!silent) Object.keys(bodies).forEach(skel);
-    var next = { stats: null, shielded: null, swaps: null, defi: null, txs: null, users: null };
+    var next = { stats: null, shielded: null, swaps: null, defi: null, txs: null, users: null, revenue: null };
     function stage(k, chartHtml, legendHtml, meta){ next[k] = { chart: chartHtml, legend: legendHtml, meta: meta, at: Date.now() }; }
     var jobs = [
       get('/agg/pool-summary').then(function(s){
@@ -2670,6 +2715,27 @@
         var split = { names: ['TRANSACTIONS'], value: function(day){ return day.count || 0; } };
         stage('txs', stackedBars(d.days, split, 520, 250, fmtN), '',
           { days: d.days, W: 520, P: PAD_STD, rows: function(day){ return [{ label: 'TRANSACTIONS', value: fmtN(day.count || 0), color: '#1FCB94' }]; } });
+        // REVENUE (ESTIMATED), same fetch so it can never diverge from the
+        // TRANSACTIONS card's vintage: daily tx x the flat fee constant
+        // (js/fee-config.js, shared with strk.html's revenue stat and
+        // chart). This is a derivation, not a measurement, and every label
+        // on the card says so. When the backend ships a direct series
+        // ({days:[{date, feesUsd}]}), replace this block with its own
+        // get('/agg/fees') job, cumsum feesUsd, and feed feeBarsLine
+        // unchanged.
+        var FEE = window.STRK20_FLAT_FEE_USD || 0.12;
+        var cum = 0;
+        var fdays = d.days.map(function(day){
+          var f = (day.count || 0) * FEE;
+          cum += f;
+          return { date: day.date, feesUsd: f, cumUsd: cum };
+        });
+        stage('revenue', feeBarsLine(fdays, 760, 240),
+          '<div class="pmx-legend"><span><i style="background:rgba(31,203,148,.5)"></i>DAILY FEES</span><span><i style="background:#1FCB94"></i>CUMULATIVE (RIGHT AXIS)</span></div>',
+          { days: fdays, W: 760, P: PAD_DUAL, rows: function(day){
+              return [{ label: 'DAILY FEES (EST.)', value: fmtUsd(day.feesUsd), color: 'rgba(31,203,148,.5)' },
+                      { label: 'CUMULATIVE (EST.)', value: fmtUsd(day.cumUsd), color: '#1FCB94' }];
+            } });
       }).catch(function(){}),
 
       get('/agg/registrations').then(function(d){
