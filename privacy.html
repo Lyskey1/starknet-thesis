@@ -81,7 +81,7 @@
   body.page-privacy ::selection { background: var(--em); color: #03110C; }
 
   /* ============ HERO (quantum pattern: centered, eyebrow, uppercase display, accent glow) ============ */
-  .hero { min-height: auto; display: block; overflow: visible; padding: 112px 32px 56px; max-width: 1100px; margin: 0 auto; text-align: center; position: relative; }
+  .hero { min-height: auto; display: block; overflow: visible; padding: 112px 32px 36px; max-width: 1100px; margin: 0 auto; text-align: center; position: relative; }
   .hero::before { top: -40px; width: 760px; height: 420px; max-width: 100%; background: radial-gradient(ellipse at center top, rgba(var(--accent-rgb),0.16), transparent 70%); }
   .hero-eyebrow { color: var(--accent); opacity: 1; margin-bottom: 22px; position: relative; }
   /* Three-level hierarchy: setup (mono label line, sealed fragments),
@@ -135,8 +135,40 @@
     .hero-bloom .pv-chip-bloom { display: none; }
   }
 
+  /* ===== hero to section 01: gradual light falloff, no perceptible seam.
+     Three static, inert layers, page-scoped:
+     1) .pv-hero-fade: full-width scrim over the hero's lower half, from
+        transparent to the page canvas color. Sits BETWEEN the curtain and
+        the blooms in the markup (negative-z siblings paint in tree order),
+        so it eases the curtain's tail into black without dimming the chip
+        bloom. The site grain (body::after) paints above it and dithers the
+        dark end.
+     2) .hero-bloom overflow released on this page only: the styles.css
+        clip cut the chip bloom dead at the hero's bottom edge, which WAS
+        the hard band across the divider here. Unclipped, the 70px-blurred
+        tails decay across the hairline instead of stopping on it.
+     3) .pv-hero-afterglow: a very faint accent radial straddling the hero
+        bottom (well below the chip bloom's .30), so the dark under the
+        hero carries a trace of the light dying out before section 01's
+        own corner glow takes over. */
+  .pv-hero-fade { position: absolute; left: 0; right: 0; bottom: 0; height: 52%; z-index: -1; pointer-events: none;
+    background: linear-gradient(180deg, transparent, var(--black)); }
+  .hero .hero-bloom { overflow: visible; }
+  .pv-hero-afterglow { position: absolute; left: 50%; transform: translateX(-50%); bottom: -260px; width: min(1100px, 92vw); height: 520px; z-index: -1; pointer-events: none;
+    background: radial-gradient(ellipse closest-side at 50% 35%, rgba(var(--accent-rgb), .07), transparent 72%); }
+  @media (max-width: 980px) {
+    /* mobile: blooms are the site's reduced treatment; keep the clip and
+       drop the afterglow along with the chip bloom, scrim stays (cheap) */
+    .hero .hero-bloom { overflow: hidden; }
+    .pv-hero-afterglow { display: none; }
+  }
+
   /* ============ SECTION SHELL (quantum th-pm design system, emerald) ============ */
   .th-pm-sec { --th-q: var(--accent); --th-ink: var(--white); --th-muted: #8b909c; --th-hair: rgba(245,242,236,.08); --th-hair-soft: rgba(245,242,236,.05); position: relative; max-width: 1160px; margin: 0 auto; padding: 90px 32px 0; overflow: visible; }
+  /* section 01 only: the falloff zone and the section spacing read as one
+     transition (56px here + 36px hero bottom padding + hairline = 93px
+     from chip row to header block), later sections keep the 90px rhythm */
+  .hero + .th-pm-div + .th-pm-sec { padding-top: 56px; }
   .th-pm-sec::before { content: ""; position: absolute; top: 40px; left: 6px; width: 520px; height: 520px; background: radial-gradient(circle,var(--th-q) 0%,transparent 60%); opacity: .07; filter: blur(8px); pointer-events: none; z-index: 0; }
   .th-pm-sec > * { position: relative; z-index: 1; }
   .th-pm-div { max-width: 1160px; margin: 0 auto; height: 1px; background: rgba(245,242,236,.05); }
@@ -846,11 +878,13 @@
 <!-- ================= HERO ================= -->
 <div class="hero">
   <div class="hero-curtain" aria-hidden="true"></div>
+  <div class="pv-hero-fade" aria-hidden="true"></div>
   <div class="hero-bloom" aria-hidden="true">
     <i style="left:12%;bottom:-20%;width:44%;height:50%;opacity:.10"></i>
     <i style="left:52%;bottom:-24%;width:42%;height:54%;opacity:.09"></i>
     <i class="pv-chip-bloom"></i>
   </div>
+  <div class="pv-hero-afterglow" aria-hidden="true"></div>
   <p class="hero-eyebrow">The privacy flip</p>
   <h1 id="your-savings-your-strategy-your-next" class="hero-title">
     <span class="hero-setup"><span class="shield-wrap sw1"><span class="bk">[</span><span class="word">Your savings.</span><span class="bk r">]</span></span><span class="shield-wrap sw2"><span class="bk">[</span><span class="word">Your strategy.</span><span class="bk r">]</span></span><span class="shield-wrap sw3"><span class="bk">[</span><span class="word">Your next trade.</span><span class="bk r">]</span></span></span>
