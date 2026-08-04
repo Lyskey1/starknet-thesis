@@ -428,6 +428,15 @@
   .pgrid td.y:hover, .pgrid td.n:hover, .pgrid td.y:focus, .pgrid td.n:focus { background: rgba(var(--accent-rgb),.09); outline: none; cursor: help; }
   .pgrid td[data-tip]:hover .tipbox, .pgrid td[data-tip]:focus .tipbox { opacity: 1; visibility: visible; }
   .tipbox { position: absolute; bottom: calc(100% + 10px); left: 50%; transform: translateX(-50%); width: 250px; background: #10161A; border: 1px solid var(--em-line); border-radius: 8px; padding: 12px 14px; font-family: var(--sans); font-size: 12.5px; line-height: 1.55; color: #D6DAD6; text-align: left; opacity: 0; visibility: hidden; transition: opacity .18s; z-index: 20; pointer-events: none; box-shadow: 0 10px 26px rgba(0,0,0,.5); }
+  /* last column: the 250px box centered on a ~134px cell escapes the
+     gridwrap's overflow-x clip at desktop widths (the sub-860px rules
+     further down already handle narrow viewports). Anchor it to the
+     cell's right edge so it opens leftward over the table. */
+  .pgrid td:last-child .tipbox { left: auto; right: 0; transform: none; }
+  /* first data row: a tall tip opening upward clears the thead and pokes
+     past the wrapper's top edge, where overflow-x: auto clips it (top
+     overflow is not scrollable). Open downward over the rows instead. */
+  .pgrid tbody tr:first-child td .tipbox { bottom: auto; top: calc(100% + 10px); }
   .grid-lead { max-width: 68ch; color: #C9CFCB; margin-top: 64px; font-size: 17px; }
   .grid-lead b { color: var(--ink); }
 
