@@ -663,6 +663,39 @@
   .bnt-chipwin { display: none; position: relative; }
   .bnt-pos { font-family: var(--mono); font-size: 10.5px; letter-spacing: .14em; color: var(--muted); line-height: 1.7; margin-top: auto; padding-top: 22px; }
   .bnt-posline { height: 1px; background: var(--th-hair); margin-top: 10px; }
+  /* status filters: the summary counts as single-select toggle buttons.
+     They carry the shared .chip-glass recipe scaled down, but the bento
+     cells are gx-card glass surfaces, so the no-nested-glass rule
+     applies: the buttons are forced to the recipe's SOLID fallback
+     (specular stack kept, no backdrop-filter, opaque fill) at every
+     width. Active = the recipe's step-up glow plus full accent border,
+     distinct from hover which only lifts the glow. */
+  .bnt-filter { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+  .bnt-fbtn { font-family: var(--mono); font-size: 10px; letter-spacing: .12em; color: var(--em); border: 1px solid var(--em-line); border-radius: 99px; padding: 7px 12px; cursor: pointer; }
+  .bnt-filter .chip-glass { -webkit-backdrop-filter: none; backdrop-filter: none; background: var(--chip-solid, #0B0F10); }
+  .bnt-fbtn:focus-visible { outline: 2px solid var(--em); outline-offset: 2px; }
+  .bnt-fbtn[aria-pressed="true"] {
+    border-color: var(--em);
+    background: #10201B;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.5),
+      inset -1px -1px 0 rgba(255,255,255,.30),
+      inset 1px 1px 0 rgba(255,255,255,.12),
+      inset 0 10px 18px -8px rgba(255,255,255,.18),
+      inset 0 -1px 0 rgba(0,0,0,.6),
+      inset 0 -3px 5px rgba(0,0,0,.22),
+      0 0 40px rgba(var(--chip-accent-rgb, var(--accent-rgb)), .45);
+  }
+  .bnt-fstatus { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
+  /* filtered state: marquee bypassed, duplicates gone, the subset
+     renders as a compact static fully visible list */
+  .wp-card.f-hide, .bnt-chip.f-hide { display: none !important; }
+  .bnt.filtered .bnt-track, .bnt.filtered .bnt-chiptrack { animation: none !important; transform: none !important; }
+  .bnt.filtered .bnt-set[data-dup], .bnt.filtered .bnt-chipset[data-dup] { display: none !important; }
+  .bnt.filtered .bnt-win { height: auto; overflow: visible; -webkit-mask-image: none; mask-image: none; }
+  .bnt.filtered .bnt-chipwin { -webkit-mask-image: none; mask-image: none; }
+  .bnt.filtered .bnt-chiptrack { width: auto; flex-wrap: wrap; }
+  .bnt.filtered .bnt-chipset { flex-wrap: wrap; }
   @media (min-width: 981px) {
     .pv-bento { grid-template-columns: minmax(0,13fr) minmax(0,7fr); }
     .bnt-pipe { grid-column: 1 / -1; }
@@ -1512,7 +1545,7 @@
         <i style="--bc:var(--em);left:34%;top:66%;width:30%;height:28%"></i>
       </div>
     <div class="wave gx-card bnt bnt-defi">
-      <div class="bnt-eyebrow"><span class="wn">STARKNET DEFI</span><span class="bnt-n">12 INTEGRATIONS</span></div>
+      <div class="bnt-eyebrow"><span class="wn">STARKNET DEFI</span><span class="bnt-n">11 INTEGRATIONS</span></div>
       <h5 id="starknet-defi-grafts-itself-onto-the">Starknet DeFi grafts itself onto the pool</h5>
       <div class="bnt-win">
       <div class="bnt-track">
@@ -1564,7 +1597,12 @@
       </div>
       </div>
       </div>
-      <div class="bnt-sum">6 LIVE · 1 TESTNET · 4 COMING</div>
+      <div class="bnt-sum bnt-filter" role="group" aria-label="Filter Starknet DeFi items by status">
+        <button type="button" class="chip-glass bnt-fbtn" data-f="LIVE" aria-pressed="false">6 LIVE</button>
+        <button type="button" class="chip-glass bnt-fbtn" data-f="TESTNET" aria-pressed="false">1 TESTNET</button>
+        <button type="button" class="chip-glass bnt-fbtn" data-f="COMING" aria-pressed="false">4 COMING</button>
+        <span class="bnt-fstatus" aria-live="polite"></span>
+      </div>
     </div>
     <div class="wave gx-card bnt bnt-eco">
       <div class="wn">OTHER ECOSYSTEMS</div><h5 id="the-confidentiality-layer-for-other-ecosystems">The confidentiality layer for other ecosystems</h5>
@@ -1582,7 +1620,12 @@
     <div class="wave gx-card bnt bnt-pipe">
       <div class="bnt-pipe-head">
         <div><span class="wn">FIRST-PARTY PIPELINE</span><h5 id="nine-first-party-projects-by-starkware">Nine first-party projects by StarkWare &amp; the Foundation</h5></div>
-        <div class="bnt-sum">3 LIVE · 1 COHORT · 5 COMING</div>
+        <div class="bnt-sum bnt-filter" role="group" aria-label="Filter first-party pipeline projects by status">
+          <button type="button" class="chip-glass bnt-fbtn" data-f="LIVE" aria-pressed="false">3 LIVE</button>
+          <button type="button" class="chip-glass bnt-fbtn" data-f="COHORT 01" aria-pressed="false">1 COHORT</button>
+          <button type="button" class="chip-glass bnt-fbtn" data-f="COMING" aria-pressed="false">5 COMING</button>
+          <span class="bnt-fstatus" aria-live="polite"></span>
+        </div>
       </div>
       <div class="bnt-cards">
       <div id="private-payroll" class="wp-card">
@@ -2120,6 +2163,45 @@
   new IntersectionObserver(function(es){
     root.classList.toggle('run', es[0].isIntersecting);
   }, { threshold: 0.05 }).observe(root);
+
+  // status filters: single-select per card, scoped to that card. The
+  // status key is the pill's own text (COHORT 01 shares the live pill
+  // color but is its own status). Filtering hides the non-matching
+  // wp-cards (both marquee set and mobile stack) and, on the pipeline,
+  // the matching chips; the .filtered class on the cell bypasses the
+  // marquee. Wired independently of build() so it works below 981px.
+  function itemStatus(el){
+    var p = el.querySelector('.pill');
+    return p ? p.textContent.trim() : '';
+  }
+  function applyFilter(cell, f){
+    cell.classList.toggle('filtered', !!f);
+    var shown = 0;
+    var items = cell.querySelectorAll('.bnt-set:not([data-dup]) .wp-card, .bnt-cards .wp-card');
+    [].forEach.call(items, function(c){
+      var hide = !!f && itemStatus(c) !== f;
+      c.classList.toggle('f-hide', hide);
+      if (!hide) shown++;
+    });
+    [].forEach.call(cell.querySelectorAll('.bnt-chipset:not([data-dup]) .bnt-chip'), function(ch){
+      ch.classList.toggle('f-hide', !!f && itemStatus(ch) !== f);
+    });
+    var st = cell.querySelector('.bnt-fstatus');
+    if (st) st.textContent = f ? (shown + ' items shown, filtered to ' + f) : 'All items shown';
+  }
+  [].forEach.call(root.querySelectorAll('.bnt-filter'), function(bar){
+    var cell = bar.closest('.bnt');
+    var btns = [].slice.call(bar.querySelectorAll('.bnt-fbtn'));
+    btns.forEach(function(b){
+      b.addEventListener('click', function(){
+        var wasOn = b.getAttribute('aria-pressed') === 'true';
+        btns.forEach(function(x){ x.setAttribute('aria-pressed', 'false'); });
+        if (wasOn){ applyFilter(cell, null); return; }
+        b.setAttribute('aria-pressed', 'true');
+        applyFilter(cell, b.getAttribute('data-f'));
+      });
+    });
+  });
 })();
 
 // ============================================================
