@@ -1,0 +1,19 @@
+/* ===== Card glass constants (shared) =====
+   Single source for the CARD liquid-glass tier, consumed by the landing's
+   .lg-card and privacy's .gx-card (quantum's .qg-card is a candidate for
+   the same migration later). The values are the landing's, which is the
+   site reference. The chip/button tier in css/glass-chips.css is a
+   distinct locked recipe and deliberately does not read these.
+   Also carries the shared hover signature (duration + curve) used by
+   card lifts and hover state changes on both pages. */
+:root {
+  --card-glass-blur: 16px;
+  --card-glass-sat: 110%;
+  --card-glass-fill: rgba(245,242,236,.035);
+  --card-glass-border: rgba(245,242,236,.075);
+  --card-glass-light-h: 44%;                    /* top-light height */
+  --card-glass-light: rgba(255,255,255,.075);   /* top-light strength */
+  --card-glass-lift: -4px;                      /* hover translateY */
+  --hover-dur: .28s;
+  --hover-ease: cubic-bezier(.2,.7,.2,1);
+}

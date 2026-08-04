@@ -31,6 +31,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Expanded:wght@500;600;700;800;900&family=IBM+Plex+Mono:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/dist/tabler-icons.min.css">
 <link rel="stylesheet" href="css/styles.css?v=20260802b">
+<link rel="stylesheet" href="css/glass-cards.css">
 <link rel="stylesheet" href="css/glass-chips.css">
 <style>
   /* Sub-380px nav fit: at 320px the nav row (205px logo + 44px search
@@ -413,7 +414,7 @@
   .pgrid td.n::before { content: ''; display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: rgba(245,242,236,.08); border: 1px solid rgba(245,242,236,.16); }
   .pgrid td.score { font-size: 12px; letter-spacing: .08em; color: var(--muted); }
   /* field rows rest dimmed, lift on hover or keyboard focus */
-  .pgrid tbody tr { opacity: .78; transition: opacity .12s; }
+  .pgrid tbody tr { opacity: .78; transition: opacity var(--hover-dur) var(--hover-ease); }
   .pgrid tbody tr:hover, .pgrid tbody tr:focus-within { opacity: 1; }
   @media (prefers-reduced-motion: reduce) { .pgrid tbody tr { transition: none; } }
   .pgrid td.p:hover, .pgrid td.p:focus { background: rgba(232,163,61,.08); outline: none; cursor: help; }
@@ -519,7 +520,7 @@
     /* selection on the rail: the active beam's underlying rail steps one
        subtle shade up */
     .pcore-beams g.on .pc-rail { stroke: rgba(var(--accent-rgb),.30); }
-    .pcore-node { position: absolute; margin: 0; width: min(320px, 31%); padding: 20px 22px; cursor: pointer; transition: border-color .2s, background .2s; }
+    .pcore-node { position: absolute; margin: 0; width: min(320px, 31%); padding: 20px 22px; cursor: pointer; transition: border-color var(--hover-dur) var(--hover-ease), background var(--hover-dur) var(--hover-ease); }
     .pcore-node + .pcore-node { margin-top: 0; }
     .pcore-node p { display: none; }
     .pcore-node h4 { font-size: 19px; margin: 7px 0 0; }
@@ -691,6 +692,12 @@
   .bnt-fbtn { font-family: var(--mono); font-size: 10px; letter-spacing: .12em; color: var(--em); border: 1px solid var(--em-line); border-radius: 99px; padding: 7px 12px; cursor: pointer; }
   .bnt-filter .chip-glass { -webkit-backdrop-filter: none; backdrop-filter: none; background: var(--chip-solid, #0B0F10); }
   .bnt-fbtn:focus-visible { outline: 2px solid var(--em); outline-offset: 2px; }
+  /* site hover signature on the chip tier, page-scoped so the locked
+     css/glass-chips.css recipe stays untouched */
+  .status-row .pill.chip-glass, .bnt-filter .chip-glass { transition: background var(--hover-dur) var(--hover-ease), box-shadow var(--hover-dur) var(--hover-ease); }
+  @media (prefers-reduced-motion: reduce) {
+    .status-row .pill.chip-glass, .bnt-filter .chip-glass { transition: none; }
+  }
   .bnt-fbtn[aria-pressed="true"] {
     border-color: var(--em);
     background: #10201B;
@@ -735,7 +742,7 @@
     /* the two marquees start desynchronized via the negative delay */
     .pv-bento.run .bnt-chiptrack { animation: bnth 25s linear infinite; animation-delay: -9s; }
     .bnt-pipe:hover .bnt-chiptrack, .bnt-pipe.focus-hold .bnt-chiptrack { animation-play-state: paused; }
-    .bnt-chip { display: inline-flex; align-items: center; gap: 10px; border: 1px solid var(--line); border-radius: 99px; padding: 9px 16px; background: #0B0F10; font-family: var(--display); font-weight: 600; font-size: 13px; color: var(--ink); white-space: nowrap; text-decoration: none; transition: border-color .2s, background .2s; }
+    .bnt-chip { display: inline-flex; align-items: center; gap: 10px; border: 1px solid var(--line); border-radius: 99px; padding: 9px 16px; background: #0B0F10; font-family: var(--display); font-weight: 600; font-size: 13px; color: var(--ink); white-space: nowrap; text-decoration: none; transition: border-color var(--hover-dur) var(--hover-ease), background var(--hover-dur) var(--hover-ease); }
     a.bnt-chip:hover, a.bnt-chip:focus-visible { border-color: var(--em-line); background: rgba(var(--accent-rgb),.06); }
   }
   @media (min-width: 981px) and (prefers-reduced-motion: no-preference) {
@@ -752,7 +759,7 @@
     .bnt-chipset { flex-wrap: wrap; padding-right: 0; }
   }
   /* project cards inside the fronts (same interaction pattern as the properties panel) */
-  .wp-card { border: 1px solid var(--line); border-radius: 10px; padding: 11px 14px; background: #0B0F10; transition: border-color .25s, background .25s; margin-top: 8px; }
+  .wp-card { border: 1px solid var(--line); border-radius: 10px; padding: 11px 14px; background: #0B0F10; transition: border-color var(--hover-dur) var(--hover-ease), background var(--hover-dur) var(--hover-ease); margin-top: 8px; }
   .wp-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
   .wp-t { font-family: var(--display); font-weight: 600; font-size: 13.5px; line-height: 1.35; color: var(--ink); }
   .wp-card p { font-size: 12.5px; color: var(--muted); line-height: 1.6; max-height: 0; overflow: hidden; margin-top: 0; transition: max-height .35s ease, margin-top .35s ease; }
@@ -824,9 +831,9 @@
      refraction anywhere, blur plus the specular stack only. Tier B surfaces
      (item rows, accordion, charts, terminal panels, crowd panel, flip
      bills, news, admin) are deliberately not listed in any selector here. */
-  .gx-card{position:relative;z-index:1;--gc:var(--em);background:rgba(245,242,236,.032);border:1px solid rgba(245,242,236,.07);
-    -webkit-backdrop-filter:blur(16px) saturate(112%);
-    backdrop-filter:blur(16px) saturate(112%);
+  .gx-card{position:relative;z-index:1;--gc:var(--em);background:var(--card-glass-fill);border:1px solid var(--card-glass-border);
+    -webkit-backdrop-filter:blur(var(--card-glass-blur)) saturate(var(--card-glass-sat));
+    backdrop-filter:blur(var(--card-glass-blur)) saturate(var(--card-glass-sat));
     box-shadow:
       inset -1px -1px 0 rgba(255,255,255,.42),
       inset 1px 1px 0 rgba(255,255,255,.10),
@@ -834,11 +841,11 @@
       inset 0 -1px 0 rgba(255,255,255,.22),
       inset 0 0 24px rgba(255,255,255,.05),
       0 18px 50px -30px rgba(0,0,0,.9);
-    transition:transform .25s ease,border-color .25s,box-shadow .25s;}
+    transition:transform var(--hover-dur) var(--hover-ease),border-color var(--hover-dur),box-shadow var(--hover-dur);}
   .gx-coral{--gc:var(--danger);}
-  .gx-card::before{content:"";position:absolute;top:0;left:0;right:0;height:42%;border-radius:inherit;
-    background:linear-gradient(180deg,rgba(255,255,255,.062),transparent);pointer-events:none;}
-  .gx-card:hover,.gx-card:focus-visible{transform:translateY(-3px);
+  .gx-card::before{content:"";position:absolute;top:0;left:0;right:0;height:var(--card-glass-light-h);border-radius:inherit;
+    background:linear-gradient(180deg,var(--card-glass-light),transparent);pointer-events:none;}
+  .gx-card:hover,.gx-card:focus-visible{transform:translateY(var(--card-glass-lift));
     border-color:color-mix(in srgb,var(--gc) 30%,transparent);
     box-shadow:
       inset -1px -1px 0 rgba(255,255,255,.42),

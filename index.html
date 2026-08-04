@@ -30,6 +30,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Expanded:wght@500;600;700;800;900&family=IBM+Plex+Mono:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/dist/tabler-icons.min.css">
 <link rel="stylesheet" href="css/styles.css?v=20260802b">
+<link rel="stylesheet" href="css/glass-cards.css">
 <style>
   /* Sub-380px nav fit: at 320px the nav row (205px logo + 44px search
      + 44px burger + two 24px gaps + 32px padding = 373px) leaves the
@@ -195,7 +196,7 @@
   .th-grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;}
   /* ecosystem/digest cards hold short content: lower the inherited 236px min-height so they fit (fundamentals 3-up keep theirs) */
   .th-grid-2 .th-card{min-height:196px;}
-  .th-card{position:relative;overflow:hidden;display:flex;flex-direction:column;min-height:236px;padding:30px 30px 28px;background:#0b0d13;border:1px solid rgba(245,242,236,.07);border-radius:14px;text-decoration:none;color:#F5F2EC;transition:transform .28s cubic-bezier(.2,.7,.2,1),border-color .28s,box-shadow .28s;}
+  .th-card{position:relative;overflow:hidden;display:flex;flex-direction:column;min-height:236px;padding:30px 30px 28px;background:#0b0d13;border:1px solid rgba(245,242,236,.07);border-radius:14px;text-decoration:none;color:#F5F2EC;transition:transform var(--hover-dur) var(--hover-ease),border-color var(--hover-dur),box-shadow var(--hover-dur);}
   .th-card::before{content:"";position:absolute;top:-40%;right:-30%;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,var(--ac) 0%,transparent 65%);opacity:.07;transition:opacity .28s;pointer-events:none;}
   .th-card-top{display:flex;align-items:center;justify-content:space-between;}
   .th-idx{display:flex;align-items:center;gap:9px;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500;letter-spacing:.12em;color:var(--ac);}
@@ -209,7 +210,7 @@
   .th-card:hover::before{opacity:.16;}
   .th-card:hover .th-arrow{color:var(--ac);transform:translateX(4px);}
   .th-card:hover .th-uline{width:52px;}
-  .th-feature{position:relative;overflow:hidden;display:flex;align-items:center;justify-content:space-between;gap:40px;padding:26px 38px;background:linear-gradient(90deg,#0d0a18 0%,#0b0d13 70%);border:1px solid rgba(245,242,236,.07);border-radius:14px;text-decoration:none;color:#F5F2EC;transition:transform .28s cubic-bezier(.2,.7,.2,1),border-color .28s,box-shadow .28s;}
+  .th-feature{position:relative;overflow:hidden;display:flex;align-items:center;justify-content:space-between;gap:40px;padding:26px 38px;background:linear-gradient(90deg,#0d0a18 0%,#0b0d13 70%);border:1px solid rgba(245,242,236,.07);border-radius:14px;text-decoration:none;color:#F5F2EC;transition:transform var(--hover-dur) var(--hover-ease),border-color var(--hover-dur),box-shadow var(--hover-dur);}
   .th-feature::after{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:#A78BFA;box-shadow:0 0 22px #A78BFA;}
   .th-feature::before{content:"";position:absolute;top:-60%;left:8%;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,#A78BFA 0%,transparent 62%);opacity:.10;pointer-events:none;transition:opacity .28s;}
   .th-feature:hover{transform:translateY(-4px);border-color:color-mix(in srgb,#A78BFA 55%,transparent);box-shadow:0 30px 70px -34px #A78BFA;}
@@ -227,9 +228,9 @@
      backdrop-filter creates a stacking context and containing block, so it
      lives ONLY on the card elements themselves. Never on an ancestor of
      .conv-stage or of these sections. */
-  .lg-card{position:relative;z-index:1;background:rgba(245,242,236,.035);border:1px solid rgba(245,242,236,.075);
-    -webkit-backdrop-filter:blur(16px) saturate(110%);
-    backdrop-filter:blur(16px) saturate(110%);
+  .lg-card{position:relative;z-index:1;background:var(--card-glass-fill);border:1px solid var(--card-glass-border);
+    -webkit-backdrop-filter:blur(var(--card-glass-blur)) saturate(var(--card-glass-sat));
+    backdrop-filter:blur(var(--card-glass-blur)) saturate(var(--card-glass-sat));
     box-shadow:
       inset -1px -1px 0 rgba(255,255,255,.44),
       inset 1px 1px 0 rgba(255,255,255,.10),
@@ -239,11 +240,11 @@
       0 18px 50px -28px rgba(0,0,0,.9);}
   /* top light: replaces the per-card radial halo (ambient accent moved to
      the backdrop blooms behind the cards, so glows never stack) */
-  .lg-card::before{content:"";position:absolute;top:0;left:0;right:0;bottom:auto;width:auto;height:44%;
-    border-radius:14px 14px 0 0;background:linear-gradient(180deg,rgba(255,255,255,.075),transparent);
+  .lg-card::before{content:"";position:absolute;top:0;left:0;right:0;bottom:auto;width:auto;height:var(--card-glass-light-h);
+    border-radius:14px 14px 0 0;background:linear-gradient(180deg,var(--card-glass-light),transparent);
     opacity:1;transition:none;pointer-events:none;}
   .lg-card:hover::before,.lg-card:focus-visible::before{opacity:1;}
-  .lg-card:hover,.lg-card:focus-visible{transform:translateY(-4px);
+  .lg-card:hover,.lg-card:focus-visible{transform:translateY(var(--card-glass-lift));
     border-color:color-mix(in srgb,var(--ac) 34%,transparent);
     box-shadow:
       inset -1px -1px 0 rgba(255,255,255,.44),
