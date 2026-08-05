@@ -74,7 +74,7 @@
             mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent); }
   .dg-mq-track { display: flex; width: max-content; }
   .dg-mq-set { display: flex; gap: 46px; padding-right: 46px; }
-  .dg-mq-set a { font-family: var(--mono); font-size: 12px; letter-spacing: .18em; text-transform: uppercase; color: #8b909c; white-space: nowrap; text-decoration: none; transition: color var(--hover-dur) var(--hover-ease); }
+  .dg-mq-set a, .dg-mq-set span { font-family: var(--mono); font-size: 12px; letter-spacing: .18em; text-transform: uppercase; color: #8b909c; white-space: nowrap; text-decoration: none; transition: color var(--hover-dur) var(--hover-ease); }
   .dg-mq-set a:hover { color: var(--accent); }
   .dg-marquee.run .dg-mq-track { animation: dgmq 60s linear infinite; }
   @keyframes dgmq { to { transform: translateX(-50%); } }
@@ -143,10 +143,12 @@
   </div>
 </div>
 
-<!-- latest-entries marquee: decorative band built at runtime from the
-     entries already rendered in the static digest block (items link to
-     the same posts the cards open) -->
-<div class="dg-marquee" id="dgMarquee"><div class="dg-mq-track"></div></div>
+<!-- content-types marquee: the four digest types repeated to fill the
+     seamless loop (static markup, not build-generated). Typed items jump
+     to the feed and activate the matching filter tab; THESIS has no
+     distinct on-page filter (research carries the deep dives) so it is
+     a plain label, not a dead link. -->
+<div class="dg-marquee" id="dgMarquee"><div class="dg-mq-track"><div class="dg-mq-set"><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="monthly">MONTHLY RECAP</a><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="weekly">WEEKLY ROUNDUP</a><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="research">DEEP DIVES</a><span>THESIS</span><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="monthly">MONTHLY RECAP</a><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="weekly">WEEKLY ROUNDUP</a><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="research">DEEP DIVES</a><span>THESIS</span><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="monthly">MONTHLY RECAP</a><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="weekly">WEEKLY ROUNDUP</a><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="research">DEEP DIVES</a><span>THESIS</span><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="monthly">MONTHLY RECAP</a><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="weekly">WEEKLY ROUNDUP</a><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="research">DEEP DIVES</a><span>THESIS</span><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="monthly">MONTHLY RECAP</a><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="weekly">WEEKLY ROUNDUP</a><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="research">DEEP DIVES</a><span>THESIS</span><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="monthly">MONTHLY RECAP</a><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="weekly">WEEKLY ROUNDUP</a><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="research">DEEP DIVES</a><span>THESIS</span></div><div class="dg-mq-set" data-dup aria-hidden="true"><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="monthly" tabindex="-1">MONTHLY RECAP</a><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="weekly" tabindex="-1">WEEKLY ROUNDUP</a><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="research" tabindex="-1">DEEP DIVES</a><span>THESIS</span><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="monthly" tabindex="-1">MONTHLY RECAP</a><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="weekly" tabindex="-1">WEEKLY ROUNDUP</a><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="research" tabindex="-1">DEEP DIVES</a><span>THESIS</span><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="monthly" tabindex="-1">MONTHLY RECAP</a><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="weekly" tabindex="-1">WEEKLY ROUNDUP</a><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="research" tabindex="-1">DEEP DIVES</a><span>THESIS</span><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="monthly" tabindex="-1">MONTHLY RECAP</a><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="weekly" tabindex="-1">WEEKLY ROUNDUP</a><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="research" tabindex="-1">DEEP DIVES</a><span>THESIS</span><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="monthly" tabindex="-1">MONTHLY RECAP</a><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="weekly" tabindex="-1">WEEKLY ROUNDUP</a><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="research" tabindex="-1">DEEP DIVES</a><span>THESIS</span><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="monthly" tabindex="-1">MONTHLY RECAP</a><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="weekly" tabindex="-1">WEEKLY ROUNDUP</a><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="research" tabindex="-1">DEEP DIVES</a><span>THESIS</span></div></div></div>
 
 <!-- RECAPS FEED -->
 <section>
@@ -396,31 +398,12 @@
 </script>
 
 <script>
-/* Hero marquee: the latest digest entries, read at load from the
-   pre-rendered static block (same titles and destinations the cards
-   carry), duplicated once for the seamless -50% loop. Decorative
-   duplicate set is aria-hidden with unfocusable links. If the feed ever
-   ships fewer than 8 entries the set repeats to keep the loop wide. */
+/* Marquee band: static content-types markup above; this script only
+   gates the animation to the viewport and wires typed items to the
+   matching feed filter tab (the anchor itself handles the scroll). */
 (function(){
   var band = document.getElementById('dgMarquee');
   if (!band) return;
-  var cards = document.querySelectorAll('#recapGrid .recap-card');
-  var items = [];
-  [].forEach.call(cards, function(c){
-    var t = c.querySelector('.recap-title');
-    if (!t) return;
-    items.push({ label: t.textContent.replace(/^Starknet\s+/i, ''), href: c.getAttribute('href') });
-  });
-  if (!items.length) return;
-  while (items.length < 8) items = items.concat(items);
-  function setHTML(dup){
-    return '<div class="dg-mq-set"' + (dup ? ' data-dup aria-hidden="true"' : '') + '>' +
-      items.map(function(it){
-        return '<a href="' + it.href.replace(/"/g, '&quot;') + '" target="_blank" rel="noopener"' + (dup ? ' tabindex="-1"' : '') + '>' +
-          it.label.replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</a>';
-      }).join('') + '</div>';
-  }
-  band.querySelector('.dg-mq-track').innerHTML = setHTML(false) + setHTML(true);
   if ('IntersectionObserver' in window) {
     new IntersectionObserver(function(es){
       band.classList.toggle('run', es[0].isIntersecting);
@@ -428,6 +411,12 @@
   } else {
     band.classList.add('run');
   }
+  band.addEventListener('click', function(e){
+    var a = e.target.closest('a[data-mqfilter]');
+    if (!a) return;
+    var tab = document.querySelector('#recapTabs [data-filter="' + a.getAttribute('data-mqfilter') + '"]');
+    if (tab) tab.click();
+  });
 })();
 </script>
 </body>
