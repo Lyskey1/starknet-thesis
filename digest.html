@@ -23,12 +23,12 @@
 <script defer src="https://cloud.umami.is/script.js" data-website-id="45f11859-9fc2-49ae-a59e-4826e0f1e174"></script>
 <script defer src="js/nav.js"></script>
 <script defer src="js/search.js"></script>
-<script defer src="js/curtain.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Expanded:wght@500;600;700;800;900&family=IBM+Plex+Mono:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/dist/tabler-icons.min.css">
 <link rel="stylesheet" href="css/styles.css?v=20260802b">
+<link rel="stylesheet" href="css/glass-cards.css">
 <style>
   /* Sub-380px nav fit: at 320px the nav row (205px logo + 44px search
      + 44px burger + two 24px gaps + 32px padding = 373px) leaves the
@@ -42,6 +42,58 @@
   }
 </style>
 <style>
+  /* ===== Landscape hero (mirrored from ecosystem.html's eco-hero block;
+     keep scene geometry, scrim and marquee mechanics in sync with that
+     page). Tint rides var(--accent-rgb) = this page's salmon. ===== */
+  .dg-hero { min-height: calc(100vh - 72px); align-items: stretch; text-align: left; max-width: none; padding: 150px 0 120px; position: relative; }
+  .dg-hero-inner { width: 100%; max-width: 1160px; margin: 0 auto; padding: 0 32px; position: relative; z-index: 1; }
+  .dg-hero .hero-title { margin-left: 0; margin-right: 0; max-width: none; }
+  .dg-hero .hero-subtitle { margin: 22px 0 0; max-width: 620px; }
+  .dg-scene { position: absolute; inset: 0; z-index: -1; overflow: hidden;
+    background:
+      radial-gradient(56% 36% at 58% 84%, rgba(var(--accent-rgb), .17), transparent 70%),
+      linear-gradient(180deg, var(--black) 0%, #0E0C0D 42%, #1A100E 70%, #221310 88%, #241411 100%); }
+  .dg-ridges { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: min(74%, 520px); display: block; }
+  .dg-ridges .rg3 { fill: #0D0E11; }
+  .dg-ridges .rg2 { fill: #0A0B0E; }
+  .dg-ridges .rg1 { fill: #08090B; }
+  .dg-ridges .rim1 { fill: none; stroke: rgba(var(--accent-rgb), .55); stroke-width: 1.5; }
+  .dg-ridges .rim2 { fill: none; stroke: rgba(var(--accent-rgb), .26); stroke-width: 1; }
+  .dg-ridges .rim3 { fill: none; stroke: rgba(var(--accent-rgb), .12); stroke-width: 1; }
+  .dg-scrim { position: absolute; left: 0; right: 0; bottom: 0; height: 200px;
+    background: linear-gradient(180deg, transparent, var(--black)); }
+  .dg-ctas { display: flex; gap: 36px; margin-top: 42px; flex-wrap: wrap; position: relative; }
+  .dg-cta { font-family: var(--mono); font-size: 13px; letter-spacing: .14em; text-transform: uppercase; text-decoration: none; color: var(--white); padding-bottom: 9px; border-bottom: 1px solid var(--accent); display: inline-flex; align-items: center; gap: 10px; transition: color var(--hover-dur) var(--hover-ease), border-color var(--hover-dur); }
+  .dg-cta i { font-style: normal; transition: transform var(--hover-dur) var(--hover-ease); }
+  .dg-cta:hover { color: var(--accent); }
+  .dg-cta:hover i { transform: translateX(4px); }
+  .dg-cta--muted { color: rgba(245,242,236,.62); border-bottom-color: var(--border); }
+  .dg-cta--muted:hover { color: var(--white); border-bottom-color: rgba(245,242,236,.4); }
+  .dg-marquee { border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); overflow: hidden; padding: 19px 0;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+            mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent); }
+  .dg-mq-track { display: flex; width: max-content; }
+  .dg-mq-set { display: flex; gap: 46px; padding-right: 46px; }
+  .dg-mq-set a { font-family: var(--mono); font-size: 12px; letter-spacing: .18em; text-transform: uppercase; color: #8b909c; white-space: nowrap; text-decoration: none; transition: color var(--hover-dur) var(--hover-ease); }
+  .dg-mq-set a:hover { color: var(--accent); }
+  .dg-marquee.run .dg-mq-track { animation: dgmq 60s linear infinite; }
+  @keyframes dgmq { to { transform: translateX(-50%); } }
+  .dg-marquee:hover .dg-mq-track { animation-play-state: paused; }
+  @media (prefers-reduced-motion: reduce) {
+    .dg-mq-track { animation: none !important; flex-wrap: wrap; width: auto; gap: 12px 0; }
+    .dg-mq-set[data-dup] { display: none; }
+    .dg-marquee { -webkit-mask-image: none; mask-image: none; }
+  }
+  @media (max-width: 980px) {
+    .dg-hero { min-height: auto; padding: 130px 0 90px; }
+    .dg-ridges { height: 52%; }
+    .dg-marquee { display: none; }
+  }
+  @media (max-width: 700px) {
+    .dg-hero-inner { padding: 0 24px; }
+    .dg-ctas { flex-direction: column; gap: 20px; align-items: flex-start; }
+  }
+
   /* section headers ported from quantum.html (th-pm- structure), using this page's own accent */
   .th-pm-head{display:flex;align-items:center;gap:18px;}
   .th-pm-marker{width:0;height:0;border-left:13px solid var(--accent);border-top:8px solid transparent;border-bottom:8px solid transparent;transform:translateY(2px);filter:drop-shadow(0 0 8px rgba(var(--accent-rgb),.6));}
@@ -64,23 +116,37 @@
 </nav>
 
 <!-- HERO -->
-<div class="hero">
-  <div class="hero-curtain" aria-hidden="true"></div>
-  <div class="hero-bloom" aria-hidden="true">
-    <i style="left:12%;bottom:-20%;width:44%;height:50%;opacity:.10"></i>
-    <i style="left:52%;bottom:-24%;width:42%;height:54%;opacity:.09"></i>
+<!-- HERO: dark landscape composition, mirrored from ecosystem.html's
+     hero (keep the scene geometry and CSS in sync with that page). Same
+     grammar, this page's accent: CSS reads var(--accent-rgb) so the
+     salmon tint comes from body.page-recap, never hardcoded. -->
+<div class="hero dg-hero">
+  <div class="dg-scene" aria-hidden="true">
+    <svg class="dg-ridges" viewBox="0 0 1440 520" preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false">
+      <path class="rg3" d="M0,318 L120,268 L260,304 L400,248 L560,298 L720,256 L880,300 L1040,260 L1200,298 L1330,270 L1440,296 L1440,520 L0,520 Z"/>
+      <polyline class="rim3" points="0,318 120,268 260,304 400,248 560,298 720,256 880,300 1040,260 1200,298 1330,270 1440,296"/>
+      <path class="rg2" d="M0,392 L90,350 L210,384 L330,316 L470,378 L610,328 L760,386 L900,334 L1030,380 L1170,328 L1300,376 L1440,342 L1440,520 L0,520 Z"/>
+      <polyline class="rim2" points="0,392 90,350 210,384 330,316 470,378 610,328 760,386 900,334 1030,380 1170,328 1300,376 1440,342"/>
+      <path class="rg1" d="M0,470 L140,398 L300,452 L430,374 L590,446 L750,386 L920,456 L1080,394 L1230,450 L1360,408 L1440,442 L1440,520 L0,520 Z"/>
+      <polyline class="rim1" points="0,470 140,398 300,452 430,374 590,446 750,386 920,456 1080,394 1230,450 1360,408 1440,442"/>
+    </svg>
+    <div class="dg-scrim"></div>
   </div>
-  <p class="hero-eyebrow">Digest</p>
-  <h1 id="never-miss-whatsshipping-on-starknet" class="hero-title">Never miss what's<br>shipping on <em>Starknet</em>.</h1>
-  <p class="hero-subtitle">Because a thesis only holds if the ecosystem actually ships behind it. Starknet is among the very few ecosystems shipping this much, this constantly.</p>
-  <div style="margin-bottom:56px;"><a class="btn-primary" href="https://starknetresearch.substack.com/subscribe" target="_blank" rel="noopener">Subscribe</a></div>
-  <div class="hero-scroll">
-    <div class="scroll-line"></div>
-    <span>Scroll</span>
+  <div class="dg-hero-inner">
+    <p class="hero-eyebrow">Digest</p>
+    <h1 id="never-miss-whatsshipping-on-starknet" class="hero-title">Never miss what's<br>shipping on <em>Starknet</em>.</h1>
+    <p class="hero-subtitle">Because a thesis only holds if the ecosystem actually ships behind it. Starknet is among the very few ecosystems shipping this much, this constantly.</p>
+    <div class="dg-ctas">
+      <a class="dg-cta" href="https://starknetresearch.substack.com/subscribe" target="_blank" rel="noopener">Subscribe <i aria-hidden="true">&rarr;</i></a>
+      <a class="dg-cta dg-cta--muted" href="#latest-from-the-starknet-ecosystem">Read the latest <i aria-hidden="true">&rarr;</i></a>
+    </div>
   </div>
 </div>
 
-<div class="section-divider"></div>
+<!-- latest-entries marquee: decorative band built at runtime from the
+     entries already rendered in the static digest block (items link to
+     the same posts the cards open) -->
+<div class="dg-marquee" id="dgMarquee"><div class="dg-mq-track"></div></div>
 
 <!-- RECAPS FEED -->
 <section>
@@ -329,5 +395,40 @@
 })();
 </script>
 
+<script>
+/* Hero marquee: the latest digest entries, read at load from the
+   pre-rendered static block (same titles and destinations the cards
+   carry), duplicated once for the seamless -50% loop. Decorative
+   duplicate set is aria-hidden with unfocusable links. If the feed ever
+   ships fewer than 8 entries the set repeats to keep the loop wide. */
+(function(){
+  var band = document.getElementById('dgMarquee');
+  if (!band) return;
+  var cards = document.querySelectorAll('#recapGrid .recap-card');
+  var items = [];
+  [].forEach.call(cards, function(c){
+    var t = c.querySelector('.recap-title');
+    if (!t) return;
+    items.push({ label: t.textContent.replace(/^Starknet\s+/i, ''), href: c.getAttribute('href') });
+  });
+  if (!items.length) return;
+  while (items.length < 8) items = items.concat(items);
+  function setHTML(dup){
+    return '<div class="dg-mq-set"' + (dup ? ' data-dup aria-hidden="true"' : '') + '>' +
+      items.map(function(it){
+        return '<a href="' + it.href.replace(/"/g, '&quot;') + '" target="_blank" rel="noopener"' + (dup ? ' tabindex="-1"' : '') + '>' +
+          it.label.replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</a>';
+      }).join('') + '</div>';
+  }
+  band.querySelector('.dg-mq-track').innerHTML = setHTML(false) + setHTML(true);
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(function(es){
+      band.classList.toggle('run', es[0].isIntersecting);
+    }, { threshold: 0 }).observe(band);
+  } else {
+    band.classList.add('run');
+  }
+})();
+</script>
 </body>
 </html>
