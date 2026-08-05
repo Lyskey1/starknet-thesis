@@ -29,6 +29,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/dist/tabler-icons.min.css">
 <link rel="stylesheet" href="css/styles.css?v=20260802b">
 <link rel="stylesheet" href="css/glass-cards.css">
+<link rel="stylesheet" href="css/glass-chips.css">
 <style>
   /* Sub-380px nav fit: at 320px the nav row (205px logo + 44px search
      + 44px burger + two 24px gaps + 32px padding = 373px) leaves the
@@ -62,13 +63,45 @@
   .dg-ridges .rim3 { fill: none; stroke: rgba(var(--accent-rgb), .12); stroke-width: 1; }
   .dg-scrim { position: absolute; left: 0; right: 0; bottom: 0; height: 200px;
     background: linear-gradient(180deg, transparent, var(--black)); }
-  .dg-ctas { display: flex; gap: 36px; margin-top: 42px; flex-wrap: wrap; position: relative; }
-  .dg-cta { font-family: var(--mono); font-size: 13px; letter-spacing: .14em; text-transform: uppercase; text-decoration: none; color: var(--white); padding-bottom: 9px; border-bottom: 1px solid var(--accent); display: inline-flex; align-items: center; gap: 10px; transition: color var(--hover-dur) var(--hover-ease), border-color var(--hover-dur); }
+  /* hero CTAs: the locked shared dark glass tier (css/glass-chips.css
+     .chip-glass) at button scale (nav-CTA-like padding, chip pill
+     radius). The recipe's accent terms read --chip-accent-rgb with an
+     --accent-rgb fallback, so this page's own accent colors the glow
+     with nothing hardcoded. Primary carries the accent border and the
+     recipe's full glow; secondary sits on a neutral border with a faint
+     glow and reaches primary intensity on hover (those two stacks are
+     copied from the locked recipe; keep in sync). Site hover signature
+     page-scoped so the locked file stays untouched. The buttons sit
+     over the hero scene, which carries no backdrop-filter: no nested
+     glass, and the blur samples the ridges behind. */
+  .dg-ctas { display: flex; gap: 18px; margin-top: 42px; flex-wrap: wrap; position: relative; }
+  .dg-cta { font-family: var(--mono); font-size: 13px; letter-spacing: .14em; text-transform: uppercase; text-decoration: none; color: var(--white); padding: 12px 22px; border-radius: 99px; border: 1px solid rgba(var(--accent-rgb), .55); display: inline-flex; align-items: center; gap: 10px; }
+  .dg-cta.chip-glass { transition: background var(--hover-dur) var(--hover-ease), box-shadow var(--hover-dur) var(--hover-ease), border-color var(--hover-dur); }
   .dg-cta i { font-style: normal; transition: transform var(--hover-dur) var(--hover-ease); }
-  .dg-cta:hover { color: var(--accent); }
   .dg-cta:hover i { transform: translateX(4px); }
-  .dg-cta--muted { color: rgba(245,242,236,.62); border-bottom-color: var(--border); }
-  .dg-cta--muted:hover { color: var(--white); border-bottom-color: rgba(245,242,236,.4); }
+  .dg-cta:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  .dg-cta--muted { border-color: var(--border);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.5),
+      inset -1px -1px 0 rgba(255,255,255,.30),
+      inset 1px 1px 0 rgba(255,255,255,.12),
+      inset 0 10px 18px -8px rgba(255,255,255,.18),
+      inset 0 -1px 0 rgba(0,0,0,.6),
+      inset 0 -3px 5px rgba(0,0,0,.22),
+      0 0 12px rgba(var(--accent-rgb), .10); }
+  .dg-cta--muted:hover { border-color: rgba(var(--accent-rgb), .55); background: rgba(245,242,236,.10);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.5),
+      inset -1px -1px 0 rgba(255,255,255,.30),
+      inset 1px 1px 0 rgba(255,255,255,.12),
+      inset 0 10px 18px -8px rgba(255,255,255,.18),
+      inset 0 -1px 0 rgba(0,0,0,.6),
+      inset 0 -3px 5px rgba(0,0,0,.22),
+      0 0 40px rgba(var(--accent-rgb), .45); }
+  @media (prefers-reduced-motion: reduce) {
+    .dg-cta.chip-glass { transition: none; }
+    .dg-cta i { transition: none; }
+  }
   .dg-marquee { border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); overflow: hidden; padding: 19px 0;
     -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
             mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent); }
@@ -137,8 +170,8 @@
     <h1 id="never-miss-whatsshipping-on-starknet" class="hero-title">Never miss what's<br>shipping on <em>Starknet</em>.</h1>
     <p class="hero-subtitle">Because a thesis only holds if the ecosystem actually ships behind it. Starknet is among the very few ecosystems shipping this much, this constantly.</p>
     <div class="dg-ctas">
-      <a class="dg-cta" href="https://starknetresearch.substack.com/subscribe" target="_blank" rel="noopener">Subscribe <i aria-hidden="true">&rarr;</i></a>
-      <a class="dg-cta dg-cta--muted" href="#latest-from-the-starknet-ecosystem">Read the latest <i aria-hidden="true">&rarr;</i></a>
+      <a class="dg-cta chip-glass" href="https://starknetresearch.substack.com/subscribe" target="_blank" rel="noopener">Subscribe <i aria-hidden="true">&rarr;</i></a>
+      <a class="dg-cta dg-cta--muted chip-glass" href="#latest-from-the-starknet-ecosystem">Read the latest <i aria-hidden="true">&rarr;</i></a>
     </div>
   </div>
 </div>
