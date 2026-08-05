@@ -153,6 +153,20 @@
   .recap-card { border-radius: 14px; color: inherit;
     transition: transform var(--hover-dur) var(--hover-ease), border-color var(--hover-dur), background var(--hover-dur), box-shadow var(--hover-dur); }
   @media (prefers-reduced-motion: reduce) { .recap-card:hover { transform: none; } .recap-card { transition: none; } }
+  /* D5: filter tabs adopt ecosystem's filter pill vocabulary in this
+     page's accent (overrides .chart-toggle and .toggle-btn; behavior,
+     classes and the marquee band's tab wiring untouched) */
+  #recapTabs.chart-toggle { border: none; padding: 0; gap: 8px; border-radius: 0; background: none; }
+  #recapTabs .toggle-btn { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: #8b909c; padding: 7px 14px; border: 1px solid var(--border); border-radius: 40px; background: transparent;
+    transition: color var(--hover-dur) var(--hover-ease), border-color var(--hover-dur), background var(--hover-dur), box-shadow var(--hover-dur); }
+  #recapTabs .toggle-btn:hover { color: var(--white); border-color: rgba(245,242,236,0.25); }
+  #recapTabs .toggle-btn.active { color: var(--accent); border-color: var(--accent); background: rgba(var(--accent-rgb), .12);
+    box-shadow: 0 0 16px rgba(var(--accent-rgb), .22); }
+  @media (prefers-reduced-motion: reduce) { #recapTabs .toggle-btn { transition: none; } }
+  /* D6: badge scheme on the page palette (overrides .recap-cat.weekly's
+     hardcoded blue-violet): monthly keeps the full accent alias, weekly
+     becomes a reduced-intensity accent variant, research stays neutral */
+  .recap-cat.weekly { color: rgba(var(--accent-rgb), .8); border-color: rgba(var(--accent-rgb), .28); background: rgba(var(--accent-rgb), .07); }
 </style>
 <script src="js/admin-gate.js"></script>
 </head>
