@@ -104,6 +104,14 @@ full-width stacked headers with zero blank columns.
   only for optional normalization).
 - Avatars, verified marks (#1D9BF0 is X's semantic color), X icons, and
   the embedded-avatar fallback chain.
+- (2026-08-05, E10 resolved KEEP) The sub-nav bar glass stays at
+  saturate(115%): its in-file rationale is sticky legibility over varied
+  content, quoted: "liquid glass, sticky-bar variant: a real backdrop
+  blur (the 127 colored avatar cards scroll beneath this bar) over a
+  deliberately heavy scrim. The scrim is not optional: [...] holding
+  4.5:1 over a pure-white avatar passing beneath needs the blended
+  backdrop at or under roughly rgb(40), measured, not estimated." A
+  measured contrast constraint outranks constant uniformity.
 - The hero eyebrow at 12px/.24em uppercase: that IS the site's hero
   eyebrow spec (landing identical); the 13px/0.04em spec applies to
   section eyebrows, of which ecosystem has none.
