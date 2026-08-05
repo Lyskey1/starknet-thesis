@@ -112,6 +112,11 @@ full-width stacked headers with zero blank columns.
   4.5:1 over a pure-white avatar passing beneath needs the blended
   backdrop at or under roughly rgb(40), measured, not estimated." A
   measured contrast constraint outranks constant uniformity.
+- (2026-08-05, E6 resolved INTENTIONAL) Mono card metadata stays: the
+  directory's dense auto-fill grids read handles and one-line descriptions
+  as data, and IBM Plex Mono at 12px is the deliberate voice for that
+  chrome; only the color tier was normalized to #8b909c in the coherence
+  pass.
 - The hero eyebrow at 12px/.24em uppercase: that IS the site's hero
   eyebrow spec (landing identical); the 13px/0.04em spec applies to
   section eyebrows, of which ecosystem has none.

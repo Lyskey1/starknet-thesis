@@ -1630,7 +1630,7 @@
       }
       return {
         id: c.id, group: c.group || 'projects', label: c.label, monogram: c.monogram,
-        accent: c.accent, accent2: c.accent2 || c.accent,
+        accent: c.accent,
         featured: !!c.featured, verified: !!c.verified, playful: !!c.playful,
         subtitle: c.subtitle,
         accounts: accounts
@@ -1642,7 +1642,6 @@
   function normalize(cats){
     cats.forEach(function(c){
       if (!Array.isArray(c.accounts)) c.accounts = [];
-      c.accent2 = c.accent2 || c.accent;
       c.accounts.forEach(function(a){
         a.handle = String(a.handle || '').replace(/^@/, '');
         if (!a.name) a.name = '@' + a.handle;
@@ -1700,12 +1699,6 @@
   function esc(s){ return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
   function escA(s){ return esc(s).replace(/"/g,'&quot;'); }
   function initials(h){ var s = String(h || '').replace(/[^A-Za-z0-9]/g, ''); return (s.slice(0, 2) || 'X').toUpperCase(); }
-  function hexToRgba(hex, a){
-    hex = String(hex || '#888').replace('#','');
-    if (hex.length === 3) hex = hex.split('').map(function(c){ return c + c; }).join('');
-    var n = parseInt(hex, 16);
-    return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
-  }
   function findAcc(uidv){
     for (var i = 0; i < data.length; i++) {
       var idx = data[i].accounts.findIndex(function(a){ return a.uid === uidv; });
@@ -1724,7 +1717,7 @@
       var cats = data.filter(function(c){ return (c.group || 'projects') === g.id; });
       if (!cats.length) return '';
       var pills = cats.map(function(c){
-        return '<a class="eco-pill" href="#' + c.id + '" data-cat="' + c.id + '" style="--pa:' + c.accent + ';--pa2:' + (c.accent2 || c.accent) + ';">' + esc(c.label) + '</a>';
+        return '<a class="eco-pill" href="#' + c.id + '" data-cat="' + c.id + '">' + esc(c.label) + '</a>';
       }).join('');
       return '<div class="eco-pill-row"><span class="eco-pill-glabel">' + esc(g.label) + '</span><div class="eco-pill-set">' + pills + '</div></div>';
     }).join('');
@@ -1752,10 +1745,9 @@
   }
 
   function sectionHTML(cat){
-    var style = '--accent:' + cat.accent + ';--accent2:' + (cat.accent2 || cat.accent) + ';--glow:' + hexToRgba(cat.accent, 0.28) + ';';
     var cards = cat.accounts.map(function(a){ return cardHTML(a, cat); }).join('');
     var add = editing ? '<button class="eco-add" data-cat="' + cat.id + '">+ Add account</button>' : '';
-    return '<section class="eco-section" id="' + cat.id + '" style="' + style + '"' + (cat.playful ? ' data-playful="1"' : '') + '>' +
+    return '<section class="eco-section" id="' + cat.id + '"' + (cat.playful ? ' data-playful="1"' : '') + '>' +
       '<div class="eco-cat-head">' +
         '<span class="eco-monogram">' + esc(cat.monogram) + '</span>' +
         '<h2 class="eco-cat-title">' + esc(cat.label) + '</h2>' +
@@ -1939,7 +1931,6 @@
   var emAvMono = document.getElementById('emAvMono');
   var ctx = null;            // { mode:'edit'|'add', uid?, catId? }
   var modalAvatar = '';      // current custom avatar (pasted URL or base64 data URL)
-  var modalAccent = '#8B5CF6', modalAccent2 = '#8B5CF6';
 
   emAvImg.addEventListener('error', function(){ this.hidden = true; }); // bad URL → show preview monogram
 
@@ -1977,7 +1968,6 @@
     emHandle.value = f.acc.handle || '';
     emDesc.value = f.acc.description || '';
     emUrl.value = f.acc.url || '';
-    modalAccent = f.cat.accent; modalAccent2 = f.cat.accent2 || f.cat.accent;
     modalAvatar = f.acc.avatar || '';
     emAvUrl.value = (modalAvatar && modalAvatar.indexOf('data:') !== 0) ? modalAvatar : '';
     emAvFile.value = '';
@@ -1991,7 +1981,6 @@
     emTitle.textContent = 'Add account';
     emHandle.value = ''; emDesc.value = ''; emUrl.value = '';
     var c = catById(catId);
-    modalAccent = c ? c.accent : '#8B5CF6'; modalAccent2 = c ? (c.accent2 || c.accent) : '#8B5CF6';
     modalAvatar = ''; emAvUrl.value = ''; emAvFile.value = '';
     emDelete.style.display = 'none';
     updateAvPreview();
@@ -2045,7 +2034,7 @@
   function cleanData(){
     return data.map(function(c){
       return {
-        id: c.id, group: c.group, label: c.label, monogram: c.monogram, accent: c.accent, accent2: c.accent2,
+        id: c.id, group: c.group, label: c.label, monogram: c.monogram, accent: c.accent,
         featured: c.featured, verified: c.verified, playful: c.playful, subtitle: c.subtitle,
         accounts: c.accounts.map(function(a){ var o = { name: a.name, handle: a.handle, url: a.url }; if (a.description) o.description = a.description; if (a.avatar) o.avatar = a.avatar; if (a.orbit) { o.orbit = true; o.orbitRing = a.orbitRing === 1 ? 1 : 2; } return o; })
       };
