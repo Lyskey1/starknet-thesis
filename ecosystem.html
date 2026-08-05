@@ -43,6 +43,10 @@
 </style>
 <style>
   /* ===================== ECOSYSTEM PAGE ===================== */
+  /* Page coral captured at body level: category sections shadow --accent
+     inline (per-category data colors feed the publish pipeline), so the
+     rebrand reads these frozen copies and stays coral everywhere. */
+  body.page-ecosystem { --eco-accent: var(--accent); --eco-accent-rgb: var(--accent-rgb); }
   /* Hero fills the viewport minus the marquee band, so hero + band are the
      first screen and the filter bar starts below the fold. */
   .eco-hero { min-height: calc(100vh - 72px); align-items: stretch; text-align: left; max-width: none; padding: 150px 0 120px; position: relative; }
@@ -144,13 +148,10 @@
     transition: color 0.2s, border-color 0.2s, background 0.2s;
   }
   .eco-pill:hover { color: var(--white); border-color: rgba(245,242,236,0.25); }
-  /* the selected pill now sits on a translucent surface, so it is
-     strengthened on three axes at once, the way the quantum selected state
-     was: the opaque gradient surface it already had, a visible light rim
-     where the border used to be transparent, and an outer glow in the
-     pill's own accent. */
-  .eco-pill.active { color: #0A0A0A; border-color: rgba(245,242,236,.45); background: linear-gradient(135deg, var(--pa), var(--pa2));
-    box-shadow: 0 0 16px color-mix(in srgb, var(--pa) 55%, transparent), 0 0 3px color-mix(in srgb, var(--pa2) 60%, transparent); }
+  /* selected pill: page coral, site pill vocabulary (no chip-glass here:
+     the sub-nav itself is a glass surface, nested glass is banned) */
+  .eco-pill.active { color: var(--eco-accent); border-color: var(--eco-accent); background: rgba(var(--eco-accent-rgb), .12);
+    box-shadow: 0 0 16px rgba(var(--eco-accent-rgb), .22); }
 
   /* Admin / edit controls (top-right of the sub-nav) */
   .eco-admin { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
@@ -170,27 +171,25 @@
 
   /* Top-level group heading (Projects / People) */
   .eco-group-head { max-width: 1100px; margin: 0 auto; padding: 80px 48px 4px; display: flex; align-items: center; gap: 16px; scroll-margin-top: 185px; }
-  .eco-group-tag { font-family: var(--mono); font-size: 12px; letter-spacing: 0.15em; color: rgba(245,242,236,0.35); }
-  .eco-group-title { font-family: var(--display); font-weight: 800; font-size: clamp(28px, 3.4vw, 44px); letter-spacing: -0.02em; }
+  .eco-marker { width: 0; height: 0; border-left: 13px solid var(--eco-accent); border-top: 8px solid transparent; border-bottom: 8px solid transparent; transform: translateY(2px); filter: drop-shadow(0 0 8px rgba(var(--eco-accent-rgb),.6)); flex-shrink: 0; }
+  .eco-group-tag { font-family: var(--display); font-weight: 900; font-size: 64px; line-height: 1; letter-spacing: -.02em; color: var(--eco-accent); }
+  .eco-group-title { font-family: var(--display); font-weight: 800; font-size: 52px; line-height: 1.02; letter-spacing: -.015em; }
+  @media (max-width: 880px) { .eco-group-tag { font-size: 48px; } .eco-group-title { font-size: 38px; } }
   .eco-group-count { font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: rgba(245,242,236,0.4); }
-  .eco-group-line { flex: 1; height: 1px; background: linear-gradient(90deg, rgba(245,242,236,0.18), transparent); }
+  .eco-group-line { flex: 1; height: 1px; background: var(--border); }
   .eco-section:last-of-type { padding-bottom: 8px; }
   .eco-cat-head { display: flex; align-items: center; gap: 16px; margin-bottom: 10px; flex-wrap: wrap; }
   .eco-monogram {
-    min-width: 46px; height: 46px; padding: 0 12px; border-radius: 12px;
-    display: flex; align-items: center; justify-content: center;
-    font-family: var(--display); font-weight: 800; font-size: 16px; letter-spacing: 0.02em;
-    color: #0A0A0A; white-space: nowrap; flex-shrink: 0;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    box-shadow: 0 0 20px var(--glow);
+    font-family: var(--display); font-weight: 800; font-size: 22px; letter-spacing: 0.02em;
+    color: var(--eco-accent); white-space: nowrap; flex-shrink: 0; line-height: 1;
   }
   .eco-cat-title { font-family: var(--display); font-weight: 700; font-size: 28px; letter-spacing: -0.01em; }
   .eco-cat-count {
     font-family: var(--mono); font-size: 12px; color: rgba(245,242,236,0.45);
     border: 1px solid var(--border); border-radius: 40px; padding: 3px 10px;
   }
-  .eco-cat-sub { font-size: 14px; color: rgba(245,242,236,0.5); margin-bottom: 18px; }
-  .eco-divider2 { height: 1px; background: linear-gradient(90deg, var(--accent), var(--accent2) 28%, transparent 80%); margin-bottom: 26px; }
+  .eco-cat-sub { font-size: 16px; color: rgba(245,242,236,0.62); margin-bottom: 18px; max-width: 68ch; }
+  .eco-divider2 { height: 1px; background: var(--border); margin-bottom: 26px; }
 
   /* Account grids */
   .eco-accounts { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
@@ -199,23 +198,23 @@
   .eco-card {
     display: flex; align-items: center; gap: 14px; position: relative;
     padding: 16px 18px; border: 1px solid var(--border); border-radius: 12px;
-    background: rgba(255,255,255,0.012); text-decoration: none;
-    transition: transform 0.2s, border-color 0.2s, background 0.2s, box-shadow 0.2s;
+    background: #0B0D13; text-decoration: none;
+    transition: transform var(--hover-dur) var(--hover-ease), border-color var(--hover-dur), background var(--hover-dur), box-shadow var(--hover-dur);
   }
   .eco-card:hover {
-    transform: translateY(-3px); border-color: var(--accent);
-    background: rgba(255,255,255,0.03); box-shadow: 0 10px 30px var(--glow);
+    transform: translateY(var(--card-glass-lift)); border-color: var(--eco-accent);
+    background: rgba(255,255,255,0.03); box-shadow: 0 10px 30px rgba(var(--eco-accent-rgb), .22);
   }
   .eco-accounts.featured .eco-card { padding: 22px 24px; gap: 18px; }
   /* playful category: subtle tilt on hover */
-  .eco-section[data-playful="1"] .eco-card:hover { transform: translateY(-3px) rotate(-1.4deg); }
+  .eco-section[data-playful="1"] .eco-card:hover { transform: translateY(var(--card-glass-lift)) rotate(-1.4deg); }
 
   .eco-av { position: relative; width: 48px; height: 48px; border-radius: 50%; overflow: hidden; flex-shrink: 0; background: var(--gray-light); }
   .eco-accounts.featured .eco-av { width: 60px; height: 60px; }
   .eco-av-mono {
     position: absolute; inset: 0; z-index: 1; display: flex; align-items: center; justify-content: center;
     font-family: var(--display); font-weight: 700; font-size: 16px; color: #fff;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    background: var(--accent-dim);
   }
   .eco-av-img { position: absolute; inset: 0; z-index: 2; width: 100%; height: 100%; object-fit: cover; display: block; }
 
@@ -230,7 +229,7 @@
     .eco-desc { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; line-height: 1.45; }
   }
   .eco-x { color: rgba(245,242,236,0.3); font-size: 17px; flex-shrink: 0; transition: color 0.2s; }
-  .eco-card:hover .eco-x { color: var(--accent); }
+  .eco-card:hover .eco-x { color: var(--eco-accent); }
 
   /* Edit-mode bits */
   .eco-del {
@@ -1701,6 +1700,7 @@
       if (!cats.length) return '';
       var n = cats.reduce(function(s, c){ return s + c.accounts.length; }, 0);
       var head = '<div class="eco-group-head" id="group-' + g.id + '">' +
+        '<span class="eco-marker"></span>' +
         '<span class="eco-group-tag">' + (gi + 1 < 10 ? '0' : '') + (gi + 1) + '</span>' +
         '<h2 class="eco-group-title">' + esc(g.label) + '</h2>' +
         '<span class="eco-group-count">' + n + ' accounts</span>' +
@@ -1869,7 +1869,7 @@
 
   function updateAvPreview(){
     emAvMono.textContent = initials(emHandle.value.trim() || 'X');
-    emAvMono.style.background = 'linear-gradient(135deg,' + modalAccent + ',' + modalAccent2 + ')';
+    emAvMono.style.background = ''; /* flat page-accent fallback from .eco-av-mono */
     if (modalAvatar) { emAvImg.hidden = false; emAvImg.src = modalAvatar; }
     else { emAvImg.hidden = true; emAvImg.removeAttribute('src'); }
   }
