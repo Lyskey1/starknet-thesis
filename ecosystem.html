@@ -179,10 +179,14 @@
   .eco-group-duo .eco-group-head { max-width: none; margin: 0; padding: 0; }
   .eco-orbit { display: none; }
   @media (min-width: 981px) {
-    .eco-group-duo { grid-template-columns: 460px minmax(0,1fr); gap: 44px; }
-    .eco-group-duo.orbit-right { grid-template-columns: minmax(0,1fr) 460px; }
-    .eco-group-duo.orbit-right .eco-orbit { order: 2; }
-    .eco-orbit { display: block; }
+    /* the two-column duo is OPT-IN: buildOrbits() adds .has-orbit only
+       after a stage actually renders, so a section with no flagged
+       entries (or any builder failure) keeps the normal full-width
+       stacked header instead of a blank column */
+    .eco-group-duo.has-orbit { grid-template-columns: 460px minmax(0,1fr); gap: 44px; }
+    .eco-group-duo.has-orbit.orbit-right { grid-template-columns: minmax(0,1fr) 460px; }
+    .eco-group-duo.has-orbit.orbit-right .eco-orbit { order: 2; }
+    .eco-group-duo.has-orbit .eco-orbit { display: block; }
   }
   .eco-orbit-stage { position: relative; width: 440px; height: 440px; margin: 0 auto; }
   .eco-orbit-path { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); border-radius: 50%; pointer-events: none; }
@@ -1665,7 +1669,20 @@
       var s = byId[d.id];
       if (!s) return d;
       var m = {}; for (var k in d) m[k] = d[k];
-      if (Array.isArray(s.accounts)) m.accounts = s.accounts;
+      if (Array.isArray(s.accounts)) {
+        // orbit curation is canonical metadata: a draft saved before the
+        // flags existed inherits them by handle; a draft that already
+        // carries its own orbit fields keeps them
+        var canon = {};
+        d.accounts.forEach(function(a){ canon[String(a.handle || '').replace(/^@/, '')] = a; });
+        m.accounts = s.accounts.map(function(a){
+          if (a && a.orbit === undefined) {
+            var c = canon[String(a.handle || '').replace(/^@/, '')];
+            if (c && c.orbit) { a.orbit = c.orbit; a.orbitRing = c.orbitRing; }
+          }
+          return a;
+        });
+      }
       return m;
     });
     stored.forEach(function(c){ if (c && c.id && !defaults.some(function(d){ return d.id === c.id; })) merged.push(c); });
@@ -2140,7 +2157,9 @@
         if ((c.group || 'projects') !== g.id) return;
         c.accounts.forEach(function(a){ if (a.orbit) flagged.push({ acc: a, ring: a.orbitRing === 1 ? 1 : 2 }); });
       });
-      if (!flagged.length){ holder.innerHTML = ''; return; }
+      var duo = holder.closest('.eco-group-duo');
+      if (!flagged.length){ holder.innerHTML = ''; if (duo) duo.classList.remove('has-orbit'); return; }
+      if (duo) duo.classList.add('has-orbit');
       var core = g.id === 'projects'
         ? '<img src="assets/img/stark-logo.png" alt="" width="44" height="44">'
         : '<span class="eco-core-glyph">@</span>';
