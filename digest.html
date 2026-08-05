@@ -133,8 +133,26 @@
   .th-pm-num{font-family:var(--display);font-weight:900;font-size:64px;line-height:1;color:var(--accent);letter-spacing:-.02em;}
   .th-pm-title{font-family:var(--display);font-weight:800;font-size:52px;line-height:1.02;letter-spacing:-.015em;color:var(--white);max-width:none;}
   .th-pm-title b, .th-pm-title em{color:var(--accent);font-weight:800;font-style:normal;}
-  .th-pm-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:var(--accent);margin-top:16px;opacity:.85;}
+  /* eyebrow: the landing's spec (13px, .04em, sentence case, opacity .9) */
+  .th-pm-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:.04em;color:var(--accent);opacity:.9;margin-top:16px;}
   @media(max-width:880px){.th-pm-title{font-size:38px;}.th-pm-num{font-size:48px;}}
+
+  /* ===== coherence pass (audit/digest-vs-landing.md). The feed's base
+     rules live in css/styles.css (off limits); each rule below
+     page-scopes the canon value over the shared selector it names. */
+  /* D3: feed container to 1160/32 (overrides the global section
+     padding: 120px 48px; mobile mirrors the shared 80/24 step) */
+  section.dg-feed { max-width: 1160px; margin: 0 auto; padding: 120px 32px; }
+  @media (max-width: 768px) { section.dg-feed { padding: 80px 24px; } }
+  /* D4 + D9: two muted tiers + 14.5px excerpt (overrides .recap-excerpt,
+     .recap-date, .recap-count) */
+  .recap-excerpt { color: #8b909c; font-size: 14.5px; }
+  .recap-date, .recap-count { color: #8b909c; }
+  /* D7 + D11: card canon radius, unified hover signature, link-color
+     hygiene (overrides .recap-card) */
+  .recap-card { border-radius: 14px; color: inherit;
+    transition: transform var(--hover-dur) var(--hover-ease), border-color var(--hover-dur), background var(--hover-dur), box-shadow var(--hover-dur); }
+  @media (prefers-reduced-motion: reduce) { .recap-card:hover { transform: none; } .recap-card { transition: none; } }
 </style>
 <script src="js/admin-gate.js"></script>
 </head>
@@ -184,8 +202,8 @@
 <div class="dg-marquee" id="dgMarquee"><div class="dg-mq-track"><div class="dg-mq-set"><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="monthly">MONTHLY RECAP</a><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="weekly">WEEKLY ROUNDUP</a><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="research">DEEP DIVES</a><span>THESIS</span><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="monthly">MONTHLY RECAP</a><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="weekly">WEEKLY ROUNDUP</a><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="research">DEEP DIVES</a><span>THESIS</span><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="monthly">MONTHLY RECAP</a><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="weekly">WEEKLY ROUNDUP</a><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="research">DEEP DIVES</a><span>THESIS</span><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="monthly">MONTHLY RECAP</a><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="weekly">WEEKLY ROUNDUP</a><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="research">DEEP DIVES</a><span>THESIS</span><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="monthly">MONTHLY RECAP</a><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="weekly">WEEKLY ROUNDUP</a><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="research">DEEP DIVES</a><span>THESIS</span><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="monthly">MONTHLY RECAP</a><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="weekly">WEEKLY ROUNDUP</a><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="research">DEEP DIVES</a><span>THESIS</span></div><div class="dg-mq-set" data-dup aria-hidden="true"><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="monthly" tabindex="-1">MONTHLY RECAP</a><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="weekly" tabindex="-1">WEEKLY ROUNDUP</a><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="research" tabindex="-1">DEEP DIVES</a><span>THESIS</span><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="monthly" tabindex="-1">MONTHLY RECAP</a><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="weekly" tabindex="-1">WEEKLY ROUNDUP</a><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="research" tabindex="-1">DEEP DIVES</a><span>THESIS</span><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="monthly" tabindex="-1">MONTHLY RECAP</a><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="weekly" tabindex="-1">WEEKLY ROUNDUP</a><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="research" tabindex="-1">DEEP DIVES</a><span>THESIS</span><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="monthly" tabindex="-1">MONTHLY RECAP</a><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="weekly" tabindex="-1">WEEKLY ROUNDUP</a><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="research" tabindex="-1">DEEP DIVES</a><span>THESIS</span><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="monthly" tabindex="-1">MONTHLY RECAP</a><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="weekly" tabindex="-1">WEEKLY ROUNDUP</a><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="research" tabindex="-1">DEEP DIVES</a><span>THESIS</span><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="monthly" tabindex="-1">MONTHLY RECAP</a><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="weekly" tabindex="-1">WEEKLY ROUNDUP</a><a href="#latest-from-the-starknet-ecosystem" data-mqfilter="research" tabindex="-1">DEEP DIVES</a><span>THESIS</span></div></div></div>
 
 <!-- RECAPS FEED -->
-<section>
-  <div class="th-pm-head"><span class="th-pm-marker"></span><h2 id="latest-from-the-starknet-ecosystem" class="th-pm-title">Latest from the Starknet ecosystem</h2></div>
+<section class="dg-feed">
+  <div class="th-pm-head"><span class="th-pm-marker"></span><span class="th-pm-num">01</span><h2 id="latest-from-the-starknet-ecosystem" class="th-pm-title">Latest from the Starknet ecosystem</h2></div>
   <p class="th-pm-eyebrow">The newsletter</p>
 
   <div class="chart-toggle" role="tablist" id="recapTabs">
