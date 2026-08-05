@@ -209,7 +209,8 @@
   .eco-orbit-stage:not(.run) .eco-orbiter { animation-play-state: paused; }
   .eco-orbit-stage[data-pause="1"] .eco-orbiter.ring1,
   .eco-orbit-stage[data-pause="2"] .eco-orbiter.ring2 { animation-play-state: paused; }
-  .eco-orb-av { display: block; width: 38px; height: 38px; border-radius: 50%; overflow: hidden; border: 1px solid var(--border); background: var(--accent-dim); transition: border-color var(--hover-dur) var(--hover-ease), box-shadow var(--hover-dur); }
+  .eco-orb-av { display: block; position: relative; width: 38px; height: 38px; border-radius: 50%; overflow: hidden; border: 1px solid var(--border); background: var(--accent-dim); transition: border-color var(--hover-dur) var(--hover-ease), box-shadow var(--hover-dur); }
+  .eco-orb-av .eco-av-mono { font-size: 13px; }
   .eco-orb-av img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .eco-orbiter:hover .eco-orb-av, .eco-orbiter:focus-visible .eco-orb-av { border-color: var(--eco-accent); box-shadow: 0 0 14px rgba(var(--eco-accent-rgb), .45); }
   .eco-orbiter:focus-visible { outline: none; }
@@ -233,7 +234,6 @@
   .eco-group-tag { font-family: var(--display); font-weight: 900; font-size: 64px; line-height: 1; letter-spacing: -.02em; color: var(--eco-accent); }
   .eco-group-title { font-family: var(--display); font-weight: 800; font-size: 52px; line-height: 1.02; letter-spacing: -.015em; }
   @media (max-width: 880px) { .eco-group-tag { font-size: 48px; } .eco-group-title { font-size: 38px; } }
-  .eco-group-count { font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: rgba(245,242,236,0.4); }
   .eco-group-line { flex: 1; height: 1px; background: var(--border); }
   .eco-section:last-of-type { padding-bottom: 8px; }
   .eco-cat-head { display: flex; align-items: center; gap: 16px; margin-bottom: 10px; flex-wrap: wrap; }
@@ -617,7 +617,7 @@
       "accounts": [
         {
           "name": "@Starknet",
-          "handle": "Starknet", "orbit": true, "orbitRing": 1,
+          "handle": "Starknet",
           "url": "https://x.com/Starknet",
           "description": "Starknet's official account, managed by Starknet Foundation",
           "avatar": "assets/avatars/Starknet.webp"
@@ -631,13 +631,13 @@
         },
         {
           "name": "@StarknetFndn",
-          "handle": "StarknetFndn", "orbit": true, "orbitRing": 1,
+          "handle": "StarknetFndn",
           "url": "https://x.com/StarknetFndn",
           "description": "Official account of the Starknet Foundation"
         },
         {
           "name": "@CairoLang",
-          "handle": "CairoLang", "orbit": true, "orbitRing": 1,
+          "handle": "CairoLang",
           "url": "https://x.com/CairoLang",
           "description": "Official account of the Cairo Language, managed by StarkWare",
           "avatar": "assets/avatars/StarknetFndn.webp"
@@ -658,43 +658,43 @@
       "accounts": [
         {
           "name": "@avnu_fi",
-          "handle": "avnu_fi", "orbit": true, "orbitRing": 2,
+          "handle": "avnu_fi", "orbit": true, "orbitRing": 1,
           "url": "https://x.com/avnu_fi",
           "description": "DEX aggregator"
         },
         {
           "name": "@EkuboProtocol",
-          "handle": "EkuboProtocol", "orbit": true, "orbitRing": 2,
+          "handle": "EkuboProtocol", "orbit": true, "orbitRing": 1,
           "url": "https://x.com/EkuboProtocol",
           "description": "AMM"
         },
         {
           "name": "@extendedapp",
-          "handle": "extendedapp",
+          "handle": "extendedapp", "orbit": true, "orbitRing": 2,
           "url": "https://x.com/extendedapp",
           "description": "Perp DEX"
         },
         {
           "name": "@vesuxyz",
-          "handle": "vesuxyz",
+          "handle": "vesuxyz", "orbit": true, "orbitRing": 2,
           "url": "https://x.com/vesuxyz",
           "description": "Lending/borrowing"
         },
         {
           "name": "@trovesfi",
-          "handle": "trovesfi",
+          "handle": "trovesfi", "orbit": true, "orbitRing": 2,
           "url": "https://x.com/trovesfi",
           "description": "DeFi vaults"
         },
         {
           "name": "@endurfi",
-          "handle": "endurfi", "orbit": true, "orbitRing": 2,
+          "handle": "endurfi", "orbit": true, "orbitRing": 1,
           "url": "https://x.com/endurfi",
           "description": "Liquid staking"
         },
         {
           "name": "@ForgeYields",
-          "handle": "ForgeYields",
+          "handle": "ForgeYields", "orbit": true, "orbitRing": 2,
           "url": "https://x.com/ForgeYields",
           "description": "Cross-chain yield"
         },
@@ -756,13 +756,13 @@
       "accounts": [
         {
           "name": "@cartridge_gg",
-          "handle": "cartridge_gg", "orbit": true, "orbitRing": 2,
+          "handle": "cartridge_gg",
           "url": "https://x.com/cartridge_gg",
           "description": "Gaming wallet"
         },
         {
           "name": "@LootSurvivor",
-          "handle": "LootSurvivor",
+          "handle": "LootSurvivor", "orbit": true, "orbitRing": 2,
           "url": "https://x.com/LootSurvivor",
           "description": "RPG dungeon crawler"
         },
@@ -818,7 +818,7 @@
         },
         {
           "name": "@focustree_app",
-          "handle": "focustree_app", "orbit": true, "orbitRing": 2,
+          "handle": "focustree_app",
           "url": "https://x.com/focustree_app",
           "description": "Focus app",
           "avatar": "assets/avatars/focustree_app.webp"
@@ -937,7 +937,7 @@
         },
         {
           "name": "@paradex",
-          "handle": "paradex", "orbit": true, "orbitRing": 2,
+          "handle": "paradex", "orbit": true, "orbitRing": 1,
           "url": "https://x.com/paradex",
           "description": "L2 Perp chain",
           "avatar": "assets/avatars/paradex.webp"
@@ -958,7 +958,7 @@
         },
         {
           "name": "@HerodotusDev",
-          "handle": "HerodotusDev", "orbit": true, "orbitRing": 2,
+          "handle": "HerodotusDev",
           "url": "https://x.com/HerodotusDev",
           "description": "Data and coprocessing",
           "avatar": "assets/avatars/HerodotusDev.webp"
@@ -986,7 +986,7 @@
       "accounts": [
         {
           "name": "@ready_co",
-          "handle": "ready_co", "orbit": true, "orbitRing": 2,
+          "handle": "ready_co",
           "url": "https://x.com/ready_co",
           "description": "Wallet & Card",
           "avatar": "assets/avatars/ready_co.webp"
@@ -1007,14 +1007,14 @@
         },
         {
           "name": "@myBraavos",
-          "handle": "myBraavos", "orbit": true, "orbitRing": 2,
+          "handle": "myBraavos",
           "url": "https://x.com/myBraavos",
           "description": "Wallet",
           "avatar": "assets/avatars/myBraavos.webp"
         },
         {
           "name": "@ohayo_dojo",
-          "handle": "ohayo_dojo",
+          "handle": "ohayo_dojo", "orbit": true, "orbitRing": 2,
           "url": "https://x.com/ohayo_dojo",
           "description": "Game engine"
         },
@@ -1769,14 +1769,12 @@
     var html = GROUPS.map(function(g, gi){
       var cats = data.filter(function(c){ return (c.group || 'projects') === g.id; });
       if (!cats.length) return '';
-      var n = cats.reduce(function(s, c){ return s + c.accounts.length; }, 0);
       var head = '<div class="eco-group-duo' + (gi % 2 ? ' orbit-right' : '') + '" id="group-' + g.id + '">' +
         '<div class="eco-orbit" data-group="' + g.id + '"></div>' +
         '<div class="eco-group-head">' +
           '<span class="eco-marker"></span>' +
           '<span class="eco-group-tag">' + (gi + 1 < 10 ? '0' : '') + (gi + 1) + '</span>' +
           '<h2 class="eco-group-title">' + esc(g.label) + '</h2>' +
-          '<span class="eco-group-count">' + n + ' accounts</span>' +
           '<span class="eco-group-line"></span>' +
         '</div>' +
       '</div>';
@@ -1794,7 +1792,7 @@
   sectionsEl.addEventListener('error', function(e){
     var img = e.target;
     if (!img || !img.classList || !img.classList.contains('eco-av-img')) return;
-    var card = img.closest('.eco-card');
+    var card = img.closest('.eco-card, .eco-orbiter');
     var acc = card ? (findAcc(card.getAttribute('data-uid')) || {}).acc : null;
     var cands = acc ? avatarCandidatesFor(acc) : [];
     var next = parseInt(img.getAttribute('data-try') || '0', 10) + 1;
@@ -2173,7 +2171,7 @@
           var frac = list.length ? i / list.length : 0;
           html += '<a class="eco-orbiter ring' + ring + '" href="' + escA(x.acc.url) + '" data-uid="' + x.acc.uid + '" data-ring="' + ring + '"' +
             ' style="animation-delay:' + (-frac * dur).toFixed(2) + 's;--a:' + Math.round(frac * 360) + 'deg" aria-label="@' + esc(x.acc.handle) + '">' +
-            '<span class="eco-orb-av"><img src="' + escA(avatarCandidatesFor(x.acc)[0]) + '" alt="" loading="lazy" decoding="async" width="38" height="38"></span>' +
+            '<span class="eco-orb-av"><span class="eco-av-mono">' + esc(initials(x.acc.handle)) + '</span><img class="eco-av-img" src="' + escA(avatarCandidatesFor(x.acc)[0]) + '" data-try="0" alt="" loading="lazy" decoding="async" width="38" height="38"></span>' +
             '<span class="eco-orb-tip">@' + esc(x.acc.handle) + '</span></a>';
         });
       });
