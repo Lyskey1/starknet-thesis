@@ -23,12 +23,12 @@
 <script defer src="https://cloud.umami.is/script.js" data-website-id="45f11859-9fc2-49ae-a59e-4826e0f1e174"></script>
 <script defer src="js/nav.js"></script>
 <script defer src="js/search.js"></script>
-<script defer src="js/curtain.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Expanded:wght@500;600;700;800;900&family=IBM+Plex+Mono:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/dist/tabler-icons.min.css">
 <link rel="stylesheet" href="css/styles.css?v=20260802b">
+<link rel="stylesheet" href="css/glass-cards.css">
 <style>
   /* Sub-380px nav fit: at 320px the nav row (205px logo + 44px search
      + 44px burger + two 24px gaps + 32px padding = 373px) leaves the
@@ -43,10 +43,63 @@
 </style>
 <style>
   /* ===================== ECOSYSTEM PAGE ===================== */
-  /* Hero fills the viewport so the in-flow filter bar starts below the fold:
-     on first load you see ONLY the hero (the bar is the header of the projects
-     section, not docked to the viewport). */
-  .hero { min-height: 100vh; }
+  /* Hero fills the viewport minus the marquee band, so hero + band are the
+     first screen and the filter bar starts below the fold. */
+  .eco-hero { min-height: calc(100vh - 72px); align-items: stretch; text-align: left; max-width: none; padding: 150px 0 120px; position: relative; }
+  .eco-hero-inner { width: 100%; max-width: 1160px; margin: 0 auto; padding: 0 32px; position: relative; z-index: 1; }
+  .eco-hero .hero-title { margin-left: 0; margin-right: 0; max-width: none; }
+  .eco-hero .hero-subtitle { margin: 22px 0 0; max-width: 560px; }
+  /* landscape scene: sky warms toward a coral horizon, radial glow behind
+     the ridges, three silhouette layers with accent rim light fading with
+     depth. z-index -1 keeps it under content and under the site grain. */
+  .eco-scene { position: absolute; inset: 0; z-index: -1; overflow: hidden;
+    background:
+      radial-gradient(56% 36% at 58% 84%, rgba(var(--accent-rgb), .17), transparent 70%),
+      linear-gradient(180deg, var(--black) 0%, #0E0C0D 42%, #1A100E 70%, #221310 88%, #241411 100%); }
+  .eco-ridges { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: min(74%, 520px); display: block; }
+  .eco-ridges .rg3 { fill: #0D0E11; }
+  .eco-ridges .rg2 { fill: #0A0B0E; }
+  .eco-ridges .rg1 { fill: #08090B; }
+  .eco-ridges .rim1 { fill: none; stroke: rgba(var(--accent-rgb), .55); stroke-width: 1.5; }
+  .eco-ridges .rim2 { fill: none; stroke: rgba(var(--accent-rgb), .26); stroke-width: 1; }
+  .eco-ridges .rim3 { fill: none; stroke: rgba(var(--accent-rgb), .12); stroke-width: 1; }
+  .eco-scrim { position: absolute; left: 0; right: 0; bottom: 0; height: 200px;
+    background: linear-gradient(180deg, transparent, var(--black)); }
+  /* mono underlined anchor CTAs */
+  .eco-ctas { display: flex; gap: 36px; margin-top: 42px; flex-wrap: wrap; position: relative; }
+  .eco-cta { font-family: var(--mono); font-size: 13px; letter-spacing: .14em; text-transform: uppercase; text-decoration: none; color: var(--white); padding-bottom: 9px; border-bottom: 1px solid var(--accent); display: inline-flex; align-items: center; gap: 10px; transition: color var(--hover-dur) var(--hover-ease), border-color var(--hover-dur); }
+  .eco-cta i { font-style: normal; transition: transform var(--hover-dur) var(--hover-ease); }
+  .eco-cta:hover { color: var(--accent); }
+  .eco-cta:hover i { transform: translateX(4px); }
+  .eco-cta--muted { color: rgba(245,242,236,.62); border-bottom-color: var(--border); }
+  .eco-cta--muted:hover { color: var(--white); border-bottom-color: rgba(245,242,236,.4); }
+  /* project-name marquee band: seamless -50% loop over a duplicated set,
+     edge fades, hover pause, IO gated; hidden below 981px (the filter bar
+     right below already lists every category, a hundred wrapped names
+     would just be noise there) */
+  .eco-marquee { border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); overflow: hidden; padding: 19px 0;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+            mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent); }
+  .eco-mq-track { display: flex; width: max-content; }
+  .eco-mq-set { display: flex; gap: 46px; padding-right: 46px; }
+  .eco-mq-set span { font-family: var(--mono); font-size: 12px; letter-spacing: .18em; text-transform: uppercase; color: rgba(245,242,236,.35); white-space: nowrap; }
+  .eco-marquee.run .eco-mq-track { animation: ecomq 70s linear infinite; }
+  @keyframes ecomq { to { transform: translateX(-50%); } }
+  .eco-marquee:hover .eco-mq-track { animation-play-state: paused; }
+  @media (prefers-reduced-motion: reduce) {
+    .eco-mq-track { animation: none !important; flex-wrap: wrap; width: auto; gap: 12px 0; }
+    .eco-mq-set[data-dup] { display: none; }
+    .eco-marquee { -webkit-mask-image: none; mask-image: none; }
+  }
+  @media (max-width: 980px) {
+    .eco-hero { min-height: auto; padding: 130px 0 90px; }
+    .eco-ridges { height: 52%; }
+    .eco-marquee { display: none; }
+  }
+  @media (max-width: 700px) {
+    .eco-hero-inner { padding: 0 24px; }
+    .eco-ctas { flex-direction: column; gap: 20px; align-items: flex-start; }
+  }
 
   /* Category sub-nav: in normal flow until scrolled, then sticks FLUSH below
      the fixed 86px main nav (top = actual nav height, not 0/58 — otherwise the
@@ -328,25 +381,38 @@
   <a href="/" class="btn nav-cta" data-umami-event="cta-read-thesis">Read the thesis <i class="ti ti-arrow-right"></i></a>
 </nav>
 
-<!-- HERO -->
-<div class="hero">
-  <div class="hero-curtain" aria-hidden="true"></div>
-  <!-- blobs held fully inside the hero: the section below is dark, so a
-       clipped tail at the edge would read as a band across the divider -->
-  <div class="hero-bloom" aria-hidden="true">
-    <i style="left:12%;bottom:4%;width:44%;height:42%;opacity:.10"></i>
-    <i style="left:52%;bottom:2%;width:42%;height:44%;opacity:.09"></i>
+<!-- HERO: dark landscape composition. Sky and glow are CSS gradients, the
+     ridgelines are one inline SVG (three low-poly layers, front layers rim
+     lit in the page accent), the scrim fades the scene into the page
+     background the same way privacy's hero falloff works. Static, no
+     canvas, no assets; the site grain (body::after) dithers it for free. -->
+<div class="hero eco-hero">
+  <div class="eco-scene" aria-hidden="true">
+    <svg class="eco-ridges" viewBox="0 0 1440 520" preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false">
+      <path class="rg3" d="M0,318 L120,268 L260,304 L400,248 L560,298 L720,256 L880,300 L1040,260 L1200,298 L1330,270 L1440,296 L1440,520 L0,520 Z"/>
+      <polyline class="rim3" points="0,318 120,268 260,304 400,248 560,298 720,256 880,300 1040,260 1200,298 1330,270 1440,296"/>
+      <path class="rg2" d="M0,392 L90,350 L210,384 L330,316 L470,378 L610,328 L760,386 L900,334 L1030,380 L1170,328 L1300,376 L1440,342 L1440,520 L0,520 Z"/>
+      <polyline class="rim2" points="0,392 90,350 210,384 330,316 470,378 610,328 760,386 900,334 1030,380 1170,328 1300,376 1440,342"/>
+      <path class="rg1" d="M0,470 L140,398 L300,452 L430,374 L590,446 L750,386 L920,456 L1080,394 L1230,450 L1360,408 L1440,442 L1440,520 L0,520 Z"/>
+      <polyline class="rim1" points="0,470 140,398 300,452 430,374 590,446 750,386 920,456 1080,394 1230,450 1360,408 1440,442"/>
+    </svg>
+    <div class="eco-scrim"></div>
   </div>
-  <p class="hero-eyebrow">Who to follow</p>
-  <h1 id="the-people-building-shaping-starknet" class="hero-title">The people building<br>&amp; shaping <em>Starknet</em>.</h1>
-  <p class="hero-subtitle">Everything worth following to stay on top of the Starknet ecosystem, from the core teams and the projects shipping, to the builders and the degens.</p>
-  <div class="hero-scroll">
-    <div class="scroll-line"></div>
-    <span>Scroll</span>
+  <div class="eco-hero-inner">
+    <p class="hero-eyebrow">The ecosystem</p>
+    <h1 id="the-people-building-shaping-starknet" class="hero-title">The people building<br>&amp; shaping <em>Starknet</em>.</h1>
+    <p class="hero-subtitle">Everything worth following to stay on top of the Starknet ecosystem, from the core teams and the projects shipping, to the builders and the degens.</p>
+    <div class="eco-ctas">
+      <a class="eco-cta" href="#group-projects">Browse the projects <i aria-hidden="true">&rarr;</i></a>
+      <a class="eco-cta eco-cta--muted" href="#group-people">Meet the voices <i aria-hidden="true">&rarr;</i></a>
+    </div>
   </div>
 </div>
 
-<div class="section-divider"></div>
+<!-- project-name marquee: decorative band built from the page's own
+     project data after it resolves (aria-hidden: every name repeats in
+     the sections below) -->
+<div class="eco-marquee" id="ecoMarquee" aria-hidden="true"><div class="eco-mq-track"></div></div>
 
 <!-- STICKY CATEGORY NAV (admin edit controls are injected when the admin gate is on) -->
 <div class="eco-subnav">
@@ -1996,8 +2062,35 @@
     renderSections();
   });
 
+  // ----- hero marquee: project names from this page's own data (projects
+  // group only), duplicated once for the seamless -50% loop, rebuilt when
+  // the published file is adopted. Decorative: the whole band is
+  // aria-hidden and items are not links (cards carry no per-card anchors).
+  function buildMarquee(){
+    var band = document.getElementById('ecoMarquee');
+    if (!band) return;
+    var names = [];
+    data.forEach(function(c){
+      if ((c.group || 'projects') !== 'projects') return;
+      c.accounts.forEach(function(a){ if (names.indexOf(a.handle) === -1) names.push(a.handle); });
+    });
+    if (!names.length) return;
+    var set = '<div class="eco-mq-set">' + names.map(function(n){ return '<span>' + esc(n) + '</span>'; }).join('') + '</div>';
+    band.querySelector('.eco-mq-track').innerHTML = set + set.replace('class="eco-mq-set"', 'class="eco-mq-set" data-dup');
+    if (!band.__io && 'IntersectionObserver' in window) {
+      band.__io = new IntersectionObserver(function(es){
+        band.classList.toggle('run', es[0].isIntersecting);
+      }, { threshold: 0 });
+      band.__io.observe(band);
+    } else if (!band.__io) {
+      band.classList.add('run');
+      band.__io = true;
+    }
+  }
+
   // ----- init -----
   render();
+  buildMarquee();
 
   // fetch the published file; adopt it only when it differs from the in-code
   // fallback so the first paint stays untouched for a fresh visitor
@@ -2010,6 +2103,7 @@
     PUBLISHED = byId;
     data = loadData(); // a local draft still wins: stored accounts overlay the file
     renderSections();  // pills and category meta are code-owned and unchanged
+    buildMarquee();    // the hero band follows the adopted account list
   }
   fetch('/data/ecosystem.json?_=' + Date.now())
     .then(function(r){ if (!r.ok) throw new Error('ecosystem.json ' + r.status); return r.json(); })
