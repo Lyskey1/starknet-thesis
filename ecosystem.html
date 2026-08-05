@@ -169,6 +169,60 @@
   /* Sections */
   .eco-section { max-width: 1100px; margin: 0 auto; padding: 56px 48px 0; scroll-margin-top: 185px; }
 
+  /* Orbit constellation headers: each group head composes as a duo with
+     an orbit stage (01 orbit left, 02 orbit right for the page zigzag).
+     Pure CSS keyframe orbit (rotate / translateY / counter-rotate), one
+     reusable component instantiated per group by buildOrbits() from the
+     section's own flagged accounts (orbit / orbitRing in the data).
+     Stages render at >=981px only and animate only in viewport. */
+  .eco-group-duo { max-width: 1100px; margin: 0 auto; padding: 80px 48px 4px; display: grid; grid-template-columns: minmax(0,1fr); gap: 26px; align-items: center; scroll-margin-top: 185px; }
+  .eco-group-duo .eco-group-head { max-width: none; margin: 0; padding: 0; }
+  .eco-orbit { display: none; }
+  @media (min-width: 981px) {
+    .eco-group-duo { grid-template-columns: 460px minmax(0,1fr); gap: 44px; }
+    .eco-group-duo.orbit-right { grid-template-columns: minmax(0,1fr) 460px; }
+    .eco-group-duo.orbit-right .eco-orbit { order: 2; }
+    .eco-orbit { display: block; }
+  }
+  .eco-orbit-stage { position: relative; width: 440px; height: 440px; margin: 0 auto; }
+  .eco-orbit-path { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); border-radius: 50%; pointer-events: none; }
+  .eco-orbit-path.p1 { width: 260px; height: 260px; border: 1px solid rgba(var(--eco-accent-rgb), .22); }
+  .eco-orbit-path.p2 { width: 400px; height: 400px; border: 1px solid rgba(var(--eco-accent-rgb), .11); }
+  .eco-orbit-core { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 88px; height: 88px; border-radius: 50%; border: 1px solid rgba(var(--eco-accent-rgb), .55); background: radial-gradient(circle at 50% 38%, #16110F, #0A0A0B); display: flex; align-items: center; justify-content: center; box-shadow: 0 0 24px rgba(var(--eco-accent-rgb), .25), 0 0 80px rgba(var(--eco-accent-rgb), .12); }
+  .eco-orbit-core img { width: 44px; height: 44px; display: block; }
+  .eco-core-glyph { font-family: var(--mono); font-size: 30px; color: var(--eco-accent); }
+  /* orbiters: animated transform spins the position, the trailing
+     counter-rotate keeps the avatar and tooltip upright; the static --a
+     transform below is what reduced motion (animation: none) falls back
+     to, giving distributed static angles */
+  .eco-orbiter { position: absolute; top: 50%; left: 50%; width: 38px; height: 38px; margin: -19px 0 0 -19px; border-radius: 50%; transform: rotate(var(--a, 0deg)) translateY(calc(-1 * var(--orb-r))) rotate(calc(-1 * var(--a, 0deg))); }
+  .eco-orbiter.ring1 { --orb-r: 130px; animation: ecoOrb 26s linear infinite; }
+  .eco-orbiter.ring2 { --orb-r: 200px; animation: ecoOrb 42s linear infinite reverse; }
+  @keyframes ecoOrb {
+    from { transform: rotate(0deg) translateY(calc(-1 * var(--orb-r))) rotate(0deg); }
+    to { transform: rotate(360deg) translateY(calc(-1 * var(--orb-r))) rotate(-360deg); }
+  }
+  .eco-orbit-stage:not(.run) .eco-orbiter { animation-play-state: paused; }
+  .eco-orbit-stage[data-pause="1"] .eco-orbiter.ring1,
+  .eco-orbit-stage[data-pause="2"] .eco-orbiter.ring2 { animation-play-state: paused; }
+  .eco-orb-av { display: block; width: 38px; height: 38px; border-radius: 50%; overflow: hidden; border: 1px solid var(--border); background: var(--accent-dim); transition: border-color var(--hover-dur) var(--hover-ease), box-shadow var(--hover-dur); }
+  .eco-orb-av img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .eco-orbiter:hover .eco-orb-av, .eco-orbiter:focus-visible .eco-orb-av { border-color: var(--eco-accent); box-shadow: 0 0 14px rgba(var(--eco-accent-rgb), .45); }
+  .eco-orbiter:focus-visible { outline: none; }
+  .eco-orb-tip { position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%); font-family: var(--mono); font-size: 11px; letter-spacing: .06em; white-space: nowrap; background: #10161A; border: 1px solid rgba(var(--eco-accent-rgb), .35); border-radius: 8px; padding: 6px 10px; color: rgba(245,242,236,.78); opacity: 0; visibility: hidden; transition: opacity .18s; pointer-events: none; z-index: 5; }
+  .eco-orbiter:hover .eco-orb-tip, .eco-orbiter:focus-visible .eco-orb-tip { opacity: 1; visibility: visible; }
+  /* click-to-card highlight pulse */
+  @keyframes ecoPulse {
+    0%, 100% { border-color: var(--border); box-shadow: none; }
+    25% { border-color: var(--eco-accent); box-shadow: 0 0 0 1px var(--eco-accent), 0 0 26px rgba(var(--eco-accent-rgb), .4); }
+    70% { border-color: var(--eco-accent); }
+  }
+  .eco-card.eco-pulse { animation: ecoPulse 1.5s ease; }
+  @media (prefers-reduced-motion: reduce) {
+    .eco-orbiter { animation: none !important; }
+    .eco-card.eco-pulse { animation: none; }
+  }
+
   /* Top-level group heading (Projects / People) */
   .eco-group-head { max-width: 1100px; margin: 0 auto; padding: 80px 48px 4px; display: flex; align-items: center; gap: 16px; scroll-margin-top: 185px; }
   .eco-marker { width: 0; height: 0; border-left: 13px solid var(--eco-accent); border-top: 8px solid transparent; border-bottom: 8px solid transparent; transform: translateY(2px); filter: drop-shadow(0 0 8px rgba(var(--eco-accent-rgb),.6)); flex-shrink: 0; }
@@ -559,27 +613,27 @@
       "accounts": [
         {
           "name": "@Starknet",
-          "handle": "Starknet",
+          "handle": "Starknet", "orbit": true, "orbitRing": 1,
           "url": "https://x.com/Starknet",
           "description": "Starknet's official account, managed by Starknet Foundation",
           "avatar": "assets/avatars/Starknet.webp"
         },
         {
           "name": "@StarkWareLtd",
-          "handle": "StarkWareLtd",
+          "handle": "StarkWareLtd", "orbit": true, "orbitRing": 1,
           "url": "https://x.com/StarkWareLtd",
           "description": "Starknet’s core contributor",
           "avatar": "assets/avatars/StarkWareLtd.webp"
         },
         {
           "name": "@StarknetFndn",
-          "handle": "StarknetFndn",
+          "handle": "StarknetFndn", "orbit": true, "orbitRing": 1,
           "url": "https://x.com/StarknetFndn",
           "description": "Official account of the Starknet Foundation"
         },
         {
           "name": "@CairoLang",
-          "handle": "CairoLang",
+          "handle": "CairoLang", "orbit": true, "orbitRing": 1,
           "url": "https://x.com/CairoLang",
           "description": "Official account of the Cairo Language, managed by StarkWare",
           "avatar": "assets/avatars/StarknetFndn.webp"
@@ -600,13 +654,13 @@
       "accounts": [
         {
           "name": "@avnu_fi",
-          "handle": "avnu_fi",
+          "handle": "avnu_fi", "orbit": true, "orbitRing": 2,
           "url": "https://x.com/avnu_fi",
           "description": "DEX aggregator"
         },
         {
           "name": "@EkuboProtocol",
-          "handle": "EkuboProtocol",
+          "handle": "EkuboProtocol", "orbit": true, "orbitRing": 2,
           "url": "https://x.com/EkuboProtocol",
           "description": "AMM"
         },
@@ -630,7 +684,7 @@
         },
         {
           "name": "@endurfi",
-          "handle": "endurfi",
+          "handle": "endurfi", "orbit": true, "orbitRing": 2,
           "url": "https://x.com/endurfi",
           "description": "Liquid staking"
         },
@@ -698,7 +752,7 @@
       "accounts": [
         {
           "name": "@cartridge_gg",
-          "handle": "cartridge_gg",
+          "handle": "cartridge_gg", "orbit": true, "orbitRing": 2,
           "url": "https://x.com/cartridge_gg",
           "description": "Gaming wallet"
         },
@@ -760,7 +814,7 @@
         },
         {
           "name": "@focustree_app",
-          "handle": "focustree_app",
+          "handle": "focustree_app", "orbit": true, "orbitRing": 2,
           "url": "https://x.com/focustree_app",
           "description": "Focus app",
           "avatar": "assets/avatars/focustree_app.webp"
@@ -830,7 +884,7 @@
         },
         {
           "name": "@DucksEverywher2",
-          "handle": "DucksEverywher2",
+          "handle": "DucksEverywher2", "orbit": true, "orbitRing": 2,
           "url": "https://x.com/DucksEverywher2",
           "description": "NFT collection",
           "avatar": "assets/avatars/DucksEverywher2.webp"
@@ -879,7 +933,7 @@
         },
         {
           "name": "@paradex",
-          "handle": "paradex",
+          "handle": "paradex", "orbit": true, "orbitRing": 2,
           "url": "https://x.com/paradex",
           "description": "L2 Perp chain",
           "avatar": "assets/avatars/paradex.webp"
@@ -900,7 +954,7 @@
         },
         {
           "name": "@HerodotusDev",
-          "handle": "HerodotusDev",
+          "handle": "HerodotusDev", "orbit": true, "orbitRing": 2,
           "url": "https://x.com/HerodotusDev",
           "description": "Data and coprocessing",
           "avatar": "assets/avatars/HerodotusDev.webp"
@@ -928,7 +982,7 @@
       "accounts": [
         {
           "name": "@ready_co",
-          "handle": "ready_co",
+          "handle": "ready_co", "orbit": true, "orbitRing": 2,
           "url": "https://x.com/ready_co",
           "description": "Wallet & Card",
           "avatar": "assets/avatars/ready_co.webp"
@@ -949,7 +1003,7 @@
         },
         {
           "name": "@myBraavos",
-          "handle": "myBraavos",
+          "handle": "myBraavos", "orbit": true, "orbitRing": 2,
           "url": "https://x.com/myBraavos",
           "description": "Wallet",
           "avatar": "assets/avatars/myBraavos.webp"
@@ -1003,21 +1057,21 @@
       "accounts": [
         {
           "name": "@EliBenSasson",
-          "handle": "EliBenSasson",
+          "handle": "EliBenSasson", "orbit": true, "orbitRing": 1,
           "url": "https://x.com/EliBenSasson",
           "description": "Cco-founder",
           "avatar": "assets/avatars/tongoxyz.webp"
         },
         {
           "name": "@odin_free",
-          "handle": "odin_free",
+          "handle": "odin_free", "orbit": true, "orbitRing": 2,
           "url": "https://x.com/odin_free",
           "description": "Head of ecosystem",
           "avatar": "assets/avatars/odin_free.webp"
         },
         {
           "name": "@Lyskey",
-          "handle": "Lyskey",
+          "handle": "Lyskey", "orbit": true, "orbitRing": 2,
           "url": "https://x.com/Lyskey",
           "description": "Social & ecosystem",
           "avatar": "assets/avatars/Lyskey.webp"
@@ -1073,7 +1127,7 @@
         },
         {
           "name": "@AbdelStark",
-          "handle": "AbdelStark",
+          "handle": "AbdelStark", "orbit": true, "orbitRing": 1,
           "url": "https://x.com/AbdelStark",
           "description": "AI x ZK lead",
           "avatar": "assets/avatars/AbdelStark.webp"
@@ -1157,21 +1211,21 @@
         },
         {
           "name": "@bsturisky",
-          "handle": "bsturisky",
+          "handle": "bsturisky", "orbit": true, "orbitRing": 1,
           "url": "https://x.com/bsturisky",
           "description": "Ecosystem",
           "avatar": "assets/avatars/bsturisky.webp"
         },
         {
           "name": "@thedamooo",
-          "handle": "thedamooo",
+          "handle": "thedamooo", "orbit": true, "orbitRing": 2,
           "url": "https://x.com/thedamooo",
           "description": "Head of growth",
           "avatar": "assets/avatars/thedamooo.webp"
         },
         {
           "name": "@omarespejel",
-          "handle": "omarespejel",
+          "handle": "omarespejel", "orbit": true, "orbitRing": 2,
           "url": "https://x.com/omarespejel",
           "description": "Crypto x AI",
           "avatar": "assets/avatars/omarespejel.webp"
@@ -1269,14 +1323,14 @@
         },
         {
           "name": "@itamarl",
-          "handle": "itamarl",
+          "handle": "itamarl", "orbit": true, "orbitRing": 2,
           "url": "https://x.com/itamarl",
           "description": "CEO Ready",
           "avatar": "assets/avatars/itamarl.webp"
         },
         {
           "name": "@tarrence",
-          "handle": "tarrence",
+          "handle": "tarrence", "orbit": true, "orbitRing": 1,
           "url": "https://x.com/tarrence",
           "description": "Co-founder Cartridge/Dojo",
           "avatar": "assets/avatars/tarrence.webp"
@@ -1332,7 +1386,7 @@
         },
         {
           "name": "@akiraonstarknet",
-          "handle": "akiraonstarknet",
+          "handle": "akiraonstarknet", "orbit": true, "orbitRing": 2,
           "url": "https://x.com/akiraonstarknet",
           "description": "CEO Endur & Troves",
           "avatar": "assets/avatars/akiraonstarknet.webp"
@@ -1423,7 +1477,7 @@
       "accounts": [
         {
           "name": "@Cudan_Svat",
-          "handle": "Cudan_Svat",
+          "handle": "Cudan_Svat", "orbit": true, "orbitRing": 1,
           "url": "https://x.com/Cudan_Svat",
           "description": "Degen lead",
           "avatar": "assets/avatars/Cudan_Svat.webp"
@@ -1444,7 +1498,7 @@
         },
         {
           "name": "@0xKodawari",
-          "handle": "0xKodawari",
+          "handle": "0xKodawari", "orbit": true, "orbitRing": 2,
           "url": "https://x.com/0xKodawari",
           "description": "Community Manager",
           "avatar": "assets/avatars/0xKodawari.webp"
@@ -1699,17 +1753,21 @@
       var cats = data.filter(function(c){ return (c.group || 'projects') === g.id; });
       if (!cats.length) return '';
       var n = cats.reduce(function(s, c){ return s + c.accounts.length; }, 0);
-      var head = '<div class="eco-group-head" id="group-' + g.id + '">' +
-        '<span class="eco-marker"></span>' +
-        '<span class="eco-group-tag">' + (gi + 1 < 10 ? '0' : '') + (gi + 1) + '</span>' +
-        '<h2 class="eco-group-title">' + esc(g.label) + '</h2>' +
-        '<span class="eco-group-count">' + n + ' accounts</span>' +
-        '<span class="eco-group-line"></span>' +
+      var head = '<div class="eco-group-duo' + (gi % 2 ? ' orbit-right' : '') + '" id="group-' + g.id + '">' +
+        '<div class="eco-orbit" data-group="' + g.id + '"></div>' +
+        '<div class="eco-group-head">' +
+          '<span class="eco-marker"></span>' +
+          '<span class="eco-group-tag">' + (gi + 1 < 10 ? '0' : '') + (gi + 1) + '</span>' +
+          '<h2 class="eco-group-title">' + esc(g.label) + '</h2>' +
+          '<span class="eco-group-count">' + n + ' accounts</span>' +
+          '<span class="eco-group-line"></span>' +
+        '</div>' +
       '</div>';
       return head + cats.map(sectionHTML).join('');
     }).join('');
     sectionsEl.innerHTML = html;
     setupObserver();
+    buildOrbits();
   }
   function render(){ renderPills(); renderSections(); }
 
@@ -1971,7 +2029,7 @@
       return {
         id: c.id, group: c.group, label: c.label, monogram: c.monogram, accent: c.accent, accent2: c.accent2,
         featured: c.featured, verified: c.verified, playful: c.playful, subtitle: c.subtitle,
-        accounts: c.accounts.map(function(a){ var o = { name: a.name, handle: a.handle, url: a.url }; if (a.description) o.description = a.description; if (a.avatar) o.avatar = a.avatar; return o; })
+        accounts: c.accounts.map(function(a){ var o = { name: a.name, handle: a.handle, url: a.url }; if (a.description) o.description = a.description; if (a.avatar) o.avatar = a.avatar; if (a.orbit) { o.orbit = true; o.orbitRing = a.orbitRing === 1 ? 1 : 2; } return o; })
       };
     });
   }
@@ -2062,6 +2120,81 @@
     renderSections();
   });
 
+  // ----- orbit constellation headers: one component, one instance per
+  // group, built from THAT group's accounts flagged orbit/orbitRing in the
+  // data (DEFAULTS and the published file both carry the flags; cleanData
+  // exports them so the publish pipeline round-trips). Ring 1 spins 26s,
+  // ring 2 42s reversed; even distribution via negative animation-delay
+  // plus a static --a angle that reduced motion falls back to. Hover or
+  // focus pauses the hovered ring; click scroll-pulses the account's card.
+  var orbitIOs = [];
+  function buildOrbits(){
+    orbitIOs.forEach(function(io){ io.disconnect(); });
+    orbitIOs = [];
+    if (!window.matchMedia('(min-width: 981px)').matches) return;
+    GROUPS.forEach(function(g){
+      var holder = sectionsEl.querySelector('.eco-orbit[data-group="' + g.id + '"]');
+      if (!holder) return;
+      var flagged = [];
+      data.forEach(function(c){
+        if ((c.group || 'projects') !== g.id) return;
+        c.accounts.forEach(function(a){ if (a.orbit) flagged.push({ acc: a, ring: a.orbitRing === 1 ? 1 : 2 }); });
+      });
+      if (!flagged.length){ holder.innerHTML = ''; return; }
+      var core = g.id === 'projects'
+        ? '<img src="assets/img/stark-logo.png" alt="" width="44" height="44">'
+        : '<span class="eco-core-glyph">@</span>';
+      var html = '<div class="eco-orbit-stage" aria-label="' + esc(g.label) + ' constellation">' +
+        '<i class="eco-orbit-path p1"></i><i class="eco-orbit-path p2"></i>' +
+        '<div class="eco-orbit-core" aria-hidden="true">' + core + '</div>';
+      [1, 2].forEach(function(ring){
+        var list = flagged.filter(function(x){ return x.ring === ring; });
+        var dur = ring === 1 ? 26 : 42;
+        list.forEach(function(x, i){
+          var frac = list.length ? i / list.length : 0;
+          html += '<a class="eco-orbiter ring' + ring + '" href="' + escA(x.acc.url) + '" data-uid="' + x.acc.uid + '" data-ring="' + ring + '"' +
+            ' style="animation-delay:' + (-frac * dur).toFixed(2) + 's;--a:' + Math.round(frac * 360) + 'deg" aria-label="@' + esc(x.acc.handle) + '">' +
+            '<span class="eco-orb-av"><img src="' + escA(avatarCandidatesFor(x.acc)[0]) + '" alt="" loading="lazy" decoding="async" width="38" height="38"></span>' +
+            '<span class="eco-orb-tip">@' + esc(x.acc.handle) + '</span></a>';
+        });
+      });
+      holder.innerHTML = html + '</div>';
+      var stage = holder.firstChild;
+      if ('IntersectionObserver' in window){
+        var io = new IntersectionObserver(function(es){ stage.classList.toggle('run', es[0].isIntersecting); }, { threshold: 0.1 });
+        io.observe(stage);
+        orbitIOs.push(io);
+      } else {
+        stage.classList.add('run');
+      }
+      stage.addEventListener('mouseover', function(e){
+        var o = e.target.closest('.eco-orbiter');
+        stage.setAttribute('data-pause', o ? o.getAttribute('data-ring') : '');
+      });
+      stage.addEventListener('mouseleave', function(){ stage.setAttribute('data-pause', ''); });
+      stage.addEventListener('focusin', function(e){
+        var o = e.target.closest('.eco-orbiter');
+        if (o) stage.setAttribute('data-pause', o.getAttribute('data-ring'));
+      });
+      stage.addEventListener('focusout', function(e){
+        if (!stage.contains(e.relatedTarget)) stage.setAttribute('data-pause', '');
+      });
+      stage.addEventListener('click', function(e){
+        var o = e.target.closest('.eco-orbiter');
+        if (!o) return;
+        var card = sectionsEl.querySelector('.eco-card[data-uid="' + o.getAttribute('data-uid') + '"]');
+        if (!card) return; // no card rendered: let the profile link navigate
+        e.preventDefault();
+        var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        card.scrollIntoView({ block: 'center', behavior: reduce ? 'auto' : 'smooth' });
+        card.classList.remove('eco-pulse');
+        void card.offsetWidth;
+        card.classList.add('eco-pulse');
+        setTimeout(function(){ card.classList.remove('eco-pulse'); }, 1600);
+      });
+    });
+  }
+
   // ----- hero marquee: project names from this page's own data (projects
   // group only), duplicated once for the seamless -50% loop, rebuilt when
   // the published file is adopted. Decorative: the whole band is
@@ -2091,6 +2224,8 @@
   // ----- init -----
   render();
   buildMarquee();
+  var orbitMq = window.matchMedia('(min-width: 981px)');
+  (orbitMq.addEventListener ? orbitMq.addEventListener.bind(orbitMq, 'change') : orbitMq.addListener.bind(orbitMq))(buildOrbits);
 
   // fetch the published file; adopt it only when it differs from the in-code
   // fallback so the first paint stays untouched for a fresh visitor
