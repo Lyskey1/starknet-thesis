@@ -99,3 +99,128 @@ digest.html with this report present (exit 0).
   many-surfaces case as ecosystem's directory; opaque cards are correct.
 - Cover images from Substack's CDN and the category classifier living in
   both the build script and the client (documented keep-in-sync pair).
+
+## F. Coherence pass closure (verified 2026-08-06)
+
+All eleven findings are closed. Method: digest, landing and ecosystem
+served locally and rendered in headless Chrome at 1440x900 and 375x812,
+computed styles sampled per role through a sized-iframe harness (an
+explicitly sized frame is required below roughly 500px, where the headless
+window floor otherwise reports a false layout width), plus real pointer
+hover probes and a prefix-normalized text diff of the twin hero blocks.
+Values below are computed, not authored.
+
+| ID | Decision taken | Verified evidence (computed) |
+|----|----------------|------------------------------|
+| D1 | Adopted the landing section-eyebrow spec | 13px, letter-spacing 0.52px, text-transform none, opacity 0.9, IBM Plex Mono, accent color. Byte-equal to the landing's `.th-pm-eyebrow` at both widths |
+| D2 | Number added; the numberless variant was NOT adopted | `.th-pm-num` 64px/900/accent, line-height 64px; title 52px/800/-0.78px. Mobile 48px/38px. All three equal to the landing |
+| D3 | Page-scoped container, shared rule untouched | `section.dg-feed` max-width 1160px, padding 120px 32px, measured box 1160.0px at 1440; 80px 24px at 375. Equal to the landing's `.th-sections` |
+| D4 + D9 | Both muted tiers normalized | `.recap-excerpt` rgb(139,144,156) at 14.5px, exactly the landing's `.th-card p`; `.recap-date` and `.recap-count` on the same chrome tier |
+| D5 | Pill vocabulary with accent active state; chart-toggle vocabulary rejected | Pill 40px radius, 11px/0.66px uppercase, 7px 14px, 0.28s on the shared curve; active = accent text, accent border, accent fill 0.12, accent glow 0.22. Hover probe: border steps to rgba(245,242,236,0.25) |
+| D6 | Accent-tinted scheme chosen; the hardcoded violet is gone | monthly = full accent, weekly = accent at 0.8 / 0.28 / 0.07, research = neutral. Zero non-accent chroma remains in the badge set |
+| D7 | Full non-glass card tier adopted, matching ecosystem's `.eco-card` | Base: #0B0D13 fill, border rgba(245,242,236,0.075), radius 14px. Hover: translateY(-4px), accent border, rgba(255,255,255,0.03), accent glow 0 10px 30px at 0.22. Byte-identical to `.eco-card` at both states, modulo the page accent (salmon vs coral). Cards stay non-glass by design |
+| D8 | Duration normalized to ecosystem's 70s, link rule and comments ported both ways | Prefix-normalized unified diff of the two hero blocks (87 lines each): identical, zero hunks. Marquee animation computes 70s on both; hidden and animation-none at 375 as specced |
+| D10 | SUPERSEDED 2026-08-06: the closing block is now a twin of ecosystem's, not of the landing's `.lc-close`. See section G | Section: 88px/48px/120px, no border-top, centered (max-width 1100px, margin 0 auto). Panel fills the 1004px content box, radius 0, padding 80px 48px, centered, card-glass fill/border + specular insets + top-light `::after`. Heading 48px/52.8px/800; lede 16px/400 at rgba(245,242,236,0.5)/520px. Every value equal to ecosystem's closing block at 1440 and 375; the two differ only in copy, the action, and the page accent |
+| D11 | Page-scoped `color: inherit` | `.recap-card` computes rgb(245,242,236); the UA link-blue is gone |
+
+Cross-checks run alongside:
+
+- Horizontal overflow at 375: clean on digest, ecosystem and the landing.
+  Every out-of-viewport box on all three pages is clipped by an ancestor
+  with a non-visible overflow-x, and `documentElement.scrollWidth` equals
+  the viewport on each. The landing's `body.scrollWidth` of 397px is that
+  same clipped scene machinery, not a real scroll.
+- Hero specs unchanged by the pass and still on canon: 76px/800 uppercase
+  display, 18px/300 lede at 0.62 and 620px, CTA chips at fill 0.07, blur
+  12 / saturate 112, 99px radius, 0.28s.
+- Build hygiene: `npm run build` produces a byte-identical digest.html on
+  consecutive runs with this report present. The search index is
+  deterministic apart from its `built` timestamp, which is the only field
+  that differs between runs.
+
+## G. Closing block and footer hairline (2026-08-06)
+
+Two layout defects were reported in the closing/footer area and fixed.
+Both were introduced by the D10 change in section F; ecosystem's closing
+block is the reference.
+
+### G1. Closing block off-center by 170px
+
+Root cause: `.dg-close` set `margin: 40px 0 0`. The shared `section` rule
+(css/styles.css:305) supplies `max-width: 1100px; margin: 0 auto`, so a
+margin shorthand on the page-scoped override silently dropped the
+horizontal `auto` and pinned the 1100px section to x=0. Measured before:
+section left=0 right=1100, center offset -170px; the 820px panel inherited
+the same -170px shift. Ecosystem's equivalent section measured left=170
+right=1270, offset 0.
+
+What D10 missed: it treated the closing block as a twin of the landing's
+`.lc-close` (820px cap, 16px radius, 130/140 padding, 56px display
+heading, .62 lede at 640px) while the panel it was overriding is the
+shared `.cta-block` that ecosystem's closing block also uses. The result
+matched neither reference, and the margin shorthand broke centering.
+
+Fix: the section carries no margin shorthand and no border-top, and its
+padding matches ecosystem's computed 88px/48px/120px. The panel drops the
+820px cap, the 16px radius and the h2/p type overrides, so both twins ride
+the shared `.cta-block` base, and it gains ecosystem's specular inset
+shadow and top-light `::after`. The panel's own bloom (base
+`.cta-block::before`) is the light source on both, retinted here off the
+page accent instead of the base rule's hardcoded violet; the section-level
+`.dg-close-bloom` that D10 added is removed, since ecosystem has no
+section-level bloom. Verified identical on every geometry field at 1440
+and 375: section 1100/left 170/88-48-120, panel 1004/left 218/80-48/radius
+0/text-align center, h2 48px/52.8px/800, lede 16px/400/0.5 at 520px,
+box-shadow string length equal. Mobile matches too (section 375/0,
+padding 88-24-80, panel 327/left 24, h2 28px). The only computed
+differences are the copy, the action, and the accent tint in the mobile
+solid fill.
+
+### G2. Two stacked hairlines
+
+Sources, both marking the same feed/closing boundary 41px apart:
+
+1. `.section-divider` (digest.html:297, pre-existing, full-bleed 1px)
+2. `.dg-close { border-top: 1px solid var(--border) }` (added by D10)
+
+Measured before at 1440: divider at y=6550.5 spanning 1440px, then a
+1100px-wide left-aligned line at y=6590.5. At 375 both were 375px wide, so
+the pair read as an unambiguous double rule. The second is the redundant
+one and was removed; `.section-divider` remains as the single feed/closing
+marker.
+
+A separate check of the content/footer boundary found the site canon:
+`footer.site-footer { border-top }` (css/styles.css, shared) is the single
+content/footer hairline on index, digest, privacy, quantum, btcfi and
+strk. Ecosystem was the only page of the seven that also placed a
+`.section-divider` immediately before the footer, which rendered a second
+full-bleed line 41px above the footer rule. That divider is removed, so
+ecosystem now shows exactly one hairline at the bottom, matching the other
+six pages.
+
+Post-fix hairline census, full-bleed lines from 1600px above the footer
+down to the footer rule:
+
+| Page | 1440 | 375 |
+|------|------|-----|
+| digest | divider y=6550.5 (feed/closing, 631px above the footer), footer rule y=7181.4 | divider y=9356, footer rule y=10037.3 |
+| ecosystem | footer rule y=8057.1 only | footer rule y=15930.2 only |
+
+Exactly one hairline separates content from footer on both pages, and no
+two lines are stacked. Digest keeps its feed/closing divider, which
+ecosystem has no equivalent for: it terminates a long archive feed and
+sits 631px clear of the footer rule, so it does not read as a stacked
+pair. Flagged as a deliberate retained difference rather than silently
+removed.
+
+Also verified: `npm run build` twice, exit 0 both runs, digest.html
+byte-identical (the search index differs only in its `built` timestamp);
+subscribe action unchanged (href, target="_blank", rel="noopener", no
+umami attribute, matching ecosystem's Follow here button and the
+no-analytics-event decision in section E) and hit-tested as the topmost
+element at its center on both pages, with a real click opening the
+Substack subscribe URL; no horizontal overflow at 375 on either page; no
+stale references to the removed bloom; console clean on digest. Ecosystem
+logs one pre-existing unrelated 404 for a missing avatar file
+(assets/avatars/LootSurvivor.jpg), which the embedded-avatar fallback
+chain covers.

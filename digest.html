@@ -155,10 +155,18 @@
      .recap-date, .recap-count) */
   .recap-excerpt { color: #8b909c; font-size: 14.5px; }
   .recap-date, .recap-count { color: #8b909c; }
-  /* D7 + D11: card canon radius, unified hover signature, link-color
-     hygiene (overrides .recap-card) */
+  /* D7 + D11: entry cards onto the site's NON-glass card tier, the one
+     ecosystem's .eco-card established for many-surfaces grids (opaque
+     #0B0D13 fill, card-glass border alpha, 14px radius, shared hover
+     signature: card-glass-lift + accent border + accent glow). Cards stay
+     non-glass by design (a hydrated archive grid is the same
+     many-backdrop-filter case as the directory). Also fixes the UA
+     link-blue computing on the anchor itself. Overrides .recap-card. */
   .recap-card { border-radius: 14px; color: inherit;
+    border-color: var(--card-glass-border); background: #0B0D13;
     transition: transform var(--hover-dur) var(--hover-ease), border-color var(--hover-dur), background var(--hover-dur), box-shadow var(--hover-dur); }
+  .recap-card:hover { transform: translateY(var(--card-glass-lift)); border-color: var(--accent);
+    background: rgba(255,255,255,0.03); box-shadow: 0 10px 30px rgba(var(--accent-rgb), .22); }
   @media (prefers-reduced-motion: reduce) { .recap-card:hover { transform: none; } .recap-card { transition: none; } }
   /* D5: filter tabs adopt ecosystem's filter pill vocabulary in this
      page's accent (overrides .chart-toggle and .toggle-btn; behavior,
@@ -174,30 +182,51 @@
      hardcoded blue-violet): monthly keeps the full accent alias, weekly
      becomes a reduced-intensity accent variant, research stays neutral */
   .recap-cat.weekly { color: rgba(var(--accent-rgb), .8); border-color: rgba(var(--accent-rgb), .28); background: rgba(var(--accent-rgb), .07); }
-  /* D10: closing on the landing's grammar (hairline top, static accent
-     bloom mirroring index.html's .lc-bloom, display-scale heading, .62
-     lede), the block surface on the shared card-glass constants like
-     ecosystem's closing block. Overrides .cta-block's base h2/p sizes
-     and hides its hardcoded violet ::before wash (the accent bloom
-     carries the light instead). */
-  .dg-close { position: relative; overflow: hidden; margin: 40px 0 0; padding: 130px 48px 140px; border-top: 1px solid var(--border); }
-  .dg-close-bloom { position: absolute; inset: 0; z-index: 0; pointer-events: none; filter: blur(70px); }
-  .dg-close-bloom i { position: absolute; border-radius: 50%; background: radial-gradient(closest-side, var(--accent), transparent 72%); }
-  .dg-close .cta-block { position: relative; z-index: 1; max-width: 820px; margin: 0 auto; border-radius: 16px;
+  /* D10: closing block.
+     KEEP IN SYNC: twin of ecosystem.html's closing block (.cta-block
+     .ecg-glass) and its section; geometry must stay identical, the two
+     differ only in copy, the action, and this page's accent.
+     The section deliberately sets NO margin shorthand and NO border-top:
+     the shared `section` rule supplies `max-width:1100px; margin:0 auto`
+     (a shorthand here drops the horizontal `auto` and pins the block
+     left), and the feed/closing boundary is already carried by the
+     .section-divider above it, so a border-top here doubles that
+     hairline. Type scale, radius and panel width stay on the shared
+     .cta-block base, as ecosystem's do. */
+  .dg-close { position: relative; overflow: hidden; padding: 88px 48px 120px; }
+  .dg-close .cta-block {
     background: var(--card-glass-fill); border-color: var(--card-glass-border);
     -webkit-backdrop-filter: blur(var(--card-glass-blur)) saturate(var(--card-glass-sat));
-    backdrop-filter: blur(var(--card-glass-blur)) saturate(var(--card-glass-sat)); }
-  .dg-close .cta-block::before { display: none; }
-  .dg-close .cta-block h2 { font-size: clamp(32px, 4.6vw, 56px); line-height: 1.06; letter-spacing: -.015em; }
-  .dg-close .cta-block p { margin: 0 auto 28px; max-width: 640px; color: rgba(245,242,236,.62); font-size: 17px; font-weight: 300; line-height: 1.7; }
+    backdrop-filter: blur(var(--card-glass-blur)) saturate(var(--card-glass-sat));
+    box-shadow:
+      inset -1px -1px 0 rgba(255,255,255,.42),
+      inset 1px 1px 0 rgba(255,255,255,.10),
+      inset 0 1px 0 rgba(255,255,255,.26),
+      inset 0 -1px 0 rgba(255,255,255,.22),
+      inset 0 0 24px rgba(255,255,255,.05),
+      0 18px 50px -30px rgba(0,0,0,.9);
+  }
+  .dg-close .cta-block::after {
+    content: ""; position: absolute; top: 0; left: 0; right: 0; height: 42%;
+    pointer-events: none;
+    background: linear-gradient(180deg, rgba(255,255,255,.062), transparent);
+  }
+  /* the panel's own bloom (base .cta-block::before) is the light source on
+     both twins; retinted here off the page accent instead of the base
+     rule's hardcoded violet */
+  .dg-close .cta-block::before {
+    background: radial-gradient(ellipse at center bottom, rgba(var(--accent-rgb),0.15) 0%, transparent 70%);
+  }
   @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
     .dg-close .cta-block { background: #0B0D13; }
   }
+  /* mobile, site rule: no backdrop-filter below 981px, solid surface with a
+     barely perceptible accent tint (ecosystem's closing panel, same step) */
   @media (max-width: 980px) {
-    .dg-close-bloom { filter: blur(40px); }
-    .dg-close .cta-block { -webkit-backdrop-filter: none; backdrop-filter: none; background: #0B0D13; }
+    .dg-close .cta-block { -webkit-backdrop-filter: none; backdrop-filter: none;
+      background: color-mix(in srgb, var(--accent) 2.5%, #0B0D13); }
   }
-  @media (max-width: 768px) { .dg-close { padding: 96px 24px 110px; } }
+  @media (max-width: 768px) { .dg-close { padding: 88px 24px 80px; } }
 </style>
 <script src="js/admin-gate.js"></script>
 </head>
@@ -290,11 +319,6 @@
 
 <!-- SUBSCRIBE CTA -->
 <section class="dg-close">
-  <div class="dg-close-bloom" aria-hidden="true">
-    <i style="left:24%;top:26%;width:52%;height:56%;opacity:.11"></i>
-    <i style="left:6%;top:58%;width:30%;height:44%;opacity:.08"></i>
-    <i style="left:64%;top:56%;width:30%;height:46%;opacity:.08"></i>
-  </div>
   <div class="cta-block">
     <h2 id="get-every-digest-in-your-inbox">Get every digest in your inbox.</h2>
     <p>Subscribe to Starknet Research for weekly roundups, monthly digests and original research on the Starknet ecosystem.</p>
