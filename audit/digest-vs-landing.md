@@ -224,3 +224,64 @@ stale references to the removed bloom; console clean on digest. Ecosystem
 logs one pre-existing unrelated 404 for a missing avatar file
 (assets/avatars/LootSurvivor.jpg), which the embedded-avatar fallback
 chain covers.
+
+## H. Hero scene divergence (2026-08-06)
+
+Finding D8 and section F recorded the landscape hero as a keep-in-sync
+twin required to stay byte-identical modulo the `dg-`/`eco-` prefix. That
+expectation now applies to the SHELL ONLY. The SVG scene layer is
+deliberately per-page from this date and a diff there is NOT drift.
+
+| Layer | Status |
+|-------|--------|
+| Hero frame, content grid, type specs | twins, byte-identical modulo prefix |
+| Glass CTAs (both chip-glass stacks) | twins |
+| Scrim, sky ramp, low radial accent glow | twins |
+| Marquee band (mechanics, 70s, mask, hover pause, IO gate) | twins |
+| Breakpoints and reduced-motion block | twins, except the two scene-simplification lines inside the 980px block |
+| **SVG scene** | **per-page by design: ecosystem = node network, digest = publishing cadence** |
+
+The mountain-ridge SVG and all ridge-only CSS were removed from both
+pages: the three `<path>` silhouettes plus three rim `<polyline>`s per
+page, and the `.rg1/.rg2/.rg3/.rim1/.rim2/.rim3` rules plus the
+`.eco-ridges`/`.dg-ridges` box rules. Two stale comment references to
+"the ridges" behind the CTA glass were rewritten to name each page's own
+scene. Grep for `ridges|rim[123]|\.rg[123]` over both pages returns only
+the intentional past-tense reference in the mobile-simplification
+comments.
+
+Verified after the swap (headless, computed values and rendered output):
+
+- Accent only, zero hardcoding. Ecosystem nodes/links compute
+  rgba(236,123,107,...) across four node tiers (.9/.66/.44/.26) and two
+  link tiers (.16/.08); digest bars compute rgba(242,151,138,...) at
+  baseline .18, weekly .3, monthly .58, archive row .14.
+- Slice scaling holds at 1200, 1440, 1920 and 2560 with the painted
+  network spanning the full frame and no empty corners. At 1200 the outer
+  marks fall outside the revealed window, which is the intended
+  edge-continues-off-screen read. At 3440 the crop reaches y=302, so
+  ecosystem's upper satellite tier drops out of frame and only the node
+  band shows; the old ridges' back layer behaved the same way, the band
+  still fills the frame, and nothing clips mid-mark.
+- Ecosystem breathing: exactly 7 nodes, one shared keyframe set scaling
+  each node's own tier alpha, 7 distinct durations (4.2s to 6.9s) and 7
+  staggered delays, computed transform none on every one. `.run` is
+  present while the hero is in view and the animation count drops to 0
+  once it leaves; under prefers-reduced-motion the count is 0 at all
+  times.
+- Digest scene: 31 elements, 0 animated, 0 with a transition. Static, so
+  reduced motion needs no extra handling. The archive row is one `<use>`
+  of a single declared row, and both instances render (1378x76 each, 38px
+  apart, back at opacity .14).
+- Scene sits at z-index -1 with pointer-events none on both pages; all
+  four hero CTAs hit-test as topmost at their centers and every in-page
+  anchor target resolves.
+- At 375: no horizontal overflow, scene height steps to 52%, and the
+  simplified tier computes display none (ecosystem satellites, digest
+  archive row). Marquee band hidden as before.
+- `npm run build` twice, exit 0 both runs, digest.html byte-identical.
+- Payload: no new dependencies, assets or requests. Inline scene markup
+  and its comments cost +721 bytes gzipped on digest and +1619 on
+  ecosystem (+6.1% each) versus the six ridge polygons they replace.
+- Console clean on digest. Ecosystem still logs the one pre-existing
+  unrelated 404 for assets/avatars/LootSurvivor.jpg.

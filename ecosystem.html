@@ -50,27 +50,54 @@
   body.page-ecosystem { --eco-accent: var(--accent); --eco-accent-rgb: var(--accent-rgb); }
   /* Hero fills the viewport minus the marquee band, so hero + band are the
      first screen and the filter bar starts below the fold.
-     KEEP IN SYNC: this landscape hero block (scene, scrim, CTAs, marquee)
-     is mirrored on digest.html (dg- prefix); the two must stay
-     byte-identical modulo the prefix. */
+     SHARED SHELL, PER-PAGE SCENE. KEEP IN SYNC with digest.html (dg-
+     prefix), but only the SHELL: hero frame, content grid, glass CTAs,
+     scrim, marquee band and breakpoints must stay byte-identical modulo
+     the prefix. The SVG scene layer is deliberately NOT shared as of
+     2026-08-06 (this page: node network; digest: publishing cadence) and
+     must not be re-synced. */
   .eco-hero { min-height: calc(100vh - 72px); align-items: stretch; text-align: left; max-width: none; padding: 150px 0 120px; position: relative; }
   .eco-hero-inner { width: 100%; max-width: 1160px; margin: 0 auto; padding: 0 32px; position: relative; z-index: 1; }
   .eco-hero .hero-title { margin-left: 0; margin-right: 0; max-width: none; }
   .eco-hero .hero-subtitle { margin: 22px 0 0; max-width: 620px; }
-  /* landscape scene: sky warms toward the horizon, radial glow behind
-     the ridges, three silhouette layers with accent rim light fading with
-     depth. z-index -1 keeps it under content and under the site grain. */
+  /* PER-PAGE SCENE (ecosystem): THE NETWORK.
+     NOT shared: from 2026-08-06 the scene layer is deliberately per-page
+     (digest carries a publishing-cadence chart). Do not re-sync it with
+     digest.html and do not read a diff here as drift. Everything AROUND
+     the scene stays a twin: sky ramp, low accent glow, scrim, content
+     grid, CTAs, marquee band, breakpoints.
+     The scene reads as the ecosystem graph: one continuous polyline
+     through 14 primary nodes, five cross-links, three junction nodes low
+     down for bottom density, and six fainter satellites above with faint
+     links down into the band and across to each other. Depth is carried
+     by radius and opacity, lowest being biggest and brightest. The low
+     radial accent glow already lives in the scene background below.
+     z-index -1 keeps it under content and under the site grain. */
   .eco-scene { position: absolute; inset: 0; z-index: -1; overflow: hidden;
     background:
       radial-gradient(56% 36% at 58% 84%, rgba(var(--accent-rgb), .17), transparent 70%),
       linear-gradient(180deg, var(--black) 0%, #0E0C0D 42%, #1A100E 70%, #221310 88%, #241411 100%); }
-  .eco-ridges { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: min(74%, 520px); display: block; }
-  .eco-ridges .rg3 { fill: #0D0E11; }
-  .eco-ridges .rg2 { fill: #0A0B0E; }
-  .eco-ridges .rg1 { fill: #08090B; }
-  .eco-ridges .rim1 { fill: none; stroke: rgba(var(--accent-rgb), .55); stroke-width: 1.5; }
-  .eco-ridges .rim2 { fill: none; stroke: rgba(var(--accent-rgb), .26); stroke-width: 1; }
-  .eco-ridges .rim3 { fill: none; stroke: rgba(var(--accent-rgb), .12); stroke-width: 1; }
+  .eco-net { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: min(74%, 520px); display: block; pointer-events: none; }
+  /* nodes: filled accent circles, four depth tiers (bottom brightest) */
+  .eco-net .nd1 { fill: rgba(var(--accent-rgb), .9); }
+  .eco-net .nd2 { fill: rgba(var(--accent-rgb), .66); }
+  .eco-net .nd3 { fill: rgba(var(--accent-rgb), .44); }
+  .eco-net .ns  { fill: rgba(var(--accent-rgb), .26); }
+  /* links: 1px accent strokes, main band then the fainter upper tier */
+  .eco-net .lk1 { fill: none; stroke: rgba(var(--accent-rgb), .16); stroke-width: 1; }
+  .eco-net .lk2 { fill: none; stroke: rgba(var(--accent-rgb), .08); stroke-width: 1; }
+  /* breathing subset (7 nodes): opacity only, no transform, so it cannot
+     move layout or fight the scrim. Each node staggers itself with --d /
+     --dl. The animation is only declared while .run is on the scene, and
+     an IntersectionObserver owns that class, so nothing animates
+     off-screen. Because each tier bakes its alpha into fill, one keyframe
+     set works for every tier: it scales whatever brightness the node
+     already has. */
+  .eco-scene.run .eco-net .br { animation: eco-breathe var(--d, 5s) ease-in-out var(--dl, 0s) infinite; }
+  @keyframes eco-breathe { 0%, 100% { opacity: .55 } 50% { opacity: 1 } }
+  @media (prefers-reduced-motion: reduce) {
+    .eco-scene.run .eco-net .br { animation: none; }
+  }
   .eco-scrim { position: absolute; left: 0; right: 0; bottom: 0; height: 200px;
     background: linear-gradient(180deg, transparent, var(--black)); }
   /* hero CTAs: the locked shared dark glass tier (css/glass-chips.css
@@ -83,7 +110,7 @@
      copied from the locked recipe; keep in sync). Site hover signature
      page-scoped so the locked file stays untouched. The buttons sit
      over the hero scene, which carries no backdrop-filter: no nested
-     glass, and the blur samples the ridges behind. */
+     glass, and the blur samples the node network behind. */
   .eco-ctas { display: flex; gap: 18px; margin-top: 42px; flex-wrap: wrap; position: relative; }
   .eco-cta { font-family: var(--mono); font-size: 13px; letter-spacing: .14em; text-transform: uppercase; text-decoration: none; color: var(--white); padding: 12px 22px; border-radius: 99px; border: 1px solid rgba(var(--accent-rgb), .55); display: inline-flex; align-items: center; gap: 10px; }
   .eco-cta.chip-glass { transition: background var(--hover-dur) var(--hover-ease), box-shadow var(--hover-dur) var(--hover-ease), border-color var(--hover-dur); }
@@ -132,7 +159,10 @@
   }
   @media (max-width: 980px) {
     .eco-hero { min-height: auto; padding: 130px 0 90px; }
-    .eco-ridges { height: 52%; }
+    /* scene simplifies exactly as the ridges did: shorter, and the upper
+       satellite tier drops out so only the node band reads */
+    .eco-net { height: 52%; }
+    .eco-net .eco-sat { display: none; }
     .eco-marquee { display: none; }
   }
   @media (max-width: 700px) {
@@ -476,20 +506,65 @@
   <a href="/" class="btn nav-cta" data-umami-event="cta-read-thesis">Read the thesis <i class="ti ti-arrow-right"></i></a>
 </nav>
 
-<!-- HERO: dark landscape composition. Sky and glow are CSS gradients, the
-     ridgelines are one inline SVG (three low-poly layers, front layers rim
-     lit in the page accent), the scrim fades the scene into the page
-     background the same way privacy's hero falloff works. Static, no
-     canvas, no assets; the site grain (body::after) dithers it for free. -->
+<!-- HERO: dark composition. Sky and the low accent glow are CSS
+     gradients, the scene is one inline SVG (this page: a node network),
+     the scrim fades it into the page background the same way privacy's
+     hero falloff works. No canvas, no assets; the site grain
+     (body::after) dithers it for free. The scene is per-page; the shell
+     around it is a twin of digest.html's. -->
 <div class="hero eco-hero">
   <div class="eco-scene" aria-hidden="true">
-    <svg class="eco-ridges" viewBox="0 0 1440 520" preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false">
-      <path class="rg3" d="M0,318 L120,268 L260,304 L400,248 L560,298 L720,256 L880,300 L1040,260 L1200,298 L1330,270 L1440,296 L1440,520 L0,520 Z"/>
-      <polyline class="rim3" points="0,318 120,268 260,304 400,248 560,298 720,256 880,300 1040,260 1200,298 1330,270 1440,296"/>
-      <path class="rg2" d="M0,392 L90,350 L210,384 L330,316 L470,378 L610,328 L760,386 L900,334 L1030,380 L1170,328 L1300,376 L1440,342 L1440,520 L0,520 Z"/>
-      <polyline class="rim2" points="0,392 90,350 210,384 330,316 470,378 610,328 760,386 900,334 1030,380 1170,328 1300,376 1440,342"/>
-      <path class="rg1" d="M0,470 L140,398 L300,452 L430,374 L590,446 L750,386 L920,456 L1080,394 L1230,450 L1360,408 L1440,442 L1440,520 L0,520 Z"/>
-      <polyline class="rim1" points="0,470 140,398 300,452 430,374 590,446 750,386 920,456 1080,394 1230,450 1360,408 1440,442"/>
+    <svg class="eco-net" viewBox="0 0 1440 520" preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false">
+      <!-- upper tier: satellites, their cross-links, and faint links down
+           into the main band. Hidden below 981px, where the slice crop
+           already leaves only the band. Kept at y>=246 so a very wide
+           viewport (which crops from the top) still shows them. -->
+      <g class="eco-sat">
+        <polyline class="lk2" points="196,268 452,248 688,292 930,252 1180,282 1392,246"/>
+        <line class="lk2" x1="196" y1="268" x2="104" y2="412"/>
+        <line class="lk2" x1="452" y1="248" x2="430" y2="444"/>
+        <line class="lk2" x1="688" y1="292" x2="652" y2="438"/>
+        <line class="lk2" x1="930" y1="252" x2="988" y2="400"/>
+        <line class="lk2" x1="1180" y1="282" x2="1208" y2="388"/>
+        <line class="lk2" x1="1392" y1="246" x2="1440" y2="404"/>
+        <circle class="ns" cx="196" cy="268" r="1.7"/>
+        <circle class="ns br" cx="452" cy="248" r="1.8" style="--d:6.4s;--dl:1.6s"/>
+        <circle class="ns" cx="688" cy="292" r="1.7"/>
+        <circle class="ns" cx="930" cy="252" r="1.7"/>
+        <circle class="ns br" cx="1180" cy="282" r="1.8" style="--d:5.7s;--dl:.4s"/>
+        <circle class="ns" cx="1392" cy="246" r="1.7"/>
+      </g>
+      <!-- main band: the continuous polyline, then cross-links, then the
+           three low junction runs that thicken the bottom -->
+      <polyline class="lk1" points="0,448 104,412 212,462 318,398 430,444 540,384 652,438 764,394 876,454 988,400 1098,448 1208,388 1320,436 1440,404"/>
+      <line class="lk1" x1="104" y1="412" x2="430" y2="444"/>
+      <line class="lk1" x1="318" y1="398" x2="652" y2="438"/>
+      <line class="lk1" x1="540" y1="384" x2="876" y2="454"/>
+      <line class="lk1" x1="764" y1="394" x2="1098" y2="448"/>
+      <line class="lk1" x1="988" y1="400" x2="1320" y2="436"/>
+      <polyline class="lk1" points="104,412 160,492 212,462"/>
+      <polyline class="lk1" points="430,444 596,484 652,438"/>
+      <polyline class="lk1" points="876,454 1042,490 1098,448"/>
+      <!-- primary nodes: tier 2 sit low on the polyline, tier 3 ride its
+           peaks and read further back -->
+      <circle class="nd2" cx="0" cy="448" r="2.6"/>
+      <circle class="nd3" cx="104" cy="412" r="2"/>
+      <circle class="nd2 br" cx="212" cy="462" r="2.6" style="--d:4.2s;--dl:0s"/>
+      <circle class="nd3" cx="318" cy="398" r="2"/>
+      <circle class="nd2" cx="430" cy="444" r="2.6"/>
+      <circle class="nd3" cx="540" cy="384" r="2"/>
+      <circle class="nd2" cx="652" cy="438" r="2.6"/>
+      <circle class="nd3" cx="764" cy="394" r="2"/>
+      <circle class="nd2 br" cx="876" cy="454" r="2.6" style="--d:5.1s;--dl:2.3s"/>
+      <circle class="nd3" cx="988" cy="400" r="2"/>
+      <circle class="nd2" cx="1098" cy="448" r="2.6"/>
+      <circle class="nd3" cx="1208" cy="388" r="2"/>
+      <circle class="nd2 br" cx="1320" cy="436" r="2.6" style="--d:6.9s;--dl:1.2s"/>
+      <circle class="nd3" cx="1440" cy="404" r="2"/>
+      <!-- junction nodes: lowest, biggest, brightest -->
+      <circle class="nd1 br" cx="160" cy="492" r="3.2" style="--d:4.8s;--dl:.8s"/>
+      <circle class="nd1" cx="596" cy="484" r="3.2"/>
+      <circle class="nd1 br" cx="1042" cy="490" r="3.2" style="--d:4.5s;--dl:2.8s"/>
     </svg>
     <div class="eco-scrim"></div>
   </div>
@@ -2242,6 +2317,25 @@
     });
   }
 
+  // ----- hero scene: gate the breathing nodes on visibility. Same idiom
+  // as the marquee band and the constellation stage: the CSS only declares
+  // the animation under .run, so off-screen the subset is not animating at
+  // all rather than animating invisibly. Reduced motion is handled in CSS,
+  // so this stays a pure visibility toggle.
+  function gateHeroScene(){
+    var scene = document.querySelector('.eco-scene');
+    if (!scene || scene.__io) return;
+    if ('IntersectionObserver' in window) {
+      scene.__io = new IntersectionObserver(function(es){
+        scene.classList.toggle('run', es[0].isIntersecting);
+      }, { threshold: 0 });
+      scene.__io.observe(scene);
+    } else {
+      scene.classList.add('run');
+      scene.__io = true;
+    }
+  }
+
   // ----- hero marquee: project names from this page's own data (projects
   // group only), duplicated once for the seamless -50% loop, rebuilt when
   // the published file is adopted. Decorative: the whole band is
@@ -2270,6 +2364,7 @@
 
   // ----- init -----
   render();
+  gateHeroScene();
   buildMarquee();
   var orbitMq = window.matchMedia('(min-width: 981px)');
   (orbitMq.addEventListener ? orbitMq.addEventListener.bind(orbitMq, 'change') : orbitMq.addListener.bind(orbitMq))(buildOrbits);

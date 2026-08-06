@@ -43,28 +43,42 @@
   }
 </style>
 <style>
-  /* ===== Landscape hero.
-     KEEP IN SYNC: mirrored from ecosystem.html's eco-hero block (eco-
-     prefix); the two must stay byte-identical modulo the prefix. Tint
-     rides var(--accent-rgb) = this page's salmon. ===== */
+  /* ===== Hero: SHARED SHELL, PER-PAGE SCENE.
+     KEEP IN SYNC with ecosystem.html's eco-hero block (eco- prefix), but
+     only the SHELL: hero frame, content grid, glass CTAs, scrim, marquee
+     band and breakpoints must stay byte-identical modulo the prefix.
+     The SVG scene layer is deliberately NOT shared as of 2026-08-06 (this
+     page: publishing cadence; ecosystem: node network) and must not be
+     re-synced. Tint rides var(--accent-rgb) = this page's salmon. ===== */
   .dg-hero { min-height: calc(100vh - 72px); align-items: stretch; text-align: left; max-width: none; padding: 150px 0 120px; position: relative; }
   .dg-hero-inner { width: 100%; max-width: 1160px; margin: 0 auto; padding: 0 32px; position: relative; z-index: 1; }
   .dg-hero .hero-title { margin-left: 0; margin-right: 0; max-width: none; }
   .dg-hero .hero-subtitle { margin: 22px 0 0; max-width: 620px; }
-  /* landscape scene: sky warms toward the horizon, radial glow behind
-     the ridges, three silhouette layers with accent rim light fading with
-     depth. z-index -1 keeps it under content and under the site grain. */
+  /* PER-PAGE SCENE (digest): THE PUBLISHING CADENCE.
+     NOT shared: from 2026-08-06 the scene layer is deliberately per-page
+     (ecosystem carries a node network). Do not re-sync it with
+     ecosystem.html and do not read a diff here as drift. Everything
+     AROUND the scene stays a twin: sky ramp, low accent glow, scrim,
+     content grid, CTAs, marquee band, breakpoints.
+     The scene reads as the publishing rhythm: a baseline hairline, 26
+     bars rising off it, every 4th one tall for a monthly recap with the
+     tall amplitude growing gently left to right, and the same row again
+     behind, offset up and much fainter, for archive depth. The row is
+     declared once and instanced twice with <use>, so the second row costs
+     no extra markup. Static by design: the marquee band right below
+     already carries this page's motion, so there is nothing here for
+     reduced motion to switch off. The low radial accent glow already
+     lives in the scene background below. z-index -1 keeps it under
+     content and under the site grain. */
   .dg-scene { position: absolute; inset: 0; z-index: -1; overflow: hidden;
     background:
       radial-gradient(56% 36% at 58% 84%, rgba(var(--accent-rgb), .17), transparent 70%),
       linear-gradient(180deg, var(--black) 0%, #0E0C0D 42%, #1A100E 70%, #221310 88%, #241411 100%); }
-  .dg-ridges { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: min(74%, 520px); display: block; }
-  .dg-ridges .rg3 { fill: #0D0E11; }
-  .dg-ridges .rg2 { fill: #0A0B0E; }
-  .dg-ridges .rg1 { fill: #08090B; }
-  .dg-ridges .rim1 { fill: none; stroke: rgba(var(--accent-rgb), .55); stroke-width: 1.5; }
-  .dg-ridges .rim2 { fill: none; stroke: rgba(var(--accent-rgb), .26); stroke-width: 1; }
-  .dg-ridges .rim3 { fill: none; stroke: rgba(var(--accent-rgb), .12); stroke-width: 1; }
+  .dg-bars { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: min(74%, 520px); display: block; pointer-events: none; }
+  .dg-bars .base { fill: none; stroke: rgba(var(--accent-rgb), .18); stroke-width: 1; }
+  .dg-bars .wk { fill: rgba(var(--accent-rgb), .3); }
+  .dg-bars .mo { fill: rgba(var(--accent-rgb), .58); }
+  .dg-bars .dg-back { opacity: .14; }
   .dg-scrim { position: absolute; left: 0; right: 0; bottom: 0; height: 200px;
     background: linear-gradient(180deg, transparent, var(--black)); }
   /* hero CTAs: the locked shared dark glass tier (css/glass-chips.css
@@ -77,7 +91,7 @@
      copied from the locked recipe; keep in sync). Site hover signature
      page-scoped so the locked file stays untouched. The buttons sit
      over the hero scene, which carries no backdrop-filter: no nested
-     glass, and the blur samples the ridges behind. */
+     glass, and the blur samples the cadence bars behind. */
   .dg-ctas { display: flex; gap: 18px; margin-top: 42px; flex-wrap: wrap; position: relative; }
   .dg-cta { font-family: var(--mono); font-size: 13px; letter-spacing: .14em; text-transform: uppercase; text-decoration: none; color: var(--white); padding: 12px 22px; border-radius: 99px; border: 1px solid rgba(var(--accent-rgb), .55); display: inline-flex; align-items: center; gap: 10px; }
   .dg-cta.chip-glass { transition: background var(--hover-dur) var(--hover-ease), box-shadow var(--hover-dur) var(--hover-ease), border-color var(--hover-dur); }
@@ -126,7 +140,10 @@
   }
   @media (max-width: 980px) {
     .dg-hero { min-height: auto; padding: 130px 0 90px; }
-    .dg-ridges { height: 52%; }
+    /* scene simplifies exactly as the ridges did: shorter, and the faint
+       archive row drops out so only the front cadence reads */
+    .dg-bars { height: 52%; }
+    .dg-bars .dg-back { display: none; }
     .dg-marquee { display: none; }
   }
   @media (max-width: 700px) {
@@ -241,19 +258,52 @@
 </nav>
 
 <!-- HERO -->
-<!-- HERO: dark landscape composition, mirrored from ecosystem.html's
-     hero (keep the scene geometry and CSS in sync with that page). Same
-     grammar, this page's accent: CSS reads var(--accent-rgb) so the
-     salmon tint comes from body.page-recap, never hardcoded. -->
+<!-- HERO: dark composition sharing ecosystem.html's hero shell (frame,
+     content grid, glass CTAs, scrim, marquee band, breakpoints: keep those
+     in sync with that page). The SVG scene inside is this page's own: a
+     publishing-cadence chart, not ecosystem's node network. Accent comes
+     from var(--accent-rgb), so the salmon tint rides body.page-recap and
+     is never hardcoded. -->
 <div class="hero dg-hero">
   <div class="dg-scene" aria-hidden="true">
-    <svg class="dg-ridges" viewBox="0 0 1440 520" preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false">
-      <path class="rg3" d="M0,318 L120,268 L260,304 L400,248 L560,298 L720,256 L880,300 L1040,260 L1200,298 L1330,270 L1440,296 L1440,520 L0,520 Z"/>
-      <polyline class="rim3" points="0,318 120,268 260,304 400,248 560,298 720,256 880,300 1040,260 1200,298 1330,270 1440,296"/>
-      <path class="rg2" d="M0,392 L90,350 L210,384 L330,316 L470,378 L610,328 L760,386 L900,334 L1030,380 L1170,328 L1300,376 L1440,342 L1440,520 L0,520 Z"/>
-      <polyline class="rim2" points="0,392 90,350 210,384 330,316 470,378 610,328 760,386 900,334 1030,380 1170,328 1300,376 1440,342"/>
-      <path class="rg1" d="M0,470 L140,398 L300,452 L430,374 L590,446 L750,386 L920,456 L1080,394 L1230,450 L1360,408 L1440,442 L1440,520 L0,520 Z"/>
-      <polyline class="rim1" points="0,470 140,398 300,452 430,374 590,446 750,386 920,456 1080,394 1230,450 1360,408 1440,442"/>
+    <svg class="dg-bars" viewBox="0 0 1440 520" preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false">
+      <defs>
+        <!-- one issue row: 26 bars off a y=412 baseline, every 4th tall
+             (monthly recap) with the tall amplitude climbing 52 -> 76 left
+             to right; the rest are weekly roundups at 18-30 -->
+        <g id="dgCadence">
+          <rect class="wk" x="30" y="390" width="3" height="22"/>
+          <rect class="wk" x="85" y="385" width="3" height="27"/>
+          <rect class="wk" x="140" y="393" width="3" height="19"/>
+          <rect class="mo" x="195" y="360" width="3" height="52"/>
+          <rect class="wk" x="250" y="388" width="3" height="24"/>
+          <rect class="wk" x="305" y="383" width="3" height="29"/>
+          <rect class="wk" x="360" y="391" width="3" height="21"/>
+          <rect class="mo" x="415" y="355" width="3" height="57"/>
+          <rect class="wk" x="470" y="386" width="3" height="26"/>
+          <rect class="wk" x="525" y="394" width="3" height="18"/>
+          <rect class="wk" x="580" y="389" width="3" height="23"/>
+          <rect class="mo" x="635" y="351" width="3" height="61"/>
+          <rect class="wk" x="690" y="384" width="3" height="28"/>
+          <rect class="wk" x="745" y="392" width="3" height="20"/>
+          <rect class="wk" x="800" y="387" width="3" height="25"/>
+          <rect class="mo" x="855" y="346" width="3" height="66"/>
+          <rect class="wk" x="910" y="382" width="3" height="30"/>
+          <rect class="wk" x="965" y="390" width="3" height="22"/>
+          <rect class="wk" x="1020" y="385" width="3" height="27"/>
+          <rect class="mo" x="1075" y="341" width="3" height="71"/>
+          <rect class="wk" x="1130" y="393" width="3" height="19"/>
+          <rect class="wk" x="1185" y="388" width="3" height="24"/>
+          <rect class="wk" x="1240" y="383" width="3" height="29"/>
+          <rect class="mo" x="1295" y="336" width="3" height="76"/>
+          <rect class="wk" x="1350" y="391" width="3" height="21"/>
+          <rect class="wk" x="1405" y="386" width="3" height="26"/>
+        </g>
+      </defs>
+      <!-- archive depth: the same row, offset up and much fainter -->
+      <use class="dg-back" href="#dgCadence" transform="translate(0,-38)"/>
+      <line class="base" x1="0" y1="412" x2="1440" y2="412"/>
+      <use href="#dgCadence"/>
     </svg>
     <div class="dg-scrim"></div>
   </div>
