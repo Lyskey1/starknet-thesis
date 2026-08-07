@@ -783,16 +783,57 @@
   .btile:hover .ba { transform: translate(2px,-2px); }
 
   /* ===== live pool metrics (data: strk20 backend; sources: Starkscan + STRK20 dashboard) ===== */
-  .pmx-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-top: 36px; }
+  /* KPI row: four cells now (revenue joined the three pool-summary stats).
+     These are stat cards, not chart cells, so they keep the page's existing
+     gx-card treatment; the no-glass rule applies to the plot cells below,
+     which stay on the solid --bg-raise surface with a hairline. */
+  .pmx-stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-top: 36px; }
   .pmx-stats:empty { display: none; margin: 0; }
   .pmx-stat { border: 1px solid var(--line); border-radius: 12px; background: var(--bg-raise); padding: 20px 22px; }
   .pmx-stat .l { font-family: var(--mono); font-size: 10.5px; letter-spacing: .16em; color: var(--muted); }
-  .pmx-stat .v { font-family: var(--display); font-weight: 800; font-size: clamp(26px,2.6vw,34px); margin-top: 10px; line-height: 1; }
+  .pmx-stat .v { font-family: var(--display); font-weight: 800; font-size: clamp(22px,2.1vw,30px); margin-top: 10px; line-height: 1; }
   .pmx-stat .v .em { color: var(--em); }
-  .pmx-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 14px; }
-  .pmx-card { border: 1px solid var(--line); border-radius: 12px; background: var(--bg-raise); padding: 18px 20px 14px; display: flex; flex-direction: column; min-width: 0; }
-  .pmx-card.pmx-wide { grid-column: 1 / -1; }
+  /* sub-line and 30D delta, both mono at the block's smallest tier */
+  .pmx-stat .s { font-family: var(--mono); font-size: 9.5px; letter-spacing: .1em; color: var(--muted); margin-top: 9px; display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+  .pmx-stat .s b { font-weight: 400; color: var(--em); }
+  /* Dashboard grid. Twelve columns carry all three chart rows: 8/4 for the
+     shielded + composition pair (the ~13:7 the layout calls for, at the
+     nearest split a single grid can also divide into the thirds row 3 needs),
+     4/4/4 for the three mid charts, 6/6 for the bottom pair. */
+  .pmx-grid { display: grid; grid-template-columns: repeat(12,1fr); gap: 14px; margin-top: 14px; }
+  .pmx-card { border: 1px solid var(--line); border-radius: 12px; background: var(--bg-raise); padding: 18px 20px 14px; display: flex; flex-direction: column; min-width: 0; grid-column: span 12; }
+  .pmx-card.pmx-wide { grid-column: span 12; }
+  @media (min-width: 981px) {
+    .pmx-card[data-pmx="shielded"] { grid-column: span 8; }
+    .pmx-card[data-pmx="comp"]     { grid-column: span 4; }
+    .pmx-card[data-pmx="txs"],
+    .pmx-card[data-pmx="users"],
+    .pmx-card[data-pmx="swaps"]    { grid-column: span 4; }
+    .pmx-card[data-pmx="defi"],
+    .pmx-card[data-pmx="revenue"]  { grid-column: span 6; }
+  }
+  /* POOL COMPOSITION: one horizontal bar per asset at the latest snapshot
+     date, in that asset's stacked-chart series color, sorted by value. Rows
+     and TOTAL are built from the same split and the same display rounding as
+     the stacked chart's tooltip, so the two always agree for that date. */
+  .pmx-comp { display: flex; flex-direction: column; gap: 9px; }
+  .pmx-comp-r { display: grid; grid-template-columns: 1fr auto; gap: 4px 10px; align-items: baseline; }
+  .pmx-comp-r .n, .pmx-comp-r .v { font-family: var(--mono); font-size: 10px; letter-spacing: .08em; }
+  .pmx-comp-r .n { color: var(--muted); }
+  .pmx-comp-r .v { color: var(--ink); }
+  .pmx-comp-bar { grid-column: 1 / -1; height: 6px; border-radius: 3px; background: rgba(245,242,236,.05); overflow: hidden; }
+  .pmx-comp-bar i { display: block; height: 100%; border-radius: 3px; }
+  .pmx-comp-t { display: flex; justify-content: space-between; gap: 10px; border-top: 1px solid var(--line); margin-top: 3px; padding-top: 9px;
+    font-family: var(--mono); font-size: 10px; letter-spacing: .08em; color: var(--ink); }
   .pmx-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+  /* In the grid every head stacks title over sub. Side by side, a long sub
+     (NEW USERS carries the longest) wraps in a third-width cell and only that
+     card's head grows, which pushes its plot down and breaks the row's
+     alignment. Stacking makes every head exactly two lines, so the plots line
+     up across a row by construction rather than by luck of string length. */
+  @media (min-width: 981px) {
+    .pmx-head { flex-direction: column; align-items: flex-start; gap: 5px; flex-wrap: nowrap; }
+  }
   .pmx-t { font-family: var(--mono); font-size: 11px; letter-spacing: .14em; color: var(--ink); }
   .pmx-sub { font-family: var(--mono); font-size: 9.5px; letter-spacing: .1em; color: var(--muted); }
   .pmx-body { margin-top: 14px; min-height: 190px; display: flex; flex-direction: column; justify-content: center; }
@@ -800,7 +841,10 @@
   .pmx-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 10px; }
   .pmx-legend span { font-family: var(--mono); font-size: 9.5px; letter-spacing: .08em; color: var(--muted); display: inline-flex; align-items: center; gap: 6px; }
   .pmx-legend i { width: 9px; height: 9px; border-radius: 2px; display: inline-block; }
-  .pmx-src { font-family: var(--mono); font-size: 10px; letter-spacing: .1em; color: var(--em); text-decoration: underline; text-underline-offset: 3px; margin-top: 14px; align-self: flex-start; }
+  /* one source link per cell, pinned to the card's bottom edge so the row of
+     links reads as a single line across the grid whatever height the plots
+     above them take. white-space: nowrap keeps "SOURCE: X" on one line. */
+  .pmx-src { font-family: var(--mono); font-size: 10px; letter-spacing: .1em; color: var(--em); text-decoration: underline; text-underline-offset: 3px; margin-top: auto; padding-top: 14px; align-self: flex-start; white-space: nowrap; }
   .pmx-live { display: flex; align-items: center; justify-content: center; min-height: 190px; border: 1px dashed var(--line); border-radius: 10px; font-family: var(--mono); font-size: 12px; letter-spacing: .14em; color: var(--em); text-decoration: none; transition: border-color .2s, background .2s; }
   .pmx-live:hover { border-color: var(--em-line); background: rgba(var(--accent-rgb),.05); }
   .pmx-skel { min-height: 190px; border-radius: 10px; background: linear-gradient(100deg, #0B0F10 40%, #131A1D 50%, #0B0F10 60%); background-size: 200% 100%; animation: pmxShimmer 1.4s linear infinite; }
@@ -818,8 +862,15 @@
   .pmx-tip .r { display: flex; justify-content: space-between; gap: 14px; line-height: 1.7; }
   .pmx-tip .r i { width: 8px; height: 8px; border-radius: 2px; display: inline-block; margin-right: 6px; }
   .pmx-tip .r.t { border-top: 1px solid var(--line); margin-top: 4px; padding-top: 4px; }
-  @media (max-width: 900px) {
-    .pmx-stats, .pmx-grid { grid-template-columns: 1fr; }
+  /* below the site's 981px breakpoint the whole block is one column, in the
+     DOM order the cards already sit in: KPIs, shielded, composition, then the
+     four remaining charts. KPIs pair up 2x2 until the labels stop fitting. */
+  @media (max-width: 980px) {
+    .pmx-stats { grid-template-columns: repeat(2,1fr); }
+    .pmx-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 560px) {
+    .pmx-stats { grid-template-columns: 1fr; }
   }
   @media (prefers-reduced-motion: reduce) {
     .pmx-skel { animation: none; }
@@ -1767,20 +1818,18 @@
     <div class="pmx-stats" id="pmxStats"></div>
     <div class="pmx-updated" id="pmxUpdated"></div>
     <div class="pmx-grid">
-      <div class="pmx-card pmx-wide" data-pmx="shielded">
+      <!-- card order IS the grid order, and the single-column order below
+           981px: shielded + composition, then the three mid charts, then the
+           bottom pair -->
+      <div class="pmx-card" data-pmx="shielded">
         <div class="pmx-head"><span class="pmx-t">SHIELDED VALUE OVER TIME</span><span class="pmx-sub">USD, STACKED BY ASSET, DAILY</span></div>
         <div class="pmx-body"><a class="pmx-live" href="https://starkscan.co/privacy-pool" target="_blank" rel="noopener">VIEW LIVE →</a></div>
         <a class="pmx-src" href="https://starkscan.co/privacy-pool" target="_blank" rel="noopener">SOURCE: STARKSCAN ↗</a>
       </div>
-      <div class="pmx-card" data-pmx="swaps">
-        <div class="pmx-head"><span class="pmx-t">PRIVATE SWAP VOLUME</span><span class="pmx-sub">USD BY TOKEN, DAILY</span></div>
-        <div class="pmx-body"><a class="pmx-live" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">VIEW LIVE →</a></div>
-        <a class="pmx-src" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">SOURCE: STRK20 DASHBOARD ↗</a>
-      </div>
-      <div class="pmx-card" data-pmx="defi">
-        <div class="pmx-head"><span class="pmx-t">DEFI VOLUME PRIVATELY ROUTED</span><span class="pmx-sub">USD BY PROTOCOL, DAILY</span></div>
-        <div class="pmx-body"><a class="pmx-live" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">VIEW LIVE →</a></div>
-        <a class="pmx-src" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">SOURCE: STRK20 DASHBOARD ↗</a>
+      <div class="pmx-card" data-pmx="comp">
+        <div class="pmx-head"><span class="pmx-t">POOL COMPOSITION</span><span class="pmx-sub">USD BY ASSET, LATEST</span></div>
+        <div class="pmx-body"><a class="pmx-live" href="https://starkscan.co/privacy-pool" target="_blank" rel="noopener">VIEW LIVE →</a></div>
+        <a class="pmx-src" href="https://starkscan.co/privacy-pool" target="_blank" rel="noopener">SOURCE: STARKSCAN ↗</a>
       </div>
       <div class="pmx-card" data-pmx="txs">
         <div class="pmx-head"><span class="pmx-t">TRANSACTIONS</span><span class="pmx-sub">COUNT, DAILY</span></div>
@@ -1792,10 +1841,23 @@
         <div class="pmx-body"><a class="pmx-live" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">VIEW LIVE →</a></div>
         <a class="pmx-src" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">SOURCE: STRK20 DASHBOARD ↗</a>
       </div>
-      <div class="pmx-card pmx-wide" data-pmx="revenue">
+      <div class="pmx-card" data-pmx="swaps">
+        <div class="pmx-head"><span class="pmx-t">PRIVATE SWAP VOLUME</span><span class="pmx-sub">USD BY TOKEN, DAILY</span></div>
+        <div class="pmx-body"><a class="pmx-live" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">VIEW LIVE →</a></div>
+        <a class="pmx-src" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">SOURCE: STRK20 DASHBOARD ↗</a>
+      </div>
+      <div class="pmx-card" data-pmx="defi">
+        <div class="pmx-head"><span class="pmx-t">DEFI VOLUME PRIVATELY ROUTED</span><span class="pmx-sub">USD BY PROTOCOL, DAILY</span></div>
+        <div class="pmx-body"><a class="pmx-live" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">VIEW LIVE →</a></div>
+        <a class="pmx-src" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">SOURCE: STRK20 DASHBOARD ↗</a>
+      </div>
+      <div class="pmx-card" data-pmx="revenue">
         <div class="pmx-head"><span class="pmx-t">REVENUE</span><span class="pmx-sub">ESTIMATED: FLAT FEE x DAILY TX</span></div>
         <div class="pmx-body"><a class="pmx-live" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">VIEW LIVE →</a></div>
-        <a class="pmx-src" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">SOURCE: DERIVED FROM STRK20 DASHBOARD (DAILY TX x ~$0.12) ↗</a>
+        <!-- condensed to fit one unwrapped line in the grid cell; the full
+             derivation stays stated on the card itself, in the sub-line
+             (ESTIMATED: FLAT FEE x DAILY TX) and in both tooltip rows -->
+        <a class="pmx-src" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">SOURCE: STRK20 DASHBOARD (DERIVED) ↗</a>
       </div>
     </div>
   </div>
@@ -2459,19 +2521,25 @@
   }
   function esc(s){ return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;'); }
 
-  // shared frame: gridlines + y labels (left/right) + x date ticks
+  // shared frame: gridlines + y labels (left/right) + x date ticks.
+  // Tick COUNT is what shrinks for the dashboard cells, never the label size:
+  // three y ticks (max, mid, 0) and the first and last date on x. Every cell
+  // is drawn at a viewBox width equal to its measured CSS width (see plotW),
+  // so .pmx-axis renders at its real 9px in the narrow cells as well as the
+  // wide ones, and the DATA RANGE is untouched: days is always the full
+  // series and the first x label is still the first day of history.
   function frame(W, H, P, yMax, fmt, days, yMaxR, fmtR){
     var s = '', i;
-    for (i = 0; i <= 3; i++) {
-      var y = P.t + (H - P.t - P.b) * i / 3;
+    for (i = 0; i <= 2; i++) {
+      var y = P.t + (H - P.t - P.b) * i / 2;
       s += '<line class="pmx-grid-line" x1="' + P.l + '" y1="' + y + '" x2="' + (W - P.r) + '" y2="' + y + '"/>';
-      s += '<text class="pmx-axis" x="' + (P.l - 6) + '" y="' + (y + 3) + '" text-anchor="end">' + fmt(yMax * (1 - i / 3)) + '</text>';
-      if (yMaxR) s += '<text class="pmx-axis" x="' + (W - P.r + 6) + '" y="' + (y + 3) + '" text-anchor="start" fill="#1FCB94">' + fmtR(yMaxR * (1 - i / 3)) + '</text>';
+      s += '<text class="pmx-axis" x="' + (P.l - 6) + '" y="' + (y + 3) + '" text-anchor="end">' + fmt(yMax * (1 - i / 2)) + '</text>';
+      if (yMaxR) s += '<text class="pmx-axis" x="' + (W - P.r + 6) + '" y="' + (y + 3) + '" text-anchor="start" fill="#1FCB94">' + fmtR(yMaxR * (1 - i / 2)) + '</text>';
     }
-    var n = days.length, ticks = n > 1 ? [0, Math.round((n - 1) / 3), Math.round((n - 1) * 2 / 3), n - 1] : [0];
+    var n = days.length, ticks = n > 1 ? [0, n - 1] : [0];
     ticks.forEach(function(ix){
       var x = P.l + (W - P.l - P.r) * (n > 1 ? ix / (n - 1) : 0.5);
-      var anchor = ix === 0 ? 'start' : ix === n - 1 ? 'end' : 'middle'; // edge labels stay inside the viewBox
+      var anchor = ix === 0 ? 'start' : 'end'; // edge labels stay inside the viewBox
       s += '<text class="pmx-axis" x="' + x + '" y="' + (H - 4) + '" text-anchor="' + anchor + '">' + dLabel(days[ix].date) + '</text>';
     });
     return s;
@@ -2521,6 +2589,28 @@
       rows.push({ label: 'TOTAL', value: fmt(tot), total: true });
       return rows;
     };
+  }
+
+  // POOL COMPOSITION: the latest day of the SAME series the stacked chart
+  // plots, through the SAME split and the SAME stackRows() rounding, so the
+  // bars and the TOTAL are by construction the numbers that chart's tooltip
+  // shows for that date. Bar length is proportional to the largest asset;
+  // color is the asset's index in the split, which is its series color in the
+  // stacked chart and its swatch in the legend. Sorted by value, descending.
+  function compBlock(days, split){
+    var d = days[days.length - 1];
+    var rows = stackRows(split, fmtUsd)(d);
+    var total = rows[rows.length - 1];
+    var assets = rows.slice(0, -1).map(function(r, i){
+      return { label: r.label, value: r.value, color: r.color, num: dispVal(fmtUsd, split.value(d, split.names[i])) };
+    }).sort(function(a, b){ return b.num - a.num; });
+    var max = assets.length ? assets[0].num : 0;
+    return '<div class="pmx-comp">' + assets.map(function(a){
+      var pct = max > 0 ? Math.max(1.5, a.num / max * 100) : 0;
+      return '<div class="pmx-comp-r"><span class="n">' + esc(a.label) + '</span><span class="v">' + esc(a.value) + '</span>' +
+        '<span class="pmx-comp-bar"><i style="width:' + pct.toFixed(1) + '%;background:' + a.color + '"></i></span></div>';
+    }).join('') +
+      '<div class="pmx-comp-t"><span>' + esc(total.label) + '</span><span>' + esc(total.value) + '</span></div></div>';
   }
 
   function stackedArea(days, split, W, H){
@@ -2678,10 +2768,27 @@
   }
   function mount(k, chartHtml, legendHtml, meta){
     if (window.ChartLoading) window.ChartLoading.resolved(bodies[k].el);
+    // meta === null marks a cell with no time axis (pool composition): no
+    // crosshair, no tooltip, nothing to attach
+    if (!meta) { bodies[k].el.innerHTML = chartHtml + (legendHtml || ''); return; }
     bodies[k].el.innerHTML = '<div class="pmx-plot">' + chartHtml + '<div class="pmx-cross"></div><div class="pmx-tip"></div></div>' + legendHtml;
     var show = attachHover(bodies[k].el.querySelector('.pmx-plot'), meta, k);
     var hv = bodies[k].hv;
     if (hv && hv.open) show(hv.x); // an open tooltip re-renders in place from the fresh data
+  }
+
+  // Every plot is drawn at a viewBox width equal to the cell's measured CSS
+  // width, so the SVG scale factor is 1 and .pmx-axis text renders at its
+  // real 9px in a third-width cell exactly as in a full-width one. Height is
+  // the card's base, pulled down on narrow cells so the plot never becomes
+  // taller than it is wide.
+  var PLOT_H = { shielded: 240, comp: 0, swaps: 190, defi: 210, txs: 190, users: 190, revenue: 210 };
+  function plotW(k){
+    var w = bodies[k] && bodies[k].el ? bodies[k].el.clientWidth : 0;
+    return Math.max(240, Math.round(w || 520));
+  }
+  function plotH(k, w){
+    return Math.max(160, Math.min(PLOT_H[k] || 190, Math.round(w * 0.55)));
   }
   function get(path){
     // cache-busting param: every page load and refresh pulls fresh numbers
@@ -2693,7 +2800,7 @@
   // (0 = the card shows no fetched data, e.g. the VIEW LIVE fallback). The
   // label reports the OLDEST data on screen, so a partially failed silent
   // refresh can never claim "just now" over a chart it did not update.
-  var prov = { stats: 0, shielded: 0, swaps: 0, defi: 0, txs: 0, users: 0, revenue: 0 };
+  var prov = { stats: 0, shielded: 0, comp: 0, swaps: 0, defi: 0, txs: 0, users: 0, revenue: 0 };
   function tickUpdated(){
     if (!upEl) return;
     var oldest = Infinity;
@@ -2706,59 +2813,104 @@
   // one candidate per cycle: every endpoint stages its payload off-screen and
   // the whole block commits in a single pass, so no two fetch vintages can
   // paint side by side within a cycle
+  // the draw closure and the width each card was last drawn at, so a resize
+  // can re-render from the data already in hand instead of refetching
+  var drawn = {}, drawnW = {};
+
   function commit(next, silent){
     var stats = document.getElementById('pmxStats');
     if (next.stats) { stats.innerHTML = next.stats.html; prov.stats = next.stats.at; }
     else if (!silent) { stats.innerHTML = ''; prov.stats = 0; }
     Object.keys(bodies).forEach(function(k){
       var p = next[k];
-      if (p) { mount(k, p.chart, p.legend, p.meta); prov[k] = p.at; }
-      else if (!silent) { if (window.ChartLoading) window.ChartLoading.resolved(bodies[k].el); bodies[k].el.innerHTML = bodies[k].fallback; prov[k] = 0; }
+      if (p) { mount(k, p.chart, p.legend, p.meta); prov[k] = p.at; drawn[k] = p.draw; drawnW[k] = p.w; }
+      else if (!silent) { if (window.ChartLoading) window.ChartLoading.resolved(bodies[k].el); bodies[k].el.innerHTML = bodies[k].fallback; prov[k] = 0; drawn[k] = null; }
       // silent refresh + failed source: the card keeps its last good chart AND
       // its old provenance, so the label keeps reporting that older time
     });
     tickUpdated();
   }
 
+  // Re-render at the new cell width after a layout change. The plots are
+  // drawn to a measured viewBox, so without this a resize would rescale the
+  // axis type; redrawing keeps every label at 9px. No refetch, so provenance
+  // and the single-snapshot model are untouched, and mount() restores an open
+  // tooltip in place.
+  var rzT;
+  window.addEventListener('resize', function(){
+    clearTimeout(rzT);
+    rzT = setTimeout(function(){
+      Object.keys(drawn).forEach(function(k){
+        if (!drawn[k]) return;
+        var w = plotW(k);
+        if (w === drawnW[k]) return;
+        var d = drawn[k](w);
+        mount(k, d.chart, d.legend, d.meta);
+        drawnW[k] = w;
+      });
+    }, 180);
+  });
+
   function load(silent){
     if (!silent) Object.keys(bodies).forEach(skel);
-    var next = { stats: null, shielded: null, swaps: null, defi: null, txs: null, users: null, revenue: null };
-    function stage(k, chartHtml, legendHtml, meta){ next[k] = { chart: chartHtml, legend: legendHtml, meta: meta, at: Date.now() }; }
+    var next = { stats: null, shielded: null, comp: null, swaps: null, defi: null, txs: null, users: null, revenue: null };
+    // every card stages a DRAW closure, called once here at the current cell
+    // width and again on resize; the payload it closes over is the one this
+    // cycle fetched, so the snapshot stays whole
+    function stage(k, draw){
+      var w = plotW(k), d = draw(w);
+      next[k] = { chart: d.chart, legend: d.legend, meta: d.meta, draw: draw, w: w, at: Date.now() };
+    }
+    // raw payloads this cycle, for the KPI row: it reads the same series the
+    // charts do, so a KPI and its chart can never come from different vintages
+    var raw = { summary: null, shielded: null, fees: null };
     var jobs = [
-      get('/agg/pool-summary').then(function(s){
-        next.stats = { at: Date.now(), html:
-          '<div class="gx-bloom" aria-hidden="true"><i style="--bc:var(--em);left:5.5%;top:16%;width:22%;height:68%"></i><i style="--bc:var(--em);left:39.3%;top:16%;width:22%;height:68%"></i><i style="--bc:var(--em);left:73.1%;top:16%;width:22%;height:68%"></i></div>' +
-          '<div class="pmx-stat gx-card"><div class="l">TOTAL SHIELDED VALUE</div><div class="v"><span class="em">$' + Math.round(s.tvlUsd).toLocaleString('en-US') + '</span></div></div>' +
-          '<div class="pmx-stat gx-card"><div class="l">PROTECTED ASSETS</div><div class="v">' + (s.perToken || []).length.toLocaleString('en-US') + '</div></div>' +
-          '<div class="pmx-stat gx-card"><div class="l">TOTAL USERS</div><div class="v">' + (s.userCount || 0).toLocaleString('en-US') + '</div></div>' };
-      }).catch(function(){}),
+      get('/agg/pool-summary').then(function(s){ raw.summary = { s: s, at: Date.now() }; }).catch(function(){}),
 
       get('/agg/shielded-balance').then(function(d){
         if (!d.days || !d.days.length) throw new Error('empty');
+        raw.shielded = d;
         var split = topSeries(d.days, 'byToken', 5);
-        stage('shielded', stackedArea(d.days, split, 760, 240), legend(split.names),
-          { days: d.days, W: 760, P: PAD_STD, rows: stackRows(split, fmtUsd) });
+        stage('shielded', function(W){
+          var H = plotH('shielded', W);
+          return { chart: stackedArea(d.days, split, W, H), legend: legend(split.names),
+                   meta: { days: d.days, W: W, P: PAD_STD, rows: stackRows(split, fmtUsd) } };
+        });
+        // POOL COMPOSITION, same payload and same split: the two cells cannot
+        // disagree because they are the same numbers rendered twice
+        stage('comp', function(){
+          return { chart: compBlock(d.days, split), legend: '', meta: null };
+        });
       }).catch(function(){}),
 
       get('/agg/swap-by-token').then(function(d){
         if (!d.days || !d.days.length) throw new Error('empty');
         var split = topSeries(d.days, 'byToken', 4);
-        stage('swaps', stackedBars(d.days, split, 520, 250, fmtUsd), legend(split.names),
-          { days: d.days, W: 520, P: PAD_STD, rows: stackRows(split, fmtUsd) });
+        stage('swaps', function(W){
+          var H = plotH('swaps', W);
+          return { chart: stackedBars(d.days, split, W, H, fmtUsd), legend: legend(split.names),
+                   meta: { days: d.days, W: W, P: PAD_STD, rows: stackRows(split, fmtUsd) } };
+        });
       }).catch(function(){}),
 
       get('/agg/routed-volume').then(function(d){
         if (!d.days || !d.days.length) throw new Error('empty');
         var split = topSeries(d.days, 'byProtocol', 4);
-        stage('defi', stackedBars(d.days, split, 520, 250, fmtUsd), legend(split.names),
-          { days: d.days, W: 520, P: PAD_STD, rows: stackRows(split, fmtUsd) });
+        stage('defi', function(W){
+          var H = plotH('defi', W);
+          return { chart: stackedBars(d.days, split, W, H, fmtUsd), legend: legend(split.names),
+                   meta: { days: d.days, W: W, P: PAD_STD, rows: stackRows(split, fmtUsd) } };
+        });
       }).catch(function(){}),
 
       get('/agg/transactions').then(function(d){
         if (!d.days || !d.days.length) throw new Error('empty');
         var split = { names: ['TRANSACTIONS'], value: function(day){ return day.count || 0; } };
-        stage('txs', stackedBars(d.days, split, 520, 250, fmtN), '',
-          { days: d.days, W: 520, P: PAD_STD, rows: function(day){ return [{ label: 'TRANSACTIONS', value: fmtN(day.count || 0), color: '#1FCB94' }]; } });
+        stage('txs', function(W){
+          var H = plotH('txs', W);
+          return { chart: stackedBars(d.days, split, W, H, fmtN), legend: '',
+                   meta: { days: d.days, W: W, P: PAD_STD, rows: function(day){ return [{ label: 'TRANSACTIONS', value: fmtN(day.count || 0), color: '#1FCB94' }]; } } };
+        });
         // REVENUE (ESTIMATED), same fetch so it can never diverge from the
         // TRANSACTIONS card's vintage: daily tx x the flat fee constant
         // (js/fee-config.js, shared with strk.html's revenue stat and
@@ -2774,26 +2926,91 @@
           cum += f;
           return { date: day.date, feesUsd: f, cumUsd: cum };
         });
-        stage('revenue', feeBarsLine(fdays, 760, 240),
-          '<div class="pmx-legend"><span><i style="background:rgba(31,203,148,.5)"></i>DAILY FEES</span><span><i style="background:#1FCB94"></i>CUMULATIVE (RIGHT AXIS)</span></div>',
-          { days: fdays, W: 760, P: PAD_DUAL, rows: function(day){
-              return [{ label: 'DAILY FEES (EST.)', value: fmtUsd(day.feesUsd), color: 'rgba(31,203,148,.5)' },
-                      { label: 'CUMULATIVE (EST.)', value: fmtUsd(day.cumUsd), color: '#1FCB94' }];
-            } });
+        raw.fees = fdays;
+        stage('revenue', function(W){
+          var H = plotH('revenue', W);
+          return { chart: feeBarsLine(fdays, W, H),
+                   legend: '<div class="pmx-legend"><span><i style="background:rgba(31,203,148,.5)"></i>DAILY FEES</span><span><i style="background:#1FCB94"></i>CUMULATIVE (RIGHT AXIS)</span></div>',
+                   meta: { days: fdays, W: W, P: PAD_DUAL, rows: function(day){
+                     return [{ label: 'DAILY FEES (EST.)', value: fmtUsd(day.feesUsd), color: 'rgba(31,203,148,.5)' },
+                             { label: 'CUMULATIVE (EST.)', value: fmtUsd(day.cumUsd), color: '#1FCB94' }];
+                   } } };
+        });
       }).catch(function(){}),
 
       get('/agg/registrations').then(function(d){
         if (!d.days || !d.days.length) throw new Error('empty');
-        stage('users',
-          barsPlusLine(d.days, function(day){ return day.newUsers || 0; }, function(day){ return day.totalUsers || 0; }, 520, 250),
-          '<div class="pmx-legend"><span><i style="background:#7FB4E8"></i>NEW USERS / DAY</span><span><i style="background:#1FCB94"></i>CUMULATIVE (RIGHT AXIS)</span></div>',
-          { days: d.days, W: 520, P: PAD_DUAL, rows: function(day){
-              return [{ label: 'NEW USERS', value: fmtN(day.newUsers || 0), color: '#7FB4E8' },
-                      { label: 'CUMULATIVE', value: fmtN(day.totalUsers || 0), color: '#1FCB94' }];
-            } });
+        stage('users', function(W){
+          var H = plotH('users', W);
+          return { chart: barsPlusLine(d.days, function(day){ return day.newUsers || 0; }, function(day){ return day.totalUsers || 0; }, W, H),
+                   legend: '<div class="pmx-legend"><span><i style="background:#7FB4E8"></i>NEW USERS / DAY</span><span><i style="background:#1FCB94"></i>CUMULATIVE (RIGHT AXIS)</span></div>',
+                   meta: { days: d.days, W: W, P: PAD_DUAL, rows: function(day){
+                     return [{ label: 'NEW USERS', value: fmtN(day.newUsers || 0), color: '#7FB4E8' },
+                             { label: 'CUMULATIVE', value: fmtN(day.totalUsers || 0), color: '#1FCB94' }];
+                   } } };
+        });
       }).catch(function(){})
     ];
-    Promise.all(jobs).then(function(){ commit(next, silent); });
+    Promise.all(jobs).then(function(){
+      next.stats = buildStats(raw);
+      commit(next, silent);
+    });
+  }
+
+  /* KPI row, built after the cycle's fetches so each cell reads the same
+     payload its chart does.
+
+     30D DELTAS are shown only where the delta comes from the SAME series as
+     the value on the cell, over a lookback the series actually covers:
+     - shielded value and protected assets both come from the shielded-balance
+       day series (its last day's total is the pool-summary tvlUsd to the cent,
+       and its last day's nonzero byToken keys are the perToken entries that
+       still hold a balance), so both carry a delta.
+     - estimated revenue is the cumulative of the derived fee series, so its
+       delta is that series' own 30-day movement.
+     - TOTAL USERS carries NO delta: its value is pool-summary userCount, a
+       single number with no history, and registrations.totalUsers is a
+       different metric (2,356 against 2,336 on 2026-08-07, viewing-key
+       registrations rather than pool users). Subtracting one from the other
+       would be an approximation, so the cell simply omits it.
+     The lookback is the series' own day 30 back, never a windowed series: the
+     charts above still plot every day since launch. */
+  function delta30(days, val){
+    if (!days || days.length < 31) return null;
+    var now = val(days[days.length - 1]), then = val(days[days.length - 31]);
+    if (!isFinite(now) || !isFinite(then)) return null;
+    return now - then;
+  }
+  function dTag(v, fmt){
+    if (v === null) return '';
+    return (v >= 0 ? '+' : '-') + fmt(Math.abs(v)) + ' 30D';
+  }
+  function statCell(label, value, sub, delta){
+    var foot = (sub || delta)
+      ? '<div class="s">' + (sub ? '<span>' + sub + '</span>' : '') + (delta ? '<b>' + delta + '</b>' : '') + '</div>'
+      : '';
+    return '<div class="pmx-stat gx-card"><div class="l">' + label + '</div><div class="v">' + value + '</div>' + foot + '</div>';
+  }
+  function buildStats(raw){
+    if (!raw.summary) return null;
+    var s = raw.summary.s;
+    var sd = raw.shielded && raw.shielded.days;
+    var nz = function(day){ var m = day.byToken || {}; return Object.keys(m).filter(function(k){ return m[k] > 0; }).length; };
+
+    var assets = sd ? nz(sd[sd.length - 1]) : (s.perToken || []).filter(function(t){ return (t.balanceUsd || 0) > 0; }).length;
+    var cum = raw.fees && raw.fees.length ? raw.fees[raw.fees.length - 1].cumUsd : null;
+
+    var bloom = '<div class="gx-bloom" aria-hidden="true">' +
+      [1.5, 26.5, 51.5, 76.5].map(function(l){ return '<i style="--bc:var(--em);left:' + l + '%;top:16%;width:22%;height:68%"></i>'; }).join('') +
+      '</div>';
+    return { at: raw.summary.at, html: bloom +
+      statCell('TOTAL SHIELDED VALUE', '<span class="em">$' + Math.round(s.tvlUsd).toLocaleString('en-US') + '</span>',
+        'ONE POOL', dTag(delta30(sd, function(d){ return d.total; }), fmtUsd)) +
+      statCell('PROTECTED ASSETS', assets.toLocaleString('en-US'),
+        'NONZERO BALANCE', dTag(delta30(sd, nz), fmtN)) +
+      statCell('TOTAL USERS', (s.userCount || 0).toLocaleString('en-US'), '', '') +
+      statCell('REVENUE', cum === null ? 'N/A' : fmtUsd(cum),
+        'ESTIMATED, CUMULATIVE', dTag(delta30(raw.fees, function(d){ return d.cumUsd; }), fmtUsd)) };
   }
 
   var loaded = false;
