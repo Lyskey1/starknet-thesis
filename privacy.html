@@ -82,9 +82,28 @@
   }
   body.page-privacy ::selection { background: var(--em); color: #03110C; }
 
-  /* ============ HERO (quantum pattern: centered, eyebrow, uppercase display, accent glow) ============ */
-  .hero { min-height: auto; display: block; overflow: visible; padding: 112px 32px 36px; max-width: 1100px; margin: 0 auto; text-align: center; position: relative; }
-  .hero::before { top: -40px; width: 760px; height: 420px; max-width: 100%; background: radial-gradient(ellipse at center top, rgba(var(--accent-rgb),0.16), transparent 70%); }
+  /* ============ HERO ============================================
+     SHARED SHELL, PER-PAGE BACKDROP. The frame around the backdrop is a
+     twin of ecosystem.html's and digest.html's heroes: full-bleed hero
+     box, contained content grid (1160 / 32px gutters), left-aligned
+     eyebrow + display + lede, glass CTA pair, marquee band directly
+     below. That shell is duplicated per page by convention, not
+     factored, so keep the four copies in sync.
+     The BACKDROP is deliberately per-page and must NOT be re-synced:
+     privacy keeps its aurora curtain (js/curtain.js plus the falloff
+     layers below), ecosystem carries the node network, digest the
+     publishing-cadence chart. Reading a diff between the backdrops is
+     not drift.
+     The curtain, its scrim and its afterglow are absolutely positioned
+     children of .hero and sit OUTSIDE .pv-hero-inner, so left-aligning
+     the copy moves the copy only: no shader parameter, no height rule
+     and no falloff layer changed here. */
+  .hero { min-height: auto; display: block; overflow: visible; padding: 150px 0 120px; max-width: none; margin: 0 auto; text-align: left; position: relative; }
+  .pv-hero-inner { width: 100%; max-width: 1160px; margin: 0 auto; padding: 0 32px; position: relative; z-index: 1; }
+  /* the CSS glow only paints when WebGL2 is missing (.hero-curtain-on
+     hides it); left-anchored now so the fallback lights the copy rather
+     than the empty right half */
+  .hero::before { top: -40px; left: 18%; width: 760px; height: 420px; max-width: 100%; background: radial-gradient(ellipse at center top, rgba(var(--accent-rgb),0.16), transparent 70%); }
   .hero-eyebrow { color: var(--accent); opacity: 1; margin-bottom: 22px; position: relative; }
   /* Three-level hierarchy: setup (mono label line, sealed fragments),
      premise (one display step down, softened), payoff (dominant, accent).
@@ -113,28 +132,79 @@
     .shield-wrap { display: block; margin: 0; }
     .hero .turn { font-size: clamp(30px,8.6vw,44px); }
   }
-  .hero-subtitle { font-size: 18px; color: rgba(245,242,236,0.62); max-width: 620px; margin: 0 auto 8px; line-height: 1.7; position: relative; }
+  .hero-subtitle { font-size: 18px; color: rgba(245,242,236,0.62); max-width: 620px; margin: 22px 0 0; line-height: 1.7; position: relative; }
   .hero-subtitle b { color: var(--white); font-weight: 600; }
-  .status-row { display: flex; gap: 14px; margin-top: 42px; flex-wrap: wrap; justify-content: center; position: relative; }
-  /* hero chips: dark glass coating from the shared css/glass-chips.css
-     (.chip-glass on the pills). No background declared here so the shared
-     class's fill and solid fallback win; the accent border and label stay
-     page-owned. The pill rule must not out-specify .chip-glass on
-     background. */
-  .status-row .pill { font-family: var(--mono); font-size: 12px; letter-spacing: .1em; border: 1px solid var(--em-line); color: var(--em); padding: 9px 16px; border-radius: 99px; display: inline-flex; }
-  /* one diffuse accent bloom behind the chip row: the aurora ends far
-     above it, so this gives the chips' backdrop-filter visible variation
-     to distort. Same treatment as the sibling .hero-bloom blobs (their
-     base rule in styles.css carries the radial and the 70px blur);
-     positioned via this class instead of an inline style because it hides
-     together with the glass fallbacks below. Static, aria-hidden parent,
-     inert. */
-  .hero-bloom .pv-chip-bloom { left: 18%; bottom: -34%; width: 64%; height: 64%; opacity: .30; }
-  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-    .hero-bloom .pv-chip-bloom { display: none; }
+
+  /* HERO CTAs: twin of .eco-cta / .dg-cta. The locked shared dark glass
+     tier (css/glass-chips.css) reading this page's accent through the
+     fallback --accent-rgb, primary on an accent border with the recipe's
+     full glow, secondary on a neutral border reaching primary intensity
+     on hover. Those two shadow stacks are copies of the locked recipe:
+     keep in sync. Anchors only, so the site's html{scroll-behavior:smooth}
+     carries the scroll and reduced motion turns it off for free. */
+  .pv-ctas { display: flex; gap: 18px; margin-top: 42px; flex-wrap: wrap; position: relative; }
+  .pv-cta { font-family: var(--mono); font-size: 13px; letter-spacing: .14em; text-transform: uppercase; text-decoration: none; color: var(--white); padding: 12px 22px; border-radius: 99px; border: 1px solid rgba(var(--accent-rgb), .55); display: inline-flex; align-items: center; gap: 10px; }
+  .pv-cta.chip-glass { transition: background var(--hover-dur) var(--hover-ease), box-shadow var(--hover-dur) var(--hover-ease), border-color var(--hover-dur); }
+  .pv-cta i { font-style: normal; transition: transform var(--hover-dur) var(--hover-ease); }
+  .pv-cta:hover i { transform: translateX(4px); }
+  .pv-cta:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  .pv-cta--muted { border-color: var(--border);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.5),
+      inset -1px -1px 0 rgba(255,255,255,.30),
+      inset 1px 1px 0 rgba(255,255,255,.12),
+      inset 0 10px 18px -8px rgba(255,255,255,.18),
+      inset 0 -1px 0 rgba(0,0,0,.6),
+      inset 0 -3px 5px rgba(0,0,0,.22),
+      0 0 12px rgba(var(--accent-rgb), .10); }
+  .pv-cta--muted:hover { border-color: rgba(var(--accent-rgb), .55); background: rgba(245,242,236,.10);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.5),
+      inset -1px -1px 0 rgba(255,255,255,.30),
+      inset 1px 1px 0 rgba(255,255,255,.12),
+      inset 0 10px 18px -8px rgba(255,255,255,.18),
+      inset 0 -1px 0 rgba(0,0,0,.6),
+      inset 0 -3px 5px rgba(0,0,0,.22),
+      0 0 40px rgba(var(--accent-rgb), .45); }
+  @media (prefers-reduced-motion: reduce) {
+    .pv-cta.chip-glass { transition: none; }
+    .pv-cta i { transition: none; }
+  }
+
+  /* CLAIM BAND: twin of .eco-marquee / .dg-marquee. Seamless -50% loop
+     over a duplicated set, edge fade masks, hover pause, IO gated, same
+     70s duration as the other bands. The items are plain labels, never
+     links: they are claims, not navigation.
+     Two deliberate divergences from the sibling bands, both because
+     these items carry CONTENT the page does not repeat elsewhere (the
+     ecosystem band repeats project names from the sections below it, so
+     it is decorative and fully aria-hidden):
+     1) only the DUPLICATE set is aria-hidden, so the claims are read
+        once by a screen reader instead of twice or not at all;
+     2) below 981px the band stays, as static wrapped rows, where the
+        sibling bands hide entirely. */
+  .pv-marquee { border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); overflow: hidden; padding: 19px 0;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+            mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent); }
+  .pv-mq-track { display: flex; width: max-content; }
+  .pv-mq-set { display: flex; gap: 14px; padding-right: 14px; }
+  .pv-mq-set span { font-family: var(--mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; white-space: nowrap;
+    border: 1px solid var(--em-line); color: var(--em); padding: 9px 16px; border-radius: 99px; display: inline-flex; }
+  .pv-marquee.run .pv-mq-track { animation: pvmq 70s linear infinite; }
+  @keyframes pvmq { to { transform: translateX(-50%); } }
+  .pv-marquee:hover .pv-mq-track { animation-play-state: paused; }
+  @media (prefers-reduced-motion: reduce) {
+    .pv-mq-track { animation: none !important; flex-wrap: wrap; width: auto; gap: 12px 0; }
+    .pv-mq-set[data-dup] { display: none; }
+    .pv-mq-set { flex-wrap: wrap; gap: 12px; padding-right: 0; }
+    .pv-marquee { -webkit-mask-image: none; mask-image: none; }
   }
   @media (max-width: 980px) {
-    .hero-bloom .pv-chip-bloom { display: none; }
+    /* static wrapped rows, not hidden: these claims appear nowhere else */
+    .pv-mq-track { animation: none !important; flex-wrap: wrap; width: auto; }
+    .pv-mq-set[data-dup] { display: none; }
+    .pv-mq-set { flex-wrap: wrap; gap: 10px; padding: 0 24px; }
+    .pv-marquee { -webkit-mask-image: none; mask-image: none; padding: 16px 0; }
   }
 
   /* ===== hero to section 01: gradual light falloff, no perceptible seam.
@@ -160,9 +230,15 @@
     background: radial-gradient(ellipse closest-side at 50% 35%, rgba(var(--accent-rgb), .07), transparent 72%); }
   @media (max-width: 980px) {
     /* mobile: blooms are the site's reduced treatment; keep the clip and
-       drop the afterglow along with the chip bloom, scrim stays (cheap) */
+       drop the afterglow, scrim stays (cheap). Hero rhythm matches the
+       sibling heroes' mobile pattern. */
     .hero .hero-bloom { overflow: hidden; }
     .pv-hero-afterglow { display: none; }
+    .hero { padding: 130px 0 90px; }
+  }
+  @media (max-width: 700px) {
+    .pv-hero-inner { padding: 0 24px; }
+    .pv-ctas { flex-direction: column; gap: 20px; align-items: flex-start; }
   }
 
   /* ============ SECTION SHELL (quantum th-pm design system, emerald) ============ */
@@ -170,7 +246,7 @@
   /* section 01 only: the falloff zone and the section spacing read as one
      transition (56px here + 36px hero bottom padding + hairline = 93px
      from chip row to header block), later sections keep the 90px rhythm */
-  .hero + .th-pm-div + .th-pm-sec { padding-top: 56px; }
+  .pv-marquee + .th-pm-div + .th-pm-sec { padding-top: 56px; }
   .th-pm-sec::before { content: ""; position: absolute; top: 40px; left: 6px; width: 520px; height: 520px; background: radial-gradient(circle,var(--th-q) 0%,transparent 60%); opacity: .07; filter: blur(8px); pointer-events: none; z-index: 0; }
   .th-pm-sec > * { position: relative; z-index: 1; }
   .th-pm-div { max-width: 1160px; margin: 0 auto; height: 1px; background: rgba(245,242,236,.05); }
@@ -694,9 +770,9 @@
   .bnt-fbtn:focus-visible { outline: 2px solid var(--em); outline-offset: 2px; }
   /* site hover signature on the chip tier, page-scoped so the locked
      css/glass-chips.css recipe stays untouched */
-  .status-row .pill.chip-glass, .bnt-filter .chip-glass { transition: background var(--hover-dur) var(--hover-ease), box-shadow var(--hover-dur) var(--hover-ease); }
+  .pv-mq-set .chip-glass, .bnt-filter .chip-glass { transition: background var(--hover-dur) var(--hover-ease), box-shadow var(--hover-dur) var(--hover-ease); }
   @media (prefers-reduced-motion: reduce) {
-    .status-row .pill.chip-glass, .bnt-filter .chip-glass { transition: none; }
+    .pv-mq-set .chip-glass, .bnt-filter .chip-glass { transition: none; }
   }
   .bnt-fbtn[aria-pressed="true"] {
     border-color: var(--em);
@@ -1157,23 +1233,31 @@
   <div class="hero-bloom" aria-hidden="true">
     <i style="left:12%;bottom:-20%;width:44%;height:50%;opacity:.10"></i>
     <i style="left:52%;bottom:-24%;width:42%;height:54%;opacity:.09"></i>
-    <i class="pv-chip-bloom"></i>
   </div>
   <div class="pv-hero-afterglow" aria-hidden="true"></div>
-  <p class="hero-eyebrow">The privacy flip</p>
-  <h1 id="your-savings-your-strategy-your-next" class="hero-title">
-    <span class="hero-setup"><span class="shield-wrap sw1"><span class="bk">[</span><span class="word">Your savings.</span><span class="bk r">]</span></span><span class="shield-wrap sw2"><span class="bk">[</span><span class="word">Your strategy.</span><span class="bk r">]</span></span><span class="shield-wrap sw3"><span class="bk">[</span><span class="word">Your next trade.</span><span class="bk r">]</span></span></span>
-    <span class="hero-mid">Onchain, anyone can read all of it. Forever.</span>
-    <span class="turn">Starknet just made that optional.</span>
-  </h1>
-  <p class="hero-subtitle">Crypto built the most surveilled financial system in history, <b>by accident</b>. Starknet shipped the layer that ends it: private to the market, answerable to the law, <b>and live today</b>.</p>
-  <div class="status-row">
-    <div class="pill chip-glass">ZK-STARK</div>
-    <div class="pill chip-glass">PROTOCOL-LEVEL PRIVACY</div>
-    <div class="pill chip-glass">STRK20s</div>
-    <div class="pill chip-glass">PRIVATE DEFI</div>
+  <div class="pv-hero-inner">
+    <p class="hero-eyebrow">The privacy flip</p>
+    <h1 id="your-savings-your-strategy-your-next" class="hero-title">
+      <span class="hero-setup"><span class="shield-wrap sw1"><span class="bk">[</span><span class="word">Your savings.</span><span class="bk r">]</span></span><span class="shield-wrap sw2"><span class="bk">[</span><span class="word">Your strategy.</span><span class="bk r">]</span></span><span class="shield-wrap sw3"><span class="bk">[</span><span class="word">Your next trade.</span><span class="bk r">]</span></span></span>
+      <span class="hero-mid">Onchain, anyone can read all of it. Forever.</span>
+      <span class="turn">Starknet just made that optional.</span>
+    </h1>
+    <p class="hero-subtitle">Crypto built the most surveilled financial system in history, <b>by accident</b>. Starknet shipped the layer that ends it: private to the market, answerable to the law, <b>and live today</b>.</p>
+    <div class="pv-ctas">
+      <a class="pv-cta chip-glass" href="#why-starknet-structurally">How it works <i aria-hidden="true">&rarr;</i></a>
+      <a class="pv-cta pv-cta--muted chip-glass" href="#the-most-complete-privacy-ecosystem">See what is live <i aria-hidden="true">&rarr;</i></a>
+    </div>
   </div>
 </div>
+
+<!-- claim band: the hero's four static chips expanded to the full claim
+     set, on the sibling pages' marquee mechanics. The first set is the
+     readable one; the second is a duplicate purely so the -50% loop is
+     seamless, so it is aria-hidden. Labels only, never links. -->
+<div class="pv-marquee" id="pvMarquee"><div class="pv-mq-track">
+  <div class="pv-mq-set"><span class="chip-glass">ZK-STARK</span><span class="chip-glass">PROTOCOL-LEVEL PRIVACY</span><span class="chip-glass">PRIVACY FOR EVERY ASSET</span><span class="chip-glass">ONE POOL, ONE CLICK</span><span class="chip-glass">CHEAPEST WITH REAL DEFI ACCESS</span><span class="chip-glass">DEEP DEFI INTEGRATION</span><span class="chip-glass">WALLET-NATIVE</span><span class="chip-glass">FLAT FEE ~$0.12</span><span class="chip-glass">SHIELDED IN SECONDS</span><span class="chip-glass">ANSWERABLE TO THE LAW</span><span class="chip-glass">NOTHING TO BACK UP</span><span class="chip-glass">AUDITED AND FORMALLY VERIFIED</span><span class="chip-glass">OPEN SOURCE, APACHE 2.0</span><span class="chip-glass">STRK20S</span></div>
+  <div class="pv-mq-set" data-dup aria-hidden="true"><span class="chip-glass">ZK-STARK</span><span class="chip-glass">PROTOCOL-LEVEL PRIVACY</span><span class="chip-glass">PRIVACY FOR EVERY ASSET</span><span class="chip-glass">ONE POOL, ONE CLICK</span><span class="chip-glass">CHEAPEST WITH REAL DEFI ACCESS</span><span class="chip-glass">DEEP DEFI INTEGRATION</span><span class="chip-glass">WALLET-NATIVE</span><span class="chip-glass">FLAT FEE ~$0.12</span><span class="chip-glass">SHIELDED IN SECONDS</span><span class="chip-glass">ANSWERABLE TO THE LAW</span><span class="chip-glass">NOTHING TO BACK UP</span><span class="chip-glass">AUDITED AND FORMALLY VERIFIED</span><span class="chip-glass">OPEN SOURCE, APACHE 2.0</span><span class="chip-glass">STRK20S</span></div>
+</div></div>
 
 <!-- ================= SECTION 01 ================= -->
 <div class="th-pm-div"></div>
@@ -3725,6 +3809,25 @@
 
   renderPublic();
   syncDraftUI();
+})();
+</script>
+
+<script>
+/* claim band: same gate as the ecosystem and digest bands. The CSS only
+   declares the animation under .run, so off-screen the band is not
+   animating at all rather than animating invisibly. Reduced motion and
+   the sub-981px static treatment are handled in CSS, so this stays a
+   pure visibility toggle. */
+(function(){
+  var band = document.getElementById('pvMarquee');
+  if (!band) return;
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(function(es){
+      band.classList.toggle('run', es[0].isIntersecting);
+    }, { threshold: 0 }).observe(band);
+  } else {
+    band.classList.add('run');
+  }
 })();
 </script>
 
