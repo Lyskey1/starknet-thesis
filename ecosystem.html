@@ -275,12 +275,21 @@
      DEPTH CUES. The path stays a flat circle at unchanged radii; the
      volume is read off the grading along it. Top of the path is FAR
      (behind the core plane), bottom is NEAR (in front).
-     Position, scale, opacity and blur all live in the SAME ecoOrb
+     Grading (preset C): opacity .26 -> 1, scale .72 -> 1.24, blur 1.6px
+     -> 0, saturate .5 -> 1, all on the same cosine depth term.
+     Position, opacity, blur and desaturation live in the SAME ecoOrb
      keyframe, so they cannot drift from one another by construction (one
      animation cannot desynchronise from itself), and transform can only
-     be driven by one animation in any case. Scale is the LAST function in
-     the list and uniform, so the cancelling rotates still leave the
-     avatar upright and it cannot ovalize.
+     be driven by one animation in any case.
+     Scale is the one grading channel that does NOT ride that keyframe: it
+     animates the inner .eco-orb-av instead (ecoOrbS), because a picked-up
+     orbiter has to snap to the near size and an !important override of the
+     parent transform would also override the position and teleport it to
+     its static angle. The two animations cannot desynchronise either: same
+     duration, same direction, one shared inline --od delay, and every
+     play-state rule below names both elements. Scaling the inner span is
+     uniform and inside the counter-rotate, so the avatar stays upright and
+     cannot ovalize, and the tooltip (a sibling) keeps full size at depth.
      z-index has to step rather than interpolate, so it rides a second
      keyframe on the SAME element with the SAME duration and step-end
      easing. That stays locked to the position because one inline
@@ -300,29 +309,46 @@
      (1 + cos --a)/2, the static pose equals the animation's value at that
      orbiter's own start phase, so the handover is seamless. */
   .eco-orbiter { position: absolute; top: 50%; left: 50%; width: 38px; height: 38px; margin: -19px 0 0 -19px; border-radius: 50%;
-    transform: rotate(var(--a, 0deg)) translateY(calc(-1 * var(--orb-r))) rotate(calc(-1 * var(--a, 0deg))) scale(calc(1.08 - .18 * var(--d, 0)));
-    opacity: calc(1 - .45 * var(--d, 0));
-    filter: blur(calc(.4px * var(--d, 0)));
+    transform: rotate(var(--a, 0deg)) translateY(calc(-1 * var(--orb-r))) rotate(calc(-1 * var(--a, 0deg)));
+    opacity: calc(1 - .74 * var(--d, 0));
+    filter: blur(calc(1.6px * var(--d, 0))) saturate(calc(1 - .5 * var(--d, 0)));
     z-index: var(--dz, 3); }
-  .eco-orbiter.ring1 { --orb-r: 130px; animation: ecoOrb 26s linear infinite, ecoOrbZ 26s step-end infinite; }
-  .eco-orbiter.ring2 { --orb-r: 200px; animation: ecoOrb 42s linear infinite reverse, ecoOrbZ 42s step-end infinite reverse; }
+  .eco-orbiter.ring1 { --orb-r: 130px; animation: ecoOrb 26s linear infinite, ecoOrbZ 26s step-end infinite; animation-delay: var(--od, 0s); }
+  .eco-orbiter.ring1 .eco-orb-av { animation: ecoOrbS 26s linear infinite; animation-delay: var(--od, 0s); }
+  .eco-orbiter.ring2 { --orb-r: 200px; animation: ecoOrb 42s linear infinite reverse, ecoOrbZ 42s step-end infinite reverse; animation-delay: var(--od, 0s); }
+  .eco-orbiter.ring2 .eco-orb-av { animation: ecoOrbS 42s linear infinite reverse; animation-delay: var(--od, 0s); }
   /* Rotation stays exactly linear (stops every 45deg at every 12.5% of the
      cycle, so angular velocity is unchanged). The grading tracks
      (1 + cos angle)/2 instead of the raw progress, which is the real depth
      of a point on a circle and reads as rotation rather than a triangular
      fade: it lingers at the extremes and moves fastest through the
-     crossings. Eight segments approximate the cosine to within 0.016
-     opacity, well below perception. */
+     crossings. Eight segments approximate the cosine to within 0.039 of the
+     depth term, which at preset C's ranges is 0.029 of opacity, 0.02 of
+     scale (0.8px on a 38px avatar) and 0.06px of blur: the worst case sits
+     mid-segment near the crossings and is well below perception. */
   @keyframes ecoOrb {
-    0%     { transform: rotate(0deg)    translateY(calc(-1 * var(--orb-r))) rotate(0deg)    scale(.900); opacity: .550; filter: blur(.400px); }
-    12.5%  { transform: rotate(45deg)   translateY(calc(-1 * var(--orb-r))) rotate(-45deg)  scale(.926); opacity: .616; filter: blur(.341px); }
-    25%    { transform: rotate(90deg)   translateY(calc(-1 * var(--orb-r))) rotate(-90deg)  scale(.990); opacity: .775; filter: blur(.200px); }
-    37.5%  { transform: rotate(135deg)  translateY(calc(-1 * var(--orb-r))) rotate(-135deg) scale(1.054); opacity: .934; filter: blur(.059px); }
-    50%    { transform: rotate(180deg)  translateY(calc(-1 * var(--orb-r))) rotate(-180deg) scale(1.080); opacity: 1;    filter: blur(0px); }
-    62.5%  { transform: rotate(225deg)  translateY(calc(-1 * var(--orb-r))) rotate(-225deg) scale(1.054); opacity: .934; filter: blur(.059px); }
-    75%    { transform: rotate(270deg)  translateY(calc(-1 * var(--orb-r))) rotate(-270deg) scale(.990); opacity: .775; filter: blur(.200px); }
-    87.5%  { transform: rotate(315deg)  translateY(calc(-1 * var(--orb-r))) rotate(-315deg) scale(.926); opacity: .616; filter: blur(.341px); }
-    100%   { transform: rotate(360deg)  translateY(calc(-1 * var(--orb-r))) rotate(-360deg) scale(.900); opacity: .550; filter: blur(.400px); }
+    0%     { transform: rotate(0deg)    translateY(calc(-1 * var(--orb-r))) rotate(0deg);    opacity: .260; filter: blur(1.600px) saturate(.500); }
+    12.5%  { transform: rotate(45deg)   translateY(calc(-1 * var(--orb-r))) rotate(-45deg);  opacity: .368; filter: blur(1.366px) saturate(.573); }
+    25%    { transform: rotate(90deg)   translateY(calc(-1 * var(--orb-r))) rotate(-90deg);  opacity: .630; filter: blur(.800px)  saturate(.750); }
+    37.5%  { transform: rotate(135deg)  translateY(calc(-1 * var(--orb-r))) rotate(-135deg); opacity: .892; filter: blur(.234px)  saturate(.927); }
+    50%    { transform: rotate(180deg)  translateY(calc(-1 * var(--orb-r))) rotate(-180deg); opacity: 1;    filter: blur(0px)     saturate(1); }
+    62.5%  { transform: rotate(225deg)  translateY(calc(-1 * var(--orb-r))) rotate(-225deg); opacity: .892; filter: blur(.234px)  saturate(.927); }
+    75%    { transform: rotate(270deg)  translateY(calc(-1 * var(--orb-r))) rotate(-270deg); opacity: .630; filter: blur(.800px)  saturate(.750); }
+    87.5%  { transform: rotate(315deg)  translateY(calc(-1 * var(--orb-r))) rotate(-315deg); opacity: .368; filter: blur(1.366px) saturate(.573); }
+    100%   { transform: rotate(360deg)  translateY(calc(-1 * var(--orb-r))) rotate(-360deg); opacity: .260; filter: blur(1.600px) saturate(.500); }
+  }
+  /* the scale half of the same grading, on the inner avatar, at the same
+     cosine stops and the same progress values as ecoOrb above */
+  @keyframes ecoOrbS {
+    0%     { transform: scale(.720); }
+    12.5%  { transform: scale(.796); }
+    25%    { transform: scale(.980); }
+    37.5%  { transform: scale(1.164); }
+    50%    { transform: scale(1.240); }
+    62.5%  { transform: scale(1.164); }
+    75%    { transform: scale(.980); }
+    87.5%  { transform: scale(.796); }
+    100%   { transform: scale(.720); }
   }
   /* crossing points: 25% rising into the near half, 75% returning to the
      far half. step-end holds each value across its whole arc. */
@@ -331,10 +357,29 @@
     25% { z-index: 3; }
     75% { z-index: 1; }
   }
-  .eco-orbit-stage:not(.run) .eco-orbiter { animation-play-state: paused; }
+  /* every play-state gate names the orbiter AND its avatar, so position and
+     scale always pause and resume together */
+  .eco-orbit-stage:not(.run) .eco-orbiter,
+  .eco-orbit-stage:not(.run) .eco-orb-av { animation-play-state: paused; }
   .eco-orbit-stage[data-pause="1"] .eco-orbiter.ring1,
-  .eco-orbit-stage[data-pause="2"] .eco-orbiter.ring2 { animation-play-state: paused; }
-  .eco-orb-av { display: block; position: relative; width: 38px; height: 38px; border-radius: 50%; overflow: hidden; border: 1px solid var(--border); background: var(--accent-dim); transition: border-color var(--hover-dur) var(--hover-ease), box-shadow var(--hover-dur); }
+  .eco-orbit-stage[data-pause="1"] .eco-orbiter.ring1 .eco-orb-av,
+  .eco-orbit-stage[data-pause="2"] .eco-orbiter.ring2,
+  .eco-orbit-stage[data-pause="2"] .eco-orbiter.ring2 .eco-orb-av { animation-play-state: paused; }
+  /* base (static) scale, the same cosine term the keyframe uses.
+     DARK-AVATAR FLOOR, measured rather than assumed. At the far pose the
+     darkest avatars in each ring were sampled against the page background:
+     projects @extendedapp 1.05, @trovesfi 1.07, @ForgeYields 1.09,
+     @StarkWareLtd 1.20 mean disc contrast (peaks 1.2 to 1.9); voices
+     @EliBenSasson 1.11, @Cudan_Svat 1.12, @odin_free 1.15. Faint by design,
+     but every disc still reads, so the .26 floor stands unraised.
+     A brighter border ring was tried as the alternative remedy and dropped:
+     at scale .72 the 1px rim is 0.72px wide and blur(1.6px) is a Gaussian
+     of sigma 0.8px, which erases about two thirds of its peak. Raising the
+     rim alpha from .09 to 1.0 moved the worst case by 0.02 of contrast,
+     so it was paint work for nothing. Anything that survives that blur has
+     to be broad, which would mean adding a halo the preset does not call
+     for. */
+  .eco-orb-av { display: block; position: relative; width: 38px; height: 38px; border-radius: 50%; overflow: hidden; border: 1px solid var(--border); background: var(--accent-dim); transform: scale(calc(1.24 - .52 * var(--d, 0))); transition: border-color var(--hover-dur) var(--hover-ease), box-shadow var(--hover-dur); }
   .eco-orb-av .eco-av-mono { font-size: 13px; }
   .eco-orb-av img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .eco-orbiter:hover .eco-orb-av, .eco-orbiter:focus-visible .eco-orb-av { border-color: var(--eco-accent); box-shadow: 0 0 14px rgba(var(--eco-accent-rgb), .45); }
@@ -343,11 +388,16 @@
      orbiter (max 3) and the core (2) and returns to full clarity, so a
      far-half orbiter's tooltip is never veiled by its own blur/dim nor
      occluded by a near-half neighbour. !important is required because all
-     three properties are animated and animations outrank normal
-     declarations. transform is deliberately NOT overridden: the orbiter
-     must not jump position at the moment it is picked up, so it keeps the
-     scale its phase gives it. */
+     four properties are animated and animations outrank normal
+     declarations. filter: none clears the WHOLE chain, blur and saturate
+     together, because both are functions of the one filter property.
+     The parent transform is deliberately NOT overridden: it carries the
+     position, and overriding it would teleport the orbiter to its static
+     angle. The scale reset therefore lands on .eco-orb-av, whose transform
+     is scale only, so a picked-up orbiter reads at the near size (1.24)
+     wherever it is on the path, without moving. */
   .eco-orbiter:hover, .eco-orbiter:focus-visible { z-index: 9 !important; opacity: 1 !important; filter: none !important; }
+  .eco-orbiter:hover .eco-orb-av, .eco-orbiter:focus-visible .eco-orb-av { transform: scale(1.24) !important; }
   .eco-orb-tip { position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%); font-family: var(--sans); font-size: 12.5px; line-height: 1.55; white-space: nowrap; background: #10161A; border: 1px solid rgba(var(--eco-accent-rgb), .35); border-radius: 8px; padding: 12px 14px; color: rgba(245,242,236,.78); opacity: 0; visibility: hidden; transition: opacity .18s; pointer-events: none; z-index: 5; box-shadow: 0 10px 26px rgba(0,0,0,.5); }
   .eco-orbiter:hover .eco-orb-tip, .eco-orbiter:focus-visible .eco-orb-tip { opacity: 1; visibility: visible; }
   /* click-to-card highlight pulse */
@@ -362,11 +412,14 @@
   .eco-card.eco-pulse { animation: ecoPulse 1.5s ease; }
   @media (prefers-reduced-motion: reduce) {
     /* no rotation, as before. The volume still reads: switching the
-       animation off falls back to the base rule above, which is already
+       animations off falls back to the base rules above, which are already
        the graded static pose at each orbiter's own --a (far-half ones
-       dimmed, shrunk and behind the core, near-half ones front and full
-       size), so the still constellation is volumetric rather than flat. */
-    .eco-orbiter { animation: none !important; }
+       dimmed, desaturated, blurred, shrunk and behind the core, near-half
+       ones front and full size), so the still constellation is volumetric
+       rather than flat. Both animations are switched off, and both base
+       rules read the same --d, so the static pose and the animated pose
+       are the same preset by construction. */
+    .eco-orbiter, .eco-orbiter .eco-orb-av { animation: none !important; }
     .eco-card.eco-pulse { animation: none; }
   }
 
@@ -2347,7 +2400,14 @@
         var list = flagged.filter(function(x){ return x.ring === ring; });
         var dur = ring === 1 ? 26 : 42;
         list.forEach(function(x, i){
-          var frac = list.length ? i / list.length : 0;
+          // ring2 starts half a gap round, so the two rings interleave instead
+          // of lining their orbiters up on the same spokes. It offsets the
+          // static angle and the delay together (both come off frac), so the
+          // interleave holds in the animated pose and in the still one.
+          var frac = list.length ? (i + (ring === 2 ? 0.5 : 0)) / list.length : 0;
+          // --od is the one delay both animations on this orbiter read (the
+          // position/opacity/blur one on the anchor and the scale one on its
+          // avatar), so they cannot be given different phases.
           // static depth for the reduced-motion pose, derived from the SAME
           // rounded angle that --a uses so the still frame is self-consistent:
           // --d is 1 at the top of the path (far) and 0 at the bottom (near),
@@ -2355,7 +2415,7 @@
           var ang = Math.round(frac * 360);
           var depth = (1 + Math.cos(ang * Math.PI / 180)) / 2;
           html += '<a class="eco-orbiter ring' + ring + '" href="' + escA(x.acc.url) + '" data-uid="' + x.acc.uid + '" data-ring="' + ring + '"' +
-            ' style="animation-delay:' + (-frac * dur).toFixed(2) + 's;--a:' + ang + 'deg;--d:' + depth.toFixed(3) + ';--dz:' + (depth > 0.5 ? 1 : 3) + '" aria-label="@' + esc(x.acc.handle) + '">' +
+            ' style="--od:' + (-frac * dur).toFixed(2) + 's;--a:' + ang + 'deg;--d:' + depth.toFixed(3) + ';--dz:' + (depth > 0.5 ? 1 : 3) + '" aria-label="@' + esc(x.acc.handle) + '">' +
             '<span class="eco-orb-av"><span class="eco-av-mono">' + esc(initials(x.acc.handle)) + '</span><img class="eco-av-img" src="' + escA(avatarCandidatesFor(x.acc)[0]) + '" data-try="0" alt="" loading="lazy" decoding="async" width="38" height="38"></span>' +
             '<span class="eco-orb-tip">@' + esc(x.acc.handle) + '</span></a>';
         });
