@@ -1936,9 +1936,32 @@
         ? c.accounts.map(function(a){ var o = {}; for (var k in a) o[k] = a[k]; return o; })
         : c.handles.map(function(h){ return { handle: h }; });
       // the published data file (data/ecosystem.json) overrides the in-code
-      // accounts once adopted; category meta stays code-owned either way
+      // accounts once adopted; category meta stays code-owned either way.
+      //
+      // The ORBIT CURATION is code-owned too, and is re-applied here by handle
+      // over whatever the published file supplies. It has to be: the publish
+      // payload carries only name/handle/url/description/avatar (accountsById()
+      // builds it that way, and /api/publish's validateEco rejects any other
+      // field and requires every value to be a string, so a boolean orbit and a
+      // numeric orbitRing cannot survive a round trip). Without this, adopting
+      // a published file replaced every account object with a flagless copy,
+      // buildOrbits() found nothing flagged, and BOTH constellations silently
+      // collapsed to the no-entries header fallback. That is what happened in
+      // e2c9349. Matching is on the bare lowercased handle so an @ prefix or a
+      // case change in the directory cannot drop a flag.
       if (PUBLISHED && Array.isArray(PUBLISHED[c.id])) {
-        accounts = PUBLISHED[c.id].map(function(a){ var o = {}; for (var k in a) o[k] = a[k]; return o; });
+        var curatedRing = {};
+        if (Array.isArray(c.accounts)) {
+          c.accounts.forEach(function(a){
+            if (a.orbit) curatedRing[String(a.handle || '').replace(/^@/, '').toLowerCase()] = a.orbitRing === 1 ? 1 : 2;
+          });
+        }
+        accounts = PUBLISHED[c.id].map(function(a){
+          var o = {}; for (var k in a) o[k] = a[k];
+          var ring = curatedRing[String(o.handle || '').replace(/^@/, '').toLowerCase()];
+          if (ring) { o.orbit = true; o.orbitRing = ring; }
+          return o;
+        });
       }
       return {
         id: c.id, group: c.group || 'projects', label: c.label, monogram: c.monogram,
