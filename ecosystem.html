@@ -619,6 +619,37 @@
       background: color-mix(in srgb, var(--accent) 2.5%, #0B0D13);
     }
   }
+
+  /* Submission CTA: a quieter second beat under the closing panel, not a
+     second section. It carries no surface, no border and no divider of its
+     own, so the single hairline before the footer stays the footer's own
+     border-top; the two blocks read as one closing area because the gap
+     (36px) is far tighter than the 88px that opens the closing section.
+     Type steps down one tier from the panel's h2 (clamp 28/48) to the
+     site's next heading size (clamp 26/38, the .scale-title tier), and the
+     sub-line sits in the standard muted body tier, so the hierarchy is
+     carried by scale rather than by another panel.
+     The button reuses the page's existing secondary CTA tier verbatim
+     (.eco-cta.eco-cta--muted.chip-glass, same scale as the hero pair):
+     neutral border, near-nothing rest glow, fill and glow stepping up on
+     hover, so FOLLOW HERE above it stays the dominant action. No
+     --chip-accent-rgb is set, so the shared recipe falls back to the page
+     accent, exactly as the hero CTAs do. The block sits OUTSIDE
+     .cta-block.ecg-glass: the recipe forbids glass inside glass. */
+  .eco-submit { text-align: center; margin: 36px auto 0; max-width: 620px; }
+  .eco-submit h2 {
+    font-family: var(--display); font-weight: 700;
+    font-size: clamp(26px, 3vw, 38px); line-height: 1.15;
+    letter-spacing: -0.01em; margin: 0 0 12px;
+  }
+  .eco-submit p { font-size: 16px; line-height: 1.7; color: rgba(245,242,236,0.62); margin: 0 0 26px; }
+  .eco-submit .eco-cta { justify-content: center; }
+  @media (max-width: 700px) {
+    .eco-submit { margin-top: 30px; padding: 0 24px; }
+    /* the hero stacks its CTA column left-aligned; a single centered button
+       here keeps the block's own axis */
+    .eco-submit .eco-cta { display: inline-flex; }
+  }
 </style>
 <script src="js/admin-gate.js"></script>
 </head>
@@ -726,6 +757,13 @@
     <div class="cta-buttons">
       <a class="btn-primary" href="https://x.com/StarkWareLtd/lists" target="_blank" rel="noopener">Follow here</a>
     </div>
+  </div>
+
+  <!-- submission CTA: same closing area, subordinate treatment -->
+  <div class="eco-submit">
+    <h2 id="building-on-starknet-and-missing-from">Building on Starknet and missing from this page?</h2>
+    <p>Send a DM on X and the account gets added.</p>
+    <a class="eco-cta eco-cta--muted chip-glass" href="https://x.com/Lyskey" target="_blank" rel="noopener">DM on X <i aria-hidden="true">&rarr;</i></a>
   </div>
 </section>
 
