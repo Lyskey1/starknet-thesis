@@ -189,16 +189,16 @@
     .pv-cta i { transition: none; }
   }
 
-  /* CLAIM BAND: twin of .eco-marquee / .dg-marquee. Seamless -50% loop
-     over a duplicated set, edge fade masks, hover pause, IO gated, same
-     70s duration as the other bands. The items are plain labels, never
+  /* CLAIM BAND: twin of .eco-marquee / .dg-marquee. Seamless loop over
+     repeated sets (three here, see the markup for why), edge fade masks,
+     hover pause, IO gated, same 70s duration as the other bands. The items are plain labels, never
      links: they are claims, not navigation.
      Two deliberate divergences from the sibling bands, both because
      these items carry CONTENT the page does not repeat elsewhere (the
      ecosystem band repeats project names from the sections below it, so
      it is decorative and fully aria-hidden):
-     1) only the DUPLICATE set is aria-hidden, so the claims are read
-        once by a screen reader instead of twice or not at all;
+     1) only the DUPLICATE sets are aria-hidden, so the claims are read
+        once by a screen reader instead of three times or not at all;
      2) below 981px the band stays, as static wrapped rows, where the
         sibling bands hide entirely. */
   /* 10px of band padding, not the sibling bands' 19px: their items are
@@ -215,7 +215,7 @@
   .pv-mq-set span { font-family: var(--mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; white-space: nowrap;
     border: 1px solid var(--em-line); color: var(--em); padding: 9px 16px; border-radius: 99px; display: inline-flex; }
   .pv-marquee.run .pv-mq-track { animation: pvmq 70s linear infinite; }
-  @keyframes pvmq { to { transform: translateX(-50%); } }
+  @keyframes pvmq { to { transform: translateX(-33.3333%); } }
   .pv-marquee:hover .pv-mq-track { animation-play-state: paused; }
   @media (prefers-reduced-motion: reduce) {
     .pv-mq-track { animation: none !important; flex-wrap: wrap; width: auto; gap: 12px 0; }
@@ -1276,11 +1276,18 @@
 
 <!-- claim band: the hero's four static chips expanded to the full claim
      set, on the sibling pages' marquee mechanics. The first set is the
-     readable one; the second is a duplicate purely so the -50% loop is
-     seamless, so it is aria-hidden. Labels only, never links. -->
+     readable one; the two after it are duplicates that exist purely so the
+     loop is gapless, so both are aria-hidden. Labels only, never links.
+     THREE sets, not the sibling bands' two: at 12 items one set measures
+     2508px, which covers 1440 and 1920 but falls 52px short of 2560 and
+     932px short of 3440, so a two-set track would show bare band at the
+     loop point on an ultrawide display. With three sets the track carries
+     2 x 2508 = 5016px behind the leading edge, and the keyframe steps by
+     one third (one set) instead of one half. -->
 <div class="pv-marquee" id="pvMarquee"><div class="pv-mq-track">
-  <div class="pv-mq-set"><span class="chip-glass">ZK-STARK</span><span class="chip-glass">PROTOCOL-LEVEL PRIVACY</span><span class="chip-glass">PRIVACY FOR EVERY ASSET</span><span class="chip-glass">ONE POOL, ONE CLICK</span><span class="chip-glass">CHEAPEST WITH REAL DEFI ACCESS</span><span class="chip-glass">DEEP DEFI INTEGRATION</span><span class="chip-glass">WALLET-NATIVE</span><span class="chip-glass">FLAT FEE ~$0.12</span><span class="chip-glass">SHIELDED IN SECONDS</span><span class="chip-glass">ANSWERABLE TO THE LAW</span><span class="chip-glass">NOTHING TO BACK UP</span><span class="chip-glass">AUDITED AND FORMALLY VERIFIED</span><span class="chip-glass">OPEN SOURCE, APACHE 2.0</span><span class="chip-glass">STRK20S</span></div>
-  <div class="pv-mq-set" data-dup aria-hidden="true"><span class="chip-glass">ZK-STARK</span><span class="chip-glass">PROTOCOL-LEVEL PRIVACY</span><span class="chip-glass">PRIVACY FOR EVERY ASSET</span><span class="chip-glass">ONE POOL, ONE CLICK</span><span class="chip-glass">CHEAPEST WITH REAL DEFI ACCESS</span><span class="chip-glass">DEEP DEFI INTEGRATION</span><span class="chip-glass">WALLET-NATIVE</span><span class="chip-glass">FLAT FEE ~$0.12</span><span class="chip-glass">SHIELDED IN SECONDS</span><span class="chip-glass">ANSWERABLE TO THE LAW</span><span class="chip-glass">NOTHING TO BACK UP</span><span class="chip-glass">AUDITED AND FORMALLY VERIFIED</span><span class="chip-glass">OPEN SOURCE, APACHE 2.0</span><span class="chip-glass">STRK20S</span></div>
+  <div class="pv-mq-set"><span class="chip-glass">ZK-STARK</span><span class="chip-glass">PROTOCOL-LEVEL PRIVACY</span><span class="chip-glass">PRIVACY FOR EVERY ASSET</span><span class="chip-glass">LOWEST PRIVACY FEES IN DEFI</span><span class="chip-glass">DEEP DEFI INTEGRATION</span><span class="chip-glass">WALLET-NATIVE</span><span class="chip-glass">ONE POOL FOR ALL ASSETS</span><span class="chip-glass">FLAT FEE ~$0.12</span><span class="chip-glass">SHIELDED IN SECONDS</span><span class="chip-glass">AUDITED AND FORMALLY VERIFIED</span><span class="chip-glass">OPEN SOURCE, APACHE 2.0</span><span class="chip-glass">STRK20S</span></div>
+  <div class="pv-mq-set" data-dup aria-hidden="true"><span class="chip-glass">ZK-STARK</span><span class="chip-glass">PROTOCOL-LEVEL PRIVACY</span><span class="chip-glass">PRIVACY FOR EVERY ASSET</span><span class="chip-glass">LOWEST PRIVACY FEES IN DEFI</span><span class="chip-glass">DEEP DEFI INTEGRATION</span><span class="chip-glass">WALLET-NATIVE</span><span class="chip-glass">ONE POOL FOR ALL ASSETS</span><span class="chip-glass">FLAT FEE ~$0.12</span><span class="chip-glass">SHIELDED IN SECONDS</span><span class="chip-glass">AUDITED AND FORMALLY VERIFIED</span><span class="chip-glass">OPEN SOURCE, APACHE 2.0</span><span class="chip-glass">STRK20S</span></div>
+  <div class="pv-mq-set" data-dup aria-hidden="true"><span class="chip-glass">ZK-STARK</span><span class="chip-glass">PROTOCOL-LEVEL PRIVACY</span><span class="chip-glass">PRIVACY FOR EVERY ASSET</span><span class="chip-glass">LOWEST PRIVACY FEES IN DEFI</span><span class="chip-glass">DEEP DEFI INTEGRATION</span><span class="chip-glass">WALLET-NATIVE</span><span class="chip-glass">ONE POOL FOR ALL ASSETS</span><span class="chip-glass">FLAT FEE ~$0.12</span><span class="chip-glass">SHIELDED IN SECONDS</span><span class="chip-glass">AUDITED AND FORMALLY VERIFIED</span><span class="chip-glass">OPEN SOURCE, APACHE 2.0</span><span class="chip-glass">STRK20S</span></div>
 </div></div>
 
 <!-- ================= SECTION 01 ================= -->
