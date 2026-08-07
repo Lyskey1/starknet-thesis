@@ -98,7 +98,14 @@
      children of .hero and sit OUTSIDE .pv-hero-inner, so left-aligning
      the copy moves the copy only: no shader parameter, no height rule
      and no falloff layer changed here. */
-  .hero { min-height: auto; display: block; overflow: visible; padding: 150px 0 120px; max-width: none; margin: 0 auto; text-align: left; position: relative; }
+  /* HEIGHT BUDGET, shared with the ecosystem hero: min-height
+     calc(100vh - 72px) with the content centred inside it, so the band
+     below lands at the same place in the first viewport on both pages.
+     The bottom padding is 76px rather than the sibling heroes' 120px:
+     this hero carries a fourth tier (the mono bracket setup line) and a
+     three-line lede, so it needs that back to keep the band above the
+     fold at 1280x800. */
+  .hero { min-height: calc(100vh - 72px); display: flex; flex-direction: column; justify-content: center; align-items: stretch; overflow: visible; padding: 150px 0 76px; max-width: none; margin: 0 auto; text-align: left; position: relative; }
   .pv-hero-inner { width: 100%; max-width: 1160px; margin: 0 auto; padding: 0 32px; position: relative; z-index: 1; }
   /* the CSS glow only paints when WebGL2 is missing (.hero-curtain-on
      hides it); left-anchored now so the fallback lights the copy rather
@@ -118,8 +125,19 @@
   .sw2 { --t: 1.2s; } .sw3 { --t: 1.5s; }
   @keyframes bkin { to { opacity: 1; transform: translateX(0); } }
   @keyframes seal { to { filter: blur(1.8px); opacity: .6; } }
-  .hero-mid { display: block; color: rgba(245,242,236,.78); }
-  .hero .turn { display: block; margin-top: .3em; font-size: clamp(44px,6.6vw,86px); line-height: 1.0; letter-spacing: -.01em; color: var(--em); opacity: 0; transform: translateY(10px); animation: turnin .6s ease 2s forwards; }
+  /* PREMISE: one decisive step down from the payoff, about 45% of it at
+     every width (34px against 76px at 1440, 30.7 against 69.1 at 1280),
+     which also sets it on ONE line instead of two. It was previously
+     rendering at the .hero-title size, close enough to the payoff to
+     flatten the three-tier hierarchy and cost a whole line of height.
+     Tone unchanged. */
+  .hero-mid { display: block; color: rgba(245,242,236,.78); font-size: clamp(20px, 2.4vw, 34px); line-height: 1.16; }
+  /* PAYOFF: the site display spec, identical to the ecosystem hero's h1
+     (css/styles.css .hero-title: clamp(34px, 5.4vw, 76px), weight 800,
+     line-height .98, letter-spacing -.01em). The two heroes share one
+     display scale; this page's .hero-title override only governs the
+     premise tier above. */
+  .hero .turn { display: block; margin-top: .3em; font-size: clamp(34px, 5.4vw, 76px); line-height: .98; letter-spacing: -.01em; color: var(--em); opacity: 0; transform: translateY(10px); animation: turnin .6s ease 2s forwards; }
   @keyframes turnin { to { opacity: 1; transform: none; } }
   @media (prefers-reduced-motion: reduce) {
     .shield-wrap .bk { animation: none; opacity: 1; transform: none; }
@@ -183,7 +201,13 @@
         once by a screen reader instead of twice or not at all;
      2) below 981px the band stays, as static wrapped rows, where the
         sibling bands hide entirely. */
-  .pv-marquee { border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); overflow: hidden; padding: 19px 0;
+  /* 10px of band padding, not the sibling bands' 19px: their items are
+     bare text, these are chips that carry 9px of their own padding plus a
+     border, so the band is 41px of content against their 21px. Matching
+     their padding would put the band 20px taller and push its lower edge
+     past the fold at 1440x900, with the hero already at exactly the
+     ecosystem height. */
+  .pv-marquee { border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); overflow: hidden; padding: 10px 0;
     -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
             mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent); }
   .pv-mq-track { display: flex; width: max-content; }
