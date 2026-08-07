@@ -266,7 +266,6 @@
      the page accent only, no new colors. */
   .eco-orbit-core { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 88px; height: 88px; border-radius: 50%; border: 1px solid rgba(var(--eco-accent-rgb), .55); background: radial-gradient(circle at 50% 38%, #16110F, #0A0A0B); display: flex; align-items: center; justify-content: center; z-index: 2; box-shadow: 0 0 24px rgba(var(--eco-accent-rgb), .25), 0 0 80px rgba(var(--eco-accent-rgb), .12), 0 16px 34px -10px rgba(0,0,0,.8), 0 12px 30px -8px rgba(var(--eco-accent-rgb), .18); }
   .eco-orbit-core img { width: 44px; height: 44px; display: block; }
-  .eco-core-glyph { font-family: var(--mono); font-size: 30px; color: var(--eco-accent); }
   /* orbiters: animated transform spins the position, the trailing
      counter-rotate keeps the avatar and tooltip upright; the base rule
      below is what reduced motion (animation: none) falls back to, giving
@@ -2390,9 +2389,9 @@
       var duo = holder.closest('.eco-group-duo');
       if (!flagged.length){ holder.innerHTML = ''; if (duo) duo.classList.remove('has-orbit'); return; }
       if (duo) duo.classList.add('has-orbit');
-      var core = g.id === 'projects'
-        ? '<img src="assets/img/stark-logo.png" alt="" width="44" height="44">'
-        : '<span class="eco-core-glyph">@</span>';
+      // both constellations carry the same Starknet mark. The core div is
+      // aria-hidden, so the image stays decorative with an empty alt.
+      var core = '<img src="assets/img/stark-logo.png" alt="" width="44" height="44">';
       var html = '<div class="eco-orbit-stage" aria-label="' + esc(g.label) + ' constellation">' +
         '<i class="eco-orbit-path p1"></i><i class="eco-orbit-path p2"></i>' +
         '<div class="eco-orbit-core" aria-hidden="true">' + core + '</div>';
