@@ -247,6 +247,39 @@
         bottom (well below the chip bloom's .30), so the dark under the
         hero carries a trace of the light dying out before section 01's
         own corner glow takes over. */
+  /* HERO SCENE: hex field, scoped window.
+     Sits at the same z-index as the other backdrop layers and paints in
+     tree order between the curtain and the scrim, so the curtain reads
+     through it from below and the scrim takes it into the page from above.
+     No filter, no blur, no gradient: it is two <use> references to one
+     text group, which is why it costs nothing per frame.
+     Colors come from --accent-rgb, never a literal. */
+  /* Type and fill live on the SVG ROOT, not on a `.pv-hex text` rule.
+     The field is drawn through <use>, and document selectors do not match
+     inside a use shadow tree: an instance only INHERITS. A rule on the
+     original in <defs> therefore styles an element that is never painted,
+     while the instances inherit fill from the <use>, which defaults to
+     black. That is what rendered the field as dark grey text. Every
+     property here is inherited, so it reaches both copies. */
+  .pv-hex { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; overflow: hidden;
+    font-family: var(--mono); font-size: 13px; letter-spacing: .18em; white-space: pre;
+    fill: rgb(var(--accent-rgb));
+    -webkit-user-select: none; user-select: none; }
+  /* the two readabilities of the same glyphs */
+  .pv-hex-noise { opacity: .10; }
+  /* the scrim paints OVER this layer and is 11 to 60 percent opaque across
+     the window band, so the disclosure carries a little more than the .65
+     starting point to read at every row */
+  .pv-hex-read  { opacity: .72; }
+  .pv-hex-frame { fill: none; stroke: rgba(var(--accent-rgb), .34); stroke-width: 1; }
+  .pv-hex-tick path { fill: none; stroke: rgba(var(--accent-rgb), .62); stroke-width: 1.5; }
+  .pv-hex-label { font-size: 10px; letter-spacing: .22em; fill: rgba(var(--accent-rgb), .5); }
+  @media (max-width: 980px) {
+    /* stacked content owns the width here: the field drops to its first six
+       rows and the window goes entirely, so nothing sits beside the copy */
+    .pv-hex-lower, .pv-hex-win { display: none; }
+    .pv-hex { font-size: 11px; }
+  }
   .pv-hero-fade { position: absolute; left: 0; right: 0; bottom: 0; height: 52%; z-index: -1; pointer-events: none;
     background: linear-gradient(180deg, transparent, var(--black)); }
   .hero .hero-bloom { overflow: visible; }
@@ -1253,6 +1286,47 @@
 <!-- ================= HERO ================= -->
 <div class="hero">
   <div class="hero-curtain" aria-hidden="true"></div>
+  <!-- HERO SCENE: a hex field with one scoped window. The field is defined
+       ONCE and drawn twice by reference: the base <use> is the noise, the
+       second <use> is the SAME glyphs at readable opacity, clipped to the
+       window. One dataset, two readabilities, which is the whole idea.
+       Placed between the curtain and the scrim by design: the curtain paints
+       under it so its glow still reads through, and the scrim paints over it
+       so the hex dies into the page on the falloff the curtain already uses,
+       with no new seam at the divider.
+       Decorative: aria-hidden, pointer-events none, glyphs not selectable.
+       The values are generated noise. No address, balance or anything
+       resembling user data, and no contiguous run of letters in the field
+       spells a word (digits and spaces break every run). -->
+  <svg class="pv-hex" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+    <defs>
+      <g id="pvHexField">
+      <text class="pv-hex-row" x="-40" y="96">a5a2 cbf9 8b33 53c1 cc04 473b f800 7492 6bf0 75fa 0f37 c345 a805 8ff2 d856 988b dbe1 a9e5 aa3c 0902 1b65 fb60 9d78 4e79 8d2e bd32 e6da 9f7f 6bcc 05fc ade0 00e3 fa0e 2b5b</text>
+      <text class="pv-hex-row" x="-40" y="154">397a eb44 4193 442e a136 5552 981a 99e5 2cb3 86ca 1552 307f e2c1 a54d f0e9 606a 281e e889 6f8f 5066 1639 874c 8ae4 2831 d3f2 9917 a7a5 1e8c 96f7 65c8 ed92 49f3 96e8 11ee</text>
+      <text class="pv-hex-row" x="-40" y="212">6549 f138 fa83 d549 737b 5b08 e977 e876 20d6 9012 aa73 5146 c308 d606 6417 7646 62d1 5493 4e21 6f47 45d0 4268 7f41 53e7 92c4 c633 3e35 79d5 805c 17b3 a29c 07b0 4727 6c88</text>
+      <text class="pv-hex-row" x="-40" y="270">f216 1557 0ef3 dc51 6561 fa59 fb80 214d cc65 356e 0bea 4f57 b33b 144a 17f7 1541 f679 aff4 1bd5 ccdd 3c0b 3c20 759a 3b18 d23d 93aa 6d68 9bc8 d93b 76f0 b8c1 03ac 47b2 0dd2</text>
+      <text class="pv-hex-row" x="-40" y="328">9f83 ba63 6462 6dfe 484d e6cc 67ea dff4 eabf af57 76f9 8982 ab97 4ce1 c84e 9369 c484 e40b 8588 4245 7b36 bd82 e356 cfc8 d66b eff7 0a86 30af 1ea2 a128 30a8 dc89 79db 39b4</text>
+      <text class="pv-hex-row" x="-40" y="386">8d7b db26 1d74 af4a 479e 5225 235d 4aa9 86d0 9a45 e114 3171 80c0 ca34 8d68 ab6f 8d2c 1791 1009 de24 93a5 aa1c ff95 d26d faf8 a884 23cb fddb d8b5 6b68 f14b 582c 64bb f786</text>
+      <text class="pv-hex-row pv-hex-lower" x="-40" y="444">92d3 280f d789 959d 2b12 9423 45ee 6a3e d5c8 e537 0778 af26 e573 20eb 3408 8b14 74f3 adfc f22b 23a8 b7f5 83fb 8891 d081 e70b f9a5 2e09 987d 39f1 25cb eb22 c22c c568 5feb</text>
+      <text class="pv-hex-row pv-hex-lower" x="-40" y="502">059b 763d c31e 9dd4 b313 e96e 78a3 3825 2d58 345f fcc5 55ad 8a0a bdce 7723 2cfb 00d8 6c5b 3e8d d4bf d661 a6c5 6981 a3b6 2484 84ba 2fdf b191 10c0 4cea a835 250e f2d4 0603</text>
+      <text class="pv-hex-row pv-hex-lower" x="-40" y="560">2932 46bc e18e 17b5 3a59 026f 78af b23e 3997 9f44 8f9f 398b 5a22 ddbd 5335 644c e3ba d379 2c2f 8b2f 0cfe d926 202d b5e3 ec9e 0595 76de 3928 ba48 9f54 55f0 2e9c adca bd21</text>
+      <text class="pv-hex-row pv-hex-lower" x="-40" y="618">e433 bbfe fba5 87bc 7b36 27de cca7 53a4 00a7 aa0a 368f 49c8 fa46 4932 a2dc 7fa7 50c1 5c04 156e 3c00 6ac8 0a2f c7c2 9891 5e09 7a42 fec8 eafa 4325 d32d b300 38fb 70e8 6c5e</text>
+      <text class="pv-hex-row pv-hex-lower" x="-40" y="676">5b28 ca21 1de4 4cb5 fdfe c64c 40e6 b9c0 d213 63fa 408d dc5e 0f35 d90c 448a eb0f dcf4 4f00 6399 0d81 502d ebc4 e55c 6994 d160 d4c8 e080 46d5 786d 62eb bbc5 cbf6 7ad1 accc</text>
+      <text class="pv-hex-row pv-hex-lower" x="-40" y="734">6ed9 2fb3 ee7d e80a 2e5c 88bd 1ddf 3d64 440c 1fa2 2cb6 e398 d689 1a32 43c1 0147 0c92 a02b a8cf dc2e 2bd5 081c 744f 8edd 4c02 58c5 ec00 4c13 95d8 d9c4 38c2 4d9f 6ee5 a1e8</text>
+      </g>
+      <clipPath id="pvHexWin"><rect x="902" y="480" width="470" height="210" rx="3"/></clipPath>
+    </defs>
+    <use href="#pvHexField" class="pv-hex-noise"/>
+    <g class="pv-hex-win">
+      <use href="#pvHexField" class="pv-hex-read" clip-path="url(#pvHexWin)"/>
+      <rect class="pv-hex-frame" x="902" y="480" width="470" height="210" rx="3"/>
+      <g class="pv-hex-tick">
+        <path d="M902 494 V480 H916"/><path d="M1358 480 H1372 V494"/>
+        <path d="M1372 676 V690 H1358"/><path d="M916 690 H902 V676"/>
+      </g>
+      <text class="pv-hex-label" x="902" y="468">SCOPED DISCLOSURE</text>
+    </g>
+  </svg>
   <div class="pv-hero-fade" aria-hidden="true"></div>
   <div class="hero-bloom" aria-hidden="true">
     <i style="left:12%;bottom:-20%;width:44%;height:50%;opacity:.10"></i>
