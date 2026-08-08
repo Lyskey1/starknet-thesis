@@ -78,7 +78,7 @@
   .hero {
     min-height: calc(100vh - 72px); display: flex; flex-direction: column; justify-content: center;
     align-items: stretch; overflow: visible;
-    padding: 150px 0 56px; max-width: none; margin: 0 auto; text-align: left; position: relative;
+    padding: 112px 0 26px; max-width: none; margin: 0 auto; text-align: left; position: relative;
   }
   .qh-inner { width: 100%; max-width: 1160px; margin: 0 auto; padding: 0 32px; position: relative; z-index: 1; }
   .hero::before {
@@ -97,7 +97,7 @@
      --accent-rgb fallback. The two shadow stacks are copies of the locked
      recipe: keep in sync. Anchors only, so the site's smooth scroll carries
      them. */
-  .qh-ctas { display: flex; gap: 18px; margin-top: 42px; flex-wrap: wrap; position: relative; }
+  .qh-ctas { display: flex; gap: 18px; margin-top: 24px; flex-wrap: wrap; position: relative; }
   .qh-cta { font-family: var(--mono); font-size: 13px; letter-spacing: .14em; text-transform: uppercase; text-decoration: none; color: var(--white); padding: 12px 22px; border-radius: 99px; border: 1px solid rgba(var(--accent-rgb), .55); display: inline-flex; align-items: center; gap: 10px; }
   .qh-cta.chip-glass { transition: background var(--hover-dur) var(--hover-ease), box-shadow var(--hover-dur) var(--hover-ease), border-color var(--hover-dur); }
   .qh-cta i { font-style: normal; transition: transform var(--hover-dur) var(--hover-ease); }
@@ -140,8 +140,12 @@
      mono label and one row. Numbers sit at large-stat scale (34px against
      the display's 76px) so the hierarchy holds, and only the seconds digit
      carries the accent. */
-  .qh-cd { border-top: 1px solid var(--border); margin-top: 14px; padding-top: 15px; max-width: 620px; }
+  .qh-cd { border-top: 1px solid var(--border); margin-top: 10px; padding-top: 13px; max-width: 620px; }
   .qh-cd-label { font-family: var(--mono); font-size: 10.5px; letter-spacing: .18em; text-transform: uppercase; color: rgba(245,242,236,.5); margin-bottom: 10px; }
+  /* the year is written by the timer from its own target constant, so the two
+     can never disagree; it is empty in the markup on purpose */
+  .qh-cd-yr { font-weight: 400; color: var(--stark-purple); }
+  .qh-cd-label .qh-cd-sep { color: rgba(245,242,236,.25); margin: 0 3px; }
   .qh-cd-row { display: flex; align-items: baseline; gap: 13px; flex-wrap: wrap; }
   .qh-cd-g { display: inline-flex; align-items: baseline; gap: 7px; }
   .qh-cd-n { font-family: var(--display); font-weight: 800; font-size: 34px; line-height: 1; letter-spacing: -.01em; color: var(--white); font-variant-numeric: tabular-nums; }
@@ -152,10 +156,10 @@
     /* the budget is tightest here: the display wraps to three lines and the
        viewport is usually shorter, so all three levers are applied at once.
        The display and the lede are untouched. */
-    .qh-cd-n { font-size: 24px; }
-    .qh-cd { margin-top: 8px; padding-top: 10px; }
-    .qh-cd-label { margin-bottom: 8px; }
-    .hero { padding-bottom: 20px; }
+    .qh-cd-n { font-size: 22px; }
+    .qh-cd { margin-top: 6px; padding-top: 8px; }
+    .qh-cd-label { margin-bottom: 7px; }
+    .hero { padding-bottom: 14px; }
   }
   @media (max-width: 700px) {
     /* two rows of two: at this width four groups plus separators cannot sit
@@ -483,7 +487,7 @@
          untouched; the progress track went with the card and the JS already
          guarded those two nodes. -->
     <div class="qh-cd" id="the-industrys-converging-deadline">
-      <div class="qh-cd-label">The industry's converging deadline</div>
+      <div class="qh-cd-label">The industry's converging deadline <span class="qh-cd-sep" aria-hidden="true">/</span> <b class="qh-cd-yr" id="cd-year"></b></div>
       <div class="qh-cd-row">
         <span class="qh-cd-g"><b class="qh-cd-n" id="cd-days">876</b><i>Days</i></span>
         <span class="qh-cd-s" aria-hidden="true">/</span>
@@ -1341,6 +1345,10 @@ body.page-quantum{overflow-x:clip;}
     var pct = Math.max(0, Math.min(100, (now - start) / (target - start) * 100));
     var fill = document.getElementById('cd-fill'); if (fill) fill.style.width = pct + '%';
     var mark = document.getElementById('cd-mark'); if (mark) mark.style.left = pct + '%';
+    // the label's year comes from the same target constant as the digits, so
+    // the two can never drift apart
+    var yr = document.getElementById('cd-year');
+    if (yr && !yr.textContent) yr.textContent = new Date(target).getUTCFullYear();
   }
   // The interval used to run forever, including for readers who could not
   // see the panel and in hidden tabs. Same discipline as the hero field and
