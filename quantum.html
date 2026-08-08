@@ -30,6 +30,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Expanded:wght@500;600;700;800;900&family=IBM+Plex+Mono:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/dist/tabler-icons.min.css">
 <link rel="stylesheet" href="css/styles.css?v=20260802b">
+<link rel="stylesheet" href="css/glass-chips.css">
 <style>
   /* Sub-380px nav fit: at 320px the nav row (205px logo + 44px search
      + 44px burger + two 24px gaps + 32px padding = 373px) leaves the
@@ -141,6 +142,37 @@
     /* the stacked layout has no free right column and the countdown card
        owns the width, so the drawing goes rather than crowd it */
     .qh-scene { display: none; }
+  }
+  .qh-cd-wrap { max-width: 1160px; margin: 0 auto; padding: 0 32px; }
+  /* DEADLINE BAND: twin of .eco-marquee / .dg-marquee / .pv-marquee. Three
+     repeated sets rather than two, for the same reason privacy needs three:
+     one set is narrower than an ultrawide viewport, so a two-set track would
+     show bare band at the loop point. The keyframe steps one third. */
+  .qh-marquee { border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); overflow: hidden; padding: 10px 0;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+            mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent); }
+  .qh-mq-track { display: flex; width: max-content; }
+  .qh-mq-set { display: flex; gap: 14px; padding-right: 14px; }
+  .qh-mq-set span { font-family: var(--mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; white-space: nowrap;
+    border: 1px solid rgba(var(--accent-rgb), .35); color: var(--stark-purple); padding: 9px 16px; border-radius: 99px; display: inline-flex; }
+  .qh-marquee.run .qh-mq-track { animation: qhmq 70s linear infinite; }
+  @keyframes qhmq { to { transform: translateX(-33.3333%); } }
+  .qh-marquee:hover .qh-mq-track { animation-play-state: paused; }
+  .qh-mq-set .chip-glass, .qh-cta.chip-glass { transition: background var(--hover-dur) var(--hover-ease), box-shadow var(--hover-dur) var(--hover-ease); }
+  @media (prefers-reduced-motion: reduce) {
+    .qh-mq-track { animation: none !important; flex-wrap: wrap; width: auto; gap: 12px 0; }
+    .qh-mq-set[data-dup] { display: none; }
+    .qh-mq-set { flex-wrap: wrap; gap: 12px; padding-right: 0; }
+    .qh-marquee { -webkit-mask-image: none; mask-image: none; }
+    .qh-mq-set .chip-glass { transition: none; }
+  }
+  @media (max-width: 980px) {
+    /* static wrapped rows, not hidden: these are the page's own claims */
+    .qh-mq-track { animation: none !important; flex-wrap: wrap; width: auto; }
+    .qh-mq-set[data-dup] { display: none; }
+    .qh-mq-set { flex-wrap: wrap; gap: 10px; padding: 0 24px; }
+    .qh-marquee { -webkit-mask-image: none; mask-image: none; padding: 16px 0; }
+    .qh-cd-wrap { padding: 0 24px; }
   }
   .qh-chandelier { --qh: rgb(var(--accent-rgb)); }
   .qh-plates ellipse { fill: none; stroke: var(--qh); stroke-width: 1; opacity: .60; }
@@ -432,7 +464,28 @@
     <a class="qh-cta qh-cta--muted chip-glass" href="#starknet-will-be-ready-before-q">How Starknet is ready <i aria-hidden="true">&rarr;</i></a>
   </div>
 
-  <!-- COUNTDOWN -->
+  </div>
+</div>
+
+
+
+<!-- deadline band: every item restates a claim already made and sourced in
+     the body below. Mechanics are the twin of the ecosystem, digest and
+     privacy bands: seamless loop over repeated sets, edge fade masks, hover
+     pause, IO gated, same 70s duration. The first set is the readable one;
+     the copies exist only so the loop is gapless and are aria-hidden. The
+     single Starknet item is scoped to the proving system, never to the
+     chain: account signature schemes still require their own PQC migration,
+     so an unscoped claim here would be indefensible. -->
+<div class="qh-marquee" id="qhMarquee"><div class="qh-mq-track">
+  <div class="qh-mq-set"><span class="chip-glass">CONVERGING DEADLINE: 2029</span><span class="chip-glass">MICROSOFT: 2033 TO 2029</span><span class="chip-glass">GOOGLE MIGRATES BY 2029</span><span class="chip-glass">IBM: FAULT-TOLERANT BY 2029</span><span class="chip-glass">IBM COMMITS $10B+</span><span class="chip-glass">TWO QUANTUM EXECUTIVE ORDERS</span><span class="chip-glass">GOVERNMENT-WIDE PQC MIGRATION</span><span class="chip-glass">US TAKES EQUITY, $2B</span><span class="chip-glass">UK PROQURE, GBP 2B</span><span class="chip-glass">FRANCE, EUR 1B</span><span class="chip-glass">IONQ BUYS SKYWATER, $1.8B</span><span class="chip-glass">ECDLP-256: UNDER 500,000 QUBITS</span><span class="chip-glass">PROVING SYSTEM: TARGET ~2027</span></div>
+  <div class="qh-mq-set" data-dup aria-hidden="true"><span class="chip-glass">CONVERGING DEADLINE: 2029</span><span class="chip-glass">MICROSOFT: 2033 TO 2029</span><span class="chip-glass">GOOGLE MIGRATES BY 2029</span><span class="chip-glass">IBM: FAULT-TOLERANT BY 2029</span><span class="chip-glass">IBM COMMITS $10B+</span><span class="chip-glass">TWO QUANTUM EXECUTIVE ORDERS</span><span class="chip-glass">GOVERNMENT-WIDE PQC MIGRATION</span><span class="chip-glass">US TAKES EQUITY, $2B</span><span class="chip-glass">UK PROQURE, GBP 2B</span><span class="chip-glass">FRANCE, EUR 1B</span><span class="chip-glass">IONQ BUYS SKYWATER, $1.8B</span><span class="chip-glass">ECDLP-256: UNDER 500,000 QUBITS</span><span class="chip-glass">PROVING SYSTEM: TARGET ~2027</span></div>
+  <div class="qh-mq-set" data-dup aria-hidden="true"><span class="chip-glass">CONVERGING DEADLINE: 2029</span><span class="chip-glass">MICROSOFT: 2033 TO 2029</span><span class="chip-glass">GOOGLE MIGRATES BY 2029</span><span class="chip-glass">IBM: FAULT-TOLERANT BY 2029</span><span class="chip-glass">IBM COMMITS $10B+</span><span class="chip-glass">TWO QUANTUM EXECUTIVE ORDERS</span><span class="chip-glass">GOVERNMENT-WIDE PQC MIGRATION</span><span class="chip-glass">US TAKES EQUITY, $2B</span><span class="chip-glass">UK PROQURE, GBP 2B</span><span class="chip-glass">FRANCE, EUR 1B</span><span class="chip-glass">IONQ BUYS SKYWATER, $1.8B</span><span class="chip-glass">ECDLP-256: UNDER 500,000 QUBITS</span><span class="chip-glass">PROVING SYSTEM: TARGET ~2027</span></div>
+</div></div>
+
+<!-- The countdown card, now below the band rather than inside the hero,
+     which is what brings the hero back inside the shared height budget -->
+<div class="qh-cd-wrap">
   <div id="the-industrys-converging-deadline" class="countdown qg-cd">
     <div class="qg-bloom" aria-hidden="true"><i style="--bc:var(--accent);left:8%;top:10%;width:32%;height:80%"></i></div>
     <div class="qg-cd-glass" aria-hidden="true"></div>
@@ -450,7 +503,6 @@
       <div class="th-cd-ends"><span>TODAY</span><span>2029</span></div>
     </div>
     <p class="countdown-foot">Microsoft, Google, and IBM have converged, independently, within days of each other, on 2029. The "when" is arriving faster than crypto has priced in, and it could arrive even sooner than that.</p>
-  </div>
   </div>
 </div>
 
@@ -2246,5 +2298,22 @@ var VIDEOS = [
 })();
 </script>
 
+<script>
+/* deadline band: same gate as the sibling bands. The CSS only declares the
+   animation under .run, so off-screen the band is not animating at all
+   rather than animating invisibly. Reduced motion and the sub-981px static
+   treatment are handled in CSS, so this stays a pure visibility toggle. */
+(function(){
+  var band = document.getElementById('qhMarquee');
+  if (!band) return;
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(function(es){
+      band.classList.toggle('run', es[0].isIntersecting);
+    }, { threshold: 0 }).observe(band);
+  } else {
+    band.classList.add('run');
+  }
+})();
+</script>
 </body>
 </html>
