@@ -68,21 +68,91 @@
   .em-o { color: var(--orange); }
 
   /* hero (override shared orange/100vh hero with the mockup's purple, compact hero) */
+  /* HERO: shared grammar, per-page backdrop.
+     Frame is a twin of the ecosystem, digest and privacy heroes: full-bleed
+     box, contained 1160/32 content grid, left-aligned eyebrow, display and
+     lede, glass CTA pair. Duplicated per page by convention, not factored,
+     so keep the four copies in sync. The BACKDROP is per-page: quantum
+     keeps its aurora curtain and adds the chandelier drawing. */
   .hero {
-    min-height: auto; display: block; overflow: visible;
-    padding: 128px 32px 60px; max-width: 1100px; margin: 0 auto; text-align: center; position: relative;
+    min-height: calc(100vh - 72px); display: flex; flex-direction: column; justify-content: center;
+    align-items: stretch; overflow: visible;
+    padding: 150px 0 96px; max-width: none; margin: 0 auto; text-align: left; position: relative;
   }
+  .qh-inner { width: 100%; max-width: 1160px; margin: 0 auto; padding: 0 32px; position: relative; z-index: 1; }
   .hero::before {
-    top: -40px; width: 760px; height: 420px; max-width: 100%;
+    top: -40px; left: 18%; width: 760px; height: 420px; max-width: 100%;
     background: radial-gradient(ellipse at center top, rgba(var(--accent-rgb),0.16), transparent 70%);
   }
-  .hero-eyebrow { color: var(--stark-purple); opacity: 1; margin-bottom: 24px; position: relative; }
-  .hero-title { font-size: clamp(40px,6.5vw,76px); line-height: 1.0; margin-bottom: 26px; max-width: none; position: relative; }
+  .hero-eyebrow { color: var(--stark-purple); opacity: 1; margin-bottom: 22px; position: relative; }
+  /* the shared display scale (css/styles.css .hero-title), so quantum and
+     the sibling heroes share one size at every width */
+  .hero-title { font-size: clamp(34px,5.4vw,76px); line-height: .98; margin-bottom: 26px; max-width: none; position: relative; }
   .hero-title em { color: var(--stark-purple); }
-  .hero-subtitle { font-size: 18px; color: rgba(245,242,236,0.62); max-width: 620px; margin: 0 auto 8px; line-height: 1.7; position: relative; }
+  .hero-subtitle { font-size: 18px; color: rgba(245,242,236,0.62); max-width: 620px; margin: 22px 0 0; line-height: 1.7; position: relative; }
+
+  /* HERO CTAs: twin of .eco-cta / .pv-cta on the shared dark glass tier
+     (css/glass-chips.css), reading this page's accent through the recipe's
+     --accent-rgb fallback. The two shadow stacks are copies of the locked
+     recipe: keep in sync. Anchors only, so the site's smooth scroll carries
+     them. */
+  .qh-ctas { display: flex; gap: 18px; margin-top: 42px; flex-wrap: wrap; position: relative; }
+  .qh-cta { font-family: var(--mono); font-size: 13px; letter-spacing: .14em; text-transform: uppercase; text-decoration: none; color: var(--white); padding: 12px 22px; border-radius: 99px; border: 1px solid rgba(var(--accent-rgb), .55); display: inline-flex; align-items: center; gap: 10px; }
+  .qh-cta.chip-glass { transition: background var(--hover-dur) var(--hover-ease), box-shadow var(--hover-dur) var(--hover-ease), border-color var(--hover-dur); }
+  .qh-cta i { font-style: normal; transition: transform var(--hover-dur) var(--hover-ease); }
+  .qh-cta:hover i { transform: translateX(4px); }
+  .qh-cta:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  .qh-cta--muted { border-color: var(--border);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.5),
+      inset -1px -1px 0 rgba(255,255,255,.30),
+      inset 1px 1px 0 rgba(255,255,255,.12),
+      inset 0 10px 18px -8px rgba(255,255,255,.18),
+      inset 0 -1px 0 rgba(0,0,0,.6),
+      inset 0 -3px 5px rgba(0,0,0,.22),
+      0 0 12px rgba(var(--accent-rgb), .10); }
+  .qh-cta--muted:hover { border-color: rgba(var(--accent-rgb), .55); background: rgba(245,242,236,.10);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.5),
+      inset -1px -1px 0 rgba(255,255,255,.30),
+      inset 1px 1px 0 rgba(255,255,255,.12),
+      inset 0 10px 18px -8px rgba(255,255,255,.18),
+      inset 0 -1px 0 rgba(0,0,0,.6),
+      inset 0 -3px 5px rgba(0,0,0,.22),
+      0 0 40px rgba(var(--accent-rgb), .45); }
+  @media (prefers-reduced-motion: reduce) {
+    .qh-cta.chip-glass { transition: none; }
+    .qh-cta i { transition: none; }
+  }
+
+  /* CHANDELIER: hairline drawing of a dilution refrigerator, the canonical
+     quantum-computer object. Lives in the hero's right zone only, aligned to
+     the same content grid the copy uses, so it never sits behind the
+     display, the CTAs or the countdown card. Static, no filter, no blur:
+     strokes and one radial gradient. Accent comes from --accent-rgb. */
+  .qh-scene { position: absolute; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
+  .qh-scene-in { max-width: 1160px; margin: 0 auto; padding: 0 32px; height: 100%; position: relative; }
+  /* the drawing sits in the strip between the countdown card's right edge
+     and the content grid's right edge: about 340px at 1440, which the
+     300x620 viewBox fits at 56 percent of the hero height */
+  .qh-chandelier { position: absolute; right: 32px; top: 36%; height: 56%; width: auto; }
+  @media (max-width: 1180px) { .qh-chandelier { height: 48%; top: 42%; } }
+  @media (max-width: 980px) {
+    /* the stacked layout has no free right column and the countdown card
+       owns the width, so the drawing goes rather than crowd it */
+    .qh-scene { display: none; }
+  }
+  .qh-chandelier { --qh: rgb(var(--accent-rgb)); }
+  .qh-plates ellipse { fill: none; stroke: var(--qh); stroke-width: 1; opacity: .60; }
+  .qh-rods path { fill: none; stroke: var(--qh); stroke-width: 1; opacity: .40; }
+  .qh-cables path { fill: none; stroke: var(--qh); stroke-width: 1; opacity: .27; stroke-linecap: round; }
+  .qh-mix rect { fill: rgba(var(--accent-rgb), .10); stroke: var(--qh); stroke-width: 1.2; opacity: .85; }
+  .qh-mix circle { fill: var(--qh); opacity: .95; }
+  .qh-mix .qh-stem { fill: none; stroke: var(--qh); stroke-width: 1; opacity: .5; }
+
 
   /* countdown */
-  .countdown { margin: 54px auto 0; max-width: 740px; border: 1px solid var(--border-p); border-radius: 18px; background: linear-gradient(180deg,rgba(var(--accent-rgb),0.06),rgba(var(--accent-rgb),0.01)); padding: 32px 32px 42px; position: relative; }
+  .countdown { margin: 54px 0 0; max-width: 740px; border: 1px solid var(--border-p); border-radius: 18px; background: linear-gradient(180deg,rgba(var(--accent-rgb),0.06),rgba(var(--accent-rgb),0.01)); padding: 32px 32px 42px; position: relative; }
   .countdown-label { font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(245,242,236,0.5); margin-bottom: 18px; }
   .countdown-label b { color: var(--stark-purple); font-weight: 400; }
   .cd-grid { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; }
@@ -319,9 +389,48 @@
 <!-- HERO -->
 <div class="hero">
   <div class="hero-curtain" aria-hidden="true" data-gain="0.18"></div>
+  <!-- CHANDELIER: dilution refrigerator, hairline technical drawing. Seven
+       plates as thin ellipses narrowing downward, five rods converging
+       inward, cable bundles draping between plates (denser at the top), and
+       the mixing chamber with the chip at the bottom, the only element at
+       full brightness. Decorative: aria-hidden, pointer-events none. -->
+  <div class="qh-scene" aria-hidden="true">
+    <div class="qh-scene-in">
+      <svg class="qh-chandelier" viewBox="0 0 300 620" preserveAspectRatio="xMidYMid meet" focusable="false">
+        <defs>
+          <radialGradient id="qhGlow" cx="50%" cy="46%" r="52%">
+            <stop offset="0%" stop-color="rgb(var(--accent-rgb))" stop-opacity=".13"/>
+            <stop offset="100%" stop-color="rgb(var(--accent-rgb))" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <rect class="qh-glow" x="0" y="0" width="300" height="620" fill="url(#qhGlow)"/>
+        <g class="qh-rods"><path d="M30 58 L43 144 L58 216 L73 280 L87 336 L100 384 L111 424 L111 432"/><path d="M85 58 L92 144 L100 216 L108 280 L116 336 L123 384 L129 424 L129 432"/><path d="M150 58 L150 144 L150 216 L150 280 L150 336 L150 384 L150 424 L150 432"/><path d="M215 58 L208 144 L200 216 L192 280 L184 336 L177 384 L171 424 L171 432"/><path d="M270 58 L257 144 L242 216 L227 280 L213 336 L200 384 L189 424 L189 432"/></g>
+        <g class="qh-cables"><path d="M88 70 C79 98, 85 124, 94 138"/><path d="M129 70 C138 90, 140 132, 131 138"/><path d="M171 70 C162 98, 160 124, 169 138"/><path d="M212 70 C221 90, 215 132, 206 138"/><path d="M94 150 C85 178, 93 196, 102 210"/><path d="M131 150 C140 170, 143 204, 134 210"/><path d="M169 150 C160 178, 157 196, 166 210"/><path d="M206 150 C215 170, 207 204, 198 210"/><path d="M110 222 C101 250, 107 260, 116 274"/><path d="M150 222 C159 242, 159 268, 150 274"/><path d="M190 222 C181 250, 175 260, 184 274"/><path d="M116 286 C107 314, 114 316, 123 330"/><path d="M150 286 C159 306, 159 324, 150 330"/><path d="M184 286 C175 314, 168 316, 177 330"/><path d="M132 342 C123 370, 127 364, 136 378"/><path d="M168 342 C177 362, 173 372, 164 378"/><path d="M136 390 C127 418, 130 404, 139 418"/><path d="M164 390 C173 410, 170 412, 161 418"/></g>
+        <g class="qh-plates">
+          <ellipse cx="150" cy="64" rx="130" ry="9"/>
+          <ellipse cx="150" cy="144" rx="116" ry="8.4"/>
+          <ellipse cx="150" cy="216" rx="100" ry="7.8"/>
+          <ellipse cx="150" cy="280" rx="84" ry="7.2"/>
+          <ellipse cx="150" cy="336" rx="68" ry="6.6"/>
+          <ellipse cx="150" cy="384" rx="54" ry="6"/>
+          <ellipse cx="150" cy="424" rx="42" ry="5.4"/>
+        </g>
+        <g class="qh-mix">
+          <path class="qh-stem" d="M150 430 L150 452"/>
+          <rect x="124" y="452" width="52" height="38" rx="2"/>
+          <circle cx="150" cy="471" r="2.6"/>
+        </g>
+      </svg>
+    </div>
+  </div>
+  <div class="qh-inner">
   <p class="hero-eyebrow">The quantum reckoning</p>
   <h1 id="quantum-will-break-most-chains-starknet" class="hero-title">Quantum will break most chains. Starknet has been <em>waiting for it.</em></h1>
   <p class="hero-subtitle">Governments, Big Tech, and researchers are increasingly converging on the same timeline for when quantum breaks today's cryptography. When it arrives, nearly every onchain wallet is exposed. For most of crypto, this is a threat. For Starknet, it highlights the strength of its architecture.</p>
+  <div class="qh-ctas">
+    <a class="qh-cta chip-glass" href="#q-day-and-the-fault-line">See the fault line <i aria-hidden="true">&rarr;</i></a>
+    <a class="qh-cta qh-cta--muted chip-glass" href="#starknet-will-be-ready-before-q">How Starknet is ready <i aria-hidden="true">&rarr;</i></a>
+  </div>
 
   <!-- COUNTDOWN -->
   <div id="the-industrys-converging-deadline" class="countdown qg-cd">
@@ -341,6 +450,7 @@
       <div class="th-cd-ends"><span>TODAY</span><span>2029</span></div>
     </div>
     <p class="countdown-foot">Microsoft, Google, and IBM have converged, independently, within days of each other, on 2029. The "when" is arriving faster than crypto has priced in, and it could arrive even sooner than that.</p>
+  </div>
   </div>
 </div>
 
