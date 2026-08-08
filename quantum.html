@@ -150,9 +150,11 @@
      rightmost ink reaches 88% of the viewport at 1280, so the specified left
      edge would sit under the copy there. */
   .qh-chandelier { position: absolute; left: 90.5%; transform: translateX(-50%);
-    top: 29.5%; height: 43%; max-height: 409px; width: auto; }
-  @media (max-width: 1360px) { .qh-chandelier { left: 93.5%; top: 33%; height: 32%; } }
-  @media (max-width: 1180px) { .qh-chandelier { left: 93%; top: 35%; height: 28%; } }
+    top: 22.5%; height: 56%; max-height: 560px; width: auto; }
+  @media (max-width: 1760px) { .qh-chandelier { top: 26%; height: 50%; } }
+  @media (max-width: 1560px) { .qh-chandelier { top: 30.5%; height: 41.3%; } }
+  @media (max-width: 1360px) { .qh-chandelier { left: 94.2%; top: 32%; height: 27%; } }
+  @media (max-width: 1180px) { .qh-chandelier { left: 94%; top: 34%; height: 24%; } }
   @media (max-width: 980px) {
     /* the stacked layout has no free right column and the countdown card
        owns the width, so the drawing goes rather than crowd it */
@@ -190,6 +192,10 @@
     .qh-cd-wrap { padding: 0 24px; }
   }
   .qh-chandelier { --qh: rgb(var(--accent-rgb)); }
+  /* strokes stay hairlines at any scale: without this they would thicken
+     in proportion to the drawing and it would stop reading as a technical
+     drawing */
+  .qh-chandelier :is(ellipse, path, rect, circle) { vector-effect: non-scaling-stroke; }
   .qh-plates ellipse { fill: none; stroke: var(--qh); stroke-width: 1; opacity: .60; }
   .qh-rods path { fill: none; stroke: var(--qh); stroke-width: 1; opacity: .40; }
   .qh-cables path { fill: none; stroke: var(--qh); stroke-width: 1; opacity: .34; stroke-linecap: round; }
@@ -443,7 +449,7 @@
        full brightness. Decorative: aria-hidden, pointer-events none. -->
   <div class="qh-scene" aria-hidden="true">
     <div class="qh-scene-in">
-      <svg class="qh-chandelier" viewBox="0 0 300 620" preserveAspectRatio="xMidYMid meet" focusable="false">
+      <svg class="qh-chandelier" viewBox="16 50 268 445" preserveAspectRatio="xMidYMid meet" focusable="false">
         <defs>
           <radialGradient id="qhGlow" cx="50%" cy="46%" r="52%">
             <stop offset="0%" stop-color="rgb(var(--accent-rgb))" stop-opacity=".13"/>
