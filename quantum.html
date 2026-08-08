@@ -136,16 +136,21 @@
   /* the drawing sits in the strip between the countdown card's right edge
      and the content grid's right edge: about 340px at 1440, which the
      300x620 viewBox fits at 56 percent of the hero height */
-  /* Anchored to the viewport's right edge and allowed to bleed past it. The
-     left edge must clear the display's rightmost ink, which sits at 88% of
-     the viewport at 1280, 82% at 1440 and 74% at 1920, so the size steps by
-     breakpoint: the narrower the viewport, the more width the display takes
-     and the less room the drawing has. The mixing chamber stays on screen at
-     every step. */
-  .qh-chandelier { position: absolute; right: -84px; top: 9%; height: 84%; width: auto; }
-  @media (max-width: 1560px) { .qh-chandelier { right: -70px; top: 11%; height: 80%; } }
-  @media (max-width: 1360px) { .qh-chandelier { right: -76px; top: 18%; height: 58%; } }
-  @media (max-width: 1180px) { .qh-chandelier { right: -40px; top: 26%; height: 46%; } }
+  /* ANCHORED TO THE EMPTY POCKET, both axes.
+     The zone bounded by the display's rightmost ink and the container's
+     right edge is 22px wide at 1280 and 52px at 1440 and 1920: the display
+     wraps to within ~90px of the container edge, so there is no full-height
+     column beside it. The real empty rectangle is BELOW the display and
+     RIGHT of the lede and the CTAs, and that is what the drawing is centred
+     in: left of it is the lede's right edge plus a gutter, right is the
+     container edge, top is the display's last line plus a gutter, bottom is
+     the band. That pocket is about 300px tall, which is what sets the size.
+     Percentages are of the hero box, which spans the viewport. */
+  .qh-chandelier { position: absolute; left: 63%; top: 60.7%; height: 33.5%; width: auto; }
+  @media (max-width: 1760px) { .qh-chandelier { left: 66%; top: 60.8%; height: 33.2%; } }
+  @media (max-width: 1560px) { .qh-chandelier { left: 68%; top: 61%; height: 33%; } }
+  @media (max-width: 1360px) { .qh-chandelier { left: 71%; top: 61.4%; height: 32%; } }
+  @media (max-width: 1180px) { .qh-chandelier { left: 72%; top: 62%; height: 30%; } }
   @media (max-width: 980px) {
     /* the stacked layout has no free right column and the countdown card
        owns the width, so the drawing goes rather than crowd it */
