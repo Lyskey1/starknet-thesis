@@ -132,12 +132,20 @@
      display, the CTAs or the countdown card. Static, no filter, no blur:
      strokes and one radial gradient. Accent comes from --accent-rgb. */
   .qh-scene { position: absolute; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
-  .qh-scene-in { max-width: 1160px; margin: 0 auto; padding: 0 32px; height: 100%; position: relative; }
+  .qh-scene-in { height: 100%; position: relative; }
   /* the drawing sits in the strip between the countdown card's right edge
      and the content grid's right edge: about 340px at 1440, which the
      300x620 viewBox fits at 56 percent of the hero height */
-  .qh-chandelier { position: absolute; right: 32px; top: 36%; height: 56%; width: auto; }
-  @media (max-width: 1180px) { .qh-chandelier { height: 48%; top: 42%; } }
+  /* Anchored to the viewport's right edge and allowed to bleed past it. The
+     left edge must clear the display's rightmost ink, which sits at 88% of
+     the viewport at 1280, 82% at 1440 and 74% at 1920, so the size steps by
+     breakpoint: the narrower the viewport, the more width the display takes
+     and the less room the drawing has. The mixing chamber stays on screen at
+     every step. */
+  .qh-chandelier { position: absolute; right: -84px; top: 9%; height: 84%; width: auto; }
+  @media (max-width: 1560px) { .qh-chandelier { right: -70px; top: 11%; height: 80%; } }
+  @media (max-width: 1360px) { .qh-chandelier { right: -76px; top: 18%; height: 58%; } }
+  @media (max-width: 1180px) { .qh-chandelier { right: -40px; top: 26%; height: 46%; } }
   @media (max-width: 980px) {
     /* the stacked layout has no free right column and the countdown card
        owns the width, so the drawing goes rather than crowd it */
@@ -177,7 +185,7 @@
   .qh-chandelier { --qh: rgb(var(--accent-rgb)); }
   .qh-plates ellipse { fill: none; stroke: var(--qh); stroke-width: 1; opacity: .60; }
   .qh-rods path { fill: none; stroke: var(--qh); stroke-width: 1; opacity: .40; }
-  .qh-cables path { fill: none; stroke: var(--qh); stroke-width: 1; opacity: .27; stroke-linecap: round; }
+  .qh-cables path { fill: none; stroke: var(--qh); stroke-width: 1; opacity: .34; stroke-linecap: round; }
   .qh-mix rect { fill: rgba(var(--accent-rgb), .10); stroke: var(--qh); stroke-width: 1.2; opacity: .85; }
   .qh-mix circle { fill: var(--qh); opacity: .95; }
   .qh-mix .qh-stem { fill: none; stroke: var(--qh); stroke-width: 1; opacity: .5; }
@@ -436,17 +444,9 @@
           </radialGradient>
         </defs>
         <rect class="qh-glow" x="0" y="0" width="300" height="620" fill="url(#qhGlow)"/>
-        <g class="qh-rods"><path d="M30 58 L43 144 L58 216 L73 280 L87 336 L100 384 L111 424 L111 432"/><path d="M85 58 L92 144 L100 216 L108 280 L116 336 L123 384 L129 424 L129 432"/><path d="M150 58 L150 144 L150 216 L150 280 L150 336 L150 384 L150 424 L150 432"/><path d="M215 58 L208 144 L200 216 L192 280 L184 336 L177 384 L171 424 L171 432"/><path d="M270 58 L257 144 L242 216 L227 280 L213 336 L200 384 L189 424 L189 432"/></g>
-        <g class="qh-cables"><path d="M88 70 C79 98, 85 124, 94 138"/><path d="M129 70 C138 90, 140 132, 131 138"/><path d="M171 70 C162 98, 160 124, 169 138"/><path d="M212 70 C221 90, 215 132, 206 138"/><path d="M94 150 C85 178, 93 196, 102 210"/><path d="M131 150 C140 170, 143 204, 134 210"/><path d="M169 150 C160 178, 157 196, 166 210"/><path d="M206 150 C215 170, 207 204, 198 210"/><path d="M110 222 C101 250, 107 260, 116 274"/><path d="M150 222 C159 242, 159 268, 150 274"/><path d="M190 222 C181 250, 175 260, 184 274"/><path d="M116 286 C107 314, 114 316, 123 330"/><path d="M150 286 C159 306, 159 324, 150 330"/><path d="M184 286 C175 314, 168 316, 177 330"/><path d="M132 342 C123 370, 127 364, 136 378"/><path d="M168 342 C177 362, 173 372, 164 378"/><path d="M136 390 C127 418, 130 404, 139 418"/><path d="M164 390 C173 410, 170 412, 161 418"/></g>
-        <g class="qh-plates">
-          <ellipse cx="150" cy="64" rx="130" ry="9"/>
-          <ellipse cx="150" cy="144" rx="116" ry="8.4"/>
-          <ellipse cx="150" cy="216" rx="100" ry="7.8"/>
-          <ellipse cx="150" cy="280" rx="84" ry="7.2"/>
-          <ellipse cx="150" cy="336" rx="68" ry="6.6"/>
-          <ellipse cx="150" cy="384" rx="54" ry="6"/>
-          <ellipse cx="150" cy="424" rx="42" ry="5.4"/>
-        </g>
+        <g class="qh-rods"><path d="M28 58 L39 144 L49 216 L59 280 L68 336 L79 384 L89 424 L89 432"/><path d="M82 58 L89 144 L94 216 L100 280 L105 336 L110 384 L116 424 L116 432"/><path d="M150 58 L150 144 L150 216 L150 280 L150 336 L150 384 L150 424 L150 432"/><path d="M218 58 L211 144 L206 216 L200 280 L195 336 L190 384 L184 424 L184 432"/><path d="M272 58 L261 144 L251 216 L241 280 L232 336 L221 384 L211 424 L211 432"/></g>
+        <g class="qh-cables"><path d="M70 70 C62 96, 70 124, 78 138"/><path d="M102 70 C110 86, 115 134, 107 138"/><path d="M134 70 C126 96, 128 124, 136 138"/><path d="M166 70 C174 86, 172 134, 164 138"/><path d="M198 70 C190 96, 185 124, 193 138"/><path d="M230 70 C238 86, 230 134, 222 138"/><path d="M78 150 C70 176, 76 196, 84 210"/><path d="M107 150 C115 166, 119 206, 111 210"/><path d="M136 150 C128 176, 129 196, 137 210"/><path d="M164 150 C172 166, 171 206, 163 210"/><path d="M193 150 C185 176, 181 196, 189 210"/><path d="M222 150 C230 166, 224 206, 216 210"/><path d="M89 222 C81 248, 86 260, 94 274"/><path d="M119 222 C127 238, 130 270, 122 274"/><path d="M150 222 C142 248, 142 260, 150 274"/><path d="M181 222 C189 238, 186 270, 178 274"/><path d="M211 222 C203 248, 198 260, 206 274"/><path d="M94 286 C86 312, 92 316, 100 330"/><path d="M122 286 C130 302, 133 326, 125 330"/><path d="M150 286 C142 312, 142 316, 150 330"/><path d="M178 286 C186 302, 183 326, 175 330"/><path d="M206 286 C198 312, 192 316, 200 330"/><path d="M105 342 C97 368, 103 364, 111 378"/><path d="M135 342 C143 358, 145 374, 137 378"/><path d="M165 342 C157 368, 155 364, 163 378"/><path d="M195 342 C203 358, 197 374, 189 378"/><path d="M111 390 C103 416, 108 404, 116 418"/><path d="M137 390 C145 406, 147 414, 139 418"/><path d="M163 390 C155 416, 153 404, 161 418"/><path d="M189 390 C197 406, 192 414, 184 418"/></g>
+        <g class="qh-plates"><ellipse cx="150" cy="64" rx="130" ry="9.0"/><ellipse cx="150" cy="144" rx="118" ry="8.6"/><ellipse cx="150" cy="216" rx="107" ry="8.2"/><ellipse cx="150" cy="280" rx="97" ry="7.8"/><ellipse cx="150" cy="336" rx="87" ry="7.4"/><ellipse cx="150" cy="384" rx="76" ry="7.0"/><ellipse cx="150" cy="424" rx="65" ry="6.6"/></g>
         <g class="qh-mix">
           <path class="qh-stem" d="M150 430 L150 452"/>
           <rect x="124" y="452" width="52" height="38" rx="2"/>
@@ -469,8 +469,8 @@
 
 
 
-<!-- deadline band: every item restates a claim already made and sourced in
-     the body below. Mechanics are the twin of the ecosystem, digest and
+<!-- claim band: every item restates a claim already made and sourced in the
+     body below, on Starknet's side of the argument. Mechanics are the twin of the ecosystem, digest and
      privacy bands: seamless loop over repeated sets, edge fade masks, hover
      pause, IO gated, same 70s duration. The first set is the readable one;
      the copies exist only so the loop is gapless and are aria-hidden. The
@@ -478,9 +478,9 @@
      chain: account signature schemes still require their own PQC migration,
      so an unscoped claim here would be indefensible. -->
 <div class="qh-marquee" id="qhMarquee"><div class="qh-mq-track">
-  <div class="qh-mq-set"><span class="chip-glass">CONVERGING DEADLINE: 2029</span><span class="chip-glass">MICROSOFT: 2033 TO 2029</span><span class="chip-glass">GOOGLE MIGRATES BY 2029</span><span class="chip-glass">IBM: FAULT-TOLERANT BY 2029</span><span class="chip-glass">IBM COMMITS $10B+</span><span class="chip-glass">TWO QUANTUM EXECUTIVE ORDERS</span><span class="chip-glass">GOVERNMENT-WIDE PQC MIGRATION</span><span class="chip-glass">US TAKES EQUITY, $2B</span><span class="chip-glass">UK PROQURE, GBP 2B</span><span class="chip-glass">FRANCE, EUR 1B</span><span class="chip-glass">IONQ BUYS SKYWATER, $1.8B</span><span class="chip-glass">ECDLP-256: UNDER 500,000 QUBITS</span><span class="chip-glass">PROVING SYSTEM: TARGET ~2027</span></div>
-  <div class="qh-mq-set" data-dup aria-hidden="true"><span class="chip-glass">CONVERGING DEADLINE: 2029</span><span class="chip-glass">MICROSOFT: 2033 TO 2029</span><span class="chip-glass">GOOGLE MIGRATES BY 2029</span><span class="chip-glass">IBM: FAULT-TOLERANT BY 2029</span><span class="chip-glass">IBM COMMITS $10B+</span><span class="chip-glass">TWO QUANTUM EXECUTIVE ORDERS</span><span class="chip-glass">GOVERNMENT-WIDE PQC MIGRATION</span><span class="chip-glass">US TAKES EQUITY, $2B</span><span class="chip-glass">UK PROQURE, GBP 2B</span><span class="chip-glass">FRANCE, EUR 1B</span><span class="chip-glass">IONQ BUYS SKYWATER, $1.8B</span><span class="chip-glass">ECDLP-256: UNDER 500,000 QUBITS</span><span class="chip-glass">PROVING SYSTEM: TARGET ~2027</span></div>
-  <div class="qh-mq-set" data-dup aria-hidden="true"><span class="chip-glass">CONVERGING DEADLINE: 2029</span><span class="chip-glass">MICROSOFT: 2033 TO 2029</span><span class="chip-glass">GOOGLE MIGRATES BY 2029</span><span class="chip-glass">IBM: FAULT-TOLERANT BY 2029</span><span class="chip-glass">IBM COMMITS $10B+</span><span class="chip-glass">TWO QUANTUM EXECUTIVE ORDERS</span><span class="chip-glass">GOVERNMENT-WIDE PQC MIGRATION</span><span class="chip-glass">US TAKES EQUITY, $2B</span><span class="chip-glass">UK PROQURE, GBP 2B</span><span class="chip-glass">FRANCE, EUR 1B</span><span class="chip-glass">IONQ BUYS SKYWATER, $1.8B</span><span class="chip-glass">ECDLP-256: UNDER 500,000 QUBITS</span><span class="chip-glass">PROVING SYSTEM: TARGET ~2027</span></div>
+  <div class="qh-mq-set"><span class="chip-glass">HASH-BASED PROVING</span><span class="chip-glass">NO ELLIPTIC CURVES IN PROOFS</span><span class="chip-glass">QUANTUM-RESISTANT PROVING SYSTEM</span><span class="chip-glass">STARK, NOT SNARK</span><span class="chip-glass">HASH-BASED SINCE 2018</span><span class="chip-glass">SHOR DOES NOT BREAK HASHES</span><span class="chip-glass">NATIVE ACCOUNT ABSTRACTION</span><span class="chip-glass">UPGRADABLE SIGNATURE SCHEMES</span><span class="chip-glass">PQC MIGRATION WITHOUT A HARD FORK</span><span class="chip-glass">FALCON-512 ACCOUNT LIVE, APRIL 2026</span><span class="chip-glass">STATE TRIE: PEDERSEN TO BLAKE2</span><span class="chip-glass">PROVING SYSTEM: TARGET ~2027</span></div>
+  <div class="qh-mq-set" data-dup aria-hidden="true"><span class="chip-glass">HASH-BASED PROVING</span><span class="chip-glass">NO ELLIPTIC CURVES IN PROOFS</span><span class="chip-glass">QUANTUM-RESISTANT PROVING SYSTEM</span><span class="chip-glass">STARK, NOT SNARK</span><span class="chip-glass">HASH-BASED SINCE 2018</span><span class="chip-glass">SHOR DOES NOT BREAK HASHES</span><span class="chip-glass">NATIVE ACCOUNT ABSTRACTION</span><span class="chip-glass">UPGRADABLE SIGNATURE SCHEMES</span><span class="chip-glass">PQC MIGRATION WITHOUT A HARD FORK</span><span class="chip-glass">FALCON-512 ACCOUNT LIVE, APRIL 2026</span><span class="chip-glass">STATE TRIE: PEDERSEN TO BLAKE2</span><span class="chip-glass">PROVING SYSTEM: TARGET ~2027</span></div>
+  <div class="qh-mq-set" data-dup aria-hidden="true"><span class="chip-glass">HASH-BASED PROVING</span><span class="chip-glass">NO ELLIPTIC CURVES IN PROOFS</span><span class="chip-glass">QUANTUM-RESISTANT PROVING SYSTEM</span><span class="chip-glass">STARK, NOT SNARK</span><span class="chip-glass">HASH-BASED SINCE 2018</span><span class="chip-glass">SHOR DOES NOT BREAK HASHES</span><span class="chip-glass">NATIVE ACCOUNT ABSTRACTION</span><span class="chip-glass">UPGRADABLE SIGNATURE SCHEMES</span><span class="chip-glass">PQC MIGRATION WITHOUT A HARD FORK</span><span class="chip-glass">FALCON-512 ACCOUNT LIVE, APRIL 2026</span><span class="chip-glass">STATE TRIE: PEDERSEN TO BLAKE2</span><span class="chip-glass">PROVING SYSTEM: TARGET ~2027</span></div>
 </div></div>
 
 <!-- The countdown card, now below the band rather than inside the hero,
