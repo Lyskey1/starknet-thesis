@@ -78,7 +78,7 @@
   .hero {
     min-height: calc(100vh - 72px); display: flex; flex-direction: column; justify-content: center;
     align-items: stretch; overflow: visible;
-    padding: 150px 0 96px; max-width: none; margin: 0 auto; text-align: left; position: relative;
+    padding: 150px 0 56px; max-width: none; margin: 0 auto; text-align: left; position: relative;
   }
   .qh-inner { width: 100%; max-width: 1160px; margin: 0 auto; padding: 0 32px; position: relative; z-index: 1; }
   .hero::before {
@@ -136,6 +136,34 @@
   /* the drawing sits in the strip between the countdown card's right edge
      and the content grid's right edge: about 340px at 1440, which the
      300x620 viewBox fits at 56 percent of the hero height */
+  /* COUNTDOWN, inline in the hero content column. No card: a hairline, a
+     mono label and one row. Numbers sit at large-stat scale (34px against
+     the display's 76px) so the hierarchy holds, and only the seconds digit
+     carries the accent. */
+  .qh-cd { border-top: 1px solid var(--border); margin-top: 14px; padding-top: 15px; max-width: 620px; }
+  .qh-cd-label { font-family: var(--mono); font-size: 10.5px; letter-spacing: .18em; text-transform: uppercase; color: rgba(245,242,236,.5); margin-bottom: 10px; }
+  .qh-cd-row { display: flex; align-items: baseline; gap: 13px; flex-wrap: wrap; }
+  .qh-cd-g { display: inline-flex; align-items: baseline; gap: 7px; }
+  .qh-cd-n { font-family: var(--display); font-weight: 800; font-size: 34px; line-height: 1; letter-spacing: -.01em; color: var(--white); font-variant-numeric: tabular-nums; }
+  .qh-cd-g i { font-style: normal; font-family: var(--mono); font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: rgba(245,242,236,.42); }
+  .qh-cd-sec { color: var(--stark-purple); }
+  .qh-cd-s { font-family: var(--mono); font-size: 15px; color: rgba(245,242,236,.20); }
+  @media (max-width: 1360px) {
+    /* the budget is tightest here: the display wraps to three lines and the
+       viewport is usually shorter, so all three levers are applied at once.
+       The display and the lede are untouched. */
+    .qh-cd-n { font-size: 24px; }
+    .qh-cd { margin-top: 8px; padding-top: 10px; }
+    .qh-cd-label { margin-bottom: 8px; }
+    .hero { padding-bottom: 20px; }
+  }
+  @media (max-width: 700px) {
+    /* two rows of two: at this width four groups plus separators cannot sit
+       on one line without shrinking the numbers below a readable size */
+    .qh-cd-row { display: grid; grid-template-columns: repeat(2, max-content); gap: 14px 30px; }
+    .qh-cd-s { display: none; }
+    .qh-cd-n { font-size: 30px; }
+  }
   /* RIGHT MARGIN ZONE, anchored to the VIEWPORT rather than the 1160
      container, so the drawing sits in the page margin beside the copy.
      Zone: 84% to 97% of viewport width, 28% to 74% of hero height. The
@@ -160,7 +188,6 @@
        owns the width, so the drawing goes rather than crowd it */
     .qh-scene { display: none; }
   }
-  .qh-cd-wrap { max-width: 1160px; margin: 0 auto; padding: 0 32px; }
   /* DEADLINE BAND: twin of .eco-marquee / .dg-marquee / .pv-marquee. Three
      repeated sets rather than two, for the same reason privacy needs three:
      one set is narrower than an ultrawide viewport, so a two-set track would
@@ -189,7 +216,6 @@
     .qh-mq-set[data-dup] { display: none; }
     .qh-mq-set { flex-wrap: wrap; gap: 10px; padding: 0 24px; }
     .qh-marquee { -webkit-mask-image: none; mask-image: none; padding: 16px 0; }
-    .qh-cd-wrap { padding: 0 24px; }
   }
   .qh-chandelier { --qh: rgb(var(--accent-rgb)); }
   /* strokes stay hairlines at any scale: without this they would thicken
@@ -205,15 +231,6 @@
 
 
   /* countdown */
-  .countdown { margin: 54px 0 0; max-width: 740px; border: 1px solid var(--border-p); border-radius: 18px; background: linear-gradient(180deg,rgba(var(--accent-rgb),0.06),rgba(var(--accent-rgb),0.01)); padding: 32px 32px 42px; position: relative; }
-  .countdown-label { font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(245,242,236,0.5); margin-bottom: 18px; }
-  .countdown-label b { color: var(--stark-purple); font-weight: 400; }
-  .cd-grid { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; }
-  .cd-unit { min-width: 92px; }
-  .cd-num { font-family: var(--display); font-weight: 800; font-size: clamp(34px,5vw,52px); line-height: 1; color: var(--white); font-variant-numeric: tabular-nums; }
-  .cd-unit .lab { font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(245,242,236,0.4); margin-top: 8px; }
-  .cd-sep { font-family: var(--display); font-weight: 800; font-size: clamp(28px,4vw,44px); color: rgba(var(--accent-rgb),0.4); align-self: flex-start; line-height: 1.2; }
-  .countdown-foot { font-size: 13px; color: rgba(245,242,236,0.45); margin: 34px auto 0; line-height: 1.6; max-width: 62ch; text-align: center; }
 
   /* sections — full width with inner .wrap (override shared centered/maxwidth section) */
   section { padding: 80px 0; max-width: none; margin: 0; border-top: 1px solid var(--border); }
@@ -407,25 +424,6 @@
   .news-toggle:focus:not(:focus-visible) { outline: none; }
 </style>
 <style>
-.th-cd{--q:#3DA9FC;--ink:#F5F2EC;--muted:#8b909c;--hair:rgba(245,242,236,.08);max-width:1000px;margin:0 auto;}
-.th-cd-eyebrow{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:30px;}
-.th-cd-eyebrow .lbl{font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);}
-.th-cd-row{display:flex;align-items:flex-end;justify-content:center;gap:8px;}
-.th-cd-unit{text-align:center;min-width:150px;}
-.th-cd-num{position:relative;display:inline-block;font-family:'Archivo Expanded','Archivo',sans-serif;font-weight:900;font-size:82px;line-height:1;color:var(--ink);letter-spacing:-.03em;font-variant-numeric:tabular-nums;padding-bottom:14px;}
-.th-cd-num::after{content:"";position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:54px;height:3px;border-radius:3px;background:var(--q);box-shadow:0 0 16px var(--q);opacity:.8;}
-.th-cd-lbl{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);margin-top:18px;}
-.th-cd-track{max-width:510px;margin:36px auto 0;height:1px;background:var(--hair);position:relative;}
-.th-cd-track .fill{position:absolute;left:0;top:0;height:100%;background:linear-gradient(90deg,transparent,var(--q));opacity:.6;width:0;}
-.th-cd-track .mk{position:absolute;top:50%;left:0;transform:translate(-50%,-50%);width:9px;height:9px;border-radius:50%;background:var(--q);box-shadow:0 0 12px var(--q);}
-.th-cd-ends{max-width:510px;margin:12px auto 0;display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;color:var(--muted);}
-@media(max-width:760px){.th-cd-row{flex-wrap:wrap}.th-cd-num{font-size:56px}}
-/* <=480px: 2x2 countdown grid — no more one-unit-per-row tower */
-@media(max-width:480px){
-  .th-cd-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-  .th-cd-unit{min-width:0;}
-  .th-cd-num{font-size:clamp(34px,11vw,56px);}
-}
 </style>
 <script src="js/admin-gate.js"></script>
 </head>
@@ -477,6 +475,26 @@
     <a class="qh-cta qh-cta--muted chip-glass" href="#starknet-will-be-ready-before-q">How Starknet is ready <i aria-hidden="true">&rarr;</i></a>
   </div>
 
+    <!-- COUNTDOWN, inline. The card is gone: no border, radius, fill, padding
+         or glass layer. It is a hairline, a mono label and one row of values,
+         so it reads as data belonging to the hero rather than a second panel.
+         The seconds value carries the page accent, which makes the only
+         moving digit the only accented one. Ids and the timer JS are
+         untouched; the progress track went with the card and the JS already
+         guarded those two nodes. -->
+    <div class="qh-cd" id="the-industrys-converging-deadline">
+      <div class="qh-cd-label">The industry's converging deadline</div>
+      <div class="qh-cd-row">
+        <span class="qh-cd-g"><b class="qh-cd-n" id="cd-days">876</b><i>Days</i></span>
+        <span class="qh-cd-s" aria-hidden="true">/</span>
+        <span class="qh-cd-g"><b class="qh-cd-n" id="cd-hours">10</b><i>Hrs</i></span>
+        <span class="qh-cd-s" aria-hidden="true">/</span>
+        <span class="qh-cd-g"><b class="qh-cd-n" id="cd-mins">45</b><i>Min</i></span>
+        <span class="qh-cd-s" aria-hidden="true">/</span>
+        <span class="qh-cd-g"><b class="qh-cd-n qh-cd-sec" id="cd-secs">38</b><i>Sec</i></span>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -495,29 +513,6 @@
   <div class="qh-mq-set" data-dup aria-hidden="true"><span class="chip-glass">NO ELLIPTIC CURVES IN PROOFS</span><span class="chip-glass">QUANTUM-RESISTANT PROVING SYSTEM</span><span class="chip-glass">STARK, NOT SNARK</span><span class="chip-glass">HASH-BASED SINCE 2018</span><span class="chip-glass">NATIVE ACCOUNT ABSTRACTION</span><span class="chip-glass">UPGRADABLE SIGNATURE SCHEMES</span><span class="chip-glass">PQC MIGRATION WITHOUT A HARD FORK</span><span class="chip-glass">FALCON-512 ACCOUNT LIVE, APRIL 2026</span><span class="chip-glass">STATE TRIE: PEDERSEN TO BLAKE2</span></div>
   <div class="qh-mq-set" data-dup aria-hidden="true"><span class="chip-glass">NO ELLIPTIC CURVES IN PROOFS</span><span class="chip-glass">QUANTUM-RESISTANT PROVING SYSTEM</span><span class="chip-glass">STARK, NOT SNARK</span><span class="chip-glass">HASH-BASED SINCE 2018</span><span class="chip-glass">NATIVE ACCOUNT ABSTRACTION</span><span class="chip-glass">UPGRADABLE SIGNATURE SCHEMES</span><span class="chip-glass">PQC MIGRATION WITHOUT A HARD FORK</span><span class="chip-glass">FALCON-512 ACCOUNT LIVE, APRIL 2026</span><span class="chip-glass">STATE TRIE: PEDERSEN TO BLAKE2</span></div>
 </div></div>
-
-<!-- The countdown card, now below the band rather than inside the hero,
-     which is what brings the hero back inside the shared height budget -->
-<div class="qh-cd-wrap">
-  <div id="the-industrys-converging-deadline" class="countdown qg-cd">
-    <div class="qg-bloom" aria-hidden="true"><i style="--bc:var(--accent);left:8%;top:10%;width:32%;height:80%"></i></div>
-    <div class="qg-cd-glass" aria-hidden="true"></div>
-    <div class="th-cd">
-      <div class="th-cd-eyebrow">
-        <span class="lbl">The industry's converging deadline</span>
-      </div>
-      <div class="th-cd-row">
-        <div class="th-cd-unit"><span class="th-cd-num" id="cd-days">919</span><div class="th-cd-lbl">Days</div></div>
-        <div class="th-cd-unit"><span class="th-cd-num" id="cd-hours">10</span><div class="th-cd-lbl">Hours</div></div>
-        <div class="th-cd-unit"><span class="th-cd-num" id="cd-mins">45</span><div class="th-cd-lbl">Minutes</div></div>
-        <div class="th-cd-unit"><span class="th-cd-num" id="cd-secs">38</span><div class="th-cd-lbl">Seconds</div></div>
-      </div>
-      <div class="th-cd-track"><div class="fill" id="cd-fill"></div><div class="mk" id="cd-mark"></div></div>
-      <div class="th-cd-ends"><span>TODAY</span><span>2029</span></div>
-    </div>
-    <p class="countdown-foot">Microsoft, Google, and IBM have converged, independently, within days of each other, on 2029. The "when" is arriving faster than crypto has priced in, and it could arrive even sooner than that.</p>
-  </div>
-</div>
 
 <!-- TH-PM: shared premium design system (installed once) -->
 <style>
@@ -680,35 +675,6 @@ a.qg-card:focus-visible{outline:2px solid var(--qa);outline-offset:3px;}
   .th-pm-compare .qg-bloom i:nth-child(2){left:10%;top:53%;width:80%;height:44%;}
 }
 
-/* ===== Countdown panel glass. The seconds digit rewrites every second, so
-   backdrop-filter must NOT live on the panel container: a DOM write inside
-   a backdrop-filtered element would repaint and recomposite the blurred
-   region on every tick, forever. The glass is an absolutely positioned
-   sibling layer behind the content; digit updates never touch it. The
-   panel keeps its own 1px border and 18px radius; its old blue wash
-   gradient is replaced by this surface plus one static bloom. Not a link,
-   not interactive: no hover, no lift. */
-.qg-cd{background:none;}
-.qg-cd>:not(.qg-cd-glass):not(.qg-bloom){position:relative;z-index:1;}
-.qg-cd-glass{position:absolute;inset:0;z-index:0;border-radius:inherit;pointer-events:none;
-  background:rgba(245,242,236,.032);
-  -webkit-backdrop-filter:blur(16px) saturate(112%);
-  backdrop-filter:blur(16px) saturate(112%);
-  box-shadow:
-    inset -1px -1px 0 rgba(255,255,255,.42),
-    inset 1px 1px 0 rgba(255,255,255,.10),
-    inset 0 1px 0 rgba(255,255,255,.26),
-    inset 0 -1px 0 rgba(255,255,255,.22),
-    inset 0 0 24px rgba(255,255,255,.05),
-    0 18px 50px -30px rgba(0,0,0,.9);}
-.qg-cd-glass::before{content:"";position:absolute;top:0;left:0;right:0;height:42%;border-radius:inherit;
-  background:linear-gradient(180deg,rgba(255,255,255,.062),transparent);pointer-events:none;}
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))){
-  .qg-cd-glass{background:#0b0d13;}
-}
-@media (max-width:980px){
-  .qg-cd-glass{-webkit-backdrop-filter:none;backdrop-filter:none;background:#0b0d13;}
-}
 .th-pm-video{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:40px;}
 .th-pm-vcard{border-radius:14px;overflow:hidden;border:1px solid var(--th-hair);background:#0b0d13;}
 .th-pm-vcard .frame{position:relative;aspect-ratio:16/9;background:#0a0c12;}
