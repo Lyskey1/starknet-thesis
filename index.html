@@ -45,13 +45,11 @@
 </style>
 <style>
   /* ===== Landing hero v2 (thesis-wide, violet accent) - index.html only ===== */
-  /* Per-page accent: violet. Overrides the shared body.page-landing token
-     (orange) from css/styles.css — declared here, after the shared sheet,
-     at equal specificity, so it wins without touching the shared file.
-     Same pattern as privacy.html's emerald override. Everything reading
-     var(--accent)/var(--accent-rgb) (nav CTA fill and glow, ghost hovers,
-     search focus ring, footer status) now resolves violet with no local
-     overrides. */
+  /* Per-page accent: violet. The shared body.page-landing palette in
+     css/styles.css carries the same set; this declaration is the page's
+     source of truth. Everything reading var(--accent)/var(--accent-rgb)
+     (nav CTA fill and glow, ghost hovers, search focus ring, footer
+     status) resolves violet. */
   body.page-landing{
     --accent:#A78BFA;
     --accent-rgb:167,139,250;
