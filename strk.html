@@ -613,6 +613,11 @@ a.chip:hover{background:var(--acc);border-color:var(--acc);color:#0A0A0A}
 #numbers .kpi .kl{font-family:var(--mono),monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
 #numbers .kpi .kv{font-family:var(--display);font-weight:800;font-stretch:110%;font-size:25px;margin-top:8px}
 #numbers .kpi .ks{font-family:var(--mono),monospace;font-size:11px;color:var(--muted);margin-top:5px}
+/* inline source links on a KPI, same convention as .tk-meta a above: muted
+   text plus the site's ↗ external marker, hairline underline, white on hover */
+#numbers .kpi .ksrc{margin-top:6px}
+#numbers .kpi .ksrc a{color:var(--muted);text-decoration:none;border-bottom:1px solid rgba(245,242,236,.2)}
+#numbers .kpi .ksrc a:hover{color:var(--white)}
 #numbers .note{font-family:var(--mono),monospace;font-size:11px;letter-spacing:.03em;color:var(--muted);margin-top:16px;line-height:1.6}
 #numbers .note b{color:var(--white)}
 #numbers .dist{display:grid;grid-template-columns:1.5fr 1fr;gap:30px;align-items:center;margin-top:18px}
@@ -1207,9 +1212,8 @@ window.ADMIN_GATE=on;})();
         <svg id="muchart" viewBox="0 0 1000 300"></svg>
         <div class="stip" id="mtip2"></div>
       </div>
-      <div class="legend"><span><i style="background:#A78BFA"></i>Scheduled vesting</span><span><i style="background:#6D4FD0"></i>Estimated release</span><span><i style="background:#F5F2EC"></i>Cumulative supply</span></div>
+      <div class="legend"><span><i style="background:#A78BFA"></i>Scheduled vesting</span><span><i style="background:#6D4FD0"></i>Estimated release (no fixed schedule)</span><span><i style="background:#F5F2EC"></i>Cumulative supply</span></div>
       <div class="kpis" id="mukpis"></div>
-      <div class="note">Scheduled vesting (Investors + Early Contributors) is the only contractual monthly unlock: about <b>127M STRK</b> on the 15th of each month until <b>March 15, 2027</b>, per the <a href="https://docs.starknet.io/learn/protocol/strk" target="_blank" rel="noopener noreferrer">official schedule ↗</a> (also tracked on <a href="https://defillama.com/unlocks/starknet" target="_blank" rel="noopener noreferrer">DefiLlama ↗</a>). The estimated release is the Foundation distributing the remaining allocations over time, with no fixed schedule. The next-unlock share of supply is computed against the live circulating figure above.</div>
     </div>
     <div class="panel">
       <div class="eyebrow">Distribution</div>
@@ -2304,8 +2308,8 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
   const nuAmt=Math.max(0,vAt(nuI)-vAt(nuI-1))/100*SUPPLY;
   window.__nextUnlock={amount:nuAmt,date:nu.getFullYear()+'-'+String(nu.getMonth()+1).padStart(2,'0')+'-'+String(nu.getDate()).padStart(2,'0')};
   document.getElementById('mukpis').innerHTML=
-    `<div class="kpi"><div class="kl">Next unlock</div><div class="kv">${nuAmt>0?'~'+Math.round(nuAmt/1e6)+'M':'—'}</div><div class="ks">${nu.toLocaleString('en',{month:'short',day:'numeric',year:'numeric'})} · <span data-stat="nextunlockpct">≈1.9%</span> of circulating</div></div>`+
-    `<div class="kpi"><div class="kl">Vesting rate</div><div class="kv">~127M</div><div class="ks">per month · until Mar 2027</div></div>`+
+    `<div class="kpi"><div class="kl">Next unlock</div><div class="kv">${nuAmt>0?'~'+Math.round(nuAmt/1e6)+'M':'—'}</div><div class="ks">${nu.toLocaleString('en',{month:'short',day:'numeric',year:'numeric'})} · <span data-stat="nextunlockpct">≈1.9%</span> computed from live circulating supply</div></div>`+
+    `<div class="kpi"><div class="kl">Vesting rate</div><div class="kv">~127M</div><div class="ks">per month · until Mar 15, 2027</div><div class="ks ksrc"><a href="https://docs.starknet.io/learn/protocol/strk" target="_blank" rel="noopener noreferrer">Official schedule ↗</a> · <a href="https://defillama.com/unlocks/starknet" target="_blank" rel="noopener noreferrer">DefiLlama ↗</a></div></div>`+
     `<div class="kpi"><div class="kl">Full circulation</div><div class="kv">~2031</div><div class="ks">remaining via Starknet Foundation release</div></div>`;
   const hl=document.getElementById('muhl');
   ['pointermove','pointerdown'].forEach(ev=>muchart.addEventListener(ev,e=>{const r=muchart.getBoundingClientRect();const vx=(e.clientX-r.left)/r.width*1000;
