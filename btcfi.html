@@ -30,6 +30,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Expanded:wght@500;600;700;800;900&family=IBM+Plex+Mono:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/dist/tabler-icons.min.css">
 <link rel="stylesheet" href="css/styles.css?v=20260802b">
+<link rel="stylesheet" href="css/glass-chips.css">
 <style>
   /* Sub-380px nav fit: at 320px the nav row (205px logo + 44px search
      + 44px burger + two 24px gaps + 32px padding = 373px) leaves the
@@ -41,6 +42,92 @@
     nav { gap: 10px; padding-left: 12px; padding-right: 12px; }
     .nav-logo { font-size: 15px; }
   }
+
+  /* ============ HERO: shared grammar, per-page backdrop ============
+     Frame is a twin of the ecosystem, digest, privacy and quantum heroes:
+     full-bleed box, contained 1160/32 grid, left-aligned eyebrow, display and
+     lede, glass CTA pair, claim band below. Duplicated per page by
+     convention, not factored, so keep the five copies in sync. The BACKDROP
+     is per-page: btcfi keeps its aurora curtain and adds the layered scene.
+     Padding is 112/26 rather than 150/120 because this page is designed to a
+     1440x780 and 1280x720 first viewport: nav, hero and band with no
+     scrolling. */
+  .hero { min-height: calc(100vh - 72px); display: flex; flex-direction: column; justify-content: center;
+    align-items: stretch; overflow: visible; padding: 112px 0 26px; max-width: none; margin: 0 auto;
+    text-align: left; position: relative; }
+  .bf-inner { width: 100%; max-width: 1160px; margin: 0 auto; padding: 0 32px; position: relative; z-index: 1; }
+  .hero-eyebrow { font-size: 13px; letter-spacing: .04em; margin-bottom: 22px; position: relative; }
+  .hero-title { font-size: clamp(34px,5.4vw,76px); line-height: .98; margin-bottom: 26px; max-width: none; position: relative; }
+  .hero-subtitle { font-size: 18px; max-width: 620px; margin: 22px 0 0; line-height: 1.7; position: relative; }
+
+  /* CTAs: twin of .eco-cta / .pv-cta / .qh-cta on the shared dark glass tier
+     (css/glass-chips.css), reading this page's accent through the recipe's
+     --accent-rgb fallback. Both shadow stacks are copies of the locked
+     recipe: keep in sync. */
+  .bf-ctas { display: flex; gap: 18px; margin-top: 24px; flex-wrap: wrap; position: relative; }
+  .bf-cta { font-family: var(--mono); font-size: 13px; letter-spacing: .14em; text-transform: uppercase; text-decoration: none; color: var(--white); padding: 12px 22px; border-radius: 99px; border: 1px solid rgba(var(--accent-rgb), .55); display: inline-flex; align-items: center; gap: 10px; }
+  .bf-cta.chip-glass { transition: background var(--hover-dur) var(--hover-ease), box-shadow var(--hover-dur) var(--hover-ease), border-color var(--hover-dur); }
+  .bf-cta i { font-style: normal; transition: transform var(--hover-dur) var(--hover-ease); }
+  .bf-cta:hover i { transform: translateX(4px); }
+  .bf-cta:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  .bf-cta--muted { border-color: var(--border);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.5), inset -1px -1px 0 rgba(255,255,255,.30),
+      inset 1px 1px 0 rgba(255,255,255,.12), inset 0 10px 18px -8px rgba(255,255,255,.18),
+      inset 0 -1px 0 rgba(0,0,0,.6), inset 0 -3px 5px rgba(0,0,0,.22), 0 0 12px rgba(var(--accent-rgb), .10); }
+  .bf-cta--muted:hover { border-color: rgba(var(--accent-rgb), .55); background: rgba(245,242,236,.10);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.5), inset -1px -1px 0 rgba(255,255,255,.30),
+      inset 1px 1px 0 rgba(255,255,255,.12), inset 0 10px 18px -8px rgba(255,255,255,.18),
+      inset 0 -1px 0 rgba(0,0,0,.6), inset 0 -3px 5px rgba(0,0,0,.22), 0 0 40px rgba(var(--accent-rgb), .45); }
+
+  /* SCENE: bottom anchored, sized in px rather than a percentage so the
+     boundary keeps a fixed distance from the hero edge at every width. The
+     mask is a UNION (mask-composite: add) of a vertical ramp, which opens the
+     strip under the CTAs, and a horizontal ramp, which opens the field to the
+     right of the copy. Ink is painted where either is opaque, so the headline
+     and the lede always sit on clean ground. */
+  .bf-scene { position: absolute; left: 0; right: 0; bottom: 0; height: 425px; z-index: -1; pointer-events: none; overflow: hidden;
+    -webkit-mask-image: linear-gradient(180deg, transparent 70%, #000 84%), linear-gradient(90deg, transparent 46%, #000 62%);
+            mask-image: linear-gradient(180deg, transparent 70%, #000 84%), linear-gradient(90deg, transparent 46%, #000 62%);
+    -webkit-mask-composite: source-over; mask-composite: add; }
+  .bf-svg { width: 100%; height: 100%; display: block; }
+  .bf-svg :is(rect, path) { vector-effect: non-scaling-stroke; }
+  .bf-settle rect { fill: none; stroke: rgb(var(--accent-rgb)); stroke-width: 1; opacity: .46; }
+  .bf-link path { fill: none; stroke: rgb(var(--accent-rgb)); stroke-width: 1; opacity: .34; }
+  .bf-exec rect { fill: rgb(var(--accent-rgb)); opacity: .36; }
+  .bf-bound { fill: none; stroke: rgb(var(--accent-rgb)); stroke-width: 1; opacity: .62; }
+  .bf-arrow path { fill: none; stroke: rgb(var(--accent-rgb)); stroke-width: 1; opacity: .34; }
+  .bf-lbl { font-family: var(--mono); font-size: 11px; letter-spacing: .2em; fill: rgb(var(--accent-rgb)); opacity: .40; }
+
+  /* CLAIM BAND: twin of the sibling bands. */
+  .bf-marquee { border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); overflow: hidden; padding: 10px 0;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+            mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent); }
+  .bf-mq-track { display: flex; width: max-content; }
+  .bf-mq-set { display: flex; gap: 14px; padding-right: 14px; }
+  .bf-mq-set span { font-family: var(--mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; white-space: nowrap;
+    border: 1px solid rgba(var(--accent-rgb), .35); color: var(--accent); padding: 9px 16px; border-radius: 99px; display: inline-flex; }
+  .bf-marquee.run .bf-mq-track { animation: bfmq 70s linear infinite; }
+  @keyframes bfmq { to { transform: translateX(-33.3333%); } }
+  .bf-marquee:hover .bf-mq-track { animation-play-state: paused; }
+  .bf-mq-set .chip-glass, .bf-cta.chip-glass { transition: background var(--hover-dur) var(--hover-ease), box-shadow var(--hover-dur) var(--hover-ease); }
+  @media (prefers-reduced-motion: reduce) {
+    .bf-mq-track { animation: none !important; flex-wrap: wrap; width: auto; gap: 12px 0; }
+    .bf-mq-set[data-dup] { display: none; }
+    .bf-mq-set { flex-wrap: wrap; gap: 12px; padding-right: 0; }
+    .bf-marquee { -webkit-mask-image: none; mask-image: none; }
+    .bf-cta.chip-glass, .bf-cta i, .bf-mq-set .chip-glass { transition: none; }
+  }
+  @media (max-width: 1360px) { .hero { padding-bottom: 14px; } }
+  @media (max-width: 980px) {
+    /* the stacked layout leaves no clean band for the scene, and the copy
+       runs the full width, so it goes rather than sit behind the text */
+    .bf-scene { display: none; }
+    .bf-mq-track { animation: none !important; flex-wrap: wrap; width: auto; }
+    .bf-mq-set[data-dup] { display: none; }
+    .bf-mq-set { flex-wrap: wrap; gap: 10px; padding: 0 24px; }
+    .bf-marquee { -webkit-mask-image: none; mask-image: none; padding: 16px 0; }
+  }
+  @media (max-width: 700px) { .bf-inner { padding: 0 24px; } .bf-ctas { flex-direction: column; align-items: flex-start; gap: 14px; } }
 </style>
 <style>
   /* ===== News editor (btcfi-only admin UI) ===== */
@@ -377,14 +464,61 @@
     <i style="left:12%;bottom:-20%;width:44%;height:50%;opacity:.10"></i>
     <i style="left:52%;bottom:-24%;width:42%;height:54%;opacity:.09"></i>
   </div>
-  <p class="hero-eyebrow">Bitcoin's next chapter</p>
-  <h1 id="bitcoin-is-the-best-asset-to" class="hero-title">Bitcoin is the <em>best asset</em> to hold.<br>It's time to make it<br>the best to <em>use</em>.</h1>
-  <p class="hero-subtitle">$1.3T in capital sitting idle. Starknet is building the execution layer Bitcoin has always needed: private, scalable, and built to last.</p>
-  <div class="hero-scroll">
-    <div class="scroll-line"></div>
-    <span>Scroll</span>
+  <!-- HERO SCENE: settlement below, execution above.
+       One hairline boundary across the full width. Beneath it eight wide
+       blocks linked end to end, the slow settlement layer, running off the
+       right edge so the chain reads as continuing past the frame. Above it a
+       scatter of small marks that thickens sharply toward the boundary, the
+       fast execution layer, with two thin arrows crossing in both directions.
+       Bottom anchored (xMinYMax slice) so the settlement row keeps a fixed
+       clearance above the hero edge at any width and only the top of the
+       scatter is trimmed on a narrow viewport. Static, aria-hidden,
+       pointer-events none. Every stroke is non-scaling-stroke so hairlines
+       stay 1px however the box scales. The mask is a union of two ramps, one
+       vertical and one horizontal, so ink is only ever painted below the copy
+       or in the open field to its right, never behind the headline or the
+       lede. The two labels sit in the left page gutter, outside the 1160
+       content column, which is why the block row starts at x=170. Accent
+       comes from --accent-rgb, never a literal. -->
+  <div class="bf-scene" aria-hidden="true">
+    <svg class="bf-svg" viewBox="0 0 1440 425" preserveAspectRatio="xMinYMax slice" focusable="false">
+      <g class="bf-exec"><rect x="10" y="174" width="7" height="6"/><rect x="29" y="182" width="7" height="10"/><rect x="45" y="334" width="10" height="8"/><rect x="59" y="69" width="8" height="6"/><rect x="72" y="314" width="8" height="7"/><rect x="100" y="148" width="6" height="7"/><rect x="108" y="226" width="7" height="8"/><rect x="128" y="311" width="8" height="8"/><rect x="151" y="300" width="10" height="10"/><rect x="159" y="134" width="8" height="14"/><rect x="180" y="66" width="10" height="10"/><rect x="200" y="258" width="6" height="8"/><rect x="214" y="154" width="10" height="8"/><rect x="235" y="255" width="8" height="8"/><rect x="251" y="104" width="8" height="8"/><rect x="271" y="215" width="10" height="14"/><rect x="285" y="225" width="8" height="10"/><rect x="305" y="231" width="7" height="7"/><rect x="319" y="116" width="8" height="14"/><rect x="328" y="307" width="7" height="6"/><rect x="344" y="246" width="8" height="6"/><rect x="363" y="313" width="8" height="7"/><rect x="386" y="193" width="8" height="8"/><rect x="400" y="338" width="8" height="6"/><rect x="421" y="183" width="8" height="8"/><rect x="436" y="324" width="6" height="14"/><rect x="453" y="130" width="7" height="8"/><rect x="475" y="132" width="6" height="12"/><rect x="489" y="118" width="7" height="12"/><rect x="504" y="185" width="8" height="12"/><rect x="525" y="229" width="8" height="6"/><rect x="535" y="335" width="6" height="8"/><rect x="557" y="298" width="7" height="12"/><rect x="569" y="180" width="10" height="8"/><rect x="588" y="302" width="8" height="12"/><rect x="603" y="194" width="6" height="7"/><rect x="621" y="92" width="6" height="6"/><rect x="637" y="221" width="8" height="8"/><rect x="662" y="201" width="7" height="8"/><rect x="675" y="145" width="7" height="6"/><rect x="691" y="336" width="7" height="14"/><rect x="706" y="155" width="6" height="14"/><rect x="720" y="101" width="8" height="8"/><rect x="743" y="59" width="10" height="8"/><rect x="755" y="140" width="10" height="6"/><rect x="780" y="54" width="6" height="14"/><rect x="789" y="308" width="8" height="7"/><rect x="815" y="47" width="10" height="8"/><rect x="831" y="208" width="10" height="14"/><rect x="841" y="208" width="7" height="12"/><rect x="858" y="207" width="8" height="12"/><rect x="874" y="336" width="6" height="12"/><rect x="892" y="306" width="10" height="14"/><rect x="914" y="166" width="6" height="14"/><rect x="931" y="334" width="10" height="8"/><rect x="947" y="125" width="6" height="10"/><rect x="966" y="264" width="8" height="6"/><rect x="981" y="319" width="8" height="8"/><rect x="1001" y="276" width="7" height="6"/><rect x="1012" y="159" width="6" height="12"/><rect x="1036" y="249" width="8" height="12"/><rect x="1048" y="300" width="6" height="12"/><rect x="1058" y="249" width="10" height="10"/><rect x="1076" y="307" width="8" height="8"/><rect x="1098" y="42" width="8" height="6"/><rect x="1121" y="240" width="6" height="8"/><rect x="1128" y="314" width="7" height="6"/><rect x="1154" y="140" width="10" height="7"/><rect x="1163" y="305" width="8" height="8"/><rect x="1179" y="237" width="6" height="8"/><rect x="1201" y="239" width="7" height="6"/><rect x="1218" y="123" width="10" height="12"/><rect x="1233" y="78" width="6" height="14"/><rect x="1257" y="73" width="8" height="8"/><rect x="1265" y="319" width="7" height="10"/><rect x="1283" y="299" width="10" height="7"/><rect x="1298" y="290" width="7" height="12"/><rect x="1325" y="345" width="8" height="7"/><rect x="1331" y="311" width="8" height="7"/><rect x="1350" y="235" width="8" height="12"/><rect x="1375" y="338" width="8" height="7"/><rect x="1385" y="215" width="7" height="7"/><rect x="1398" y="46" width="6" height="12"/><rect x="1427" y="288" width="10" height="10"/></g>
+      <path class="bf-bound" d="M0 367 H1440"/>
+      <g class="bf-settle"><rect x="170" y="377" width="104" height="30" rx="2"/><rect x="342" y="377" width="104" height="30" rx="2"/><rect x="514" y="377" width="104" height="30" rx="2"/><rect x="686" y="377" width="104" height="30" rx="2"/><rect x="858" y="377" width="104" height="30" rx="2"/><rect x="1030" y="377" width="104" height="30" rx="2"/><rect x="1202" y="377" width="104" height="30" rx="2"/><rect x="1374" y="377" width="104" height="30" rx="2"/></g>
+      <g class="bf-link"><path d="M274 392 H342"/><path d="M446 392 H514"/><path d="M618 392 H686"/><path d="M790 392 H858"/><path d="M962 392 H1030"/><path d="M1134 392 H1202"/><path d="M1306 392 H1374"/></g>
+      <g class="bf-arrow">
+        <path d="M1002 327 V393"/><path d="M997 385 L1002 393 L1007 385"/>
+        <path d="M1268 393 V327"/><path d="M1263 335 L1268 327 L1273 335"/>
+      </g>
+      <text class="bf-lbl" x="18" y="353">EXECUTION</text>
+      <text class="bf-lbl" x="18" y="391">SETTLEMENT</text>
+    </svg>
+  </div>
+  <div class="bf-inner">
+    <p class="hero-eyebrow">Bitcoin's next chapter</p>
+    <h1 id="bitcoin-is-the-best-asset-to" class="hero-title">Bitcoin is the <em>best asset</em> to hold.<br>It's time to make it<br>the best to <em>use</em>.</h1>
+    <p class="hero-subtitle">$1.3T in capital sitting idle. Starknet is building the execution layer Bitcoin has always needed: private, scalable, and built to last.</p>
+    <div class="bf-ctas">
+      <a class="bf-cta chip-glass" href="#bitcoins-unfinished-mission">The unfinished mission <i aria-hidden="true">&rarr;</i></a>
+      <a class="bf-cta bf-cta--muted chip-glass" href="#defi-scale-privacy-resilience-all-four">See the stack <i aria-hidden="true">&rarr;</i></a>
+    </div>
   </div>
 </div>
+
+<!-- claim band: every item restates something already published in the body
+     below. Mechanics are the twin of the ecosystem, digest, privacy and
+     quantum bands: seamless loop over repeated sets, edge fade masks, hover
+     pause, IO gated, same 70s duration. Three sets so the loop stays gapless
+     on an ultrawide. The first set is the readable one; the copies are
+     aria-hidden. Labels only, never links. No live figure appears here: the
+     BTC and strkBTC numbers on this page update hourly, so a static pill
+     would drift out of step with them. -->
+<div class="bf-marquee" id="bfMarquee"><div class="bf-mq-track">
+  <div class="bf-mq-set"><span class="chip-glass">BITCOIN SETTLES, STARKNET SCALES</span><span class="chip-glass">BASE LAYER: ~7 TPS</span><span class="chip-glass">NATIVE BTC STAKING SINCE 2025</span><span class="chip-glass">DUAL-TOKEN PROOF OF STAKE</span><span class="chip-glass">BTC 25%, STRK 75% WEIGHT</span><span class="chip-glass">STAKING, LENDING, PERPS, LIVE</span><span class="chip-glass">STRKBTC BEHAVES LIKE ERC-20</span><span class="chip-glass">BTCFI-READY TODAY</span><span class="chip-glass">FULLY TRUSTLESS TOMORROW</span><span class="chip-glass">COMMUNITY-VETTED FEDERATION</span><span class="chip-glass">BITVM BRIDGE WITH ALPEN LABS</span><span class="chip-glass">OP_CAT PROOF OF CONCEPT LIVE</span></div>
+  <div class="bf-mq-set" data-dup aria-hidden="true"><span class="chip-glass">BITCOIN SETTLES, STARKNET SCALES</span><span class="chip-glass">BASE LAYER: ~7 TPS</span><span class="chip-glass">NATIVE BTC STAKING SINCE 2025</span><span class="chip-glass">DUAL-TOKEN PROOF OF STAKE</span><span class="chip-glass">BTC 25%, STRK 75% WEIGHT</span><span class="chip-glass">STAKING, LENDING, PERPS, LIVE</span><span class="chip-glass">STRKBTC BEHAVES LIKE ERC-20</span><span class="chip-glass">BTCFI-READY TODAY</span><span class="chip-glass">FULLY TRUSTLESS TOMORROW</span><span class="chip-glass">COMMUNITY-VETTED FEDERATION</span><span class="chip-glass">BITVM BRIDGE WITH ALPEN LABS</span><span class="chip-glass">OP_CAT PROOF OF CONCEPT LIVE</span></div>
+  <div class="bf-mq-set" data-dup aria-hidden="true"><span class="chip-glass">BITCOIN SETTLES, STARKNET SCALES</span><span class="chip-glass">BASE LAYER: ~7 TPS</span><span class="chip-glass">NATIVE BTC STAKING SINCE 2025</span><span class="chip-glass">DUAL-TOKEN PROOF OF STAKE</span><span class="chip-glass">BTC 25%, STRK 75% WEIGHT</span><span class="chip-glass">STAKING, LENDING, PERPS, LIVE</span><span class="chip-glass">STRKBTC BEHAVES LIKE ERC-20</span><span class="chip-glass">BTCFI-READY TODAY</span><span class="chip-glass">FULLY TRUSTLESS TOMORROW</span><span class="chip-glass">COMMUNITY-VETTED FEDERATION</span><span class="chip-glass">BITVM BRIDGE WITH ALPEN LABS</span><span class="chip-glass">OP_CAT PROOF OF CONCEPT LIVE</span></div>
+</div></div>
+
 
 <div class="section-divider"></div>
 
@@ -2539,6 +2673,17 @@
     if (editing) { work = currentItems(); renderEditor(); }
   });
   syncPill();
+})();
+</script>
+<script>
+/* claim band gate, twin of the sibling bands: the CSS only declares the
+   animation under .run, so off screen the band is not animating at all. */
+(function(){
+  var band = document.getElementById('bfMarquee');
+  if (!band) return;
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(function(es){ band.classList.toggle('run', es[0].isIntersecting); }, { threshold: 0 }).observe(band);
+  } else { band.classList.add('run'); }
 })();
 </script>
 </body>
