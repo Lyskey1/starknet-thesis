@@ -511,7 +511,6 @@
   .pgrid col.c-crit { width: 10.4%; }
   .pgrid col.c-score { width: 12.2%; }
   .pgrid th { font-size: 11.5px; letter-spacing: .08em; color: var(--ink); padding: 17px 12px; border: 1px solid var(--line); background: #0D1114; font-weight: 600; line-height: 1.5; }
-  .pgrid th span { display: block; font-size: 10px; color: var(--muted); font-weight: 400; margin-top: 6px; text-transform: lowercase; letter-spacing: .04em; }
   .pgrid td { border: 1px solid var(--line); text-align: center; padding: 0; height: 66px; position: relative; }
   .pgrid td.pname, .pgrid th.pname { text-align: left; padding: 16px 18px; font-size: 14px; letter-spacing: .1em; font-weight: 600; background: #0D1114; }
   /* champion row: STRK20 distinguished with in-table means only, no
@@ -534,16 +533,20 @@
   .pgrid td.p:hover, .pgrid td.p:focus { background: rgba(232,163,61,.08); outline: none; cursor: help; }
   .pgrid td.y:hover, .pgrid td.n:hover, .pgrid td.y:focus, .pgrid td.n:focus { background: rgba(var(--accent-rgb),.09); outline: none; cursor: help; }
   .pgrid td[data-tip]:hover .tipbox, .pgrid td[data-tip]:focus .tipbox { opacity: 1; visibility: visible; }
-  .tipbox { position: absolute; bottom: calc(100% + 10px); left: 50%; transform: translateX(-50%); width: 250px; background: #10161A; border: 1px solid var(--em-line); border-radius: 8px; padding: 12px 14px; font-family: var(--sans); font-size: 12.5px; line-height: 1.55; color: rgba(245,242,236,.78); text-align: left; opacity: 0; visibility: hidden; transition: opacity .18s; z-index: 20; pointer-events: none; box-shadow: 0 10px 26px rgba(0,0,0,.5); }
+  .tipbox { position: absolute; top: calc(100% + 10px); left: 50%; transform: translateX(-50%); width: 250px; background: #10161A; border: 1px solid var(--em-line); border-radius: 8px; padding: 12px 14px; font-family: var(--sans); font-size: 12.5px; line-height: 1.55; color: rgba(245,242,236,.78); text-align: left; opacity: 0; visibility: hidden; transition: opacity .18s; z-index: 20; pointer-events: none; box-shadow: 0 10px 26px rgba(0,0,0,.5); }
   /* last column: the 250px box centered on a ~134px cell escapes the
      gridwrap's overflow-x clip at desktop widths (the sub-860px rules
      further down already handle narrow viewports). Anchor it to the
      cell's right edge so it opens leftward over the table. */
   .pgrid td:last-child .tipbox, .pgrid td:nth-last-child(2) .tipbox { left: auto; right: 0; transform: none; }
-  /* first data row: a tall tip opening upward clears the thead and pokes
-     past the wrapper's top edge, where overflow-x: auto clips it (top
-     overflow is not scrollable). Open downward over the rows instead. */
-  .pgrid tbody tr:first-child td .tipbox { bottom: auto; top: calc(100% + 10px); }
+  /* Vertical direction. Rows are 66px and a tip is 45 to 84px, so a tip
+     opening upward always lands on the row above: from AZTEC that was the
+     STRK20 scorecard, which is exactly what must never be covered. Default to
+     opening DOWNWARD so nothing can ever reach back over STRK20, and flip only
+     the last two rows upward, where a downward tip would run past the
+     wrapper's bottom edge (overflow-x: auto makes the vertical axis auto too,
+     so it would be clipped). */
+  .pgrid tbody tr:nth-last-child(-n+2) td .tipbox { top: auto; bottom: calc(100% + 10px); }
   .pgrid-legend { margin-top: 12px; font-family: var(--mono); font-size: 10px; letter-spacing: .1em; color: var(--muted); }
 
   /* ===== PRIVACY COMPLETENESS ===== */
@@ -609,20 +612,29 @@
   /* the thead carries the real column names for assistive tech; the visible
      short labels live in the tfoot under the LEDs */
   .pvc-vh { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; border: 0; }
-  .pgrid tfoot td { border: 0; height: auto; padding: 14px 6px 0; text-align: center;
-    font-family: var(--mono); font-size: 9.5px; letter-spacing: .1em; color: var(--muted); transition: color var(--hover-dur) var(--hover-ease); }
+  /* the header row is now both the visible row and the semantic one: short
+     labels for the eye, the full criterion name hidden inside the same th for
+     assistive tech. Muted and hairline-only so it does not compete with the
+     STRK20 scorecard row directly beneath it. */
+  .pgrid thead th { background: transparent; border: 0; border-bottom: 1px solid var(--line);
+    font-family: var(--mono); font-size: 9.5px; font-weight: 500; letter-spacing: .1em; line-height: 1.4;
+    color: var(--muted); text-align: center; padding: 0 6px 13px;
+    transition: color var(--hover-dur) var(--hover-ease), opacity var(--hover-dur) var(--hover-ease); }
+  .pgrid thead th.pname, .pgrid thead th.shead { font-size: 9.5px; letter-spacing: .1em; color: var(--muted); }
+  .pgrid thead th.pname { text-align: left; padding: 0 18px 13px; }
   /* chip highlight: driven by the data-col set on the table by the chip script */
   .pgrid[data-col] tbody td[data-c] { opacity: .38; transition: opacity var(--hover-dur) var(--hover-ease); }
   .pgrid[data-col="0"] tbody td[data-c="0"], .pgrid[data-col="1"] tbody td[data-c="1"],
   .pgrid[data-col="2"] tbody td[data-c="2"], .pgrid[data-col="3"] tbody td[data-c="3"],
   .pgrid[data-col="4"] tbody td[data-c="4"], .pgrid[data-col="5"] tbody td[data-c="5"],
   .pgrid[data-col="6"] tbody td[data-c="6"] { opacity: 1; background: rgba(var(--accent-rgb), .12); }
-  .pgrid[data-col="0"] tfoot td[data-c="0"], .pgrid[data-col="1"] tfoot td[data-c="1"],
-  .pgrid[data-col="2"] tfoot td[data-c="2"], .pgrid[data-col="3"] tfoot td[data-c="3"],
-  .pgrid[data-col="4"] tfoot td[data-c="4"], .pgrid[data-col="5"] tfoot td[data-c="5"],
-  .pgrid[data-col="6"] tfoot td[data-c="6"] { color: var(--em); }
+  .pgrid[data-col] thead th[data-c] { opacity: .42; }
+  .pgrid[data-col="0"] thead th[data-c="0"], .pgrid[data-col="1"] thead th[data-c="1"],
+  .pgrid[data-col="2"] thead th[data-c="2"], .pgrid[data-col="3"] thead th[data-c="3"],
+  .pgrid[data-col="4"] thead th[data-c="4"], .pgrid[data-col="5"] thead th[data-c="5"],
+  .pgrid[data-col="6"] thead th[data-c="6"] { opacity: 1; color: var(--em); }
   @media (prefers-reduced-motion: reduce) {
-    .pvc-field, .pvc-chip, .pvc-plus::before, .pvc-plus::after, .pgrid tfoot td, .pgrid[data-col] tbody td[data-c], .pvc-summary { transition: none; }
+    .pvc-field, .pvc-chip, .pvc-plus::before, .pvc-plus::after, .pgrid thead th, .pgrid[data-col] tbody td[data-c], .pvc-summary { transition: none; }
   }
   @media (max-width: 980px) { .pvc-field { grid-template-columns: repeat(3, 1fr); gap: 22px 14px; } }
   @media (max-width: 560px) { .pvc-field { grid-template-columns: repeat(2, 1fr); } .pvc-card { width: 100%; } }
@@ -1695,8 +1707,8 @@
         <table class="pgrid">
           <caption class="pvc-vh">Privacy completeness by protocol. Seven criteria scored yes, partial (not counted) or no, with each protocol's total out of seven.</caption>
           <colgroup><col class="c-name"><col class="c-crit" span="7"><col class="c-score"></colgroup>
-          <thead class="pvc-vh">
-            <tr><th scope="col" class="pname">PROTOCOL</th><th scope="col">MULTI-ASSET<br><span>one pool, all tokens</span></th><th scope="col">NO USER-MANAGED SECRETS<br><span>nothing to back up</span></th><th scope="col">COMPLIANCE PATH<br><span>scoped disclosure</span></th><th scope="col">FAST SHIELD / UNSHIELD<br><span>seconds, both ways</span></th><th scope="col">PROGRAMMABLE<br><span>private app logic</span></th><th scope="col">DEFI COMPOSABILITY<br><span>existing protocols</span></th><th scope="col">EXISTING ECOSYSTEM<br><span>real users, liquidity</span></th><th scope="col">SCORE</th></tr>
+          <thead>
+            <tr><th scope="col" class="pname">PROTOCOL</th><th scope="col" data-c="0"><span aria-hidden="true">MULTI-ASSET</span><span class="pvc-vh">Multi-asset, one pool, all tokens</span></th><th scope="col" data-c="1"><span aria-hidden="true">NO SECRETS</span><span class="pvc-vh">No user-managed secrets, nothing to back up</span></th><th scope="col" data-c="2"><span aria-hidden="true">COMPLIANCE</span><span class="pvc-vh">Compliance path, scoped disclosure</span></th><th scope="col" data-c="3"><span aria-hidden="true">FAST</span><span class="pvc-vh">Fast shield and unshield, seconds both ways</span></th><th scope="col" data-c="4"><span aria-hidden="true">PROGRAMMABLE</span><span class="pvc-vh">Programmable, private app logic</span></th><th scope="col" data-c="5"><span aria-hidden="true">DEFI</span><span class="pvc-vh">DeFi composability, existing protocols</span></th><th scope="col" data-c="6"><span aria-hidden="true">ECOSYSTEM</span><span class="pvc-vh">Existing ecosystem, real users and liquidity</span></th><th scope="col" class="shead">SCORE</th></tr>
           </thead>
           <tbody>
         <tr id="strk20-row" class="champ-row">
@@ -1735,9 +1747,6 @@
           <td class="score">1/7</td>
         </tr>
           </tbody>
-          <tfoot aria-hidden="true">
-            <tr><td></td><td data-c="0">MULTI-ASSET</td><td data-c="1">NO SECRETS</td><td data-c="2">COMPLIANCE</td><td data-c="3">FAST</td><td data-c="4">PROGRAMMABLE</td><td data-c="5">DEFI</td><td data-c="6">ECOSYSTEM</td><td></td></tr>
-          </tfoot>
         </table>
       </div>
       <div class="pgrid-legend"><i class="lg-y"></i><b>YES</b> <i class="lg-p"></i><b>PARTIAL, NOT COUNTED</b> <i class="lg-n"></i><b>NO</b></div>
