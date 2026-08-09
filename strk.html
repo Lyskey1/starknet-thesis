@@ -608,6 +608,7 @@ a.chip:hover{background:var(--acc);border-color:var(--acc);color:#0A0A0A}
 #numbers .stip .br .bt{color:var(--white);text-align:right;font-variant-numeric:tabular-nums}
 #numbers .stip .br .bp{color:var(--acc-2);text-align:right;min-width:34px;font-variant-numeric:tabular-nums}
 #numbers .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:22px}
+#numbers .kpis.two{grid-template-columns:repeat(2,1fr)}
 #numbers .kpi{border:1px solid var(--line);border-radius:14px;background:var(--card);padding:16px 18px}
 #numbers .kpi .kl{font-family:var(--mono),monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
 #numbers .kpi .kv{font-family:var(--display);font-weight:800;font-stretch:110%;font-size:25px;margin-top:8px}
@@ -640,7 +641,7 @@ a.chip:hover{background:var(--acc);border-color:var(--acc);color:#0A0A0A}
 #numbers .detail .dl span.r{color:var(--muted);border:1px solid var(--line)}
 #numbers .detail .dg{display:flex;justify-content:space-between;gap:14px;font-family:var(--mono),monospace;font-size:11px;letter-spacing:.04em;color:var(--muted);margin-top:6px}
 #numbers .detail .dg b{color:var(--white);font-family:var(--mono),monospace;font-weight:500}
-@media(max-width:880px){#numbers .dist{grid-template-columns:1fr}#numbers .kpis{grid-template-columns:1fr}}
+@media(max-width:880px){#numbers .dist{grid-template-columns:1fr}#numbers .kpis{grid-template-columns:1fr}#numbers .kpis.two{grid-template-columns:1fr}}
 
 /* bear */
 .bear{background:linear-gradient(180deg,rgba(124,58,237,0.06),transparent);border:1px solid var(--accbd);border-radius:18px;padding:34px}
@@ -1212,7 +1213,7 @@ window.ADMIN_GATE=on;})();
         <div class="stip" id="stip"></div>
       </div>
       <div class="legend" id="ulegend"></div>
-      <div class="kpis" id="ukpis"></div>
+      <div class="kpis two" id="ukpis"></div>
       <div class="note">Estimate, calibrated to the reported circulating supply. Investors + Early Contributors (38.21% of supply) vest on the published schedule, completing <b>March 15, 2027</b>; the other allocations have no fixed lock-up and are modelled as a gradual release into circulation. Excludes inflation and staking.</div>
     </div>
     <div class="panel">
@@ -1223,7 +1224,7 @@ window.ADMIN_GATE=on;})();
         <div class="stip" id="mtip2"></div>
       </div>
       <div class="legend"><span><i style="background:#A78BFA"></i>Scheduled vesting</span><span><i style="background:#6D4FD0"></i>Estimated release (no fixed schedule)</span><span><i style="background:#F5F2EC"></i>Cumulative supply</span></div>
-      <div class="kpis" id="mukpis"></div>
+      <div class="kpis two" id="mukpis"></div>
     </div>
     <div class="panel">
       <div class="eyebrow">Distribution</div>
@@ -2258,11 +2259,12 @@ function drawChart(){let s='';
 }
 drawChart();
 document.getElementById('ulegend').innerHTML=CATS.map(c=>`<span><i style="background:${c.c}"></i>${c.n}</span>`).join('');
-const tToday=TOTAL[TODAY_I], rem=100-tToday;
+const rem=100-TOTAL[TODAY_I];
+/* the model's "today" reads live in the TODAY marker and tooltip; the page's
+   only circulating stat card is the live CoinGecko figure in the Supply panel */
 document.getElementById('ukpis').innerHTML=`
- <div class="kpi"><div class="kl">In circulation today</div><div class="kv">${tToday.toFixed(1)}%</div><div class="ks">${bTok(tToday)} STRK (est.)</div></div>
  <div class="kpi"><div class="kl">Still to enter</div><div class="kv">${rem.toFixed(1)}%</div><div class="ks">${bTok(rem)} STRK to come</div></div>
- <div class="kpi"><div class="kl">Near full circulation</div><div class="kv">~2031</div><div class="ks">vesting ends Mar 2027</div></div>`;
+ <div class="kpi"><div class="kl">Near full circulation</div><div class="kv">~2031</div><div class="ks">remaining via Starknet Foundation release</div></div>`;
 const stip=document.getElementById('stip');
 ['pointermove','pointerdown'].forEach(ev=>uchart.addEventListener(ev,e=>{const r=uchart.getBoundingClientRect();const vx=(e.clientX-r.left)/r.width*1000;
   let i=Math.round((vx-PL)/(PR-PL)*(MONTHS-1));i=Math.max(0,Math.min(MONTHS-1,i));
@@ -2364,8 +2366,7 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
   window.__nextUnlock={amount:nuAmt,date:nu.getFullYear()+'-'+String(nu.getMonth()+1).padStart(2,'0')+'-'+String(nu.getDate()).padStart(2,'0')};
   document.getElementById('mukpis').innerHTML=
     `<div class="kpi"><div class="kl">Next unlock</div><div class="kv">${nuAmt>0?'~'+Math.round(nuAmt/1e6)+'M':'—'}</div><div class="ks">${nu.toLocaleString('en',{month:'short',day:'numeric',year:'numeric'})} · <span data-stat="nextunlockpct">≈1.9%</span> computed from live circulating supply</div></div>`+
-    `<div class="kpi"><div class="kl">Vesting rate</div><div class="kv">~127M</div><div class="ks">per month · until Mar 15, 2027</div><div class="ks ksrc"><a href="https://docs.starknet.io/learn/protocol/strk" target="_blank" rel="noopener noreferrer">Official schedule ↗</a></div></div>`+
-    `<div class="kpi"><div class="kl">Full circulation</div><div class="kv">~2031</div><div class="ks">remaining via Starknet Foundation release</div></div>`;
+    `<div class="kpi"><div class="kl">Vesting rate</div><div class="kv">~127M</div><div class="ks">per month · until Mar 15, 2027</div><div class="ks ksrc"><a href="https://docs.starknet.io/learn/protocol/strk" target="_blank" rel="noopener noreferrer">Official schedule ↗</a></div></div>`;
   const hl=document.getElementById('muhl');
   ['pointermove','pointerdown'].forEach(ev=>muchart.addEventListener(ev,e=>{const r=muchart.getBoundingClientRect();const vx=(e.clientX-r.left)/r.width*1000;
     let k=Math.round((vx-aL)/(aR-aL)*(n-1));k=Math.max(0,Math.min(n-1,k));const row=rows[k];const d=new Date(2024,row.i,1);
