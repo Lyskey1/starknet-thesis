@@ -607,6 +607,8 @@ a.chip:hover{background:var(--acc);border-color:var(--acc);color:#0A0A0A}
 #numbers .stip .br .bn{color:var(--muted-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #numbers .stip .br .bt{color:var(--white);text-align:right;font-variant-numeric:tabular-nums}
 #numbers .stip .br .bp{color:var(--acc-2);text-align:right;min-width:34px;font-variant-numeric:tabular-nums}
+#numbers .stip .mk{font-family:var(--mono),monospace;font-size:8px;color:var(--muted);vertical-align:super;margin-left:2px}
+#numbers .stip .mkl{margin-top:7px;font-family:var(--mono),monospace;font-size:9px;letter-spacing:.05em;color:var(--muted)}
 #numbers .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:22px}
 #numbers .kpis.two{grid-template-columns:repeat(2,1fr)}
 #numbers .kpi{border:1px solid var(--line);border-radius:14px;background:var(--card);padding:16px 18px}
@@ -1214,7 +1216,7 @@ window.ADMIN_GATE=on;})();
       </div>
       <div class="legend" id="ulegend"></div>
       <div class="kpis two" id="ukpis"></div>
-      <div class="note">Estimate, calibrated to the reported circulating supply. Investors + Early Contributors (38.21% of supply) vest on the published schedule, completing <b>March 15, 2027</b>; the other allocations have no fixed lock-up and are modelled as a gradual release into circulation. Excludes inflation and staking.</div>
+      <div class="note">Estimate, modeled after the official <a href="https://docs.starknet.io/learn/protocol/strk" target="_blank" rel="noopener noreferrer">circulating supply graph ↗</a> and calibrated to the reported circulating supply. Investors and Early Contributors (38.21% of supply) follow the published contractual lock-up, completing <b>March 15, 2027</b>; the other seven allocations have no fixed schedule and are modeled as a gradual release. 100% is the 10B initially minted, excluding inflation and staking rewards. The official count treats Starknet Foundation allotments as circulating only once they leave their wallets; this model does not track wallets and approximates that with smooth release curves.</div>
     </div>
     <div class="panel">
       <div class="eyebrow">Unlock schedule</div>
@@ -2274,7 +2276,7 @@ const stip=document.getElementById('stip');
   const d=new Date(2024,i,1),tot=TOTAL[i],re=100-tot;
   const tkf=v=>{const t=v/100*SUPPLY;return t>=1e9?(t/1e9).toFixed(2)+'B':(t/1e6).toFixed(0)+'M';};
   let rows='';CATS.forEach(c=>{const prog=c.p>0?Math.min(c.cont[i]/c.p*100,100):0;
-    rows+=`<div class="br"><span class="dot" style="background:${c.c}"></span><span class="bn">${c.n}</span><span class="bt">${tkf(c.cont[i])}</span><span class="bp">${prog.toFixed(0)}%</span></div>`;});
+    rows+=`<div class="br"><span class="dot" style="background:${c.c}"></span><span class="bn">${c.n}<sup class="mk">${c.vest?'c':'e'}</sup></span><span class="bt">${tkf(c.cont[i])}</span><span class="bp">${prog.toFixed(0)}%</span></div>`;});
   stip.style.display='block';
   const px=X(i)/1000*r.width;
   stip.style.top='50%';
@@ -2283,7 +2285,8 @@ const stip=document.getElementById('stip');
   stip.innerHTML=`<div class="td">${d.toLocaleString('en',{month:'short',year:'numeric'})}</div>
    <div class="r"><span style="color:var(--acc-2)">In circulation</span><b>${tot.toFixed(1)}% · ${bTok(tot)}</b></div>
    <div class="r"><span style="color:var(--muted)">Still to enter</span><b>${re.toFixed(1)}% · ${bTok(re)}</b></div>
-   <div class="bd">${rows}</div>`;}));
+   <div class="bd">${rows}</div>
+   <div class="mkl">c contractual schedule · e estimated release</div>`;}));
 ['mouseleave','pointerleave','pointercancel'].forEach(ev=>uchart.addEventListener(ev,()=>{stip.style.display='none';document.getElementById('ux').style.display='none';document.getElementById('ud').style.display='none';}));
 
 /* donut */
@@ -2366,7 +2369,7 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
   window.__nextUnlock={amount:nuAmt,date:nu.getFullYear()+'-'+String(nu.getMonth()+1).padStart(2,'0')+'-'+String(nu.getDate()).padStart(2,'0')};
   document.getElementById('mukpis').innerHTML=
     `<div class="kpi"><div class="kl">Next unlock</div><div class="kv">${nuAmt>0?'~'+Math.round(nuAmt/1e6)+'M':'—'}</div><div class="ks">${nu.toLocaleString('en',{month:'short',day:'numeric',year:'numeric'})} · <span data-stat="nextunlockpct">≈1.9%</span> computed from live circulating supply</div></div>`+
-    `<div class="kpi"><div class="kl">Vesting rate</div><div class="kv">~127M</div><div class="ks">per month · until Mar 15, 2027</div><div class="ks ksrc"><a href="https://docs.starknet.io/learn/protocol/strk" target="_blank" rel="noopener noreferrer">Official schedule ↗</a></div></div>`;
+    `<div class="kpi"><div class="kl">Vesting rate</div><div class="kv">up to 127M</div><div class="ks">per month · until Mar 15, 2027</div><div class="ks ksrc"><a href="https://docs.starknet.io/learn/protocol/strk" target="_blank" rel="noopener noreferrer">Official schedule ↗</a></div></div>`;
   const hl=document.getElementById('muhl');
   ['pointermove','pointerdown'].forEach(ev=>muchart.addEventListener(ev,e=>{const r=muchart.getBoundingClientRect();const vx=(e.clientX-r.left)/r.width*1000;
     let k=Math.round((vx-aL)/(aR-aL)*(n-1));k=Math.max(0,Math.min(n-1,k));const row=rows[k];const d=new Date(2024,row.i,1);
