@@ -511,11 +511,12 @@
   .pgrid col.c-crit { width: 10.4%; }
   .pgrid col.c-score { width: 12.2%; }
   .pgrid th { font-size: 11.5px; letter-spacing: .08em; color: var(--ink); padding: 17px 12px; border: 1px solid var(--line); background: #0D1114; font-weight: 600; line-height: 1.5; }
-  .pgrid td { border: 1px solid var(--line); text-align: center; padding: 0; height: 66px; position: relative; }
-  .pgrid td.pname, .pgrid th.pname { text-align: left; padding: 16px 18px; font-size: 14px; letter-spacing: .1em; font-weight: 600; background: #0D1114; }
+  .pgrid td { border: 1px solid var(--line); text-align: center; padding: 0; height: 52px; position: relative; }
+  .pgrid td.pname, .pgrid th.pname { text-align: left; padding: 9px 18px; font-size: 14px; letter-spacing: .1em; font-weight: 600; background: #0D1114; }
   /* champion row: STRK20 distinguished with in-table means only, no
      backdrop-filter, no specular stack: accent tint, 2px accent left
      edge, larger glowing dots, accent label and score, full opacity */
+  .pgrid tr.champ-row td, .pgrid tr.champ-row th.pname { height: 64px; }
   .pgrid tr.champ-row td { background: rgba(var(--accent-rgb),.05); }
   .pgrid tr.champ-row th.pname { color: var(--em); background: rgba(var(--accent-rgb),.08); border-left: 2px solid var(--em); }
   .pgrid tbody tr.champ-row { opacity: 1; }
@@ -547,7 +548,7 @@
      wrapper's bottom edge (overflow-x: auto makes the vertical axis auto too,
      so it would be clipped). */
   .pgrid tbody tr:nth-last-child(-n+2) td .tipbox { top: auto; bottom: calc(100% + 10px); }
-  .pgrid-legend { margin-top: 12px; font-family: var(--mono); font-size: 10px; letter-spacing: .1em; color: var(--muted); }
+  .pgrid-legend { margin-top: 10px; font-family: var(--mono); font-size: 10px; letter-spacing: .1em; color: var(--muted); }
 
   /* ===== PRIVACY COMPLETENESS ===== */
   .pvc { margin-top: 76px; }
@@ -581,15 +582,18 @@
   .pvc-chip:hover { color: var(--ink); border-color: rgba(var(--accent-rgb), .40); }
   .pvc-chip[aria-pressed="true"] { color: var(--em); border-color: rgba(var(--accent-rgb), .62); background: rgba(var(--accent-rgb), .10); }
   .pvc-chip:focus-visible { outline: 2px solid var(--em); outline-offset: 3px; }
-  .pvc-method { margin-top: 22px; min-height: 96px; }
+  /* height reserved to the tallest of the seven texts (DEFI, the only one that
+     runs to two lines at 1440), so opening a criterion or switching between
+     them never shifts the button or the matrix downward */
+  .pvc-method { margin-top: 22px; min-height: 71px; }
   .pvc-meth-h { font-family: var(--mono); font-size: 11.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--em); }
   .pvc-meth-h span { text-transform: lowercase; letter-spacing: .04em; color: var(--muted); margin-left: 8px; }
-  .pvc-meth-b { font-size: 14.5px; line-height: 1.65; color: rgba(245,242,236,.78); max-width: 620px; margin: 10px auto 0; }
+  .pvc-meth-b { font-size: 13.5px; line-height: 1.6; color: rgba(245,242,236,.78); max-width: 860px; margin: 9px auto 0; }
   .pvc-meth-rest { font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
   /* native details: keyboard operable and reduced-motion safe for free, and the
      matrix stays in the DOM when closed so find-in-page and the search index
      still reach it */
-  .pvc-details { margin-top: 48px; }
+  .pvc-details { margin-top: 26px; }
   .pvc-summary { display: flex; align-items: center; gap: 12px; cursor: pointer; list-style: none;
     font-family: var(--mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink);
     border: 1px solid var(--line); border-radius: 99px; padding: 12px 22px; margin: 0 auto; width: max-content;
@@ -608,7 +612,7 @@
   .pvc-plus::after { transform: rotate(90deg); }
   .pvc-details[open] .pvc-plus::before { transform: rotate(45deg); }
   .pvc-details[open] .pvc-plus::after { transform: rotate(-45deg); }
-  .pvc-details .gridwrap { margin-top: 26px; }
+  .pvc-details .gridwrap { margin-top: 18px; }
   /* the thead carries the real column names for assistive tech; the visible
      short labels live in the tfoot under the LEDs */
   .pvc-vh { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; border: 0; }
@@ -618,10 +622,10 @@
      STRK20 scorecard row directly beneath it. */
   .pgrid thead th { background: transparent; border: 0; border-bottom: 1px solid var(--line);
     font-family: var(--mono); font-size: 9.5px; font-weight: 500; letter-spacing: .1em; line-height: 1.4;
-    color: var(--muted); text-align: center; padding: 0 6px 13px;
+    color: var(--muted); text-align: center; padding: 0 6px 11px;
     transition: color var(--hover-dur) var(--hover-ease), opacity var(--hover-dur) var(--hover-ease); }
   .pgrid thead th.pname, .pgrid thead th.shead { font-size: 9.5px; letter-spacing: .1em; color: var(--muted); }
-  .pgrid thead th.pname { text-align: left; padding: 0 18px 13px; }
+  .pgrid thead th.pname { text-align: left; padding: 0 18px 11px; }
   /* chip highlight: driven by the data-col set on the table by the chip script */
   .pgrid[data-col] tbody td[data-c] { opacity: .38; transition: opacity var(--hover-dur) var(--hover-ease); }
   .pgrid[data-col="0"] tbody td[data-c="0"], .pgrid[data-col="1"] tbody td[data-c="1"],
