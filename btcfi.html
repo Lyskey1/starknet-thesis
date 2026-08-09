@@ -489,7 +489,12 @@
        the spirit of the quantum chandelier: a Bitcoin node lower left, the
        Starknet mark upper right, and two arcs closing a loop between them.
        Arc one carries execution up, arc two carries the proof back down and
-       is drawn lighter so the return reads as secondary. The Bitcoin node keeps
+       is drawn lighter so the return reads as secondary. All four arc
+       terminations stand off their node by the same 30.03 user units, the gap
+       the EXECUTE arrowhead already kept from the Starknet mark; the arcs are
+       trimmed to it by de Casteljau splitting, so curvature is untouched and
+       only the ends move. EXECUTE sits on the convex side of its arc at the
+       same perpendicular distance PROVE keeps from its own. The Bitcoin node keeps
        its hairline circle rather than the filled roundel, so the two nodes
        carry comparable weight in a drawing made of hairlines: the glyph inside is not the Bitcoin logo artwork. The box is square
        and anchored bottom right in px, so its clearance from the claim band
@@ -499,12 +504,12 @@
   <div class="bfp-scene" id="bfLoop" aria-hidden="true">
     <svg class="bfp-svg" viewBox="30 59 313 307" preserveAspectRatio="xMidYMid meet" focusable="false">
       <!-- arcs first so the nodes sit over their endpoints -->
-      <path class="bfp-arc bfp-arc--up"   id="bfArcUp"   pathLength="100" d="M157 288 C228 268, 288 216, 296 148"/>
-      <path class="bfp-arc bfp-arc--down" id="bfArcDown" pathLength="100" d="M267 109 C180 130, 60 160, 74 240"/>
-      <path class="bfp-pulse bfp-pulse--up"   pathLength="100" d="M157 288 C228 268, 288 216, 296 148"/>
-      <path class="bfp-pulse bfp-pulse--down" pathLength="100" d="M267 109 C180 130, 60 160, 74 240"/>
+      <path class="bfp-arc bfp-arc--up"   id="bfArcUp"   pathLength="100" d="M185.37 278.05 C243.42 253.5, 289.09 206.71, 296 148"/>
+      <path class="bfp-arc bfp-arc--down" id="bfArcDown" pathLength="100" d="M237.3 116.32 C167.61 134.05, 89.57 159.5, 75.21 210.35"/>
+      <path class="bfp-pulse bfp-pulse--up"   pathLength="100" d="M185.37 278.05 C243.42 253.5, 289.09 206.71, 296 148"/>
+      <path class="bfp-pulse bfp-pulse--down" pathLength="100" d="M237.3 116.32 C167.61 134.05, 89.57 159.5, 75.21 210.35"/>
       <path class="bfp-head bfp-head--up"   d="M288 160 L296 148 L304 160"/>
-      <path class="bfp-head bfp-head--down" d="M63 229 L74 240 L81 227"/>
+      <path class="bfp-head bfp-head--down" d="M70.78 196.63 L75.21 210.35 L86.17 200.97"/>
 
       <!-- lower left: Bitcoin -->
       <circle class="bfp-node bfp-node--btc" cx="96" cy="300" r="62"/><g class="bfp-mark bfp-mark--btc" transform="translate(31.17,236.50) scale(3.170)"><path transform="matrix(0.61129216,0,0,0.61129216,-118.80398,-25.96802)" d="M241.91 70.689c0.637-4.258-2.605-6.547-7.038-8.074l1.438-5.768-3.511-0.875-1.4 5.616c-0.923-0.23-1.871-0.447-2.813-0.662l1.41-5.653-3.509-0.875-1.439 5.766c-0.764-0.174-1.514-0.346-2.242-0.527l0.004-0.018-4.842-1.209-0.934 3.75c0 0 2.605 0.597 2.55 0.634 1.422 0.355 1.679 1.296 1.636 2.042l-1.638 6.571c0.098 0.025 0.225 0.061 0.365 0.117-0.117-0.029-0.242-0.061-0.371-0.092l-2.296 9.205c-0.174 0.432-0.615 1.08-1.609 0.834 0.035 0.051-2.552-0.637-2.552-0.637l-1.743 4.019 4.569 1.139c0.85 0.213 1.683 0.436 2.503 0.646l-1.453 5.834 3.507 0.875 1.439-5.772c0.958 0.26 1.888 0.5 2.798 0.726l-1.434 5.745 3.511 0.875 1.453-5.823c5.987 1.133 10.489 0.676 12.384-4.739 1.527-4.36-0.076-6.875-3.226-8.515 2.294-0.529 4.022-2.038 4.483-5.155zm-8.022 11.249c-1.085 4.36-8.426 2.003-10.806 1.412l1.928-7.729c2.38 0.594 10.012 1.77 8.878 6.317zm1.086-11.312c-0.99 3.966-7.1 1.951-9.082 1.457l1.748-7.01c1.982 0.494 8.365 1.416 7.334 5.553z"/></g>
@@ -512,7 +517,7 @@
       <!-- upper right: the Starknet four-point mark -->
       <g class="bfp-mark bfp-mark--strk" transform="translate(256.61,51.86) scale(2.324)"><path fill-rule="evenodd" clip-rule="evenodd" d="M11.2193 16.1014L11.713 14.5761C11.8133 14.2659 12.0582 14.0245 12.3695 13.9293L13.9023 13.4579C14.1145 13.3931 14.1162 13.0938 13.9057 13.0256L12.3799 12.5319C12.0702 12.4315 11.8288 12.1867 11.7331 11.8753L11.2623 10.3425C11.1975 10.1309 10.8982 10.1286 10.8299 10.3397L10.3362 11.865C10.2359 12.1746 9.991 12.416 9.67963 12.5118L8.14688 12.9826C7.93472 13.0479 7.93243 13.3467 8.14344 13.4149L9.66931 13.9086C9.97896 14.009 10.2204 14.2544 10.3161 14.5658L10.7869 16.0979C10.8517 16.3101 11.151 16.3124 11.2193 16.1014Z"/><path fill-rule="evenodd" clip-rule="evenodd" d="M35.4462 15.2134C34.7673 13.5004 33.5054 12.0585 31.8115 10.9945C30.1279 9.94223 27.7895 9.4052 25.4724 9.86299C24.3277 10.0844 23.2187 10.5106 22.2454 11.0782C21.2766 11.6436 20.4084 12.3241 19.6569 13.0543C19.2817 13.4205 18.9411 13.8026 18.6028 14.1869L17.7258 15.3049L16.3714 17.1046C14.6447 19.4202 12.7853 22.1339 9.73396 22.938C6.73838 23.7274 5.43914 23.0283 3.61086 22.7395C3.94515 23.6026 4.35925 24.4407 4.92063 25.1781C5.47155 25.9304 6.12227 26.637 6.9313 27.2426C7.34015 27.5335 7.7718 27.8206 8.25121 28.0641C8.72843 28.2994 9.24309 28.5064 9.79242 28.6623C10.8851 28.9618 12.1152 29.0667 13.3063 28.9056C14.498 28.7466 15.637 28.369 16.6326 27.8674C17.6355 27.3706 18.5092 26.7656 19.2893 26.127C20.8401 24.8392 22.0464 23.4162 23.0653 21.9778C23.5778 21.2587 24.043 20.5259 24.4733 19.793L24.9797 18.9205C25.1345 18.6654 25.2911 18.4088 25.4502 18.1698C26.0918 17.2095 26.7194 16.4395 27.4817 15.8616C28.2335 15.2687 29.2802 14.8307 30.679 14.7289C32.072 14.626 33.6801 14.8162 35.4462 15.2134Z"/><path fill-rule="evenodd" clip-rule="evenodd" d="M27.91 29.4455C27.91 30.7036 28.9304 31.724 30.1885 31.724C31.4466 31.724 32.4658 30.7036 32.4658 29.4455C32.4658 28.1874 31.4466 27.167 30.1885 27.167C28.9304 27.167 27.91 28.1874 27.91 29.4455Z"/></g>
 
-      <text class="bfp-lbl" x="264" y="214">EXECUTE</text>
+      <text class="bfp-lbl" x="254.5" y="252.5">EXECUTE</text>
       <text class="bfp-lbl" x="92" y="140">PROVE</text>
     </svg>
   </div>
