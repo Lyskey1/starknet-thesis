@@ -2219,7 +2219,7 @@ setMetric('price');setRange('7D');
 (function(){
 const SUPPLY=10e9, INV=18.17, EARLY=20.04, VEST=INV+EARLY;
 function buildVest(){const a=[];let c=0;for(let i=0;i<48;i++){let inc=0;if(i>=3&&i<=14)inc=0.64;else if(i>=15&&i<38)inc=1.27;else if(i===38)inc=VEST-c;/* settle the rounding residue so vesting completes exactly on Mar 15, 2027 */c=Math.min(c+inc,VEST);a.push(c);}return a;}
-const VS=buildVest();const MONTHS=96;const KCAL=1.10; /* calibrates non-vesting release so today ~= reported circulating (~65%) */
+const VS=buildVest();const MONTHS=96;
 function vestOwn(i){return i<48?VS[i]/VEST:1;}
 function fracAt(an,i){if(i<=an[0][0])return an[0][1];for(let k=1;k<an.length;k++){if(i<=an[k][0]){const[a,b]=an[k-1],[c,d]=an[k];return b+(d-b)*(i-a)/(c-a);}}return 1;}
 const CATS=[
@@ -2233,11 +2233,28 @@ const CATS=[
  {n:'Rebates',p:9.00,c:'#F0508C',an:[[0,.10],[12,.32],[24,.52],[36,.68],[48,.82],[72,.95],[84,1]]},
  {n:'Provisions',p:9.00,c:'#F9A8C8',an:[[0,.55],[6,.80],[12,.90],[24,.97],[36,1]]},
 ];
-CATS.forEach(c=>{c.cont=[];for(let i=0;i<MONTHS;i++){const f=c.vest?vestOwn(i):Math.min(fracAt(c.an,i)*KCAL,1);c.cont[i]=c.p*Math.min(f,1);}});
-let acc=new Array(MONTHS).fill(0);
-CATS.forEach(c=>{c.lo=acc.slice();acc=acc.map((v,i)=>v+c.cont[i]);c.hi=acc.slice();});
-const TOTAL=acc;
 const now=new Date();const TODAY_I=Math.max(0,Math.min(MONTHS-1,(now.getFullYear()-2024)*12+now.getMonth()));
+/* KCAL calibrates the seven non-vesting categories so the model's today
+   matches the circulating figure the page fetches; vesting stays exact.
+   Derived at draw time from the committed seed in the Supply card, then
+   re-derived when the live engine lands a fresh figure. The min(...,1)
+   cap keeps every category at 100% by its final anchor, so the curve
+   still ends at 100% in month 95; clamped at >=1 because below 1 that
+   cap would hold the end of the curve under 100%. */
+const SEED_CIRC=67.5;
+function circTarget(){const el=document.querySelector('#tokenomics [data-stat="circpct"]');const v=el?parseFloat(el.textContent):NaN;return (isFinite(v)&&v>30&&v<100)?v:SEED_CIRC;}
+function circAt(k){return CATS.reduce((s,c)=>s+c.p*Math.min(c.vest?vestOwn(TODAY_I):Math.min(fracAt(c.an,TODAY_I)*k,1),1),0);}
+function calibrate(target){let lo=1,hi=2;if(circAt(lo)>=target)return lo;
+  for(let n=0;n<40;n++){const m=(lo+hi)/2;if(circAt(m)<target)lo=m;else hi=m;}return (lo+hi)/2;}
+let KCAL=calibrate(circTarget());
+let TOTAL;
+function buildStack(){
+  CATS.forEach(c=>{c.cont=[];for(let i=0;i<MONTHS;i++){const f=c.vest?vestOwn(i):Math.min(fracAt(c.an,i)*KCAL,1);c.cont[i]=c.p*Math.min(f,1);}});
+  let acc=new Array(MONTHS).fill(0);
+  CATS.forEach(c=>{c.lo=acc.slice();acc=acc.map((v,i)=>v+c.cont[i]);c.hi=acc.slice();});
+  TOTAL=acc;
+}
+buildStack();
 /* ---- % of STRK on the market over time (96-month stacked area) ---- */
 function bTok(p){return (p/100*SUPPLY/1e9).toFixed(2)+'B';}
 const uchart=document.getElementById('uchart');
@@ -2261,12 +2278,17 @@ function drawChart(){let s='';
 }
 drawChart();
 document.getElementById('ulegend').innerHTML=CATS.map(c=>`<span><i style="background:${c.c}"></i>${c.n}</span>`).join('');
-const rem=100-TOTAL[TODAY_I];
 /* the model's "today" reads live in the TODAY marker and tooltip; the page's
    only circulating stat card is the live CoinGecko figure in the Supply panel */
+function drawKpis(){const rem=100-TOTAL[TODAY_I];
 document.getElementById('ukpis').innerHTML=`
  <div class="kpi"><div class="kl">Still to enter</div><div class="kv">${rem.toFixed(1)}%</div><div class="ks">${bTok(rem)} STRK to come</div></div>
- <div class="kpi"><div class="kl">Near full circulation</div><div class="kv">~2031</div><div class="ks">remaining via Starknet Foundation release</div></div>`;
+ <div class="kpi"><div class="kl">Near full circulation</div><div class="kv">~2031</div><div class="ks">remaining via Starknet Foundation release</div></div>`;}
+drawKpis();
+/* live hook: the engine calls this with the fresh circulating % after each
+   fetch; the unlock bars keep the load-time calibration until next visit */
+window.__supplyModel={recalibrate:function(pct){if(!(isFinite(pct)&&pct>30&&pct<100))return;
+  const k=calibrate(pct);if(Math.abs(k-KCAL)<1e-4)return;KCAL=k;buildStack();drawChart();drawKpis();}};
 const stip=document.getElementById('stip');
 ['pointermove','pointerdown'].forEach(ev=>uchart.addEventListener(ev,e=>{const r=uchart.getBoundingClientRect();const vx=(e.clientX-r.left)/r.width*1000;
   let i=Math.round((vx-PL)/(PR-PL)*(MONTHS-1));i=Math.max(0,Math.min(MONTHS-1,i));
@@ -2615,6 +2637,8 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
     var cp = state.circ / 1e10 * 100;
     (statEls.circpct || []).forEach(function(el){ tween(el, cp, FMT.circpct); });
     if (tkBar) tkBar.style.width = cp.toFixed(2) + '%';
+    // supply-over-time chart: recalibrate its model to the fresh figure
+    if (window.__supplyModel) window.__supplyModel.recalibrate(cp);
     // next unlock share of the live circulating supply
     if (window.__nextUnlock && window.__nextUnlock.amount > 0) {
       var up = window.__nextUnlock.amount / state.circ * 100;
