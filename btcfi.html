@@ -79,24 +79,38 @@
       inset 1px 1px 0 rgba(255,255,255,.12), inset 0 10px 18px -8px rgba(255,255,255,.18),
       inset 0 -1px 0 rgba(0,0,0,.6), inset 0 -3px 5px rgba(0,0,0,.22), 0 0 40px rgba(var(--accent-rgb), .45); }
 
-  /* SCENE: bottom anchored, sized in px rather than a percentage so the
-     boundary keeps a fixed distance from the hero edge at every width. The
-     mask is a UNION (mask-composite: add) of a vertical ramp, which opens the
-     strip under the CTAs, and a horizontal ramp, which opens the field to the
-     right of the copy. Ink is painted where either is opaque, so the headline
-     and the lede always sit on clean ground. */
-  .bf-scene { position: absolute; left: 0; right: 0; bottom: 0; height: 425px; z-index: -1; pointer-events: none; overflow: hidden;
-    -webkit-mask-image: linear-gradient(180deg, transparent 70%, #000 84%), linear-gradient(90deg, transparent 46%, #000 62%);
-            mask-image: linear-gradient(180deg, transparent 70%, #000 84%), linear-gradient(90deg, transparent 46%, #000 62%);
-    -webkit-mask-composite: source-over; mask-composite: add; }
-  .bf-svg { width: 100%; height: 100%; display: block; }
-  .bf-svg :is(rect, path) { vector-effect: non-scaling-stroke; }
-  .bf-settle rect { fill: none; stroke: rgb(var(--accent-rgb)); stroke-width: 1; opacity: .46; }
-  .bf-link path { fill: none; stroke: rgb(var(--accent-rgb)); stroke-width: 1; opacity: .34; }
-  .bf-exec rect { fill: rgb(var(--accent-rgb)); opacity: .36; }
-  .bf-bound { fill: none; stroke: rgb(var(--accent-rgb)); stroke-width: 1; opacity: .62; }
-  .bf-arrow path { fill: none; stroke: rgb(var(--accent-rgb)); stroke-width: 1; opacity: .34; }
-  .bf-lbl { font-family: var(--mono); font-size: 11px; letter-spacing: .2em; fill: rgb(var(--accent-rgb)); opacity: .40; }
+
+  /* SCENE: the proof loop. Square box anchored bottom right in px so its
+     clearance from the claim band is fixed and it never crosses the copy. The
+     step down at 1360 keeps it clear of the display's first line, which is
+     the longest and reaches furthest right. */
+  .bfp-scene { position: absolute; right: 36px; bottom: 46px; width: 380px; height: 380px; z-index: -1; pointer-events: none; }
+  .bfp-svg { width: 100%; height: 100%; display: block; overflow: visible; }
+  .bfp-svg :is(path, circle, text) { vector-effect: non-scaling-stroke; fill: none; stroke: rgb(var(--accent-rgb)); stroke-width: 1; }
+  .bfp-node--btc { opacity: .70; }
+  .bfp-node--strk { opacity: .85; stroke-linejoin: round; }
+  .bfp-glyph { font-family: var(--display, inherit); font-size: 58px; font-weight: 700; text-anchor: middle; opacity: .70; }
+  .bfp-bars { opacity: .70; }
+  .bfp-arc--up { opacity: .55; }
+  .bfp-arc--down { opacity: .38; }
+  .bfp-head--up { opacity: .55; stroke-linecap: round; stroke-linejoin: round; }
+  .bfp-head--down { opacity: .38; stroke-linecap: round; stroke-linejoin: round; }
+  .bfp-lbl { font-family: var(--mono); font-size: 11px; letter-spacing: .2em; fill: rgb(var(--accent-rgb)); stroke: none; opacity: .40; }
+
+  /* one bright segment travelling the loop: up arc for the first half of the
+     cycle, down arc for the second. dasharray on a duplicate of each path,
+     dashoffset keyframed, no transform. Declared only under .run so the
+     animation does not exist while the hero is off screen. */
+  .bfp-pulse { opacity: 0; stroke-width: 2; stroke-linecap: round; stroke-dasharray: 9 91; }
+  .bfp-scene.run .bfp-pulse { animation: bfpRun 7s linear infinite; }
+  .bfp-scene.run .bfp-pulse--down { animation-delay: 3.5s; }
+  @keyframes bfpRun {
+    0%   { stroke-dashoffset: 100; opacity: 0; }
+    3%   { opacity: .95; }
+    44%  { opacity: .95; }
+    50%  { stroke-dashoffset: 0; opacity: 0; }
+    100% { stroke-dashoffset: 0; opacity: 0; }
+  }
 
   /* CLAIM BAND: twin of the sibling bands. */
   .bf-marquee { border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); overflow: hidden; padding: 10px 0;
@@ -116,12 +130,14 @@
     .bf-mq-set { flex-wrap: wrap; gap: 12px; padding-right: 0; }
     .bf-marquee { -webkit-mask-image: none; mask-image: none; }
     .bf-cta.chip-glass, .bf-cta i, .bf-mq-set .chip-glass { transition: none; }
+    .bfp-scene.run .bfp-pulse { animation: none; opacity: 0; }
   }
-  @media (max-width: 1360px) { .hero { padding-bottom: 14px; } }
+  @media (max-width: 1360px) { .hero { padding-bottom: 14px; }
+    .bfp-scene { width: 320px; height: 320px; } }
   @media (max-width: 980px) {
-    /* the stacked layout leaves no clean band for the scene, and the copy
-       runs the full width, so it goes rather than sit behind the text */
-    .bf-scene { display: none; }
+    /* the copy runs the full width when stacked, so there is no right zone
+       left to hold the loop and it goes rather than sit behind the text */
+    .bfp-scene { display: none; }
     .bf-mq-track { animation: none !important; flex-wrap: wrap; width: auto; }
     .bf-mq-set[data-dup] { display: none; }
     .bf-mq-set { flex-wrap: wrap; gap: 10px; padding: 0 24px; }
@@ -464,34 +480,38 @@
     <i style="left:12%;bottom:-20%;width:44%;height:50%;opacity:.10"></i>
     <i style="left:52%;bottom:-24%;width:42%;height:54%;opacity:.09"></i>
   </div>
-  <!-- HERO SCENE: settlement below, execution above.
-       One hairline boundary across the full width. Beneath it eight wide
-       blocks linked end to end, the slow settlement layer, running off the
-       right edge so the chain reads as continuing past the frame. Above it a
-       scatter of small marks that thickens sharply toward the boundary, the
-       fast execution layer, with two thin arrows crossing in both directions.
-       Bottom anchored (xMinYMax slice) so the settlement row keeps a fixed
-       clearance above the hero edge at any width and only the top of the
-       scatter is trimmed on a narrow viewport. Static, aria-hidden,
-       pointer-events none. Every stroke is non-scaling-stroke so hairlines
-       stay 1px however the box scales. The mask is a union of two ramps, one
-       vertical and one horizontal, so ink is only ever painted below the copy
-       or in the open field to its right, never behind the headline or the
-       lede. The two labels sit in the left page gutter, outside the 1160
-       content column, which is why the block row starts at x=170. Accent
-       comes from --accent-rgb, never a literal. -->
-  <div class="bf-scene" aria-hidden="true">
-    <svg class="bf-svg" viewBox="0 0 1440 425" preserveAspectRatio="xMinYMax slice" focusable="false">
-      <g class="bf-exec"><rect x="10" y="174" width="7" height="6"/><rect x="29" y="182" width="7" height="10"/><rect x="45" y="334" width="10" height="8"/><rect x="59" y="69" width="8" height="6"/><rect x="72" y="314" width="8" height="7"/><rect x="100" y="148" width="6" height="7"/><rect x="108" y="226" width="7" height="8"/><rect x="128" y="311" width="8" height="8"/><rect x="151" y="300" width="10" height="10"/><rect x="159" y="134" width="8" height="14"/><rect x="180" y="66" width="10" height="10"/><rect x="200" y="258" width="6" height="8"/><rect x="214" y="154" width="10" height="8"/><rect x="235" y="255" width="8" height="8"/><rect x="251" y="104" width="8" height="8"/><rect x="271" y="215" width="10" height="14"/><rect x="285" y="225" width="8" height="10"/><rect x="305" y="231" width="7" height="7"/><rect x="319" y="116" width="8" height="14"/><rect x="328" y="307" width="7" height="6"/><rect x="344" y="246" width="8" height="6"/><rect x="363" y="313" width="8" height="7"/><rect x="386" y="193" width="8" height="8"/><rect x="400" y="338" width="8" height="6"/><rect x="421" y="183" width="8" height="8"/><rect x="436" y="324" width="6" height="14"/><rect x="453" y="130" width="7" height="8"/><rect x="475" y="132" width="6" height="12"/><rect x="489" y="118" width="7" height="12"/><rect x="504" y="185" width="8" height="12"/><rect x="525" y="229" width="8" height="6"/><rect x="535" y="335" width="6" height="8"/><rect x="557" y="298" width="7" height="12"/><rect x="569" y="180" width="10" height="8"/><rect x="588" y="302" width="8" height="12"/><rect x="603" y="194" width="6" height="7"/><rect x="621" y="92" width="6" height="6"/><rect x="637" y="221" width="8" height="8"/><rect x="662" y="201" width="7" height="8"/><rect x="675" y="145" width="7" height="6"/><rect x="691" y="336" width="7" height="14"/><rect x="706" y="155" width="6" height="14"/><rect x="720" y="101" width="8" height="8"/><rect x="743" y="59" width="10" height="8"/><rect x="755" y="140" width="10" height="6"/><rect x="780" y="54" width="6" height="14"/><rect x="789" y="308" width="8" height="7"/><rect x="815" y="47" width="10" height="8"/><rect x="831" y="208" width="10" height="14"/><rect x="841" y="208" width="7" height="12"/><rect x="858" y="207" width="8" height="12"/><rect x="874" y="336" width="6" height="12"/><rect x="892" y="306" width="10" height="14"/><rect x="914" y="166" width="6" height="14"/><rect x="931" y="334" width="10" height="8"/><rect x="947" y="125" width="6" height="10"/><rect x="966" y="264" width="8" height="6"/><rect x="981" y="319" width="8" height="8"/><rect x="1001" y="276" width="7" height="6"/><rect x="1012" y="159" width="6" height="12"/><rect x="1036" y="249" width="8" height="12"/><rect x="1048" y="300" width="6" height="12"/><rect x="1058" y="249" width="10" height="10"/><rect x="1076" y="307" width="8" height="8"/><rect x="1098" y="42" width="8" height="6"/><rect x="1121" y="240" width="6" height="8"/><rect x="1128" y="314" width="7" height="6"/><rect x="1154" y="140" width="10" height="7"/><rect x="1163" y="305" width="8" height="8"/><rect x="1179" y="237" width="6" height="8"/><rect x="1201" y="239" width="7" height="6"/><rect x="1218" y="123" width="10" height="12"/><rect x="1233" y="78" width="6" height="14"/><rect x="1257" y="73" width="8" height="8"/><rect x="1265" y="319" width="7" height="10"/><rect x="1283" y="299" width="10" height="7"/><rect x="1298" y="290" width="7" height="12"/><rect x="1325" y="345" width="8" height="7"/><rect x="1331" y="311" width="8" height="7"/><rect x="1350" y="235" width="8" height="12"/><rect x="1375" y="338" width="8" height="7"/><rect x="1385" y="215" width="7" height="7"/><rect x="1398" y="46" width="6" height="12"/><rect x="1427" y="288" width="10" height="10"/></g>
-      <path class="bf-bound" d="M0 367 H1440"/>
-      <g class="bf-settle"><rect x="170" y="377" width="104" height="30" rx="2"/><rect x="342" y="377" width="104" height="30" rx="2"/><rect x="514" y="377" width="104" height="30" rx="2"/><rect x="686" y="377" width="104" height="30" rx="2"/><rect x="858" y="377" width="104" height="30" rx="2"/><rect x="1030" y="377" width="104" height="30" rx="2"/><rect x="1202" y="377" width="104" height="30" rx="2"/><rect x="1374" y="377" width="104" height="30" rx="2"/></g>
-      <g class="bf-link"><path d="M274 392 H342"/><path d="M446 392 H514"/><path d="M618 392 H686"/><path d="M790 392 H858"/><path d="M962 392 H1030"/><path d="M1134 392 H1202"/><path d="M1306 392 H1374"/></g>
-      <g class="bf-arrow">
-        <path d="M1002 327 V393"/><path d="M997 385 L1002 393 L1007 385"/>
-        <path d="M1268 393 V327"/><path d="M1263 335 L1268 327 L1273 335"/>
-      </g>
-      <text class="bf-lbl" x="18" y="353">EXECUTION</text>
-      <text class="bf-lbl" x="18" y="391">SETTLEMENT</text>
+  <!-- HERO SCENE: the proof loop. One object in the hero's right zone, in
+       the spirit of the quantum chandelier: a Bitcoin node lower left, the
+       Starknet mark upper right, and two arcs closing a loop between them.
+       Arc one carries execution up, arc two carries the proof back down and
+       is drawn lighter so the return reads as secondary. The Bitcoin glyph is
+       constructed, an outlined B with the two vertical bars of U+20BF drawn
+       as hairlines, rather than relying on the codepoint being present in the
+       site's fonts, and it is not the Bitcoin logo artwork. The box is square
+       and anchored bottom right in px, so its clearance from the claim band
+       is fixed and it stays clear of the display's longest line at every
+       width. Decorative: aria-hidden, pointer-events none. Every stroke is
+       non-scaling-stroke. Accent comes from --accent-rgb, never a literal. -->
+  <div class="bfp-scene" id="bfLoop" aria-hidden="true">
+    <svg class="bfp-svg" viewBox="30 59 313 307" preserveAspectRatio="xMidYMid meet" focusable="false">
+      <!-- arcs first so the nodes sit over their endpoints -->
+      <path class="bfp-arc bfp-arc--up"   id="bfArcUp"   pathLength="100" d="M157 288 C228 268, 288 216, 296 148"/>
+      <path class="bfp-arc bfp-arc--down" id="bfArcDown" pathLength="100" d="M267 109 C180 130, 60 160, 74 240"/>
+      <path class="bfp-pulse bfp-pulse--up"   pathLength="100" d="M157 288 C228 268, 288 216, 296 148"/>
+      <path class="bfp-pulse bfp-pulse--down" pathLength="100" d="M267 109 C180 130, 60 160, 74 240"/>
+      <path class="bfp-head bfp-head--up"   d="M288 160 L296 148 L304 160"/>
+      <path class="bfp-head bfp-head--down" d="M63 229 L74 240 L81 227"/>
+
+      <!-- lower left: Bitcoin -->
+      <circle class="bfp-node bfp-node--btc" cx="96" cy="300" r="62"/>
+      <text class="bfp-glyph" x="96" y="322">B</text>
+      <path class="bfp-bars" d="M86 277 V330 M107 277 V330"/>
+
+      <!-- upper right: the Starknet four-point mark -->
+      <path class="bfp-node bfp-node--strk" d="M302 63 C302 85, 317 100, 339 100 C317 100, 302 115, 302 137 C302 115, 287 100, 265 100 C287 100, 302 85, 302 63 Z"/>
+
+      <text class="bfp-lbl" x="264" y="214">EXECUTE</text>
+      <text class="bfp-lbl" x="92" y="140">PROVE</text>
     </svg>
   </div>
   <div class="bf-inner">
@@ -2684,6 +2704,12 @@
   if ('IntersectionObserver' in window) {
     new IntersectionObserver(function(es){ band.classList.toggle('run', es[0].isIntersecting); }, { threshold: 0 }).observe(band);
   } else { band.classList.add('run'); }
+  var loop = document.getElementById('bfLoop');
+  if (loop) {
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function(es){ loop.classList.toggle('run', es[0].isIntersecting); }, { threshold: 0 }).observe(loop);
+    } else { loop.classList.add('run'); }
+  }
 })();
 </script>
 </body>
