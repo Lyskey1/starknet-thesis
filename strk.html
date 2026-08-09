@@ -245,7 +245,10 @@ a.nav-logo{text-decoration:none}
 .sk-mq-set{display:flex;gap:14px;padding-right:14px}
 .sk-mq-set span{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;
   border:1px solid rgba(var(--accent-rgb),.35);color:var(--accent);padding:9px 16px;border-radius:99px;display:inline-flex}
-.sk-marquee.run .sk-mq-track{animation:skmq 70s linear infinite}
+/* duration tracks the set width so the perceived scroll speed is unchanged
+   by the copy edit: the set narrowed from 3177.7px to 2907.6px, so 70s
+   becomes 64s and the band still travels ~45.4 px/s */
+.sk-marquee.run .sk-mq-track{animation:skmq 64s linear infinite}
 @keyframes skmq{to{transform:translateX(-33.3333%)}}
 .sk-marquee:hover .sk-mq-track{animation-play-state:paused}
 
@@ -272,6 +275,10 @@ a.nav-logo{text-decoration:none}
   .sk-mq-track{animation:none!important;flex-wrap:wrap;width:auto}
   .sk-mq-set[data-dup]{display:none}
   .sk-mq-set{flex-wrap:wrap;gap:10px;padding:0 24px}
+  /* the static rows are not a scrolling loop, so nowrap has no job here: it
+     only let the long pills run past the band's overflow:hidden edge. Let the
+     label wrap inside the pill instead. Type size and padding stay on spec. */
+  .sk-mq-set span{white-space:normal;text-align:center}
   .sk-marquee{-webkit-mask-image:none;mask-image:none;padding:16px 0;margin-top:26px}
 }
 @media(max-width:700px){.hero .sk-inner{padding:0 24px}.sk-ctas{flex-direction:column;align-items:flex-start;gap:14px}}
@@ -908,9 +915,9 @@ window.ADMIN_GATE=on;})();
      appears here: this page's staking, supply, revenue and netflow numbers are
      fetched hourly, so a static pill would drift out of step with them. -->
 <div class="sk-marquee" id="skMarquee"><div class="sk-mq-track">
-  <div class="sk-mq-set"><span class="chip-glass">ONE TOKEN, THREE ENGINES</span><span class="chip-glass">EVERY TX PAID IN STRK</span><span class="chip-glass">PRIVACY FEES PAID IN STRK</span><span class="chip-glass">75% OF STAKING POWER</span><span class="chip-glass">BTC STAKERS TAKE 25%</span><span class="chip-glass">ONLY STAKED STRK VOTES</span><span class="chip-glass">CORE DEFI COLLATERAL</span><span class="chip-glass">GAS, STAKING, GOVERNANCE, COLLATERAL</span><span class="chip-glass">10B MAX SUPPLY</span><span class="chip-glass">~127M STRK UNLOCKED MONTHLY</span><span class="chip-glass">VESTING ENDS MARCH 2027</span><span class="chip-glass">ONLY CHAIN IN ALL THREE</span><span class="chip-glass">THE CLAIM ON THE INTERSECTION</span></div>
-  <div class="sk-mq-set" data-dup aria-hidden="true"><span class="chip-glass">ONE TOKEN, THREE ENGINES</span><span class="chip-glass">EVERY TX PAID IN STRK</span><span class="chip-glass">PRIVACY FEES PAID IN STRK</span><span class="chip-glass">75% OF STAKING POWER</span><span class="chip-glass">BTC STAKERS TAKE 25%</span><span class="chip-glass">ONLY STAKED STRK VOTES</span><span class="chip-glass">CORE DEFI COLLATERAL</span><span class="chip-glass">GAS, STAKING, GOVERNANCE, COLLATERAL</span><span class="chip-glass">10B MAX SUPPLY</span><span class="chip-glass">~127M STRK UNLOCKED MONTHLY</span><span class="chip-glass">VESTING ENDS MARCH 2027</span><span class="chip-glass">ONLY CHAIN IN ALL THREE</span><span class="chip-glass">THE CLAIM ON THE INTERSECTION</span></div>
-  <div class="sk-mq-set" data-dup aria-hidden="true"><span class="chip-glass">ONE TOKEN, THREE ENGINES</span><span class="chip-glass">EVERY TX PAID IN STRK</span><span class="chip-glass">PRIVACY FEES PAID IN STRK</span><span class="chip-glass">75% OF STAKING POWER</span><span class="chip-glass">BTC STAKERS TAKE 25%</span><span class="chip-glass">ONLY STAKED STRK VOTES</span><span class="chip-glass">CORE DEFI COLLATERAL</span><span class="chip-glass">GAS, STAKING, GOVERNANCE, COLLATERAL</span><span class="chip-glass">10B MAX SUPPLY</span><span class="chip-glass">~127M STRK UNLOCKED MONTHLY</span><span class="chip-glass">VESTING ENDS MARCH 2027</span><span class="chip-glass">ONLY CHAIN IN ALL THREE</span><span class="chip-glass">THE CLAIM ON THE INTERSECTION</span></div>
+  <div class="sk-mq-set"><span class="chip-glass">EVERY TX PAID IN STRK</span><span class="chip-glass">PRIVACY FEES PAID IN STRK</span><span class="chip-glass">75% OF STAKING POWER</span><span class="chip-glass">BTC STAKERS TAKE 25%</span><span class="chip-glass">ONLY STAKED STRK VOTES</span><span class="chip-glass">CORE DEFI COLLATERAL</span><span class="chip-glass">GAS, STAKING, GOVERNANCE, COLLATERAL</span><span class="chip-glass">INVESTOR AND EARLY CONTRIBUTOR VESTING ENDS MARCH 2027</span><span class="chip-glass">ONLY CHAIN GATHERING ALL THREE NARRATIVES</span><span class="chip-glass">THE INTERSECTION HAS ONE ASSET</span></div>
+  <div class="sk-mq-set" data-dup aria-hidden="true"><span class="chip-glass">EVERY TX PAID IN STRK</span><span class="chip-glass">PRIVACY FEES PAID IN STRK</span><span class="chip-glass">75% OF STAKING POWER</span><span class="chip-glass">BTC STAKERS TAKE 25%</span><span class="chip-glass">ONLY STAKED STRK VOTES</span><span class="chip-glass">CORE DEFI COLLATERAL</span><span class="chip-glass">GAS, STAKING, GOVERNANCE, COLLATERAL</span><span class="chip-glass">INVESTOR AND EARLY CONTRIBUTOR VESTING ENDS MARCH 2027</span><span class="chip-glass">ONLY CHAIN GATHERING ALL THREE NARRATIVES</span><span class="chip-glass">THE INTERSECTION HAS ONE ASSET</span></div>
+  <div class="sk-mq-set" data-dup aria-hidden="true"><span class="chip-glass">EVERY TX PAID IN STRK</span><span class="chip-glass">PRIVACY FEES PAID IN STRK</span><span class="chip-glass">75% OF STAKING POWER</span><span class="chip-glass">BTC STAKERS TAKE 25%</span><span class="chip-glass">ONLY STAKED STRK VOTES</span><span class="chip-glass">CORE DEFI COLLATERAL</span><span class="chip-glass">GAS, STAKING, GOVERNANCE, COLLATERAL</span><span class="chip-glass">INVESTOR AND EARLY CONTRIBUTOR VESTING ENDS MARCH 2027</span><span class="chip-glass">ONLY CHAIN GATHERING ALL THREE NARRATIVES</span><span class="chip-glass">THE INTERSECTION HAS ONE ASSET</span></div>
 </div></div>
 
 <!-- 01 ROLE -->
