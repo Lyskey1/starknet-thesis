@@ -1204,6 +1204,17 @@ window.ADMIN_GATE=on;})();
       <div class="tk-track"><i id="tkBar" style="width:67.5%"></i></div>
       <div class="tk-meta"><span><span data-stat="circpct">67.5%</span> of the 10B max supply is on the market</span><a href="https://www.coingecko.com/en/coins/starknet" target="_blank" rel="noopener noreferrer">CoinGecko ↗</a></div>
     </div>
+    <div class="panel" id="supply-over-time">
+      <div class="eyebrow">Estimated supply in circulation</div>
+      <div class="ptitle">% of STRK on the market over time</div>
+      <div class="supchart" id="ucbox">
+        <svg id="uchart" viewBox="0 0 1000 380"></svg>
+        <div class="stip" id="stip"></div>
+      </div>
+      <div class="legend" id="ulegend"></div>
+      <div class="kpis" id="ukpis"></div>
+      <div class="note">Estimate, calibrated to the reported circulating supply. Investors + Early Contributors (38.21% of supply) vest on the published schedule, completing <b>March 15, 2027</b>; the other allocations have no fixed lock-up and are modelled as a gradual release into circulation. Excludes inflation and staking.</div>
+    </div>
     <div class="panel">
       <div class="eyebrow">Unlock schedule</div>
       <div class="ptitle">Tokens entering circulation, next 12 months</div>
@@ -2204,7 +2215,7 @@ setMetric('price');setRange('7D');
 /* ---- supply in circulation (isolated) ---- */
 (function(){
 const SUPPLY=10e9, INV=18.17, EARLY=20.04, VEST=INV+EARLY;
-function buildVest(){const a=[];let c=0;for(let i=0;i<48;i++){let inc=0;if(i>=3&&i<=14)inc=0.64;else if(i>=15&&i<=38)inc=1.27;c=Math.min(c+inc,VEST);a.push(c);}return a;}
+function buildVest(){const a=[];let c=0;for(let i=0;i<48;i++){let inc=0;if(i>=3&&i<=14)inc=0.64;else if(i>=15&&i<38)inc=1.27;else if(i===38)inc=VEST-c;/* settle the rounding residue so vesting completes exactly on Mar 15, 2027 */c=Math.min(c+inc,VEST);a.push(c);}return a;}
 const VS=buildVest();const MONTHS=96;const KCAL=1.10; /* calibrates non-vesting release so today ~= reported circulating (~65%) */
 function vestOwn(i){return i<48?VS[i]/VEST:1;}
 function fracAt(an,i){if(i<=an[0][0])return an[0][1];for(let k=1;k<an.length;k++){if(i<=an[k][0]){const[a,b]=an[k-1],[c,d]=an[k];return b+(d-b)*(i-a)/(c-a);}}return 1;}
@@ -2224,9 +2235,54 @@ let acc=new Array(MONTHS).fill(0);
 CATS.forEach(c=>{c.lo=acc.slice();acc=acc.map((v,i)=>v+c.cont[i]);c.hi=acc.slice();});
 const TOTAL=acc;
 const now=new Date();const TODAY_I=Math.max(0,Math.min(MONTHS-1,(now.getFullYear()-2024)*12+now.getMonth()));
-/* (the 96-month supply-over-time chart was replaced by the live circulating
-   supply block above; the CATS release model still powers the unlock bars
-   and the donut hover detail) */
+/* ---- % of STRK on the market over time (96-month stacked area) ---- */
+function bTok(p){return (p/100*SUPPLY/1e9).toFixed(2)+'B';}
+const uchart=document.getElementById('uchart');
+const PL=46,PR=940,PT=22,PB=320,YMAX=100;
+function X(i){return PL+i/(MONTHS-1)*(PR-PL);}
+function Y(p){return PB-p/YMAX*(PB-PT);}
+function area(lo,hi){let d='M'+X(0).toFixed(1)+','+Y(hi[0]).toFixed(1);
+  for(let i=1;i<MONTHS;i++)d+=' L'+X(i).toFixed(1)+','+Y(hi[i]).toFixed(1);
+  for(let i=MONTHS-1;i>=0;i--)d+=' L'+X(i).toFixed(1)+','+Y(lo[i]).toFixed(1);return d+' Z';}
+function drawChart(){let s='';
+  for(let g=0;g<=100;g+=20){s+=`<line x1="${PL}" y1="${Y(g)}" x2="${PR}" y2="${Y(g)}" stroke="rgba(245,242,236,.07)"/><text x="${PL-10}" y="${Y(g)+4}" text-anchor="end" font-family="IBM Plex Mono" font-size="11" fill="rgba(245,242,236,.4)">${g}%</text>`;}
+  for(let yr=2024;yr<=2031;yr++){const i=(yr-2024)*12;s+=`<text x="${X(i)}" y="${PB+24}" text-anchor="middle" font-family="IBM Plex Mono" font-size="11" fill="rgba(245,242,236,.4)">${yr}</text>`;}
+  CATS.forEach(c=>{s+=`<path d="${area(c.lo,c.hi)}" fill="${c.c}" fill-opacity="0.92"/>`;});
+  let ln='M'+X(0)+','+Y(TOTAL[0]);for(let i=1;i<MONTHS;i++)ln+=' L'+X(i).toFixed(1)+','+Y(TOTAL[i]).toFixed(1);
+  s+=`<path d="${ln}" fill="none" stroke="#F5F2EC" stroke-opacity=".5" stroke-width="1.5"/>`;
+  const tx=X(TODAY_I);
+  s+=`<line x1="${tx}" y1="${PT-6}" x2="${tx}" y2="${PB}" stroke="#F0508C" stroke-width="1.5" stroke-dasharray="3 3"/><text x="${tx}" y="${PT-12}" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" letter-spacing="1.5" fill="#F0508C">TODAY</text><circle cx="${tx}" cy="${Y(TOTAL[TODAY_I])}" r="4.5" fill="#F0508C"/>`;
+  s+=`<line id="ux" stroke="rgba(245,242,236,.3)" stroke-width="1" style="display:none"/><circle id="ud" r="4" fill="#fff" style="display:none"/>`;
+  s+=`<rect id="uover" x="${PL}" y="${PT}" width="${PR-PL}" height="${PB-PT}" fill="transparent"/>`;
+  uchart.innerHTML=s;
+}
+drawChart();
+document.getElementById('ulegend').innerHTML=CATS.map(c=>`<span><i style="background:${c.c}"></i>${c.n}</span>`).join('');
+const tToday=TOTAL[TODAY_I], rem=100-tToday;
+document.getElementById('ukpis').innerHTML=`
+ <div class="kpi"><div class="kl">In circulation today</div><div class="kv">${tToday.toFixed(1)}%</div><div class="ks">${bTok(tToday)} STRK (est.)</div></div>
+ <div class="kpi"><div class="kl">Still to enter</div><div class="kv">${rem.toFixed(1)}%</div><div class="ks">${bTok(rem)} STRK to come</div></div>
+ <div class="kpi"><div class="kl">Near full circulation</div><div class="kv">~2031</div><div class="ks">vesting ends Mar 2027</div></div>`;
+const stip=document.getElementById('stip');
+['pointermove','pointerdown'].forEach(ev=>uchart.addEventListener(ev,e=>{const r=uchart.getBoundingClientRect();const vx=(e.clientX-r.left)/r.width*1000;
+  let i=Math.round((vx-PL)/(PR-PL)*(MONTHS-1));i=Math.max(0,Math.min(MONTHS-1,i));
+  const ux=document.getElementById('ux'),ud=document.getElementById('ud');
+  ux.style.display='block';ux.setAttribute('x1',X(i));ux.setAttribute('x2',X(i));ux.setAttribute('y1',PT);ux.setAttribute('y2',PB);
+  ud.style.display='block';ud.setAttribute('cx',X(i));ud.setAttribute('cy',Y(TOTAL[i]));
+  const d=new Date(2024,i,1),tot=TOTAL[i],re=100-tot;
+  const tkf=v=>{const t=v/100*SUPPLY;return t>=1e9?(t/1e9).toFixed(2)+'B':(t/1e6).toFixed(0)+'M';};
+  let rows='';CATS.forEach(c=>{const prog=c.p>0?Math.min(c.cont[i]/c.p*100,100):0;
+    rows+=`<div class="br"><span class="dot" style="background:${c.c}"></span><span class="bn">${c.n}</span><span class="bt">${tkf(c.cont[i])}</span><span class="bp">${prog.toFixed(0)}%</span></div>`;});
+  stip.style.display='block';
+  const px=X(i)/1000*r.width;
+  stip.style.top='50%';
+  if(px<r.width*0.55){stip.style.left=(px+18)+'px';stip.style.transform='translateY(-50%)';}
+  else{stip.style.left=(px-18)+'px';stip.style.transform='translate(-100%,-50%)';}
+  stip.innerHTML=`<div class="td">${d.toLocaleString('en',{month:'short',year:'numeric'})}</div>
+   <div class="r"><span style="color:var(--acc-2)">In circulation</span><b>${tot.toFixed(1)}% · ${bTok(tot)}</b></div>
+   <div class="r"><span style="color:var(--muted)">Still to enter</span><b>${re.toFixed(1)}% · ${bTok(re)}</b></div>
+   <div class="bd">${rows}</div>`;}));
+['mouseleave','pointerleave','pointercancel'].forEach(ev=>uchart.addEventListener(ev,()=>{stip.style.display='none';document.getElementById('ux').style.display='none';document.getElementById('ud').style.display='none';}));
 
 /* donut */
 const dsvg=document.getElementById('dsvg'),cx=280,cy=180,R=116,Ri=74,RL=150;let a=-Math.PI/2;
