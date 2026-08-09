@@ -127,7 +127,7 @@
   function kindRank(e) { return KIND_RANK[e.kind] != null ? KIND_RANK[e.kind] : 3; }
 
   const PAGE_META = {
-    index: { label: 'Home', path: '/', accent: '#F7931A' },
+    index: { label: 'Home', path: '/', accent: '#A78BFA' },
     privacy: { label: 'Privacy', path: '/privacy', accent: '#1FCB94' },
     quantum: { label: 'Quantum', path: '/quantum', accent: '#3DA9FC' },
     btcfi: { label: 'BTCFi', path: '/btcfi', accent: '#F7931A' },
