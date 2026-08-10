@@ -532,6 +532,10 @@ a.chip:hover{background:var(--acc);border-color:var(--acc);color:#0A0A0A}
 #numbers .feat{border:1px solid var(--line);border-radius:20px;background:linear-gradient(180deg,rgba(124,58,237,.05),rgba(245,242,236,.02));padding:26px 28px;margin-top:24px}
 #numbers .feat-top{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;flex-wrap:wrap}
 #numbers .feat .elabel{font-family:var(--mono),monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--acc-2)}
+#numbers .feat .elabel-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;min-width:0}
+#numbers .feat .rankchip{padding:4px 11px;font-size:10px;letter-spacing:.1em;color:var(--acc-2);border-color:rgba(124,58,237,.4);background:rgba(124,58,237,.07)}
+#numbers .feat .rankchip[hidden]{display:none}
+#numbers .feat .rankchip:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
 #numbers .feat .val{font-family:var(--display);font-weight:800;font-stretch:115%;font-size:clamp(36px,5vw,54px);line-height:1;margin-top:10px}
 #numbers .feat .chgs{display:flex;gap:16px;align-items:center;margin-top:12px;font-family:var(--mono),monospace;font-size:12px}
 #numbers .feat .chgs span{color:var(--muted)}
@@ -1245,9 +1249,12 @@ window.ADMIN_GATE=on;})();
   <div class="feat">
     <div class="feat-top">
       <div>
-        <div class="elabel" id="fLabel">STRK price</div>
+        <div class="elabel-row">
+          <div class="elabel" id="fLabel">STRK price</div>
+          <a class="chip rankchip" id="fRank" href="https://defillama.com/chains" target="_blank" rel="noopener noreferrer" hidden></a>
+        </div>
         <div class="val" id="fVal"></div>
-        <div class="chgs"><span><span id="cRLabel">7D</span> <b id="cR"></b></span><span class="src" id="fSub"></span><span class="src" id="fSrc"></span></div>
+        <div class="chgs"><span><span id="cRLabel">7D</span> <b id="cR"></b></span><span class="src" id="fSub"></span><span class="src" id="fSrc"></span><span class="src" id="fRankNote"></span></div>
       </div>
       <div class="ranges" id="ranges">
         <button data-r="24H">24H</button><button data-r="7D" class="on">7D</button><button data-r="30D">30D</button><button data-r="1Y">1Y</button><button data-r="ALL">ALL</button>
@@ -1840,6 +1847,7 @@ function draw(){
   document.getElementById('fLabel').textContent=m.label;
   document.getElementById('fSub').textContent='';
   document.getElementById('fSrc').innerHTML=m.source?`· Source: <a href="${m.source.url}" target="_blank" rel="noopener noreferrer">${m.source.name} ↗</a>`:'';
+  paintRank();
   if(!h){ /* explicit empty state — never an invented curve */
     clearChart();
     document.getElementById('fVal').textContent=fmt(m,m.value);
@@ -2210,6 +2218,25 @@ window.__numbersLive={
     tipD.innerHTML=((HIST[curK]&&HIST[curK].weeklyBars)?'Week of ':'')+tsLabel(p.ts,curSpan)+(p.daily!=null?' · <span'+(dCol?' style="color:'+dCol+'"':'')+'>'+dSign+(HIST[curK]&&HIST[curK].dailyUsd?'$':'')+abbr(p.daily)+'/day</span>':'');
   }}));
 ['mouseleave','pointerleave','pointercancel'].forEach(ev=>chart.addEventListener(ev,()=>{cross.style.display='none';cdot.style.display='none';tip.style.display='none';}));
+
+/* chain rank by TVL: DefiLlama's default DeFi TVL ranking (depends on their
+   inclusion methodology), same cache policy as the series fetchers. Shown
+   only on the TVL metric; on any failure the chip simply never renders. */
+let tvlRank=null;
+function paintRank(){const el=document.getElementById('fRank'),nt=document.getElementById('fRankNote');
+  if(!el||!nt)return;
+  const show=curK==='tvl'&&Number.isFinite(tvlRank)&&tvlRank>0;
+  el.hidden=!show;
+  el.innerHTML=show?'#'+tvlRank+' chain by TVL <span class="arr">↗</span>':'';
+  el.title=show?'Rank per DefiLlama default TVL ranking':'';
+  nt.textContent=show?'· rank per DefiLlama default TVL':'';}
+cached('chainrank',TTL['30D'],()=>gj('https://api.llama.fi/v2/chains')
+  .then(a=>{const s=[...a].sort((x,y)=>(y.tvl||0)-(x.tvl||0));
+    const i=s.findIndex(c=>c&&(c.gecko_id==='starknet'||c.name==='Starknet'));
+    if(i<0)throw new Error('starknet missing from v2/chains');
+    return i+1;}))
+  .then(r=>{tvlRank=r;paintRank();})
+  .catch(()=>{});
 
 setMetric('price');setRange('7D');
 /* #upd (the "Updated" pill) is driven by the live engine at the end of the page */
