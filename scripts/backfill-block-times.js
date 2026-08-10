@@ -128,6 +128,7 @@ async function main(){
     const blocks = bounds[i + 1] - bounds[i];
     days.push({
       date: new Date(targets[i] * 1000).toISOString().slice(0, 10),
+      firstBlock: bounds[i], // chain height at the day's start boundary — the TOTAL BLOCKS series derives from this, no separate walk
       blocks,
       avgSec: blocks > 0 ? Math.round(DAY / blocks * 1000) / 1000 : null
     });

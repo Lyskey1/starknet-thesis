@@ -1329,6 +1329,7 @@ window.ADMIN_GATE=on;})();
         <!-- committed snapshot, no live source: see the M entry comment -->
         <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="Account contracts" data-chart-series="accounts"><div class="cell-top"><span class="cl">Account contracts</span></div><div class="cv" data-stat="accounts">6,981,372</div><div class="cs">Deployed, all time · Aug 10, 2026</div></div>
         <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="Total TX" data-chart-series="totaltx"><div class="cell-top"><span class="cl">Total TX</span></div><div class="cv" data-stat="totaltx">307.7M</div><div class="cs">Since genesis</div></div>
+        <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="Total blocks" data-chart-series="totalblocks"><div class="cell-top"><span class="cl">Total blocks</span></div><div class="cv" data-stat="totalblocks">13.1M</div><div class="cs">Since genesis, Nov 2021</div></div>
         <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="TPS (avg)" data-chart-series="tps"><div class="cell-top"><span class="cl">TPS (avg)</span></div><div class="cv"><span data-stat="tps">0.7</span><span class="cu"> TPS</span></div><div class="cs">Last full day</div></div>
         <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="Block time" data-chart-series="blocktime"><div class="cell-top"><span class="cl">Block time</span></div><div class="cv"><span data-stat="blocktime">1.7</span><span class="cu"> s</span></div><div class="cs">Avg over last 1,000 blocks</div></div>
         <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="StarkZap downloads" data-chart-series="downloads"><div class="cell-top"><span class="cl">StarkZap downloads</span></div><div class="cv" data-stat="downloads">7.4K</div><div class="cs">all-time · live</div></div>
@@ -1592,6 +1593,9 @@ const M=[
     (293/day) are DIFFERENT metrics, deliberately not taken. */
  {k:'accounts',label:'Account contracts',type:'count',value:6981372,emptyNote:'SEED UNAVAILABLE · LAST MANUAL SNAPSHOT, AUG 10, 2026',source:{name:'Voyager',url:'https://voyager.online/analytics?page=accounts'}},
  {k:'totaltx',label:'Total TX',type:'num',value:307714287,source:{name:'L2Beat',url:'https://l2beat.com/scaling/projects/starknet'}},
+ /* head = live starknet_blockNumber (shared rpcBlockHead call pair with the
+    block-time head); history = the block-time backfill's own day boundaries */
+ {k:'totalblocks',label:'Total blocks',type:'num',value:13093652,source:{name:'onchain (block numbers)',url:'https://voyager.online/blocks'}},
  {k:'tps',label:'TPS (avg)',type:'tps',value:0.74,source:{name:'L2Beat',url:'https://l2beat.com/scaling/projects/starknet'}},
  /* measured onchain (Cartridge archive RPC block timestamps), not a
     third-party feed; the source link lands on Token Terminal's block-time
@@ -1635,20 +1639,27 @@ function cached(key,ttl,fetcher){
   }).catch(err=>{if(st){memo[key]=st;return st.d;}throw err;});
 }
 function gj(url){return fetch(url).then(r=>{if(!r.ok)throw new Error(url);return r.json();});}
-/* current block time measured onchain: average seconds per block over the
-   last 1,000 blocks via the Cartridge RPC (CORS-open). Returns [ms, sec]
-   stamped with the head block's chain time; any bad span fails the head. */
-function rpcBlockTime(){
+/* current chain head measured onchain via the Cartridge RPC (CORS-open):
+   [ms, sec, n] = head block's chain time, average seconds per block over
+   the last 1,000 blocks, and the head block number. Memoized for 5 minutes
+   so the block-time chart and the total-blocks chart share ONE call pair;
+   a failed fetch clears the memo so the next caller can retry. */
+let __rpcHead=null;
+function rpcBlockHead(){
+  if(__rpcHead&&Date.now()-__rpcHead.at<3e5)return __rpcHead.p;
   const call=(m,p)=>fetch('https://api.cartridge.gg/x/starknet/mainnet',{method:'POST',headers:{'content-type':'application/json'},
     body:JSON.stringify({jsonrpc:'2.0',id:1,method:m,params:p})}).then(r=>r.json()).then(j=>{if(j.result==null)throw new Error('rpc');return j.result;});
-  return call('starknet_blockNumber',[]).then(n=>Promise.all([
+  const p=call('starknet_blockNumber',[]).then(n=>Promise.all([
     call('starknet_getBlockWithTxHashes',[{block_number:n}]),
     call('starknet_getBlockWithTxHashes',[{block_number:n-1000}])
-  ])).then(pair=>{
+  ]).then(pair=>{
     const s=(pair[0].timestamp-pair[1].timestamp)/1000;
     if(!(isFinite(s)&&s>0&&s<3600))throw new Error('bad span');
-    return [pair[0].timestamp*1000,s];
-  });
+    return [pair[0].timestamp*1000,s,n];
+  }));
+  __rpcHead={at:Date.now(),p};
+  p.catch(()=>{if(__rpcHead&&__rpcHead.p===p)__rpcHead=null;});
+  return p;
 }
 /* full STRK/USD daily history: Binance klines (lists at the Feb 2024 launch);
    Coinbase Exchange candles as fallback where binance.com is geo-blocked */
@@ -1712,7 +1723,18 @@ const SRC={
     .then(d=>{
       const pts=d.days.filter(r=>isFinite(r.avgSec)&&r.avgSec>0).map(r=>[Date.parse(r.date),r.avgSec]);
       if(!pts.length)throw new Error('empty');
-      return rpcBlockTime().then(h=>h[0]>pts[pts.length-1][0]?pts.concat([h]):pts).catch(()=>pts);
+      return rpcBlockHead().then(h=>h[0]>pts[pts.length-1][0]?pts.concat([[h[0],h[1]]]):pts).catch(()=>pts);
+    }));},
+  /* cumulative chain height at each UTC day end, derived from the block-time
+     backfill's own day boundaries (firstBlock + blocks) — no separate walk.
+     Live head shares rpcBlockHead's memoized call pair with the block-time
+     chart. The daily-new-blocks derivative is deliberately NOT a series
+     here: the block time chart already tells that story (86400/blocks). */
+  totalblocks(){return cached('totalblocks',TTL['7D'],()=>gj('assets/data/block-time-history.json')
+    .then(d=>{
+      const pts=d.days.filter(r=>isFinite(r.firstBlock)&&isFinite(r.blocks)).map(r=>[Date.parse(r.date)+DAY,r.firstBlock+r.blocks]);
+      if(!pts.length)throw new Error('empty');
+      return rpcBlockHead().then(h=>h[0]>pts[pts.length-1][0]?pts.concat([[h[0],h[2]]]):pts).catch(()=>pts);
     }));},
   gtp(){return cached('gtp',TTL['1Y'],()=>gj('https://api.growthepie.xyz/v1/fundamentals.json')
     .then(a=>{const o={daa:[],wau:[]};a.forEach(r=>{if(r.origin_key!=='starknet')return;
@@ -1858,6 +1880,7 @@ const HIST={
  /* lower is better: invert flips badge COLOR only (a drop renders green),
     the signed text is untouched. First inverse-colored metric on the site. */
  blocktime:{avail:['7D','30D','1Y','ALL'],invert:true,events:BT_EVENTS,get:()=>SRC.blocktime()},
+ totalblocks:{avail:['7D','30D','1Y','ALL'],deltaBadge:{unit:''},get:()=>SRC.totalblocks()},
  /* all-or-nothing: any proxy failure keeps the committed seed value and its
     dated snapshot note (the draw() catch honors emptyNote). Same recipe as
     totaltx/p_users: cumulative line + recovered per-day new-account bars. */
@@ -2713,7 +2736,7 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
     price: 0.02525706, chg24: -2.19, chg7: -13.00, mcap: 170488255, fdv: 252689837, circ: 6746937561, unlockedPct: 67.47, btcUsd: 63945,
     strkStaked: 1430248556, strkStakedUsd: 36123874, stakePct: 21.198, btcStaked: 692.25, btcStakedUsd: 44266227, valueStaked: 80390101,
     tvl: 169146064, tvs: 375481582, netflow: -9893561, stables: 162419648, apprev: 2124918, chainrev: 127790,
-    dau: 15295, wau: 45166, totaltx: 309219399, tps: 1.748, downloads: 7609, blocktime: 1.69, accounts: 6981372,
+    dau: 15295, wau: 45166, totaltx: 309219399, tps: 1.748, downloads: 7609, blocktime: 1.69, totalblocks: 13093652, accounts: 6981372,
     p_tvl: 587068, p_tx: 168, p_rev: 342, p_users: 2347, p_vol: 147128
   };
   var CACHE_KEY = 'strkNumbers_v2'; // v2: state carries per-cluster provenance; older cache shapes are dropped
@@ -2748,6 +2771,7 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
     accounts:   function(v){ return Math.round(v).toLocaleString('en-US'); },
     tps:        function(v){ return v >= 100 ? String(Math.round(v)) : v.toFixed(1); },
     blocktime:  function(v){ return v >= 10 ? String(Math.round(v)) : v.toFixed(1); }, // the ' s' unit is a static .cu span
+    totalblocks: abbr,
     downloads:  abbr,
     tvl:        function(v){ return '$' + abbr(v); },
     tvs:        function(v){ return '$' + abbr(v); },
@@ -2766,14 +2790,14 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
     price: 'price', mcap: 'mcap', fdv: 'fdv', unlockedpct: 'unlockedPct', circ: 'circ',
     strkstaked: 'strkStaked', strkstakedusd: 'strkStakedUsd', btcstaked: 'btcStaked', btcstakedusd: 'btcStakedUsd',
     valuestaked: 'valueStaked', circstaked: 'stakePct',
-    dau: 'dau', wau: 'wau', totaltx: 'totaltx', tps: 'tps', downloads: 'downloads', blocktime: 'blocktime', accounts: 'accounts',
+    dau: 'dau', wau: 'wau', totaltx: 'totaltx', tps: 'tps', downloads: 'downloads', blocktime: 'blocktime', totalblocks: 'totalblocks', accounts: 'accounts',
     tvl: 'tvl', tvs: 'tvs', stables: 'stables', netflow: 'netflow', apprev: 'apprev', chainrev: 'chainrev',
     p_tvl: 'p_tvl', p_rev: 'p_rev', p_tx: 'p_tx', p_users: 'p_users', p_vol: 'p_vol'
   };
   // chart-registry keys for window.__numbersLive (price chart chips)
   // note: p_rev and p_vol are deliberately absent — their chart registry
   // values are CUMULATIVE figures, not this engine's rolling 30D stats
-  var CHART_KEYS = { price: 'price', mcap: 'mcap', strkStaked: 'strkstaked', btcStaked: 'btcstaked', valueStaked: 'valuestaked', stakePct: 'circstaked', dau: 'dailyusers', wau: 'weeklyusers', totaltx: 'totaltx', tps: 'tps', downloads: 'downloads', tvl: 'tvl', tvs: 'tvs', stables: 'stables', netflow: 'netflow', apprev: 'apprev', chainrev: 'chainrev', blocktime: 'blocktime', accounts: 'accounts', p_tvl: 'p_tvl', p_tx: 'p_tx', p_users: 'p_users' };
+  var CHART_KEYS = { price: 'price', mcap: 'mcap', strkStaked: 'strkstaked', btcStaked: 'btcstaked', valueStaked: 'valuestaked', stakePct: 'circstaked', dau: 'dailyusers', wau: 'weeklyusers', totaltx: 'totaltx', tps: 'tps', downloads: 'downloads', tvl: 'tvl', tvs: 'tvs', stables: 'stables', netflow: 'netflow', apprev: 'apprev', chainrev: 'chainrev', blocktime: 'blocktime', totalblocks: 'totalblocks', accounts: 'accounts', p_tvl: 'p_tvl', p_tx: 'p_tx', p_users: 'p_users' };
 
   // count-up tween; parses the on-screen number (handles $, %, sign, B/M/K)
   function parseShown(text){
@@ -2952,11 +2976,11 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
       return v;
     }).catch(function(){ return rpcTotalStake(i + 1); });
   }
-  // current block time: average seconds per block over the last 1,000 blocks,
-  // measured from block timestamps on the Cartridge archive RPC (the chart
-  // script carries its own twin for the series head — both scopes stay
-  // self-contained, same precedent as the RPC staking fallback above)
-  function rpcBlockTime(){
+  // current chain head: average seconds per block over the last 1,000 blocks
+  // AND the head block number, one call pair feeding both stats (the chart
+  // script carries its own memoized twin for the series heads — both scopes
+  // stay self-contained, same precedent as the RPC staking fallback above)
+  function rpcBlockHead(){
     function call(method, params){
       return fetch('https://api.cartridge.gg/x/starknet/mainnet', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -2965,11 +2989,12 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
     }
     return call('starknet_blockNumber', []).then(function(n){
       return Promise.all([call('starknet_getBlockWithTxHashes', [{ block_number: n }]),
-                          call('starknet_getBlockWithTxHashes', [{ block_number: n - 1000 }])]);
-    }).then(function(pair){
-      var s = (pair[0].timestamp - pair[1].timestamp) / 1000;
-      if (!(isFinite(s) && s > 0 && s < 3600)) throw new Error('bad span');
-      return s;
+                          call('starknet_getBlockWithTxHashes', [{ block_number: n - 1000 }])])
+        .then(function(pair){
+          var s = (pair[0].timestamp - pair[1].timestamp) / 1000;
+          if (!(isFinite(s) && s > 0 && s < 3600)) throw new Error('bad span');
+          return { s: s, n: n };
+        });
     });
   }
   // npm downloads since first publish; the range API caps at 18 months per call
@@ -3064,7 +3089,7 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
         return { totaltx: total, tps: tps };
       }));
     var pNpm = wrap(npmTotal(NPM_FIRST_PUBLISH).then(function(v){ if (!ok(v)) throw 0; return v; }));
-    var pRpcBt = wrap(rpcBlockTime().then(function(v){ if (!ok(v)) throw 0; return v; }));
+    var pRpcBt = wrap(rpcBlockHead().then(function(v){ if (!ok(v.s) || !ok(v.n)) throw 0; return v; }));
     // account contracts from the committed seed (refreshed daily by the
     // Actions workflow); head/series cross-check fails the cluster whole
     var pVoy = wrap(getJson('assets/data/voyager-accounts-seed.json')
@@ -3159,7 +3184,9 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
       if (gtp) { state.dau = gtp.dau; state.wau = gtp.wau; stamp('gtp'); }
       if (act) { state.totaltx = act.totaltx; state.tps = act.tps; stamp('act'); }
       if (npm) { state.downloads = npm; stamp('npm'); }
-      if (bt) { state.blocktime = bt; stamp('rpcbt'); }
+      // one call pair, one coherent cluster: block time and total blocks
+      // commit together or not at all
+      if (bt) { state.blocktime = bt.s; state.totalblocks = bt.n; stamp('rpcbt'); }
       if (voy) {
         state.accounts = voy.head; stamp('voy');
         // the sub renders the seed's OWN fetched date — the note can never
