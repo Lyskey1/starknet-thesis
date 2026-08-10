@@ -1283,6 +1283,7 @@ window.ADMIN_GATE=on;})();
         <line id="cross" stroke="rgba(245,242,236,.25)" stroke-width="1" style="display:none"></line>
         <circle id="cdot" r="4.5" fill="#C4B5FD" style="display:none"></circle>
         <g id="peakG"></g>
+        <g id="annG" pointer-events="none"></g>
       </svg>
       <div class="tip" id="nTip"><div class="tv" id="nTipV"></div><div class="tdt" id="nTipD"></div></div>
       <div class="cnote" id="chartNote"></div>
@@ -1801,6 +1802,41 @@ function weeklySum(a){ // daily [[ms,v]] → calendar-week (Mon–Sun, UTC) sums
   return Object.keys(w).map(k=>[+k,w[k]]).sort((x,y)=>x[0]-y[0]);
 }
 
+/* Sourced protocol-upgrade annotations for the BLOCK TIME chart (audited
+   2026-08-11 against the committed seed; every date below sits on a durable
+   regime edge in the data, not a single-day spike):
+   - 2023-07-12 v0.12.0 mainnet: rust blockifier + LambdaClass Cairo VM
+     (docs.starknet.io/learn/cheatsheets/version-notes). Data: 14d median
+     ~113s (May) -> ~64s (Jul) -> ~27s (Sep). The daily edge starts ~Jul 7:
+     block time was load-coupled pre-Bolt, so this alignment is approximate
+     and the hover detail says so.
+   - 2024-08-28 v0.13.2 "Bolt" mainnet: optimistic parallel execution +
+     applicative recursion / block packing (version notes;
+     starknet.io/blog/bolt-version-upgrade/). Data edge exact:
+     322s Aug 27 -> 45s Aug 28 -> 31.7s steady.
+   - 2025-09-01 v0.14.0 "Grinta" mainnet: decentralized sequencing,
+     "block time is shorten from ~30 seconds to ~6 seconds" (version notes;
+     launch coverage crypto.news/starknet-v0-14-0-upgrade-live-on-mainnet-2025).
+     Data settles ~5s from Sep 1. The Jul-Aug 2025 staged descent (30s -> ~7s)
+     is the documented rollout window (postponements Jul 28 -> Aug 18 ->
+     Sep 1) and is deliberately NOT annotated.
+   - 2025-12-10 v0.14.1 mainnet: blocks close after 2 seconds during low
+     activity (community.starknet.io/t/starknet-v0-14-1-prerelease-notes/
+     116032). Data edge exact: 4.4s Dec 9 -> 2.8s Dec 10 -> 2.1s steady.
+   NOT annotated, checked 2026-08-11, so the next audit knows this was
+   examined rather than missed: v0.14.3 (mainnet 2026-06-22, "shortened
+   block production times" per blog.thirdweb.com explainer) shows NO edge
+   in the data on its date (June 2026 holds 2.6s throughout); the two small
+   Jul 2026 steps (2.6 -> 2.1 mid-Jul, 2.1 -> 1.7 on Jul 28) remain
+   unattributed. The 2021-2022 genesis-era descent has no single
+   attributable release. */
+const BT_EVENTS=[
+ {t:Date.UTC(2023,6,12),label:'V0.12 · RUST SEQUENCER',detail:'v0.12.0: rust sequencer rewrite, ~113s to ~27s; block time was load-coupled in this era, edge approximate'},
+ {t:Date.UTC(2024,7,28),label:'V0.13.2 · PARALLEL EXECUTION',detail:'v0.13.2 Bolt: parallel execution + block packing, ~320s to ~32s'},
+ {t:Date.UTC(2025,8,1),label:'V0.14 · DECENTRALIZED SEQUENCING',detail:'v0.14.0 Grinta: decentralized sequencing, ~30s to ~6s'},
+ {t:Date.UTC(2025,11,10),label:'V0.14.1 · 2S BLOCKS',detail:'v0.14.1: blocks close after 2s on low load, ~4.4s to ~2.1s'},
+];
+
 /* per-metric history config: which ranges have data + how to get the series.
    Staking series are monthly (reconstructed from onchain state at historical
    blocks), so only 1Y/ALL are offered for them; any metric absent from HIST
@@ -1821,7 +1857,7 @@ const HIST={
  tps:{avail:['7D','30D','1Y','ALL'],peak:true,get:()=>SRC.act().then(a=>a.map(p=>[p[0],p[1]/86400]))},
  /* lower is better: invert flips badge COLOR only (a drop renders green),
     the signed text is untouched. First inverse-colored metric on the site. */
- blocktime:{avail:['7D','30D','1Y','ALL'],invert:true,get:()=>SRC.blocktime()},
+ blocktime:{avail:['7D','30D','1Y','ALL'],invert:true,events:BT_EVENTS,get:()=>SRC.blocktime()},
  /* all-or-nothing: any proxy failure keeps the committed seed value and its
     dated snapshot note (the draw() catch honors emptyNote). Same recipe as
     totaltx/p_users: cumulative line + recovered per-day new-account bars. */
@@ -1918,6 +1954,7 @@ function tsLabel(ts,spanMs){const d=new Date(ts);
   return spanMs>90*DAY?s+', '+d.getFullYear():s;}
 function setNote(t){fNote.textContent=t||'';}
 const dbars=document.getElementById('dbars'),peakG=document.getElementById('peakG'),legEl=document.getElementById('chartLegend');
+const annG=document.getElementById('annG');let ANN=[]; // annotations in the current window: {x, ev}, tip proximity reads it
 const gridV=document.getElementById('gridV'),axEl=document.getElementById('chartAxis');
 const stackG=document.getElementById('stackG'),stlEl=document.getElementById('stackLegend');
 /* X axis: first tick = the series' actual first point, last at the right
@@ -1944,7 +1981,7 @@ function renderAxis(t0,t1){
   axEl.innerHTML=html;gridV.innerHTML=grid;
 }
 function clearChart(){line.setAttribute('d','');area.setAttribute('d','');cross.style.display='none';cdot.style.display='none';
-  dbars.innerHTML='';peakG.innerHTML='';legEl.innerHTML='';gridV.innerHTML='';axEl.innerHTML='';
+  dbars.innerHTML='';peakG.innerHTML='';annG.innerHTML='';ANN=[];legEl.innerHTML='';gridV.innerHTML='';axEl.innerHTML='';
   document.getElementById('signG').innerHTML='';stackG.innerHTML='';stlEl.innerHTML='';
   document.getElementById('fVal').style.color='';PTS=[];}
 function renderBadge(p,label,inv){const el=document.getElementById('cR'),wrap=el.parentElement;
@@ -2116,6 +2153,36 @@ function draw(){
         peakG.innerHTML=`<circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="4" fill="#C4B5FD"/>`+
           `<text x="${tx.toFixed(1)}" y="${(py-12).toFixed(1)}" text-anchor="${anch}" font-family="IBM Plex Mono,monospace" font-size="11" letter-spacing="1" fill="rgba(245,242,236,.75)">PEAK: ${(h.dailyUsd?'$':'')+abbr(dl[di])}/DAY · ${tsLabel(PTS[di].ts,500*DAY).toUpperCase()}</text>`;
       }
+    }
+    /* sourced protocol-upgrade annotations (h.events): PEAK/TODAY grammar,
+       dashed hairline + dot on the series + compact mono label. Labels
+       stagger to free tiers when they would collide; below 560px they hide
+       and the hairline + dot remain (detail arrives on tap through the tip).
+       The group takes no pointer events, so the crosshair is untouched:
+       the tip handler surfaces the detail by x-proximity instead. */
+    annG.innerHTML='';ANN=[];
+    if(h.events&&PTS.length){
+      const wideA=(chart.getBoundingClientRect().width||800)>=560;
+      const tiers=[];let annHtml='';
+      h.events.forEach(ev=>{
+        if(ev.t<t0||ev.t>t1)return;
+        const ax=(ev.t-t0)/(curSpan||1)*W;
+        let alo=0,ahi=PTS.length-1;
+        while(ahi-alo>1){const mid=(alo+ahi)>>1;(PTS[mid].ts<ev.t)?alo=mid:ahi=mid;}
+        const ap=(ev.t-PTS[alo].ts<=PTS[ahi].ts-ev.t)?PTS[alo]:PTS[ahi];
+        ANN.push({x:ax,ev:ev});
+        annHtml+=`<line x1="${ax.toFixed(1)}" y1="${pT}" x2="${ax.toFixed(1)}" y2="${H-pB}" stroke="rgba(196,181,253,.32)" stroke-width="1" stroke-dasharray="3 3"/>`+
+          `<circle cx="${ax.toFixed(1)}" cy="${ap.y.toFixed(1)}" r="3.5" fill="#C4B5FD"/>`;
+        if(wideA){
+          const lw=ev.label.length*7.2+8; /* mono 11px + letter-spacing, viewBox units */
+          const flip=ax+lw>W,tx=flip?ax-6:ax+6,anch=flip?'end':'start';
+          const lx0=flip?ax-lw:ax,lx1=flip?ax:ax+lw;
+          let tier=0;while(tier<tiers.length&&tiers[tier]!=null&&lx0<tiers[tier]+14)tier++;
+          tiers[tier]=Math.max(tiers[tier]!=null?tiers[tier]:-1e9,lx1);
+          annHtml+=`<text x="${tx.toFixed(1)}" y="${pT+11+tier*15}" text-anchor="${anch}" font-family="IBM Plex Mono,monospace" font-size="11" letter-spacing="1" fill="rgba(245,242,236,.75)">${ev.label}</text>`;
+        }
+      });
+      annG.innerHTML=annHtml;
     }
     /* window-max marker (TPS): dot + mono label, flipped near edges so it never clips */
     if(h.peak&&PTS.length){
@@ -2376,6 +2443,15 @@ window.__numbersLive={
          registrations (a different metric) */
       ? tsLabel(p.ts,curSpan)+'<br>'+(hh.dailyNames.tip||'NEW')+' <span'+(dCol?' style="color:'+dCol+'"':'')+'>'+dSign+Math.round(Math.abs(p.daily)).toLocaleString('en-US')+'</span> · '+(hh.dailyNames.line||'CUMULATIVE')+' '+fmt(map[curK],p.v)
       : ((hh.weeklyBars)?'Week of ':'')+tsLabel(p.ts,curSpan)+(p.daily!=null?' · <span'+(dCol?' style="color:'+dCol+'"':'')+'>'+dSign+(hh.dailyUsd?'$':'')+abbr(p.daily)+'/day</span>':'');
+  }
+  /* annotation detail rides the tip when the cursor or tap lands near an
+     event hairline (proximity in viewBox units; the layer itself never
+     takes pointer events) */
+  if(ANN.length){
+    let best=null;
+    ANN.forEach(a=>{const d=Math.abs(a.x-vx);if(d<=14&&(!best||d<Math.abs(best.x-vx)))best=a;});
+    if(best)tipD.innerHTML+='<br><span style="color:#C4B5FD">'+best.ev.label+'</span>'+
+      '<span style="display:block;white-space:normal;max-width:min(420px,64vw)">'+best.ev.detail+'</span>';
   }}));
 ['mouseleave','pointerleave','pointercancel'].forEach(ev=>chart.addEventListener(ev,()=>{cross.style.display='none';cdot.style.display='none';tip.style.display='none';}));
 
