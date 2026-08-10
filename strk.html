@@ -467,6 +467,7 @@ a.chip:hover{background:var(--acc);border-color:var(--acc);color:#0A0A0A}
 #numbers .chartbox .cnote{position:absolute;top:10px;right:12px;font-family:var(--mono),monospace;font-size:10px;letter-spacing:.12em;color:var(--muted);pointer-events:none;text-align:right}
 #numbers .chartbox .cnote:empty{display:none}
 #numbers .chartbox .cleg{right:auto;left:12px;text-align:left}
+@media(max-width:520px){#numbers .chartbox .cleg{top:26px}} /* long legends (dual-series, stacked) drop below the since-note instead of colliding */
 #numbers .ranges button.off{opacity:.25;pointer-events:none}
 /* --- section 04: chart date axis (HTML overlay — SVG text would distort
        under preserveAspectRatio="none") --- */
@@ -1781,7 +1782,9 @@ const HIST={
     seed renders alone, ending at its last real point; nothing projected
     or carried forward. A multi-day gap between seed end and the live
     head draws as one straight bridge segment, like any sparse tail. */
- p_users:{avail:['7D','30D','1Y','ALL'],deltaBadge:{unit:''},get:()=>SRC.s20users().then(pts=>{
+ p_users:{avail:['7D','30D','1Y','ALL'],dailyBars:true,peakDaily:true,deltaBadge:{unit:''},
+   dailyNames:{line:'CUMULATIVE',bars:'NEW DEPOSITORS / DAY',tip:'NEW DEPOSITORS'},
+   get:()=>SRC.s20users().then(pts=>{
    const lv=window.__poolUsers,last=pts[pts.length-1];
    if(lv&&isFinite(lv.v)&&last&&lv.at>last[0]&&lv.v>=last[1])return pts.concat([[lv.at,lv.v]]);
    return pts;})},
@@ -2001,7 +2004,8 @@ function draw(){
       for(let i=1;i<PTS.length;i++){const bh=mxd?dl[i]/mxd*BH:0;
         if(bh>0.2)bs+=`<rect x="${(PTS[i].x-bw/2).toFixed(1)}" y="${(H-pB-bh).toFixed(1)}" width="${bw.toFixed(1)}" height="${bh.toFixed(1)}" fill="#6D4FD0" fill-opacity="0.55" rx="0.5"/>`;}
       dbars.innerHTML=bs;
-      legEl.innerHTML='<span style="color:#A78BFA">—</span> TOTAL&ensp;<span style="color:#6D4FD0">▮</span> PER DAY';
+      const dn=h.dailyNames||{};
+      legEl.innerHTML='<span style="color:#A78BFA">—</span> '+(dn.line||'TOTAL')+'&ensp;<span style="color:#6D4FD0">▮</span> '+(dn.bars||'PER DAY');
       /* peak DAILY bar marker (revenue-style charts) */
       if(h.peakDaily&&mxd>0){
         let di=1;for(let i=2;i<dl.length;i++)if(dl[i]>dl[di])di=i;
@@ -2255,7 +2259,13 @@ window.__numbersLive={
        unstyled. abbr() strips the sign, so the prefix carries it. */
     const dSign=p.daily>0?'+':p.daily<0?'-':'';
     const dCol=p.daily>0?'var(--up)':p.daily<0?'var(--down)':'';
-    tipD.innerHTML=((HIST[curK]&&HIST[curK].weeklyBars)?'Week of ':'')+tsLabel(p.ts,curSpan)+(p.daily!=null?' · <span'+(dCol?' style="color:'+dCol+'"':'')+'>'+dSign+(HIST[curK]&&HIST[curK].dailyUsd?'$':'')+abbr(p.daily)+'/day</span>':'');
+    const hh=HIST[curK]||{};
+    tipD.innerHTML=hh.dailyNames&&p.daily!=null
+      /* labeled dual rows (privacy-chart grammar): the hovered day's new
+         depositors plus the cumulative, both named so neither reads as
+         registrations (a different metric) */
+      ? tsLabel(p.ts,curSpan)+'<br>'+(hh.dailyNames.tip||'NEW')+' <span'+(dCol?' style="color:'+dCol+'"':'')+'>'+dSign+Math.round(Math.abs(p.daily)).toLocaleString('en-US')+'</span> · '+(hh.dailyNames.line||'CUMULATIVE')+' '+fmt(map[curK],p.v)
+      : ((hh.weeklyBars)?'Week of ':'')+tsLabel(p.ts,curSpan)+(p.daily!=null?' · <span'+(dCol?' style="color:'+dCol+'"':'')+'>'+dSign+(hh.dailyUsd?'$':'')+abbr(p.daily)+'/day</span>':'');
   }}));
 ['mouseleave','pointerleave','pointercancel'].forEach(ev=>chart.addEventListener(ev,()=>{cross.style.display='none';cdot.style.display='none';tip.style.display='none';}));
 
