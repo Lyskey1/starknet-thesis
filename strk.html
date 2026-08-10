@@ -568,6 +568,8 @@ a.chip:hover{background:var(--acc);border-color:var(--acc);color:#0A0A0A}
 #numbers .grp.priv .gl{color:var(--acc-2)}
 #numbers .cells{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
 #numbers .cells.c3{grid-template-columns:repeat(3,1fr)}
+#numbers .cells.c5{grid-template-columns:repeat(5,1fr)}
+@media(max-width:1100px){#numbers .cells.c5{grid-template-columns:repeat(3,1fr)}}
 #numbers .cell{position:relative;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:linear-gradient(180deg,rgba(245,242,236,.045),rgba(245,242,236,.012));padding:15px 17px 12px;min-height:140px;display:flex;flex-direction:column;transition:.18s}
 #numbers .cell.click{cursor:pointer}
 #numbers .cell.click:hover{transform:translateY(-3px);border-color:rgba(124,58,237,.45);box-shadow:0 14px 34px rgba(124,58,237,.13)}
@@ -592,7 +594,7 @@ a.chip:hover{background:var(--acc);border-color:var(--acc);color:#0A0A0A}
 #numbers .cell.bd.shown .bar i{width:var(--w)}
 #numbers .bd-row .bv{color:var(--white)}
 @media(prefers-reduced-motion:reduce){#numbers .pill .d{animation:none}#numbers .cell .spark path.l{transition:none;stroke-dashoffset:0}#numbers .bd-row .bar i{transition:none;width:var(--w)}}
-@media(max-width:980px){#numbers .cells,#numbers .cells.c3{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:980px){#numbers .cells,#numbers .cells.c3,#numbers .cells.c5{grid-template-columns:repeat(2,1fr)}}
 
 #numbers .panel{border:1px solid var(--line);border-radius:20px;background:linear-gradient(180deg,rgba(124,58,237,.05),rgba(245,242,236,.02));padding:26px 28px;margin-top:24px}
 #numbers .eyebrow{font-family:var(--mono),monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--acc-2)}
@@ -745,7 +747,7 @@ footer.site-footer .foot-bottom a:hover{color:var(--accent)}
   .nav-logo{font-size:15px}
 }
 @media(max-width:560px){.wrap{padding:0 16px}#numbers .feat .val{font-size:clamp(26px,7.5vw,36px)}}
-@media(max-width:520px){#numbers .cells,#numbers .cells.c3{grid-template-columns:1fr}}
+@media(max-width:520px){#numbers .cells,#numbers .cells.c3,#numbers .cells.c5{grid-template-columns:1fr}}
 @media(max-width:600px){
   /* series pills: single-row scroll strip with right-edge fade */
   #numbers .chips{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:6px;
@@ -1341,11 +1343,13 @@ window.ADMIN_GATE=on;})();
     </div>
 
     <div class="nacc-item" id="strk20">
-      <button class="nacc-head" aria-expanded="false" aria-controls="strk20-body"><span class="nacc-title">Privacy · STRK20</span><span class="nacc-count">3</span><i class="ti ti-chevron-down nacc-chev"></i></button>
-      <div class="nacc-body" id="strk20-body"><div class="nacc-inner"><div class="cells c3">
+      <button class="nacc-head" aria-expanded="false" aria-controls="strk20-body"><span class="nacc-title">Privacy · STRK20</span><span class="nacc-count">5</span><i class="ti ti-chevron-down nacc-chev"></i></button>
+      <div class="nacc-body" id="strk20-body"><div class="nacc-inner"><div class="cells c5">
         <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="TVL in STRK20 pool" data-chart-series="p_tvl"><div class="cell-top"><span class="cl">TVL in STRK20 pool</span></div><div class="cv" data-stat="p_tvl">$528.9K</div><div class="cs">Shielded value</div></div>
         <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="Revenue from STRK20 (30D)" data-chart-series="p_rev"><div class="cell-top"><span class="cl">Revenue from STRK20 (30D)</span></div><div class="cv" data-stat="p_rev">$2.6K</div><div class="cs">~$0.12 flat fee × 30d private TX · derived</div></div>
         <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="Private TX (daily)" data-chart-series="p_tx"><div class="cell-top"><span class="cl">Private TX (daily)</span></div><div class="cv" data-stat="p_tx">36</div><div class="cs">Last full day</div></div>
+        <div class="cell"><div class="cell-top"><span class="cl">Total users</span></div><div class="cv" data-stat="p_users">2,345</div><div class="cs">Pool users, all time</div></div>
+        <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="DeFi volume privately routed (30D)" data-chart-series="p_vol"><div class="cell-top"><span class="cl">DeFi volume privately routed (30D)</span></div><div class="cv" data-stat="p_vol">$147.1K</div><div class="cs">USD by protocol · STRK20 dashboard</div></div>
       </div></div></div>
     </div>
 
@@ -1583,6 +1587,7 @@ const M=[
  {k:'p_tvl',label:'TVL in STRK20 pool',type:'usd',value:528903},
  {k:'p_rev',label:'Revenue from STRK20',type:'usd',value:3045},
  {k:'p_tx',label:'Private TX (daily)',type:'num',value:36},
+ {k:'p_vol',label:'DeFi volume privately routed',type:'usd',value:339540},
 ];
 const map={};
 M.forEach(m=>{map[m.k]=m;});
@@ -1664,6 +1669,15 @@ const SRC={
       // drop the in-progress day — a partial count would read as a real dip
       if(days.length&&days[days.length-1].date===new Date().toISOString().slice(0,10))days=days.slice(0,-1);
       return days.map(r=>[Date.parse(r.date),r.count]);
+    }));},
+  /* per-day routed DeFi volume totals — the same series privacy.html's
+     "DeFi volume privately routed" chart plots (measured, byProtocol) */
+  s20vol(){return cached('s20vol',TTL['7D'],()=>gj('https://strk20-dashboard-production.up.railway.app/agg/routed-volume')
+    .then(d=>{
+      let days=d.days||[];
+      // drop the in-progress day — a partial total would read as a real dip
+      if(days.length&&days[days.length-1].date===new Date().toISOString().slice(0,10))days=days.slice(0,-1);
+      return days.map(r=>[Date.parse(r.date),r.total||0]);
     }));},
   /* per-day totals + fixed per-asset bands (same STRK20 pipeline the privacy
      page's "Shielded value over time" chart uses; OTHER buckets the tail) */
@@ -1747,6 +1761,11 @@ const HIST={
     dailyBars recovers the per-day bars; sub30 keeps the rolling figure. */
  p_rev:{avail:['7D','30D','1Y','ALL'],dailyBars:true,peakDaily:true,dailyUsd:true,deltaBadge:{},sub30:true,
    get:()=>SRC.s20tx().then(a=>cumsum(a.map(p=>[p[0],p[1]*(window.STRK20_FLAT_FEE_USD||0.12)])))},
+ /* measured routed DeFi volume, same recipe as p_rev: cumulative header,
+    dailyBars recovers the per-day bars, the 30D badge is the window's
+    absolute delta (= 30D routed volume), sub30 keeps the rolling figure */
+ p_vol:{avail:['7D','30D','1Y','ALL'],dailyBars:true,peakDaily:true,dailyUsd:true,deltaBadge:{},sub30:true,
+   get:()=>SRC.s20vol().then(cumsum)},
 };
 function abbr(v){v=Math.abs(v);if(v>=1e9)return (v/1e9).toFixed(2)+'B';if(v>=1e6)return (v/1e6).toFixed(1)+'M';if(v>=1e3)return (v/1e3).toFixed(1)+'K';return Math.round(v).toString();}
 function fmt(m,v){
@@ -2478,7 +2497,7 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
     strkStaked: 1430248556, strkStakedUsd: 36123874, stakePct: 21.198, btcStaked: 692.25, btcStakedUsd: 44266227, valueStaked: 80390101,
     tvl: 169146064, tvs: 375481582, netflow: -9893561, stables: 162419648, apprev: 2124918, chainrev: 127790,
     dau: 15295, wau: 45166, totaltx: 309219399, tps: 1.748, downloads: 7609,
-    p_tvl: 587068, p_tx: 168, p_rev: 319
+    p_tvl: 587068, p_tx: 168, p_rev: 319, p_users: 2345, p_vol: 147128
   };
   var CACHE_KEY = 'strkNumbers_v2'; // v2: state carries per-cluster provenance; older cache shapes are dropped
   var NPM_FIRST_PUBLISH = '2026-02-24'; // starkzap first npm release
@@ -2519,7 +2538,9 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
     chainrev:   function(v){ return '$' + abbr(v); },
     p_tvl:      function(v){ return '$' + abbr(v); },
     p_rev:      function(v){ return '$' + abbr(v); },
-    p_tx:       function(v){ return Math.round(v).toLocaleString('en-US'); }
+    p_tx:       function(v){ return Math.round(v).toLocaleString('en-US'); },
+    p_users:    function(v){ return Math.round(v).toLocaleString('en-US'); },
+    p_vol:      function(v){ return '$' + abbr(v); }
   };
   // which state field feeds each [data-stat] hook
   var BIND = {
@@ -2528,16 +2549,17 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
     valuestaked: 'valueStaked', circstaked: 'stakePct',
     dau: 'dau', wau: 'wau', totaltx: 'totaltx', tps: 'tps', downloads: 'downloads',
     tvl: 'tvl', tvs: 'tvs', stables: 'stables', netflow: 'netflow', apprev: 'apprev', chainrev: 'chainrev',
-    p_tvl: 'p_tvl', p_rev: 'p_rev', p_tx: 'p_tx'
+    p_tvl: 'p_tvl', p_rev: 'p_rev', p_tx: 'p_tx', p_users: 'p_users', p_vol: 'p_vol'
   };
   // chart-registry keys for window.__numbersLive (price chart chips)
-  // note: p_rev is deliberately absent — its chart registry value is the
-  // CUMULATIVE figure (dashboard-matching), not this engine's rolling 30D stat
+  // note: p_rev and p_vol are deliberately absent — their chart registry
+  // values are CUMULATIVE figures, not this engine's rolling 30D stats;
+  // p_users is absent because it has no chart series at all
   var CHART_KEYS = { price: 'price', mcap: 'mcap', strkStaked: 'strkstaked', btcStaked: 'btcstaked', valueStaked: 'valuestaked', stakePct: 'circstaked', dau: 'dailyusers', wau: 'weeklyusers', totaltx: 'totaltx', tps: 'tps', downloads: 'downloads', tvl: 'tvl', tvs: 'tvs', stables: 'stables', netflow: 'netflow', apprev: 'apprev', chainrev: 'chainrev', p_tvl: 'p_tvl', p_tx: 'p_tx' };
 
   // count-up tween; parses the on-screen number (handles $, %, sign, B/M/K)
   function parseShown(text){
-    var m = String(text).match(/-?\d+(\.\d+)?/);
+    var m = String(text).replace(/,/g, '').match(/-?\d+(\.\d+)?/); // comma-grouped stats (p_users, p_tx) parse whole
     if (!m) return 0;
     var n = parseFloat(m[0]);
     if (/-\$|\(-/.test(text) && n > 0) n = -n;
@@ -2813,12 +2835,27 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
         var sum30 = days.slice(-30).reduce(function(a, x){ return a + (x.count || 0); }, 0);
         return { p_tx: days[days.length - 1].count, sum30: sum30 };
       }));
+    // pool users ride the same response as the pool TVL, one atomic cluster.
+    // NOTE: userCount is pool users, a single number with no history;
+    // /agg/registrations.totalUsers is a DIFFERENT metric (viewing-key
+    // registrations, 2,366 vs 2,345 on 2026-08-10) — never conflate or
+    // subtract them (same warning as privacy.html's stats row).
     var pS20tvl = wrap(getJson('https://strk20-dashboard-production.up.railway.app/agg/pool-summary')
-      .then(function(d){ if (!ok(d.tvlUsd)) throw 0; return d.tvlUsd; }));
+      .then(function(d){ if (!ok(d.tvlUsd) || !ok(d.userCount)) throw 0; return { tvl: d.tvlUsd, users: d.userCount }; }));
+    var pS20vol = wrap(getJson('https://strk20-dashboard-production.up.railway.app/agg/routed-volume')
+      .then(function(d){
+        var days = d.days || [];
+        var today = new Date().toISOString().slice(0, 10);
+        if (days.length && days[days.length - 1].date === today) days = days.slice(0, -1); // drop the partial day
+        if (!days.length) throw 0;
+        var sum30 = days.slice(-30).reduce(function(a, x){ return a + (x.total || 0); }, 0);
+        if (!ok(sum30)) throw 0;
+        return sum30;
+      }));
 
-    Promise.all([pCg, pEndur, pTvl, pTvs, pStables, pAppRev, pChainRev, pGtp, pAct, pNpm, pS20tx, pS20tvl]).then(function(r){
+    Promise.all([pCg, pEndur, pTvl, pTvs, pStables, pAppRev, pChainRev, pGtp, pAct, pNpm, pS20tx, pS20tvl, pS20vol]).then(function(r){
       var cg = r[0], endur = r[1], tvl = r[2], tvs = r[3], stables = r[4], apprev = r[5],
-          chainrev = r[6], gtp = r[7], act = r[8], npm = r[9], s20tx = r[10], s20tvl = r[11];
+          chainrev = r[6], gtp = r[7], act = r[8], npm = r[9], s20tx = r[10], s20tvl = r[11], s20vol = r[12];
       var stamped = false;
       function stamp(pk){
         var now = Date.now();
@@ -2862,7 +2899,8 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
       if (gtp) { state.dau = gtp.dau; state.wau = gtp.wau; stamp('gtp'); }
       if (act) { state.totaltx = act.totaltx; state.tps = act.tps; stamp('act'); }
       if (npm) { state.downloads = npm; stamp('npm'); }
-      if (s20tvl) { state.p_tvl = s20tvl; stamp('s20tvl'); }
+      if (s20tvl) { state.p_tvl = s20tvl.tvl; state.p_users = s20tvl.users; stamp('s20tvl'); }
+      if (s20vol) { state.p_vol = s20vol; stamp('s20vol'); }
       // STRK20 revenue derives from the ~$0.12 flat privacy fee × 30d
       // private TX (the fee is denominated in STRK but adjusted with STRK
       // price to hold near $0.12, so the dollar figure is the stable term)
