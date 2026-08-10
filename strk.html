@@ -1326,9 +1326,10 @@ window.ADMIN_GATE=on;})();
         <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="Daily users" data-chart-series="dailyusers"><div class="cell-top"><span class="cl">Daily users</span></div><div class="cv" data-stat="dau">13.2K</div><div class="cs">Active addresses / day</div></div>
         <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="Weekly users" data-chart-series="weeklyusers"><div class="cell-top"><span class="cl">Weekly users</span></div><div class="cv" data-stat="wau">43.4K</div><div class="cs">Active addresses / 7d</div></div>
         <!-- committed snapshot, no live source: see the M entry comment -->
-        <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="Account contracts" data-chart-series="accounts"><div class="cell-top"><span class="cl">Account contracts</span></div><div class="cv">6,981,372</div><div class="cs">Deployed, all time · Aug 10, 2026</div></div>
+        <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="Account contracts" data-chart-series="accounts"><div class="cell-top"><span class="cl">Account contracts</span></div><div class="cv" data-stat="accounts">6,981,372</div><div class="cs">Deployed, all time · Aug 10, 2026</div></div>
         <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="Total TX" data-chart-series="totaltx"><div class="cell-top"><span class="cl">Total TX</span></div><div class="cv" data-stat="totaltx">307.7M</div><div class="cs">Since genesis</div></div>
         <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="TPS (avg)" data-chart-series="tps"><div class="cell-top"><span class="cl">TPS (avg)</span></div><div class="cv"><span data-stat="tps">0.7</span><span class="cu"> TPS</span></div><div class="cs">Last full day</div></div>
+        <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="Block time" data-chart-series="blocktime"><div class="cell-top"><span class="cl">Block time</span></div><div class="cv"><span data-stat="blocktime">1.7</span><span class="cu"> s</span></div><div class="cs">Avg over last 1,000 blocks</div></div>
         <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="StarkZap downloads" data-chart-series="downloads"><div class="cell-top"><span class="cl">StarkZap downloads</span></div><div class="cv" data-stat="downloads">7.4K</div><div class="cs">all-time · live</div></div>
       </div></div></div>
     </div>
@@ -1579,17 +1580,21 @@ const M=[
  {k:'dailyusers',label:'Daily users',type:'num',value:13221,source:{name:'growthepie',url:'https://www.growthepie.com/chains/starknet'}},
  {k:'weeklyusers',label:'Weekly users',type:'num',value:43443,source:{name:'growthepie',url:'https://www.growthepie.com/chains/starknet'}},
  /* Voyager analytics "Accounts" = cumulative account contracts deployed
-    (their Total series; the by-type split stays Voyager's). Committed,
-    dated scalar: voyager.online/api/daily-stats?metrics=account_contracts
-    sits behind a Cloudflare interactive challenge (cf-mitigated: challenge,
-    verified from a clean container 2026-08-10), so no keyless fetch exists;
-    if that endpoint ever opens, this becomes a live series with forward
-    accumulation. Voyager's Active Accounts (1,651) and Accounts Growth
-    (293/day) are DIFFERENT metrics, deliberately not taken. The card's
-    static text and this value must move together in the same commit. */
- {k:'accounts',label:'Account contracts',type:'count',value:6981372,emptyNote:'NO KEYLESS HISTORY · COMMITTED SNAPSHOT, AUG 10, 2026',source:{name:'Voyager',url:'https://voyager.online/analytics?page=accounts'}},
+    (their Total series; the by-type split stays Voyager's). Voyager is
+    Cloudflare-gated for direct fetches (cf-mitigated: challenge, verified
+    from a clean container 2026-08-10), so live data rides the Vercel proxy
+    api/voyager-accounts.js; when the proxy fails, the committed seed below
+    is the last-known-good value and the dated snapshot note stands. The
+    card's static text and this value must move together in the same
+    commit. Voyager's Active Accounts (1,651) and Accounts Growth
+    (293/day) are DIFFERENT metrics, deliberately not taken. */
+ {k:'accounts',label:'Account contracts',type:'count',value:6981372,emptyNote:'LIVE FETCH DOWN · COMMITTED SNAPSHOT, AUG 10, 2026',source:{name:'Voyager',url:'https://voyager.online/analytics?page=accounts'}},
  {k:'totaltx',label:'Total TX',type:'num',value:307714287,source:{name:'L2Beat',url:'https://l2beat.com/scaling/projects/starknet'}},
  {k:'tps',label:'TPS (avg)',type:'tps',value:0.74,source:{name:'L2Beat',url:'https://l2beat.com/scaling/projects/starknet'}},
+ /* measured onchain (Cartridge archive RPC block timestamps), not a
+    third-party feed; the source link lands on Token Terminal's block-time
+    chart so the reader can compare, a comparison rather than a dependency */
+ {k:'blocktime',label:'Block time',type:'sec',value:1.69,source:{name:'onchain (block timestamps)',url:'https://tokenterminal.com/explorer/projects/starknet?metric1=block-time'}},
  {k:'downloads',label:'StarkZap downloads',type:'num',value:7356,source:{name:'npm registry',url:'https://welttowelt.github.io/starkzap-stats/'}},
  {k:'tvl',label:'TVL',type:'usd',value:173097155,source:{name:'DefiLlama',url:'https://defillama.com/chain/starknet'}},
  {k:'tvs',label:'TVS',type:'usd',value:388942978,source:{name:'L2Beat',url:'https://l2beat.com/scaling/projects/starknet'}},
@@ -1628,6 +1633,21 @@ function cached(key,ttl,fetcher){
   }).catch(err=>{if(st){memo[key]=st;return st.d;}throw err;});
 }
 function gj(url){return fetch(url).then(r=>{if(!r.ok)throw new Error(url);return r.json();});}
+/* current block time measured onchain: average seconds per block over the
+   last 1,000 blocks via the Cartridge RPC (CORS-open). Returns [ms, sec]
+   stamped with the head block's chain time; any bad span fails the head. */
+function rpcBlockTime(){
+  const call=(m,p)=>fetch('https://api.cartridge.gg/x/starknet/mainnet',{method:'POST',headers:{'content-type':'application/json'},
+    body:JSON.stringify({jsonrpc:'2.0',id:1,method:m,params:p})}).then(r=>r.json()).then(j=>{if(j.result==null)throw new Error('rpc');return j.result;});
+  return call('starknet_blockNumber',[]).then(n=>Promise.all([
+    call('starknet_getBlockWithTxHashes',[{block_number:n}]),
+    call('starknet_getBlockWithTxHashes',[{block_number:n-1000}])
+  ])).then(pair=>{
+    const s=(pair[0].timestamp-pair[1].timestamp)/1000;
+    if(!(isFinite(s)&&s>0&&s<3600))throw new Error('bad span');
+    return [pair[0].timestamp*1000,s];
+  });
+}
 /* full STRK/USD daily history: Binance klines (lists at the Feb 2024 launch);
    Coinbase Exchange candles as fallback where binance.com is geo-blocked */
 function cbAll(out,end){
@@ -1664,6 +1684,29 @@ const SRC={
       .map(r=>[Date.parse(r.date),r.value]).sort((x,y)=>x[0]-y[0])));},
   chainrev(){return cached('chainrev',TTL['30D'],()=>gj('https://api.llama.fi/summary/fees/starknet?dataType=dailyRevenue')
     .then(d=>d.totalDataChart.map(r=>[r[0]*1000,r[1]])));},
+  /* MEASURED daily average block time, committed backfill
+     (scripts/backfill-block-times.js): avgSec = 86400 / blocks per UTC day,
+     day boundaries by timestamp binary search on the archive RPC. Zero-block
+     days (sparse 2021-2022 stretches) carry null and are dropped here, never
+     interpolated. The live head (last 1,000 blocks) is stitched on when it
+     is newer than the seed's last day, same recipe as the pool-users head;
+     if the head fetch fails the committed seed renders alone. */
+  /* cumulative account contracts via the Vercel proxy (Voyager upstream is
+     Cloudflare-gated for direct fetches). The proxy normalizes to
+     {head, days:[[ms,count]]}; a head/series mismatch fails the fetch whole
+     (same cross-check recipe as s20rev) and the committed seed stands. */
+  accounts(){return cached('accounts',TTL['30D'],()=>gj('api/voyager-accounts?timerange=all')
+    .then(d=>{
+      const pts=(d.days||[]).filter(p=>Array.isArray(p)&&isFinite(p[1]));
+      if(pts.length<2||!isFinite(d.head)||d.head!==pts[pts.length-1][1])throw new Error('bad series');
+      return pts;
+    }));},
+  blocktime(){return cached('blocktime',TTL['7D'],()=>gj('assets/data/block-time-history.json')
+    .then(d=>{
+      const pts=d.days.filter(r=>isFinite(r.avgSec)&&r.avgSec>0).map(r=>[Date.parse(r.date),r.avgSec]);
+      if(!pts.length)throw new Error('empty');
+      return rpcBlockTime().then(h=>h[0]>pts[pts.length-1][0]?pts.concat([h]):pts).catch(()=>pts);
+    }));},
   gtp(){return cached('gtp',TTL['1Y'],()=>gj('https://api.growthepie.xyz/v1/fundamentals.json')
     .then(a=>{const o={daa:[],wau:[]};a.forEach(r=>{if(r.origin_key!=='starknet')return;
       if(r.metric_key==='daa')o.daa.push([Date.parse(r.date),r.value]);
@@ -1770,6 +1813,15 @@ const HIST={
     %-from-near-zero. peak: annotate the window's max point. */
  totaltx:{avail:['7D','30D','1Y','ALL'],dailyBars:true,deltaBadge:{unit:' TX'},get:()=>SRC.act().then(cumsum)},
  tps:{avail:['7D','30D','1Y','ALL'],peak:true,get:()=>SRC.act().then(a=>a.map(p=>[p[0],p[1]/86400]))},
+ /* lower is better: invert flips badge COLOR only (a drop renders green),
+    the signed text is untouched. First inverse-colored metric on the site. */
+ blocktime:{avail:['7D','30D','1Y','ALL'],invert:true,get:()=>SRC.blocktime()},
+ /* all-or-nothing: any proxy failure keeps the committed seed value and its
+    dated snapshot note (the draw() catch honors emptyNote). Same recipe as
+    totaltx/p_users: cumulative line + recovered per-day new-account bars. */
+ accounts:{avail:['7D','30D','1Y','ALL'],dailyBars:true,peakDaily:true,deltaBadge:{unit:''},
+   dailyNames:{line:'CUMULATIVE',bars:'NEW ACCOUNTS / DAY',tip:'NEW ACCOUNTS'},
+   get:()=>SRC.accounts()},
  downloads:{avail:['7D','30D','1Y','ALL'],deltaBadge:{unit:''},get:()=>SRC.npm()},
  tvl:{avail:['7D','30D','1Y','ALL'],get:()=>SRC.tvl()},
  tvs:{avail:['7D','30D','1Y','ALL'],get:r=>(r==='7D'||r==='30D')?SRC.tvs30():SRC.tvsMax()},
@@ -1843,7 +1895,9 @@ function fmt(m,v){
   if(m.type==='usdflow')return (v>=0?'+':'-')+'$'+abbr(v);
   return '$'+abbr(v);
 }
-function badge(id,p){document.getElementById(id).outerHTML='<b id="'+id+'" class="'+(p>=0?'up':'down')+'">'+(p>=0?'+':'')+p.toFixed(1)+'%</b>';}
+/* inv flips the up/down CLASS only (down-is-good metrics like block time);
+   the signed text always keeps the arithmetic sign */
+function badge(id,p,inv){document.getElementById(id).outerHTML='<b id="'+id+'" class="'+((inv?p<=0:p>=0)?'up':'down')+'">'+(p>=0?'+':'')+p.toFixed(1)+'%</b>';}
 
 let curK='price',curR='7D',PTS=[],curSpan=0,drawSeq=0;
 const chart=document.getElementById('chart'),area=document.getElementById('area'),line=document.getElementById('line');
@@ -1887,11 +1941,11 @@ function clearChart(){line.setAttribute('d','');area.setAttribute('d','');cross.
   dbars.innerHTML='';peakG.innerHTML='';legEl.innerHTML='';gridV.innerHTML='';axEl.innerHTML='';
   document.getElementById('signG').innerHTML='';stackG.innerHTML='';stlEl.innerHTML='';
   document.getElementById('fVal').style.color='';PTS=[];}
-function renderBadge(p,label){const el=document.getElementById('cR'),wrap=el.parentElement;
+function renderBadge(p,label,inv){const el=document.getElementById('cR'),wrap=el.parentElement;
   if(p==null||!isFinite(p)){wrap.style.visibility='hidden';return;}
   wrap.style.visibility='visible';
   document.getElementById('cRLabel').textContent=label;
-  badge('cR',p);}
+  badge('cR',p,inv);}
 function renderBadgeText(text,pos,label){const el=document.getElementById('cR'),wrap=el.parentElement;
   wrap.style.visibility='visible';
   document.getElementById('cRLabel').textContent=label;
@@ -1904,6 +1958,7 @@ function fmtDelta(m,d){const s=d>=0?'+':'−',a=Math.abs(d);
   if(m.type==='amtstrk')return s+abbr(a)+' STRK';
   if(m.type==='tps')return s+(a>=100?Math.round(a):a.toFixed(1))+' TPS';
   if(m.type==='num'||m.type==='amt')return s+abbr(a);
+  if(m.type==='sec')return s+(a>=10?Math.round(a):a.toFixed(2))+'s';
   if(m.type==='count')return s+Math.round(a).toLocaleString('en-US');
   return s+'$'+abbr(a); /* usd / usdflow */}
 /* THE badge rule, shared by every chart:
@@ -1914,13 +1969,13 @@ function fmtDelta(m,d){const s=d>=0?'+':'−',a=Math.abs(d);
       Kills the "+8,247,856,067%"-from-near-zero class of badges for good. */
 const MEANINGFUL_BASE=0.05;
 function windowBadge(m,h,first,last,label){
-  const d=last-first;
+  const d=last-first,inv=!!(h&&h.invert); // invert: color flips, sign text stays
   if(!isFinite(d)){renderBadge(null);return;}
   if(h&&h.deltaBadge){
-    renderBadgeText(fmtDelta(m,d)+(h.deltaBadge.unit||'')+(h.deltaBadge.suffix||''),d>=0,label);return;}
+    renderBadgeText(fmtDelta(m,d)+(h.deltaBadge.unit||'')+(h.deltaBadge.suffix||''),inv?d<=0:d>=0,label);return;}
   if(Math.abs(first)>1e-12&&Math.abs(first)>=MEANINGFUL_BASE*Math.abs(last))
-    renderBadge(d/Math.abs(first)*100,label);
-  else renderBadgeText(fmtDelta(m,d),d>=0,label);
+    renderBadge(d/Math.abs(first)*100,label,inv);
+  else renderBadgeText(fmtDelta(m,d),inv?d<=0:d>=0,label);
 }
 /* draw(): fetch the REAL series for (metric, range), then render curve +
    header value (= last point) + % evolution over the displayed window.
@@ -2101,7 +2156,9 @@ function draw(){
   }).catch(()=>{
     if(seq!==drawSeq)return;
     clearChart();document.getElementById('fVal').textContent=fmt(m,m.value);
-    renderBadge(null);setNote('DATA UNAVAILABLE');
+    /* emptyNote metrics (committed snapshots) name their seed instead of
+       claiming a transient outage */
+    renderBadge(null);setNote(m.emptyNote||'DATA UNAVAILABLE');
   });
 }
 function paintRanges(){const h=HIST[curK];
@@ -2247,15 +2304,16 @@ root.querySelectorAll('.cell').forEach(c=>io.observe(c));
       if(win.length<2)win=pts;
       const first=win[0][1],last=win[win.length-1][1],d=last-first,m=map[key];
       if(!isFinite(d))return;
+      const good=x=>h.invert?x<=0:x>=0; // down-is-good metrics color-flip only
       if(h.deltaBadge){
-        el.className='cdelta '+(d>=0?'up':'down');
+        el.className='cdelta '+(good(d)?'up':'down');
         el.textContent=fmtDelta(m,d)+(h.deltaBadge.unit||'')+' '+label;
       }else if(Math.abs(first)>1e-12&&Math.abs(first)>=MEANINGFUL_BASE*Math.abs(last)){
         const pc=d/Math.abs(first)*100;
         if(Math.abs(pc)<0.05){el.className='cdelta flat';el.textContent='0.0% '+label;}
-        else{el.className='cdelta '+(pc>=0?'up':'down');el.textContent=(pc>=0?'+':'')+pc.toFixed(1)+'% '+label;}
+        else{el.className='cdelta '+(good(pc)?'up':'down');el.textContent=(pc>=0?'+':'')+pc.toFixed(1)+'% '+label;}
       }else{
-        el.className='cdelta '+(d>=0?'up':'down');
+        el.className='cdelta '+(good(d)?'up':'down');
         el.textContent=fmtDelta(m,d)+' '+label;
       }
     }).catch(()=>{});
@@ -2573,7 +2631,7 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
     price: 0.02525706, chg24: -2.19, chg7: -13.00, mcap: 170488255, fdv: 252689837, circ: 6746937561, unlockedPct: 67.47, btcUsd: 63945,
     strkStaked: 1430248556, strkStakedUsd: 36123874, stakePct: 21.198, btcStaked: 692.25, btcStakedUsd: 44266227, valueStaked: 80390101,
     tvl: 169146064, tvs: 375481582, netflow: -9893561, stables: 162419648, apprev: 2124918, chainrev: 127790,
-    dau: 15295, wau: 45166, totaltx: 309219399, tps: 1.748, downloads: 7609,
+    dau: 15295, wau: 45166, totaltx: 309219399, tps: 1.748, downloads: 7609, blocktime: 1.69, accounts: 6981372,
     p_tvl: 587068, p_tx: 168, p_rev: 342, p_users: 2347, p_vol: 147128
   };
   var CACHE_KEY = 'strkNumbers_v2'; // v2: state carries per-cluster provenance; older cache shapes are dropped
@@ -2605,7 +2663,9 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
     valuestaked: function(v){ return '$' + abbr(v); },
     circstaked: function(v){ return v.toFixed(1); },
     dau: abbr, wau: abbr, totaltx: abbr,
+    accounts:   function(v){ return Math.round(v).toLocaleString('en-US'); },
     tps:        function(v){ return v >= 100 ? String(Math.round(v)) : v.toFixed(1); },
+    blocktime:  function(v){ return v >= 10 ? String(Math.round(v)) : v.toFixed(1); }, // the ' s' unit is a static .cu span
     downloads:  abbr,
     tvl:        function(v){ return '$' + abbr(v); },
     tvs:        function(v){ return '$' + abbr(v); },
@@ -2624,14 +2684,14 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
     price: 'price', mcap: 'mcap', fdv: 'fdv', unlockedpct: 'unlockedPct', circ: 'circ',
     strkstaked: 'strkStaked', strkstakedusd: 'strkStakedUsd', btcstaked: 'btcStaked', btcstakedusd: 'btcStakedUsd',
     valuestaked: 'valueStaked', circstaked: 'stakePct',
-    dau: 'dau', wau: 'wau', totaltx: 'totaltx', tps: 'tps', downloads: 'downloads',
+    dau: 'dau', wau: 'wau', totaltx: 'totaltx', tps: 'tps', downloads: 'downloads', blocktime: 'blocktime', accounts: 'accounts',
     tvl: 'tvl', tvs: 'tvs', stables: 'stables', netflow: 'netflow', apprev: 'apprev', chainrev: 'chainrev',
     p_tvl: 'p_tvl', p_rev: 'p_rev', p_tx: 'p_tx', p_users: 'p_users', p_vol: 'p_vol'
   };
   // chart-registry keys for window.__numbersLive (price chart chips)
   // note: p_rev and p_vol are deliberately absent — their chart registry
   // values are CUMULATIVE figures, not this engine's rolling 30D stats
-  var CHART_KEYS = { price: 'price', mcap: 'mcap', strkStaked: 'strkstaked', btcStaked: 'btcstaked', valueStaked: 'valuestaked', stakePct: 'circstaked', dau: 'dailyusers', wau: 'weeklyusers', totaltx: 'totaltx', tps: 'tps', downloads: 'downloads', tvl: 'tvl', tvs: 'tvs', stables: 'stables', netflow: 'netflow', apprev: 'apprev', chainrev: 'chainrev', p_tvl: 'p_tvl', p_tx: 'p_tx', p_users: 'p_users' };
+  var CHART_KEYS = { price: 'price', mcap: 'mcap', strkStaked: 'strkstaked', btcStaked: 'btcstaked', valueStaked: 'valuestaked', stakePct: 'circstaked', dau: 'dailyusers', wau: 'weeklyusers', totaltx: 'totaltx', tps: 'tps', downloads: 'downloads', tvl: 'tvl', tvs: 'tvs', stables: 'stables', netflow: 'netflow', apprev: 'apprev', chainrev: 'chainrev', blocktime: 'blocktime', accounts: 'accounts', p_tvl: 'p_tvl', p_tx: 'p_tx', p_users: 'p_users' };
 
   // count-up tween; parses the on-screen number (handles $, %, sign, B/M/K)
   function parseShown(text){
@@ -2673,7 +2733,7 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
   // the numbers they sit under. Loading from cache demotes 'live' to 'cache':
   // a previous session's fetch is not live data on this load.
   var SEED_AT = Date.parse(SEED.verified);
-  var PROV_KEYS = ['cg', 'stakeStrk', 'stakeBtc', 'tvl', 'tvs', 'stables', 'apprev', 'chainrev', 'gtp', 'act', 'npm', 's20tx', 's20tvl'];
+  var PROV_KEYS = ['cg', 'stakeStrk', 'stakeBtc', 'tvl', 'tvs', 'stables', 'apprev', 'chainrev', 'gtp', 'act', 'npm', 'rpcbt', 'voy', 's20tx', 's20tvl'];
   if (!state.prov) state.prov = {};
   PROV_KEYS.forEach(function(pk){
     var p = state.prov[pk];
@@ -2810,6 +2870,26 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
       return v;
     }).catch(function(){ return rpcTotalStake(i + 1); });
   }
+  // current block time: average seconds per block over the last 1,000 blocks,
+  // measured from block timestamps on the Cartridge archive RPC (the chart
+  // script carries its own twin for the series head — both scopes stay
+  // self-contained, same precedent as the RPC staking fallback above)
+  function rpcBlockTime(){
+    function call(method, params){
+      return fetch('https://api.cartridge.gg/x/starknet/mainnet', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: method, params: params })
+      }).then(function(r){ return r.json(); }).then(function(d){ if (d.result == null) throw new Error('rpc'); return d.result; });
+    }
+    return call('starknet_blockNumber', []).then(function(n){
+      return Promise.all([call('starknet_getBlockWithTxHashes', [{ block_number: n }]),
+                          call('starknet_getBlockWithTxHashes', [{ block_number: n - 1000 }])]);
+    }).then(function(pair){
+      var s = (pair[0].timestamp - pair[1].timestamp) / 1000;
+      if (!(isFinite(s) && s > 0 && s < 3600)) throw new Error('bad span');
+      return s;
+    });
+  }
   // npm downloads since first publish; the range API caps at 18 months per call
   function npmTotal(from, acc){
     var f = new Date(from + 'T00:00:00Z');
@@ -2902,6 +2982,15 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
         return { totaltx: total, tps: tps };
       }));
     var pNpm = wrap(npmTotal(NPM_FIRST_PUBLISH).then(function(v){ if (!ok(v)) throw 0; return v; }));
+    var pRpcBt = wrap(rpcBlockTime().then(function(v){ if (!ok(v)) throw 0; return v; }));
+    // account contracts via the Vercel proxy (no cache-buster: the CDN's
+    // s-maxage must absorb page traffic, one upstream hit per hour)
+    var pVoy = wrap(getJsonPlain('api/voyager-accounts?timerange=all')
+      .then(function(d){
+        var days = d.days || [];
+        if (!days.length || !ok(d.head) || d.head !== days[days.length - 1][1]) throw 0;
+        return d.head;
+      }));
     var pS20tx = wrap(getJson('https://strk20-dashboard-production.up.railway.app/agg/transactions')
       .then(function(d){
         var days = d.days || [];
@@ -2942,9 +3031,9 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
         return sum30;
       }));
 
-    Promise.all([pCg, pEndur, pTvl, pTvs, pStables, pAppRev, pChainRev, pGtp, pAct, pNpm, pS20tx, pS20tvl, pS20vol, pS20rev]).then(function(r){
+    Promise.all([pCg, pEndur, pTvl, pTvs, pStables, pAppRev, pChainRev, pGtp, pAct, pNpm, pS20tx, pS20tvl, pS20vol, pS20rev, pRpcBt, pVoy]).then(function(r){
       var cg = r[0], endur = r[1], tvl = r[2], tvs = r[3], stables = r[4], apprev = r[5],
-          chainrev = r[6], gtp = r[7], act = r[8], npm = r[9], s20tx = r[10], s20tvl = r[11], s20vol = r[12], s20rev = r[13];
+          chainrev = r[6], gtp = r[7], act = r[8], npm = r[9], s20tx = r[10], s20tvl = r[11], s20vol = r[12], s20rev = r[13], bt = r[14], voy = r[15];
       var stamped = false;
       function stamp(pk){
         var now = Date.now();
@@ -2988,6 +3077,14 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
       if (gtp) { state.dau = gtp.dau; state.wau = gtp.wau; stamp('gtp'); }
       if (act) { state.totaltx = act.totaltx; state.tps = act.tps; stamp('act'); }
       if (npm) { state.downloads = npm; stamp('npm'); }
+      if (bt) { state.blocktime = bt; stamp('rpcbt'); }
+      if (voy) {
+        state.accounts = voy; stamp('voy');
+        // the dated snapshot qualifier dies only when live data actually
+        // landed on THIS load; every fallback world keeps the static date
+        var accSub = document.querySelector('.cell[data-chart-series="accounts"] .cs');
+        if (accSub) accSub.textContent = 'Deployed, all time · live';
+      }
       if (s20tvl) {
         state.p_tvl = s20tvl.tvl; state.p_users = s20tvl.users; stamp('s20tvl');
         // live head for the STRK20 pool users chart: set ONLY on a live commit, so

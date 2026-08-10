@@ -1,0 +1,29 @@
+# One-shot egress gate test (Route 1B): does Voyager's Cloudflare pass
+# GitHub Actions runner IPs where container and (pending) Vercel egress were
+# challenged? Manual dispatch only; prints verbatim status, headers and body
+# head. If this passes, the daily seed-refresh workflow replaces it and this
+# file dies.
+name: voyager egress test
+on:
+  workflow_dispatch:
+
+jobs:
+  gate-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: fetch voyager daily-stats
+        run: |
+          code=$(curl -sS -m 25 -D headers.txt -o body.txt -w "%{http_code}" \
+            "https://voyager.online/api/daily-stats?metrics=account_contracts&timerange=all" \
+            -H "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36" \
+            -H "Accept: application/json, text/plain, */*" \
+            -H "Accept-Language: en-US,en;q=0.9" \
+            -H "Referer: https://voyager.online/analytics?page=accounts" || echo "curl-failed")
+          echo "HTTP $code"
+          echo "--- response headers"
+          head -40 headers.txt
+          echo "--- body (first 800 bytes)"
+          head -c 800 body.txt || true
+          echo
+          echo "--- verdict"
+          if [ "$code" = "200" ]; then echo "PASS: Actions egress serves JSON"; else echo "BLOCKED: HTTP $code"; fi
