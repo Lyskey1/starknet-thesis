@@ -1254,7 +1254,7 @@ window.ADMIN_GATE=on;})();
           <a class="chip rankchip" id="fRank" href="https://defillama.com/chains" target="_blank" rel="noopener noreferrer" hidden></a>
         </div>
         <div class="val" id="fVal"></div>
-        <div class="chgs"><span><span id="cRLabel">7D</span> <b id="cR"></b></span><span class="src" id="fSub"></span><span class="src" id="fSrc"></span><span class="src" id="fRankNote"></span></div>
+        <div class="chgs"><span><span id="cRLabel">7D</span> <b id="cR"></b></span><span class="src" id="fSub"></span><span class="src" id="fSrc"></span></div>
       </div>
       <div class="ranges" id="ranges">
         <button data-r="24H">24H</button><button data-r="7D" class="on">7D</button><button data-r="30D">30D</button><button data-r="1Y">1Y</button><button data-r="ALL">ALL</button>
@@ -2223,13 +2223,12 @@ window.__numbersLive={
    inclusion methodology), same cache policy as the series fetchers. Shown
    only on the TVL metric; on any failure the chip simply never renders. */
 let tvlRank=null;
-function paintRank(){const el=document.getElementById('fRank'),nt=document.getElementById('fRankNote');
-  if(!el||!nt)return;
+function paintRank(){const el=document.getElementById('fRank');
+  if(!el)return;
   const show=curK==='tvl'&&Number.isFinite(tvlRank)&&tvlRank>0;
   el.hidden=!show;
   el.innerHTML=show?'#'+tvlRank+' chain by TVL <span class="arr">↗</span>':'';
-  el.title=show?'Rank per DefiLlama default TVL ranking':'';
-  nt.textContent=show?'· rank per DefiLlama default TVL':'';}
+  el.title=show?'Rank per DefiLlama default TVL ranking':'';}
 cached('chainrank',TTL['30D'],()=>gj('https://api.llama.fi/v2/chains')
   .then(a=>{const s=[...a].sort((x,y)=>(y.tvl||0)-(x.tvl||0));
     const i=s.findIndex(c=>c&&(c.gecko_id==='starknet'||c.name==='Starknet'));
