@@ -1,0 +1,43 @@
+# Daily refresh of the ACCOUNT CONTRACTS seed (strk.html).
+#
+# Why Actions: Voyager is Cloudflare-challenge-gated for container and
+# Vercel egress, but Actions runner IPs pass (verified 2026-08-10, HTTP 200
+# with full JSON). The script validates hard before writing; a failed or
+# gated fetch fails the run visibly and commits nothing, so the site keeps
+# its last verified seed and the card's note keeps that seed's own date.
+#
+# Pushes use the workflow's own GITHUB_TOKEN (contents: write) — no new
+# secrets — and GITHUB_TOKEN pushes do not retrigger workflows, so no
+# recursion. Each commit redeploys the static site via the Vercel
+# integration, which is how the fresh seed reaches production.
+name: refresh account contracts seed
+on:
+  schedule:
+    - cron: '17 4 * * *' # off-peak UTC, avoids the top-of-hour thundering herd
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: fetch, validate, write seed
+        run: node scripts/refresh-accounts-seed.mjs
+      - name: commit when changed
+        run: |
+          if git diff --quiet assets/data/voyager-accounts-seed.json 2>/dev/null \
+             && git ls-files --error-unmatch assets/data/voyager-accounts-seed.json >/dev/null 2>&1; then
+            echo "seed unchanged, nothing to commit"; exit 0
+          fi
+          head=$(node -e "console.log(require('./assets/data/voyager-accounts-seed.json').head)")
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/data/voyager-accounts-seed.json
+          git commit -m "data: account contracts seed refresh, head $head, source Voyager"
+          git push

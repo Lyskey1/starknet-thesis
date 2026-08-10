@@ -1580,15 +1580,16 @@ const M=[
  {k:'dailyusers',label:'Daily users',type:'num',value:13221,source:{name:'growthepie',url:'https://www.growthepie.com/chains/starknet'}},
  {k:'weeklyusers',label:'Weekly users',type:'num',value:43443,source:{name:'growthepie',url:'https://www.growthepie.com/chains/starknet'}},
  /* Voyager analytics "Accounts" = cumulative account contracts deployed
-    (their Total series; the by-type split stays Voyager's). Voyager is
-    Cloudflare-gated for direct fetches (cf-mitigated: challenge, verified
-    from a clean container 2026-08-10), so live data rides the Vercel proxy
-    api/voyager-accounts.js; when the proxy fails, the committed seed below
-    is the last-known-good value and the dated snapshot note stands. The
-    card's static text and this value must move together in the same
-    commit. Voyager's Active Accounts (1,651) and Accounts Growth
+    (their Total 'commulative_value' series; the by-wallet split stays
+    Voyager's). Voyager is Cloudflare-gated for container and Vercel egress
+    but passes GitHub Actions (verified 2026-08-10), so the data path is
+    assets/data/voyager-accounts-seed.json, rewritten daily by
+    .github/workflows/refresh-accounts-seed.yml with hard validation; the
+    note and card sub render the seed's own fetched date. This value and
+    the card's static text are the boot fallback and must move together in
+    the same commit. Voyager's Active Accounts (1,651) and Accounts Growth
     (293/day) are DIFFERENT metrics, deliberately not taken. */
- {k:'accounts',label:'Account contracts',type:'count',value:6981372,emptyNote:'LIVE FETCH DOWN · COMMITTED SNAPSHOT, AUG 10, 2026',source:{name:'Voyager',url:'https://voyager.online/analytics?page=accounts'}},
+ {k:'accounts',label:'Account contracts',type:'count',value:6981372,emptyNote:'SEED UNAVAILABLE · LAST MANUAL SNAPSHOT, AUG 10, 2026',source:{name:'Voyager',url:'https://voyager.online/analytics?page=accounts'}},
  {k:'totaltx',label:'Total TX',type:'num',value:307714287,source:{name:'L2Beat',url:'https://l2beat.com/scaling/projects/starknet'}},
  {k:'tps',label:'TPS (avg)',type:'tps',value:0.74,source:{name:'L2Beat',url:'https://l2beat.com/scaling/projects/starknet'}},
  /* measured onchain (Cartridge archive RPC block timestamps), not a
@@ -1691,14 +1692,19 @@ const SRC={
      interpolated. The live head (last 1,000 blocks) is stitched on when it
      is newer than the seed's last day, same recipe as the pool-users head;
      if the head fetch fails the committed seed renders alone. */
-  /* cumulative account contracts via the Vercel proxy (Voyager upstream is
-     Cloudflare-gated for direct fetches). The proxy normalizes to
-     {head, days:[[ms,count]]}; a head/series mismatch fails the fetch whole
-     (same cross-check recipe as s20rev) and the committed seed stands. */
-  accounts(){return cached('accounts',TTL['30D'],()=>gj('api/voyager-accounts?timerange=all')
+  /* cumulative account contracts from the committed seed, refreshed daily
+     by GitHub Actions (scripts/refresh-accounts-seed.mjs — Voyager passes
+     Actions egress where container and Vercel egress hit the Cloudflare
+     challenge). A head/series mismatch fails the fetch whole (same
+     cross-check recipe as s20rev). The chart note carries the seed's OWN
+     fetched date, so the freshness claim can never outrun the data. */
+  accounts(){return cached('accounts',TTL['30D'],()=>gj('assets/data/voyager-accounts-seed.json')
     .then(d=>{
       const pts=(d.days||[]).filter(p=>Array.isArray(p)&&isFinite(p[1]));
       if(pts.length<2||!isFinite(d.head)||d.head!==pts[pts.length-1][1])throw new Error('bad series');
+      const at=Date.parse(d.fetched);
+      if(isFinite(at))HIST.accounts.defNote='UPDATED DAILY · LAST VERIFIED '+
+        new Date(at).toLocaleString('en',{month:'short',day:'numeric',year:'numeric',timeZone:'UTC'}).toUpperCase();
       return pts;
     }));},
   blocktime(){return cached('blocktime',TTL['7D'],()=>gj('assets/data/block-time-history.json')
@@ -2983,13 +2989,13 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
       }));
     var pNpm = wrap(npmTotal(NPM_FIRST_PUBLISH).then(function(v){ if (!ok(v)) throw 0; return v; }));
     var pRpcBt = wrap(rpcBlockTime().then(function(v){ if (!ok(v)) throw 0; return v; }));
-    // account contracts via the Vercel proxy (no cache-buster: the CDN's
-    // s-maxage must absorb page traffic, one upstream hit per hour)
-    var pVoy = wrap(getJsonPlain('api/voyager-accounts?timerange=all')
+    // account contracts from the committed seed (refreshed daily by the
+    // Actions workflow); head/series cross-check fails the cluster whole
+    var pVoy = wrap(getJson('assets/data/voyager-accounts-seed.json')
       .then(function(d){
         var days = d.days || [];
         if (!days.length || !ok(d.head) || d.head !== days[days.length - 1][1]) throw 0;
-        return d.head;
+        return { head: d.head, at: Date.parse(d.fetched) };
       }));
     var pS20tx = wrap(getJson('https://strk20-dashboard-production.up.railway.app/agg/transactions')
       .then(function(d){
@@ -3079,11 +3085,13 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
       if (npm) { state.downloads = npm; stamp('npm'); }
       if (bt) { state.blocktime = bt; stamp('rpcbt'); }
       if (voy) {
-        state.accounts = voy; stamp('voy');
-        // the dated snapshot qualifier dies only when live data actually
-        // landed on THIS load; every fallback world keeps the static date
+        state.accounts = voy.head; stamp('voy');
+        // the sub renders the seed's OWN fetched date — the note can never
+        // claim a freshness the data does not have; the static markup keeps
+        // the manual-snapshot wording for every fallback world
         var accSub = document.querySelector('.cell[data-chart-series="accounts"] .cs');
-        if (accSub) accSub.textContent = 'Deployed, all time · live';
+        if (accSub && isFinite(voy.at)) accSub.textContent = 'Updated daily · last verified ' +
+          new Date(voy.at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
       }
       if (s20tvl) {
         state.p_tvl = s20tvl.tvl; state.p_users = s20tvl.users; stamp('s20tvl');

@@ -1,12 +1,14 @@
-/* Read-only proxy for the ACCOUNT CONTRACTS metric (strk.html card + chart).
+/* DORMANT Route 2 scaffold — nothing on the site calls this endpoint.
 
-   Why a proxy: every Voyager surface is Cloudflare-gated for non-browser
-   clients (gate-tested from a clean container 2026-08-10: cf-mitigated:
-   challenge on voyager.online/api/daily-stats). This function exists to
-   (Route 1) test whether Vercel's egress passes where the container's did
-   not, and (Route 2) carry the documented keyed API (api.voyager.online)
-   once VOYAGER_API_KEY is provisioned. Upstream order: keyed when the env
-   var exists, public feed otherwise.
+   Gate-test outcomes (2026-08-10): Voyager's Cloudflare challenges both
+   container egress AND Vercel egress (this function, deployed, returned
+   upstream 403 cf-mitigated: challenge), but PASSES GitHub Actions runner
+   IPs. The shipped pipeline is therefore the daily Actions seed refresh
+   (.github/workflows/refresh-accounts-seed.yml writing
+   assets/data/voyager-accounts-seed.json). This file stays only as the
+   ready scaffold for the documented keyed API (api.voyager.online) should
+   a VOYAGER_API_KEY ever be provisioned: keyed when the env var exists,
+   the (gated) public feed otherwise.
 
    Response contract, stable for the client regardless of route:
      200 { source: 'voyager-keyed'|'voyager-public',
@@ -23,7 +25,7 @@
 'use strict';
 
 const PUBLIC_URL = 'https://voyager.online/api/daily-stats?metrics=account_contracts&timerange=';
-const TIMERANGES = ['1w', '1m', 'all'];
+const TIMERANGES = ['1d', '1w', '1m', '1y', 'max']; // their validated enum (verified 2026-08-10)
 
 // browser-like headers for the public feed; harmless on the keyed API
 const HEADERS = {
@@ -33,54 +35,31 @@ const HEADERS = {
   'Referer': 'https://voyager.online/analytics?page=accounts'
 };
 
-/* Tolerant normalizer: Voyager's exact payload shape is unverifiable while
-   their docs are gated, so accept any array of rows carrying one date-like
-   and one number-like field, or {metric: [rows]} / {data: [rows]} wrappers.
-   Returns ascending [[ms, value]] or null when nothing matches. */
+/* payload -> ascending [[ms, cumulative]]. Shape pinned from the live feed
+   (2026-08-10): { items: [{ date, value, commulative_value, ... }] } — the
+   running total is 'commulative_value' (their spelling; the fixed spelling
+   is accepted too), 'value' is per-day new accounts and the per-wallet
+   splits are never taken. Same parser as scripts/refresh-accounts-seed.mjs;
+   keep the two in step. */
 function normalize(payload){
-  let rows = null;
-  if (Array.isArray(payload)) rows = payload;
-  else if (payload && typeof payload === 'object') {
-    for (const k of ['account_contracts', 'accountContracts', 'data', 'items', 'days', 'result']) {
-      if (Array.isArray(payload[k])) { rows = payload[k]; break; }
-      if (payload[k] && typeof payload[k] === 'object') {
-        for (const k2 of Object.keys(payload[k])) {
-          if (Array.isArray(payload[k][k2])) { rows = payload[k][k2]; break; }
-        }
-        if (rows) break;
-      }
-    }
-  }
+  const rows = payload && Array.isArray(payload.items) ? payload.items : null;
   if (!rows || !rows.length) return null;
   const out = [];
   for (const r of rows) {
-    if (Array.isArray(r) && r.length >= 2 && isFinite(r[1])) {
-      const ms = r[0] > 1e12 ? r[0] : r[0] * 1000;
-      out.push([ms, Number(r[1])]);
-      continue;
-    }
-    if (r && typeof r === 'object') {
-      let ms = null, v = null;
-      for (const k of Object.keys(r)) {
-        const val = r[k];
-        if (ms == null && /date|day|time/i.test(k)) {
-          const t = typeof val === 'number' ? (val > 1e12 ? val : val * 1000) : Date.parse(val);
-          if (isFinite(t)) ms = t;
-        } else if (v == null && isFinite(val) && !/date|day|time/i.test(k)) {
-          v = Number(val);
-        }
-      }
-      if (ms != null && v != null) out.push([ms, v]);
-    }
+    if (!r || typeof r !== 'object') return null;
+    const ms = Date.parse(r.date);
+    const v = isFinite(r.commulative_value) ? Number(r.commulative_value)
+      : isFinite(r.cumulative_value) ? Number(r.cumulative_value) : null;
+    if (!isFinite(ms) || v == null) return null;
+    out.push([ms, v]);
   }
-  if (!out.length) return null;
   out.sort((a, b) => a[0] - b[0]);
   return out;
 }
 
 module.exports = async (req, res) => {
   if (req.method !== 'GET') { res.status(405).json({ error: 'GET only' }); return; }
-  const tr = TIMERANGES.indexOf(req.query && req.query.timerange) >= 0 ? req.query.timerange : 'all';
+  const tr = TIMERANGES.indexOf(req.query && req.query.timerange) >= 0 ? req.query.timerange : 'max';
 
   const key = process.env.VOYAGER_API_KEY || '';
   let url, source, headers;
