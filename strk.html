@@ -1348,7 +1348,7 @@ window.ADMIN_GATE=on;})();
         <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="TVL in STRK20 pool" data-chart-series="p_tvl"><div class="cell-top"><span class="cl">TVL in STRK20 pool</span></div><div class="cv" data-stat="p_tvl">$528.9K</div><div class="cs">Shielded value</div></div>
         <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="Revenue from STRK20 (30D)" data-chart-series="p_rev"><div class="cell-top"><span class="cl">Revenue from STRK20 (30D)</span></div><div class="cv" data-stat="p_rev">$2.6K</div><div class="cs">~$0.12 flat fee × 30d private TX · derived</div></div>
         <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="Private TX (daily)" data-chart-series="p_tx"><div class="cell-top"><span class="cl">Private TX (daily)</span></div><div class="cv" data-stat="p_tx">36</div><div class="cs">Last full day</div></div>
-        <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="Total users" data-chart-series="p_users"><div class="cell-top"><span class="cl">Total users</span></div><div class="cv" data-stat="p_users">2,347</div><div class="cs">Pool users, all time</div></div>
+        <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="STRK20 pool users" data-chart-series="p_users"><div class="cell-top"><span class="cl">STRK20 pool users</span></div><div class="cv" data-stat="p_users">2,347</div><div class="cs">Unique depositors, all time</div></div>
         <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="DeFi volume privately routed (30D)" data-chart-series="p_vol"><div class="cell-top"><span class="cl">DeFi volume privately routed (30D)</span></div><div class="cv" data-stat="p_vol">$147.1K</div><div class="cs">USD by protocol · STRK20 dashboard</div></div>
       </div></div></div>
     </div>
@@ -1588,7 +1588,7 @@ const M=[
  {k:'p_rev',label:'Revenue from STRK20',type:'usd',value:3045},
  {k:'p_tx',label:'Private TX (daily)',type:'num',value:36},
  {k:'p_vol',label:'DeFi volume privately routed',type:'usd',value:339540},
- {k:'p_users',label:'Total users',type:'count',value:2347,source:{name:'onchain (Deposit events)',url:'https://voyager.online/contract/0x040337b1af3c663e86e333bab5a4b28da8d4652a15a69beee2b677776ffe812a'}},
+ {k:'p_users',label:'STRK20 pool users',type:'count',value:2347,source:{name:'onchain (Deposit events)',url:'https://voyager.online/contract/0x040337b1af3c663e86e333bab5a4b28da8d4652a15a69beee2b677776ffe812a'}},
 ];
 const map={};
 M.forEach(m=>{map[m.k]=m;});
@@ -2921,7 +2921,7 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
       if (npm) { state.downloads = npm; stamp('npm'); }
       if (s20tvl) {
         state.p_tvl = s20tvl.tvl; state.p_users = s20tvl.users; stamp('s20tvl');
-        // live head for the Total users chart: set ONLY on a live commit, so
+        // live head for the STRK20 pool users chart: set ONLY on a live commit, so
         // the chart's stitched final point always equals the card's scalar
         window.__poolUsers = { v: s20tvl.users, at: Date.now() };
       }
