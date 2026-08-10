@@ -19,7 +19,27 @@
    - vs the existing seed when present: head never shrinks, grows by
      less than 50,000/day equivalent, and the first date matches
    Exit 0 with the file written = commit; any other outcome exits 1
-   with diagnostics on stdout and NOTHING written. */
+   with diagnostics on stdout and NOTHING written.
+
+   The endpoint's FULL metric vocabulary, enumerated via its own enum
+   validator from an Actions runner on 2026-08-11 (one-shot probe workflow,
+   retired after recording this): *, transactions_per_block,
+   transactions_per_second, max_transactions_per_second, transactions_count,
+   classes_count, events_count, messages_count, contracts_count,
+   cairo_1_classes, cairo_1_contracts, account_contracts_count,
+   active_account_contracts, l1_block_creation_time, l2_block_creation_time,
+   proof_generation_time, fee_per_block, tvl, account_contracts,
+   active_accounts, gas_per_block, user_operations_count,
+   user_operations_per_block, user_operations_per_second,
+   max_user_operations_per_second, account_calls_count,
+   account_calls_per_block, account_calls_per_second,
+   max_account_calls_per_second, eth_transfer_fee, erc20_transfer_fee,
+   swap_fee, nft_mint_fee, starkgate_eth_deposit_fee,
+   starkgate_eth_withdrawal_fee, l1_block_verification_cost.
+   NO token-holders metric and NO monthly-users metric exist here; checked,
+   not missed. active_accounts is DAILY actives by wallet type (1,651 on
+   2026-08-09), a different definition from growthepie daa (15.3K same day),
+   never conflate the two. */
 
 import { readFileSync, writeFileSync } from 'fs';
 import { dirname, join } from 'path';
