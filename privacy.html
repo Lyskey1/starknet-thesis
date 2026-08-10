@@ -3268,10 +3268,17 @@
 
      30D DELTAS are shown only where the delta comes from the SAME series as
      the value on the cell, over a lookback the series actually covers:
-     - shielded value and protected assets both come from the shielded-balance
-       day series (its last day's total is the pool-summary tvlUsd to the cent,
-       and its last day's nonzero byToken keys are the perToken entries that
-       still hold a balance), so both carry a delta.
+     - shielded value comes from the shielded-balance day series (its last
+       day's total is the pool-summary tvlUsd to the cent), so it carries a
+       delta.
+     - PROTECTED ASSETS shows the pool's onchain asset universe, a verified
+       constant read through STRK20_ASSET_COUNTS in js/fee-config.js (see
+       the note there: contract-derived 2026-08-10; the backend's perToken
+       misses ZEC, and the cell's previous count used balanceUsd > 0, which
+       silently dropped unpriced tokens holding real balances). The
+       sub-line's "with balances" count is live from the same pool-summary
+       payload: balanceRaw > 0, token units. No delta: the asset list has
+       no history series.
      - estimated revenue is the cumulative of the derived fee series, so its
        delta is that series' own 30-day movement.
      - TOTAL USERS carries NO delta: its value is pool-summary userCount, a
@@ -3301,9 +3308,10 @@
     if (!raw.summary) return null;
     var s = raw.summary.s;
     var sd = raw.shielded && raw.shielded.days;
-    var nz = function(day){ var m = day.byToken || {}; return Object.keys(m).filter(function(k){ return m[k] > 0; }).length; };
-
-    var assets = sd ? nz(sd[sd.length - 1]) : (s.perToken || []).filter(function(t){ return (t.balanceUsd || 0) > 0; }).length;
+    var counts = window.STRK20_ASSET_COUNTS ? window.STRK20_ASSET_COUNTS(s) : {
+      tracked: 34,
+      withBalances: (s.perToken || []).filter(function(t){ return parseFloat(t.balanceRaw || '0') > 0; }).length
+    };
     var cum = raw.fees && raw.fees.length ? raw.fees[raw.fees.length - 1].cumUsd : null;
 
     var bloom = '<div class="gx-bloom" aria-hidden="true">' +
@@ -3312,8 +3320,8 @@
     return { at: raw.summary.at, html: bloom +
       statCell('TOTAL SHIELDED VALUE', '<span class="em">$' + Math.round(s.tvlUsd).toLocaleString('en-US') + '</span>',
         'ONE POOL', dTag(delta30(sd, function(d){ return d.total; }), fmtUsd)) +
-      statCell('PROTECTED ASSETS', assets.toLocaleString('en-US'),
-        'NONZERO BALANCE', dTag(delta30(sd, nz), fmtN)) +
+      statCell('PROTECTED ASSETS', counts.tracked.toLocaleString('en-US'),
+        counts.withBalances.toLocaleString('en-US') + ' WITH BALANCES · TRACKED BY THE POOL', '') +
       statCell('TOTAL USERS', (s.userCount || 0).toLocaleString('en-US'), '', '') +
       statCell('REVENUE', cum === null ? 'N/A' : fmtUsd(cum),
         'ESTIMATED, CUMULATIVE', dTag(delta30(raw.fees, function(d){ return d.cumUsd; }), fmtUsd)) };
