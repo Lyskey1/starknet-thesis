@@ -2151,12 +2151,9 @@
         <a class="pmx-src" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">SOURCE: STRK20 DASHBOARD ↗</a>
       </div>
       <div class="pmx-card" data-pmx="revenue">
-        <div class="pmx-head"><span class="pmx-t">REVENUE</span><span class="pmx-sub">ESTIMATED: FLAT FEE x DAILY TX</span></div>
+        <div class="pmx-head"><span class="pmx-t">REVENUE</span><span class="pmx-sub">PROTOCOL FEES, DAILY + CUMULATIVE</span></div>
         <div class="pmx-body"><a class="pmx-live" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">VIEW LIVE →</a></div>
-        <!-- condensed to fit one unwrapped line in the grid cell; the full
-             derivation stays stated on the card itself, in the sub-line
-             (ESTIMATED: FLAT FEE x DAILY TX) and in both tooltip rows -->
-        <a class="pmx-src" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">SOURCE: STRK20 DASHBOARD (DERIVED) ↗</a>
+        <a class="pmx-src" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">SOURCE: STRK20 DASHBOARD ↗</a>
       </div>
     </div>
   </div>
@@ -2989,11 +2986,11 @@
     return '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img">' + svg + '</svg>';
   }
 
-  // REVENUE (ESTIMATED): daily fees as accent bars at reduced opacity,
-  // cumulative fees as a full-accent line on the right axis, plus a
-  // callout pill with a dashed leader at the line's last point (hidden
-  // below 981px via .pmx-callout). Consumes {days:[{date, feesUsd,
-  // cumUsd}]} — see the derivation note at the staging site.
+  // REVENUE: daily fees as accent bars at reduced opacity, cumulative
+  // fees as a full-accent line on the right axis, plus a callout pill
+  // with a dashed leader at the line's last point (hidden below 981px
+  // via .pmx-callout). Consumes {days:[{date, feesUsd, cumUsd}]}, built
+  // from the backend's measured protocol-fees series.
   function feeBarsLine(days, W, H){
     var P = PAD_DUAL, n = days.length;
     var bMax = 0, lMax = 0;
@@ -3217,20 +3214,20 @@
           return { chart: stackedBars(d.days, split, W, H, fmtN), legend: '',
                    meta: { days: d.days, W: W, P: PAD_STD, rows: function(day){ return [{ label: 'TRANSACTIONS', value: fmtN(day.count || 0), color: '#1FCB94' }]; } } };
         });
-        // REVENUE (ESTIMATED), same fetch so it can never diverge from the
-        // TRANSACTIONS card's vintage: daily tx x the flat fee constant
-        // (js/fee-config.js, shared with strk.html's revenue stat and
-        // chart). This is a derivation, not a measurement, and every label
-        // on the card says so. When the backend ships a direct series
-        // ({days:[{date, feesUsd}]}), replace this block with its own
-        // get('/agg/fees') job, cumsum feesUsd, and feed feeBarsLine
-        // unchanged.
-        var FEE = window.STRK20_FLAT_FEE_USD || 0.12;
-        var cum = 0;
-        var fdays = d.days.map(function(day){
-          var f = (day.count || 0) * FEE;
-          cum += f;
-          return { date: day.date, feesUsd: f, cumUsd: cum };
+      }).catch(function(){}),
+
+      // REVENUE, measured: the backend's own protocol-fees series
+      // (/agg/tvl-history feesUsd, cumulative USD with the whole series
+      // priced at current STRK spot), the same numbers the official
+      // dashboard plots. The lifetime headline is fetched alongside as a
+      // cross-check: if the pair disagrees beyond cents, the whole card
+      // fails together (all-or-nothing), never a half-render.
+      Promise.all([get('/agg/tvl-history'), get('/agg/lifetime-revenue')]).then(function(pair){
+        var days = ((pair[0] && pair[0].days) || []).filter(function(x){ return typeof x.feesUsd === 'number'; });
+        if (!days.length) throw new Error('empty');
+        if (Math.abs(days[days.length - 1].feesUsd - pair[1].revenueUsd) > 0.05) throw new Error('revenue pair mismatch');
+        var fdays = days.map(function(x, i){
+          return { date: x.date, feesUsd: Math.max(0, x.feesUsd - (i ? days[i - 1].feesUsd : 0)), cumUsd: x.feesUsd };
         });
         raw.fees = fdays;
         stage('revenue', function(W){
@@ -3238,8 +3235,8 @@
           return { chart: feeBarsLine(fdays, W, H),
                    legend: '<div class="pmx-legend"><span><i style="background:rgba(31,203,148,.5)"></i>DAILY FEES</span><span><i style="background:#1FCB94"></i>CUMULATIVE (RIGHT AXIS)</span></div>',
                    meta: { days: fdays, W: W, P: PAD_DUAL, rows: function(day){
-                     return [{ label: 'DAILY FEES (EST.)', value: fmtUsd(day.feesUsd), color: 'rgba(31,203,148,.5)' },
-                             { label: 'CUMULATIVE (EST.)', value: fmtUsd(day.cumUsd), color: '#1FCB94' }];
+                     return [{ label: 'DAILY FEES', value: fmtUsd(day.feesUsd), color: 'rgba(31,203,148,.5)' },
+                             { label: 'CUMULATIVE', value: fmtUsd(day.cumUsd), color: '#1FCB94' }];
                    } } };
         });
       }).catch(function(){}),
@@ -3279,8 +3276,9 @@
        sub-line's "with balances" count is live from the same pool-summary
        payload: balanceRaw > 0, token units. No delta: the asset list has
        no history series.
-     - estimated revenue is the cumulative of the derived fee series, so its
-       delta is that series' own 30-day movement.
+     - revenue is the measured protocol-fees series (cumulative USD, priced
+       at spot by the backend), so its delta is that series' own 30-day
+       movement.
      - STRK20 POOL USERS carries NO delta: its value is pool-summary userCount, a
        single number with no history, and registrations.totalUsers is a
        different metric (2,356 against 2,336 on 2026-08-07, viewing-key
@@ -3324,7 +3322,7 @@
         counts.withBalances.toLocaleString('en-US') + ' WITH BALANCES · TRACKED BY THE POOL', '') +
       statCell('STRK20 POOL USERS', (s.userCount || 0).toLocaleString('en-US'), '', '') +
       statCell('REVENUE', cum === null ? 'N/A' : fmtUsd(cum),
-        'ESTIMATED, CUMULATIVE', dTag(delta30(raw.fees, function(d){ return d.cumUsd; }), fmtUsd)) };
+        'MEASURED, CUMULATIVE', dTag(delta30(raw.fees, function(d){ return d.cumUsd; }), fmtUsd)) };
   }
 
   var loaded = false;

@@ -1347,7 +1347,7 @@ window.ADMIN_GATE=on;})();
       <button class="nacc-head" aria-expanded="false" aria-controls="strk20-body"><span class="nacc-title">Privacy · STRK20</span><span class="nacc-count">5</span><i class="ti ti-chevron-down nacc-chev"></i></button>
       <div class="nacc-body" id="strk20-body"><div class="nacc-inner"><div class="cells c5">
         <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="TVL in STRK20 pool" data-chart-series="p_tvl"><div class="cell-top"><span class="cl">TVL in STRK20 pool</span></div><div class="cv" data-stat="p_tvl">$528.9K</div><div class="cs">Shielded value</div></div>
-        <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="Revenue from STRK20 (30D)" data-chart-series="p_rev"><div class="cell-top"><span class="cl">Revenue from STRK20 (30D)</span></div><div class="cv" data-stat="p_rev">$2.6K</div><div class="cs">~$0.12 flat fee × 30d private TX · derived</div></div>
+        <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="Revenue from STRK20 (30D)" data-chart-series="p_rev"><div class="cell-top"><span class="cl">Revenue from STRK20 (30D)</span></div><div class="cv" data-stat="p_rev">$342</div><div class="cs">Measured protocol fees · STRK20 dashboard</div></div>
         <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="Private TX (daily)" data-chart-series="p_tx"><div class="cell-top"><span class="cl">Private TX (daily)</span></div><div class="cv" data-stat="p_tx">36</div><div class="cs">Last full day</div></div>
         <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="STRK20 pool users" data-chart-series="p_users"><div class="cell-top"><span class="cl">STRK20 pool users</span></div><div class="cv" data-stat="p_users">2,347</div><div class="cs">Unique depositors, all time</div></div>
         <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="DeFi volume privately routed (30D)" data-chart-series="p_vol"><div class="cell-top"><span class="cl">DeFi volume privately routed (30D)</span></div><div class="cv" data-stat="p_vol">$147.1K</div><div class="cs">USD by protocol · STRK20 dashboard</div></div>
@@ -1586,7 +1586,7 @@ const M=[
  {k:'apprev',label:'App revenue',type:'usd',value:2124918,source:{name:'growthepie',url:'https://www.growthepie.com'}},
  {k:'chainrev',label:'Chain revenue',type:'usd',value:120744,source:{name:'DefiLlama',url:'https://defillama.com/chain/starknet'}},
  {k:'p_tvl',label:'TVL in STRK20 pool',type:'usd',value:528903},
- {k:'p_rev',label:'Revenue from STRK20',type:'usd',value:3045},
+ {k:'p_rev',label:'Revenue from STRK20',type:'usd',value:4167,source:{name:'STRK20 dashboard',url:'https://strk20.starknet.io/dashboard'}},
  {k:'p_tx',label:'Private TX (daily)',type:'num',value:36},
  {k:'p_vol',label:'DeFi volume privately routed',type:'usd',value:339540},
  {k:'p_users',label:'STRK20 pool users',type:'count',value:2347,source:{name:'onchain (Deposit events)',url:'https://voyager.online/contract/0x040337b1af3c663e86e333bab5a4b28da8d4652a15a69beee2b677776ffe812a'}},
@@ -1671,6 +1671,20 @@ const SRC={
       // drop the in-progress day — a partial count would read as a real dip
       if(days.length&&days[days.length-1].date===new Date().toISOString().slice(0,10))days=days.slice(0,-1);
       return days.map(r=>[Date.parse(r.date),r.count]);
+    }));},
+  /* MEASURED protocol fees, the same series the official STRK20 dashboard
+     plots: /agg/tvl-history feesUsd is cumulative USD with the whole series
+     priced at current STRK spot (fees accrue in STRK; the backend reprices
+     at its pricedAt stamp). The lifetime headline rides along as a
+     cross-check: a pair mismatch beyond cents fails the fetch whole. */
+  s20rev(){return cached('s20rev',TTL['7D'],()=>Promise.all([
+      gj('https://strk20-dashboard-production.up.railway.app/agg/tvl-history'),
+      gj('https://strk20-dashboard-production.up.railway.app/agg/lifetime-revenue')
+    ]).then(([h,lr])=>{
+      const days=((h&&h.days)||[]).filter(d=>typeof d.feesUsd==='number');
+      if(!days.length)throw new Error('empty');
+      if(Math.abs(days[days.length-1].feesUsd-lr.revenueUsd)>0.05)throw new Error('revenue pair mismatch');
+      return days.map(d=>[Date.parse(d.date),d.feesUsd]);
     }));},
   /* cumulative unique direct depositors, committed onchain backfill
      (scripts/backfill-pool-users.js). userCount = unique Deposit-event
@@ -1764,13 +1778,14 @@ const HIST={
     window delta (%-vs-first-dust-deposit was absurd) */
  p_tvl:{avail:['7D','30D','1Y','ALL'],stacked:true,get:()=>SRC.s20bal()},
  p_tx:{avail:['7D','30D','1Y','ALL'],get:()=>SRC.s20tx()},
- /* cumulative protocol revenue, valued like the source STRK20 dashboard:
-    fees accrue in STRK (flat 4/tx) and the whole series is priced at live
-    spot — so the header matches the dashboard's cumulative figure (~$3.0K,
-    verified at build time; a date-matched valuation would read $3.4K).
-    dailyBars recovers the per-day bars; sub30 keeps the rolling figure. */
+ /* MEASURED cumulative protocol revenue, the dashboard's own series: fees
+    accrue in STRK and the backend prices the whole series at current spot,
+    so the header matches the official dashboard's cumulative figure to the
+    cent (cross-checked against /agg/lifetime-revenue on every fetch; this
+    spot valuation is the metric's one qualifier). dailyBars recovers the
+    per-day bars; sub30 keeps the rolling figure. */
  p_rev:{avail:['7D','30D','1Y','ALL'],dailyBars:true,peakDaily:true,dailyUsd:true,deltaBadge:{},sub30:true,
-   get:()=>SRC.s20tx().then(a=>cumsum(a.map(p=>[p[0],p[1]*(window.STRK20_FLAT_FEE_USD||0.12)])))},
+   get:()=>SRC.s20rev()},
  /* measured routed DeFi volume, same recipe as p_rev: cumulative header,
     dailyBars recovers the per-day bars, the 30D badge is the window's
     absolute delta (= 30D routed volume), sub30 keeps the rolling figure */
@@ -2504,7 +2519,7 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
      fundamentals_7d (daily + weekly active addresses) and fundamentals
      (chain-level app revenue 30d, CC BY 4.0) · npm registry
      (StarkZap downloads, chunked from first publish) · STRK20 backend
-     (pool TVL, private TX; 30d revenue derived at the ~$0.12 flat fee).
+     (pool TVL, private TX; 30d revenue from the measured protocol-fees series).
 
      Coherence: every computed stat commits atomically with ALL of its
      inputs from the same round — staked% and staked-USD only commit when
@@ -2528,7 +2543,7 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
     strkStaked: 1430248556, strkStakedUsd: 36123874, stakePct: 21.198, btcStaked: 692.25, btcStakedUsd: 44266227, valueStaked: 80390101,
     tvl: 169146064, tvs: 375481582, netflow: -9893561, stables: 162419648, apprev: 2124918, chainrev: 127790,
     dau: 15295, wau: 45166, totaltx: 309219399, tps: 1.748, downloads: 7609,
-    p_tvl: 587068, p_tx: 168, p_rev: 319, p_users: 2347, p_vol: 147128
+    p_tvl: 587068, p_tx: 168, p_rev: 342, p_users: 2347, p_vol: 147128
   };
   var CACHE_KEY = 'strkNumbers_v2'; // v2: state carries per-cluster provenance; older cache shapes are dropped
   var NPM_FIRST_PUBLISH = '2026-02-24'; // starkzap first npm release
@@ -2862,8 +2877,20 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
         var today = new Date().toISOString().slice(0, 10);
         if (days.length && days[days.length - 1].date === today) days = days.slice(0, -1); // drop the partial day
         if (!days.length) throw 0;
-        var sum30 = days.slice(-30).reduce(function(a, x){ return a + (x.count || 0); }, 0);
-        return { p_tx: days[days.length - 1].count, sum30: sum30 };
+        return { p_tx: days[days.length - 1].count };
+      }));
+    // MEASURED protocol fees: the dashboard's own cumulative series, with
+    // the lifetime headline as a cross-check. A pair mismatch beyond cents
+    // fails the cluster whole (all-or-nothing), never a half-render.
+    var pS20rev = wrap(Promise.all([
+        getJson('https://strk20-dashboard-production.up.railway.app/agg/tvl-history'),
+        getJson('https://strk20-dashboard-production.up.railway.app/agg/lifetime-revenue')
+      ]).then(function(pair){
+        var days = ((pair[0] && pair[0].days) || []).filter(function(x){ return typeof x.feesUsd === 'number'; });
+        if (days.length < 31) throw 0;
+        var head = days[days.length - 1].feesUsd;
+        if (!ok(head) || Math.abs(head - pair[1].revenueUsd) > 0.05) throw 0;
+        return Math.max(0, head - days[days.length - 31].feesUsd); // measured 30D revenue
       }));
     // pool users ride the same response as the pool TVL, one atomic cluster.
     // NOTE: userCount is pool users, a single number with no history;
@@ -2883,9 +2910,9 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
         return sum30;
       }));
 
-    Promise.all([pCg, pEndur, pTvl, pTvs, pStables, pAppRev, pChainRev, pGtp, pAct, pNpm, pS20tx, pS20tvl, pS20vol]).then(function(r){
+    Promise.all([pCg, pEndur, pTvl, pTvs, pStables, pAppRev, pChainRev, pGtp, pAct, pNpm, pS20tx, pS20tvl, pS20vol, pS20rev]).then(function(r){
       var cg = r[0], endur = r[1], tvl = r[2], tvs = r[3], stables = r[4], apprev = r[5],
-          chainrev = r[6], gtp = r[7], act = r[8], npm = r[9], s20tx = r[10], s20tvl = r[11], s20vol = r[12];
+          chainrev = r[6], gtp = r[7], act = r[8], npm = r[9], s20tx = r[10], s20tvl = r[11], s20vol = r[12], s20rev = r[13];
       var stamped = false;
       function stamp(pk){
         var now = Date.now();
@@ -2936,13 +2963,8 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
         window.__poolUsers = { v: s20tvl.users, at: Date.now() };
       }
       if (s20vol) { state.p_vol = s20vol; stamp('s20vol'); }
-      // STRK20 revenue derives from the ~$0.12 flat privacy fee × 30d
-      // private TX (the fee is denominated in STRK but adjusted with STRK
-      // price to hold near $0.12, so the dollar figure is the stable term)
-      if (s20tx) {
-        state.p_tx = s20tx.p_tx; stamp('s20tx');
-        state.p_rev = s20tx.sum30 * (window.STRK20_FLAT_FEE_USD || 0.12);
-      }
+      if (s20tx) { state.p_tx = s20tx.p_tx; stamp('s20tx'); }
+      if (s20rev != null) { state.p_rev = s20rev; stamp('s20rev'); }
 
       if (stamped) saveCache(state);
       renderAll(); // stats whose source failed keep their last good value + provenance
