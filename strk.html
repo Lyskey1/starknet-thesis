@@ -1325,6 +1325,8 @@ window.ADMIN_GATE=on;})();
       <div class="nacc-body" id="usage-body"><div class="nacc-inner"><div class="cells">
         <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="Daily users" data-chart-series="dailyusers"><div class="cell-top"><span class="cl">Daily users</span></div><div class="cv" data-stat="dau">13.2K</div><div class="cs">Active addresses / day</div></div>
         <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="Weekly users" data-chart-series="weeklyusers"><div class="cell-top"><span class="cl">Weekly users</span></div><div class="cv" data-stat="wau">43.4K</div><div class="cs">Active addresses / 7d</div></div>
+        <!-- committed snapshot, no live source: see the M entry comment -->
+        <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="Account contracts" data-chart-series="accounts"><div class="cell-top"><span class="cl">Account contracts</span></div><div class="cv">6,981,372</div><div class="cs">Deployed, all time · Aug 10, 2026</div></div>
         <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="Total TX" data-chart-series="totaltx"><div class="cell-top"><span class="cl">Total TX</span></div><div class="cv" data-stat="totaltx">307.7M</div><div class="cs">Since genesis</div></div>
         <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="TPS (avg)" data-chart-series="tps"><div class="cell-top"><span class="cl">TPS (avg)</span></div><div class="cv"><span data-stat="tps">0.7</span><span class="cu"> TPS</span></div><div class="cs">Last full day</div></div>
         <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="StarkZap downloads" data-chart-series="downloads"><div class="cell-top"><span class="cl">StarkZap downloads</span></div><div class="cv" data-stat="downloads">7.4K</div><div class="cs">all-time · live</div></div>
@@ -1576,6 +1578,16 @@ const M=[
  {k:'circstaked',label:'% of STRK circulating supply staked',type:'pct',value:21.2,source:{name:'onchain ÷ CoinGecko supply',url:'https://dashboard.endur.fi/'}},
  {k:'dailyusers',label:'Daily users',type:'num',value:13221,source:{name:'growthepie',url:'https://www.growthepie.com/chains/starknet'}},
  {k:'weeklyusers',label:'Weekly users',type:'num',value:43443,source:{name:'growthepie',url:'https://www.growthepie.com/chains/starknet'}},
+ /* Voyager analytics "Accounts" = cumulative account contracts deployed
+    (their Total series; the by-type split stays Voyager's). Committed,
+    dated scalar: voyager.online/api/daily-stats?metrics=account_contracts
+    sits behind a Cloudflare interactive challenge (cf-mitigated: challenge,
+    verified from a clean container 2026-08-10), so no keyless fetch exists;
+    if that endpoint ever opens, this becomes a live series with forward
+    accumulation. Voyager's Active Accounts (1,651) and Accounts Growth
+    (293/day) are DIFFERENT metrics, deliberately not taken. The card's
+    static text and this value must move together in the same commit. */
+ {k:'accounts',label:'Account contracts',type:'count',value:6981372,emptyNote:'NO KEYLESS HISTORY · COMMITTED SNAPSHOT, AUG 10, 2026',source:{name:'Voyager',url:'https://voyager.online/analytics?page=accounts'}},
  {k:'totaltx',label:'Total TX',type:'num',value:307714287,source:{name:'L2Beat',url:'https://l2beat.com/scaling/projects/starknet'}},
  {k:'tps',label:'TPS (avg)',type:'tps',value:0.74,source:{name:'L2Beat',url:'https://l2beat.com/scaling/projects/starknet'}},
  {k:'downloads',label:'StarkZap downloads',type:'num',value:7356,source:{name:'npm registry',url:'https://welttowelt.github.io/starkzap-stats/'}},
@@ -1919,11 +1931,12 @@ function draw(){
   document.getElementById('fSub').textContent='';
   document.getElementById('fSrc').innerHTML=m.source?`· Source: <a href="${m.source.url}" target="_blank" rel="noopener noreferrer">${m.source.name} ↗</a>`:'';
   paintRank();
-  if(!h){ /* explicit empty state — never an invented curve */
+  if(!h){ /* explicit empty state — never an invented curve. emptyNote lets a
+    committed-snapshot metric say so instead of claiming a live value */
     clearChart();
     document.getElementById('fVal').textContent=fmt(m,m.value);
     renderBadge(null);
-    setNote('NO PUBLIC HISTORY · LIVE VALUE ONLY');
+    setNote(m.emptyNote||'NO PUBLIC HISTORY · LIVE VALUE ONLY');
     return;
   }
   setNote('LOADING…');
