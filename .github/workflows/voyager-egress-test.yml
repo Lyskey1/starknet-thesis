@@ -14,7 +14,7 @@ jobs:
       - name: fetch voyager daily-stats
         run: |
           code=$(curl -sS -m 25 -D headers.txt -o body.txt -w "%{http_code}" \
-            "https://voyager.online/api/daily-stats?metrics=account_contracts&timerange=all" \
+            "https://voyager.online/api/daily-stats?metrics=account_contracts&timerange=max" \
             -H "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36" \
             -H "Accept: application/json, text/plain, */*" \
             -H "Accept-Language: en-US,en;q=0.9" \
