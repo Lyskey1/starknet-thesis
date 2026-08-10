@@ -1773,7 +1773,20 @@ const HIST={
     displayed window, badge = last full week vs the week before (WoW). 24H/7D
     make no sense at weekly granularity → muted. */
  apprev:{avail:['30D','1Y','ALL'],weeklyBars:true,peak:true,get:()=>SRC.apprev().then(weeklySum)},
- chainrev:{avail:['30D','1Y','ALL'],weeklyBars:true,peak:true,get:()=>SRC.chainrev().then(weeklySum)},
+ /* DefiLlama dailyRevenue = user fees minus L1 operator costs; the daily
+    series starts 2023-11-01. Token Terminal's "Revenue" is GROSS user fees
+    on a 3y window; DefiLlama gross fees over that same window sum to
+    $31.04M vs TT's $31.2M headline (0.5% apart), and gross fees since May
+    2022 total $45.5M. Reconciled to the dollar on 2026-08-10 against this
+    chart's ALL sum ($19.18M): gap = $8.89M window (fees paid Aug 10 to
+    Oct 31 2023, before this series starts) + $2.97M L1-cost netting.
+    DefiLlama's /summary methodology text says Revenue: "Burned coins";
+    that is stale against their own adapter code
+    (dimension-adapters/fees/starknet.ts), which is authoritative.
+    dataSince captures the daily start before weeklySum buckets it, so the
+    note never labels the first partial week's Monday as the data start. */
+ chainrev:{avail:['30D','1Y','ALL'],weeklyBars:true,peak:true,defNote:'REVENUE = USER FEES MINUS L1 COSTS',
+   get:()=>SRC.chainrev().then(a=>{HIST.chainrev.dataSince=a.length?a[0][0]:null;return weeklySum(a);})},
  /* stacked: per-asset stacked areas + white total line; badge = absolute
     window delta (%-vs-first-dust-deposit was absurd) */
  p_tvl:{avail:['7D','30D','1Y','ALL'],stacked:true,get:()=>SRC.s20bal()},
@@ -2060,13 +2073,18 @@ function draw(){
       }
     }
     fv.style.color=h.signed?(last>=0?'var(--up)':'var(--down)'):''; // signed header takes the sign color
-    /* honest-range note: window starts before the data does */
+    /* honest-range note: window starts before the data does. A metric's
+       defNote (definition qualifier) shares this line so it reads once.
+       h.dataSince, when its get() captured one, is the underlying daily
+       start (a weekly bucket's Monday can predate the data it holds);
+       dates render in UTC so a viewer west of UTC sees the same month. */
     const dataStart=all.length?all[0][0]:t0;
+    const pre=h.defNote?h.defNote+' · ':'';
     if(days!==Infinity&&dataStart>cut+DAY)
-      setNote('DATA SINCE '+new Date(dataStart).toLocaleString('en',{month:'short',day:'numeric',year:'numeric'}).toUpperCase());
+      setNote(pre+'DATA SINCE '+new Date(h.dataSince||dataStart).toLocaleString('en',{month:'short',day:'numeric',year:'numeric',timeZone:'UTC'}).toUpperCase());
     else if(days===Infinity)
-      setNote('SINCE '+new Date(t0).toLocaleString('en',{month:'short',year:'numeric'}).toUpperCase()+(h.capNote?' · '+h.capNote:''));
-    else setNote('');
+      setNote(pre+(h.defNote?'DATA SINCE ':'SINCE ')+new Date(h.dataSince||t0).toLocaleString('en',{month:'short',year:'numeric',timeZone:'UTC'}).toUpperCase()+(h.capNote?' · '+h.capNote:''));
+    else setNote(h.defNote||'');
   }).catch(()=>{
     if(seq!==drawSeq)return;
     clearChart();document.getElementById('fVal').textContent=fmt(m,m.value);
