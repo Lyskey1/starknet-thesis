@@ -1047,7 +1047,7 @@ window.ADMIN_GATE=on;})();
           <div class="barrow">
             <div class="bl">Private transaction</div>
             <div class="bartrack"><div class="barfill gas" data-w="10%"></div><div class="barfill priv" data-w="80%"></div></div>
-            <div class="seglbl"><i><span class="dotc gas"></span>Gas <span style="color:var(--white)">~$0.01</span></i><i><span class="dotc priv"></span>Privacy fee <span style="color:var(--white)">~$0.12</span></i></div>
+            <div class="seglbl"><i><span class="dotc gas"></span>Gas <span style="color:var(--white)">~$0.01</span></i><i><span class="dotc priv"></span>Privacy fee <span style="color:var(--white)">6 STRK ≈ <span data-fee-usd>$0.15</span></span></i></div>
           </div>
         </div>
       </div>
@@ -2890,7 +2890,8 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
         if (days.length < 31) throw 0;
         var head = days[days.length - 1].feesUsd;
         if (!ok(head) || Math.abs(head - pair[1].revenueUsd) > 0.05) throw 0;
-        return Math.max(0, head - days[days.length - 31].feesUsd); // measured 30D revenue
+        return { rev30: Math.max(0, head - days[days.length - 31].feesUsd), // measured 30D revenue
+                 feeUsd: pair[1].currentFeeUsd }; // current per-action fee, for the fee-copy spans
       }));
     // pool users ride the same response as the pool TVL, one atomic cluster.
     // NOTE: userCount is pool users, a single number with no history;
@@ -2964,7 +2965,14 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
       }
       if (s20vol) { state.p_vol = s20vol; stamp('s20vol'); }
       if (s20tx) { state.p_tx = s20tx.p_tx; stamp('s20tx'); }
-      if (s20rev != null) { state.p_rev = s20rev; stamp('s20rev'); }
+      if (s20rev) {
+        state.p_rev = s20rev.rev30; stamp('s20rev');
+        // refresh the fee-copy USD (seeded from js/fee-config.js display
+        // constants) with the live per-action fee from the same fetch
+        if (isFinite(s20rev.feeUsd) && s20rev.feeUsd > 0) {
+          document.querySelectorAll('[data-fee-usd]').forEach(function(el){ el.textContent = '$' + s20rev.feeUsd.toFixed(2); });
+        }
+      }
 
       if (stamped) saveCache(state);
       renderAll(); // stats whose source failed keep their last good value + provenance
