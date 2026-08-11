@@ -461,6 +461,10 @@ a.chip:hover{background:var(--acc);border-color:var(--acc);color:#0A0A0A}
 .nacc-item.open .nacc-body{grid-template-rows:1fr}
 .nacc-inner{overflow:hidden;min-height:0}
 .nacc-inner .cells{padding:2px 14px 16px}
+/* tokenomics consumer: panels instead of stat cells; first panel hugs the
+   header, the group box gets the same bottom breathing room as .cells */
+.nacc-inner .nacc-panels{padding:0 14px 16px}
+.nacc-inner .nacc-panels .panel:first-child{margin-top:8px}
 @media (prefers-reduced-motion: reduce){.nacc-body{transition:none}.nacc-chev{transition:none}.tk-track i{transition:none}}
 
 /* --- section 04: chart honest-range note + muted range buttons --- */
@@ -1207,6 +1211,16 @@ window.ADMIN_GATE=on;})();
        distribution donut is static official protocol data. -->
   <div class="grp" id="tokenomics">
     <div class="gl">STRK tokenomics</div>
+    <!-- same accordion grammar as the stats block (one .nacc system, two
+         consumers), but these groups SHIP OPEN: this is thesis content,
+         not reference metrics — the toggle exists to collapse, not to
+         hide. The count badges derive at render time and count PANELS
+         here (a panel = one thesis unit), where the stats groups count
+         their stat cells. -->
+    <div class="nacc">
+    <div class="nacc-item open" id="supply-unlocks">
+      <button class="nacc-head" aria-expanded="true" aria-controls="supply-unlocks-body"><span class="nacc-title">Supply &amp; unlocks</span><span class="nacc-count"></span><i class="ti ti-chevron-down nacc-chev"></i></button>
+      <div class="nacc-body" id="supply-unlocks-body"><div class="nacc-inner"><div class="nacc-panels">
     <div class="panel">
       <div class="eyebrow">Supply</div>
       <div class="ptitle">Circulating supply</div>
@@ -1234,6 +1248,11 @@ window.ADMIN_GATE=on;})();
       <div class="legend"><span><i style="background:#A78BFA"></i>Scheduled vesting</span><span><i style="background:#6D4FD0"></i>Estimated release (no fixed schedule)</span><span><i style="background:#F5F2EC"></i>Cumulative supply</span></div>
       <div class="kpis two" id="mukpis"></div>
     </div>
+      </div></div></div>
+    </div>
+    <div class="nacc-item open" id="distribution">
+      <button class="nacc-head" aria-expanded="true" aria-controls="distribution-body"><span class="nacc-title">Distribution</span><span class="nacc-count"></span><i class="ti ti-chevron-down nacc-chev"></i></button>
+      <div class="nacc-body" id="distribution-body"><div class="nacc-inner"><div class="nacc-panels">
     <div class="panel">
       <div class="eyebrow">Distribution</div>
       <div class="ptitle">Planned distribution of STRK</div>
@@ -1245,6 +1264,9 @@ window.ADMIN_GATE=on;})();
         <div class="detail"><div class="dt" id="udetail">Investors and Early Contributors vest until <b>March 15, 2027</b>. The rest is released into circulation as the Starknet Foundation allocates it. Hover a category for its unlock detail.</div></div>
       </div>
       <div class="note">Static protocol data — the official allocation from the <a href="https://docs.starknet.io/learn/protocol/strk" target="_blank" rel="noopener noreferrer">Starknet documentation ↗</a>.</div>
+    </div>
+      </div></div></div>
+    </div>
     </div>
   </div>
 
@@ -2284,14 +2306,16 @@ root.querySelectorAll('.cell').forEach(c=>io.observe(c));
 /* ---- stats accordion: collapsed by default, multi-open, deep-linkable ---- */
 (function(){
   const items=[...root.querySelectorAll('.nacc-item')];
-  /* count badges derive from the group's actual cards at render time — the
+  /* count badges derive from the group's actual content at render time — the
      hand-written numbers drifted (USAGE said 5 while holding 8 cards) and a
-     derived count can never desynchronize again. Every card renders
-     unconditionally (a failed fetch keeps its seed value, never hides the
-     cell), so rendered == configured and the DOM is the one source of truth. */
+     derived count can never desynchronize again. Stats groups count their
+     stat cells; tokenomics groups count PANELS (a panel = one thesis unit:
+     the supply card, a chart, the donut). Everything renders
+     unconditionally (a failed fetch keeps its seed value, never hides
+     content), so rendered == configured and the DOM is the one source of truth. */
   items.forEach(it=>{
     const c=it.querySelector('.nacc-count');
-    if(c)c.textContent=it.querySelectorAll('.cells .cell').length;
+    if(c)c.textContent=it.querySelectorAll('.cells .cell').length||it.querySelectorAll('.nacc-panels > .panel').length;
   });
   function setOpen(it,open){it.classList.toggle('open',open);
     it.querySelector('.nacc-head').setAttribute('aria-expanded',open?'true':'false');
@@ -2304,9 +2328,15 @@ root.querySelectorAll('.cell').forEach(c=>io.observe(c));
   });
   function openFromHash(){
     const id=(location.hash||'').slice(1);if(!id)return;
-    const it=document.getElementById(id);
-    if(it&&it.classList.contains('nacc-item')){setOpen(it,true);
-      if(it.scrollIntoView)setTimeout(()=>it.scrollIntoView({behavior:'smooth',block:'start'}),120);}
+    const el=document.getElementById(id);if(!el)return;
+    /* an anchor INSIDE a collapsed group (e.g. #supply-over-time after a
+       collapse) expands its group first, then scrolls to the anchor itself —
+       same contract the in-page search already applies via its own opener */
+    const it=el.classList.contains('nacc-item')?el:(el.closest?el.closest('.nacc-item'):null);
+    if(!it)return;
+    setOpen(it,true);
+    const target=el.classList.contains('nacc-item')?it:el;
+    if(target.scrollIntoView)setTimeout(()=>target.scrollIntoView({behavior:'smooth',block:'start'}),120);
   }
   window.addEventListener('hashchange',openFromHash);
   openFromHash();
