@@ -990,6 +990,7 @@ window.ADMIN_GATE=on;})();
 
     <div class="fly" id="fly">
       <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" aria-label="STRK flywheel">
+        <defs><clipPath id="hubLogoClip"><circle cx="200" cy="200" r="24"/></clipPath></defs>
         <circle class="track" cx="200" cy="200" r="130"/>
         <circle class="track-dash" cx="200" cy="200" r="130"/>
 
@@ -1000,9 +1001,14 @@ window.ADMIN_GATE=on;})();
 
         <g class="travel-orbit"><circle class="travel" cx="200" cy="70" r="4.5"/></g>
 
-        <g class="hub">
+        <g class="hub" role="img" aria-label="STRK">
           <circle cx="200" cy="200" r="40"/>
-          <text x="200" y="206" text-anchor="middle">STRK</text>
+          <!-- the hero fan core's exact recipe (assets/starknet-logo.png,
+               circle-clipped) so the page's two Starknet-mark renderings can
+               never diverge. 48px = 60% of the 80px disc; the badge is a
+               symmetric disc, so geometric centering IS its optical center
+               (the swoosh's asymmetry is contained inside the badge). -->
+          <image x="176" y="176" width="48" height="48" clip-path="url(#hubLogoClip)" preserveAspectRatio="xMidYMid slice" href="assets/starknet-logo.png" aria-hidden="true"/>
         </g>
 
         <g class="stage" data-i="01" data-t="Thesis plays out" data-d="More demand for privacy, more capital seeking quantum-safety, more Bitcoin looking for DeFi, all of it drives activity onto Starknet.">
