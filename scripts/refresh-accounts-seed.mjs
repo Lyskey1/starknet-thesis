@@ -53,7 +53,22 @@
    holder-count source is known (explorers bot-gated, Token Terminal
    keyed). STRK token address verified: 0x04718f5a0fc34cc1af16a1cdee98ffb2
    0c31f5cd61d6ab07201858f4287c938d, chain path segment SN_MAIN, header
-   X-Starkscan-Api-Key. */
+   X-Starkscan-Api-Key.
+
+   MONTHLY USERS via Starkscan, probed live 2026-08-11 (read tier): does
+   NOT exist there either. /v1/{chain}/metrics/network (read tier) has
+   monthly buckets on window=all, but (1) its activeSenderCount is NOT an
+   active-users measure: July 2026 monthly bucket = 984 vs one daily
+   bucket = 674 vs growthepie daa ~15K the same period, so it counts some
+   much narrower sender notion, definition undocumented; (2) coverage was
+   partial with the materializer lagging 719,241 blocks (~2 weeks) and
+   only ONE monthly bucket served; (3) window=all is spec-bounded to the
+   latest 9,000 prepared hours, no deep history. /metrics/wallets (read,
+   beta) returned coverageStatus "unavailable" (source_contract_mismatch)
+   with empty items. The MAU audit trail is therefore complete: growthepie
+   computes maa but serves it only on paid/gated endpoints; Voyager's
+   vocabulary has no monthly metric; Starkscan has no usable one at any
+   accessible tier. No free MAU source exists as of 2026-08-11. */
 
 import { readFileSync, writeFileSync } from 'fs';
 import { dirname, join } from 'path';
