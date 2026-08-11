@@ -2600,10 +2600,24 @@ root.querySelectorAll('.cell').forEach(c=>io.observe(c));
          applying the site-wide badge rule (absolute delta off a near-zero base) */
       if(NO_BADGE.indexOf(key)>=0)return;
       const el=cell.querySelector('.cdelta');if(!el)return;
-      const days=BADGE7.indexOf(key)>=0?7:30,label=days===7?'7D':'30D';
-      const bcut=Date.now()-days*DAY;
-      let win=all.filter(p=>p[0]>=bcut&&isFinite(p[1]));
-      if(win.length<2)win=pts;
+      /* the badge value and its window label derive from ONE decision:
+         prefer the card's authored window (BADGE7 -> 7D, default 30D); a
+         series too sparse or too young for that window climbs to the
+         smallest window it GENUINELY covers (1Y, then ALL) and is
+         relabeled truthfully. The old fallback borrowed the whole history
+         under the short label, which printed the monthly staking series'
+         +1800%-since-launch as "30D". */
+      const finite=all.filter(p=>isFinite(p[1]));
+      if(finite.length<2)return;
+      const authored=BADGE7.indexOf(key)>=0?7:30;
+      let win=null,label='ALL';
+      for(const [wd,wl] of [[authored,authored===7?'7D':'30D'],[365,'1Y'],[Infinity,'ALL']]){
+        const cutT=wd===Infinity?-Infinity:Date.now()-wd*DAY;
+        const w=finite.filter(p=>p[0]>=cutT);
+        const covered=wd===Infinity||finite[0][0]<=cutT+3*DAY; /* the series must actually span the window it claims */
+        if(w.length>=2&&covered){win=w;label=wl;break;}
+      }
+      if(!win)win=finite;
       const first=win[0][1],last=win[win.length-1][1],d=last-first,m=map[key];
       if(!isFinite(d))return;
       const good=x=>h.invert?x<=0:x>=0; // down-is-good metrics color-flip only
