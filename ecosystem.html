@@ -481,10 +481,13 @@
   .eco-accounts.featured .eco-name { font-size: 18px; }
   .eco-verified { color: #1D9BF0; font-size: 14px; flex-shrink: 0; }
   .eco-handle { font-family: var(--mono); font-size: 12px; color: #8b909c; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .eco-desc { font-family: var(--mono); font-size: 12px; color: #8b909c; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  @media (max-width: 860px) {
-    .eco-desc { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; line-height: 1.45; }
-  }
+  /* descriptions wrap to two lines at every width (the old desktop rule
+     single-line-ellipsized an 18-char column). The two-line box is RESERVED
+     via min-height on every card (all cards carry a description), so rows
+     stay even across the grid; short descriptions top-align, the card's
+     existing column anatomy. Any string still exceeding two lines at the
+     1440px card width gets rewritten in the data, not shipped clamped. */
+  .eco-desc { font-family: var(--mono); font-size: 12px; color: #8b909c; line-height: 1.45; white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: calc(2 * 1.45em); }
   .eco-x { color: #8b909c; font-size: 17px; flex-shrink: 0; transition: color 0.2s; }
   .eco-card:hover .eco-x { color: var(--eco-accent); }
 
