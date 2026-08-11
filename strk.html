@@ -664,7 +664,11 @@ a.chip:hover{background:var(--acc);border-color:var(--acc);color:#0A0A0A}
 /* buy */
 /* where to get — collapsible accordion categories */
 .buy-acc{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;align-items:start}
-.buy-cat{border:1px solid var(--line);border-radius:14px;background:var(--card);overflow:hidden}
+/* polish pass: the rows read as raised objects on a darker panel. Depth is
+   layered fills + inset hairlines only (the site never blurs): panel one
+   step BELOW the old --card (.015), rows one step above it (.04) with a
+   1px top-edge inner highlight at 5% white, +one step (.06) on hover. */
+.buy-cat{border:1px solid var(--line);border-radius:14px;background:rgba(245,242,236,.015);overflow:hidden}
 .buy-head{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;background:none;border:0;cursor:pointer;color:var(--white);padding:16px 18px;text-align:left;font-family:inherit}
 .buy-head:hover{background:rgba(245,242,236,.03)}
 .buy-head .bh-l{display:flex;align-items:center;gap:11px}
@@ -676,14 +680,22 @@ a.chip:hover{background:var(--acc);border-color:var(--acc);color:#0A0A0A}
 .buy-body{max-height:0;overflow:hidden;transition:max-height .32s cubic-bezier(.22,1,.36,1)}
 .buy-cat.open .buy-body{max-height:1400px}
 .buy-body .buy-list{padding:0 14px 14px}
-.buy-list{display:flex;flex-direction:column;gap:6px}
-.buy-item{display:flex;align-items:center;justify-content:space-between;gap:12px;background:rgba(245,242,236,.02);border:1px solid var(--line);border-radius:10px;padding:10px 13px;font-family:var(--mono),monospace;font-size:13px;transition:border-color .2s}
-.buy-item:hover{border-color:var(--accbd)} .buy-item .badge{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
-.buy-item .bi-name{display:flex;align-items:center;gap:9px;min-width:0}
-.buy-item .bi-logo{position:relative;width:18px;height:18px;border-radius:5px;flex:none;overflow:hidden;background:rgba(124,58,237,.12);display:flex;align-items:center;justify-content:center}
-.buy-item .bi-logo i{font-family:var(--mono),monospace;font-style:normal;font-size:9px;font-weight:600;color:var(--acc-2);line-height:1}
-.buy-item .bi-logo img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:rgba(245,242,236,.05)}
-@media(prefers-reduced-motion:reduce){.buy-body{transition:none}.buy-head .bh-chev{transition:none}}
+.buy-list{display:flex;flex-direction:column;gap:8px}
+.buy-item{display:flex;align-items:center;justify-content:space-between;gap:12px;background:rgba(245,242,236,.04);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-family:var(--mono),monospace;font-size:13px;font-weight:500;
+  box-shadow:inset 0 1px 0 rgba(245,242,236,.05); /* top-edge highlight, zero blur */
+  transition:border-color .15s ease-out,background .15s ease-out,transform .15s ease-out}
+.buy-item:hover{border-color:var(--accbd);background:rgba(245,242,236,.06);transform:translateY(-1px)}
+.buy-item:focus-visible{outline:2px solid rgba(245,242,236,.5);outline-offset:2px}
+.buy-item .badge{font-size:8.5px;font-weight:400;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);flex:none}
+.buy-item .bi-name{display:flex;align-items:center;gap:11px;min-width:0}
+/* uniform logo tile: 32px, one ring, mismatched logo shapes centered at
+   20px inside so round and square marks read as one family */
+.buy-item .bi-logo{position:relative;width:32px;height:32px;border-radius:9px;flex:none;overflow:hidden;background:rgba(245,242,236,.045);border:1px solid rgba(245,242,236,.09);display:flex;align-items:center;justify-content:center}
+.buy-item .bi-logo i{font-family:var(--mono),monospace;font-style:normal;font-size:12px;font-weight:600;color:var(--acc-2);line-height:1}
+.buy-item .bi-logo img{position:absolute;inset:6px;width:20px;height:20px;object-fit:contain}
+@media(prefers-reduced-motion:reduce){.buy-body{transition:none}.buy-head .bh-chev{transition:none}
+  .buy-item{transition:border-color .15s ease-out,background .15s ease-out}
+  .buy-item:hover{transform:none}}
 
 
 /* conclusion */
