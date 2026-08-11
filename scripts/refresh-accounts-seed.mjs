@@ -39,7 +39,21 @@
    NO token-holders metric and NO monthly-users metric exist here; checked,
    not missed. active_accounts is DAILY actives by wallet type (1,651 on
    2026-08-09), a different definition from growthepie daa (15.3K same day),
-   never conflate the two. */
+   never conflate the two.
+
+   TOKEN HOLDERS via Starkscan, attempted 2026-08-11 with the provisioned
+   STARKSCAN_API_KEY (repo secret): the key authenticates and reads the
+   read-tier endpoints fine (/v1/SN_MAIN/status and /token/{STRK} both 200,
+   x-ratelimit-limit 120 light;w=60), but BOTH holders endpoints
+   (/token/{token}/holders and /holders/analytics, the one carrying
+   holderCount) returned 403 {"code":"forbidden","docSlug":"api/auth"} with
+   either accepted auth header. The public OpenAPI spec marks them
+   x-starkscan-key-tier: partner; the live API enforces it. The metric
+   stays unbuilt until a partner-tier key exists; no alternative free
+   holder-count source is known (explorers bot-gated, Token Terminal
+   keyed). STRK token address verified: 0x04718f5a0fc34cc1af16a1cdee98ffb2
+   0c31f5cd61d6ab07201858f4287c938d, chain path segment SN_MAIN, header
+   X-Starkscan-Api-Key. */
 
 import { readFileSync, writeFileSync } from 'fs';
 import { dirname, join } from 'path';
