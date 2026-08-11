@@ -1205,71 +1205,6 @@ window.ADMIN_GATE=on;})();
     <span class="pill"><span class="d"></span><span id="upd">Updated --:--</span></span>
   </div>
 
-  <!-- A. STRK TOKENOMICS — circulating supply is live (CoinGecko); the unlock
-       schedule is the official contractual vesting (docs.starknet.io), with the
-       next-unlock %-of-circulating computed from the live supply; the
-       distribution donut is static official protocol data. -->
-  <div class="grp" id="tokenomics">
-    <div class="gl">STRK tokenomics</div>
-    <!-- same accordion grammar as the stats block (one .nacc system, two
-         consumers), but these groups SHIP OPEN: this is thesis content,
-         not reference metrics — the toggle exists to collapse, not to
-         hide. The count badges derive at render time and count PANELS
-         here (a panel = one thesis unit), where the stats groups count
-         their stat cells. -->
-    <div class="nacc">
-    <div class="nacc-item open" id="supply-unlocks">
-      <button class="nacc-head" aria-expanded="true" aria-controls="supply-unlocks-body"><span class="nacc-title">Supply &amp; unlocks</span><span class="nacc-count"></span><i class="ti ti-chevron-down nacc-chev"></i></button>
-      <div class="nacc-body" id="supply-unlocks-body"><div class="nacc-inner"><div class="nacc-panels">
-    <div class="panel">
-      <div class="eyebrow">Supply</div>
-      <div class="ptitle">Circulating supply</div>
-      <div class="tk-big"><span data-stat="circ">6.75B</span><span class="tk-of">of 10B STRK</span></div>
-      <div class="tk-track"><i id="tkBar" style="width:67.5%"></i></div>
-      <div class="tk-meta"><span><span data-stat="circpct">67.5%</span> of the 10B max supply is on the market</span><a href="https://www.coingecko.com/en/coins/starknet" target="_blank" rel="noopener noreferrer">CoinGecko ↗</a></div>
-    </div>
-    <div class="panel" id="supply-over-time">
-      <div class="eyebrow">Estimated supply in circulation</div>
-      <div class="ptitle">% of STRK on the market over time</div>
-      <div class="supchart" id="ucbox">
-        <svg id="uchart" viewBox="0 0 1000 380"></svg>
-        <div class="stip" id="stip"></div>
-      </div>
-      <div class="legend" id="ulegend"></div>
-      <div class="kpis two" id="ukpis"></div>
-    </div>
-    <div class="panel">
-      <div class="eyebrow">Unlock schedule</div>
-      <div class="ptitle">Tokens entering circulation, next 12 months</div>
-      <div class="supchart" id="mucbox">
-        <svg id="muchart" viewBox="0 0 1000 300"></svg>
-        <div class="stip" id="mtip2"></div>
-      </div>
-      <div class="legend"><span><i style="background:#A78BFA"></i>Scheduled vesting</span><span><i style="background:#6D4FD0"></i>Estimated release (no fixed schedule)</span><span><i style="background:#F5F2EC"></i>Cumulative supply</span></div>
-      <div class="kpis two" id="mukpis"></div>
-    </div>
-      </div></div></div>
-    </div>
-    <div class="nacc-item open" id="distribution">
-      <button class="nacc-head" aria-expanded="true" aria-controls="distribution-body"><span class="nacc-title">Distribution</span><span class="nacc-count"></span><i class="ti ti-chevron-down nacc-chev"></i></button>
-      <div class="nacc-body" id="distribution-body"><div class="nacc-inner"><div class="nacc-panels">
-    <div class="panel">
-      <div class="eyebrow">Distribution</div>
-      <div class="ptitle">Planned distribution of STRK</div>
-      <div class="dist">
-        <div class="donut" id="udonut">
-          <svg viewBox="0 0 560 360" id="dsvg"></svg>
-          <div class="center"><div class="ct">Total supply</div><div class="cv">10B</div><div class="cs" id="cHint">Hover a category</div></div>
-        </div>
-        <div class="detail"><div class="dt" id="udetail">Investors and Early Contributors vest until <b>March 15, 2027</b>. The rest is released into circulation as the Starknet Foundation allocates it. Hover a category for its unlock detail.</div></div>
-      </div>
-      <div class="note">Static protocol data — the official allocation from the <a href="https://docs.starknet.io/learn/protocol/strk" target="_blank" rel="noopener noreferrer">Starknet documentation ↗</a>.</div>
-    </div>
-      </div></div></div>
-    </div>
-    </div>
-  </div>
-
   <!-- B. PRICE CHART (existing component) -->
   <div class="feat">
     <div class="feat-top">
@@ -1321,6 +1256,59 @@ window.ADMIN_GATE=on;})();
        live via the engine at the end of the page; seeds are today's real
        readings, never mock. -->
   <div class="nacc" id="statsAcc">
+
+    <!-- TOKENOMICS, first group of the stack — circulating supply is live
+         (CoinGecko); the unlock schedule is the official contractual vesting
+         (docs.starknet.io) with the next-unlock %-of-circulating computed
+         from the live supply; the distribution donut is static official
+         protocol data. This group SHIPS OPEN, unlike the reference-metric
+         groups below: thesis content, the toggle exists to collapse, not to
+         hide. The count badge derives at render time and counts PANELS (a
+         panel = one thesis unit), where the stats groups count stat cells. -->
+    <div class="nacc-item open" id="tokenomics">
+      <button class="nacc-head" aria-expanded="true" aria-controls="tokenomics-body"><span class="nacc-title">Tokenomics</span><span class="nacc-count"></span><i class="ti ti-chevron-down nacc-chev"></i></button>
+      <div class="nacc-body" id="tokenomics-body"><div class="nacc-inner"><div class="nacc-panels">
+    <div class="panel">
+      <div class="eyebrow">Supply</div>
+      <div class="ptitle">Circulating supply</div>
+      <div class="tk-big"><span data-stat="circ">6.75B</span><span class="tk-of">of 10B STRK</span></div>
+      <div class="tk-track"><i id="tkBar" style="width:67.5%"></i></div>
+      <div class="tk-meta"><span><span data-stat="circpct">67.5%</span> of the 10B max supply is on the market</span><a href="https://www.coingecko.com/en/coins/starknet" target="_blank" rel="noopener noreferrer">CoinGecko ↗</a></div>
+    </div>
+    <div class="panel" id="supply-over-time">
+      <div class="eyebrow">Estimated supply in circulation</div>
+      <div class="ptitle">% of STRK on the market over time</div>
+      <div class="supchart" id="ucbox">
+        <svg id="uchart" viewBox="0 0 1000 380"></svg>
+        <div class="stip" id="stip"></div>
+      </div>
+      <div class="legend" id="ulegend"></div>
+      <div class="kpis two" id="ukpis"></div>
+    </div>
+    <div class="panel">
+      <div class="eyebrow">Unlock schedule</div>
+      <div class="ptitle">Tokens entering circulation, next 12 months</div>
+      <div class="supchart" id="mucbox">
+        <svg id="muchart" viewBox="0 0 1000 300"></svg>
+        <div class="stip" id="mtip2"></div>
+      </div>
+      <div class="legend"><span><i style="background:#A78BFA"></i>Scheduled vesting</span><span><i style="background:#6D4FD0"></i>Estimated release (no fixed schedule)</span><span><i style="background:#F5F2EC"></i>Cumulative supply</span></div>
+      <div class="kpis two" id="mukpis"></div>
+    </div>
+    <div class="panel">
+      <div class="eyebrow">Distribution</div>
+      <div class="ptitle">Planned distribution of STRK</div>
+      <div class="dist">
+        <div class="donut" id="udonut">
+          <svg viewBox="0 0 560 360" id="dsvg"></svg>
+          <div class="center"><div class="ct">Total supply</div><div class="cv">10B</div><div class="cs" id="cHint">Hover a category</div></div>
+        </div>
+        <div class="detail"><div class="dt" id="udetail">Investors and Early Contributors vest until <b>March 15, 2027</b>. The rest is released into circulation as the Starknet Foundation allocates it. Hover a category for its unlock detail.</div></div>
+      </div>
+      <div class="note">Static protocol data — the official allocation from the <a href="https://docs.starknet.io/learn/protocol/strk" target="_blank" rel="noopener noreferrer">Starknet documentation ↗</a>.</div>
+    </div>
+      </div></div></div>
+    </div>
 
     <div class="nacc-item" id="market">
       <button class="nacc-head" aria-expanded="false" aria-controls="market-body"><span class="nacc-title">Market</span><span class="nacc-count"></span><i class="ti ti-chevron-down nacc-chev"></i></button>
@@ -2327,7 +2315,11 @@ root.querySelectorAll('.cell').forEach(c=>io.observe(c));
     });
   });
   function openFromHash(){
-    const id=(location.hash||'').slice(1);if(!id)return;
+    const raw=(location.hash||'').slice(1);if(!raw)return;
+    /* group ids merged away (7a8edbb's two tokenomics groups became one)
+       keep resolving: external links to them land on the merged group */
+    const ALIAS={'supply-unlocks':'tokenomics','distribution':'tokenomics'};
+    const id=ALIAS[raw]||raw;
     const el=document.getElementById(id);if(!el)return;
     /* an anchor INSIDE a collapsed group (e.g. #supply-over-time after a
        collapse) expands its group first, then scrolls to the anchor itself —
