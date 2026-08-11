@@ -384,47 +384,55 @@ a.nav-logo{text-decoration:none}
 .seglbl i{font-style:normal;display:inline-flex;align-items:center;gap:6px}
 .dotc{width:9px;height:9px;border-radius:3px;display:inline-block}
 .dotc.strk{background:var(--acc-2)} .dotc.btc{background:rgba(247,147,26,.8)} .dotc.gas{background:rgba(245,242,236,.4)} .dotc.priv{background:var(--acc-2)}
-/* bar <-> legend hover linking, Staking panel only (#staking-2): pure CSS
-   via :has() scoped to each .barrow / the panel's .viz, no JS and no DOM
-   changes. Segments stay non-focusable: the legend text already carries
-   every value, so keyboard users lose nothing (spec option 2). The whole
-   block lives under (hover:hover), so touch devices stay inert and a tap
-   can never stick a highlighted state. Opacity/color/filter only, no
-   layout shift; the one transform (legend dot scale) drops under reduced
-   motion while the informative dim/brighten stays. */
+/* bar <-> legend hover linking, ONE structural implementation shared by the
+   Staking and Fees panels: inside any utility .barrow, the Nth .barfill
+   segment pairs with the Nth .seglbl entry (staking: STRK/BTC side by side;
+   fees: gas/privacy stacked — same DOM order, same rules). Pure CSS via
+   :has(), no JS, no DOM changes; segments stay non-focusable since the
+   legend text carries every value. The whole block lives under
+   (hover:hover) so touch stays inert and a tap can never stick a state.
+   Opacity/color/filter only, no layout shift; the one transform (legend
+   dot scale) drops under reduced motion, the informative dim stays.
+   Per-panel extras below: staking's supply-bar <-> %-stat pair, and the
+   fees standard-transaction bar <-> its header value. */
 @media (hover:hover){
-  #staking-2 .barfill,#staking-2 .seglbl i,#staking-2 .dotc{transition:opacity .13s ease,filter .13s ease,color .13s ease,transform .13s ease}
-  /* STRK segment <-> STRK legend entry */
-  #staking-2 .barrow:has(.barfill.strk:hover) .barfill.btc,
-  #staking-2 .barrow:has(.seglbl i:first-child:hover) .barfill.btc,
-  #staking-2 .barrow:has(.barfill.strk:hover) .seglbl i:last-child,
-  #staking-2 .barrow:has(.seglbl i:first-child:hover) .seglbl i:last-child{opacity:.4}
-  #staking-2 .barrow:has(.barfill.strk:hover) .barfill.strk,
-  #staking-2 .barrow:has(.seglbl i:first-child:hover) .barfill.strk{filter:brightness(1.18)}
-  #staking-2 .barrow:has(.barfill.strk:hover) .seglbl i:first-child,
-  #staking-2 .barrow:has(.seglbl i:first-child:hover) .seglbl i:first-child{color:var(--white)}
-  #staking-2 .barrow:has(.barfill.strk:hover) .seglbl i:first-child .dotc,
-  #staking-2 .barrow:has(.seglbl i:first-child:hover) .seglbl i:first-child .dotc{transform:scale(1.25);filter:brightness(1.15)}
-  /* BTC segment <-> BTC legend entry, mirrored */
-  #staking-2 .barrow:has(.barfill.btc:hover) .barfill.strk,
-  #staking-2 .barrow:has(.seglbl i:last-child:hover) .barfill.strk,
-  #staking-2 .barrow:has(.barfill.btc:hover) .seglbl i:first-child,
-  #staking-2 .barrow:has(.seglbl i:last-child:hover) .seglbl i:first-child{opacity:.4}
-  #staking-2 .barrow:has(.barfill.btc:hover) .barfill.btc,
-  #staking-2 .barrow:has(.seglbl i:last-child:hover) .barfill.btc{filter:brightness(1.18)}
-  #staking-2 .barrow:has(.barfill.btc:hover) .seglbl i:last-child,
-  #staking-2 .barrow:has(.seglbl i:last-child:hover) .seglbl i:last-child{color:var(--white)}
-  #staking-2 .barrow:has(.barfill.btc:hover) .seglbl i:last-child .dotc,
-  #staking-2 .barrow:has(.seglbl i:last-child:hover) .seglbl i:last-child .dotc{transform:scale(1.25);filter:brightness(1.15)}
-  /* supply-staked bar <-> the % stat (first figlink); the accent tint
-     matches the figlink's own hover language. The other two stats are
-     not part of this pair and stay neutral. */
+  .util-panel .barfill,.util-panel .seglbl i,.util-panel .dotc{transition:opacity .13s ease,filter .13s ease,color .13s ease,transform .13s ease}
+  /* segment 1 <-> legend entry 1 */
+  .util-panel .barrow:has(.bartrack .barfill:nth-child(1):hover) .bartrack .barfill:nth-child(2),
+  .util-panel .barrow:has(.seglbl i:nth-child(1):hover) .bartrack .barfill:nth-child(2),
+  .util-panel .barrow:has(.bartrack .barfill:nth-child(1):hover) .seglbl i:nth-child(2),
+  .util-panel .barrow:has(.seglbl i:nth-child(1):hover) .seglbl i:nth-child(2){opacity:.4}
+  .util-panel .barrow:has(.bartrack .barfill:nth-child(1):hover) .bartrack .barfill:nth-child(1),
+  .util-panel .barrow:has(.seglbl i:nth-child(1):hover) .bartrack .barfill:nth-child(1){filter:brightness(1.18)}
+  .util-panel .barrow:has(.bartrack .barfill:nth-child(1):hover) .seglbl i:nth-child(1),
+  .util-panel .barrow:has(.seglbl i:nth-child(1):hover) .seglbl i:nth-child(1){color:var(--white)}
+  .util-panel .barrow:has(.bartrack .barfill:nth-child(1):hover) .seglbl i:nth-child(1) .dotc,
+  .util-panel .barrow:has(.seglbl i:nth-child(1):hover) .seglbl i:nth-child(1) .dotc{transform:scale(1.25);filter:brightness(1.15)}
+  /* segment 2 <-> legend entry 2, mirrored */
+  .util-panel .barrow:has(.bartrack .barfill:nth-child(2):hover) .bartrack .barfill:nth-child(1),
+  .util-panel .barrow:has(.seglbl i:nth-child(2):hover) .bartrack .barfill:nth-child(1),
+  .util-panel .barrow:has(.bartrack .barfill:nth-child(2):hover) .seglbl i:nth-child(1),
+  .util-panel .barrow:has(.seglbl i:nth-child(2):hover) .seglbl i:nth-child(1){opacity:.4}
+  .util-panel .barrow:has(.bartrack .barfill:nth-child(2):hover) .bartrack .barfill:nth-child(2),
+  .util-panel .barrow:has(.seglbl i:nth-child(2):hover) .bartrack .barfill:nth-child(2){filter:brightness(1.18)}
+  .util-panel .barrow:has(.bartrack .barfill:nth-child(2):hover) .seglbl i:nth-child(2),
+  .util-panel .barrow:has(.seglbl i:nth-child(2):hover) .seglbl i:nth-child(2){color:var(--white)}
+  .util-panel .barrow:has(.bartrack .barfill:nth-child(2):hover) .seglbl i:nth-child(2) .dotc,
+  .util-panel .barrow:has(.seglbl i:nth-child(2):hover) .seglbl i:nth-child(2) .dotc{transform:scale(1.25);filter:brightness(1.15)}
+  /* staking extra: supply-staked bar <-> the % stat (first figlink); the
+     accent tint matches the figlink's own hover language. The other two
+     stats are not part of this pair and stay neutral. */
   #staking-2 .viz:has(.barfill.meter:hover) .vrow .figlink:first-child .bignum,
   #staking-2 .viz:has(.barfill.meter:hover) .vrow .figlink:first-child .subt{color:var(--acc-2)}
-  #staking-2 .viz:has(.barfill.meter:hover) .barfill.meter,
   #staking-2 .viz:has(.vrow .figlink:first-child:hover) .barfill.meter{filter:brightness(1.18)}
+  /* fees extra: standard-transaction bar <-> its header value (the only
+     .bl with spans in the panel is that row's, so these cannot leak) */
+  #fees .barrow .bl span:last-child{transition:color .13s ease}
+  #fees .barrow:has(.bartrack .barfill:hover) .bl span:last-child,
+  #fees .barrow:has(.bl span:last-child:hover) .bl span:last-child{color:var(--acc-2)!important} /* the value span carries an inline color:var(--white); !important is the only way a stylesheet hover can win over it */
+  #fees .barrow:has(.bl span:last-child:hover) .bartrack .barfill{filter:brightness(1.18)}
 }
-@media (prefers-reduced-motion:reduce){#staking-2 .dotc{transform:none!important}}
+@media (prefers-reduced-motion:reduce){.util-panel .dotc{transform:none!important}}
 .bignum{font-family:var(--display);font-weight:800;font-size:30px;line-height:1}
 .bignum .u{font-size:15px;color:var(--muted-2);margin-left:6px}
 .subt{font-family:var(--mono),monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-top:6px}
