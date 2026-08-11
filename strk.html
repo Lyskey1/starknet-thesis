@@ -1261,12 +1261,14 @@ window.ADMIN_GATE=on;})();
          (CoinGecko); the unlock schedule is the official contractual vesting
          (docs.starknet.io) with the next-unlock %-of-circulating computed
          from the live supply; the distribution donut is static official
-         protocol data. This group SHIPS OPEN, unlike the reference-metric
-         groups below: thesis content, the toggle exists to collapse, not to
-         hide. The count badge derives at render time and counts PANELS (a
-         panel = one thesis unit), where the stats groups count stat cells. -->
-    <div class="nacc-item open" id="tokenomics">
-      <button class="nacc-head" aria-expanded="true" aria-controls="tokenomics-body"><span class="nacc-title">Tokenomics</span><span class="nacc-count"></span><i class="ti ti-chevron-down nacc-chev"></i></button>
+         protocol data. CONTRACT since this commit: every group, this one
+         included, ships CLOSED; each visitor's open/closed choices persist
+         per group in localStorage (snt.acc.<id>, restored pre-paint by the
+         inline script after the stack). The count badge derives at render
+         time and counts PANELS (a panel = one thesis unit), where the
+         stats groups count stat cells. -->
+    <div class="nacc-item" id="tokenomics">
+      <button class="nacc-head" aria-expanded="false" aria-controls="tokenomics-body"><span class="nacc-title">Tokenomics</span><span class="nacc-count"></span><i class="ti ti-chevron-down nacc-chev"></i></button>
       <div class="nacc-body" id="tokenomics-body"><div class="nacc-inner"><div class="nacc-panels">
     <div class="panel">
       <div class="eyebrow">Supply</div>
@@ -1370,6 +1372,23 @@ window.ADMIN_GATE=on;})();
     </div>
 
   </div>
+  <script>
+  /* pre-paint restore of each visitor's persisted group state. Contract:
+     snt.acc.<groupId> = '1' open / '0' closed; absent = closed (the markup
+     default). Runs inline immediately after the stack parses, before its
+     first paint, so a restored-open group never flashes closed-then-open
+     and never animates on restore. Only real user toggles write these keys
+     (see the accordion click handler); storage unavailable degrades
+     silently to all-closed. */
+  (function(){try{
+    document.querySelectorAll('#statsAcc .nacc-item').forEach(function(it){
+      if(localStorage.getItem('snt.acc.'+it.id)==='1'){
+        it.classList.add('open');
+        var h=it.querySelector('.nacc-head');if(h)h.setAttribute('aria-expanded','true');
+      }
+    });
+  }catch(e){}})();
+  </script>
 </div></div></section>
 
 <!-- BUY -->
@@ -2309,8 +2328,12 @@ root.querySelectorAll('.cell').forEach(c=>io.observe(c));
     it.querySelector('.nacc-head').setAttribute('aria-expanded',open?'true':'false');
     if(open&&window.__drawSparks)window.__drawSparks(it);}
   items.forEach(it=>{
-    it.querySelector('.nacc-head').addEventListener('click',()=>{
+    it.querySelector('.nacc-head').addEventListener('click',e=>{
       const open=!it.classList.contains('open');setOpen(it,open);
+      /* only a REAL user toggle persists (snt.acc.<id>): hash and in-page
+         search expansions arrive as synthetic clicks (isTrusted false) or
+         through setOpen directly, and must not write visitor state */
+      if(e.isTrusted){try{localStorage.setItem('snt.acc.'+it.id,open?'1':'0');}catch(err){}}
       if(open)history.replaceState(null,'','#'+it.id);
     });
   });
