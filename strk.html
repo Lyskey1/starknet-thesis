@@ -477,11 +477,30 @@ a.chip:hover{background:var(--acc);border-color:var(--acc);color:#0A0A0A}
 .venn-stage{position:relative}
 .venn-svg{width:100%;height:auto;display:block;overflow:visible}
 .venn-svg text{paint-order:stroke;stroke:var(--black);stroke-width:3px;stroke-linejoin:round}
-.venn-set{cursor:pointer;transition:opacity .3s}
-.venn-stage.focus .venn-set{opacity:.28}
+.venn-set{cursor:pointer;transition:opacity .25s}
+.venn-stage.focus .venn-set{opacity:.45}
 .venn-stage.focus .venn-set.on{opacity:1}
+/* core focus: the three pillars recede, the core lifts */
+.venn-stage.focus-core .venn-set{opacity:.45}
+.venn-stage.focus-core .venn-core{filter:brightness(1.25)}
 .venn-set .ring{fill:transparent;stroke-width:2;transition:stroke-width .25s,filter .25s}
-.venn-set:hover .ring,.venn-set a:focus-visible .ring{stroke-width:3.5;filter:brightness(1.25)}
+.venn-set .halo{transition:opacity .25s}
+.venn-set:hover .ring,.venn-set.on .ring,.venn-set a:focus-visible .ring{stroke-width:3.5;filter:brightness(1.25)}
+.venn-set:hover .halo,.venn-set.on .halo{opacity:.45}
+.venn-set:hover .fill,.venn-set.on .fill{filter:brightness(1.35)}
+/* entrance: rings draw in staggered, fills/halos/labels fade up after, all
+   IO-gated once (.venn-prep is added by JS, so no-JS renders settled; the
+   whole block is inside no-preference, so reduced motion renders settled) */
+@media (prefers-reduced-motion: no-preference){
+  .venn-stage.venn-prep .ring{stroke-dasharray:974;stroke-dashoffset:974}
+  .venn-stage.venn-prep .fill,.venn-stage.venn-prep .halo,.venn-stage.venn-prep text,.venn-stage.venn-prep .venn-core{opacity:0}
+  .venn-stage.venn-prep.in .ring{animation:vennDraw .6s cubic-bezier(.4,0,.2,1) forwards}
+  .venn-stage.venn-prep.in .venn-set:nth-of-type(2) .ring{animation-delay:.12s}
+  .venn-stage.venn-prep.in .venn-set:nth-of-type(3) .ring{animation-delay:.24s}
+  .venn-stage.venn-prep.in .fill,.venn-stage.venn-prep.in .halo,.venn-stage.venn-prep.in text,.venn-stage.venn-prep.in .venn-core{opacity:1;transition:opacity .5s ease .55s}
+  .venn-stage.venn-prep.in .venn-set:hover .halo,.venn-stage.venn-prep.in .venn-set.on .halo{opacity:.45}
+}
+@keyframes vennDraw{to{stroke-dashoffset:0}}
 .venn-svg a{cursor:pointer}
 .venn-core{transition:filter .25s}
 .venn-core:hover,.venn-core:focus-visible{filter:brightness(1.3)}
@@ -565,8 +584,13 @@ a.chip:hover{background:var(--acc);border-color:var(--acc);color:#0A0A0A}
 .venn-side h3{font-size:24px;margin-bottom:12px}
 .venn-side .lead{font-size:16px;max-width:40ch}
 .venn-legend{margin-top:24px;display:flex;flex-direction:column;gap:10px}
-.venn-legend a{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;cursor:pointer;text-align:left;text-decoration:none;color:var(--white);transition:border-color .2s,background .2s}
+.venn-legend a{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;cursor:pointer;text-align:left;text-decoration:none;color:var(--white);transition:border-color .2s,background .2s,opacity .2s}
 .venn-legend a:hover{border-color:var(--acc-2);background:rgba(124,58,237,.10)}
+/* venn <-> row linking states (set by the focusSet engine): the matched row
+   lifts with its own accent border, unmatched rows recede; rows stay links
+   and their click is untouched */
+.venn-legend a.on{border-color:var(--lc);background:rgba(245,242,236,.06)}
+.venn-legend a.dim{opacity:.45}
 .venn-legend .swatch{width:11px;height:11px;border-radius:50%;background:var(--lc);box-shadow:0 0 10px var(--lc);flex:0 0 auto}
 .venn-legend .ln{font-family:var(--display);font-weight:700;font-size:15px;flex:1;color:var(--white)}
 .venn-legend .lmc{font-family:var(--mono),monospace;font-size:14px;color:var(--muted-2)}
@@ -1220,10 +1244,17 @@ window.ADMIN_GATE=on;})();
     <div class="venn-stage" id="vennStage">
       <svg class="venn-svg" viewBox="0 0 600 560" xmlns="http://www.w3.org/2000/svg" aria-label="Three narratives converging on Starknet">
         <defs>
-          <radialGradient id="g-btcfi" cx="50%" cy="50%" r="50%"><stop offset="40%" stop-color="rgba(247,147,26,0)"/><stop offset="100%" stop-color="rgba(247,147,26,0.16)"/></radialGradient>
-          <radialGradient id="g-quantum" cx="50%" cy="50%" r="50%"><stop offset="40%" stop-color="rgba(61,169,252,0)"/><stop offset="100%" stop-color="rgba(61,169,252,0.16)"/></radialGradient>
-          <radialGradient id="g-privacy" cx="50%" cy="50%" r="50%"><stop offset="40%" stop-color="rgba(31,203,148,0)"/><stop offset="100%" stop-color="rgba(31,203,148,0.16)"/></radialGradient>
-          <radialGradient id="g-core" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="rgba(124,58,237,0.55)"/><stop offset="100%" stop-color="rgba(124,58,237,0)"/></radialGradient>
+          <!-- premium pass: fills keep a faint 3% center so the lenses never
+               read as holes, rising to 13% at the rim; the core halo stops at
+               ~82% of its radius so it no longer washes the CONVERGENCE
+               eyebrow and the label ring. vennGlow feeds the static halo
+               strokes: geometry never animates, so the blur rasterizes once
+               and steady-state paint cost is zero. -->
+          <radialGradient id="g-btcfi" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="rgba(247,147,26,0.03)"/><stop offset="72%" stop-color="rgba(247,147,26,0.05)"/><stop offset="100%" stop-color="rgba(247,147,26,0.13)"/></radialGradient>
+          <radialGradient id="g-quantum" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="rgba(61,169,252,0.03)"/><stop offset="72%" stop-color="rgba(61,169,252,0.05)"/><stop offset="100%" stop-color="rgba(61,169,252,0.13)"/></radialGradient>
+          <radialGradient id="g-privacy" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="rgba(31,203,148,0.03)"/><stop offset="72%" stop-color="rgba(31,203,148,0.05)"/><stop offset="100%" stop-color="rgba(31,203,148,0.13)"/></radialGradient>
+          <radialGradient id="g-core" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="rgba(124,58,237,0.5)"/><stop offset="55%" stop-color="rgba(124,58,237,0.16)"/><stop offset="82%" stop-color="rgba(124,58,237,0)"/></radialGradient>
+          <filter id="vennGlow" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="5"/></filter>
         </defs>
 
         <!-- Each set links to the same CoinGecko page as its legend row. SVG <a>
@@ -1235,6 +1266,7 @@ window.ADMIN_GATE=on;})();
         <g class="venn-set" data-set="btcfi">
           <a href="https://www.coingecko.com/en/categories/bitcoin-layer-2" target="_blank" rel="noopener noreferrer" aria-label="BTCFi — Bitcoin Layer 2 category on CoinGecko">
             <circle class="fill" cx="300" cy="190" r="155" fill="url(#g-btcfi)"/>
+            <circle class="halo" cx="300" cy="190" r="155" fill="none" stroke="#F7931A" stroke-width="6" opacity="0.26" filter="url(#vennGlow)"/>
             <circle class="ring" cx="300" cy="190" r="155" stroke="#F7931A"/>
             <text x="300" y="90" text-anchor="middle" fill="#F7931A" font-family="Archivo Expanded" font-weight="800" font-size="22">BTCFi</text>
             <text x="300" y="114" text-anchor="middle" fill="#F7931A" font-family="Archivo Expanded" font-weight="700" font-size="18" data-metric="venn.btcfi">$618.9M</text>
@@ -1244,6 +1276,7 @@ window.ADMIN_GATE=on;})();
         <g class="venn-set" data-set="quantum">
           <a href="https://www.coingecko.com/en/categories/quantum-resistant" target="_blank" rel="noopener noreferrer" aria-label="Quantum — Quantum-Resistant category on CoinGecko">
             <circle class="fill" cx="231" cy="310" r="155" fill="url(#g-quantum)"/>
+            <circle class="halo" cx="231" cy="310" r="155" fill="none" stroke="#3DA9FC" stroke-width="6" opacity="0.26" filter="url(#vennGlow)"/>
             <circle class="ring" cx="231" cy="310" r="155" stroke="#3DA9FC"/>
             <text x="150" y="350" text-anchor="middle" fill="#3DA9FC" font-family="Archivo Expanded" font-weight="800" font-size="20">Quantum</text>
             <text x="150" y="373" text-anchor="middle" fill="#3DA9FC" font-family="Archivo Expanded" font-weight="700" font-size="17" data-metric="venn.quantum">$10.11B</text>
@@ -1253,6 +1286,7 @@ window.ADMIN_GATE=on;})();
         <g class="venn-set" data-set="privacy">
           <a href="https://www.coingecko.com/en/categories/privacy-infrastructure" target="_blank" rel="noopener noreferrer" aria-label="Privacy — Privacy Infrastructure category on CoinGecko">
             <circle class="fill" cx="369" cy="310" r="155" fill="url(#g-privacy)"/>
+            <circle class="halo" cx="369" cy="310" r="155" fill="none" stroke="#1FCB94" stroke-width="6" opacity="0.26" filter="url(#vennGlow)"/>
             <circle class="ring" cx="369" cy="310" r="155" stroke="#1FCB94"/>
             <text x="450" y="350" text-anchor="middle" fill="#1FCB94" font-family="Archivo Expanded" font-weight="800" font-size="20">Privacy</text>
             <text x="450" y="373" text-anchor="middle" fill="#1FCB94" font-family="Archivo Expanded" font-weight="700" font-size="17" data-metric="venn.privacy">$10.43B</text>
@@ -1591,15 +1625,50 @@ deferEngine('[data-list="cex"]',function(){
 
 /* ---------- Venn focus interaction ---------- */
 const stage=document.getElementById("vennStage");
-function focusSet(s){if(!s||s==="strk"){stage.classList.remove("focus");
-    stage.querySelectorAll(".venn-set").forEach(g=>g.classList.remove("on"));return;}
-  stage.classList.add("focus");
-  stage.querySelectorAll(".venn-set").forEach(g=>g.classList.toggle("on",g.dataset.set===s));}
-document.querySelectorAll('.venn-set,[data-set]').forEach(el=>{
-  el.addEventListener("mouseenter",()=>focusSet(el.dataset.set));
-  el.addEventListener("mouseleave",()=>focusSet(null));
-  el.addEventListener("click",()=>focusSet(el.dataset.set));
-});
+const vennRows=[...document.querySelectorAll('.venn-legend a')];
+/* one state machine for both directions: a pillar set dims its siblings and
+   the unmatched panel rows; the core ('strk') is its own state — pillars
+   recede, the core and the Starknet row lift. Listeners attach only on
+   hover-capable pointers (touch taps just navigate, no state can stick; the
+   old click-to-focus is gone for the same reason) plus focusin/focusout for
+   keyboard parity on the existing links. */
+function focusSet(s){
+  stage.classList.toggle("focus",!!s&&s!=="strk");
+  stage.classList.toggle("focus-core",s==="strk");
+  stage.querySelectorAll(".venn-set").forEach(g=>g.classList.toggle("on",g.dataset.set===s));
+  vennRows.forEach(r=>{r.classList.toggle("on",!!s&&r.dataset.set===s);r.classList.toggle("dim",!!s&&r.dataset.set!==s);});
+}
+if(matchMedia('(hover:hover)').matches){
+  document.querySelectorAll('.venn-set,.venn-core,.venn-legend a').forEach(el=>{
+    el.addEventListener("mouseenter",()=>focusSet(el.dataset.set));
+    el.addEventListener("mouseleave",()=>focusSet(null));
+    el.addEventListener("focusin",()=>focusSet(el.dataset.set));
+    el.addEventListener("focusout",()=>focusSet(null));
+  });
+}
+/* entrance: rings draw, fills fade, the four venn figures count up from 0 —
+   IO-gated, once. Reduced motion skips the whole thing (settled render). */
+(function(){
+  if(!stage||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  stage.classList.add('venn-prep');
+  const vio=new IntersectionObserver(es=>es.forEach(e=>{
+    if(!e.isIntersecting)return;
+    vio.disconnect();
+    stage.classList.add('in');
+    setTimeout(()=>{ /* figures start as the rings land */
+      stage.querySelectorAll('[data-metric^="venn."]').forEach(el=>{
+        const txt=el.textContent,m=txt.match(/[0-9]+(?:\.[0-9]+)?/);if(!m)return;
+        const target=parseFloat(m[0]),dec=(m[0].split('.')[1]||'').length,t0=performance.now();
+        (function tick(now){
+          const f=Math.min(1,(now-t0)/800),ease=1-Math.pow(1-f,3);
+          el.textContent=txt.replace(m[0],(target*ease).toFixed(dec));
+          if(f<1)requestAnimationFrame(tick);else el.textContent=txt;
+        })(t0);
+      });
+    },550);
+  }),{threshold:.35});
+  vio.observe(stage);
+})();
 
 /* ---------- section 05 where-to-get accordion (CSS-driven; ships collapsed, independent toggles) ---------- */
 document.querySelectorAll(".buy-head").forEach(h=>{
