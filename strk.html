@@ -693,7 +693,16 @@ a.chip:hover{background:var(--acc);border-color:var(--acc);color:#0A0A0A}
 .conclude h2{font-size:clamp(28px,4vw,46px);max-width:18ch;margin:0 auto 14px}
 .pillar-links{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin-top:30px}
 .pillar-links a{display:inline-flex;align-items:center;gap:9px;border:1px solid var(--line);border-radius:10px;padding:13px 20px;font-family:var(--mono),monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted-2);transition:.2s}
-.pillar-links a:hover{border-color:var(--clr);color:var(--white)} .pillar-links a i{color:var(--clr)}
+.pillar-links a:hover{border-color:var(--clr);color:var(--white)}
+/* pillar glyphs: two hand-drawn stroke SVGs + the ZK braces. The braces are
+   IBM Plex Mono TEXT at 11px (the font IS the design; ink height 9.9px vs
+   the 13px SVGs' 9.5px ink), flex-centered — the em-box vs ink-box offset
+   measures ~0.1px at this size, below a device pixel, so no nudge. The
+   drawn glyphs' 1.9-unit stroke matches the braces' apparent stem weight.
+   Everything inherits the pill accent via --clr, as the font glyphs did. */
+.pillar-links a svg{color:var(--clr);flex:none}
+.pillar-links .pg-braces{display:inline-flex;align-items:center;font:400 11px var(--mono),monospace;line-height:1;color:var(--clr)}
+.pillar-links .pg-dot{display:block;width:2.4px;height:2.4px;border-radius:50%;background:currentColor;margin:0 1.5px}
 .pillar-links .l-btcfi{--clr:var(--p-btcfi)}.pillar-links .l-privacy{--clr:var(--p-privacy)}.pillar-links .l-quantum{--clr:var(--p-quantum)}
 
 /* footer */
@@ -1433,10 +1442,17 @@ window.ADMIN_GATE=on;})();
   <p class="eyebrow" style="display:block;margin-bottom:18px">The whole bet, one ticker</p>
   <h2 id="strk-is-a-bet-on-privacy">STRK is a bet on <span class="hl-privacy">privacy</span>, <span class="hl-quantum">quantum resistance</span> &amp; <span class="hl-btcfi">BTCFi</span>.</h2>
   <p class="lead" style="margin:0 auto;text-align:center">Read the three pillars it's built on.</p>
+  <!-- pillar glyphs, one 24-grid hand-drawn set (Tabler webfont glyphs
+       replaced; the font itself stays for the accordion chevrons and other
+       icons). PRIVACY: ZK braces with the hidden dot, the one fill in the
+       set. QUANTUM: the qh-chandelier from quantum.html distilled to its
+       silhouette: axis, three shrinking plates, mixing chamber. BTCFI: the
+       Bitcoin B silhouette redrawn in the trio's stroke. aria-hidden
+       throughout: the labels carry the meaning. -->
   <div class="pillar-links">
-    <a class="l-privacy" href="/privacy"><i class="ti ti-eye-off"></i> Privacy</a>
-    <a class="l-quantum" href="/quantum"><i class="ti ti-shield-bolt"></i> Quantum</a>
-    <a class="l-btcfi" href="/btcfi"><i class="ti ti-currency-bitcoin"></i> BTCFi</a>
+    <a class="l-privacy" href="/privacy"><span class="pg-braces" aria-hidden="true">{<i class="pg-dot"></i>}</span> Privacy</a>
+    <a class="l-quantum" href="/quantum"><svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5v13"/><path d="M5 6.5h14"/><path d="M6.75 10.5h10.5"/><path d="M8.5 14.5h7"/><rect x="9.75" y="16.5" width="4.5" height="4.5" rx="0.8"/></svg> Quantum</a>
+    <a class="l-btcfi" href="/btcfi"><svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6h7.5a3 3 0 0 1 0 6a3 3 0 0 1 0 6H6.5"/><path d="M8.5 6v12"/><path d="M8.5 12h5.5"/><path d="M10 3.5V6"/><path d="M13 3.5V6"/><path d="M10 18v2.5"/><path d="M13 18v2.5"/></svg> BTCFi</a>
   </div>
 </div></section>
 
