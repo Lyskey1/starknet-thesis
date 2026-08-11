@@ -211,7 +211,7 @@
             mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent); }
   .pv-mq-track { display: flex; width: max-content; }
   .pv-mq-set { display: flex; gap: 14px; padding-right: 14px; }
-  .pv-mq-set span { font-family: var(--mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; white-space: nowrap;
+  .pv-mq-set > span { /* child combinator: the FEE chip nests a live-value span, and the old descendant selector dressed it as a second pill, inflating the whole flex row (59px chips vs quantum's 39px) */ font-family: var(--mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; white-space: nowrap;
     border: 1px solid var(--em-line); color: var(--em); padding: 9px 16px; border-radius: 99px; display: inline-flex; }
   .pv-marquee.run .pv-mq-track { animation: pvmq 70s linear infinite; }
   @keyframes pvmq { to { transform: translateX(-33.3333%); } }

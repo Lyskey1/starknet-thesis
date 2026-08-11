@@ -250,7 +250,7 @@ a.nav-logo{text-decoration:none}
           mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent)}
 .sk-mq-track{display:flex;width:max-content}
 .sk-mq-set{display:flex;gap:14px;padding-right:14px}
-.sk-mq-set span{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;
+.sk-mq-set>span{/* child combinator, band-family rule: nested spans must never pick up pill styles */font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;
   border:1px solid rgba(var(--accent-rgb),.35);color:var(--accent);padding:9px 16px;border-radius:99px;display:inline-flex}
 /* duration tracks the set width so the perceived scroll speed is unchanged
    by the copy edit: the set narrowed from 3177.7px to 2907.6px, so 70s
@@ -287,7 +287,7 @@ a.nav-logo{text-decoration:none}
   /* the static rows are not a scrolling loop, so nowrap has no job here: it
      only let the long pills run past the band's overflow:hidden edge. Let the
      label wrap inside the pill instead. Type size and padding stay on spec. */
-  .sk-mq-set span{white-space:normal;text-align:center}
+  .sk-mq-set>span{white-space:normal;text-align:center}
   .sk-marquee{-webkit-mask-image:none;mask-image:none;padding:16px 0;margin-top:26px}
 }
 @media(max-width:700px){.hero .sk-inner{padding:0 24px}.sk-ctas{flex-direction:column;align-items:flex-start;gap:14px}}
