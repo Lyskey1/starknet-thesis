@@ -14,19 +14,20 @@ jobs:
     env:
       STARKSCAN_API_KEY: ${{ secrets.STARKSCAN_API_KEY }}
     steps:
-      - name: holders analytics for STRK
+      - name: tier diagnosis for STRK holders
         run: |
           if [ -z "$STARKSCAN_API_KEY" ]; then echo "secret missing"; exit 1; fi
           STRK=0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d
-          for chain in SN_MAIN; do
-            echo "=== chain=$chain"
+          probe(){
+            echo "=== $1 (header $2)"
             code=$(curl -sS -m 25 -D headers.txt -o body.json -w "%{http_code}" \
-              "https://api.starkscan.co/v1/$chain/token/$STRK/holders/analytics" \
-              -H "X-Starkscan-Api-Key: $STARKSCAN_API_KEY" \
+              "https://api.starkscan.co$1" -H "$2: $STARKSCAN_API_KEY" \
               -H "Accept: application/json" || echo "curl-failed")
             echo "HTTP $code"
-            echo "--- rate-limit and validator headers only"
-            grep -i -E "ratelimit|rate-limit|retry-after|etag|last-modified|x-request-id" headers.txt || echo "(none)"
-            echo "--- body"
-            head -c 1500 body.json; echo
-          done
+            grep -i -E "ratelimit|retry-after|x-request-id|x-starkscan-route-class" headers.txt || true
+            head -c 700 body.json; echo
+          }
+          probe "/v1/SN_MAIN/status" "X-Starkscan-Api-Key"
+          probe "/v1/SN_MAIN/token/$STRK" "X-Starkscan-Api-Key"
+          probe "/v1/SN_MAIN/token/$STRK/holders/analytics" "X-Starkscan-Api-Key"
+          probe "/v1/SN_MAIN/token/$STRK/holders/analytics" "X-Api-Key"
