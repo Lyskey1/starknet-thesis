@@ -649,7 +649,13 @@
      roughly 600px viewport, where the clamp has already scaled it, and lets
      it wrap naturally below that. Still far narrower than the 1160px panel
      above it. */
-  .eco-submit { text-align: center; margin: 36px auto 0; max-width: 840px; }
+  /* closing-sequence rhythm: the shared .cta-block reserves 80px of bottom
+     padding that stranded the FOLLOW button mid-panel (the "dead zone");
+     page-scoped, the panel now hugs its content (48px) and the inter-block
+     margin carries the beat instead: 48 + 128 = 176px of air before the
+     missing-project heading, the same 176 the panel gets after the grid. */
+  section .cta-block { padding-bottom: 48px; }
+  .eco-submit { text-align: center; margin: 128px auto 0; max-width: 840px; }
   .eco-submit h2 {
     font-family: var(--display); font-weight: 700;
     font-size: clamp(26px, 3vw, 38px); line-height: 1.15;
@@ -688,7 +694,7 @@
       0 0 40px rgba(var(--accent-rgb), .45);
   }
   @media (max-width: 700px) {
-    .eco-submit { margin-top: 30px; padding: 0 24px; }
+    .eco-submit { margin-top: 64px; padding: 0 24px; } /* mobile keeps the closing beat: 48px panel pad + 64 = 112px of air, proportionate to the 48px mobile section rhythm */
     /* the hero stacks its CTA column left-aligned; a single centered button
        here keeps the block's own axis */
     .eco-submit .eco-cta { display: inline-flex; }
@@ -793,7 +799,10 @@
 <div id="ecoSections"></div>
 
 <!-- CLOSING CTA -->
-<section style="padding-top:88px;">
+<!-- closing sequence spacing: 176px above the panel matches the page's
+     ~181px full inter-section separation (last card to next section's first
+     card); the old 88px read as half a beat. -->
+<section style="padding-top:176px;">
   <div class="cta-block ecg-glass">
     <h2 id="dont-want-to-follow-them-one">Don't want to follow them one by one?</h2>
     <p>Follow entire Starknet lists in one click, curated on X.</p>
@@ -805,7 +814,10 @@
   <!-- submission CTA: same closing area, subordinate treatment -->
   <div class="eco-submit">
     <h2 id="a-project-or-a-voice-missing">A project or a voice missing from this page?</h2>
-    <p>Send a DM on X and the account gets added.</p>
+    <!-- first-person (us/we) is a DELIBERATE owner exception for this
+         contribution CTA only; the site's copy rules avoid it elsewhere.
+         Do not "fix" back to impersonal voice in a copy audit. -->
+    <p>DM us on X and we'll add it.</p>
     <a class="eco-cta eco-cta--muted chip-glass" href="https://x.com/Lyskey" target="_blank" rel="noopener">DM on X <i aria-hidden="true">&rarr;</i></a>
   </div>
 </section>
