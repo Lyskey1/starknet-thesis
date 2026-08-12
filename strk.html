@@ -492,7 +492,11 @@ a.chip:hover{background:var(--acc);border-color:var(--acc);color:#0A0A0A}
    IO-gated once (.venn-prep is added by JS, so no-JS renders settled; the
    whole block is inside no-preference, so reduced motion renders settled) */
 @media (prefers-reduced-motion: no-preference){
-  .venn-stage.venn-prep .ring{stroke-dasharray:974;stroke-dashoffset:974}
+  /* 1200 exceeds the largest possible circumference (r is engine-scaled up
+     to 155*1.08, C 1051.8), so armed rings are fully hidden at any radius;
+     the exact per-ring length is measured and set inline when the draw
+     starts, and every dash property is removed once it lands */
+  .venn-stage.venn-prep .ring{stroke-dasharray:1200;stroke-dashoffset:1200}
   .venn-stage.venn-prep .fill,.venn-stage.venn-prep .halo,.venn-stage.venn-prep text,.venn-stage.venn-prep .venn-core{opacity:0}
   .venn-stage.venn-prep.in .ring{animation:vennDraw .6s cubic-bezier(.4,0,.2,1) forwards}
   .venn-stage.venn-prep.in .venn-set:nth-of-type(2) .ring{animation-delay:.12s}
@@ -1642,10 +1646,32 @@ if(matchMedia('(hover:hover)').matches){
 (function(){
   if(!stage||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
   stage.classList.add('venn-prep');
+  /* the metrics engine rescales every r after this arms (155 * 0.9..1.08),
+     so dash values are measured per ring when the draw starts, and removed
+     entirely once it lands: the settled circle is a plain full stroke with
+     zero dash math, whatever the radius, zoom or DPR. */
+  const rings=[...stage.querySelectorAll('.venn-set .ring')];
+  let settled=false;
+  function settleVenn(){
+    if(settled)return;settled=true;
+    rings.forEach(r=>{r.style.strokeDasharray='';r.style.strokeDashoffset='';});
+    stage.classList.remove('venn-prep','in');
+  }
+  rings.forEach(r=>r.addEventListener('animationend',()=>{
+    r.style.strokeDasharray='';r.style.strokeDashoffset='';
+  }));
   const vio=new IntersectionObserver(es=>es.forEach(e=>{
     if(!e.isIntersecting)return;
     vio.disconnect();
+    rings.forEach(r=>{
+      const L=Math.ceil(r.getTotalLength())+2; /* +2 overdraw absorbs rounding */
+      r.style.strokeDasharray=L;r.style.strokeDashoffset=L;
+    });
     stage.classList.add('in');
+    /* classes drop after the fills' opacity transition (.55s delay + .5s)
+       and the last ring's draw (.24s delay + .6s) have both finished; also
+       the safety net if animationend never fires */
+    setTimeout(settleVenn,1300);
     setTimeout(()=>{ /* figures start as the rings land */
       stage.querySelectorAll('[data-metric^="venn."]').forEach(el=>{
         const txt=el.textContent,m=txt.match(/[0-9]+(?:\.[0-9]+)?/);if(!m)return;
