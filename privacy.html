@@ -432,6 +432,12 @@
   .pw-wall .case .cd { line-height: 1.6; margin-top: 10px; }
   .pw-wall .case .cs { margin-top: 11px; padding-top: 10px; }
   .pw-wall .landmass { padding: 18px; }
+  /* the field takes a fixed height rather than filling what the readout
+     leaves: the readout runs two lines at small crowds and four at narrow
+     desktop widths, and any height change re-lays the field out, which
+     moves every dot mid-drag. Fixed here, the crowd cannot be disturbed by
+     the numbers changing underneath it. */
+  .pw-wall .dots { height: 208px; }
   /* walls 01 and 02 run their copy full width with the artifact below:
      both measure shorter that way, and the island (a flex row of two
      landmasses either side of a 118px bridge) needs the full column or it
@@ -449,6 +455,7 @@
     .pw-rail { grid-template-rows: none; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 12px; }
     .pw-obj { width: 76px; height: 66px; }
     .pw-plinth { max-width: none; height: 54px; }
+    .pw-wall .dots { height: 150px; }
     .pw-shell { height: auto; overflow: visible; -webkit-backdrop-filter: none; backdrop-filter: none; background: #0B0F10; }
     .pw-shell::after { content: none; }
     .pw-panel { height: auto; overflow: visible; }
@@ -636,10 +643,13 @@
   .crowd-top { display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; }
   .crowd-top .t { font-family: var(--mono); font-size: 12px; letter-spacing: .14em; color: var(--muted); }
   .crowd-top input { accent-color: var(--em); width: 220px; }
-  .dots { display: grid; grid-template-columns: repeat(30,1fr); gap: 7px; margin-top: 24px; }
-  .dot { aspect-ratio: 1; border-radius: 50%; background: #20272B; transition: opacity .3s; }
-  .dot.hidden { opacity: 0; }
-  .dot.you { background: var(--em); box-shadow: 0 0 10px var(--em); position: relative; }
+  /* the crowd field is one canvas, not N nodes: at the slider's ceiling it
+     paints 240 dots per frame, which costs far less than mutating 240
+     elements, and it cannot spill because every dot is clipped to the box.
+     Positions are computed once per size (never per tick), so dragging adds
+     and removes neighbours instead of reshuffling the crowd. */
+  .dots { position: relative; margin-top: 20px; min-height: 120px; }
+  .dots canvas { display: block; width: 100%; height: 100%; position: absolute; inset: 0; }
   .crowd-cap { font-family: var(--mono); font-size: 12px; margin-top: 22px; letter-spacing: .06em; }
   .crowd-cap .n { color: var(--em); }
   .crowd-cap .warn { color: var(--danger); }
@@ -1452,7 +1462,6 @@
     .cases { grid-template-columns: 1fr; }
     .island { flex-direction: column; gap: 14px; }
     .bridge { flex: none; width: 100%; padding: 8px 0; }
-    .dots { grid-template-columns: repeat(15,1fr); }
     .forum-post { grid-template-columns: 1fr; }
     .forum-user { border-right: none; border-bottom: 1px solid var(--line); }
     /* vertical rail: left connector line, dots on the line, year+label right */
@@ -1484,7 +1493,6 @@
     .shield-wrap .bk { animation: none; opacity: 1; transform: none; }
     .shield-wrap .word { animation: none; }
     .hero .turn { animation: none; opacity: 1; transform: none; }
-    .dot { transition: none; }
     a.ln:hover { transform: none; }
   }
 
@@ -1785,10 +1793,10 @@
         </div>
         <div class="crowd">
           <div class="crowd-top">
-            <span class="t">HOW HIDDEN ARE YOU? DRAG THE CROWD.</span>
-            <input type="range" id="crowdRange" min="3" max="240" value="8">
+            <span class="t" id="crowdLabel">HOW HIDDEN ARE YOU? DRAG THE CROWD.</span>
+            <input type="range" id="crowdRange" min="3" max="240" value="8" aria-labelledby="crowdLabel">
           </div>
-          <div class="dots" id="dots"></div>
+          <div class="dots" id="dots"><canvas id="crowdField" aria-hidden="true"></canvas></div>
           <div class="crowd-cap" id="crowdCap"></div>
         </div>
         </div>
@@ -2610,26 +2618,115 @@ function thRove(opts){
 // SECTION 02 — crowd slider (240 dots, live caption)
 // ============================================================
 (function(){
-  var dotsEl = document.getElementById('dots'), cap = document.getElementById('crowdCap'), range = document.getElementById('crowdRange');
-  if (!dotsEl) return;
-  var TOTAL = 240, YOU = 97;
-  for (var i = 0; i < TOTAL; i++) {
-    var d = document.createElement('div');
-    d.className = 'dot' + (i === YOU ? ' you' : '');
-    dotsEl.appendChild(d);
+  var dotsEl = document.getElementById('dots'), cap = document.getElementById('crowdCap'),
+      range = document.getElementById('crowdRange'), cv = document.getElementById('crowdField');
+  if (!dotsEl || !cv) return;
+  var ctx = cv.getContext('2d');
+  var MAX = +range.max, MIN = +range.min;
+  var pts = [], W = 0, H = 0;
+
+  /* seeded PRNG: the jitter and the draw order must be identical on every
+     load and every tick, or the crowd would reshuffle as the slider moves */
+  function rng(seed){
+    return function(){
+      seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+      var t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+  /* one jittered-grid slot per crowd member, shuffled once so that the
+     first n slots are spread over the whole field rather than filling a
+     corner. Recomputed on resize only: a slider tick never moves a dot. */
+  function layout(w, h){
+    var rand = rng(20260812);
+    var cols = Math.max(1, Math.round(Math.sqrt(MAX * w / Math.max(1, h))));
+    var rows = Math.ceil(MAX / cols);
+    var cw = w / cols, ch = h / rows, pad = 3;
+    var all = [];
+    for (var i = 0; i < MAX; i++) {
+      var cx = (i % cols) * cw, cy = Math.floor(i / cols) * ch;
+      all.push({
+        x: Math.min(w - pad, Math.max(pad, cx + cw * (.12 + rand() * .76))),
+        y: Math.min(h - pad, Math.max(pad, cy + ch * (.12 + rand() * .76)))
+      });
+    }
+    for (var j = all.length - 1; j > 0; j--) {
+      var k = Math.floor(rand() * (j + 1)), tmp = all[j]; all[j] = all[k]; all[k] = tmp;
+    }
+    /* your dot takes the slot nearest the middle: that is where the crowd
+       closes over it most tightly at the top of the range */
+    var best = 0, bestD = Infinity;
+    for (var m = 0; m < all.length; m++) {
+      var dx = all[m].x - w / 2, dy = all[m].y - h * .55, d2 = dx * dx + dy * dy;
+      if (d2 < bestD) { bestD = d2; best = m; }
+    }
+    var you = all[best]; all[best] = all[0]; all[0] = you;
+    pts = all;
+  }
+  /* re-lays out only when the box actually changes size, so the observer's
+     stream of resize ticks never disturbs the crowd */
+  function size(){
+    var r = dotsEl.getBoundingClientRect();
+    if (!r.width || !r.height) return false;   /* the wall is not on screen yet */
+    if (Math.abs(r.width - W) < .5 && Math.abs(r.height - H) < .5) return true;
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = r.width; H = r.height;
+    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    layout(W, H);
+    return true;
+  }
+  function lerp(a, b, t){ return a + (b - a) * t; }
+  function draw(){
+    if (!size()) return;                       /* nothing to paint into yet */
+    var n = +range.value;
+    var accent = (getComputedStyle(document.body).getPropertyValue('--accent-rgb') || '31,203,148').trim();
+    /* t runs 0 at the smallest crowd to 1 at the largest. The neighbours
+       brighten and close in as it rises while your dot's ring, glow and
+       size advantage fade: obvious at the floor, lost at the ceiling. */
+    var t = (n - MIN) / (MAX - MIN);
+    var r = lerp(5.4, 2.7, t);
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = 'rgba(' + accent + ',' + lerp(.26, .72, Math.pow(t, .7)).toFixed(3) + ')';
+    for (var i = 1; i < n; i++) {
+      ctx.beginPath(); ctx.arc(pts[i].x, pts[i].y, r, 0, 6.2832); ctx.fill();
+    }
+    var you = pts[0], yr = r + lerp(2.5, 0.8, t);
+    ctx.save();
+    ctx.shadowColor = 'rgba(' + accent + ',.9)';
+    ctx.shadowBlur = lerp(12, 2, t);
+    ctx.fillStyle = 'rgb(' + accent + ')';
+    ctx.beginPath(); ctx.arc(you.x, you.y, yr, 0, 6.2832); ctx.fill();
+    ctx.restore();
+    ctx.strokeStyle = 'rgba(' + accent + ',' + lerp(.95, .12, t).toFixed(3) + ')';
+    ctx.lineWidth = 1.2;
+    ctx.beginPath(); ctx.arc(you.x, you.y, yr + lerp(5, 2.4, t), 0, 6.2832); ctx.stroke();
   }
   function upd(){
     var n = +range.value;
-    [].forEach.call(dotsEl.children, function(d, i){
-      if (i === YOU) return;
-      d.classList.toggle('hidden', i >= n);
-    });
     var odds = n <= 1 ? 'YOU ARE ALONE.' : '1 IN ' + n;
+    range.setAttribute('aria-valuetext', n + ' in the crowd, you are ' + odds.toLowerCase().replace(/\.$/, ''));
     cap.innerHTML = n < 20
       ? 'CROWD: <span class="n">' + n + '</span> — YOU ARE <span class="warn">' + odds + '</span>. EASY TO ISOLATE.'
       : 'CROWD: <span class="n">' + n + '</span> — YOU ARE <span class="n">' + odds + '</span>. EVERY NEW USER HIDES YOU BETTER.';
+    draw();
   }
-  range.addEventListener('input', upd); upd();
+  /* painting straight from the event keeps the field in lockstep with the
+     handle; one paint is 240 arcs into a single canvas, measured at well
+     under a tenth of a millisecond, so there is nothing to defer */
+  range.addEventListener('input', upd);
+  /* the wall ships hidden, so the box has no size until it is selected:
+     the observer covers that first reveal and any later resize, and the
+     pedestal click covers browsers without one */
+  if ('ResizeObserver' in window) {
+    new ResizeObserver(draw).observe(dotsEl);
+  } else {
+    window.addEventListener('resize', draw);
+  }
+  var pw = document.getElementById('wall-pedestals');
+  if (pw) pw.addEventListener('click', function(){ setTimeout(draw, 0); });
+  upd();
 })();
 
 // ============================================================
