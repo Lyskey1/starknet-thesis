@@ -350,7 +350,10 @@
      prefix, collides with nothing. Fact rows keep the pb-li family so
      the search index spec keeps matching them. */
   .bstk { display: grid; grid-template-columns: minmax(0, 46%) minmax(0, 1fr); gap: 40px; align-items: stretch; margin-top: 34px; }
-  .bstk-stage { perspective: 1400px; display: grid; place-items: center; min-height: 390px; }
+  /* reserved headroom: the lifted plane's projection rises up to 56px above
+     the rest stack (worst at 768px), so the stage owns that air permanently.
+     Static padding means no layout shift between selection states. */
+  .bstk-stage { perspective: 1400px; display: grid; place-items: center; min-height: 390px; padding-top: 80px; }
   .bstk-iso { position: relative; width: 310px; height: 216px; transform: scale(var(--iso-s,1)) rotateX(58deg) rotateZ(-45deg); transform-style: preserve-3d; }
   .bstk-plane { position: absolute; inset: 0; transform-style: preserve-3d; background: none; border: 0; padding: 0; cursor: pointer;
     transform: translateZ(var(--pz)); transition: transform .42s cubic-bezier(.22,1,.36,1), opacity .5s ease; }
@@ -386,7 +389,12 @@
   /* the bottom plane owns the empty air under the stack */
   .bstk-plane:first-child .bstk-ef::after { bottom: -36px; }
   /* slab: top face + two visible edge strips */
+  /* clip-path is load-bearing beyond the clip: it groups the face so the
+     stroked watermark digit rasterizes INTO the face's 3D plane. Without it
+     Chrome composites the digit as its own layer and paints it out of plane,
+     over sibling planes below. */
   .bstk-face { position: absolute; inset: 0; border-radius: 6px;
+    clip-path: inset(0 round 6px);
     background: linear-gradient(135deg, rgba(var(--t), .16), rgba(var(--t), .05) 55%, rgba(var(--t), .10));
     border: 1px solid rgba(var(--t), .42);
     box-shadow: inset 0 1px 0 rgba(255,255,255,.18), inset 0 0 34px rgba(var(--t), .07); }
