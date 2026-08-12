@@ -209,6 +209,12 @@
     if (target.classList && (target.classList.contains('wp-card') || target.classList.contains('sp-card'))) {
       target.classList.add(target.classList.contains('wp-card') ? 'tap-open' : 'on'); did = true;
     }
+    /* privacy: wall pedestals panel shows one wall at a time */
+    const pw = target.closest && target.closest('.pw-wall');
+    if (pw && !pw.classList.contains('is-on')) did = clickIf(document.querySelectorAll('#wall-pedestals .pw-ped')[+pw.dataset.wall]) || did;
+    /* privacy: bills panel shows one bill at a time */
+    const bill = target.closest && target.closest('.bstk-bill');
+    if (bill && !bill.classList.contains('is-on')) did = clickIf(document.querySelectorAll('#bills .bstk-tab')[+bill.dataset.bill]) || did;
     /* generic reveal-on-scroll blocks become visible once scrolled to */
     return did;
   }
