@@ -341,28 +341,41 @@
   }
 
   /* ============ 02: three walls (pedestal composition) ============ */
-  /* Three glass plinths in a row, one symbolic object each (seal, rings,
-     discs); selecting a pedestal lights it and renders that wall's full
-     content in the reserved panel below. Glass follows the established
-     recipe: gradients dense at the rim, hairline strokes, no drop
-     shadows; the floor halo appears under the selected pedestal only.
-     pw- prefix. */
-  .pw-row { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 18px; margin-top: 46px; }
-  .pw-ped { position: relative; display: grid; justify-items: center; background: none; border: 0;
-    padding: 16px 10px 0; cursor: pointer; border-radius: 16px; transition: opacity .35s ease; }
-  .pw-ped:focus-visible { outline: 2px solid var(--em); outline-offset: 4px; }
+  /* A selector rail of three glass pedestals (seal, rings, discs) beside a
+     detail panel that renders the selected wall. Sized so the heading,
+     intro and both columns clear one 900px-tall viewport: 90px section pad
+     + 189px header + 520px row = 799px, inside 90vh (810px). Glass follows
+     the established recipe: gradients dense at the rim, hairline strokes,
+     no drop shadows; the floor halo appears under the selected pedestal
+     only.
+     The panel scrolls internally rather than growing the section. Measured
+     2026-08-12 at 1440px against the 462px panel content box: wall 01
+     overflows by 144px, wall 02 by 65px, wall 03 fits. No layout in which
+     copy is not cut brings wall 01 under the budget (the most compact
+     non-cutting variant measured 606px), so the overflow is scrolled, the
+     row height is constant across selections, and the page below never
+     moves. pw- prefix. */
+  .pw { --pw-h: 500px; margin-top: 26px; }
+  .pw-grid { display: grid; grid-template-columns: minmax(0, 38%) minmax(0, 1fr); gap: 40px; height: var(--pw-h); }
+  /* rail: three equal rows, so the pedestals always fill the row height */
+  .pw-rail { display: grid; grid-template-rows: repeat(3, 1fr); gap: 22px; }
+  .pw-ped { position: relative; display: grid; grid-template-rows: 1fr auto; justify-items: center;
+    background: none; border: 0; padding: 0; cursor: pointer; border-radius: 14px;
+    transition: opacity .35s ease; }
+  .pw-ped:focus-visible { outline: 2px solid var(--em); outline-offset: 5px; }
   .pw-ped[aria-selected="false"] { opacity: .55; }
   /* floor halo, selected only */
-  .pw-ped::before { content: ""; position: absolute; left: 14%; right: 14%; bottom: -10px; height: 46px;
-    border-radius: 50%; background: radial-gradient(closest-side, rgba(var(--accent-rgb), .20), transparent 72%);
+  .pw-ped::before { content: ""; position: absolute; left: 18%; right: 18%; bottom: -9px; height: 38px;
+    border-radius: 50%; background: radial-gradient(closest-side, rgba(var(--accent-rgb), .22), transparent 72%);
     opacity: 0; transition: opacity .4s ease; pointer-events: none; }
   .pw-ped[aria-selected="true"]::before { opacity: 1; }
-  .pw-obj { width: 104px; height: 90px; color: var(--em); position: relative; z-index: 1; margin-bottom: -4px;
-    transition: transform .4s cubic-bezier(.22,1,.36,1), filter .4s ease; }
+  .pw-obj { width: 96px; height: 90px; color: var(--em); align-self: end; margin-bottom: -2px;
+    position: relative; z-index: 1; transition: transform .4s cubic-bezier(.22,1,.36,1), filter .4s ease; }
   .pw-obj svg { width: 100%; height: 100%; display: block; }
   .pw-ped[aria-selected="true"] .pw-obj { transform: translateY(-6px);
     filter: drop-shadow(0 0 10px rgba(var(--accent-rgb), .45)); }
-  .pw-plinth { width: 100%; height: 72px; border-radius: 12px; position: relative; display: grid; place-items: center;
+  .pw-plinth { width: 100%; max-width: 340px; height: 62px; border-radius: 12px; position: relative;
+    display: grid; place-items: center;
     background: linear-gradient(180deg, rgba(var(--accent-rgb), .15), rgba(var(--accent-rgb), .05) 48%, rgba(var(--accent-rgb), .10));
     border: 1px solid rgba(var(--accent-rgb), .34);
     box-shadow: inset 0 1px 0 rgba(255,255,255,.14), inset 0 0 24px rgba(var(--accent-rgb), .05);
@@ -373,10 +386,10 @@
     background: linear-gradient(180deg, rgba(var(--accent-rgb), .24), rgba(var(--accent-rgb), .08) 48%, rgba(var(--accent-rgb), .15)); }
   .pw-label { font-family: var(--mono); font-size: 11px; letter-spacing: .16em; color: var(--ink); white-space: nowrap; }
   .pw-label b { color: var(--em); font-weight: 600; margin-right: 7px; }
-  /* detail panel: liquid glass, articles stacked in one grid cell so the
-     panel reserves the tallest wall's height at the current width and
-     switching walls never reflows the page below (the section-01 lesson) */
-  .pw-panel { position: relative; z-index: 1; display: grid; margin-top: 36px; border-radius: 14px; padding: 30px 32px 28px;
+  /* detail panel: the glass shell holds the light band and the scroll fade
+     (both would scroll away if they sat on the scroller itself), the inner
+     element scrolls */
+  .pw-shell { position: relative; z-index: 1; height: 100%; overflow: hidden; border-radius: 14px;
     background: var(--card-glass-fill); border: 1px solid var(--card-glass-border);
     -webkit-backdrop-filter: blur(var(--card-glass-blur)) saturate(var(--card-glass-sat));
     backdrop-filter: blur(var(--card-glass-blur)) saturate(var(--card-glass-sat));
@@ -387,36 +400,70 @@
       inset 0 -1px 0 rgba(255,255,255,.22),
       inset 0 0 24px rgba(255,255,255,.05),
       0 18px 50px -30px rgba(0,0,0,.9); }
-  .pw-panel::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: var(--card-glass-light-h);
-    border-radius: inherit; background: linear-gradient(180deg, var(--card-glass-light), transparent); pointer-events: none; }
-  .pw-wall { grid-area: 1 / 1; position: relative; visibility: hidden; opacity: 0; transform: translateY(8px);
-    transition: opacity .32s ease, transform .32s ease, visibility 0s .32s; }
-  .pw-wall.is-on { visibility: visible; opacity: 1; transform: none;
-    transition: opacity .32s ease .08s, transform .32s ease .08s, visibility 0s; }
-  .pw-pos { position: absolute; top: -8px; right: 0; font-family: var(--mono); font-size: 9px;
-    letter-spacing: .22em; color: var(--muted); }
-  .pw-wall h3 { margin-bottom: 20px; }
-  .pw-wall .kicker { margin-top: 26px; }
+  .pw-shell::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: var(--card-glass-light-h);
+    border-radius: 14px 14px 0 0; background: linear-gradient(180deg, var(--card-glass-light), transparent);
+    pointer-events: none; z-index: 2; }
+  /* scroll affordance: only while there is more below */
+  .pw-shell::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 64px; opacity: 0;
+    background: linear-gradient(180deg, transparent, rgba(7,9,10,.92)); pointer-events: none; z-index: 2;
+    transition: opacity .3s ease; }
+  .pw-shell.has-more::after { opacity: 1; }
+  /* scroll-behavior: auto opts out of the site's inherited html{smooth}: the
+     wall swap replaces the content, so the return to the top must be instant
+     rather than animating through copy the reader did not ask for */
+  .pw-panel { height: 100%; overflow-y: auto; overscroll-behavior: contain; scroll-behavior: auto;
+    padding: 30px 32px 28px; }
+  .pw-panel:focus-visible { outline: 2px solid var(--em); outline-offset: -3px; }
+  /* one wall in flow at a time: the hidden ones must not inflate the
+     scroller, or a short wall would scroll to the tallest wall's height */
+  .pw-wall { display: none; position: relative; }
+  .pw-wall.is-on { display: block; animation: bstkIn .3s ease; }
+  /* punch titles step down one size inside the panel (the fit) */
+  .pw-wall h3 { font-size: clamp(19px, 1.7vw, 24px); margin-bottom: 14px; }
+  .pw-wall p { margin-bottom: 13px; }
+  /* the kicker keeps its size: measured, its height is driven by the 30ch
+     cap, not the type size, and .pw-wall p already lifts that cap to the
+     panel column (21px uncapped measured shorter than 17px at 46ch) */
+  .pw-wall .kicker { margin-top: 16px; }
+  /* the artifacts were authored full width: inside the panel column their
+     padding and leading tighten a step (no copy is cut) */
+  .pw-wall .cases { gap: 12px; }
+  .pw-wall .case { padding: 17px 19px; }
+  .pw-wall .case .cd { line-height: 1.6; margin-top: 10px; }
+  .pw-wall .case .cs { margin-top: 11px; padding-top: 10px; }
+  .pw-wall .landmass { padding: 18px; }
+  /* walls 01 and 02 run their copy full width with the artifact below:
+     both measure shorter that way, and the island (a flex row of two
+     landmasses either side of a 118px bridge) needs the full column or it
+     overflows the panel */
+  .pw-wall--stack .pv-duo { grid-template-columns: minmax(0,1fr); gap: 18px; }
+  .pw-wall--stack .pv-duo .cases { grid-template-columns: 1fr 1fr; }
   @supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
-    .pw-panel { background: #0B0F10; }
+    .pw-shell { background: #0B0F10; }
   }
   @media (max-width: 980px) {
-    .pw-panel { -webkit-backdrop-filter: none; backdrop-filter: none; background: #0B0F10; }
-    /* below the row the panel hugs the selected wall: hidden walls leave
-       the layout entirely instead of reserving the tallest wall's height */
-    .pw-wall { display: none; }
-    .pw-wall.is-on { display: block; visibility: visible; opacity: 1; transform: none; animation: bstkIn .28s ease; }
+    /* the one-viewport constraint is desktop only: the rail becomes a
+       triptych above the panel and the section scrolls naturally */
+    .pw { --pw-h: auto; }
+    .pw-grid { grid-template-columns: minmax(0,1fr); gap: 26px; }
+    .pw-rail { grid-template-rows: none; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 12px; }
+    .pw-obj { width: 76px; height: 66px; }
+    .pw-plinth { max-width: none; height: 54px; }
+    .pw-shell { height: auto; overflow: visible; -webkit-backdrop-filter: none; backdrop-filter: none; background: #0B0F10; }
+    .pw-shell::after { content: none; }
+    .pw-panel { height: auto; overflow: visible; }
   }
   @media (max-width: 480px) {
-    .pw-row { gap: 10px; }
-    .pw-obj { width: 72px; height: 64px; }
-    .pw-plinth { height: 58px; }
-    .pw-label { font-size: 8px; letter-spacing: .08em; }
+    .pw-rail { gap: 8px; }
+    .pw-obj { width: 58px; height: 52px; }
+    .pw-plinth { height: 46px; border-radius: 10px; }
+    .pw-label { font-size: 8px; letter-spacing: .06em; }
     .pw-label b { margin-right: 4px; }
     .pw-panel { padding: 24px 20px 22px; }
+    .pw-wall--stack .pv-duo .cases { grid-template-columns: 1fr; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .pw-ped, .pw-ped::before, .pw-obj, .pw-plinth, .pw-wall, .pw-wall.is-on { transition: none; animation: none; }
+    .pw-ped, .pw-ped::before, .pw-obj, .pw-plinth, .pw-wall, .pw-wall.is-on, .pw-shell::after { transition: none; animation: none; }
     .pw-ped[aria-selected="true"] .pw-obj { transform: none; }
   }
 
@@ -1662,12 +1709,15 @@
   <p class="th-pm-eyebrow th-pm-reveal">The precedent</p>
   <p class="th-pm-intro th-pm-reveal">Crypto has attempted privacy for a decade. Every attempt hit at least one of <b>three walls</b>.</p>
 
-  <!-- Pedestal composition: three glass plinths, one symbolic object per
-       wall (seal / rings / discs); the selected wall's full content renders
-       in the reserved panel below. Wall copy and artifacts moved verbatim
-       from the retired long-scroll layout, heading and artifact ids kept. -->
+  <!-- Pedestal composition: a rail of three glass plinths, one symbolic
+       object per wall (seal / rings / discs), beside a detail panel that
+       renders the selected wall. Sized to clear one 900px viewport; the
+       panel scrolls internally instead of growing the section. Wall copy
+       and artifacts moved verbatim from the retired long-scroll layout,
+       heading and artifact ids kept. -->
   <div class="pw th-pm-reveal" id="wall-pedestals">
-    <div class="pw-row" role="tablist" aria-label="The three walls">
+    <div class="pw-grid">
+    <div class="pw-rail" role="tablist" aria-label="The three walls">
       <button class="pw-ped" type="button" role="tab" data-wall="0" aria-selected="true" aria-controls="walls-panel" tabindex="0">
         <span class="pw-obj" aria-hidden="true"><svg viewBox="0 0 96 84" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="48" cy="42" r="30"/><circle cx="48" cy="42" r="21" stroke-dasharray="4 5"/><path d="M38 42.5 45 50 59 34" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
         <span class="pw-plinth"><span class="pw-label"><b>01</b>COMPLIANCE</span></span>
@@ -1681,9 +1731,9 @@
         <span class="pw-plinth"><span class="pw-label"><b>03</b>SCALE</span></span>
       </button>
     </div>
-    <div class="pw-panel" id="walls-panel" role="tabpanel" aria-live="polite">
-      <article class="pw-wall is-on" data-wall="0">
-        <span class="pw-pos">01 / 03</span>
+    <div class="pw-shell" id="walls-shell">
+    <div class="pw-panel" id="walls-panel" role="tabpanel" aria-live="polite" tabindex="0">
+      <article class="pw-wall pw-wall--stack is-on" data-wall="0">
         <div class="pv-duo">
         <div>
         <h3 id="wall-n-01compliance-a-privacy-system"><span class="wall-tag">WALL Nº 01</span>Compliance: a privacy system with no disclosure path <span class="em">is unbankable by design.</span></h3>
@@ -1710,8 +1760,7 @@
         </div>
         </div>
       </article>
-      <article class="pw-wall" data-wall="1">
-        <span class="pw-pos">02 / 03</span>
+      <article class="pw-wall pw-wall--stack" data-wall="1">
         <div class="pv-duo">
         <div>
         <h3 id="wall-n-02composability-privacy-kept-being"><span class="wall-tag">WALL Nº 02</span>Composability: privacy kept being built as a destination, <span class="em">and destinations empty out.</span></h3>
@@ -1729,7 +1778,6 @@
         </div>
       </article>
       <article class="pw-wall" data-wall="2">
-        <span class="pw-pos">03 / 03</span>
         <div class="pv-duo">
         <div>
         <h3 id="wall-n-03scale-anonymity-is-headcount"><span class="wall-tag">WALL Nº 03</span>Scale: anonymity is headcount. <span class="em">You are only as hidden as the crowd is large.</span></h3>
@@ -1745,6 +1793,8 @@
         </div>
         </div>
       </article>
+    </div>
+    </div>
     </div>
   </div>
 
@@ -2377,6 +2427,9 @@ function thRove(opts){
     b.addEventListener('click', function(){ opts.pick(k, true); });
   });
   opts.root.addEventListener('keydown', function(ev){
+    /* arrows belong to the selector only: the panels hold their own
+       controls (the crowd range input), and those keep their native keys */
+    if (opts.buttons.indexOf(ev.target) === -1) return;
     var step = (ev.key === 'ArrowRight' || ev.key === 'ArrowDown') ? 1 :
                (ev.key === 'ArrowLeft' || ev.key === 'ArrowUp') ? -1 : 0;
     if (!step) return;
@@ -2496,30 +2549,49 @@ function thRove(opts){
 })();
 
 // ============================================================
-// SECTION 02 - wall pedestals. Three glass plinths; picking one
-// lights it (object lifts, floor halo) and renders that wall in
-// the reserved panel below. Always exactly one selected; wall 01
-// ships selected in the markup so the section reads complete
+// SECTION 02 - wall pedestals. A rail of three glass plinths beside
+// the detail panel; picking one lights it (object lifts, floor halo)
+// and renders that wall in the panel. Always exactly one selected;
+// wall 01 ships selected in the markup so the section reads complete
 // with no JS and no interaction, and the section's IO reveal is
 // the entrance. The pedestals carry the roving tab stop (thRove),
 // arrows cycle, Enter/click picks via native button semantics.
 // Touch: tap picks, nothing sticky. Reduced motion: settled
 // states, no lift transition (CSS). A location hash that targets
 // an element inside a hidden wall surfaces that wall first.
+// The panel is a fixed-height scroller (the section holds one
+// viewport, see the CSS fit note): switching walls returns it to
+// the top, and the shell's fade shows only while more copy sits
+// below the fold.
 // ============================================================
 (function(){
   var root = document.getElementById('wall-pedestals');
   if (!root) return;
   var peds = [].slice.call(root.querySelectorAll('.pw-ped'));
   var walls = [].slice.call(root.querySelectorAll('.pw-wall'));
+  var shell = document.getElementById('walls-shell');
+  var panel = document.getElementById('walls-panel');
   function shown(){
     var w = root.querySelector('.pw-wall.is-on');
     return w ? +w.dataset.wall : 0;
   }
+  /* the scroller only earns a tab stop while it actually scrolls */
+  function fade(){
+    var more = panel.scrollHeight - panel.clientHeight;
+    var atEnd = panel.scrollTop >= more - 2;
+    shell.classList.toggle('has-more', more > 4 && !atEnd);
+    panel.setAttribute('tabindex', more > 4 ? '0' : '-1');
+  }
   function select(i){
     walls.forEach(function(w){ w.classList.toggle('is-on', +w.dataset.wall === i); });
     rove.mirror(i);
+    panel.scrollTop = 0;
+    fade();
   }
+  panel.addEventListener('scroll', fade);
+  window.addEventListener('resize', fade);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fade);
+  fade();
   var rove = thRove({ root: root, buttons: peds, shown: shown,
     pick: function(k){ select(k); } });
   function surface(){
