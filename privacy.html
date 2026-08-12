@@ -354,8 +354,31 @@
   .bstk-plane.is-out { transform: translateZ(calc(var(--pz) + 30px)) translate(54px, -54px); }
   @media (hover: hover) and (pointer: fine) {
     .bstk-plane:not(.is-out):hover { transform: translateZ(calc(var(--pz) + 12px)); }
+    .bstk-plane:not(.is-out):hover .bstk-ef { border-color: rgba(var(--t), .8);
+      background: linear-gradient(180deg, rgba(var(--t), .42), rgba(var(--t), .18)); }
   }
   .bstk-plane:focus-visible { outline: 2px solid var(--em); outline-offset: 8px; }
+  /* selector chips: the primary control; the planes stay clickable but sit
+     outside the tab order. Chip index digits carry each plane's ramp tint,
+     the selected state rides the page accent. */
+  /* the iso's rotated visual overflows its 216px layout box downward, so the
+     chip row clears it with margin rather than grid alignment */
+  .bstk-tabs { display: flex; gap: 8px; justify-content: center; margin-top: 46px; position: relative; z-index: 2; }
+  .bstk-tab { font-family: var(--mono); font-size: 10px; letter-spacing: .16em; color: var(--muted); background: none;
+    border: 1px solid rgba(245,242,236,.14); border-radius: 999px; padding: 8px 13px; cursor: pointer;
+    display: inline-flex; align-items: baseline; gap: 7px;
+    transition: border-color .2s, color .2s, background .2s, box-shadow .2s; }
+  .bstk-tab .tn { color: rgba(var(--t), .95); font-weight: 600; }
+  .bstk-tab:hover { border-color: rgba(var(--accent-rgb), .45); color: var(--ink); }
+  .bstk-tab[aria-selected="true"] { border-color: rgba(var(--accent-rgb), .55); color: var(--ink);
+    background: rgba(var(--accent-rgb), .08); box-shadow: 0 0 14px rgba(var(--accent-rgb), .12); }
+  .bstk-tab:focus-visible { outline: 2px solid var(--em); outline-offset: 3px; }
+  /* fattened invisible hit region: a covered plane's only exposed surface is
+     its edge strip, so the strip carries the padding (topmost plane wins in
+     the overlap, which matches what the eye expects) */
+  .bstk-ef::after { content: ""; position: absolute; left: -8px; right: -8px; top: -22px; bottom: -2px; }
+  /* the bottom plane owns the empty air under the stack */
+  .bstk-plane:first-child .bstk-ef::after { bottom: -36px; }
   /* slab: top face + two visible edge strips */
   .bstk-face { position: absolute; inset: 0; border-radius: 6px;
     background: linear-gradient(135deg, rgba(var(--t), .16), rgba(var(--t), .05) 55%, rgba(var(--t), .10));
@@ -1463,31 +1486,36 @@
     <div class="bstk-stage">
       <div class="bstk-iso">
         <div class="bstk-ground" aria-hidden="true"></div>
-        <button class="bstk-plane" type="button" style="--pz:0px; --t:14,122,90" data-bill="2" aria-expanded="false" aria-controls="bills-panel" aria-label="Bill 03, Absence. Waiting outside.">
+        <button class="bstk-plane" type="button" tabindex="-1" style="--pz:0px; --t:14,122,90" data-bill="2" aria-expanded="false" aria-controls="bills-panel" aria-label="Bill 03, Absence. Waiting outside.">
           <span class="bstk-face" aria-hidden="true"><span class="bstk-num">03</span></span>
           <span class="bstk-edge bstk-ef" aria-hidden="true">03 ABSENCE</span>
           <span class="bstk-edge bstk-er" aria-hidden="true"></span>
         </button>
-        <button class="bstk-plane" type="button" style="--pz:52px; --t:23,162,120" data-bill="1" aria-expanded="false" aria-controls="bills-panel" aria-label="Bill 02, Strategy. Bait, accepted.">
+        <button class="bstk-plane" type="button" tabindex="-1" style="--pz:58px; --t:23,162,120" data-bill="1" aria-expanded="false" aria-controls="bills-panel" aria-label="Bill 02, Strategy. Bait, accepted.">
           <span class="bstk-face" aria-hidden="true"><span class="bstk-num">02</span></span>
           <span class="bstk-edge bstk-ef" aria-hidden="true">02 STRATEGY</span>
           <span class="bstk-edge bstk-er" aria-hidden="true"></span>
         </button>
-        <button class="bstk-plane" type="button" style="--pz:104px; --t:31,203,148" data-bill="0" aria-expanded="false" aria-controls="bills-panel" aria-label="Bill 01, Extraction. A standing tax.">
+        <button class="bstk-plane" type="button" tabindex="-1" style="--pz:116px; --t:31,203,148" data-bill="0" aria-expanded="false" aria-controls="bills-panel" aria-label="Bill 01, Extraction. A standing tax.">
           <span class="bstk-face" aria-hidden="true"><span class="bstk-num">01</span></span>
           <span class="bstk-edge bstk-ef" aria-hidden="true">01 EXTRACTION</span>
           <span class="bstk-edge bstk-er" aria-hidden="true"></span>
         </button>
       </div>
+      <div class="bstk-tabs" role="tablist" aria-label="The three bills">
+        <button class="bstk-tab" type="button" role="tab" data-bill="0" style="--t:31,203,148" aria-selected="true" aria-controls="bills-panel" tabindex="0"><span class="tn">01</span>EXTRACTION</button>
+        <button class="bstk-tab" type="button" role="tab" data-bill="1" style="--t:23,162,120" aria-selected="false" aria-controls="bills-panel" tabindex="-1"><span class="tn">02</span>STRATEGY</button>
+        <button class="bstk-tab" type="button" role="tab" data-bill="2" style="--t:14,122,90" aria-selected="false" aria-controls="bills-panel" tabindex="-1"><span class="tn">03</span>ABSENCE</button>
+      </div>
     </div>
-    <div class="bstk-panel" id="bills-panel" aria-live="polite">
+    <div class="bstk-panel" id="bills-panel" role="tabpanel" aria-live="polite">
       <article class="bstk-bill is-on" data-bill="0">
-        <div class="bstk-row"><span class="bstk-kicker">BILL Nº 01 — EXTRACTION</span><span class="bstk-pos">01 / 03</span></div>
+        <div class="bstk-row"><span class="bstk-kicker">BILL Nº 01 · EXTRACTION</span><span class="bstk-pos">01 / 03</span></div>
         <div class="bstk-status">STATUS</div>
         <h3 class="bstk-value">A STANDING TAX</h3>
         <div class="bstk-label">CHARGED ON EVERY VISIBLE TRADE</div>
         <div class="bstk-rule"></div>
-        <h4 class="bstk-fp">FINE PRINT — EXTRACTION</h4>
+        <h4 class="bstk-fp">FINE PRINT · EXTRACTION</h4>
         <p class="bstk-body">Every pending transaction in the public mempool announces what you are about to do to the parties best equipped to charge you for it. Billions extracted on Ethereum since the Merge; $370 to $500 million taken by Solana's sandwich bots in barely a year and a half; the same extraction runs on every transparent chain. A standing tax on anyone who interacts where everyone can watch.</p>
         <ul class="pb-list">
           <li class="pb-li"><span class="pb-idx">01</span><span class="pb-lt">MEV extracted on Ethereum since the Merge</span><span class="pb-amt">$B+</span></li>
@@ -1495,12 +1523,12 @@
         </ul>
       </article>
       <article class="bstk-bill" data-bill="1">
-        <div class="bstk-row"><span class="bstk-kicker">BILL Nº 02 — STRATEGY</span><span class="bstk-pos">02 / 03</span></div>
+        <div class="bstk-row"><span class="bstk-kicker">BILL Nº 02 · STRATEGY</span><span class="bstk-pos">02 / 03</span></div>
         <div class="bstk-status">STATUS</div>
         <h3 class="bstk-value">BAIT, ACCEPTED</h3>
         <div class="bstk-label">YOUR LIQUIDATION LEVELS, PUBLISHED TRANSPARENTLY TO THE ENTIRE WORLD</div>
         <div class="bstk-rule"></div>
-        <h4 class="bstk-fp">FINE PRINT — STRATEGY</h4>
+        <h4 class="bstk-fp">FINE PRINT · STRATEGY</h4>
         <p class="bstk-body">May 2025: James Wynn runs the largest publicly visible leveraged position in crypto history, $1.25B at 40x leverage on Hyperliquid. His liquidation price was known to everyone, down to the penny. The position got liquidated, and the account ended the month at $23. <b>"They are hunting me,"</b> he posted, reopening a $100M position, which got liquidated too. The reality is that everything was public; nobody needed to conspire. A year earlier, the market got Egorov's levels the same way, in his borrowing strategy against his own CRV, and left $10M of bad debt across several lending markets. And this is no isolated event: it happens every day, across every DeFi vertical.</p>
         <ul class="pb-list">
           <li class="pb-li"><span class="pb-idx">01</span><span class="pb-lt">J. Wynn, $1.25B position, liq. price public</span><span class="pb-amt">LIQUIDATED</span></li>
@@ -1509,12 +1537,12 @@
         </ul>
       </article>
       <article class="bstk-bill" data-bill="2">
-        <div class="bstk-row"><span class="bstk-kicker">BILL Nº 03 — ABSENCE</span><span class="bstk-pos">03 / 03</span></div>
+        <div class="bstk-row"><span class="bstk-kicker">BILL Nº 03 · ABSENCE</span><span class="bstk-pos">03 / 03</span></div>
         <div class="bstk-status">STATUS</div>
         <h3 class="bstk-value">WAITING OUTSIDE</h3>
         <div class="bstk-label">THE CAPITAL THAT NEVER ARRIVES</div>
         <div class="bstk-rule"></div>
-        <h4 class="bstk-fp">FINE PRINT — ABSENCE</h4>
+        <h4 class="bstk-fp">FINE PRINT · ABSENCE</h4>
         <p class="bstk-body">Institutions do not publish supplier lists, treasuries do not broadcast rebalances, and sovereigns do not accumulate in daylight. The spot Bitcoin ETFs launched in January 2024 with every issuer declining to publish its addresses; it took Arkham <b>twelve days</b> to map BlackRock's and Fidelity's wallets anyway, over 58,000 BTC exposed before either firm had said a word. That is why the capital stays away: on transparent rails, showing up means being mapped. This is the bill nobody sees getting paid, and it is the biggest of the three.</p>
         <ul class="pb-list">
           <li class="pb-li"><span class="pb-idx">01</span><span class="pb-lt">BTC in use in DeFi vs total value</span><span class="pb-amt">$14B / $1.5T</span></li>
@@ -2218,17 +2246,20 @@
 // ============================================================
 // SECTION 01 - stacked glass planes. The stack assembles once on
 // scroll, then bill 01 slides out so a non-interacting reader still
-// sees one full bill. Hover (fine pointers) or click/Enter selects a
-// plane: it slides out of the stack and its bill renders in the
-// panel; one plane out at a time. Esc or focus leaving the stack
-// returns the plane; the panel keeps the last bill (the record
-// stays readable). Touch: tap selects, tap outside returns.
+// sees one full bill. The chip row is the primary control: click or
+// Enter selects, arrow keys cycle bills while focus is inside the
+// section, and the chips carry the roving tab stop. The planes stay
+// clickable (hover on fine pointers, tap on touch) but sit outside
+// the tab order; one plane out at a time. Esc or focus leaving the
+// section returns the plane; the panel keeps the last bill (the
+// record stays readable). Touch: tap selects, tap outside returns.
 // ============================================================
 (function(){
   var root = document.getElementById('bills');
   if (!root) return;
   var planes = [].slice.call(root.querySelectorAll('.bstk-plane'));
   var bills = [].slice.call(root.querySelectorAll('.bstk-bill'));
+  var tabs = [].slice.call(root.querySelectorAll('.bstk-tab'));
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
@@ -2238,18 +2269,43 @@
       p.classList.toggle('is-out', on);
       p.setAttribute('aria-expanded', on ? 'true' : 'false');
     });
-    if (i >= 0) bills.forEach(function(b){ b.classList.toggle('is-on', +b.dataset.bill === i); });
+    if (i >= 0) {
+      bills.forEach(function(b){ b.classList.toggle('is-on', +b.dataset.bill === i); });
+      /* chips mirror the panel (the record), not the lift, so a returned
+         plane leaves the last bill's chip active alongside its content */
+      tabs.forEach(function(t){
+        var on = +t.dataset.bill === i;
+        t.setAttribute('aria-selected', on ? 'true' : 'false');
+        t.setAttribute('tabindex', on ? '0' : '-1');
+      });
+    }
   }
   function current(){
     var p = root.querySelector('.bstk-plane.is-out');
     return p ? +p.dataset.bill : -1;
+  }
+  function shown(){
+    var b = root.querySelector('.bstk-bill.is-on');
+    return b ? +b.dataset.bill : 0;
   }
 
   planes.forEach(function(p){
     var i = +p.dataset.bill;
     p.addEventListener('click', function(){ select(current() === i ? -1 : i); });
     if (fine) p.addEventListener('mouseenter', function(){ select(i); });
-    p.addEventListener('keydown', function(ev){ if (ev.key === 'Escape') select(-1); });
+  });
+  tabs.forEach(function(t){
+    t.addEventListener('click', function(){ select(+t.dataset.bill); });
+  });
+  root.addEventListener('keydown', function(ev){
+    if (ev.key === 'Escape') { select(-1); return; }
+    var step = (ev.key === 'ArrowRight' || ev.key === 'ArrowDown') ? 1 :
+               (ev.key === 'ArrowLeft' || ev.key === 'ArrowUp') ? -1 : 0;
+    if (!step) return;
+    ev.preventDefault();
+    var next = (shown() + step + 3) % 3;
+    select(next);
+    tabs[next].focus();
   });
   root.addEventListener('focusout', function(ev){
     if (!root.contains(ev.relatedTarget)) select(-1);
