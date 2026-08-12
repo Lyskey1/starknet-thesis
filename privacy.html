@@ -341,17 +341,23 @@
   }
 
   /* ============ 01: the three bills (stacked glass planes) ============ */
-  /* Isometric stack of three glass slabs, emerald ramp. Selecting a plane
-     slides it out of the stack along the stack axis; the bill's content
-     renders in the glass detail panel beside it. bstk- prefix, collides
-     with nothing. Fact rows keep the pb-li family so the search index
-     spec keeps matching them. */
+  /* Isometric stack of three glass slabs, emerald ramp. Selection is a
+     state system over --pz: the lifted plane goes to one fixed out pose
+     (slot-independent), and JS reassigns the two remaining planes to the
+     bottom slots (0 / 58px) so the stack recomposes per selection and no
+     plane is ever left resting inside the lifted plane's travel. The
+     bill's content renders in the glass detail panel beside it. bstk-
+     prefix, collides with nothing. Fact rows keep the pb-li family so
+     the search index spec keeps matching them. */
   .bstk { display: grid; grid-template-columns: minmax(0, 46%) minmax(0, 1fr); gap: 40px; align-items: stretch; margin-top: 34px; }
   .bstk-stage { perspective: 1400px; display: grid; place-items: center; min-height: 390px; }
   .bstk-iso { position: relative; width: 310px; height: 216px; transform: scale(var(--iso-s,1)) rotateX(58deg) rotateZ(-45deg); transform-style: preserve-3d; }
   .bstk-plane { position: absolute; inset: 0; transform-style: preserve-3d; background: none; border: 0; padding: 0; cursor: pointer;
     transform: translateZ(var(--pz)); transition: transform .42s cubic-bezier(.22,1,.36,1), opacity .5s ease; }
-  .bstk-plane.is-out { transform: translateZ(calc(var(--pz) + 30px)) translate(54px, -54px); }
+  /* the out pose is fixed, never derived from the plane's slot: deriving
+     it from --pz is what glued a lifted middle plane to the plane still
+     resting above it */
+  .bstk-plane.is-out { transform: translateZ(146px) translate(54px, -54px); }
   @media (hover: hover) and (pointer: fine) {
     .bstk-plane:not(.is-out):hover { transform: translateZ(calc(var(--pz) + 12px)); }
     .bstk-plane:not(.is-out):hover .bstk-ef { border-color: rgba(var(--t), .8);
@@ -402,7 +408,7 @@
   .bstk.bstk-in .bstk-plane { opacity: 1; transform: translateZ(var(--pz)); }
   .bstk.bstk-in .bstk-plane:nth-child(2) { transition-delay: .1s, .1s; }
   .bstk.bstk-in .bstk-plane:nth-child(3) { transition-delay: .2s, .2s; }
-  .bstk.bstk-in .bstk-plane.is-out { transform: translateZ(calc(var(--pz) + 30px)) translate(54px, -54px); transition-delay: 0s, 0s; }
+  .bstk.bstk-in .bstk-plane.is-out { transform: translateZ(146px) translate(54px, -54px); transition-delay: 0s, 0s; }
 
   /* detail panel: liquid glass, articles stacked in one grid cell so the
      panel holds the height of the tallest bill at the current width (no
@@ -456,11 +462,15 @@
   @media (max-width: 480px) {
     .bstk-stage { --iso-s: .74; min-height: 300px; }
     .bstk-panel { padding: 24px 20px 20px; }
+    /* the full-tracking chip row runs 357px wide, past a 375px viewport
+       minus the 32px side pads: tighten tracking and padding to fit */
+    .bstk-tabs { gap: 6px; }
+    .bstk-tab { padding: 7px 9px; letter-spacing: .09em; gap: 5px; }
   }
   @media (prefers-reduced-motion: reduce) {
     .bstk-plane, .bstk-bill, .bstk-bill.is-on { transition: none; animation: none; }
     .bstk.bstk-armed .bstk-plane { opacity: 1; transform: translateZ(var(--pz)); }
-    .bstk.bstk-armed .bstk-plane.is-out { transform: translateZ(calc(var(--pz) + 30px)) translate(54px, -54px); }
+    .bstk.bstk-armed .bstk-plane.is-out { transform: translateZ(146px) translate(54px, -54px); }
   }
 
   /* ============ 01: section exit line ============ */
@@ -2246,8 +2256,11 @@
 // ============================================================
 // SECTION 01 - stacked glass planes. The stack assembles once on
 // scroll, then bill 01 slides out so a non-interacting reader still
-// sees one full bill. The chip row is the primary control: click or
-// Enter selects, arrow keys cycle bills while focus is inside the
+// sees one full bill. Selection recomposes the whole stack: the
+// lifted plane takes a fixed out pose and the two left behind close
+// up into the bottom slots (see compose()). The chip row is the
+// primary control: click or Enter selects, re-click returns the
+// plane, arrow keys cycle bills while focus is inside the
 // section, and the chips carry the roving tab stop. The planes stay
 // clickable (hover on fine pointers, tap on touch) but sit outside
 // the tab order; one plane out at a time. Esc or focus leaving the
@@ -2263,7 +2276,22 @@
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
+  /* rest slots, bottom to top; the planes array is in DOM order, which is
+     the same bottom-to-top order (bill 03, 02, 01) */
+  var REST = { 0: 116, 1: 58, 2: 0 };
+  function compose(i){
+    if (i < 0) {
+      planes.forEach(function(p){ p.style.setProperty('--pz', REST[+p.dataset.bill] + 'px'); });
+      return;
+    }
+    /* the two planes left behind close up into the bottom two slots,
+       keeping their front-to-back order; the lifted plane's own --pz is
+       untouched (its out pose is fixed and slot-independent) */
+    planes.filter(function(p){ return +p.dataset.bill !== i; })
+      .forEach(function(p, k){ p.style.setProperty('--pz', (k * 58) + 'px'); });
+  }
   function select(i){
+    compose(i);
     planes.forEach(function(p){
       var on = +p.dataset.bill === i;
       p.classList.toggle('is-out', on);
@@ -2295,7 +2323,8 @@
     if (fine) p.addEventListener('mouseenter', function(){ select(i); });
   });
   tabs.forEach(function(t){
-    t.addEventListener('click', function(){ select(+t.dataset.bill); });
+    var i = +t.dataset.bill;
+    t.addEventListener('click', function(){ select(current() === i ? -1 : i); });
   });
   root.addEventListener('keydown', function(ev){
     if (ev.key === 'Escape') { select(-1); return; }
