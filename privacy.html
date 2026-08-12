@@ -657,7 +657,7 @@
   .wall-out .em { color: var(--em); }
 
   /* ============ 03: protocol grid ============ */
-  .gridwrap { margin: 56px 0 0; overflow-x: auto; }
+  .gridwrap { margin: 0; overflow-x: auto; }
   /* mobile: right-edge fade + sticky protocol column (the symbol matrix cannot
      restack cleanly — its td pseudo-elements already carry the state dots) */
   @media (max-width: 860px) {
@@ -714,97 +714,20 @@
   .pgrid-legend { margin-top: 10px; font-family: var(--mono); font-size: 10px; letter-spacing: .1em; color: var(--muted); }
 
   /* ===== PRIVACY COMPLETENESS ===== */
-  .pvc { margin-top: 76px; }
-  .pvc-card { position: relative; overflow: hidden; width: min(340px, 100%); margin: 0 auto; padding: 30px 24px 26px; text-align: center;
-    border: 1px solid rgba(var(--accent-rgb), .38); border-radius: 16px;
-    background: linear-gradient(180deg, rgba(var(--accent-rgb), .10), rgba(var(--accent-rgb), .02) 62%, transparent); }
-  .pvc-card-bloom { position: absolute; left: 50%; top: -46%; width: 78%; height: 96%; transform: translateX(-50%); z-index: 0; pointer-events: none;
-    border-radius: 50%; filter: blur(52px); background: radial-gradient(closest-side, rgba(var(--accent-rgb), .30), transparent 72%); }
-  .pvc-card > :not(.pvc-card-bloom) { position: relative; z-index: 1; }
-  .pvc-card-label { font-family: var(--mono); font-size: 12px; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
-  .pvc-card-score { font-family: var(--display); font-weight: 800; font-size: clamp(56px, 7vw, 88px); line-height: 1; color: var(--em); margin: 6px 0 0; letter-spacing: -.02em; }
-  .pvc-card-score span { font-size: .42em; opacity: .55; }
-  .pvc-card-state { font-family: var(--mono); font-size: 12px; letter-spacing: .2em; text-transform: uppercase; color: var(--em); margin-top: 8px; }
-  .pvc-card-segs { display: flex; justify-content: center; gap: 6px; margin-top: 18px; }
-  .pvc-card-segs i { width: 26px; height: 4px; border-radius: 2px; background: var(--em); box-shadow: 0 0 8px rgba(var(--accent-rgb), .55); }
-  /* the field rests as one dimmed group so the card stays the subject */
-  .pvc-field { display: grid; grid-template-columns: repeat(6, 1fr); gap: 18px; max-width: 900px; margin: 40px auto 0; opacity: .5; transition: opacity var(--hover-dur) var(--hover-ease); }
-  .pvc-field:hover { opacity: .72; }
-  .pvc-col { text-align: center; }
-  .pvc-col-score { font-family: var(--display); font-weight: 800; font-size: 26px; line-height: 1; color: var(--ink); }
-  .pvc-col-score span { font-size: .56em; color: var(--muted); }
-  .pvc-col-name { font-family: var(--mono); font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin: 8px 0 10px; }
-  .pvc-track { height: 3px; border-radius: 2px; background: rgba(245,242,236,.10); overflow: hidden; }
-  .pvc-track i { display: block; height: 100%; background: var(--em); border-radius: 2px; }
-  .pvc-why { max-width: 900px; margin: 56px auto 0; text-align: center; }
-  .pvc-why-h { font-family: var(--display); font-weight: 800; font-size: clamp(20px, 2.2vw, 28px); letter-spacing: -.01em; margin: 0 0 20px; }
-  .pvc-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
-  .pvc-chip { font-family: var(--mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted);
-    background: transparent; border: 1px solid var(--line); border-radius: 99px; padding: 9px 15px; cursor: pointer;
-    transition: color var(--hover-dur) var(--hover-ease), border-color var(--hover-dur) var(--hover-ease), background var(--hover-dur) var(--hover-ease); }
-  .pvc-chip:hover { color: var(--ink); border-color: rgba(var(--accent-rgb), .40); }
-  .pvc-chip[aria-pressed="true"] { color: var(--em); border-color: rgba(var(--accent-rgb), .62); background: rgba(var(--accent-rgb), .10); }
-  .pvc-chip:focus-visible { outline: 2px solid var(--em); outline-offset: 3px; }
-  /* height reserved to the tallest of the seven texts (DEFI, the only one that
-     runs to two lines at 1440), so opening a criterion or switching between
-     them never shifts the button or the matrix downward */
-  .pvc-method { margin-top: 22px; min-height: 71px; }
-  .pvc-meth-h { font-family: var(--mono); font-size: 11.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--em); }
-  .pvc-meth-h span { text-transform: lowercase; letter-spacing: .04em; color: var(--muted); margin-left: 8px; }
-  .pvc-meth-b { font-size: 13.5px; line-height: 1.6; color: rgba(245,242,236,.78); max-width: 860px; margin: 9px auto 0; }
-  .pvc-meth-rest { font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
-  /* native details: keyboard operable and reduced-motion safe for free, and the
-     matrix stays in the DOM when closed so find-in-page and the search index
-     still reach it */
-  .pvc-details { margin-top: 26px; }
-  .pvc-summary { display: flex; align-items: center; gap: 12px; cursor: pointer; list-style: none;
-    font-family: var(--mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink);
-    border: 1px solid var(--line); border-radius: 99px; padding: 12px 22px; margin: 0 auto; width: max-content;
-    background: rgba(245,242,236,.07); -webkit-backdrop-filter: blur(12px) saturate(112%); backdrop-filter: blur(12px) saturate(112%);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,.5), inset -1px -1px 0 rgba(255,255,255,.30),
-      inset 1px 1px 0 rgba(255,255,255,.12), inset 0 10px 18px -8px rgba(255,255,255,.18),
-      inset 0 -1px 0 rgba(0,0,0,.6), inset 0 -3px 5px rgba(0,0,0,.22), 0 0 12px rgba(var(--accent-rgb), .10);
-    transition: border-color var(--hover-dur) var(--hover-ease), box-shadow var(--hover-dur) var(--hover-ease); }
-  .pvc-summary::-webkit-details-marker { display: none; }
-  .pvc-summary:hover { border-color: rgba(var(--accent-rgb), .55); box-shadow: inset 0 1px 0 rgba(255,255,255,.5), inset -1px -1px 0 rgba(255,255,255,.30), inset 1px 1px 0 rgba(255,255,255,.12), inset 0 10px 18px -8px rgba(255,255,255,.18), inset 0 -1px 0 rgba(0,0,0,.6), inset 0 -3px 5px rgba(0,0,0,.22), 0 0 40px rgba(var(--accent-rgb), .45); }
-  .pvc-summary:focus-visible { outline: 2px solid var(--em); outline-offset: 3px; }
-  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { .pvc-summary { background: #0B0F10; } }
-  @media (max-width: 980px) { .pvc-summary { background: #0B0F10; -webkit-backdrop-filter: none; backdrop-filter: none; } }
-  .pvc-plus { position: relative; width: 11px; height: 11px; flex: 0 0 auto; }
-  .pvc-plus::before, .pvc-plus::after { content: ''; position: absolute; left: 0; top: 5px; width: 11px; height: 1px; background: var(--em); transition: transform var(--hover-dur) var(--hover-ease); }
-  .pvc-plus::after { transform: rotate(90deg); }
-  .pvc-details[open] .pvc-plus::before { transform: rotate(45deg); }
-  .pvc-details[open] .pvc-plus::after { transform: rotate(-45deg); }
-  .pvc-details .gridwrap { margin-top: 18px; }
+  /* the block holds the matrix alone: heading, intro, matrix */
+  .pvc { margin-top: 56px; }
   /* the thead carries the real column names for assistive tech; the visible
      short labels live in the tfoot under the LEDs */
   .pvc-vh { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; border: 0; }
-  /* the header row is now both the visible row and the semantic one: short
-     labels for the eye, the full criterion name hidden inside the same th for
-     assistive tech. Muted and hairline-only so it does not compete with the
-     STRK20 scorecard row directly beneath it. */
+  /* the header row is both the visible row and the semantic one: short
+     labels for the eye, the full criterion name hidden inside the same th
+     for assistive tech. Muted and hairline-only so it does not compete with
+     the STRK20 row directly beneath it. */
   .pgrid thead th { background: transparent; border: 0; border-bottom: 1px solid var(--line);
     font-family: var(--mono); font-size: 9.5px; font-weight: 500; letter-spacing: .1em; line-height: 1.4;
-    color: var(--muted); text-align: center; padding: 0 6px 11px;
-    transition: color var(--hover-dur) var(--hover-ease), opacity var(--hover-dur) var(--hover-ease); }
+    color: var(--muted); text-align: center; padding: 0 6px 11px; }
   .pgrid thead th.pname, .pgrid thead th.shead { font-size: 9.5px; letter-spacing: .1em; color: var(--muted); }
   .pgrid thead th.pname { text-align: left; padding: 0 18px 11px; }
-  /* chip highlight: driven by the data-col set on the table by the chip script */
-  .pgrid[data-col] tbody td[data-c] { opacity: .38; transition: opacity var(--hover-dur) var(--hover-ease); }
-  .pgrid[data-col="0"] tbody td[data-c="0"], .pgrid[data-col="1"] tbody td[data-c="1"],
-  .pgrid[data-col="2"] tbody td[data-c="2"], .pgrid[data-col="3"] tbody td[data-c="3"],
-  .pgrid[data-col="4"] tbody td[data-c="4"], .pgrid[data-col="5"] tbody td[data-c="5"],
-  .pgrid[data-col="6"] tbody td[data-c="6"] { opacity: 1; background: rgba(var(--accent-rgb), .12); }
-  .pgrid[data-col] thead th[data-c] { opacity: .42; }
-  .pgrid[data-col="0"] thead th[data-c="0"], .pgrid[data-col="1"] thead th[data-c="1"],
-  .pgrid[data-col="2"] thead th[data-c="2"], .pgrid[data-col="3"] thead th[data-c="3"],
-  .pgrid[data-col="4"] thead th[data-c="4"], .pgrid[data-col="5"] thead th[data-c="5"],
-  .pgrid[data-col="6"] thead th[data-c="6"] { opacity: 1; color: var(--em); }
-  @media (prefers-reduced-motion: reduce) {
-    .pvc-field, .pvc-chip, .pvc-plus::before, .pvc-plus::after, .pgrid thead th, .pgrid[data-col] tbody td[data-c], .pvc-summary { transition: none; }
-  }
-  @media (max-width: 980px) { .pvc-field { grid-template-columns: repeat(3, 1fr); gap: 22px 14px; } }
-  @media (max-width: 560px) { .pvc-field { grid-template-columns: repeat(2, 1fr); } .pvc-card { width: 100%; } }
   .pgrid-legend i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; vertical-align: -1px; margin-right: 6px; }
   .pgrid-legend .lg-y { background: var(--em); opacity: .75; }
   .pgrid-legend .lg-p { border: 1px solid #E8A33D; background: linear-gradient(90deg, #E8A33D 0 50%, transparent 50%); }
@@ -1816,113 +1739,63 @@
   <p class="th-pm-eyebrow th-pm-reveal">The architecture</p>
   <p class="th-pm-intro th-pm-reveal">Strip away the branding and it comes down to architecture: <b>Starknet is, structurally, the strongest privacy platform in production today.</b> Not on one criterion. On all of them.</p>
 
-  <!-- ===== PRIVACY COMPLETENESS =====
-       Replaces the raw 7x7 comparison table with an editorial read of it. The
-       matrix survives underneath in a native <details>, so its content stays in
-       the DOM for find-in-page and for the search index build.
+  <!-- ===== PRIVACY COMPLETENESS MATRIX =====
        DATA INTEGRITY: the matrix tbody cell state classes (y / p / n) are the
        only source of truth. scripts/build-privacy-matrix.js derives every
-       score, the field ordering and every bar width from them at build time and
-       rewrites the two AUTO regions below, so no number here is typed by hand.
-       Partial never counts toward a score, matching the legend. The block
-       opens on the card: the statement that used to sit above it was dropped
-       on 2026-08-09. -->
+       score from them at build time, orders the rows by that score and
+       rewrites the SCORE column, so no number here is typed by hand. Partial
+       never counts toward a score, matching the legend. The editorial summary
+       that used to sit above the matrix (the STRK20 scorecard, the competitor
+       bars and the criterion picker) was removed on 2026-08-12: the SCORE
+       column carries the completeness argument on its own. -->
   <div class="pvc th-pm-reveal">
-
-    <!-- PVC:AUTO-CARD START -->
-    <div class="pvc-card" id="strk20">
-      <div class="pvc-card-bloom" aria-hidden="true"></div>
-      <p class="pvc-card-label">STRK20</p>
-      <p class="pvc-card-score">7<span>/7</span></p>
-      <p class="pvc-card-state">Complete</p>
-      <div class="pvc-card-segs" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="gridwrap">
+      <table class="pgrid">
+        <caption class="pvc-vh">Privacy completeness by protocol. Seven criteria scored yes, partial (not counted) or no, with each protocol's total out of seven.</caption>
+        <colgroup><col class="c-name"><col class="c-crit" span="7"><col class="c-score"></colgroup>
+        <thead>
+          <tr><th scope="col" class="pname">PROTOCOL</th><th scope="col" data-c="0"><span aria-hidden="true">MULTI-ASSET</span><span class="pvc-vh">Multi-asset, one pool, all tokens</span></th><th scope="col" data-c="1"><span aria-hidden="true">NO SECRETS</span><span class="pvc-vh">No user-managed secrets, nothing to back up</span></th><th scope="col" data-c="2"><span aria-hidden="true">COMPLIANCE</span><span class="pvc-vh">Compliance path, scoped disclosure</span></th><th scope="col" data-c="3"><span aria-hidden="true">FAST</span><span class="pvc-vh">Fast shield and unshield, seconds both ways</span></th><th scope="col" data-c="4"><span aria-hidden="true">PROGRAMMABLE</span><span class="pvc-vh">Programmable, private app logic</span></th><th scope="col" data-c="5"><span aria-hidden="true">DEFI</span><span class="pvc-vh">DeFi composability, existing protocols</span></th><th scope="col" data-c="6"><span aria-hidden="true">ECOSYSTEM</span><span class="pvc-vh">Existing ecosystem, real users and liquidity</span></th><th scope="col" class="shead">SCORE</th></tr>
+        </thead>
+        <tbody>
+      <tr id="strk20-row" class="champ-row">
+        <th scope="row" class="pname">STRK20</th>
+        <td class="y" data-c="0" tabindex="0" data-tip="One shared pool for every ERC-20: BTC, USDC, STRK, memecoins. Every asset deepens the same crowd."><span class="pvc-vh">yes</span></td><td class="y" data-c="1" tabindex="0" data-tip="Notes are discovered through the protocol itself. Nothing to back up, nothing to lose."><span class="pvc-vh">yes</span></td><td class="y" data-c="2" tabindex="0" data-tip="Viewing-key escrow enforced by the proof itself. Scoped, lawful disclosure without exposing anyone else in the pool."><span class="pvc-vh">yes</span></td><td class="y" data-c="3" tabindex="0" data-tip="One click in Ready or Xverse, settled in seconds, one per-action fee whatever the amount: about $0.12, paid in STRK."><span class="pvc-vh">yes</span></td><td class="y" data-c="4" tabindex="0" data-tip="Full Cairo expressivity: private flows inside real applications, not a fixed transfer circuit."><span class="pvc-vh">yes</span></td><td class="y" data-c="5" tabindex="0" data-tip="The whole Starknet DeFi stack plugs into the pool: swaps, lending, staking, yield, all atomic with no intermediate public state, and cross-chain flows from other ecosystems are next."><span class="pvc-vh">yes</span></td><td class="y" data-c="6" tabindex="0" data-tip="Live on Starknet mainnet DeFi since June 2026."><span class="pvc-vh">yes</span></td>
+        <td class="score">7/7</td>
+      </tr>
+      <tr id="aztec">
+        <th scope="row" class="pname">AZTEC</th>
+        <td class="y" data-c="0" tabindex="0" data-tip="Multi-asset, within its own chain."><span class="pvc-vh">yes</span></td><td class="n" data-c="1" tabindex="0" data-tip="Client-side note management is the user's problem."><span class="pvc-vh">no</span></td><td class="p" data-c="2" tabindex="0" data-tip="Opt-in viewing keys; nothing compels disclosure."><span class="pvc-vh">partial, not counted</span></td><td class="y" data-c="3" tabindex="0" data-tip="Fast within Aztec itself."><span class="pvc-vh">yes</span></td><td class="y" data-c="4" tabindex="0" data-tip="Noir enables genuinely private applications."><span class="pvc-vh">yes</span></td><td class="y" data-c="5" tabindex="0" data-tip="Composable inside Aztec; reaching outside liquidity means bridging out in public."><span class="pvc-vh">yes</span></td><td class="n" data-c="6" tabindex="0" data-tip="Alpha-stage network with minimal liquidity: privacy with little to use it on."><span class="pvc-vh">no</span></td>
+        <td class="score">4/7</td>
+      </tr>
+      <tr id="zama">
+        <th scope="row" class="pname">ZAMA</th>
+        <td class="y" data-c="0" tabindex="0" data-tip="FHE encrypts balances for any ERC-20."><span class="pvc-vh">yes</span></td><td class="n" data-c="1" tabindex="0" data-tip="Relies on threshold key infrastructure users must depend on."><span class="pvc-vh">no</span></td><td class="y" data-c="2" tabindex="0" data-tip="Programmable disclosure through FHE access control."><span class="pvc-vh">yes</span></td><td class="n" data-c="3" tabindex="0" data-tip="FHE computation is heavy: not a seconds-level experience yet."><span class="pvc-vh">no</span></td><td class="y" data-c="4" tabindex="0" data-tip="Encrypted smart contracts are the whole point."><span class="pvc-vh">yes</span></td><td class="n" data-c="5" tabindex="0" data-tip="Confidential tokens do not yet compose with live DeFi at scale."><span class="pvc-vh">no</span></td><td class="y" data-c="6" tabindex="0" data-tip="Deploys onto existing EVM ecosystems."><span class="pvc-vh">yes</span></td>
+        <td class="score">4/7</td>
+      </tr>
+      <tr id="railgun">
+        <th scope="row" class="pname">RAILGUN</th>
+        <td class="y" data-c="0" tabindex="0" data-tip="Any ERC-20 can enter its shielded pool."><span class="pvc-vh">yes</span></td><td class="n" data-c="1" tabindex="0" data-tip="Note secrets live client-side; losing them means losing access."><span class="pvc-vh">no</span></td><td class="p" data-c="2" tabindex="0" data-tip="Proof-of-innocence screening is automatic at entry, but tracing a specific user afterwards still requires their cooperation."><span class="pvc-vh">partial, not counted</span></td><td class="n" data-c="3" tabindex="0" data-tip="0.25% fee each way and waiting periods on freshly shielded tokens."><span class="pvc-vh">no</span></td><td class="n" data-c="4" tabindex="0" data-tip="A shielding layer, not a private programming environment."><span class="pvc-vh">no</span></td><td class="y" data-c="5" tabindex="0" data-tip="Relay Adapt reaches EVM DeFi from inside the pool."><span class="pvc-vh">yes</span></td><td class="y" data-c="6" tabindex="0" data-tip="Live on Ethereum and other EVM chains."><span class="pvc-vh">yes</span></td>
+        <td class="score">3/7</td>
+      </tr>
+      <tr id="canton">
+        <th scope="row" class="pname">CANTON</th>
+        <td class="n" data-c="0" tabindex="0" data-tip="Privacy is scoped per contract domain, not one shared pool."><span class="pvc-vh">no</span></td><td class="n" data-c="1" tabindex="0" data-tip="Participants operate nodes and manage their own state."><span class="pvc-vh">no</span></td><td class="y" data-c="2" tabindex="0" data-tip="Built for regulated disclosure from day one."><span class="pvc-vh">yes</span></td><td class="n" data-c="3" tabindex="0" data-tip="No public shield/unshield: the network is permissioned."><span class="pvc-vh">no</span></td><td class="n" data-c="4" tabindex="0" data-tip="Programmable, but inside permissioned domains, not open crypto."><span class="pvc-vh">no</span></td><td class="y" data-c="5" tabindex="0" data-tip="Composability across Canton's connected institutional applications."><span class="pvc-vh">yes</span></td><td class="y" data-c="6" tabindex="0" data-tip="Real institutional users: the SWIFT-equivalent path, not Web3."><span class="pvc-vh">yes</span></td>
+        <td class="score">3/7</td>
+      </tr>
+      <tr id="monero">
+        <th scope="row" class="pname">MONERO</th>
+        <td class="n" data-c="0" tabindex="0" data-tip="Single asset. XMR only."><span class="pvc-vh">no</span></td><td class="n" data-c="1" tabindex="0" data-tip="Users hold and manage their own keys and wallet state."><span class="pvc-vh">no</span></td><td class="p" data-c="2" tabindex="0" data-tip="View keys are opt-in and only reveal incoming funds; outgoing spends stay hidden even from the key holder."><span class="pvc-vh">partial, not counted</span></td><td class="y" data-c="3" tabindex="0" data-tip="Nothing to toggle: every transaction is private by default."><span class="pvc-vh">yes</span></td><td class="n" data-c="4" tabindex="0" data-tip="No programmability. Digital cash, not a platform."><span class="pvc-vh">no</span></td><td class="n" data-c="5" tabindex="0" data-tip="Isolated by design, and repeatedly delisted from major venues."><span class="pvc-vh">no</span></td><td class="y" data-c="6" tabindex="0" data-tip="The longest-running privacy money in crypto."><span class="pvc-vh">yes</span></td>
+        <td class="score">2/7</td>
+      </tr>
+      <tr id="zcash">
+        <th scope="row" class="pname">ZCASH</th>
+        <td class="n" data-c="0" tabindex="0" data-tip="Single asset. The pool only ever hides ZEC."><span class="pvc-vh">no</span></td><td class="n" data-c="1" tabindex="0" data-tip="Wallets manage spending and viewing keys, and must scan the whole chain to find notes."><span class="pvc-vh">no</span></td><td class="p" data-c="2" tabindex="0" data-tip="Viewing keys exist, but sharing is voluntary: compliance fails the moment a user refuses."><span class="pvc-vh">partial, not counted</span></td><td class="n" data-c="3" tabindex="0" data-tip="Shielding rides Zcash block times and wallet scanning. Not a seconds-level toggle."><span class="pvc-vh">no</span></td><td class="n" data-c="4" tabindex="0" data-tip="No smart contracts. Privacy without programmability."><span class="pvc-vh">no</span></td><td class="n" data-c="5" tabindex="0" data-tip="A dedicated chain: no lending, no AMMs, no shared liquidity."><span class="pvc-vh">no</span></td><td class="y" data-c="6" tabindex="0" data-tip="A decade of real monetary usage and holders."><span class="pvc-vh">yes</span></td>
+        <td class="score">1/7</td>
+      </tr>
+        </tbody>
+      </table>
     </div>
-    <!-- PVC:AUTO-CARD END -->
-
-    <!-- PVC:AUTO-FIELD START -->
-    <div class="pvc-field">
-      <div class="pvc-col"><p class="pvc-col-score">4<span>/7</span></p><p class="pvc-col-name">AZTEC</p><div class="pvc-track"><i style="width:57.1429%"></i></div></div>
-      <div class="pvc-col"><p class="pvc-col-score">4<span>/7</span></p><p class="pvc-col-name">ZAMA</p><div class="pvc-track"><i style="width:57.1429%"></i></div></div>
-      <div class="pvc-col"><p class="pvc-col-score">3<span>/7</span></p><p class="pvc-col-name">RAILGUN</p><div class="pvc-track"><i style="width:42.8571%"></i></div></div>
-      <div class="pvc-col"><p class="pvc-col-score">3<span>/7</span></p><p class="pvc-col-name">CANTON</p><div class="pvc-track"><i style="width:42.8571%"></i></div></div>
-      <div class="pvc-col"><p class="pvc-col-score">2<span>/7</span></p><p class="pvc-col-name">MONERO</p><div class="pvc-track"><i style="width:28.5714%"></i></div></div>
-      <div class="pvc-col"><p class="pvc-col-score">1<span>/7</span></p><p class="pvc-col-name">ZCASH</p><div class="pvc-track"><i style="width:14.2857%"></i></div></div>
-    </div>
-    <!-- PVC:AUTO-FIELD END -->
-
-    <div class="pvc-why">
-      <h4 id="why-7-of-7" class="pvc-why-h">Why 7 of 7?</h4>
-      <div class="pvc-chips">
-        <button type="button" class="pvc-chip" data-c="0" aria-pressed="false" aria-controls="pvc-method">MULTI-ASSET</button>
-        <button type="button" class="pvc-chip" data-c="1" aria-pressed="false" aria-controls="pvc-method">NO SECRETS</button>
-        <button type="button" class="pvc-chip" data-c="2" aria-pressed="false" aria-controls="pvc-method">COMPLIANCE</button>
-        <button type="button" class="pvc-chip" data-c="3" aria-pressed="false" aria-controls="pvc-method">FAST</button>
-        <button type="button" class="pvc-chip" data-c="4" aria-pressed="false" aria-controls="pvc-method">PROGRAMMABLE</button>
-        <button type="button" class="pvc-chip" data-c="5" aria-pressed="false" aria-controls="pvc-method">DEFI</button>
-        <button type="button" class="pvc-chip" data-c="6" aria-pressed="false" aria-controls="pvc-method">ECOSYSTEM</button>
-      </div>
-      <div class="pvc-method" id="pvc-method" aria-live="polite">
-        <div class="pvc-meth-item" data-c="0" hidden><p class="pvc-meth-h">MULTI-ASSET <span>one pool, all tokens</span></p><p class="pvc-meth-b">One shared pool for every ERC-20: BTC, USDC, STRK, memecoins. Every asset deepens the same crowd.</p></div>
-        <div class="pvc-meth-item" data-c="1" hidden><p class="pvc-meth-h">NO USER-MANAGED SECRETS <span>nothing to back up</span></p><p class="pvc-meth-b">Notes are discovered through the protocol itself. Nothing to back up, nothing to lose.</p></div>
-        <div class="pvc-meth-item" data-c="2" hidden><p class="pvc-meth-h">COMPLIANCE PATH <span>scoped disclosure</span></p><p class="pvc-meth-b">Viewing-key escrow enforced by the proof itself. Scoped, lawful disclosure without exposing anyone else in the pool.</p></div>
-        <div class="pvc-meth-item" data-c="3" hidden><p class="pvc-meth-h">FAST SHIELD / UNSHIELD <span>seconds, both ways</span></p><p class="pvc-meth-b">One click in Ready or Xverse, settled in seconds, one per-action fee whatever the amount: about $0.12, paid in STRK.</p></div>
-        <div class="pvc-meth-item" data-c="4" hidden><p class="pvc-meth-h">PROGRAMMABLE <span>private app logic</span></p><p class="pvc-meth-b">Full Cairo expressivity: private flows inside real applications, not a fixed transfer circuit.</p></div>
-        <div class="pvc-meth-item" data-c="5" hidden><p class="pvc-meth-h">DEFI COMPOSABILITY <span>existing protocols</span></p><p class="pvc-meth-b">The whole Starknet DeFi stack plugs into the pool: swaps, lending, staking, yield, all atomic with no intermediate public state, and cross-chain flows from other ecosystems are next.</p></div>
-        <div class="pvc-meth-item" data-c="6" hidden><p class="pvc-meth-h">EXISTING ECOSYSTEM <span>real users, liquidity</span></p><p class="pvc-meth-b">Live on Starknet mainnet DeFi since June 2026.</p></div>
-        <p class="pvc-meth-rest">Pick a criterion to see how it is scored.</p>
-      </div>
-    </div>
-
-    <details class="pvc-details" id="pvc-matrix">
-      <summary class="pvc-summary">See the full matrix <span class="pvc-plus" aria-hidden="true"></span></summary>
-      <div class="gridwrap">
-        <table class="pgrid">
-          <caption class="pvc-vh">Privacy completeness by protocol. Seven criteria scored yes, partial (not counted) or no, with each protocol's total out of seven.</caption>
-          <colgroup><col class="c-name"><col class="c-crit" span="7"><col class="c-score"></colgroup>
-          <thead>
-            <tr><th scope="col" class="pname">PROTOCOL</th><th scope="col" data-c="0"><span aria-hidden="true">MULTI-ASSET</span><span class="pvc-vh">Multi-asset, one pool, all tokens</span></th><th scope="col" data-c="1"><span aria-hidden="true">NO SECRETS</span><span class="pvc-vh">No user-managed secrets, nothing to back up</span></th><th scope="col" data-c="2"><span aria-hidden="true">COMPLIANCE</span><span class="pvc-vh">Compliance path, scoped disclosure</span></th><th scope="col" data-c="3"><span aria-hidden="true">FAST</span><span class="pvc-vh">Fast shield and unshield, seconds both ways</span></th><th scope="col" data-c="4"><span aria-hidden="true">PROGRAMMABLE</span><span class="pvc-vh">Programmable, private app logic</span></th><th scope="col" data-c="5"><span aria-hidden="true">DEFI</span><span class="pvc-vh">DeFi composability, existing protocols</span></th><th scope="col" data-c="6"><span aria-hidden="true">ECOSYSTEM</span><span class="pvc-vh">Existing ecosystem, real users and liquidity</span></th><th scope="col" class="shead">SCORE</th></tr>
-          </thead>
-          <tbody>
-        <tr id="strk20-row" class="champ-row">
-          <th scope="row" class="pname">STRK20</th>
-          <td class="y" data-c="0" tabindex="0" data-tip="One shared pool for every ERC-20: BTC, USDC, STRK, memecoins. Every asset deepens the same crowd."><span class="pvc-vh">yes</span></td><td class="y" data-c="1" tabindex="0" data-tip="Notes are discovered through the protocol itself. Nothing to back up, nothing to lose."><span class="pvc-vh">yes</span></td><td class="y" data-c="2" tabindex="0" data-tip="Viewing-key escrow enforced by the proof itself. Scoped, lawful disclosure without exposing anyone else in the pool."><span class="pvc-vh">yes</span></td><td class="y" data-c="3" tabindex="0" data-tip="One click in Ready or Xverse, settled in seconds, one per-action fee whatever the amount: about $0.12, paid in STRK."><span class="pvc-vh">yes</span></td><td class="y" data-c="4" tabindex="0" data-tip="Full Cairo expressivity: private flows inside real applications, not a fixed transfer circuit."><span class="pvc-vh">yes</span></td><td class="y" data-c="5" tabindex="0" data-tip="The whole Starknet DeFi stack plugs into the pool: swaps, lending, staking, yield, all atomic with no intermediate public state, and cross-chain flows from other ecosystems are next."><span class="pvc-vh">yes</span></td><td class="y" data-c="6" tabindex="0" data-tip="Live on Starknet mainnet DeFi since June 2026."><span class="pvc-vh">yes</span></td>
-          <td class="score">7/7</td>
-        </tr>
-        <tr id="aztec">
-          <th scope="row" class="pname">AZTEC</th>
-          <td class="y" data-c="0" tabindex="0" data-tip="Multi-asset, within its own chain."><span class="pvc-vh">yes</span></td><td class="n" data-c="1" tabindex="0" data-tip="Client-side note management is the user's problem."><span class="pvc-vh">no</span></td><td class="p" data-c="2" tabindex="0" data-tip="Opt-in viewing keys; nothing compels disclosure."><span class="pvc-vh">partial, not counted</span></td><td class="y" data-c="3" tabindex="0" data-tip="Fast within Aztec itself."><span class="pvc-vh">yes</span></td><td class="y" data-c="4" tabindex="0" data-tip="Noir enables genuinely private applications."><span class="pvc-vh">yes</span></td><td class="y" data-c="5" tabindex="0" data-tip="Composable inside Aztec; reaching outside liquidity means bridging out in public."><span class="pvc-vh">yes</span></td><td class="n" data-c="6" tabindex="0" data-tip="Alpha-stage network with minimal liquidity: privacy with little to use it on."><span class="pvc-vh">no</span></td>
-          <td class="score">4/7</td>
-        </tr>
-        <tr id="zama">
-          <th scope="row" class="pname">ZAMA</th>
-          <td class="y" data-c="0" tabindex="0" data-tip="FHE encrypts balances for any ERC-20."><span class="pvc-vh">yes</span></td><td class="n" data-c="1" tabindex="0" data-tip="Relies on threshold key infrastructure users must depend on."><span class="pvc-vh">no</span></td><td class="y" data-c="2" tabindex="0" data-tip="Programmable disclosure through FHE access control."><span class="pvc-vh">yes</span></td><td class="n" data-c="3" tabindex="0" data-tip="FHE computation is heavy: not a seconds-level experience yet."><span class="pvc-vh">no</span></td><td class="y" data-c="4" tabindex="0" data-tip="Encrypted smart contracts are the whole point."><span class="pvc-vh">yes</span></td><td class="n" data-c="5" tabindex="0" data-tip="Confidential tokens do not yet compose with live DeFi at scale."><span class="pvc-vh">no</span></td><td class="y" data-c="6" tabindex="0" data-tip="Deploys onto existing EVM ecosystems."><span class="pvc-vh">yes</span></td>
-          <td class="score">4/7</td>
-        </tr>
-        <tr id="railgun">
-          <th scope="row" class="pname">RAILGUN</th>
-          <td class="y" data-c="0" tabindex="0" data-tip="Any ERC-20 can enter its shielded pool."><span class="pvc-vh">yes</span></td><td class="n" data-c="1" tabindex="0" data-tip="Note secrets live client-side; losing them means losing access."><span class="pvc-vh">no</span></td><td class="p" data-c="2" tabindex="0" data-tip="Proof-of-innocence screening is automatic at entry, but tracing a specific user afterwards still requires their cooperation."><span class="pvc-vh">partial, not counted</span></td><td class="n" data-c="3" tabindex="0" data-tip="0.25% fee each way and waiting periods on freshly shielded tokens."><span class="pvc-vh">no</span></td><td class="n" data-c="4" tabindex="0" data-tip="A shielding layer, not a private programming environment."><span class="pvc-vh">no</span></td><td class="y" data-c="5" tabindex="0" data-tip="Relay Adapt reaches EVM DeFi from inside the pool."><span class="pvc-vh">yes</span></td><td class="y" data-c="6" tabindex="0" data-tip="Live on Ethereum and other EVM chains."><span class="pvc-vh">yes</span></td>
-          <td class="score">3/7</td>
-        </tr>
-        <tr id="canton">
-          <th scope="row" class="pname">CANTON</th>
-          <td class="n" data-c="0" tabindex="0" data-tip="Privacy is scoped per contract domain, not one shared pool."><span class="pvc-vh">no</span></td><td class="n" data-c="1" tabindex="0" data-tip="Participants operate nodes and manage their own state."><span class="pvc-vh">no</span></td><td class="y" data-c="2" tabindex="0" data-tip="Built for regulated disclosure from day one."><span class="pvc-vh">yes</span></td><td class="n" data-c="3" tabindex="0" data-tip="No public shield/unshield: the network is permissioned."><span class="pvc-vh">no</span></td><td class="n" data-c="4" tabindex="0" data-tip="Programmable, but inside permissioned domains, not open crypto."><span class="pvc-vh">no</span></td><td class="y" data-c="5" tabindex="0" data-tip="Composability across Canton's connected institutional applications."><span class="pvc-vh">yes</span></td><td class="y" data-c="6" tabindex="0" data-tip="Real institutional users: the SWIFT-equivalent path, not Web3."><span class="pvc-vh">yes</span></td>
-          <td class="score">3/7</td>
-        </tr>
-        <tr id="monero">
-          <th scope="row" class="pname">MONERO</th>
-          <td class="n" data-c="0" tabindex="0" data-tip="Single asset. XMR only."><span class="pvc-vh">no</span></td><td class="n" data-c="1" tabindex="0" data-tip="Users hold and manage their own keys and wallet state."><span class="pvc-vh">no</span></td><td class="p" data-c="2" tabindex="0" data-tip="View keys are opt-in and only reveal incoming funds; outgoing spends stay hidden even from the key holder."><span class="pvc-vh">partial, not counted</span></td><td class="y" data-c="3" tabindex="0" data-tip="Nothing to toggle: every transaction is private by default."><span class="pvc-vh">yes</span></td><td class="n" data-c="4" tabindex="0" data-tip="No programmability. Digital cash, not a platform."><span class="pvc-vh">no</span></td><td class="n" data-c="5" tabindex="0" data-tip="Isolated by design, and repeatedly delisted from major venues."><span class="pvc-vh">no</span></td><td class="y" data-c="6" tabindex="0" data-tip="The longest-running privacy money in crypto."><span class="pvc-vh">yes</span></td>
-          <td class="score">2/7</td>
-        </tr>
-        <tr id="zcash">
-          <th scope="row" class="pname">ZCASH</th>
-          <td class="n" data-c="0" tabindex="0" data-tip="Single asset. The pool only ever hides ZEC."><span class="pvc-vh">no</span></td><td class="n" data-c="1" tabindex="0" data-tip="Wallets manage spending and viewing keys, and must scan the whole chain to find notes."><span class="pvc-vh">no</span></td><td class="p" data-c="2" tabindex="0" data-tip="Viewing keys exist, but sharing is voluntary: compliance fails the moment a user refuses."><span class="pvc-vh">partial, not counted</span></td><td class="n" data-c="3" tabindex="0" data-tip="Shielding rides Zcash block times and wallet scanning. Not a seconds-level toggle."><span class="pvc-vh">no</span></td><td class="n" data-c="4" tabindex="0" data-tip="No smart contracts. Privacy without programmability."><span class="pvc-vh">no</span></td><td class="n" data-c="5" tabindex="0" data-tip="A dedicated chain: no lending, no AMMs, no shared liquidity."><span class="pvc-vh">no</span></td><td class="y" data-c="6" tabindex="0" data-tip="A decade of real monetary usage and holders."><span class="pvc-vh">yes</span></td>
-          <td class="score">1/7</td>
-        </tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="pgrid-legend"><i class="lg-y"></i><b>YES</b> <i class="lg-p"></i><b>PARTIAL, NOT COUNTED</b> <i class="lg-n"></i><b>NO</b></div>
-    </details>
+    <div class="pgrid-legend"><i class="lg-y"></i><b>YES</b> <i class="lg-p"></i><b>PARTIAL, NOT COUNTED</b> <i class="lg-n"></i><b>NO</b></div>
   </div>
 
   <!-- Satoshi narrative: three rows. Row 1 asks (question + the post),
@@ -4432,39 +4305,6 @@ function thRove(opts){
       if(!was) el.classList.add('on');
     });
   });
-})();
-</script>
-<script>
-/* Criterion chips: open the matrix if closed, mark the column on the table so
-   one CSS rule tints its LEDs and its footer micro-label, and swap in that
-   criterion's methodology. Every line of that methodology copy is the table's
-   own STRK20 tooltip plus the published column subtitle, so nothing here
-   asserts anything the matrix does not already say. */
-(function(){
-  var chips = [].slice.call(document.querySelectorAll('.pvc-chip'));
-  var det = document.getElementById('pvc-matrix');
-  var table = det && det.querySelector('.pgrid');
-  var items = [].slice.call(document.querySelectorAll('.pvc-meth-item'));
-  var rest = document.querySelector('.pvc-meth-rest');
-  if (!chips.length || !table) return;
-  function select(c){
-    var off = c === null;
-    chips.forEach(function(b){ b.setAttribute('aria-pressed', String(!off && +b.dataset.c === c)); });
-    items.forEach(function(el){ el.hidden = off || +el.dataset.c !== c; });
-    if (rest) rest.hidden = !off;
-    if (off) table.removeAttribute('data-col'); else table.setAttribute('data-col', String(c));
-  }
-  chips.forEach(function(b){
-    b.addEventListener('click', function(){
-      var already = b.getAttribute('aria-pressed') === 'true';
-      if (!det.open) det.open = true;
-      select(already ? null : +b.dataset.c);
-    });
-  });
-  function syncExpanded(){ chips.forEach(function(b){ b.setAttribute('aria-expanded', String(det.open)); }); }
-  det.addEventListener('toggle', function(){ syncExpanded(); if (!det.open) select(null); });
-  syncExpanded();
-  select(null);
 })();
 </script>
 </body>
