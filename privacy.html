@@ -4172,6 +4172,13 @@
     setInterval(function(){ load(true); }, 3600000); // silent hourly refresh
     setInterval(tickUpdated, 60000);                 // relative "UPDATED" ticker
   }
+  /* BEHAVIOR CHANGE, 2026-08-13: root now sits inside section 04's movement
+     panel 04, which is display:none until its pedestal is selected. A hidden
+     element never intersects, so this engine no longer wakes on scroll: it
+     wakes the first time a reader selects METRICS, and if nobody ever selects
+     it, nothing is fetched. That is correct (no work for data nobody looks
+     at) but it is not what this observer used to mean, and the single
+     snapshot discipline below assumes one wake per page load either way. */
   if ('IntersectionObserver' in window) {
     var io = new IntersectionObserver(function(entries){
       entries.forEach(function(en){ if (en.isIntersecting) { io.disconnect(); once(); } });

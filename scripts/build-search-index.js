@@ -137,6 +137,10 @@ const CARD_SPECS = {
     { cls: 'landmass', kind: 'card' },
     { cls: 'snode', kind: 'card' },
     { cls: 'pb-li', kind: 'card' },
+    /* section 04's live metric cards: real measured data, so they belong in
+       the index. The wallet card in the same section deliberately does NOT,
+       its figures are illustrative and would read as real in a result. */
+    { cls: 'pmx-card', kind: 'metric' },
   ],
   quantum: [
     { cls: 'th-pm-card', kind: 'card' },
@@ -164,7 +168,7 @@ const CARD_SPECS = {
   ecosystem: [],
   digest: [],
 };
-const TITLE_CLASSES = ['mode-item-title', 'metric-label', 'step-name', 'catalyst-tag', 'wp-t', 'cl', 'ptitle', 'bh-title', 'tx', 'k', 'lt', 'lb', 'lbl'];
+const TITLE_CLASSES = ['mode-item-title', 'metric-label', 'step-name', 'catalyst-tag', 'wp-t', 'cl', 'ptitle', 'bh-title', 'tx', 'k', 'lt', 'lb', 'lbl', 'pmx-t'];
 
 function titleFor(node) {
   const h = find(node, n => HEADINGS.has(n.tag))[0];

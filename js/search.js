@@ -209,6 +209,11 @@
     if (target.classList && (target.classList.contains('wp-card') || target.classList.contains('sp-card'))) {
       target.classList.add(target.classList.contains('wp-card') ? 'tap-open' : 'on'); did = true;
     }
+    /* privacy: section 04 shows one movement panel at a time. The index does
+       not record which panel a hit lives in; the DOM does, so walk up to the
+       panel and click the tab it names through aria-labelledby. */
+    const pmv = target.closest && target.closest('.pmv-panel');
+    if (pmv && pmv.hidden) did = clickIf(document.getElementById(pmv.getAttribute('aria-labelledby'))) || did;
     /* privacy: the proving-properties panel shows one property at a time */
     const pci = target.closest && target.closest('.pcore-item');
     if (pci && !pci.classList.contains('is-on')) did = clickIf(document.querySelectorAll('#pcore .pcore-node')[+pci.dataset.p]) || did;
