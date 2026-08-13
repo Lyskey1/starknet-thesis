@@ -941,29 +941,36 @@
         modal (200), the mobile overlay (300) or the search palette (400),
         whatever local z-index the strip carries.
      --pmv-stick-top is written from the nav's MEASURED height rather than
-     a literal, so the strip follows a nav that changes height. */
+     a literal, so the strip follows a nav that changes height.
+
      Condensing costs the row 88px of height, and a sticky box stays in flow,
      so without help the whole panel would jump up by exactly that much at
      the moment of sticking. .pmv-spacer takes back the difference in the
      same frame, measured rather than assumed, which is also what lets the
-     scroll-on-switch target below stay a fixed position. The geometry is
+     scroll-on-switch target stay a fixed position. The geometry is
      deliberately NOT transitioned for the same reason: a tweened height
      cannot be cancelled exactly by the spacer, and content that slides
-     under the reader costs more than a 300ms size tween buys. Opacity and
-     background still fade. */
-  .pmv-sentinel { height: 1px; margin-bottom: -1px; pointer-events: none; }
+     under the reader costs more than a 300ms size tween buys. */
   .pmv-spacer { height: 0; pointer-events: none; }
   .pmv.is-stuck .pmv-spacer { height: var(--pmv-spacer, 0px); }
   /* used for one synchronous measurement, never painted in this state */
   .pmv.pmv-measuring .pmv-row, .pmv.pmv-measuring .pmv-row * { transition: none !important; }
-  .pmv-row { position: sticky; top: var(--pmv-stick-top, 86px); z-index: 6;
-    border-radius: 0 0 12px 12px;
+  /* Sticky is switched ON by the script, and that same script owns .is-stuck,
+     which carries the opaque fill. So the row cannot be sticky without the
+     code that backgrounds it: if the script never runs the row stays static,
+     never leaves its own space, and never needs a background. Overlap starts
+     at the exact scroll position that sets .is-stuck, so the fill is present
+     for every pixel of overlap rather than arriving a frame later. */
+  .pmv.stick-on .pmv-row { position: sticky; top: var(--pmv-stick-top, 86px); z-index: 6; }
+  .pmv-row { border-radius: 0 0 12px 12px;
     transition: background var(--hover-dur) var(--hover-ease); }
   /* condensed. The plinths collapse and the glyphs shrink: same nodes, same
      listeners, same thRove state. Nothing is swapped in or re-rendered, so
      the strip and the at-rest row cannot disagree by construction. */
   .pmv.is-stuck .pmv-row { gap: 8px; padding: 10px; margin: 0 -10px;
-    background: rgba(7,9,10,.9);
+    /* fully opaque: the strip sits over charts and headings, and a partly
+       transparent fill let text read through even where the blur applied */
+    background: #080A0B;
     -webkit-backdrop-filter: blur(14px) saturate(115%);
             backdrop-filter: blur(14px) saturate(115%);
     box-shadow: 0 10px 26px rgba(0,0,0,.42), inset 0 -1px 0 var(--th-hair); }
@@ -3558,26 +3565,34 @@
   }
   thRove({ root: root, buttons: peds, shown: shown, pick: function(k){ select(k); scrollToPanelTop(); } });
 
-  // Sticky selector. The row is sticky in CSS; this only reports WHEN it has
-  // stuck, so the row can condense. A 1px sentinel directly above the row
-  // does the reporting, which is why there is no scroll handler here.
+  // Sticky selector. The row sticks in CSS; this decides WHEN it has stuck so
+  // it can condense.
   //
-  // The offset is the nav's measured height, not a literal: the nav is fixed
-  // and is 64px under 860px and content-sized above it, so both the sticky
-  // top and the observer's root margin are rebuilt when the viewport changes.
+  // This was an IntersectionObserver on a sentinel and it shipped broken. An
+  // observer only calls back when the intersection STATE changes, and the
+  // sentinel's last state change is the moment it crosses the root's top
+  // edge, which the negative nav root margin puts at y = navH. Measured on
+  // production: the final callback arrived with boundingClientRect.top =
+  // +20.1 and isIntersecting false, and no callback ever came again, all the
+  // way down to top = -1299.9. So the guard "not intersecting AND top < 0"
+  // was unreachable in practice: by the time top went negative there were no
+  // more callbacks to evaluate it in. An observer also stays silent when a
+  // deep link jumps the reader straight past the section, because the state
+  // is "outside" both before and after the jump.
+  //
+  // A scroll listener has none of those failure modes. It reads #pmv's own
+  // top, which is a static box, so the answer cannot drift with layout and
+  // there is no cached offset to go stale. Reading it costs one rect per
+  // frame, throttled by rAF and registered passive.
   //
   // Nothing about selection changes. These are the same buttons under the
   // same thRove instance above, so the strip is the at-rest row in a second
   // visual state and the two cannot hold different selections.
-  var sentinel = document.createElement('div');
-  sentinel.className = 'pmv-sentinel';
-  sentinel.setAttribute('aria-hidden', 'true');
-  root.insertBefore(sentinel, root.firstChild);
   var spacer = document.createElement('div');
   spacer.className = 'pmv-spacer';
   spacer.setAttribute('aria-hidden', 'true');
   root.insertBefore(spacer, row.nextSibling);
-  var stickIo = null;
+  var navH = 0, ticking = false;
   function navHeight(){
     var n = document.querySelector('nav');
     return n ? Math.round(n.getBoundingClientRect().height) : 0;
@@ -3597,26 +3612,31 @@
     root.classList.remove('pmv-measuring');
     root.style.setProperty('--pmv-spacer', Math.max(0, restH - condH).toFixed(1) + 'px');
   }
-  function wireStick(){
-    var h = navHeight();
-    document.documentElement.style.setProperty('--pmv-stick-top', h + 'px');
-    measureSpacer();
-    if (stickIo) stickIo.disconnect();
-    // pulling the root's top edge down by the nav height puts the trigger
-    // line exactly where the row comes to rest, so leaving the box IS stuck
-    stickIo = new IntersectionObserver(function(es){
-      var e = es[0];
-      // the sentinel is equally "outside" while the whole section is still
-      // below the fold, which is not stuck: only count it once it is above
-      root.classList.toggle('is-stuck', !e.isIntersecting && e.boundingClientRect.top < 0);
-    }, { rootMargin: (-h) + 'px 0px 0px 0px', threshold: 0 });
-    stickIo.observe(sentinel);
+  // #pmv is NOT the sticky box, the row inside it is, so #pmv's top is always
+  // the row's own resting position in the document. Toggling the class moves
+  // height between the row and the spacer, both inside #pmv, so #pmv's top
+  // never moves in response: the test cannot oscillate against itself.
+  function evaluate(){
+    root.classList.toggle('is-stuck', root.getBoundingClientRect().top <= navH);
   }
+  function onScroll(){
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(function(){ ticking = false; evaluate(); });
+  }
+  function wireStick(){
+    navH = navHeight();
+    document.documentElement.style.setProperty('--pmv-stick-top', navH + 'px');
+    measureSpacer();
+    evaluate();
+  }
+  root.classList.add('stick-on');   // hands the row its sticky position
   wireStick();
+  window.addEventListener('scroll', onScroll, { passive: true });
   // the labels are mono webfont, so the row is a couple of pixels shorter
   // before it loads and the spacer would under-reserve by that much
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(measureSpacer);
-  window.addEventListener('load', measureSpacer);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(wireStick);
+  window.addEventListener('load', wireStick);
   var stickT = null;
   window.addEventListener('resize', function(){
     clearTimeout(stickT); stickT = setTimeout(wireStick, 150);
