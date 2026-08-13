@@ -902,16 +902,14 @@
     opacity: 0; transition: opacity .4s ease; pointer-events: none; }
   .pmv-ped[aria-selected="true"]::before { opacity: 1; }
   .pmv-obj { width: 66px; height: 66px; color: var(--em); align-self: end; margin-bottom: 6px;
-    position: relative; z-index: 2; transition: transform .4s cubic-bezier(.22,1,.36,1), filter .4s ease,
-      width .32s var(--hover-ease), height .32s var(--hover-ease); }
+    position: relative; z-index: 2; transition: transform .4s cubic-bezier(.22,1,.36,1), filter .4s ease; }
   .pmv-obj svg { width: 100%; height: 100%; display: block; }
   .pmv-ped[aria-selected="true"] .pmv-obj { transform: translateY(-6px);
     filter: drop-shadow(0 0 10px rgba(var(--accent-rgb), .45)); }
   /* the plinth: an elliptical top face over a short cylinder wall, both cut
      from the shipped glass so it reads as one volume rather than two fills */
   .pmv-plinth { position: relative; width: 100%; max-width: 190px; height: 46px; z-index: 1;
-    transition: height .32s var(--hover-ease), max-width .32s var(--hover-ease),
-                opacity .32s var(--hover-ease); }
+    transition: opacity .2s var(--hover-ease); }
   .pmv-plinth i, .pmv-plinth u { position: absolute; left: 0; right: 0; display: block; }
   .pmv-plinth u { top: 13px; bottom: 0; border-radius: 0 0 50% 50% / 0 0 26px 26px;
     background: var(--card-glass-fill); border: 1px solid var(--card-glass-border); border-top: 0;
@@ -944,11 +942,23 @@
         whatever local z-index the strip carries.
      --pmv-stick-top is written from the nav's MEASURED height rather than
      a literal, so the strip follows a nav that changes height. */
+     Condensing costs the row 88px of height, and a sticky box stays in flow,
+     so without help the whole panel would jump up by exactly that much at
+     the moment of sticking. .pmv-spacer takes back the difference in the
+     same frame, measured rather than assumed, which is also what lets the
+     scroll-on-switch target below stay a fixed position. The geometry is
+     deliberately NOT transitioned for the same reason: a tweened height
+     cannot be cancelled exactly by the spacer, and content that slides
+     under the reader costs more than a 300ms size tween buys. Opacity and
+     background still fade. */
   .pmv-sentinel { height: 1px; margin-bottom: -1px; pointer-events: none; }
+  .pmv-spacer { height: 0; pointer-events: none; }
+  .pmv.is-stuck .pmv-spacer { height: var(--pmv-spacer, 0px); }
+  /* used for one synchronous measurement, never painted in this state */
+  .pmv.pmv-measuring .pmv-row, .pmv.pmv-measuring .pmv-row * { transition: none !important; }
   .pmv-row { position: sticky; top: var(--pmv-stick-top, 86px); z-index: 6;
     border-radius: 0 0 12px 12px;
-    transition: gap var(--hover-dur) var(--hover-ease), padding var(--hover-dur) var(--hover-ease),
-                background var(--hover-dur) var(--hover-ease); }
+    transition: background var(--hover-dur) var(--hover-ease); }
   /* condensed. The plinths collapse and the glyphs shrink: same nodes, same
      listeners, same thRove state. Nothing is swapped in or re-rendered, so
      the strip and the at-rest row cannot disagree by construction. */
@@ -3480,6 +3490,7 @@
   var root = document.getElementById('pmv');
   if (!root) return;
   var stage = document.getElementById('pmvStage');
+  var row = root.querySelector('.pmv-row');
   var peds = [].slice.call(root.querySelectorAll('.pmv-ped'));
   var panels = [].slice.call(root.querySelectorAll('.pmv-panel'));
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -3523,7 +3534,29 @@
     if (settling) clearTimeout(settling);
     settling = setTimeout(function(){ stage.style.height = ''; settling = null; }, 460);
   }
-  thRove({ root: root, buttons: peds, shown: shown, pick: function(k){ select(k); } });
+  // Selecting while the strip is stuck also takes the reader to the top of
+  // the new panel. Without it they land wherever they happened to be inside
+  // a panel they have never seen. The target is the same for all four,
+  // because every panel starts at the same offset inside the stage, so
+  // arrowing along the strip settles instead of hopping.
+  //
+  // Offset: put the panel's top edge at nav + strip + GAP down the viewport.
+  // Both heights are read live rather than assumed, which is what makes the
+  // same line correct at 1440 (86 + 58 + 14 = 158) and at 375 (64 + 52 + 14
+  // = 130). GAP keeps the panel title off the strip's bottom edge.
+  var SCROLL_GAP = 14;
+  function scrollToPanelTop(){
+    if (!root.classList.contains('is-stuck')) return;   // in place already
+    var panel = panels[shown()];
+    if (!panel) return;
+    var strip = row.getBoundingClientRect().height;
+    var want = navHeight() + strip + SCROLL_GAP;
+    var delta = panel.getBoundingClientRect().top - want;
+    if (Math.abs(delta) < 2) return;
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.scrollTo({ top: window.scrollY + delta, behavior: reduce ? 'instant' : 'smooth' });
+  }
+  thRove({ root: root, buttons: peds, shown: shown, pick: function(k){ select(k); scrollToPanelTop(); } });
 
   // Sticky selector. The row is sticky in CSS; this only reports WHEN it has
   // stuck, so the row can condense. A 1px sentinel directly above the row
@@ -3540,14 +3573,34 @@
   sentinel.className = 'pmv-sentinel';
   sentinel.setAttribute('aria-hidden', 'true');
   root.insertBefore(sentinel, root.firstChild);
+  var spacer = document.createElement('div');
+  spacer.className = 'pmv-spacer';
+  spacer.setAttribute('aria-hidden', 'true');
+  root.insertBefore(spacer, row.nextSibling);
   var stickIo = null;
   function navHeight(){
     var n = document.querySelector('nav');
     return n ? Math.round(n.getBoundingClientRect().height) : 0;
   }
+  // How much height the row gives up when it condenses. Measured by toggling
+  // the class with transitions suppressed and reading back, all inside one
+  // task so no frame is ever painted in the intermediate state. Assuming the
+  // number would break the moment the strip's padding or glyph size changed.
+  function measureSpacer(){
+    var wasStuck = root.classList.contains('is-stuck');
+    root.classList.add('pmv-measuring');
+    root.classList.remove('is-stuck');
+    var restH = row.getBoundingClientRect().height;
+    root.classList.add('is-stuck');
+    var condH = row.getBoundingClientRect().height;
+    if (!wasStuck) root.classList.remove('is-stuck');
+    root.classList.remove('pmv-measuring');
+    root.style.setProperty('--pmv-spacer', Math.max(0, restH - condH).toFixed(1) + 'px');
+  }
   function wireStick(){
     var h = navHeight();
     document.documentElement.style.setProperty('--pmv-stick-top', h + 'px');
+    measureSpacer();
     if (stickIo) stickIo.disconnect();
     // pulling the root's top edge down by the nav height puts the trigger
     // line exactly where the row comes to rest, so leaving the box IS stuck
@@ -3560,6 +3613,10 @@
     stickIo.observe(sentinel);
   }
   wireStick();
+  // the labels are mono webfont, so the row is a couple of pixels shorter
+  // before it loads and the spacer would under-reserve by that much
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(measureSpacer);
+  window.addEventListener('load', measureSpacer);
   var stickT = null;
   window.addEventListener('resize', function(){
     clearTimeout(stickT); stickT = setTimeout(wireStick, 150);

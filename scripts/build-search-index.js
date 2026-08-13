@@ -141,6 +141,14 @@ const CARD_SPECS = {
        the index. The wallet card in the same section deliberately does NOT,
        its figures are illustrative and would read as real in a result. */
     { cls: 'pmx-card', kind: 'metric' },
+    /* the four movement titles. Three quarters of section 04 sits behind
+       tabs, and movement 02 held nothing else indexable once the wallet
+       figures were excluded, so it was unreachable by search entirely. The
+       title div carries no heading and no title class, so titleFor falls
+       through to the node's own text and the body comes out empty: the
+       entry is the safe copy and nothing else. Its anchor resolves to the
+       enclosing pmvPanel id, which is what reveal() needs to open it. */
+    { cls: 'pmv-title', kind: 'movement' },
   ],
   quantum: [
     { cls: 'th-pm-card', kind: 'card' },
