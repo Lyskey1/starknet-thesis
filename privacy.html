@@ -1438,11 +1438,25 @@
   .vctl-play svg { width: 18px; height: 18px; }
   .vctl-play:hover { color: #06110C; background: var(--em); filter: brightness(1.1); }
   .vctl-right { margin-left: auto; display: flex; align-items: center; gap: 6px; }
-  /* fullscreen: the frame itself goes full screen so the bar travels with it */
-  .frame:fullscreen { aspect-ratio: auto; width: 100%; height: 100%; background: #000; }
-  .frame:fullscreen video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
-  .frame:-webkit-full-screen { aspect-ratio: auto; width: 100%; height: 100%; background: #000; }
-  .frame:-webkit-full-screen video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+  /* Fullscreen targets the GRID, the one parent all four slots share, never a
+     single slot's frame: prev and next swap which slot is displayed, and a
+     fullscreen element that has just been display:none leaves an empty
+     screen showing the page behind. Fixed 2026-08-13, after exactly that
+     shipped. Every rule here is inside a fullscreen session, so page
+     geometry outside one is untouched.
+     The prefixed selectors are written as separate rules on purpose: one
+     unknown pseudo-class invalidates a whole selector list, which would
+     take the standard rule down with it in browsers that lack the other. */
+  #pvVideos:fullscreen { width: 100%; height: 100%; background: #000; grid-template-rows: 100%; }
+  #pvVideos:fullscreen .video-slot { height: 100%; }
+  #pvVideos:fullscreen .pv-vcard { border: 0; border-radius: 0; }
+  #pvVideos:fullscreen .frame { aspect-ratio: auto; height: 100%; }
+  #pvVideos:fullscreen video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+  #pvVideos:-webkit-full-screen { width: 100%; height: 100%; background: #000; grid-template-rows: 100%; }
+  #pvVideos:-webkit-full-screen .video-slot { height: 100%; }
+  #pvVideos:-webkit-full-screen .pv-vcard { border: 0; border-radius: 0; }
+  #pvVideos:-webkit-full-screen .frame { aspect-ratio: auto; height: 100%; }
+  #pvVideos:-webkit-full-screen video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
   @media (max-width: 560px) {
     /* the row keeps every control: the two-row layout has the width for it
        once the buttons and gaps step down */
@@ -2731,9 +2745,11 @@
 // travels with it.
 // ============================================================
 (function(){
+  var grid = document.getElementById('pvVideos');
   var slots = [].slice.call(document.querySelectorAll('#pvVideos .video-slot'));
   var chips = [].slice.call(document.querySelectorAll('.pvv-chip'));
-  if (!slots.length || !chips.length) return;
+  if (!grid || !slots.length || !chips.length) return;
+  function fsEl(){ return document.fullscreenElement || document.webkitFullscreenElement || null; }
   var IDLE_MS = 2500, STEP = 5;
   var SVG = 'http://www.w3.org/2000/svg';
   var I = {
@@ -2853,12 +2869,13 @@
     bNext.addEventListener('click', function(){ if (index < chips.length - 1) chips[index + 1].click(); });
 
     bFs.addEventListener('click', function(){
-      var fsEl = document.fullscreenElement || document.webkitFullscreenElement;
-      if (fsEl) { (document.exitFullscreen || document.webkitExitFullscreen).call(document); }
-      else { (frame.requestFullscreen || frame.webkitRequestFullscreen).call(frame); }
+      if (fsEl()) { (document.exitFullscreen || document.webkitExitFullscreen).call(document); }
+      else { (grid.requestFullscreen || grid.webkitRequestFullscreen).call(grid); }
     });
+    /* every slot runs this on every fullscreenchange, so the bar the reader
+       lands on after a switch never claims "Enter fullscreen" from inside it */
     function syncFs(){
-      var on = (document.fullscreenElement || document.webkitFullscreenElement) === frame;
+      var on = fsEl() === grid;
       bFs.innerHTML = on ? I.fsx : I.fs;
       bFs.setAttribute('aria-label', on ? 'Exit fullscreen' : 'Enter fullscreen');
     }
