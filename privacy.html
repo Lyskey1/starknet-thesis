@@ -902,13 +902,16 @@
     opacity: 0; transition: opacity .4s ease; pointer-events: none; }
   .pmv-ped[aria-selected="true"]::before { opacity: 1; }
   .pmv-obj { width: 66px; height: 66px; color: var(--em); align-self: end; margin-bottom: 6px;
-    position: relative; z-index: 2; transition: transform .4s cubic-bezier(.22,1,.36,1), filter .4s ease; }
+    position: relative; z-index: 2; transition: transform .4s cubic-bezier(.22,1,.36,1), filter .4s ease,
+      width .32s var(--hover-ease), height .32s var(--hover-ease); }
   .pmv-obj svg { width: 100%; height: 100%; display: block; }
   .pmv-ped[aria-selected="true"] .pmv-obj { transform: translateY(-6px);
     filter: drop-shadow(0 0 10px rgba(var(--accent-rgb), .45)); }
   /* the plinth: an elliptical top face over a short cylinder wall, both cut
      from the shipped glass so it reads as one volume rather than two fills */
-  .pmv-plinth { position: relative; width: 100%; max-width: 190px; height: 46px; z-index: 1; }
+  .pmv-plinth { position: relative; width: 100%; max-width: 190px; height: 46px; z-index: 1;
+    transition: height .32s var(--hover-ease), max-width .32s var(--hover-ease),
+                opacity .32s var(--hover-ease); }
   .pmv-plinth i, .pmv-plinth u { position: absolute; left: 0; right: 0; display: block; }
   .pmv-plinth u { top: 13px; bottom: 0; border-radius: 0 0 50% 50% / 0 0 26px 26px;
     background: var(--card-glass-fill); border: 1px solid var(--card-glass-border); border-top: 0;
@@ -929,6 +932,40 @@
   .pmv-label { font-family: var(--mono); font-size: 10.5px; letter-spacing: .14em; color: var(--ink);
     margin-top: 14px; white-space: nowrap; }
   .pmv-label b { color: var(--em); font-weight: 600; margin-right: 6px; }
+  /* ---- sticky selector ------------------------------------------------
+     A reader deep in a panel can still switch movement. Two structural
+     facts carry this, so there is no scroll math anywhere:
+     1. .pmv-row is position:sticky inside #pmv, and #pmv is the LAST child
+        of section 04, so the strip releases at the section's own end and
+        cannot follow the reader into section 05.
+     2. #pmv takes z-index 1 from .th-pm-sec > *, which makes it a stacking
+        context. Nothing in here can paint over the nav (z 100), the news
+        modal (200), the mobile overlay (300) or the search palette (400),
+        whatever local z-index the strip carries.
+     --pmv-stick-top is written from the nav's MEASURED height rather than
+     a literal, so the strip follows a nav that changes height. */
+  .pmv-sentinel { height: 1px; margin-bottom: -1px; pointer-events: none; }
+  .pmv-row { position: sticky; top: var(--pmv-stick-top, 86px); z-index: 6;
+    border-radius: 0 0 12px 12px;
+    transition: gap var(--hover-dur) var(--hover-ease), padding var(--hover-dur) var(--hover-ease),
+                background var(--hover-dur) var(--hover-ease); }
+  /* condensed. The plinths collapse and the glyphs shrink: same nodes, same
+     listeners, same thRove state. Nothing is swapped in or re-rendered, so
+     the strip and the at-rest row cannot disagree by construction. */
+  .pmv.is-stuck .pmv-row { gap: 8px; padding: 10px; margin: 0 -10px;
+    background: rgba(7,9,10,.9);
+    -webkit-backdrop-filter: blur(14px) saturate(115%);
+            backdrop-filter: blur(14px) saturate(115%);
+    box-shadow: 0 10px 26px rgba(0,0,0,.42), inset 0 -1px 0 var(--th-hair); }
+  .pmv.is-stuck .pmv-ped { display: flex; align-items: center; justify-content: center; gap: 9px;
+    padding: 8px; border: 1px solid transparent; border-radius: 9px; }
+  .pmv.is-stuck .pmv-ped[aria-selected="true"] { border-color: var(--em);
+    background: rgba(var(--accent-rgb), .08); }
+  .pmv.is-stuck .pmv-obj { width: 20px; height: 20px; margin-bottom: 0; align-self: center; }
+  .pmv.is-stuck .pmv-ped[aria-selected="true"] .pmv-obj { transform: none; }
+  .pmv.is-stuck .pmv-ped::before { opacity: 0; }
+  .pmv.is-stuck .pmv-plinth { height: 0; max-width: 0; opacity: 0; }
+  .pmv.is-stuck .pmv-label { margin-top: 0; overflow: hidden; text-overflow: ellipsis; }
   /* the panel: its own settled height, animated on switch */
   .pmv-stage { margin-top: 46px; border-top: 1px solid var(--th-hair); padding-top: 30px;
     overflow: hidden; transition: height .42s var(--hover-ease); }
@@ -939,6 +976,21 @@
   @media (max-width: 860px) {
     /* four across stops fitting: two by two, no scroller */
     .pmv-row { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 26px 14px; }
+    /* stuck, the two by two would cost two rows of height. Back to four
+       across, and only the selected movement carries its label: four mono
+       labels plus four glyphs are not legible side by side at 375px. The
+       unselected labels leave the layout but stay in the accessibility
+       tree, so the tablist still reads as four named tabs. */
+    /* flex, not four equal columns: the selected item needs room for its
+       label and the other three only need a glyph, so equal columns would
+       truncate the one label that is actually shown */
+    .pmv.is-stuck .pmv-row { display: flex; justify-content: space-evenly; align-items: center;
+      gap: 4px; padding: 8px 6px; }
+    .pmv.is-stuck .pmv-ped { flex: 0 0 auto; gap: 7px; padding: 7px 10px; }
+    .pmv.is-stuck .pmv-label { position: absolute; width: 1px; height: 1px; overflow: hidden;
+      clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
+    .pmv.is-stuck .pmv-ped[aria-selected="true"] .pmv-label { position: static; width: auto; height: auto;
+      clip: auto; clip-path: none; font-size: 9px; letter-spacing: .06em; }
   }
   @media (max-width: 480px) {
     .pmv-obj { width: 52px; height: 52px; }
@@ -948,7 +1000,8 @@
     .pmv-label { font-size: 9px; letter-spacing: .06em; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .pmv-ped, .pmv-ped::before, .pmv-obj, .pmv-plinth i, .pmv-plinth u, .pmv-stage { transition: none; }
+    .pmv-ped, .pmv-ped::before, .pmv-obj, .pmv-plinth, .pmv-plinth i, .pmv-plinth u,
+    .pmv-stage, .pmv-row { transition: none; }
     .pmv-ped[aria-selected="true"] .pmv-obj { transform: none; }
   }
   .h3d .em { color: var(--em); }
@@ -3471,6 +3524,46 @@
     settling = setTimeout(function(){ stage.style.height = ''; settling = null; }, 460);
   }
   thRove({ root: root, buttons: peds, shown: shown, pick: function(k){ select(k); } });
+
+  // Sticky selector. The row is sticky in CSS; this only reports WHEN it has
+  // stuck, so the row can condense. A 1px sentinel directly above the row
+  // does the reporting, which is why there is no scroll handler here.
+  //
+  // The offset is the nav's measured height, not a literal: the nav is fixed
+  // and is 64px under 860px and content-sized above it, so both the sticky
+  // top and the observer's root margin are rebuilt when the viewport changes.
+  //
+  // Nothing about selection changes. These are the same buttons under the
+  // same thRove instance above, so the strip is the at-rest row in a second
+  // visual state and the two cannot hold different selections.
+  var sentinel = document.createElement('div');
+  sentinel.className = 'pmv-sentinel';
+  sentinel.setAttribute('aria-hidden', 'true');
+  root.insertBefore(sentinel, root.firstChild);
+  var stickIo = null;
+  function navHeight(){
+    var n = document.querySelector('nav');
+    return n ? Math.round(n.getBoundingClientRect().height) : 0;
+  }
+  function wireStick(){
+    var h = navHeight();
+    document.documentElement.style.setProperty('--pmv-stick-top', h + 'px');
+    if (stickIo) stickIo.disconnect();
+    // pulling the root's top edge down by the nav height puts the trigger
+    // line exactly where the row comes to rest, so leaving the box IS stuck
+    stickIo = new IntersectionObserver(function(es){
+      var e = es[0];
+      // the sentinel is equally "outside" while the whole section is still
+      // below the fold, which is not stuck: only count it once it is above
+      root.classList.toggle('is-stuck', !e.isIntersecting && e.boundingClientRect.top < 0);
+    }, { rootMargin: (-h) + 'px 0px 0px 0px', threshold: 0 });
+    stickIo.observe(sentinel);
+  }
+  wireStick();
+  var stickT = null;
+  window.addEventListener('resize', function(){
+    clearTimeout(stickT); stickT = setTimeout(wireStick, 150);
+  });
 })();
 
 // ============================================================
