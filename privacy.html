@@ -797,76 +797,70 @@
   .ln .y { font-size: 12px; margin-top: 12px; color: var(--ink); }
   .ln .l { font-size: 10px; color: var(--muted); letter-spacing: .06em; margin-top: 4px; line-height: 1.6; }
 
-  /* four properties: beam convergence into the proving core. The nodes
-     hold the full authored copy (single source). Mobile-first the four
-     nodes are a plain vertical card stack (the pre-existing card look)
-     and every piece of stage chrome (beams svg, hub, detail panel) is
-     hidden with the JS inert. At >=981px the stage lays the nodes out at
-     the corners, shows only label + title + eliminates per node, draws
-     the beams from the nodes' actual measured positions (recomputed on
-     resize and fonts.ready), and the panel below projects the active
-     node's paragraph, cloned once at init so copy stays single-source.
-     The four panel items stack in one grid cell so the tallest reserves
-     the height: switching never shifts layout. */
-  .pcore { margin: 64px 0 0; }
-  .pcore-node { position: relative; padding: 26px 28px; border: 1px solid var(--line); border-left: 3px solid var(--em); border-radius: 12px; background: var(--bg-raise); box-shadow: 0 0 24px rgba(var(--accent-rgb),.05); }
-  .pcore-node + .pcore-node { margin-top: 18px; }
-  .pcore-node .rn { font-family: var(--mono); font-size: 11px; letter-spacing: .16em; color: var(--em); }
-  .pcore-node h4 { font-family: var(--display); font-weight: 700; font-size: 23px; margin: 8px 0 10px; }
-  .pcore-node p { color: rgba(245,242,236,.78); font-size: 15.5px; max-width: 62ch; }
-  .pcore-node .elim { font-family: var(--mono); font-size: 11px; letter-spacing: .12em; color: var(--danger); margin-top: 12px; }
-  .pcore-beams, .pcore-hub, .pcore-panel { display: none; }
-  @media (min-width: 981px) {
-    .pcore-stage { position: relative; height: 460px; }
-    .pcore-beams { display: block; position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
-    .pc-rail { fill: none; stroke: rgba(245,242,236,.10); stroke-width: 1.5; }
-    /* the four pulses are deliberately IDENTICAL at all times (color,
-       width, opacity, dash); only the stagger delay differs. Selection
-       is signaled by the node highlight and the rail shade, never by
-       pulse disparity. */
-    .pc-pulse { fill: none; stroke: var(--em); stroke-width: 3; stroke-linecap: round; opacity: 1; }
-    /* pulse: pathLength is normalized to 1 in JS, so one dashoffset
-       period per iteration flows node -> hub and loops seamlessly */
-    .pcore.pc-anim .pc-pulse { stroke-dasharray: .14 .86; stroke-dashoffset: 1; animation: pcflow 3.8s linear infinite; }
-    @keyframes pcflow { to { stroke-dashoffset: 0; } }
-    .pcore.pc-off .pc-pulse { animation-play-state: paused; }
-    /* selection on the rail: the active beam's underlying rail steps one
-       subtle shade up */
-    .pcore-beams g.on .pc-rail { stroke: rgba(var(--accent-rgb),.30); }
-    .pcore-node { position: absolute; margin: 0; width: min(320px, 31%); padding: 20px 22px; cursor: pointer; transition: border-color var(--hover-dur) var(--hover-ease), background var(--hover-dur) var(--hover-ease); }
-    .pcore-node + .pcore-node { margin-top: 0; }
-    .pcore-node p { display: none; }
-    .pcore-node h4 { font-size: 19px; margin: 7px 0 0; }
-    .pcore-node .elim { margin-top: 10px; }
-    .pc-left { left: 0; border-left: 1px solid var(--line); border-right: 3px solid var(--em); }
-    .pc-right { right: 0; text-align: right; }
-    .pc-top { top: 20px; }
-    .pc-bot { bottom: 20px; }
-    /* selection on the node: brighter borders plus a subtle glow, the
-       one clear active signal of the diagram */
-    .pcore-node.on { background: rgba(var(--accent-rgb),.07); border-color: color-mix(in srgb, var(--em) 55%, transparent);
-      box-shadow: 0 0 24px rgba(var(--accent-rgb),.22), 0 0 60px rgba(var(--accent-rgb),.10); }
-    .pc-left.on { border-right-color: var(--em); }
-    .pc-right.on { border-left-color: var(--em); }
-    .pcore-node:focus-visible { outline: 2px solid var(--em); outline-offset: 3px; }
-    /* the hub's outer glow lives on stage::before, painted BEFORE the
-       svg in tree order, so the beams pass over the glow untinted and
-       under the opaque disc itself (hub z-index 1) */
-    .pcore-stage::before { content: ""; position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); width: 176px; height: 176px; border-radius: 50%; pointer-events: none;
-      box-shadow: 0 0 24px rgba(var(--accent-rgb),.18), 0 0 80px rgba(var(--accent-rgb),.12); }
-    .pcore-hub { display: flex; position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); width: 176px; height: 176px; border-radius: 50%; border: 1px solid rgba(var(--accent-rgb),.55); background: radial-gradient(circle at 50% 36%, #101614, #0A0D0C); align-items: center; justify-content: center; text-align: center; z-index: 1;
-      box-shadow: inset 0 0 30px rgba(var(--accent-rgb),.08); }
-    .pcore-hub span { font-family: var(--mono); font-size: 12px; letter-spacing: .18em; color: var(--em); max-width: 118px; line-height: 1.9; }
-    .pcore-panel { display: block; margin-top: 26px; border-top: 1px solid var(--th-hair); padding-top: 22px; }
-    .pcore-pgrid { display: grid; }
-    .pcore-pitem { grid-area: 1 / 1; visibility: hidden; }
-    .pcore-pitem.on { visibility: visible; }
-    .pcore-pitem .ph { font-family: var(--mono); font-size: 11px; letter-spacing: .16em; color: var(--em); text-transform: uppercase; margin-bottom: 10px; }
-    .pcore-pitem .pb { color: rgba(245,242,236,.78); font-size: 15.5px; max-width: 74ch; }
+  /* ============ 03: the four proving properties (pedestals) ============ */
+  /* Four glass plinths, one symbolic object each, beside nothing: the
+     selected property renders in the reserved panel below. Same recipe as
+     section 02's wall pedestals, so the two selectors read as one family;
+     the accent is the page accent, which is why these are emerald and not
+     the blue of the quantum page the pattern was first sketched against.
+     The panel stacks all four in one grid cell, so it reserves the tallest
+     property's height and switching never reflows the page. ppd- prefix. */
+  .ppd { margin: 46px 0 0; }
+  .ppd-kicker { font-family: var(--mono); font-size: 12px; letter-spacing: .2em; text-transform: uppercase;
+    color: var(--em); text-align: center; margin-bottom: 34px; }
+  .ppd-row { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 18px; }
+  .ppd-ped { position: relative; display: grid; grid-template-rows: 1fr auto; justify-items: center;
+    background: none; border: 0; padding: 0; cursor: pointer; border-radius: 14px;
+    transition: opacity .35s ease; }
+  .ppd-ped:focus-visible { outline: 2px solid var(--em); outline-offset: 5px; }
+  .ppd-ped[aria-selected="false"] { opacity: .55; }
+  /* floor halo, selected only */
+  .ppd-ped::before { content: ""; position: absolute; left: 16%; right: 16%; bottom: -9px; height: 36px;
+    border-radius: 50%; background: radial-gradient(closest-side, rgba(var(--accent-rgb), .22), transparent 72%);
+    opacity: 0; transition: opacity .4s ease; pointer-events: none; }
+  .ppd-ped[aria-selected="true"]::before { opacity: 1; }
+  .ppd-obj { width: 74px; height: 74px; color: var(--em); align-self: end; margin-bottom: 2px;
+    position: relative; z-index: 1; transition: transform .4s cubic-bezier(.22,1,.36,1), filter .4s ease; }
+  .ppd-obj svg { width: 100%; height: 100%; display: block; }
+  .ppd-ped[aria-selected="true"] .ppd-obj { transform: translateY(-6px);
+    filter: drop-shadow(0 0 10px rgba(var(--accent-rgb), .45)); }
+  .ppd-plinth { width: 100%; height: 66px; border-radius: 12px; position: relative;
+    display: grid; place-items: center; gap: 4px; padding: 0 10px; text-align: center;
+    background: linear-gradient(180deg, rgba(var(--accent-rgb), .15), rgba(var(--accent-rgb), .05) 48%, rgba(var(--accent-rgb), .10));
+    border: 1px solid rgba(var(--accent-rgb), .34);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.14), inset 0 0 24px rgba(var(--accent-rgb), .05);
+    transition: border-color .35s ease, background .35s ease; }
+  .ppd-plinth::after { content: ""; position: absolute; inset: 0 0 auto 0; height: 46%; border-radius: 12px 12px 0 0;
+    background: linear-gradient(180deg, rgba(255,255,255,.07), transparent); pointer-events: none; }
+  .ppd-ped[aria-selected="true"] .ppd-plinth { border-color: rgba(var(--accent-rgb), .6);
+    background: linear-gradient(180deg, rgba(var(--accent-rgb), .24), rgba(var(--accent-rgb), .08) 48%, rgba(var(--accent-rgb), .15)); }
+  .ppd-n { font-family: var(--mono); font-size: 10px; letter-spacing: .18em; color: var(--em); }
+  .ppd-label { font-family: var(--mono); font-size: 10.5px; letter-spacing: .1em; line-height: 1.35; color: var(--ink); }
+  /* reserved panel: all four properties share one grid cell */
+  .ppd-panel { position: relative; display: grid; margin-top: 40px; padding-top: 26px;
+    border-top: 1px solid var(--th-hair); }
+  .ppd-item { grid-area: 1 / 1; visibility: hidden; opacity: 0;
+    transition: opacity .3s ease, visibility 0s .3s; }
+  .ppd-item.is-on { visibility: visible; opacity: 1; transition: opacity .3s ease .06s, visibility 0s; }
+  .ppd-item .rn { font-family: var(--mono); font-size: 11px; letter-spacing: .16em; color: var(--em); }
+  .ppd-item h4 { font-family: var(--display); font-weight: 700; font-size: clamp(21px, 2vw, 26px); margin: 9px 0 12px; }
+  .ppd-item p { color: rgba(245,242,236,.78); font-size: 15.5px; line-height: 1.65; max-width: 74ch; }
+  .ppd-item .elim { font-family: var(--mono); font-size: 11px; letter-spacing: .12em; color: var(--danger); margin-top: 14px; }
+  @media (max-width: 980px) {
+    .ppd-row { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 14px; }
+    .ppd-obj { width: 60px; height: 60px; }
+    .ppd-plinth { height: 74px; }
+  }
+  @media (max-width: 480px) {
+    .ppd-row { gap: 10px; }
+    .ppd-obj { width: 46px; height: 46px; }
+    .ppd-plinth { height: 68px; padding: 0 6px; }
+    .ppd-label { font-size: 9px; letter-spacing: .04em; }
+    .ppd-kicker { font-size: 10px; letter-spacing: .16em; }
   }
   @media (prefers-reduced-motion: reduce) {
-    /* static rails with one fixed accent segment mid-beam, no flow */
-    .pcore.pc-anim .pc-pulse { animation: none; stroke-dashoffset: -.43; }
+    .ppd-ped, .ppd-ped::before, .ppd-obj, .ppd-plinth, .ppd-item, .ppd-item.is-on { transition: none; }
+    .ppd-ped[aria-selected="true"] .ppd-obj { transform: none; }
   }
 
   /* ============ 04: rollout timeline / foundation / visualizer / waves ============ */
@@ -1231,18 +1225,18 @@
      nodes (their own hover language). The band is pointer-inert so links
      and marquee interactions underneath stay live; it is static at rest
      (transform held, no idle animation). */
-  .wave.gx-card, .case.gx-card, .btile.gx-card, .snode.gx-card, .pcore-node { overflow: hidden; }
-  .wave.gx-card::after, .case.gx-card::after, .btile.gx-card::after, .snode.gx-card::after, .pcore-node::after {
+  .wave.gx-card, .case.gx-card, .btile.gx-card, .snode.gx-card { overflow: hidden; }
+  .wave.gx-card::after, .case.gx-card::after, .btile.gx-card::after, .snode.gx-card::after {
     content: ""; position: absolute; top: -30%; bottom: -30%; left: 0; width: 38%;
     background: var(--sweep-grad);
     opacity: 0; transform: translateX(-130%); pointer-events: none;
     transition: transform var(--sweep-dur) var(--sweep-ease), opacity .3s;
   }
-  .wave.gx-card:hover::after, .case.gx-card:hover::after, .btile.gx-card:hover::after, .snode.gx-card:hover::after, .pcore-node:hover::after {
+  .wave.gx-card:hover::after, .case.gx-card:hover::after, .btile.gx-card:hover::after, .snode.gx-card:hover::after {
     opacity: 1; transform: translateX(330%);
   }
   @media (prefers-reduced-motion: reduce) {
-    .wave.gx-card::after, .case.gx-card::after, .btile.gx-card::after, .snode.gx-card::after, .pcore-node::after { display: none; }
+    .wave.gx-card::after, .case.gx-card::after, .btile.gx-card::after, .snode.gx-card::after { display: none; }
   }
 
   /* Narrative blooms: one blob per card, behind that card only. Static,
@@ -1364,7 +1358,31 @@
   @media (max-width: 760px) {
     .vg-head .pv-vadmin { position: static; transform: none; justify-content: center; margin-top: 14px; }
   }
-  .video-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  /* one player at a time: the four slots stay in the DOM because each one
+     carries its own source state, title and admin editor (all owned by the PV
+     script below), but they stack in a single grid cell so only the selected
+     slot renders. That leaves one visible frame, and one set of native video
+     controls instead of four competing with the design. */
+  .pvv-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-bottom: 22px; }
+  .pvv-chip { font-family: var(--mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--muted); background: transparent; border: 1px solid var(--line); border-radius: 99px;
+    padding: 9px 15px; cursor: pointer; white-space: nowrap;
+    transition: color var(--hover-dur) var(--hover-ease), border-color var(--hover-dur) var(--hover-ease), background var(--hover-dur) var(--hover-ease); }
+  .pvv-chip:hover { color: var(--ink); border-color: rgba(var(--accent-rgb), .40); }
+  .pvv-chip[aria-selected="true"] { color: var(--em); border-color: rgba(var(--accent-rgb), .62);
+    background: rgba(var(--accent-rgb), .10); }
+  .pvv-chip:focus-visible { outline: 2px solid var(--em); outline-offset: 3px; }
+  .video-grid { display: grid; }
+  .video-slot { grid-area: 1 / 1; display: none; }
+  .video-slot.is-on { display: block; }
+  /* the frame is ours even though the controls inside it are the browser's */
+  .video-slot.pv-vcard { border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: #000; }
+  .video-slot .meta { text-align: center; }
+  @media (max-width: 480px) {
+    .pvv-chips { gap: 7px; }
+    .pvv-chip { font-size: 9.5px; letter-spacing: .06em; padding: 8px 11px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .pvv-chip { transition: none; } }
   .vg-written { display: block; text-align: center; margin-top: 26px; font-family: var(--mono); font-size: 11px; letter-spacing: .14em; color: var(--muted); text-decoration: none; transition: color .2s; }
   .vg-written .arr { color: var(--em); }
   .vg-written:hover { color: var(--em); }
@@ -1862,8 +1880,14 @@
     <div class="vg-head">
       <div class="vg-title">The core of <span class="em">Starknet's architecture.</span></div>
     </div>
-    <div class="video-grid">
-      <div class="video-slot pv-vcard" data-pv="0">
+    <div class="pvv-chips" role="tablist" aria-label="Architecture videos">
+      <button class="pvv-chip" type="button" role="tab" data-v="0" aria-selected="true" aria-controls="pvVideos" tabindex="0">ARCHITECTURE</button>
+      <button class="pvv-chip" type="button" role="tab" data-v="1" aria-selected="false" aria-controls="pvVideos" tabindex="-1">SEQUENCER</button>
+      <button class="pvv-chip" type="button" role="tab" data-v="2" aria-selected="false" aria-controls="pvVideos" tabindex="-1">PROVER</button>
+      <button class="pvv-chip" type="button" role="tab" data-v="3" aria-selected="false" aria-controls="pvVideos" tabindex="-1">VERIFICATION</button>
+    </div>
+    <div class="video-grid" id="pvVideos" role="tabpanel">
+      <div class="video-slot pv-vcard is-on" data-pv="0">
         <div class="frame">
           <div class="qv-ph"><span>VIDEO 01 — TO BE ADDED</span></div>
           <video class="qv-player" controls preload="metadata" playsinline hidden poster="assets/posters/privacy-video-01.jpg"></video>
@@ -1897,35 +1921,58 @@
 
   <p class="grid-lead th-pm-reveal" style="margin-top:64px">Based on that, Starknet built everything around proving, from scratch, <b>optimizing every layer of the stack</b>:</p>
 
-  <div class="pcore th-pm-reveal" id="pcore">
-    <div class="pcore-stage">
-      <svg class="pcore-beams" aria-hidden="true"></svg>
-      <div class="pcore-node pc-left pc-top">
+  <!-- The four proving properties as pedestal selectors. Replaces the radial
+       hub whose central claim now leads the block as its kicker. Copy, ids
+       and the coral ELIMINATES slot come across verbatim from the retired
+       nodes; property 04 had no ELIMINATES line, so it carries the arrival
+       fact from its own prose in the same slot rather than an invented
+       competitor claim (owner call, 2026-08-13). -->
+  <div class="ppd th-pm-reveal" id="ppd">
+    <p class="ppd-kicker">PROOF, NOT REPLAY</p>
+    <div class="ppd-row" role="tablist" aria-label="The four proving properties">
+      <button class="ppd-ped" type="button" role="tab" data-p="0" aria-selected="true" aria-controls="ppd-panel" tabindex="0">
+        <span class="ppd-obj" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"><path d="M6 13.5 12 7.5 18 13.5"/><path d="M12 4.5v15"/></svg></span>
+        <span class="ppd-plinth"><span class="ppd-n">01</span><span class="ppd-label">SPEED</span></span>
+      </button>
+      <button class="ppd-ped" type="button" role="tab" data-p="1" aria-selected="false" aria-controls="ppd-panel" tabindex="-1">
+        <span class="ppd-obj" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.6" cy="12" r="5.6"/><path d="M15.2 12h3.1M16.9 10.2 18.7 12l-1.8 1.8"/><circle cx="21.2" cy="12" r="1.6" fill="currentColor" stroke="none"/></svg></span>
+        <span class="ppd-plinth"><span class="ppd-n">02</span><span class="ppd-label">SUCCINCT<br>VERIFIABILITY</span></span>
+      </button>
+      <button class="ppd-ped" type="button" role="tab" data-p="2" aria-selected="false" aria-controls="ppd-panel" tabindex="-1">
+        <span class="ppd-obj" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 4.5 5 8v8l3.5 3.5"/><path d="M15.5 4.5 19 8v8l-3.5 3.5"/><circle cx="12" cy="12" r="1.9" fill="currentColor" stroke="none"/></svg></span>
+        <span class="ppd-plinth"><span class="ppd-n">03</span><span class="ppd-label">ZK-NATIVE,<br>END TO END</span></span>
+      </button>
+      <button class="ppd-ped" type="button" role="tab" data-p="3" aria-selected="false" aria-controls="ppd-panel" tabindex="-1">
+        <span class="ppd-obj" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="4.5" width="15" height="15" rx="3"/><path d="M8.5 12.2 11 14.8 15.8 9.4"/></svg></span>
+        <span class="ppd-plinth"><span class="ppd-n">04</span><span class="ppd-label">IN-PROTOCOL<br>VERIFICATION</span></span>
+      </button>
+    </div>
+    <div class="ppd-panel" id="ppd-panel" role="tabpanel" aria-live="polite">
+      <article class="ppd-item is-on" data-p="0">
         <div class="rn">PROPERTY 01</div>
         <h4 id="speed">Speed</h4>
         <p>A privacy system is a consumer product before it is a cryptographic one, and private UX dies at high latency. Starknet runs at around 1,000 TPS today, with 10,000+ targeted for 2027, and latency sits in the hundreds of milliseconds for regular transactions, a few seconds for private ones.</p>
         <div class="elim">ELIMINATES: DEDICATED PRIVACY L1s</div>
-      </div>
-      <div class="pcore-node pc-left pc-bot">
+      </article>
+      <article class="ppd-item" data-p="1">
         <div class="rn">PROPERTY 02</div>
         <h4 id="succinct-verifiability">Succinct verifiability</h4>
         <p>Privacy at scale eventually needs clients, on browsers or phones, that verify the chain without borrowing trust from someone else's server. That requires compact proofs, not replaying everything.</p>
         <div class="elim">ELIMINATES: FAST-BUT-HEAVY CHAINS</div>
-      </div>
-      <div class="pcore-node pc-right pc-top">
+      </article>
+      <article class="ppd-item" data-p="2">
         <div class="rn">PROPERTY 03</div>
         <h4 id="zk-native-end-to-end">ZK-native, end to end</h4>
         <p>Private computation means proving everything, constantly. Cairo was designed as a language whose execution is cheap to prove; EVM chains run a virtual machine that predates the idea, where every opcode never designed to be proven adds a cost that cannot be optimized away, and Ethereum itself is now converging on the bet StarkWare made in 2018.</p>
         <div class="elim">ELIMINATES: EVM CHAINS</div>
-      </div>
-      <div class="pcore-node pc-right pc-bot">
+      </article>
+      <article class="ppd-item" data-p="3">
         <div class="rn">PROPERTY 04</div>
         <h4 id="in-protocol-proof-verification">In-protocol proof verification</h4>
         <p>The piece that arrived this year. <a href="https://x.com/Starknet/status/2046232796625068334" target="_blank" rel="noopener" style="color:var(--em);text-decoration:underline;text-underline-offset:3px">The Shinobi upgrade</a> (April 2026, <a href="https://community.starknet.io/t/snip-36-in-protocol-proof-verification/116123" target="_blank" rel="noopener" style="color:var(--em);text-decoration:underline;text-underline-offset:3px">SNIP-36</a>) moved proof verification into consensus itself: a transaction carries its proof, the network checks it as part of ordinary block work, and private transactions went from impractical to seconds and cents.</p>
-      </div>
-      <div class="pcore-hub"><span>PROOF, NOT REPLAY</span></div>
+        <div class="elim">ARRIVED: APRIL 2026 (SNIP-36)</div>
+      </article>
     </div>
-    <div class="pcore-panel" aria-live="polite"><div class="pcore-pgrid"></div></div>
   </div>
 
   <p class="th-pm-pivot th-pm-reveal">With all four properties in place, Starknet is now shipping <span class="em">the most complete privacy ecosystem the market has seen</span>, designed against the failure list of the past decade.</p>
@@ -2306,43 +2353,10 @@
   </div>
 </footer>
 
+<!-- the shared selector state machine, in document order ahead of the four
+     blocks that consume it (a deferred load would run after them) -->
+<script src="js/selector-rove.js"></script>
 <script>
-// ============================================================
-// shared selection state machine: a roving group of tab-buttons
-// over a stacked panel. Owns click-to-pick, arrow-key cycling
-// with focus follow, and the aria-selected / tabindex mirror.
-// Sections keep their own scene logic (planes, pedestals) inside
-// the pick callback: pick(i, fromClick) with fromClick=false for
-// arrow keys (sections that toggle on re-click only do so for
-// clicks). Factored out of section 01 (2026-08-12) so sections
-// 01 and 02 run the same machine.
-// ============================================================
-function thRove(opts){
-  opts.buttons.forEach(function(b, k){
-    b.addEventListener('click', function(){ opts.pick(k, true); });
-  });
-  opts.root.addEventListener('keydown', function(ev){
-    /* arrows belong to the selector only: the panels hold their own
-       controls (the crowd range input), and those keep their native keys */
-    if (opts.buttons.indexOf(ev.target) === -1) return;
-    var step = (ev.key === 'ArrowRight' || ev.key === 'ArrowDown') ? 1 :
-               (ev.key === 'ArrowLeft' || ev.key === 'ArrowUp') ? -1 : 0;
-    if (!step) return;
-    ev.preventDefault();
-    var next = (opts.shown() + step + opts.buttons.length) % opts.buttons.length;
-    opts.pick(next, false);
-    opts.buttons[next].focus();
-  });
-  return {
-    mirror: function(i){
-      opts.buttons.forEach(function(b, k){
-        b.setAttribute('aria-selected', k === i ? 'true' : 'false');
-        b.setAttribute('tabindex', k === i ? '0' : '-1');
-      });
-    }
-  };
-}
-
 // ============================================================
 // SECTION 01 - stacked glass planes. The stack assembles once on
 // scroll, then bill 01 slides out so a non-interacting reader still
@@ -2636,115 +2650,65 @@ function thRove(opts){
 })();
 
 // ============================================================
-// SECTION 03 — properties beam convergence. Nodes hold the copy;
-// the panel items are cloned from them once (single source). Beam
-// paths are computed from measured node/hub rects on init, resize
-// and fonts.ready, so endpoints stay aligned at any width. The
-// pulse is stroke-dashoffset only (no layout work per frame), and
-// both the animation and the idle cycle stop while the diagram is
-// off-screen or below 981px. Reduced motion: no flow, no cycle.
+// SECTION 03 - architecture videos. One player at a time: the chips
+// pick which of the four slots renders, and a switch pauses the
+// outgoing video so a hidden frame can never keep playing audio.
+// Nothing autoplays; each slot keeps its own poster and its own
+// source state, so the PV editor below is untouched by this. The
+// chips carry the roving tab stop (shared thRove).
 // ============================================================
 (function(){
-  var root = document.getElementById('pcore');
-  if (!root) return;
-  var mq = window.matchMedia('(min-width: 981px)');
-  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
-  var stage = root.querySelector('.pcore-stage');
-  var svg = root.querySelector('.pcore-beams');
-  var hub = root.querySelector('.pcore-hub');
-  var nodes = [].slice.call(root.querySelectorAll('.pcore-node'));
-  var pgrid = root.querySelector('.pcore-pgrid');
-  var NS = 'http://www.w3.org/2000/svg';
-  var built = false, groups = [], active = 0, pinned = -1, hovered = false, lastAct = 0, inView = false;
+  var chips = [].slice.call(document.querySelectorAll('.pvv-chip'));
+  var slots = [].slice.call(document.querySelectorAll('#pvVideos .video-slot'));
+  if (!chips.length || !slots.length) return;
+  var wrap = document.querySelector('.video-grid-wrap') || document.getElementById('pvVideos');
+  function shown(){
+    var el = document.querySelector('#pvVideos .video-slot.is-on');
+    return el ? +el.dataset.pv : 0;
+  }
+  function select(i){
+    slots.forEach(function(sl){
+      var on = +sl.dataset.pv === i;
+      if (!on) { var v = sl.querySelector('.qv-player'); if (v && !v.paused) v.pause(); }
+      sl.classList.toggle('is-on', on);
+    });
+    rove.mirror(i);
+  }
+  var rove = thRove({ root: wrap, buttons: chips, shown: shown, pick: function(k){ select(k); } });
+})();
 
-  function build(){
-    if (built) return; built = true;
-    nodes.forEach(function(n, i){
-      var item = document.createElement('div');
-      item.className = 'pcore-pitem';
-      var ph = document.createElement('div'); ph.className = 'ph';
-      ph.textContent = n.querySelector('.rn').textContent + ' · ' + n.querySelector('h4').textContent;
-      var pb = document.createElement('div'); pb.className = 'pb';
-      pb.innerHTML = n.querySelector('p').innerHTML;
-      item.appendChild(ph); item.appendChild(pb);
-      pgrid.appendChild(item);
-      var g = document.createElementNS(NS, 'g');
-      g.setAttribute('class', 'pc-beam');
-      var rail = document.createElementNS(NS, 'path'); rail.setAttribute('class', 'pc-rail');
-      var pulse = document.createElementNS(NS, 'path'); pulse.setAttribute('class', 'pc-pulse');
-      pulse.setAttribute('pathLength', '1');
-      pulse.style.animationDelay = (i * 0.95) + 's';
-      g.appendChild(rail); g.appendChild(pulse); svg.appendChild(g);
-      groups.push({ g: g, rail: rail, pulse: pulse, item: item });
-      n.setAttribute('tabindex', '0');
-      n.setAttribute('role', 'button');
-      n.setAttribute('aria-pressed', 'false');
-      n.addEventListener('mouseenter', function(){ if (mq.matches){ touch(); if (pinned < 0) setActive(i); } });
-      n.addEventListener('focus', function(){ if (mq.matches){ touch(); if (pinned < 0) setActive(i); } });
-      n.addEventListener('click', function(){ if (mq.matches) pin(i); });
-      n.addEventListener('keydown', function(e){
-        if (mq.matches && (e.key === 'Enter' || e.key === ' ')){ e.preventDefault(); pin(i); }
-      });
-    });
-    stage.addEventListener('mouseenter', function(){ hovered = true; touch(); });
-    stage.addEventListener('mouseleave', function(){ hovered = false; touch(); });
-    root.classList.add('pc-anim');
-    setActive(0);
+// ============================================================
+// SECTION 03 - proving-property pedestals. One property renders at
+// a time in the reserved panel; the pedestals carry the roving tab
+// stop (shared thRove), arrows cycle, Enter and click pick. Wall 01
+// ships selected in the markup so the block reads complete with no
+// JS. Reduced motion: settled states, no lift (CSS). A hash aimed
+// at a property inside a hidden panel item surfaces it first.
+// ============================================================
+(function(){
+  var root = document.getElementById('ppd');
+  if (!root) return;
+  var peds = [].slice.call(root.querySelectorAll('.ppd-ped'));
+  var items = [].slice.call(root.querySelectorAll('.ppd-item'));
+  function shown(){
+    var el = root.querySelector('.ppd-item.is-on');
+    return el ? +el.dataset.p : 0;
   }
-  function setActive(i){
-    active = i;
-    groups.forEach(function(gr, j){
-      gr.g.classList.toggle('on', j === i);
-      gr.item.classList.toggle('on', j === i);
-      nodes[j].classList.toggle('on', j === i);
-    });
+  function select(i){
+    items.forEach(function(el){ el.classList.toggle('is-on', +el.dataset.p === i); });
+    rove.mirror(i);
   }
-  function pin(i){
-    touch();
-    if (pinned === i){ pinned = -1; } else { pinned = i; setActive(i); }
-    nodes.forEach(function(n, j){ n.setAttribute('aria-pressed', String(pinned === j)); });
+  var rove = thRove({ root: root, buttons: peds, shown: shown, pick: function(k){ select(k); } });
+  function surface(){
+    var id = (location.hash || '').slice(1);
+    if (!id) return;
+    var el = document.getElementById(id);
+    if (!el || !root.contains(el)) return;
+    var it = el.closest('.ppd-item');
+    if (it) select(+it.dataset.p);
   }
-  function touch(){ lastAct = Date.now(); }
-  function layout(){
-    if (!mq.matches || !built) return;
-    var sw = stage.clientWidth, sh = stage.clientHeight;
-    svg.setAttribute('viewBox', '0 0 ' + sw + ' ' + sh);
-    var sr = stage.getBoundingClientRect();
-    var hr = hub.getBoundingClientRect();
-    var hx = hr.left - sr.left + hr.width / 2, hy = hr.top - sr.top + hr.height / 2;
-    var R = hr.width / 2 + 4;
-    nodes.forEach(function(n, i){
-      var nr = n.getBoundingClientRect();
-      var leftSide = (nr.left - sr.left + nr.width / 2) < sw / 2;
-      var ax = leftSide ? nr.right - sr.left + 6 : nr.left - sr.left - 6;
-      var ay = nr.top - sr.top + nr.height / 2;
-      var dx = hx - ax, dy = hy - ay, dist = Math.sqrt(dx * dx + dy * dy) || 1;
-      var ex = hx - dx / dist * R, ey = hy - dy / dist * R;
-      var c = Math.abs(ex - ax) * 0.5;
-      var d = 'M' + ax + ' ' + ay +
-        ' C ' + (ax + (leftSide ? c : -c)) + ' ' + ay +
-        ', ' + (ex - (leftSide ? c : -c)) + ' ' + ey +
-        ', ' + ex + ' ' + ey;
-      groups[i].rail.setAttribute('d', d);
-      groups[i].pulse.setAttribute('d', d);
-    });
-  }
-  function onMq(){ if (mq.matches){ build(); layout(); } }
-  onMq();
-  (mq.addEventListener ? mq.addEventListener.bind(mq, 'change') : mq.addListener.bind(mq))(onMq);
-  window.addEventListener('resize', layout);
-  if (window.ResizeObserver) new ResizeObserver(layout).observe(stage);
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(layout);
-  new IntersectionObserver(function(es){
-    inView = es[0].isIntersecting;
-    root.classList.toggle('pc-off', !inView);
-  }, { threshold: 0.05 }).observe(root);
-  setInterval(function(){
-    if (!built || !mq.matches || !inView || reduce.matches) return;
-    if (pinned >= 0 || hovered) return;
-    if (Date.now() - lastAct < 15000) return;
-    setActive((active + 1) % nodes.length);
-  }, 6000);
+  window.addEventListener('hashchange', surface);
+  surface();
 })();
 
 // ============================================================
