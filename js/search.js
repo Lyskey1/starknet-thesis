@@ -209,6 +209,9 @@
     if (target.classList && (target.classList.contains('wp-card') || target.classList.contains('sp-card'))) {
       target.classList.add(target.classList.contains('wp-card') ? 'tap-open' : 'on'); did = true;
     }
+    /* privacy: the proving-properties panel shows one property at a time */
+    const pci = target.closest && target.closest('.pcore-item');
+    if (pci && !pci.classList.contains('is-on')) did = clickIf(document.querySelectorAll('#pcore .pcore-node')[+pci.dataset.p]) || did;
     /* privacy: wall pedestals panel shows one wall at a time */
     const pw = target.closest && target.closest('.pw-wall');
     if (pw && !pw.classList.contains('is-on')) did = clickIf(document.querySelectorAll('#wall-pedestals .pw-ped')[+pw.dataset.wall]) || did;
