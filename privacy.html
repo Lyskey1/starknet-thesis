@@ -956,25 +956,61 @@
     .sp-card p { transition: none; }
   }
 
-  .viz { border: 1px solid var(--line); border-radius: 16px; background: linear-gradient(180deg,var(--bg-raise),#07090A); margin-top: 40px; overflow: hidden; }
-  .viz-bar { display: flex; justify-content: space-between; align-items: center; padding: 18px 26px; border-bottom: 1px solid var(--line); gap: 14px; flex-wrap: wrap; }
-  .viz-bar .t { font-family: var(--mono); font-size: 12px; letter-spacing: .14em; color: var(--muted); }
-  .switch { display: flex; border: 1px solid var(--em-line); border-radius: 99px; overflow: hidden; font-family: var(--mono); font-size: 11.5px; letter-spacing: .1em; }
-  .switch button { background: none; border: none; color: var(--muted); padding: 10px 18px; cursor: pointer; font-family: inherit; font-size: inherit; letter-spacing: inherit; }
-  .switch button.on { background: var(--em-dim); color: var(--em); }
-  .viz-body { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
-  .viz-col { padding: 30px; border-right: 1px solid var(--line); }
-  .viz-col:last-child { border-right: none; }
-  .viz-col .vt { font-family: var(--mono); font-size: 11px; letter-spacing: .16em; color: var(--muted); margin-bottom: 18px; }
-  .tx { font-family: var(--mono); font-size: 13px; line-height: 2.1; }
-  .tx .k { color: var(--muted); }
-  .tx .red { color: var(--danger); }
-  .tx .grn { color: var(--em); }
-  .viz .note-state { display: none; }
-  .viz.shielded .note-state { display: block; }
-  .viz.shielded .pub-state { display: none; }
-  .viz-foot { padding: 16px 26px; border-top: 1px solid var(--line); font-family: var(--mono); font-size: 11px; letter-spacing: .08em; color: var(--muted); }
-  .viz-foot .em { color: var(--em); }
+  /* ===== redactable wallet card =====
+     One card, four bands on hairlines, mono throughout. The public/shielded
+     toggle masks every value column with block glyphs, sweeping row by row so
+     it reads as a curtain rather than a flip. No reflow is the whole design
+     constraint: columns are minmax(0,1fr) so content cannot widen them, every
+     value cell is one nowrap line, numerals are tabular, and each mask is
+     exactly as many characters as the string it hides. In a monospace face
+     that is the same width to the pixel. wlt- prefix. */
+  .wlt { border: 1px solid var(--line); border-radius: 16px; background: linear-gradient(180deg,var(--bg-raise),#07090A);
+    margin-top: 40px; overflow: hidden; font-family: var(--mono); font-variant-numeric: tabular-nums; }
+  .wlt-bar { display: flex; justify-content: space-between; align-items: center; gap: 14px; flex-wrap: wrap;
+    padding: 18px 26px; border-bottom: 1px solid var(--line); }
+  .wlt-eyebrow { font-size: 12px; letter-spacing: .14em; color: var(--muted); }
+  /* the two state strings stack in one grid cell: at narrow widths the
+     shielded sentence wraps one line further than the public one, and a
+     footer that grows on toggle is the same reflow the masks avoid */
+  .wlt-swap { display: grid; }
+  .wlt-swap > * { grid-area: 1 / 1; visibility: hidden; }
+  .wlt-swap > .is-on { visibility: visible; }
+  .wlt-seg { display: flex; border: 1px solid var(--line); border-radius: 99px; overflow: hidden;
+    font-size: 11.5px; letter-spacing: .1em; }
+  .wlt-opt { background: none; border: 0; color: var(--muted); padding: 10px 18px; cursor: pointer;
+    font-family: inherit; font-size: inherit; letter-spacing: inherit;
+    transition: color var(--hover-dur) var(--hover-ease), background var(--hover-dur) var(--hover-ease); }
+  .wlt-opt:hover { color: var(--ink); }
+  .wlt-opt[aria-checked="true"] { background: rgba(var(--accent-rgb), .10); color: var(--em); }
+  /* public is the exposed state, so its active chip takes the warning color */
+  .wlt-opt.is-pub[aria-checked="true"] { background: rgba(232,93,84,.12); color: var(--danger); }
+  .wlt-opt:focus-visible { outline: 2px solid var(--em); outline-offset: -2px; }
+  .wlt-band { padding: 20px 26px; border-bottom: 1px solid var(--line); }
+  .wlt-gl { font-size: 11px; letter-spacing: .16em; color: var(--muted); margin-bottom: 12px; }
+  .wlt-row { display: grid; grid-template-columns: minmax(0,1.05fr) minmax(0,1.15fr) minmax(0,.8fr);
+    gap: 12px; align-items: baseline; font-size: 13px; line-height: 2.05; }
+  .wlt-k { color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .wlt-val { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .wlt-val.is-num { text-align: right; }
+  .wlt-val .rv { color: var(--danger); }
+  .wlt-val .mv, .wlt-val .sr { display: none; }
+  /* masked: the value leaves the accessibility tree with the ink, the glyph
+     run is decorative, and the cell announces itself as redacted instead */
+  .wlt-row.is-masked .rv { display: none; }
+  .wlt-row.is-masked .mv { display: inline; color: var(--muted); opacity: .5; letter-spacing: -.04em; }
+  .wlt-row.is-masked .sr { display: inline; }
+  .wlt-foot { display: flex; justify-content: space-between; align-items: baseline; gap: 14px; flex-wrap: wrap;
+    padding: 16px 26px; font-size: 11px; letter-spacing: .08em; color: var(--muted); }
+  .wlt-note { color: rgba(245,242,236,.34); letter-spacing: .1em; white-space: nowrap; }
+  @media (max-width: 560px) {
+    .wlt-bar, .wlt-band, .wlt-foot { padding-left: 16px; padding-right: 16px; }
+    .wlt-row { font-size: 12px; }
+    /* three columns stop fitting for the sentence-length rows: the label takes
+       its own line and the two values sit under it, masking unchanged */
+    .wlt-band.is-wide .wlt-row { grid-template-columns: minmax(0,1fr) minmax(0,1fr); row-gap: 0; }
+    .wlt-band.is-wide .wlt-k { grid-column: 1 / -1; }
+  }
+  @media (prefers-reduced-motion: reduce) { .wlt-opt { transition: none; } }
 
   /* three fronts: asymmetric bento. Mobile-first the three cells stack
      and every list renders fully and statically (the wp-cards ARE the
@@ -1528,9 +1564,6 @@
     .lineage--band .ln .y, .lineage--band .ln:first-child .y, .lineage--band .ln:last-child .y { margin-top: 0; }
     .lineage--band .ln .l { margin-top: 0; }
     .build-tiles { grid-template-columns: 1fr; }
-    .viz-body, .video-grid { grid-template-columns: 1fr; }
-    .viz-col { border-right: none; border-bottom: 1px solid var(--line); }
-    .viz-col:last-child { border-bottom: none; }
     .schema { grid-template-columns: 1fr; }
     .slink { padding: 10px 0; justify-content: center; transform: rotate(90deg); }
     .closing { padding: 90px 32px 80px; }
@@ -1546,7 +1579,7 @@
 
   /* touch affordances (phase 2): 44px targets + viewport-safe tooltips */
   @media (hover: none) {
-    .switch button { min-height: 44px; }
+    .wlt-opt { min-height: 44px; }
     .wp-card, .snode, .sp-card { cursor: pointer; }
   }
   @media (max-width: 860px) {
@@ -2114,38 +2147,48 @@
     </div>
   </div>
 
-  <div class="viz th-pm-reveal" id="viz">
-    <div class="viz-bar">
-      <span class="t">ONE BALANCE, TWO STATES, ONE CLICK APART</span>
-      <div class="switch"><button id="btnPub" class="on">₿ PUBLIC</button><button id="btnShd">[₿] SHIELDED</button></div>
-    </div>
-    <div class="viz-body">
-      <div class="viz-col">
-        <div class="vt">WHAT THE MARKET SEES</div>
-        <div class="tx pub-state">
-          <span class="k">owner:</span> <span class="red">0x7f3a…c92e (you, mapped)</span><br>
-          <span class="k">balance:</span> <span class="red">1.284 BTC</span><br>
-          <span class="k">last tx:</span> <span class="red">0.4 BTC → 0x91bb…e07a</span><br>
-          <span class="k">history:</span> <span class="red">complete, forever</span>
-        </div>
-        <div class="tx note-state">
-          <span class="k">note:</span> <span class="grn">0xa93f…e4d1 (ciphertext)</span><br>
-          <span class="k">owner:</span> <span class="grn">unreadable</span><br>
-          <span class="k">amount:</span> <span class="grn">unreadable</span><br>
-          <span class="k">link to past tx:</span> <span class="grn">none</span>
-        </div>
-      </div>
-      <div class="viz-col">
-        <div class="vt">WHAT YOU SEE</div>
-        <div class="tx">
-          <span class="k">balance:</span> 1.284 [₿]<br>
-          <span class="k">spendable:</span> instantly, atomically<br>
-          <span class="k">DeFi access:</span> swaps, lending, staking... all of it<br>
-          <span class="k">disclosure:</span> <span class="grn">scoped, lawful request only</span>
-        </div>
+  <!-- Redactable wallet card. Every value column is a real string plus a
+       same-length block-glyph mask plus an sr-only "redacted"; the row class
+       swaps which one is live, so masking can never change a width or a
+       height. The figures are invented for the demonstration, which the
+       footer states outright. -->
+  <div class="wlt th-pm-reveal" id="wlt">
+    <div class="wlt-bar">
+      <span class="wlt-eyebrow wlt-swap" id="wltEyebrow">
+        <span data-s="public" class="is-on">ONE WALLET, TWO STATES</span>
+        <span data-s="shielded">SAME WALLET, NOTHING TO READ</span>
+      </span>
+      <div class="wlt-seg" role="radiogroup" aria-label="Wallet visibility">
+        <button type="button" class="wlt-opt is-pub" role="radio" data-s="public" aria-checked="true" tabindex="0">PUBLIC</button>
+        <button type="button" class="wlt-opt is-shd" role="radio" data-s="shielded" aria-checked="false" tabindex="-1">SHIELDED</button>
       </div>
     </div>
-    <div class="viz-foot">SAME TOKENS, SAME WALLET.</div>
+    <div class="wlt-band">
+      <div class="wlt-gl">ASSETS</div>
+          <div class="wlt-row"><span class="wlt-k">BTC</span><span class="wlt-val"><span class="rv">1.284</span><span class="mv" aria-hidden="true">█████</span><span class="sr pvc-vh">redacted</span></span><span class="wlt-val is-num"><span class="rv">$142,880</span><span class="mv" aria-hidden="true">████████</span><span class="sr pvc-vh">redacted</span></span></div>
+          <div class="wlt-row"><span class="wlt-k">STRK</span><span class="wlt-val"><span class="rv">48,200</span><span class="mv" aria-hidden="true">██████</span><span class="sr pvc-vh">redacted</span></span><span class="wlt-val is-num"><span class="rv">$9,640</span><span class="mv" aria-hidden="true">██████</span><span class="sr pvc-vh">redacted</span></span></div>
+          <div class="wlt-row"><span class="wlt-k">ETH</span><span class="wlt-val"><span class="rv">3.10</span><span class="mv" aria-hidden="true">████</span><span class="sr pvc-vh">redacted</span></span><span class="wlt-val is-num"><span class="rv">$11,470</span><span class="mv" aria-hidden="true">███████</span><span class="sr pvc-vh">redacted</span></span></div>
+          <div class="wlt-row"><span class="wlt-k">USDC</span><span class="wlt-val"><span class="rv">12,500</span><span class="mv" aria-hidden="true">██████</span><span class="sr pvc-vh">redacted</span></span><span class="wlt-val is-num"><span class="rv">$12,500</span><span class="mv" aria-hidden="true">███████</span><span class="sr pvc-vh">redacted</span></span></div>
+    </div>
+    <div class="wlt-band is-wide">
+      <div class="wlt-gl">RECENT ACTIVITY</div>
+          <div class="wlt-row"><span class="wlt-k">0.4 BTC sent</span><span class="wlt-val"><span class="rv">0x91bb...e07a</span><span class="mv" aria-hidden="true">█████████████</span><span class="sr pvc-vh">redacted</span></span><span class="wlt-val is-num"><span class="rv">2h ago</span><span class="mv" aria-hidden="true">██████</span><span class="sr pvc-vh">redacted</span></span></div>
+          <div class="wlt-row"><span class="wlt-k">Swap STRK to USDC</span><span class="wlt-val"><span class="rv">9,000 STRK</span><span class="mv" aria-hidden="true">██████████</span><span class="sr pvc-vh">redacted</span></span><span class="wlt-val is-num"><span class="rv">yesterday</span><span class="mv" aria-hidden="true">█████████</span><span class="sr pvc-vh">redacted</span></span></div>
+          <div class="wlt-row"><span class="wlt-k">0.85 BTC received</span><span class="wlt-val"><span class="rv">0x4d2c...81fa</span><span class="mv" aria-hidden="true">█████████████</span><span class="sr pvc-vh">redacted</span></span><span class="wlt-val is-num"><span class="rv">6 days ago</span><span class="mv" aria-hidden="true">██████████</span><span class="sr pvc-vh">redacted</span></span></div>
+    </div>
+    <div class="wlt-band is-wide">
+      <div class="wlt-gl">DEFI POSITIONS</div>
+          <div class="wlt-row"><span class="wlt-k">Lending, Vesu</span><span class="wlt-val"><span class="rv">0.6 BTC supplied</span><span class="mv" aria-hidden="true">████████████████</span><span class="sr pvc-vh">redacted</span></span><span class="wlt-val is-num"><span class="rv">4.1% APY</span><span class="mv" aria-hidden="true">████████</span><span class="sr pvc-vh">redacted</span></span></div>
+          <div class="wlt-row"><span class="wlt-k">LP, Ekubo</span><span class="wlt-val"><span class="rv">STRK / USDC</span><span class="mv" aria-hidden="true">███████████</span><span class="sr pvc-vh">redacted</span></span><span class="wlt-val is-num"><span class="rv">$8,240</span><span class="mv" aria-hidden="true">██████</span><span class="sr pvc-vh">redacted</span></span></div>
+    </div>
+    <div class="wlt-foot">
+      <span class="wlt-swap" id="wltFoot">
+        <span data-s="public" class="is-on">VISIBLE TO ANYONE WITH THE ADDRESS.</span>
+        <span data-s="shielded">SAME TOKENS, SAME WALLET. DISCLOSURE ON LAWFUL REQUEST ONLY.</span>
+      </span>
+      <span class="wlt-note">ILLUSTRATIVE. NOT LIVE DATA.</span>
+    </div>
+    <p class="pvc-vh" id="wltLive" role="status" aria-live="polite"></p>
   </div>
 
   <div class="h3d th-pm-reveal">Three fronts are building <span class="em">on top of it.</span></div>
@@ -3212,13 +3255,63 @@
 })();
 
 // ============================================================
-// SECTION 04 — shielded state visualizer toggle
+// SECTION 04 - redactable wallet card. PUBLIC on load; switching
+// to SHIELDED masks every value column with a same-length run of
+// block glyphs, one row at a time, 55ms apart, top to bottom in
+// document order. Unmasking sweeps the same direction. Clicks are
+// ignored while a sweep is in flight so the state cannot desync
+// from what is rendered. The eyebrow and the toggle flip at the
+// start (the reader's declared intent), the footer at the end
+// (it describes the settled render). The change announces once,
+// not once per row. Reduced motion: no stagger, instant swap.
+// The segmented control is a real radiogroup, so it borrows the
+// shared thRove machine for clicks and arrows but writes its own
+// aria-checked mirror: aria-selected would be the wrong contract.
 // ============================================================
 (function(){
-  var viz = document.getElementById('viz'), bp = document.getElementById('btnPub'), bs = document.getElementById('btnShd');
-  if (!viz) return;
-  bp.addEventListener('click', function(){ viz.classList.remove('shielded'); bp.classList.add('on'); bs.classList.remove('on'); });
-  bs.addEventListener('click', function(){ viz.classList.add('shielded'); bs.classList.add('on'); bp.classList.remove('on'); });
+  var card = document.getElementById('wlt');
+  if (!card) return;
+  var opts = [].slice.call(card.querySelectorAll('.wlt-opt'));
+  var rows = [].slice.call(card.querySelectorAll('.wlt-row'));
+  var eyebrow = document.getElementById('wltEyebrow');
+  var foot = document.getElementById('wltFoot');
+  var live = document.getElementById('wltLive');
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  var SAY = { public: 'Wallet public', shielded: 'Wallet shielded' };
+  function swap(host, next){
+    [].forEach.call(host.children, function(el){ el.classList.toggle('is-on', el.dataset.s === next); });
+  }
+  var state = 'public', busy = false, timers = [];
+
+  function mirror(i){
+    opts.forEach(function(o, k){
+      o.setAttribute('aria-checked', k === i ? 'true' : 'false');
+      o.setAttribute('tabindex', k === i ? '0' : '-1');
+    });
+  }
+  function apply(next){
+    if (busy || next === state) return;
+    busy = true;
+    state = next;
+    var mask = next === 'shielded';
+    mirror(mask ? 1 : 0);
+    swap(eyebrow, next);
+    live.textContent = SAY[next];
+    timers.forEach(clearTimeout); timers = [];
+    function land(){ swap(foot, next); busy = false; }
+    if (reduce.matches) {
+      rows.forEach(function(r){ r.classList.toggle('is-masked', mask); });
+      land();
+      return;
+    }
+    rows.forEach(function(r, i){
+      timers.push(setTimeout(function(){ r.classList.toggle('is-masked', mask); }, i * 55));
+    });
+    timers.push(setTimeout(land, rows.length * 55));
+  }
+  thRove({ root: card, buttons: opts,
+    shown: function(){ return state === 'shielded' ? 1 : 0; },
+    pick: function(k){ apply(k === 1 ? 'shielded' : 'public'); } });
 })();
 
 // ============================================================
