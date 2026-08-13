@@ -1153,7 +1153,10 @@
               mask-image: linear-gradient(180deg, #000 78%, transparent); }
     .bnt-track { display: flex; flex-direction: column; }
     .bnt-set { padding-bottom: 8px; }
-    .pv-bento.run .bnt-track { animation: bntv 28s linear infinite; }
+    /* duration comes from --bnt-dur, which JS derives from the track's own
+       measured travel so both bands hold one px per second rate. The literal
+       fallback is the rate-correct value at this width, for the no-JS case */
+    .pv-bento.run .bnt-track { animation: bntv var(--bnt-dur, 28s) linear infinite; }
     .bnt-defi:hover .bnt-track, .bnt-defi.focus-hold .bnt-track { animation-play-state: paused; }
     .bnt-cards { display: none; }
     .bnt-pipe-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 18px; }
@@ -1165,7 +1168,7 @@
     .bnt-chiptrack { display: flex; width: max-content; }
     .bnt-chipset { display: flex; gap: 10px; padding-right: 10px; }
     /* the two marquees start desynchronized via the negative delay */
-    .pv-bento.run .bnt-chiptrack { animation: bnth 25s linear infinite; animation-delay: -9s; }
+    .pv-bento.run .bnt-chiptrack { animation: bnth var(--bnt-dur, 102.6s) linear infinite; animation-delay: -9s; }
     .bnt-pipe:hover .bnt-chiptrack, .bnt-pipe.focus-hold .bnt-chiptrack { animation-play-state: paused; }
     .bnt-chip { display: inline-flex; align-items: center; gap: 10px; border: 1px solid var(--line); border-radius: 99px; padding: 9px 16px; background: #0B0F10; font-family: var(--display); font-weight: 600; font-size: 13px; color: var(--ink); white-space: nowrap; text-decoration: none; transition: border-color var(--hover-dur) var(--hover-ease), background var(--hover-dur) var(--hover-ease); }
     a.bnt-chip:hover, a.bnt-chip:focus-visible { border-color: var(--em-line); background: rgba(var(--accent-rgb),.06); }
@@ -3315,11 +3318,53 @@
       }
     });
   }
-  function onMq(){ if (mq.matches) build(); }
+  // Both bands hold ONE rate, in px per second, rather than one duration.
+  // The rate is the DeFi column's own: it is the slower of the two and it is
+  // the band the section is read against, so the pipeline is slowed to it and
+  // the DeFi column is not sped up. At 1280px the DeFi set travels 620.3px in
+  // its authored 28s, which is where 22.16 comes from; feeding that rate back
+  // through the formula returns 27.99s for the same band, a 0.04% difference
+  // that keeps it where it was while letting both bands share one formula.
+  //
+  // Duration is derived per band from that band's OWN measured travel, so an
+  // item added or removed on either side cannot pull the two out of step: the
+  // travel changes and the duration follows it. Travel for one loop is the
+  // size of a single set, which is exactly the 50% the keyframes cover
+  // because each track holds the original set plus one clone of it.
+  //
+  // Sizes are only real once movement panel 03 is open (a display:none
+  // subtree measures 0), so this runs off the same intersection that starts
+  // the animation, and again on resize because the DeFi column's height
+  // depends on how its text wraps at the current column width.
+  var MQ_PX_PER_SEC = 22.16;
+  var rateRetry = 0;
+  function syncRate(){
+    if (!mq.matches) return;   // below 981px neither band animates
+    var pending = false;
+    [[defiTrack, true], [chipTrack, false]].forEach(function(pair){
+      var track = pair[0], vertical = pair[1];
+      var set = track.firstElementChild;
+      if (!set) return;
+      var r = set.getBoundingClientRect();
+      var travel = vertical ? r.height : r.width;
+      if (travel < 1) { pending = true; return; }  // hidden: keep the fallback
+      track.style.setProperty('--bnt-dur', (travel / MQ_PX_PER_SEC).toFixed(2) + 's');
+    });
+    // measured zero because the panel was still closed: come back for it, so
+    // a band cannot be left running on the CSS fallback for the whole visit
+    if (pending && rateRetry < 20) { rateRetry++; setTimeout(syncRate, 400); }
+  }
+  function onMq(){ if (mq.matches) { build(); syncRate(); } }
   onMq();
   (mq.addEventListener ? mq.addEventListener.bind(mq, 'change') : mq.addListener.bind(mq))(onMq);
+  var rateTimer = null;
+  window.addEventListener('resize', function(){
+    clearTimeout(rateTimer);
+    rateTimer = setTimeout(syncRate, 150);
+  });
   new IntersectionObserver(function(es){
     root.classList.toggle('run', es[0].isIntersecting);
+    if (es[0].isIntersecting) syncRate();
   }, { threshold: 0.05 }).observe(root);
 
   // status filters: single-select per card, scoped to that card. The
