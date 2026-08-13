@@ -296,6 +296,21 @@
   .th-pm-eyebrow { font-family: var(--mono); font-size: 13px; letter-spacing: .04em; color: var(--accent); margin-top: 16px; opacity: .9; }
   .th-pm-intro { font-size: 17px; line-height: 1.6; color: #8b909c; max-width: 62ch; margin-top: 34px; }
   .th-pm-intro b { color: var(--white); font-weight: 600; }
+  /* Closing pivot: the beat that ends a section and launches the next. One
+     treatment for all of them (they had grown three: 17px muted prose, a
+     30px display line capped at 34ch that broke into six ragged lines, and
+     an 820px display line). Centered on the content column, sized between
+     body copy and the section heading, with a short hairline marking it as
+     a deliberate beat rather than leftover text. The air above and below is
+     equal and far wider than the paragraph rhythm, so every pivot sits in
+     the same amount of space on every section. */
+  .th-pm-pivot { position: relative; max-width: 52ch; margin: 90px auto 0; padding: 44px 0 44px;
+    font-family: var(--display); font-weight: 700; font-size: clamp(21px, 2vw, 28px); line-height: 1.36;
+    letter-spacing: -.01em; color: var(--ink); text-align: center; text-wrap: balance; }
+  .th-pm-pivot::before { content: ""; position: absolute; top: 0; left: 50%; width: 60px; height: 1px;
+    transform: translateX(-50%);
+    background: linear-gradient(90deg, transparent, rgba(var(--accent-rgb), .6), transparent); }
+  .th-pm-pivot .em { color: var(--em); }
   @media (max-width: 880px) { .th-pm-title { font-size: 38px; } .th-pm-num { font-size: 48px; } }
 
   /* chapters (display headline + free prose) */
@@ -328,7 +343,6 @@
   .pv-wall { margin-top: 0; border-top: 1px solid var(--th-hair); padding: 52px 0 56px; }
   .pv-wall .kicker { margin-top: 26px; }
   .pv-wall h3 { margin-bottom: 20px; }
-  .wall-out { margin-top: 0; padding: 52px 0 8px; border-top: 1px solid var(--th-hair); }
   /* schema as a 2x2 inside its duo cell: arrows give way to counter labels */
   .pv-duo .schema { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 14px; margin-top: 0; counter-reset: sn; }
   .pv-duo .schema .slink { display: none; }
@@ -616,7 +630,6 @@
   }
 
   /* ============ 01: section exit line ============ */
-  .reveal-lead { margin-top: 80px; }
 
   /* ============ 02: case files / island / crowd ============ */
   .cases { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 30px 0; max-width: 820px; }
@@ -653,8 +666,6 @@
   .crowd-cap { font-family: var(--mono); font-size: 12px; margin-top: 22px; letter-spacing: .06em; }
   .crowd-cap .n { color: var(--em); }
   .crowd-cap .warn { color: var(--danger); }
-  .wall-out { margin-top: 76px; max-width: 34ch; font-family: var(--display); font-weight: 700; font-size: clamp(22px,2.6vw,30px); line-height: 1.3; }
-  .wall-out .em { color: var(--em); }
 
   /* ============ 03: protocol grid ============ */
   .gridwrap { margin: 0; overflow-x: auto; }
@@ -852,8 +863,6 @@
     /* static rails with one fixed accent segment mid-beam, no flow */
     .pcore.pc-anim .pc-pulse { animation: none; stroke-dashoffset: -.43; }
   }
-  .rail-out { max-width: 820px; margin: 70px auto 0; font-family: var(--display); font-weight: 700; font-size: clamp(22px,2.6vw,30px); line-height: 1.3; }
-  .rail-out .em { color: var(--em); }
 
   /* ============ 04: rollout timeline / foundation / visualizer / waves ============ */
   .lead { max-width: 68ch; color: rgba(245,242,236,.78); margin: 56px 0 0; font-size: 17px; font-weight: 400; line-height: 1.65; }
@@ -1630,7 +1639,7 @@
   </div>
 
   <!-- Section exit: the single transition line into 02 -->
-  <p class="th-pm-intro reveal-lead th-pm-reveal">There is one way to cut every line on those bills: <b>onchain privacy</b>.</p>
+  <p class="th-pm-pivot th-pm-reveal">There is one way to cut every line on those bills: <span class="em">onchain privacy</span>.</p>
 </section>
 
 <!-- ================= SECTION 02 ================= -->
@@ -1729,7 +1738,7 @@
     </div>
   </div>
 
-  <p class="wall-out th-pm-reveal">Compliance. Composability. Scale. Three walls, a decade of failed attempts. <span class="em">Starknet is the first design to clear all three at once.</span></p>
+  <p class="th-pm-pivot th-pm-reveal">Compliance. Composability. Scale. Three walls, a decade of failed attempts. <span class="em">Starknet is the first design to clear all three at once.</span></p>
 </section>
 
 <!-- ================= SECTION 03 ================= -->
@@ -1914,7 +1923,7 @@
     <div class="pcore-panel" aria-live="polite"><div class="pcore-pgrid"></div></div>
   </div>
 
-  <p class="rail-out th-pm-reveal">With all four properties in place, Starknet is now shipping <span class="em">the most complete privacy ecosystem the market has seen</span>, designed against the failure list of the past decade.</p>
+  <p class="th-pm-pivot th-pm-reveal">With all four properties in place, Starknet is now shipping <span class="em">the most complete privacy ecosystem the market has seen</span>, designed against the failure list of the past decade.</p>
 </section>
 
 <!-- ================= SECTION 04 ================= -->
@@ -2246,7 +2255,7 @@
   </div>
   </div>
 
-  <p class="lead th-pm-reveal">And the whole stack is open source under Apache 2.0.</p>
+  <p class="th-pm-pivot th-pm-reveal">And the whole stack is open source under Apache 2.0.</p>
 </section>
 
 <!-- ================= CLOSING ================= -->
