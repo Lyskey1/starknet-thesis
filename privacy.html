@@ -880,6 +880,77 @@
   .lead { max-width: 68ch; color: rgba(245,242,236,.78); margin: 56px 0 0; font-size: 17px; font-weight: 400; line-height: 1.65; }
   .lead b { color: var(--ink); font-weight: 600; }
   .h3d { font-family: var(--display); font-weight: 700; font-size: clamp(22px,2.6vw,30px); line-height: 1.25; margin: 84px 0 24px; max-width: 30ch; }
+
+  /* ============ 04: movement selector (pedestals + one panel) ============ */
+  /* Four volumetric plinths; selecting one renders that movement alone. Glass
+     is the page's shipped recipe by reference (--card-glass-*), timing is the
+     page's --hover-dur/--hover-ease, hairlines are --th-hair, and the panel
+     title reuses .h3d's type. Nothing here declares a new constant. The panel
+     animates its own height on switch rather than reserving one height for
+     all four: movement 1 carries an animation and movement 4 a metrics grid,
+     so a shared reservation would leave a void under the short ones. */
+  .pmv { margin-top: 40px; }
+  .pmv-row { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 18px; }
+  .pmv-ped { position: relative; display: grid; grid-template-rows: 1fr auto auto; justify-items: center;
+    background: none; border: 0; padding: 0; cursor: pointer; border-radius: 14px;
+    transition: opacity var(--hover-dur) var(--hover-ease); }
+  .pmv-ped:focus-visible { outline: 2px solid var(--em); outline-offset: 5px; }
+  .pmv-ped[aria-selected="false"] { opacity: .55; }
+  /* floor halo, selected only */
+  .pmv-ped::before { content: ""; position: absolute; left: 14%; right: 14%; bottom: 22px; height: 34px;
+    border-radius: 50%; background: radial-gradient(closest-side, rgba(var(--accent-rgb), .22), transparent 72%);
+    opacity: 0; transition: opacity .4s ease; pointer-events: none; }
+  .pmv-ped[aria-selected="true"]::before { opacity: 1; }
+  .pmv-obj { width: 66px; height: 66px; color: var(--em); align-self: end; margin-bottom: 6px;
+    position: relative; z-index: 2; transition: transform .4s cubic-bezier(.22,1,.36,1), filter .4s ease; }
+  .pmv-obj svg { width: 100%; height: 100%; display: block; }
+  .pmv-ped[aria-selected="true"] .pmv-obj { transform: translateY(-6px);
+    filter: drop-shadow(0 0 10px rgba(var(--accent-rgb), .45)); }
+  /* the plinth: an elliptical top face over a short cylinder wall, both cut
+     from the shipped glass so it reads as one volume rather than two fills */
+  .pmv-plinth { position: relative; width: 100%; max-width: 190px; height: 46px; z-index: 1; }
+  .pmv-plinth i, .pmv-plinth u { position: absolute; left: 0; right: 0; display: block; }
+  .pmv-plinth u { top: 13px; bottom: 0; border-radius: 0 0 50% 50% / 0 0 26px 26px;
+    background: var(--card-glass-fill); border: 1px solid var(--card-glass-border); border-top: 0;
+    -webkit-backdrop-filter: blur(var(--card-glass-blur)) saturate(var(--card-glass-sat));
+    backdrop-filter: blur(var(--card-glass-blur)) saturate(var(--card-glass-sat));
+    box-shadow: inset 0 -1px 0 rgba(255,255,255,.22), inset 0 0 24px rgba(255,255,255,.05);
+    transition: border-color var(--hover-dur) var(--hover-ease); }
+  .pmv-plinth i { top: 0; height: 26px; border-radius: 50%;
+    background: var(--card-glass-fill); border: 1px solid var(--card-glass-border);
+    -webkit-backdrop-filter: blur(var(--card-glass-blur)) saturate(var(--card-glass-sat));
+    backdrop-filter: blur(var(--card-glass-blur)) saturate(var(--card-glass-sat));
+    box-shadow: inset -1px -1px 0 rgba(255,255,255,.42), inset 1px 1px 0 rgba(255,255,255,.10),
+      inset 0 1px 0 rgba(255,255,255,.26), inset 0 0 24px rgba(255,255,255,.05);
+    transition: border-color var(--hover-dur) var(--hover-ease), background var(--hover-dur) var(--hover-ease); }
+  .pmv-ped[aria-selected="true"] .pmv-plinth i,
+  .pmv-ped[aria-selected="true"] .pmv-plinth u { border-color: rgba(var(--accent-rgb), .55); }
+  .pmv-ped[aria-selected="true"] .pmv-plinth i { background: rgba(var(--accent-rgb), .12); }
+  .pmv-label { font-family: var(--mono); font-size: 10.5px; letter-spacing: .14em; color: var(--ink);
+    margin-top: 14px; white-space: nowrap; }
+  .pmv-label b { color: var(--em); font-weight: 600; margin-right: 6px; }
+  /* the panel: its own settled height, animated on switch */
+  .pmv-stage { margin-top: 46px; border-top: 1px solid var(--th-hair); padding-top: 30px;
+    overflow: hidden; transition: height .42s var(--hover-ease); }
+  .pmv-panel[hidden] { display: none; }
+  .pmv-title { font-family: var(--display); font-weight: 700; font-size: clamp(22px,2.6vw,30px);
+    line-height: 1.25; margin: 0 0 24px; max-width: 30ch; }
+  .pmv-title .em { color: var(--em); }
+  @media (max-width: 860px) {
+    /* four across stops fitting: two by two, no scroller */
+    .pmv-row { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 26px 14px; }
+  }
+  @media (max-width: 480px) {
+    .pmv-obj { width: 52px; height: 52px; }
+    .pmv-plinth { height: 38px; max-width: 140px; }
+    .pmv-plinth i { height: 20px; }
+    .pmv-plinth u { top: 10px; }
+    .pmv-label { font-size: 9px; letter-spacing: .06em; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .pmv-ped, .pmv-ped::before, .pmv-obj, .pmv-plinth i, .pmv-plinth u, .pmv-stage { transition: none; }
+    .pmv-ped[aria-selected="true"] .pmv-obj { transform: none; }
+  }
   .h3d .em { color: var(--em); }
 
   /* ===== shield-stamp foundation component ===== */
@@ -2117,7 +2188,41 @@
   <p class="th-pm-eyebrow th-pm-reveal">The ecosystem</p>
   <p class="th-pm-intro th-pm-reveal">From first announcement to a live, multi-asset, wallet-native privacy system: in under a year. Here is what is live today, and the foundation it stands on.</p>
 
-  <div class="h3d th-pm-reveal">The foundation <span class="em">everything builds on.</span></div>
+  <!-- Movement selector: four volumetric plinths, one panel. The four blocks
+       below are the page's existing movements moved intact, not rewritten;
+       each carries its own settled height and the stage animates between
+       them. Glass, timing, hairlines and title type are the page's own
+       constants by reference. -->
+  <div class="pmv th-pm-reveal" id="pmv">
+    <div class="pmv-row" role="tablist" aria-label="The four movements">
+      <button class="pmv-ped" type="button" role="tab" id="pmvTab01" data-m="0"
+              aria-selected="true" aria-controls="pmvPanel01" tabindex="0">
+        <span class="pmv-obj" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"><path d="M3.4 6.6h17.2"/><path d="M6.6 6.6v9.8M12 6.6v9.8M17.4 6.6v9.8"/><path d="M4.2 16.4h15.6"/><path d="M3 19.2h18"/></svg></span>
+        <span class="pmv-plinth" aria-hidden="true"><u></u><i></i></span>
+        <span class="pmv-label"><b>01</b>FOUNDATIONS</span>
+      </button>
+      <button class="pmv-ped" type="button" role="tab" id="pmvTab02" data-m="1"
+              aria-selected="false" aria-controls="pmvPanel02" tabindex="-1">
+        <span class="pmv-obj" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6.4" width="18" height="11.2" rx="2"/><path d="M3 10.1h18"/><path d="M6.1 13.4h4.6"/><path d="M13.1 13.4h1.9M16.2 13.4h1.9M13.1 15.6h1.9M16.2 15.6h1.9" stroke-width="2.1" stroke-linecap="butt" opacity=".55"/></svg></span>
+        <span class="pmv-plinth" aria-hidden="true"><u></u><i></i></span>
+        <span class="pmv-label"><b>02</b>WHAT USERS GET</span>
+      </button>
+      <button class="pmv-ped" type="button" role="tab" id="pmvTab03" data-m="2"
+              aria-selected="false" aria-controls="pmvPanel03" tabindex="-1">
+        <span class="pmv-obj" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"><rect x="8.6" y="8.6" width="6.8" height="6.8" rx="1.4"/><rect x="2.6" y="3.4" width="4" height="4" rx="1"/><rect x="17.4" y="3.4" width="4" height="4" rx="1"/><rect x="10" y="18.6" width="4" height="4" rx="1"/><path d="M6.6 5.4h.9a3 3 0 0 1 3 3v.2M17.4 5.4h-.9a3 3 0 0 0-3 3v.2M12 15.4v3.2"/></svg></span>
+        <span class="pmv-plinth" aria-hidden="true"><u></u><i></i></span>
+        <span class="pmv-label"><b>03</b>ECOSYSTEM</span>
+      </button>
+      <button class="pmv-ped" type="button" role="tab" id="pmvTab04" data-m="3"
+              aria-selected="false" aria-controls="pmvPanel04" tabindex="-1">
+        <span class="pmv-obj" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"><path d="M3.4 20.2h17.2"/><rect x="5" y="13.4" width="4.2" height="6.8" rx="1"/><rect x="10.4" y="9" width="4.2" height="11.2" rx="1"/><rect x="15.8" y="4.6" width="4.2" height="15.6" rx="1"/></svg></span>
+        <span class="pmv-plinth" aria-hidden="true"><u></u><i></i></span>
+        <span class="pmv-label"><b>04</b>METRICS</span>
+      </button>
+    </div>
+    <div class="pmv-stage" id="pmvStage">
+      <div class="pmv-panel" id="pmvPanel01" role="tabpanel" aria-labelledby="pmvTab01">
+        <div class="pmv-title">The foundation <span class="em">everything builds on.</span></div>
   <div class="stamp-wrap th-pm-reveal" id="shieldStamp">
     <div class="stamp-stage">
       <div class="ss-scene">
@@ -2152,6 +2257,9 @@
        swaps which one is live, so masking can never change a width or a
        height. The figures are invented for the demonstration, which the
        footer states outright. -->
+      </div>
+      <div class="pmv-panel" id="pmvPanel02" role="tabpanel" aria-labelledby="pmvTab02" hidden>
+        <div class="pmv-title">What users get, <span class="em">in one wallet.</span></div>
   <div class="wlt th-pm-reveal" id="wlt">
     <div class="wlt-bar">
       <span class="wlt-eyebrow wlt-swap" id="wltEyebrow">
@@ -2190,8 +2298,9 @@
     </div>
     <p class="pvc-vh" id="wltLive" role="status" aria-live="polite"></p>
   </div>
-
-  <div class="h3d th-pm-reveal">Three fronts are building <span class="em">on top of it.</span></div>
+      </div>
+      <div class="pmv-panel" id="pmvPanel03" role="tabpanel" aria-labelledby="pmvTab03" hidden>
+        <div class="pmv-title">Three fronts are building <span class="em">on top of it.</span></div>
   <div class="pv-bento th-pm-reveal">
       <div class="gx-bloom" aria-hidden="true">
         <i style="--bc:var(--em);left:8%;top:4%;width:32%;height:34%"></i>
@@ -2357,7 +2466,9 @@
   <!-- Live pool metrics. Data comes from the STRK20 dashboard backend
        (CORS-open; it proxies Starkscan server-side). Cards default to
        VIEW LIVE fallbacks: readable with JS off, restored on any error. -->
-  <div class="h3d th-pm-reveal">The pool, <span class="em">measured live.</span></div>
+      </div>
+      <div class="pmv-panel" id="pmvPanel04" role="tabpanel" aria-labelledby="pmvTab04" hidden>
+        <div class="pmv-title">The pool, <span class="em">measured live.</span></div>
   <div class="pmx th-pm-reveal" id="poolMetrics">
     <div class="pmx-stats" id="pmxStats"></div>
     <div class="pmx-updated" id="pmxUpdated"></div>
@@ -2399,6 +2510,9 @@
         <div class="pmx-head"><span class="pmx-t">REVENUE</span><span class="pmx-sub">PROTOCOL FEES, DAILY + CUMULATIVE</span></div>
         <div class="pmx-body"><a class="pmx-live" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">VIEW LIVE →</a></div>
         <a class="pmx-src" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">SOURCE: STRK20 DASHBOARD ↗</a>
+      </div>
+    </div>
+  </div>
       </div>
     </div>
   </div>
@@ -3252,6 +3366,66 @@
       });
     });
   });
+})();
+
+// ============================================================
+// SECTION 04 - movement selector. Four pedestals, one panel: the
+// selected movement is the only one in the layout, so the section
+// stops being the longest scroll on the site. Heights are NOT
+// shared, because movement 1 carries an animation and movement 4
+// a metrics grid; the stage measures the incoming panel and
+// animates its own height to it, so nothing below jumps. Runs on
+// the shared thRove machine like every other selector here.
+// Reduced motion: instant swap, no height animation.
+// ============================================================
+(function(){
+  var root = document.getElementById('pmv');
+  if (!root) return;
+  var stage = document.getElementById('pmvStage');
+  var peds = [].slice.call(root.querySelectorAll('.pmv-ped'));
+  var panels = [].slice.call(root.querySelectorAll('.pmv-panel'));
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  var settling = null;
+
+  function shown(){
+    for (var i = 0; i < panels.length; i++) if (!panels[i].hidden) return i;
+    return 0;
+  }
+  function measure(el){
+    /* measured off-layout so the outgoing panel's height is never involved */
+    var prevH = stage.style.height;
+    stage.style.height = 'auto';
+    var wasHidden = el.hidden;
+    el.hidden = false;
+    var h = el.getBoundingClientRect().height;
+    el.hidden = wasHidden;
+    stage.style.height = prevH;
+    return h;
+  }
+  function select(i){
+    if (i === shown()) return;
+    var next = panels[i];
+    peds.forEach(function(p, k){
+      p.setAttribute('aria-selected', k === i ? 'true' : 'false');
+      p.setAttribute('tabindex', k === i ? '0' : '-1');
+    });
+    if (reduce.matches) {
+      panels.forEach(function(p, k){ p.hidden = k !== i; });
+      stage.style.height = '';
+      return;
+    }
+    var from = stage.getBoundingClientRect().height;
+    var to = measure(next);
+    panels.forEach(function(p, k){ p.hidden = k !== i; });
+    stage.style.height = from + 'px';
+    /* force the start frame before the target, or the browser collapses
+       both writes into one and there is nothing to animate */
+    void stage.offsetHeight;
+    stage.style.height = to + 'px';
+    if (settling) clearTimeout(settling);
+    settling = setTimeout(function(){ stage.style.height = ''; settling = null; }, 460);
+  }
+  thRove({ root: root, buttons: peds, shown: shown, pick: function(k){ select(k); } });
 })();
 
 // ============================================================
