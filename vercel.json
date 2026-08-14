@@ -3,6 +3,13 @@
   "outputDirectory": ".",
   "cleanUrls": true,
   "trailingSlash": false,
+  "rewrites": [
+    {
+      "source": "/(.*mockup.*)",
+      "has": [{ "type": "host", "value": "(www\\.)?starknetthesis\\.io" }],
+      "destination": "/mockups-are-not-served-in-production"
+    }
+  ],
   "functions": {
     "api/*.js": {
       "maxDuration": 10
