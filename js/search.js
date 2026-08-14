@@ -220,6 +220,13 @@
     /* privacy: wall pedestals panel shows one wall at a time */
     const pw = target.closest && target.closest('.pw-wall');
     if (pw && !pw.classList.contains('is-on')) did = clickIf(document.querySelectorAll('#wall-pedestals .pw-ped')[+pw.dataset.wall]) || did;
+    /* privacy: section 05's sealed stack. A hit lands on the detail item, so
+       the card that owns it is the one whose aria-controls names it: click
+       that and the stack unseals onto the right stage. */
+    const sd = target.closest && target.closest('.sd-item');
+    if (sd && sd.hasAttribute('hidden')) {
+      did = clickIf(document.querySelector('.seal-card[aria-controls="' + sd.id + '"]')) || did;
+    }
     /* privacy: bills panel shows one bill at a time */
     const bill = target.closest && target.closest('.bstk-bill');
     if (bill && !bill.classList.contains('is-on')) did = clickIf(document.querySelectorAll('#bills .bstk-tab')[+bill.dataset.bill]) || did;

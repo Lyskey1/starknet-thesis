@@ -349,9 +349,7 @@
   .pv-wall .kicker { margin-top: 26px; }
   .pv-wall h3 { margin-bottom: 20px; }
   /* schema as a 2x2 inside its duo cell: arrows give way to counter labels */
-  .pv-duo .schema { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 14px; margin-top: 0; counter-reset: sn; }
-  .pv-duo .schema .slink { display: none; }
-  .pv-duo .snode .st::before { counter-increment: sn; content: "0" counter(sn) " · "; color: var(--em); opacity: .8; }
+  .pv-duo .seal { margin-top: 0; }
   @media (max-width: 980px) {
     .pv-duo { grid-template-columns: minmax(0,1fr); gap: 30px; }
     .pv-duo--flip > *:nth-child(1) { grid-column: auto; grid-row: auto; }
@@ -1418,24 +1416,24 @@
      nodes (their own hover language). The band is pointer-inert so links
      and marquee interactions underneath stay live; it is static at rest
      (transform held, no idle animation). */
-  .wave.gx-card, .case.gx-card, .btile.gx-card, .snode.gx-card { overflow: hidden; }
-  .wave.gx-card::after, .case.gx-card::after, .btile.gx-card::after, .snode.gx-card::after {
+  .wave.gx-card, .case.gx-card, .btile.gx-card, .seal-card.gx-card { overflow: hidden; }
+  .wave.gx-card::after, .case.gx-card::after, .btile.gx-card::after, .seal-card.gx-card::after {
     content: ""; position: absolute; top: -30%; bottom: -30%; left: 0; width: 38%;
     background: var(--sweep-grad);
     opacity: 0; transform: translateX(-130%); pointer-events: none;
     transition: transform var(--sweep-dur) var(--sweep-ease), opacity .3s;
   }
-  .wave.gx-card:hover::after, .case.gx-card:hover::after, .btile.gx-card:hover::after, .snode.gx-card:hover::after {
+  .wave.gx-card:hover::after, .case.gx-card:hover::after, .btile.gx-card:hover::after, .seal-card.gx-card:hover::after {
     opacity: 1; transform: translateX(330%);
   }
   @media (prefers-reduced-motion: reduce) {
-    .wave.gx-card::after, .case.gx-card::after, .btile.gx-card::after, .snode.gx-card::after { display: none; }
+    .wave.gx-card::after, .case.gx-card::after, .btile.gx-card::after, .seal-card.gx-card::after { display: none; }
   }
 
   /* Narrative blooms: one blob per card, behind that card only. Static,
      childless, pointer-inert; the blur is on the bloom layer itself, never
      on an ancestor. */
-  .cases,.island,.pv-bento,.build-tiles,.pmx-stats,.schema{position:relative;}
+  .cases,.island,.pv-bento,.build-tiles,.pmx-stats,.seal{position:relative;}
   .gx-bloom{position:absolute;inset:0;z-index:0;pointer-events:none;filter:blur(58px);}
   .gx-bloom i{position:absolute;border-radius:50%;background:radial-gradient(closest-side,var(--bc),transparent 70%);opacity:.05;}
 
@@ -1457,18 +1455,134 @@
 
   /* ============ 05: compliance ============ */
   .lead .red { color: var(--danger); }
-  .schema { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr; gap: 0; align-items: stretch; margin-top: 56px; font-family: var(--mono); }
-  .snode { border: 1px solid var(--line); background: var(--bg-raise); border-radius: 12px; padding: 20px 22px; transition: border-color .25s, background .25s; }
-  .snode .st { font-size: 11px; letter-spacing: .16em; color: var(--em); }
-  .snode h6 { font-family: var(--display); font-weight: 700; font-size: 16px; margin: 10px 0 0; color: var(--ink); }
-  .snode .sn-sum { font-family: var(--sans); font-size: 12.5px; color: var(--muted); line-height: 1.6; margin-top: 8px; }
-  .snode ul { list-style: none; font-size: 11.5px; color: var(--muted); line-height: 1.9; letter-spacing: .03em; max-height: 0; overflow: hidden; margin-top: 0; transition: max-height .4s ease, margin-top .4s ease; }
-  .snode:hover { border-color: var(--em-line); background: rgba(var(--accent-rgb),.05); }
-  .snode:hover ul { max-height: 280px; margin-top: 10px; }
-  .snode.tap-open ul { max-height: 280px; margin-top: 10px; }
-  .slink { display: flex; align-items: center; padding: 0 12px; color: var(--em); font-size: 18px; }
+
+  /* ============ 05: the sealed stack ============================
+     The section argues that the viewing key sits sealed and unwinds only
+     under a scoped lawful request, so the block stays sealed until it is
+     acted on and then gives up one stage at a time. Nothing here invents a
+     value: the card surface is .gx-card, the border and fill are --line /
+     --bg-raise / --em-line, timing is --hover-dur with --hover-ease, the
+     eyebrow keeps the .st size and the "01 · " counter the 2x2 grid used,
+     and titles stay Archivo Expanded 700 at the grid's own title size.
+
+     Both heights are fixed: the stage is sized for the fanned arc including
+     the rotation of the outer two, and the detail region reserves the
+     tallest of the four descriptions. Opening a card therefore never
+     reflows the column and never moves the Apache 2.0 line. */
+  .seal { counter-reset: sealn; }
+  .seal-stage { position: relative; height: var(--seal-stage-h, 224px); }
+  /* the seal: a real button, because it is the affordance that unseals */
+  .seal-tile { position: absolute; left: 50%; top: 50%; width: 190px; height: 190px;
+    transform: translate(-50%,-50%); display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 14px; cursor: pointer;
+    border: 1px solid var(--em-line); border-radius: 14px;
+    background: rgba(var(--accent-rgb), .06); color: var(--ink);
+    font-family: var(--mono); z-index: 3;
+    transition: opacity var(--hover-dur) var(--hover-ease),
+                transform var(--hover-dur) var(--hover-ease); }
+  .seal-tile:focus-visible { outline: 2px solid var(--em); outline-offset: 4px; }
+  .seal-tile .sl-glyph { width: 44px; height: 44px; color: var(--em); }
+  .seal-tile .sl-glyph svg { width: 100%; height: 100%; display: block; }
+  .seal-tile .sl-lbl { font-size: 10.5px; letter-spacing: .16em; line-height: 1.7;
+    color: var(--em); text-align: center; }
+  .seal-tile .sl-sub { font-size: 9.5px; letter-spacing: .14em; color: var(--muted); }
+  .seal.is-open .seal-tile { opacity: 0; transform: translate(-50%,-50%) scale(.94);
+    pointer-events: none; }
+  /* the fan: four cards behind the seal, arced out on open. Positions are
+     percentages of the stage so the arc holds at any column width. */
+  .seal-fan { position: absolute; inset: 0; }
+  .seal-card { position: absolute; top: 50%; width: 24%; min-width: 0;
+    height: var(--seal-card-h, 162px); padding: 13px 13px; cursor: pointer;
+    display: flex; flex-direction: column; align-items: flex-start; gap: 8px;
+    border-radius: 12px; text-align: left; overflow: hidden;
+    opacity: 0; transform: translate(-50%,-50%);
+    transition: opacity var(--hover-dur) var(--hover-ease),
+                transform var(--hover-dur) var(--hover-ease),
+                border-color var(--hover-dur) var(--hover-ease),
+                filter var(--hover-dur) var(--hover-ease);
+    pointer-events: none; }
+  .seal-card .st { font-family: var(--mono); font-size: 11px; letter-spacing: .16em;
+    color: var(--em); }
+  .seal-card .st::before { counter-increment: sealn; content: "0" counter(sealn) " · ";
+    color: var(--em); opacity: .8; }
+  .seal-card .sc-t { font-family: var(--display); font-weight: 700; font-size: 15px;
+    line-height: 1.3; color: var(--ink); }
+  .seal-card:focus-visible { outline: 2px solid var(--em); outline-offset: 3px; }
+  /* fanned: the four spread into the arc, outer two rotated */
+  .seal.is-open .seal-card { opacity: 1; pointer-events: auto; }
+  /* Quartered across the stage with a hair of air between neighbors rather
+     than an overlap. An overlapping deck looks better at rest but puts one
+     card's eyebrow under the next card's corner, and the requirement is that
+     all four read at once; the rotation and the vertical arc carry the fanned
+     reading on their own. Centers sit at the quarter points. */
+  .seal-card[data-i="0"] { left: 12.5%; }
+  .seal-card[data-i="1"] { left: 37.5%; }
+  .seal-card[data-i="2"] { left: 62.5%; }
+  .seal-card[data-i="3"] { left: 87.5%; }
+  .seal.is-open .seal-card[data-i="0"] { transform: translate(-50%,-45%) rotate(-6deg); }
+  .seal.is-open .seal-card[data-i="1"] { transform: translate(-50%,-55%) rotate(-2deg); }
+  .seal.is-open .seal-card[data-i="2"] { transform: translate(-50%,-55%) rotate(2deg); }
+  .seal.is-open .seal-card[data-i="3"] { transform: translate(-50%,-45%) rotate(6deg); }
+  /* opened: the picked card comes forward square, the rest fall back and dim */
+  .seal.is-open .seal-card.is-on { z-index: 6; border-color: var(--em);
+    background: rgba(var(--accent-rgb), .07); }
+  .seal.is-open.has-open .seal-card:not(.is-on) { filter: brightness(.55) saturate(.7); }
+  .seal.is-open.has-open .seal-card[data-i="0"]:not(.is-on) { transform: translate(-50%,-41%) rotate(-6deg) scale(.9); }
+  .seal.is-open.has-open .seal-card[data-i="1"]:not(.is-on) { transform: translate(-50%,-51%) rotate(-2deg) scale(.9); }
+  .seal.is-open.has-open .seal-card[data-i="2"]:not(.is-on) { transform: translate(-50%,-51%) rotate(2deg) scale(.9); }
+  .seal.is-open.has-open .seal-card[data-i="3"]:not(.is-on) { transform: translate(-50%,-41%) rotate(6deg) scale(.9); }
+  .seal.is-open .seal-card.is-on[data-i="0"] { transform: translate(-50%,-50%) rotate(0deg) scale(1.06); }
+  .seal.is-open .seal-card.is-on[data-i="1"] { transform: translate(-50%,-50%) rotate(0deg) scale(1.06); }
+  .seal.is-open .seal-card.is-on[data-i="2"] { transform: translate(-50%,-50%) rotate(0deg) scale(1.06); }
+  .seal.is-open .seal-card.is-on[data-i="3"] { transform: translate(-50%,-50%) rotate(0deg) scale(1.06); }
+  /* the state line, and the reserved detail region */
+  .seal-state { font-family: var(--mono); font-size: 10.5px; letter-spacing: .14em;
+    color: var(--muted); margin-top: 14px; }
+  .seal-detail { margin-top: 12px; height: var(--seal-detail-h, 200px);
+    border-top: 1px solid var(--line); padding-top: 14px; }
+  .sd-head { font-family: var(--mono); font-size: 11px; letter-spacing: .16em;
+    color: var(--em); min-height: 16px; }
+  .sd-hint { font-family: var(--mono); font-size: 10.5px; letter-spacing: .14em;
+    color: var(--muted); }
+  .sd-item .sn-sum { font-family: var(--sans); font-size: 12.5px; color: var(--muted);
+    line-height: 1.6; margin-top: 8px; }
+  .sd-item ul { list-style: none; font-family: var(--mono); font-size: 11.5px;
+    color: var(--muted); line-height: 1.9; letter-spacing: .03em; margin-top: 8px; }
+  @media (max-width: 980px) {
+    /* No seal gesture below 980px. Hover does not exist on touch, and four
+       cards behind a gesture that does not exist would lose the content, so
+       the stack arrives already fanned and the seal never renders. The arc
+       also flattens to a column: a rotated overlap is unreadable at 375px. */
+    .seal-tile { display: none; }
+    .seal-stage { height: auto; }
+    .seal-fan { position: static; display: flex; flex-direction: column; gap: 10px; }
+    .seal.is-open .seal-card, .seal-card { position: static; width: auto; height: auto;
+      opacity: 1; pointer-events: auto; transform: none; }
+    .seal.is-open .seal-card[data-i="0"], .seal.is-open .seal-card[data-i="1"],
+    .seal.is-open .seal-card[data-i="2"], .seal.is-open .seal-card[data-i="3"],
+    .seal.is-open .seal-card.is-on[data-i="0"], .seal.is-open .seal-card.is-on[data-i="1"],
+    .seal.is-open .seal-card.is-on[data-i="2"], .seal.is-open .seal-card.is-on[data-i="3"],
+    .seal.is-open.has-open .seal-card[data-i="0"]:not(.is-on),
+    .seal.is-open.has-open .seal-card[data-i="1"]:not(.is-on),
+    .seal.is-open.has-open .seal-card[data-i="2"]:not(.is-on),
+    .seal.is-open.has-open .seal-card[data-i="3"]:not(.is-on) { transform: none; }
+    .seal.is-open.has-open .seal-card:not(.is-on) { filter: none; opacity: .62; }
+    .seal-card { flex-direction: row; align-items: baseline; gap: 12px; min-height: 44px; }
+    .seal-detail { height: var(--seal-detail-h-narrow, 256px); }
+  }
   @media (prefers-reduced-motion: reduce) {
-    .snode ul { max-height: none; margin-top: 10px; transition: none; }
+    /* no fan, no rotation, no scale: the four are simply present, and the
+       seal tile is replaced by a plain instruction line so the resting
+       state is never a sealed square with no visible way to open it */
+    .seal-tile, .seal-card, .sd-item { transition: none; }
+    .seal-card { transform: none !important; }
+    .seal .seal-card { opacity: 1; pointer-events: auto; }
+    .seal .seal-tile { display: none; }
+    .seal .seal-stage { position: static; height: auto; }
+    .seal .seal-fan { position: static; display: flex; flex-direction: column; gap: 10px; }
+    .seal-card { position: static; width: auto; height: auto; flex-direction: row;
+      align-items: baseline; gap: 12px; }
+    .seal.has-open .seal-card:not(.is-on) { filter: none; opacity: .62; }
   }
   /* ============ closing: the landing's lc- grammar (hairline top, static
      accent bloom, 56px display scale, .62-white lede) with this page's
@@ -1708,8 +1822,6 @@
     .lineage--band .ln .y, .lineage--band .ln:first-child .y, .lineage--band .ln:last-child .y { margin-top: 0; }
     .lineage--band .ln .l { margin-top: 0; }
     .build-tiles { grid-template-columns: 1fr; }
-    .schema { grid-template-columns: 1fr; }
-    .slink { padding: 10px 0; justify-content: center; transform: rotate(90deg); }
     .closing { padding: 90px 32px 80px; }
   }
   @media (max-width: 860px) {
@@ -1724,7 +1836,7 @@
   /* touch affordances (phase 2): 44px targets + viewport-safe tooltips */
   @media (hover: none) {
     .wlt-opt { min-height: 44px; }
-    .wp-card, .snode, .sp-card { cursor: pointer; }
+    .wp-card, .sp-card, .seal-card, .seal-tile { cursor: pointer; }
   }
   @media (max-width: 860px) {
     .tipbox { width: auto; max-width: calc(100vw - 32px); }
@@ -2603,35 +2715,57 @@
   <p class="lead" style="margin-top:0">Entry requires escrowing a viewing key, enforced by the proof itself. By default that key does nothing: it sits sealed in hardware, untouched for the overwhelming majority of users. Under a verified lawful request it can unwind one user's trail while the rest of the pool stays sealed. And even then, the key only reads: it cannot <span class="red">freeze</span>, cannot <span class="red">seize</span>, cannot <span class="red">spend</span>.</p>
     </div>
 
-  <div class="schema" id="lawSchema">
+  <!-- The sealed stack. Sealed at rest, fans on hover, click, or tab in, and
+       gives up one stage at a time. Card faces carry the eyebrow and title
+       only; each full description lives in the reserved region below, where
+       the inactive three stay in the DOM under hidden="until-found" so
+       find-in-page still reaches them and opens the card that owns them. -->
+  <div class="seal" id="lawSchema">
       <div class="gx-bloom" aria-hidden="true">
-        <i style="--bc:var(--em);left:6%;top:4%;width:40%;height:42%"></i>
-        <i style="--bc:var(--em);left:54%;top:4%;width:40%;height:42%"></i>
-        <i style="--bc:var(--em);left:6%;top:54%;width:40%;height:42%"></i>
-        <i style="--bc:var(--em);left:54%;top:54%;width:40%;height:42%"></i>
+        <i style="--bc:var(--em);left:8%;top:6%;width:38%;height:52%"></i>
+        <i style="--bc:var(--em);left:54%;top:6%;width:38%;height:52%"></i>
       </div>
-    <div class="snode gx-card">
-      <div class="st">THE POOL</div><h6>Protocol-enforced escrow</h6>
-      <p class="sn-sum">No escrowed viewing key, no entry: the proof itself enforces it.</p>
-      <ul><li>· Viewing key escrowed at entry, encrypted to the auditor</li><li>· The escrow is enforced by the proof itself</li><li>· Deposits screened at the edge</li></ul>
+    <div class="seal-stage" id="lawStage">
+      <button class="seal-tile" type="button" id="lawSeal" aria-expanded="false" aria-controls="lawFan">
+        <span class="sl-glyph" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"><rect x="4.6" y="10.4" width="14.8" height="9.4" rx="2.2"/><path d="M8.4 10.4V7.8a3.6 3.6 0 0 1 7.2 0v2.6"/><circle cx="12" cy="14.6" r="1.5"/><path d="M12 16.1v1.7"/></svg></span>
+        <span class="sl-lbl">SEALED<br>VIEWING KEY</span>
+        <span class="sl-sub">UNSEAL TO READ</span>
+      </button>
+      <div class="seal-fan" id="lawFan">
+        <button class="seal-card gx-card" type="button" data-i="0" id="law-the-pool" aria-expanded="false" aria-controls="lawDesc0" tabindex="0">
+          <span class="st">THE POOL</span><span class="sc-t">Protocol-enforced escrow</span>
+        </button>
+        <button class="seal-card gx-card" type="button" data-i="1" id="law-the-key" aria-expanded="false" aria-controls="lawDesc1" tabindex="-1">
+          <span class="st">THE KEY</span><span class="sc-t">Financial Privacy Inc (FPI)</span>
+        </button>
+        <button class="seal-card gx-card" type="button" data-i="2" id="law-the-request" aria-expanded="false" aria-controls="lawDesc2" tabindex="-1">
+          <span class="st">THE REQUEST</span><span class="sc-t">Lawful request, defined</span>
+        </button>
+        <button class="seal-card gx-card" type="button" data-i="3" id="law-the-disclosure" aria-expanded="false" aria-controls="lawDesc3" tabindex="-1">
+          <span class="st">THE DISCLOSURE</span><span class="sc-t">Scoped, and nothing more</span>
+        </button>
+      </div>
     </div>
-    <div class="slink">→</div>
-    <div class="snode gx-card">
-      <div class="st">THE KEY</div><h6>Financial Privacy Inc (FPI)</h6>
-      <p class="sn-sum">Sealed in dual hardware enclaves, governed by StarkWare, FPI, and the Starknet Security Council.</p>
-      <ul><li>· Founded by the QEDIT team</li><li>· Master key sealed in a dual-enclave TEE</li><li>· 3-of-4 multisig: StarkWare + FPI</li><li>· Starknet Security Council backup &amp; upgrade control</li><li>· Never touched for the overwhelming majority of users</li></ul>
-    </div>
-    <div class="slink">→</div>
-    <div class="snode gx-card">
-      <div class="st">THE REQUEST</div><h6>Lawful request, defined</h6>
-      <p class="sn-sum">Only an authenticated order from a competent authority, on a verified legal basis.</p>
-      <ul><li>· An authenticated order from a competent authority</li><li>· Acting inside its jurisdiction</li><li>· On a verified legal basis</li><li>· Anything less is refused</li></ul>
-    </div>
-    <div class="slink">→</div>
-    <div class="snode gx-card">
-      <div class="st">THE DISCLOSURE</div><h6>Scoped, and nothing more</h6>
-      <p class="sn-sum">The minimum the request covers, re-encrypted to that authority, and nobody else.</p>
-      <ul><li>· Minimum necessary scope: potentially a single transfer in a defined window</li><li>· Re-encrypted inside the enclave</li><li>· Delivered to the requesting authority, and nobody else</li><li>· The rest of the pool stays sealed</li></ul>
+    <p class="seal-state" id="lawState">SEALED. HOVER, CLICK, OR TAB IN TO UNSEAL.</p>
+    <div class="seal-detail" id="lawDetail">
+      <p class="sd-head" id="lawDetailHead" aria-live="polite"></p>
+      <p class="sd-hint" id="lawHint">PICK A STAGE TO READ ITS TERMS.</p>
+      <div class="sd-item" id="lawDesc0" hidden="until-found" data-title="THE POOL · Protocol-enforced escrow">
+        <p class="sn-sum">No escrowed viewing key, no entry: the proof itself enforces it.</p>
+        <ul><li>· Viewing key escrowed at entry, encrypted to the auditor</li><li>· The escrow is enforced by the proof itself</li><li>· Deposits screened at the edge</li></ul>
+      </div>
+      <div class="sd-item" id="lawDesc1" hidden="until-found" data-title="THE KEY · Financial Privacy Inc (FPI)">
+        <p class="sn-sum">Sealed in dual hardware enclaves, governed by StarkWare, FPI, and the Starknet Security Council.</p>
+        <ul><li>· Founded by the QEDIT team</li><li>· Master key sealed in a dual-enclave TEE</li><li>· 3-of-4 multisig: StarkWare + FPI</li><li>· Starknet Security Council backup &amp; upgrade control</li><li>· Never touched for the overwhelming majority of users</li></ul>
+      </div>
+      <div class="sd-item" id="lawDesc2" hidden="until-found" data-title="THE REQUEST · Lawful request, defined">
+        <p class="sn-sum">Only an authenticated order from a competent authority, on a verified legal basis.</p>
+        <ul><li>· An authenticated order from a competent authority</li><li>· Acting inside its jurisdiction</li><li>· On a verified legal basis</li><li>· Anything less is refused</li></ul>
+      </div>
+      <div class="sd-item" id="lawDesc3" hidden="until-found" data-title="THE DISCLOSURE · Scoped, and nothing more">
+        <p class="sn-sum">The minimum the request covers, re-encrypted to that authority, and nobody else.</p>
+        <ul><li>· Minimum necessary scope: potentially a single transfer in a defined window</li><li>· Re-encrypted inside the enclave</li><li>· Delivered to the requesting authority, and nobody else</li><li>· The rest of the pool stays sealed</li></ul>
+      </div>
     </div>
   </div>
   </div>
@@ -3641,6 +3775,106 @@
   window.addEventListener('resize', function(){
     clearTimeout(stickT); stickT = setTimeout(wireStick, 150);
   });
+})();
+
+// ============================================================
+// SECTION 05 - the sealed stack. Three states: SEALED at rest,
+// FANNED once acted on, and OPENED on one card, whose full
+// description renders in the reserved region below the stage.
+//
+// Trigger is hover OR click OR focus, never hover alone: hover
+// does not exist on touch and this is core content. Below 980px,
+// and under reduced motion, CSS delivers the fan already open and
+// the seal tile is not rendered, so this script only has to avoid
+// re-sealing in those modes.
+//
+// Selection runs on the shared thRove machine, which distinguishes
+// a click from an arrow key through its second argument. That maps
+// exactly onto what this block needs: arrows move the tab stop
+// without opening anything, and click (which is also what Enter
+// and Space fire on a button) toggles the card open. thRove's own
+// mirror() is not used, because aria-selected is the wrong
+// attribute for a group of expanding buttons; aria-expanded and
+// the roving tabindex are written here instead.
+// ============================================================
+(function(){
+  var root = document.getElementById('lawSchema');
+  if (!root) return;
+  var tile = document.getElementById('lawSeal');
+  var cards = [].slice.call(root.querySelectorAll('.seal-card'));
+  var items = cards.map(function(c){ return document.getElementById(c.getAttribute('aria-controls')); });
+  var state = document.getElementById('lawState');
+  var head = document.getElementById('lawDetailHead');
+  var hint = document.getElementById('lawHint');
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  var narrow = window.matchMedia('(max-width: 980px)');
+  // in these modes the CSS ships the fan open and there is no seal to re-arm
+  function alwaysOpen(){ return reduce.matches || narrow.matches; }
+
+  var SEALED_LINE = 'SEALED. HOVER, CLICK, OR TAB IN TO UNSEAL.';
+  var FANNED_LINE = 'UNSEALED. FOUR STAGES, PICK ONE TO READ ITS TERMS.';
+  var OPEN_LINE = 'ONE STAGE OPEN. THE REST OF THE STACK STAYS SEALED.';
+  var cursor = 0, openIdx = -1;
+
+  function render(){
+    var fanned = root.classList.contains('is-open');
+    root.classList.toggle('has-open', openIdx >= 0);
+    cards.forEach(function(c, k){
+      c.classList.toggle('is-on', k === openIdx);
+      c.setAttribute('aria-expanded', k === openIdx ? 'true' : 'false');
+      c.setAttribute('tabindex', k === cursor ? '0' : '-1');
+    });
+    items.forEach(function(it, k){
+      // hidden="until-found" keeps the three closed descriptions in the DOM
+      // and findable by find-in-page; removing the attribute reveals one
+      if (k === openIdx) it.removeAttribute('hidden');
+      else it.setAttribute('hidden', 'until-found');
+    });
+    if (tile) tile.setAttribute('aria-expanded', fanned ? 'true' : 'false');
+    // the live region carries the opened card's name only, so a screen reader
+    // hears one title rather than the whole stage
+    head.textContent = openIdx >= 0 ? items[openIdx].getAttribute('data-title') : '';
+    hint.hidden = openIdx >= 0 || !fanned;   // nothing to pick while sealed
+    state.textContent = openIdx >= 0 ? OPEN_LINE : (fanned ? FANNED_LINE : SEALED_LINE);
+  }
+  function fan(){
+    if (root.classList.contains('is-open')) return;
+    root.classList.add('is-open');
+    render();
+  }
+  function open(i){
+    openIdx = (openIdx === i) ? -1 : i;   // second pick returns to fanned
+    render();
+  }
+  function toFanned(){ if (openIdx >= 0) { openIdx = -1; render(); } }
+
+  // hover and focus both unseal. Focus matters on its own: a keyboard user
+  // cannot hover, so tabbing into the group has to be enough.
+  root.addEventListener('mouseenter', fan);
+  root.addEventListener('focusin', fan);
+  if (tile) tile.addEventListener('click', function(){ fan(); cards[cursor].focus(); });
+  root.addEventListener('keydown', function(ev){
+    if (ev.key === 'Escape' && openIdx >= 0) { toFanned(); cards[cursor].focus(); }
+  });
+  thRove({ root: root, buttons: cards, shown: function(){ return cursor; },
+    pick: function(k, fromClick){
+      cursor = k;
+      if (fromClick) { fan(); open(k); } else render();   // arrows only move
+    } });
+
+  // a find-in-page hit inside a closed description opens its card, so the
+  // reader lands on a card that is actually showing the text they matched
+  items.forEach(function(it, k){
+    it.addEventListener('beforematch', function(){ cursor = k; fan(); openIdx = k; render(); });
+  });
+
+  if (alwaysOpen()) root.classList.add('is-open');
+  (narrow.addEventListener ? narrow.addEventListener.bind(narrow, 'change')
+                           : narrow.addListener.bind(narrow))(function(){
+    if (alwaysOpen()) root.classList.add('is-open');
+    render();
+  });
+  render();
 })();
 
 // ============================================================
@@ -5137,7 +5371,6 @@
     });
   }
   toggle('.wp-card','tap-open');
-  toggle('.snode','tap-open');
   /* sp-card taps are exclusive (one open at a time): the stamp component only
      reserves space for a single expanded description, so two open cards would
      overflow it and shift the page */

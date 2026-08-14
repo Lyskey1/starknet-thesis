@@ -135,7 +135,12 @@ const CARD_SPECS = {
     { cls: 'case', kind: 'card' },
     { cls: 'leak', kind: 'card' },
     { cls: 'landmass', kind: 'card' },
-    { cls: 'snode', kind: 'card' },
+    /* section 05's sealed stack. The card faces carry only an eyebrow and a
+       title while each full description sits in the reserved region below,
+       so the detail item is the node worth indexing: it holds the title
+       (via data-title) plus the summary and every bullet, and it owns its
+       own id, so a result opens that exact card rather than the stack. */
+    { cls: 'sd-item', kind: 'card' },
     { cls: 'pb-li', kind: 'card' },
     /* section 04's live metric cards: real measured data, so they belong in
        the index. The wallet card in the same section deliberately does NOT,
@@ -179,6 +184,9 @@ const CARD_SPECS = {
 const TITLE_CLASSES = ['mode-item-title', 'metric-label', 'step-name', 'catalyst-tag', 'wp-t', 'cl', 'ptitle', 'bh-title', 'tx', 'k', 'lt', 'lb', 'lbl', 'pmx-t'];
 
 function titleFor(node) {
+  /* an explicit data-title wins: used where the visible title lives in a
+     different part of the DOM from the prose it names */
+  if (node.attrs && node.attrs['data-title']) return clean(decode(node.attrs['data-title']));
   const h = find(node, n => HEADINGS.has(n.tag))[0];
   if (h) return clean(textOf(h));
   for (const tc of TITLE_CLASSES) {
