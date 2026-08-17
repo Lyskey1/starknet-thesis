@@ -97,14 +97,17 @@
      children of .hero and sit OUTSIDE .pv-hero-inner, so left-aligning
      the copy moves the copy only: no shader parameter, no height rule
      and no falloff layer changed here. */
-  /* HEIGHT BUDGET, shared with the ecosystem hero: min-height
-     calc(100vh - 72px) with the content centred inside it, so the band
-     below lands at the same place in the first viewport on both pages.
-     The bottom padding is 76px rather than the sibling heroes' 120px:
-     this hero carries a fourth tier (the mono bracket setup line) and a
-     three-line lede, so it needs that back to keep the band above the
-     fold at 1280x800. */
-  .hero { min-height: calc(100vh - 72px); display: flex; flex-direction: column; justify-content: center; align-items: stretch; overflow: visible; padding: 150px 0 76px; max-width: none; margin: 0 auto; text-align: left; position: relative; }
+  /* HEIGHT BUDGET, shared with the quantum/btcfi/strk heroes: min-height
+     calc(100vh - 72px) with the content centred inside it, and their
+     112/26 vertical padding, so the claim band below lands 11px above the
+     fold in the first viewport (band is 61px tall, under the 72px
+     allowance). This hero carries more content than any sibling (mono
+     setup line + premise + payoff + three-line lede + CTAs), so the
+     stack only fits inside the budget at these paddings: at 1440x900 the
+     content measures 812px against an 828px budget, at 1280x800 it is
+     708px against 728px. Fatten the padding or a gap and the hero grows
+     past min-height, pushing the band below the fold. */
+  .hero { min-height: calc(100vh - 72px); display: flex; flex-direction: column; justify-content: center; align-items: stretch; overflow: visible; padding: 112px 0 26px; max-width: none; margin: 0 auto; text-align: left; position: relative; }
   .pv-hero-inner { width: 100%; max-width: 1160px; margin: 0 auto; padding: 0 32px; position: relative; z-index: 1; }
   /* the CSS glow only paints when WebGL2 is missing (.hero-curtain-on
      hides it); left-anchored now so the fallback lights the copy rather
@@ -152,7 +155,9 @@
      on hover. Those two shadow stacks are copies of the locked recipe:
      keep in sync. Anchors only, so the site's html{scroll-behavior:smooth}
      carries the scroll and reduced motion turns it off for free. */
-  .pv-ctas { display: flex; gap: 18px; margin-top: 42px; flex-wrap: wrap; position: relative; }
+  /* 24px above the CTAs is strk's subtitle-to-CTA gap; the eco/dg 42px
+     does not fit this hero's height budget (see the .hero comment). */
+  .pv-ctas { display: flex; gap: 18px; margin-top: 24px; flex-wrap: wrap; position: relative; }
   .pv-cta { font-family: var(--mono); font-size: 13px; letter-spacing: .14em; text-transform: uppercase; text-decoration: none; color: var(--white); padding: 12px 22px; border-radius: 99px; border: 1px solid rgba(var(--accent-rgb), .55); display: inline-flex; align-items: center; gap: 10px; }
   .pv-cta.chip-glass { transition: background var(--hover-dur) var(--hover-ease), box-shadow var(--hover-dur) var(--hover-ease), border-color var(--hover-dur); }
   .pv-cta i { font-style: normal; transition: transform var(--hover-dur) var(--hover-ease); }
