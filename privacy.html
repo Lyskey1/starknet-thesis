@@ -101,12 +101,13 @@
      calc(100vh - 72px) with the content centred inside it, and their
      112/26 vertical padding, so the claim band below lands 11px above the
      fold in the first viewport (band is 61px tall, under the 72px
-     allowance). This hero carries more content than any sibling (mono
-     setup line + premise + payoff + three-line lede + CTAs), so the
-     stack only fits inside the budget at these paddings: at 1440x900 the
-     content measures 812px against an 828px budget, at 1280x800 it is
-     708px against 728px. Fatten the padding or a gap and the hero grows
-     past min-height, pushing the band below the fold. */
+     allowance). This hero still carries more content than any sibling
+     (premise + payoff + three-line lede + CTAs), so the stack only fits
+     inside the budget at these paddings: at 1440x900 the content
+     measures 761px against an 828px budget, at 1280x800 it is 657px
+     against 728px. Fatten the padding or a gap and the margin erodes
+     until the hero outgrows min-height on short laptop windows, pushing
+     the band below the fold. */
   .hero { min-height: calc(100vh - 72px); display: flex; flex-direction: column; justify-content: center; align-items: stretch; overflow: visible; padding: 112px 0 26px; max-width: none; margin: 0 auto; text-align: left; position: relative; }
   .pv-hero-inner { width: 100%; max-width: 1160px; margin: 0 auto; padding: 0 32px; position: relative; z-index: 1; }
   /* the CSS glow only paints when WebGL2 is missing (.hero-curtain-on
@@ -114,21 +115,15 @@
      than the empty right half */
   .hero::before { top: -40px; left: 18%; width: 760px; height: 420px; max-width: 100%; background: radial-gradient(ellipse at center top, rgba(var(--accent-rgb),0.16), transparent 70%); }
   .hero-eyebrow { color: var(--accent); opacity: 1; margin-bottom: 22px; position: relative; }
-  /* Two tiers: the mono setup line (deliberately its own element) above the
-     display-scale statement. Premise and payoff both sit on the site display
-     spec inherited from css/styles.css .hero-title (clamp(34px,5.4vw,76px),
-     weight 800, line-height .98, letter-spacing -.01em), matching every
-     sibling hero; the two lines differ by color, not by size. */
+  /* Premise and payoff both sit on the site display spec inherited from
+     css/styles.css .hero-title (clamp(34px,5.4vw,76px), weight 800,
+     line-height .98, letter-spacing -.01em), matching every sibling hero;
+     the two lines differ by color, not by size. Eyebrow sits directly
+     above the h1 at the sibling heroes' 22px gap. The h1 keeps the id
+     "your-savings-your-strategy-your-next" from the removed bracket
+     setup line: build-search-index.js never rewrites existing ids, and
+     shipped deep links resolve against it. */
   .hero-title { margin-bottom: 24px; max-width: none; position: relative; }
-  .hero-setup { display: block; font-family: var(--mono); font-weight: 500; font-size: 14.5px; letter-spacing: .2em; line-height: 2; color: var(--muted); margin-bottom: 22px; }
-  .shield-wrap { position: relative; display: inline-block; white-space: nowrap; margin: 0 .55ch; }
-  .shield-wrap .bk { color: var(--em); font-weight: 700; display: inline-block; opacity: 0; transform: translateX(var(--from,-8px)); animation: bkin .5s cubic-bezier(.2,.9,.25,1) var(--t,.9s) forwards; }
-  .shield-wrap .bk.r { --from: 8px; }
-  /* the fragment text starts SHARP and blurs in once, softly (1.8px) */
-  .shield-wrap .word { display: inline-block; animation: seal .7s ease var(--t,.9s) forwards; }
-  .sw2 { --t: 1.2s; } .sw3 { --t: 1.5s; }
-  @keyframes bkin { to { opacity: 1; transform: translateX(0); } }
-  @keyframes seal { to { filter: blur(1.8px); opacity: .6; } }
   /* PREMISE: display scale, softened to 78% white so the accent payoff
      below still dominates. */
   .hero-mid { display: block; color: rgba(245,242,236,.78); }
@@ -137,13 +132,7 @@
   .hero .turn { display: block; margin-top: .3em; color: var(--em); opacity: 0; transform: translateY(10px); animation: turnin .6s ease 2s forwards; }
   @keyframes turnin { to { opacity: 1; transform: none; } }
   @media (prefers-reduced-motion: reduce) {
-    .shield-wrap .bk { animation: none; opacity: 1; transform: none; }
-    .shield-wrap .word { animation: none; filter: blur(1.8px); opacity: .6; }
     .hero .turn { animation: none; opacity: 1; transform: none; }
-  }
-  @media (max-width: 560px) {
-    .hero-setup { font-size: 12px; letter-spacing: .16em; }
-    .shield-wrap { display: block; margin: 0; }
   }
   .hero-subtitle { font-size: 18px; color: rgba(245,242,236,0.62); max-width: 620px; margin: 22px 0 0; line-height: 1.7; position: relative; }
   .hero-subtitle b { color: var(--white); font-weight: 600; }
@@ -1828,8 +1817,6 @@
   @media (max-width: 860px) {
   }
   @media (prefers-reduced-motion: reduce) {
-    .shield-wrap .bk { animation: none; opacity: 1; transform: none; }
-    .shield-wrap .word { animation: none; }
     .hero .turn { animation: none; opacity: 1; transform: none; }
     a.ln:hover { transform: none; }
   }
@@ -1937,7 +1924,6 @@
   <div class="pv-hero-inner">
     <p class="hero-eyebrow">The privacy flip</p>
     <h1 id="your-savings-your-strategy-your-next" class="hero-title">
-      <span class="hero-setup"><span class="shield-wrap sw1"><span class="bk">[</span><span class="word">Your savings.</span><span class="bk r">]</span></span><span class="shield-wrap sw2"><span class="bk">[</span><span class="word">Your strategy.</span><span class="bk r">]</span></span><span class="shield-wrap sw3"><span class="bk">[</span><span class="word">Your next trade.</span><span class="bk r">]</span></span></span>
       <span class="hero-mid">Onchain, everything is public.</span>
       <span class="turn">Starknet made that optional.</span>
     </h1>
