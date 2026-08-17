@@ -111,10 +111,12 @@
      than the empty right half */
   .hero::before { top: -40px; left: 18%; width: 760px; height: 420px; max-width: 100%; background: radial-gradient(ellipse at center top, rgba(var(--accent-rgb),0.16), transparent 70%); }
   .hero-eyebrow { color: var(--accent); opacity: 1; margin-bottom: 22px; position: relative; }
-  /* Three-level hierarchy: setup (mono label line, sealed fragments),
-     premise (one display step down, softened), payoff (dominant, accent).
-     All words unchanged; only the levels changed. */
-  .hero-title { font-size: clamp(30px,3.9vw,46px); line-height: 1.08; margin-bottom: 24px; max-width: none; position: relative; }
+  /* Two tiers: the mono setup line (deliberately its own element) above the
+     display-scale statement. Premise and payoff both sit on the site display
+     spec inherited from css/styles.css .hero-title (clamp(34px,5.4vw,76px),
+     weight 800, line-height .98, letter-spacing -.01em), matching every
+     sibling hero; the two lines differ by color, not by size. */
+  .hero-title { margin-bottom: 24px; max-width: none; position: relative; }
   .hero-setup { display: block; font-family: var(--mono); font-weight: 500; font-size: 14.5px; letter-spacing: .2em; line-height: 2; color: var(--muted); margin-bottom: 22px; }
   .shield-wrap { position: relative; display: inline-block; white-space: nowrap; margin: 0 .55ch; }
   .shield-wrap .bk { color: var(--em); font-weight: 700; display: inline-block; opacity: 0; transform: translateX(var(--from,-8px)); animation: bkin .5s cubic-bezier(.2,.9,.25,1) var(--t,.9s) forwards; }
@@ -124,19 +126,12 @@
   .sw2 { --t: 1.2s; } .sw3 { --t: 1.5s; }
   @keyframes bkin { to { opacity: 1; transform: translateX(0); } }
   @keyframes seal { to { filter: blur(1.8px); opacity: .6; } }
-  /* PREMISE: one decisive step down from the payoff, about 45% of it at
-     every width (34px against 76px at 1440, 30.7 against 69.1 at 1280),
-     which also sets it on ONE line instead of two. It was previously
-     rendering at the .hero-title size, close enough to the payoff to
-     flatten the three-tier hierarchy and cost a whole line of height.
-     Tone unchanged. */
-  .hero-mid { display: block; color: rgba(245,242,236,.78); font-size: clamp(20px, 2.4vw, 34px); line-height: 1.16; }
-  /* PAYOFF: the site display spec, identical to the ecosystem hero's h1
-     (css/styles.css .hero-title: clamp(34px, 5.4vw, 76px), weight 800,
-     line-height .98, letter-spacing -.01em). The two heroes share one
-     display scale; this page's .hero-title override only governs the
-     premise tier above. */
-  .hero .turn { display: block; margin-top: .3em; font-size: clamp(34px, 5.4vw, 76px); line-height: .98; letter-spacing: -.01em; color: var(--em); opacity: 0; transform: translateY(10px); animation: turnin .6s ease 2s forwards; }
+  /* PREMISE: display scale, softened to 78% white so the accent payoff
+     below still dominates. */
+  .hero-mid { display: block; color: rgba(245,242,236,.78); }
+  /* PAYOFF: accent color, revealed after the premise lands. Size, weight
+     and tracking are the inherited display spec — no local type overrides. */
+  .hero .turn { display: block; margin-top: .3em; color: var(--em); opacity: 0; transform: translateY(10px); animation: turnin .6s ease 2s forwards; }
   @keyframes turnin { to { opacity: 1; transform: none; } }
   @media (prefers-reduced-motion: reduce) {
     .shield-wrap .bk { animation: none; opacity: 1; transform: none; }
@@ -144,10 +139,8 @@
     .hero .turn { animation: none; opacity: 1; transform: none; }
   }
   @media (max-width: 560px) {
-    .hero-title { font-size: clamp(22px,6vw,30px); }
     .hero-setup { font-size: 12px; letter-spacing: .16em; }
     .shield-wrap { display: block; margin: 0; }
-    .hero .turn { font-size: clamp(30px,8.6vw,44px); }
   }
   .hero-subtitle { font-size: 18px; color: rgba(245,242,236,0.62); max-width: 620px; margin: 22px 0 0; line-height: 1.7; position: relative; }
   .hero-subtitle b { color: var(--white); font-weight: 600; }
@@ -271,7 +264,10 @@
        sibling heroes' mobile pattern. */
     .hero .hero-bloom { overflow: hidden; }
     .pv-hero-afterglow { display: none; }
-    .hero { padding: 130px 0 90px; }
+    /* 100/60 is the sibling heroes' mobile padding (css/styles.css ≤768
+       .hero); at the display-scale title the old 130/90 pushed the CTAs
+       below an 812px fold. Side gutters stay 0: .pv-hero-inner owns them. */
+    .hero { padding: 100px 0 60px; }
   }
   @media (max-width: 700px) {
     .pv-hero-inner { padding: 0 24px; }
