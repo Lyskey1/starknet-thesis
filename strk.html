@@ -55,7 +55,15 @@
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{background:var(--black);color:var(--white);font-family:var(--sans),system-ui,sans-serif;
+  /* Archivo's wdth axis at 125, mirrored from css/styles.css body (this page
+     never loads that file): the site display face is Archivo Expanded-width.
+     A no-op for Inter and IBM Plex Mono, which carry no width axis. */
+  font-stretch:125%;
   line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+/* The UA <button> font shorthand resets font-stretch to normal, dropping the
+   wdth axis from display-face text in buttons (.nacc-title). Mirrored from
+   css/styles.css (this page never loads that file). */
+button{font-stretch:inherit}
 a{color:inherit;text-decoration:none}
 .wrap{max-width:1180px;margin:0 auto;padding:0 32px}
 .eyebrow{font-family:var(--mono),monospace;font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:var(--accent)}
