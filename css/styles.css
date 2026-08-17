@@ -78,6 +78,13 @@
     --border-orange: rgba(var(--accent-rgb), 0.3);
   }
 
+  /* The UA <button> style sets font via the shorthand, which resets
+     font-stretch to normal — silently dropping the wdth axis from any
+     display-face text inside a button (.news-toggle-title, privacy's
+     .bstk-num and .seal-card labels). Re-inherit the body's 125%. A no-op
+     for buttons in Inter or IBM Plex Mono: neither has a width axis. */
+  button { font-stretch: inherit; }
+
   /* ===== Page-wide background texture (accent glow + film grain) =====
      Two fixed, click-through layers behind all content. The glow is a soft
      radial accent wash at top-center; the grain is pure-SVG fractal noise
