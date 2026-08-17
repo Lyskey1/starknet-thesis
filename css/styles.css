@@ -26,10 +26,14 @@
     --border: rgba(245, 242, 236, 0.09);
 
     /* ===== Type system (industrial / STRK20 language) =====
-       --display : Archivo Expanded — ultra-bold UPPERCASE headings
+       --display : Archivo at width 125 (the wdth axis, applied by the
+                   font-stretch on body below) for ultra-bold UPPERCASE
+                   headings. NOT a family called "Archivo Expanded": no such
+                   family exists on Google Fonts, and asking for one silently
+                   returned no webfont at all.
        --mono    : IBM Plex Mono   — labels / nav / buttons, letter-spaced caps
        --sans    : Inter           — body copy */
-    --display: 'Archivo Expanded', sans-serif;
+    --display: 'Archivo', sans-serif;
     --mono: 'IBM Plex Mono', monospace;
     --sans: 'Inter', sans-serif;
   }
@@ -47,6 +51,12 @@
 
   body {
     font-family: var(--sans);
+    /* Selects Archivo's wdth axis at 125, its Expanded width. Inherited so it
+       reaches every display-face element, including inline page styles and
+       SVG <text>. A no-op for Inter, IBM Plex Mono and the icon font: none
+       carries a width axis, so font matching falls to their only width and
+       CSS never synthesizes width. */
+    font-stretch: 125%;
     background: transparent; /* the black canvas lives on <html> so the fixed
                                 texture layers below can sit behind page content */
     color: var(--white);
