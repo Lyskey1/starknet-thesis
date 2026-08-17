@@ -127,13 +127,11 @@
   /* PREMISE: display scale, softened to 78% white so the accent payoff
      below still dominates. */
   .hero-mid { display: block; color: rgba(245,242,236,.78); }
-  /* PAYOFF: accent color, revealed after the premise lands. Size, weight
-     and tracking are the inherited display spec — no local type overrides. */
-  .hero .turn { display: block; margin-top: .3em; color: var(--em); opacity: 0; transform: translateY(10px); animation: turnin .6s ease 2s forwards; }
-  @keyframes turnin { to { opacity: 1; transform: none; } }
-  @media (prefers-reduced-motion: reduce) {
-    .hero .turn { animation: none; opacity: 1; transform: none; }
-  }
+  /* PAYOFF: accent color, static from first paint — its old 2s entrance
+     was the tail of the removed bracket line's reveal sequence. Size,
+     weight and tracking are the inherited display spec — no local type
+     overrides. */
+  .hero .turn { display: block; margin-top: .3em; color: var(--em); }
   .hero-subtitle { font-size: 18px; color: rgba(245,242,236,0.62); max-width: 620px; margin: 22px 0 0; line-height: 1.7; position: relative; }
   .hero-subtitle b { color: var(--white); font-weight: 600; }
 
@@ -1817,7 +1815,6 @@
   @media (max-width: 860px) {
   }
   @media (prefers-reduced-motion: reduce) {
-    .hero .turn { animation: none; opacity: 1; transform: none; }
     a.ln:hover { transform: none; }
   }
 
