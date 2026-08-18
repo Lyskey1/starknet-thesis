@@ -1511,25 +1511,10 @@
      reflows the column and never moves the Apache 2.0 line. */
   .seal { counter-reset: sealn; }
   .seal-stage { position: relative; height: var(--seal-stage-h, 224px); }
-  /* the seal: a real button, because it is the affordance that unseals */
-  .seal-tile { position: absolute; left: 50%; top: 50%; width: 190px; height: 190px;
-    transform: translate(-50%,-50%); display: flex; flex-direction: column;
-    align-items: center; justify-content: center; gap: 14px; cursor: pointer;
-    border: 1px solid var(--em-line); border-radius: 14px;
-    background: rgba(var(--accent-rgb), .06); color: var(--ink);
-    font-family: var(--mono); z-index: 3;
-    transition: opacity var(--hover-dur) var(--hover-ease),
-                transform var(--hover-dur) var(--hover-ease); }
-  .seal-tile:focus-visible { outline: 2px solid var(--em); outline-offset: 4px; }
-  .seal-tile .sl-glyph { width: 44px; height: 44px; color: var(--em); }
-  .seal-tile .sl-glyph svg { width: 100%; height: 100%; display: block; }
-  .seal-tile .sl-lbl { font-size: 10.5px; letter-spacing: .16em; line-height: 1.7;
-    color: var(--em); text-align: center; }
-  .seal-tile .sl-sub { font-size: 9.5px; letter-spacing: .14em; color: var(--muted); }
-  .seal.is-open .seal-tile { opacity: 0; transform: translate(-50%,-50%) scale(.94);
-    pointer-events: none; }
-  /* the fan: four cards behind the seal, arced out on open. Positions are
-     percentages of the stage so the arc holds at any column width. */
+  /* the fan: four cards arced across the stage, present and fanned from
+     the moment the section enters (IntersectionObserver adds .is-open once,
+     so the spread still animates on entrance). Positions are percentages of
+     the stage so the arc holds at any column width. */
   .seal-fan { position: absolute; inset: 0; }
   .seal-card { position: absolute; top: 50%; width: 24%; min-width: 0;
     height: var(--seal-card-h, 162px); padding: 13px 13px; cursor: pointer;
@@ -1575,25 +1560,18 @@
   .seal.is-open .seal-card.is-on[data-i="1"] { transform: translate(-50%,-50%) rotate(0deg) scale(1.06); }
   .seal.is-open .seal-card.is-on[data-i="2"] { transform: translate(-50%,-50%) rotate(0deg) scale(1.06); }
   .seal.is-open .seal-card.is-on[data-i="3"] { transform: translate(-50%,-50%) rotate(0deg) scale(1.06); }
-  /* the state line, and the reserved detail region */
-  .seal-state { font-family: var(--mono); font-size: 10.5px; letter-spacing: .14em;
-    color: var(--muted); margin-top: 14px; }
+  /* the reserved detail region */
   .seal-detail { margin-top: 12px; height: var(--seal-detail-h, 200px);
     border-top: 1px solid var(--line); padding-top: 14px; }
   .sd-head { font-family: var(--mono); font-size: 11px; letter-spacing: .16em;
     color: var(--em); min-height: 16px; }
-  .sd-hint { font-family: var(--mono); font-size: 10.5px; letter-spacing: .14em;
-    color: var(--muted); }
   .sd-item .sn-sum { font-family: var(--sans); font-size: 12.5px; color: var(--muted);
     line-height: 1.6; margin-top: 8px; }
   .sd-item ul { list-style: none; font-family: var(--mono); font-size: 11.5px;
     color: var(--muted); line-height: 1.9; letter-spacing: .03em; margin-top: 8px; }
   @media (max-width: 980px) {
-    /* No seal gesture below 980px. Hover does not exist on touch, and four
-       cards behind a gesture that does not exist would lose the content, so
-       the stack arrives already fanned and the seal never renders. The arc
-       also flattens to a column: a rotated overlap is unreadable at 375px. */
-    .seal-tile { display: none; }
+    /* The arc flattens to a column below 980px: a rotated overlap is
+       unreadable at 375px. */
     .seal-stage { height: auto; }
     .seal-fan { position: static; display: flex; flex-direction: column; gap: 10px; }
     .seal.is-open .seal-card, .seal-card { position: static; width: auto; height: auto;
@@ -1611,18 +1589,9 @@
     .seal-detail { height: var(--seal-detail-h-narrow, 256px); }
   }
   @media (prefers-reduced-motion: reduce) {
-    /* no fan, no rotation, no scale: the four are simply present, and the
-       seal tile is replaced by a plain instruction line so the resting
-       state is never a sealed square with no visible way to open it */
-    .seal-tile, .seal-card, .sd-item { transition: none; }
-    .seal-card { transform: none !important; }
-    .seal .seal-card { opacity: 1; pointer-events: auto; }
-    .seal .seal-tile { display: none; }
-    .seal .seal-stage { position: static; height: auto; }
-    .seal .seal-fan { position: static; display: flex; flex-direction: column; gap: 10px; }
-    .seal-card { position: static; width: auto; height: auto; flex-direction: row;
-      align-items: baseline; gap: 12px; }
-    .seal.has-open .seal-card:not(.is-on) { filter: none; opacity: .62; }
+    /* same fanned arc as everyone else, arrived at instantly: the arc is
+       static composition, only the transitions were motion */
+    .seal-card, .sd-item { transition: none; }
   }
   /* ============ closing: the landing's lc- grammar (hairline top, static
      accent bloom, 56px display scale, .62-white lede) with this page's
@@ -1873,7 +1842,7 @@
   /* touch affordances (phase 2): 44px targets + viewport-safe tooltips */
   @media (hover: none) {
     .wlt-opt { min-height: 44px; }
-    .wp-card, .sp-card, .seal-card, .seal-tile { cursor: pointer; }
+    .wp-card, .sp-card, .seal-card { cursor: pointer; }
   }
   @media (max-width: 860px) {
     .tipbox { width: auto; max-width: calc(100vw - 32px); }
@@ -2740,11 +2709,6 @@
         <i style="--bc:var(--em);left:54%;top:6%;width:38%;height:52%"></i>
       </div>
     <div class="seal-stage" id="lawStage">
-      <button class="seal-tile" type="button" id="lawSeal" aria-expanded="false" aria-controls="lawFan">
-        <span class="sl-glyph" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"><rect x="4.6" y="10.4" width="14.8" height="9.4" rx="2.2"/><path d="M8.4 10.4V7.8a3.6 3.6 0 0 1 7.2 0v2.6"/><circle cx="12" cy="14.6" r="1.5"/><path d="M12 16.1v1.7"/></svg></span>
-        <span class="sl-lbl">SEALED<br>VIEWING KEY</span>
-        <span class="sl-sub">UNSEAL TO READ</span>
-      </button>
       <div class="seal-fan" id="lawFan">
         <button class="seal-card gx-card" type="button" data-i="0" id="law-the-pool" aria-expanded="false" aria-controls="lawDesc0" tabindex="0">
           <span class="st">THE POOL</span><span class="sc-t">Protocol-enforced escrow</span>
@@ -2760,10 +2724,8 @@
         </button>
       </div>
     </div>
-    <p class="seal-state" id="lawState">SEALED. HOVER, CLICK, OR TAB IN TO UNSEAL.</p>
     <div class="seal-detail" id="lawDetail">
       <p class="sd-head" id="lawDetailHead" aria-live="polite"></p>
-      <p class="sd-hint" id="lawHint">PICK A STAGE TO READ ITS TERMS.</p>
       <div class="sd-item" id="lawDesc0" hidden="until-found" data-title="THE POOL · Protocol-enforced escrow">
         <p class="sn-sum">No escrowed viewing key, no entry: the proof itself enforces it.</p>
         <ul><li>· Viewing key escrowed at entry, encrypted to the auditor</li><li>· The escrow is enforced by the proof itself</li><li>· Deposits screened at the edge</li></ul>
@@ -3881,15 +3843,12 @@
 })();
 
 // ============================================================
-// SECTION 05 - the sealed stack. Three states: SEALED at rest,
-// FANNED once acted on, and OPENED on one card, whose full
-// description renders in the reserved region below the stage.
-//
-// Trigger is hover OR click OR focus, never hover alone: hover
-// does not exist on touch and this is core content. Below 980px,
-// and under reduced motion, CSS delivers the fan already open and
-// the seal tile is not rendered, so this script only has to avoid
-// re-sealing in those modes.
+// SECTION 05 - the card stack. Two states: FANNED at rest and
+// OPENED on one card, whose full description renders in the
+// reserved region below the stage. The fan arrives on entrance:
+// an IntersectionObserver adds .is-open once (6s timeout and
+// focusin as fallbacks), so the spread animates the first time
+// the section is seen and no gesture is required to reach it.
 //
 // Selection runs on the shared thRove machine, which distinguishes
 // a click from an arrow key through its second argument. That maps
@@ -3909,27 +3868,17 @@
 (function(){
   var root = document.getElementById('lawSchema');
   if (!root) return;
-  var tile = document.getElementById('lawSeal');
   var cards = [].slice.call(root.querySelectorAll('.seal-card'));
   var items = cards.map(function(c){ return document.getElementById(c.getAttribute('aria-controls')); });
-  var state = document.getElementById('lawState');
   var head = document.getElementById('lawDetailHead');
-  var hint = document.getElementById('lawHint');
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
   var narrow = window.matchMedia('(max-width: 980px)');
   // any-hover, not a width query: a touch laptop has desktop width but no
   // reliable hover, and a tablet with a mouse attached gains one
   var hoverable = window.matchMedia('(any-hover: hover)');
-  // in these modes the CSS ships the fan open and there is no seal to re-arm
-  function alwaysOpen(){ return reduce.matches || narrow.matches; }
-
-  var SEALED_LINE = 'SEALED. HOVER, CLICK, OR TAB IN TO UNSEAL.';
-  var FANNED_LINE = 'UNSEALED. FOUR STAGES, PICK ONE TO READ ITS TERMS.';
-  var OPEN_LINE = 'ONE STAGE OPEN. THE REST OF THE STACK STAYS SEALED.';
   var cursor = 0, openIdx = -1;
 
   function render(){
-    var fanned = root.classList.contains('is-open');
     root.classList.toggle('has-open', openIdx >= 0);
     cards.forEach(function(c, k){
       c.classList.toggle('is-on', k === openIdx);
@@ -3942,12 +3891,9 @@
       if (k === openIdx) it.removeAttribute('hidden');
       else it.setAttribute('hidden', 'until-found');
     });
-    if (tile) tile.setAttribute('aria-expanded', fanned ? 'true' : 'false');
     // the live region carries the opened card's name only, so a screen reader
     // hears one title rather than the whole stage
     head.textContent = openIdx >= 0 ? items[openIdx].getAttribute('data-title') : '';
-    hint.hidden = openIdx >= 0 || !fanned;   // nothing to pick while sealed
-    state.textContent = openIdx >= 0 ? OPEN_LINE : (fanned ? FANNED_LINE : SEALED_LINE);
   }
   function fan(){
     if (root.classList.contains('is-open')) return;
@@ -3996,11 +3942,17 @@
   });
   root.addEventListener('pointerleave', function(){ clearTimeout(hoverTimer); hoverTimer = 0; });
 
-  // hover and focus both unseal. Focus matters on its own: a keyboard user
-  // cannot hover, so tabbing into the group has to be enough.
-  root.addEventListener('mouseenter', fan);
+  // entrance: the fan opens once when the section comes into view. focusin
+  // stays as an immediate fallback (keyboard can arrive before the observer
+  // fires) and a timeout covers environments where the observer never does.
   root.addEventListener('focusin', fan);
-  if (tile) tile.addEventListener('click', function(){ fan(); cards[cursor].focus(); });
+  if ('IntersectionObserver' in window) {
+    var fanIO = new IntersectionObserver(function(es){
+      if (es[0].isIntersecting) { fan(); fanIO.disconnect(); }
+    }, { threshold: 0.35 });
+    fanIO.observe(root);
+  }
+  setTimeout(fan, 6000);
   root.addEventListener('keydown', function(ev){
     if (ev.key === 'Escape' && openIdx >= 0) { toFanned(); cards[cursor].focus(); }
   });
@@ -4019,10 +3971,12 @@
     it.addEventListener('beforematch', function(){ cursor = k; fan(); openIdx = k; render(); });
   });
 
-  if (alwaysOpen()) root.classList.add('is-open');
+  // below 980px and under reduced motion there is no entrance animation to
+  // stage, so the fan is open from the first paint
+  if (reduce.matches || narrow.matches) root.classList.add('is-open');
   (narrow.addEventListener ? narrow.addEventListener.bind(narrow, 'change')
                            : narrow.addListener.bind(narrow))(function(){
-    if (alwaysOpen()) root.classList.add('is-open');
+    if (narrow.matches) root.classList.add('is-open');
     render();
   });
   render();
