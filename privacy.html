@@ -455,9 +455,16 @@
   .pw-shell.has-more::after { opacity: 1; }
   /* scroll-behavior: auto opts out of the site's inherited html{smooth}: the
      wall swap replaces the content, so the return to the top must be instant
-     rather than animating through copy the reader did not ask for */
-  .pw-panel { height: 100%; overflow-y: auto; overscroll-behavior: contain; scroll-behavior: auto;
-    padding: 30px 32px 28px; }
+     rather than animating through copy the reader did not ask for.
+     NOT a scroll container at rest: wall 03 fits its box, and a zero-extent
+     scroller latches real wheel gestures (measured on quantum, 70db382),
+     freezing the page under the cursor. fade() grants .pw-scroll only while
+     the selected wall actually overflows. No overscroll-behavior: contain on
+     the scrollable state either: a fresh gesture over a limit-pinned scroller
+     latches to it and contain blocks the chain, freezing one gesture later;
+     default chaining hands the remainder to the page. */
+  .pw-panel { height: 100%; padding: 30px 32px 28px; }
+  .pw-panel.pw-scroll { overflow-y: auto; scroll-behavior: auto; }
   .pw-panel:focus-visible { outline: 2px solid var(--em); outline-offset: -3px; }
   /* one wall in flow at a time: the hidden ones must not inflate the
      scroller, or a short wall would scroll to the tallest wall's height */
@@ -2923,10 +2930,13 @@
     var w = root.querySelector('.pw-wall.is-on');
     return w ? +w.dataset.wall : 0;
   }
-  /* the scroller only earns a tab stop while it actually scrolls */
+  /* the panel only becomes a scroll container, and only earns a tab
+     stop, while the selected wall actually overflows (see the CSS note:
+     a zero-extent scroller captures and kills real wheel gestures) */
   function fade(){
     var more = panel.scrollHeight - panel.clientHeight;
     var atEnd = panel.scrollTop >= more - 2;
+    panel.classList.toggle('pw-scroll', more > 4);
     shell.classList.toggle('has-more', more > 4 && !atEnd);
     panel.setAttribute('tabindex', more > 4 ? '0' : '-1');
   }
