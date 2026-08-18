@@ -1251,16 +1251,20 @@
   @media (min-width: 981px) {
     .pv-bento { grid-template-columns: minmax(0,13fr) minmax(0,7fr); }
     .bnt-pipe { grid-column: 1 / -1; }
-    .bnt-win { height: 400px; overflow: hidden;
+    /* the DeFi window is a real scroll container, not a transform marquee:
+       the auto-scroll writes scrollTop from a single rAF loop (see the band
+       engine) and wraps at the measured set height, so the wheel, keyboard
+       and trackpad act on the same position the loop advances. The hidden
+       scrollbar never reserves a gutter, so nothing shifts when it would
+       appear; overscroll containment stops a hard wheel at a boundary from
+       scrolling the page (only reachable when filtering disables the wrap). */
+    .bnt-win { height: 400px; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: none;
       -webkit-mask-image: linear-gradient(180deg, #000 78%, transparent);
               mask-image: linear-gradient(180deg, #000 78%, transparent); }
+    .bnt-win::-webkit-scrollbar { display: none; }
+    .bnt-win:focus-visible { outline: 2px solid rgba(var(--accent-rgb),.7); outline-offset: -2px; border-radius: 8px; }
     .bnt-track { display: flex; flex-direction: column; }
     .bnt-set { padding-bottom: 8px; }
-    /* duration comes from --bnt-dur, which JS derives from the track's own
-       measured travel so both bands hold one px per second rate. The literal
-       fallback is the rate-correct value at this width, for the no-JS case */
-    .pv-bento.run .bnt-track { animation: bntv var(--bnt-dur, 28s) linear infinite; }
-    .bnt-defi:hover .bnt-track, .bnt-defi.focus-hold .bnt-track { animation-play-state: paused; }
     .bnt-cards { display: none; }
     .bnt-pipe-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 18px; }
     .bnt-pipe-head h5 { margin-bottom: 0; }
@@ -1279,12 +1283,12 @@
   @media (min-width: 981px) and (prefers-reduced-motion: no-preference) {
     .bnt-set[data-dup], .bnt-chipset[data-dup] { display: flex; }
   }
-  @keyframes bntv { to { transform: translateY(-50%); } }
   @keyframes bnth { to { transform: translateX(-50%); } }
   @media (prefers-reduced-motion: reduce) {
     .bnt-track, .bnt-chiptrack { animation: none !important; }
-    /* DeFi window becomes a plain scrollable list, chips wrap statically */
-    .bnt-win { overflow-y: auto; -webkit-mask-image: none; mask-image: none; }
+    /* DeFi window stays manually scrollable (the rAF advance never starts
+       under reduced motion); the fade mask goes so the list reads plainly */
+    .bnt-win { -webkit-mask-image: none; mask-image: none; }
     .bnt-chipwin { -webkit-mask-image: none; mask-image: none; }
     .bnt-chiptrack { width: auto; flex-wrap: wrap; gap: 10px; }
     .bnt-chipset { flex-wrap: wrap; padding-right: 0; }
@@ -3513,20 +3517,24 @@
   function hookFocus(cell, track, vertical){
     cell.addEventListener('focusin', function(e){
       cell.classList.add('focus-hold');
+      if (vertical) return; // the DeFi window is a scroll container: the
+                            // browser brings the focused card into view by
+                            // scrolling it, no transform needed
       var fv = false;
       try { fv = e.target.matches(':focus-visible'); } catch (err) {}
-      var t = e.target.closest && e.target.closest('.wp-card, .bnt-chip');
+      var t = e.target.closest && e.target.closest('.bnt-chip');
       if (fv && t && track.contains(t)){
         var setEl = track.firstElementChild;
-        var max = vertical ? setEl.offsetHeight : setEl.offsetWidth;
-        var off = Math.max(0, Math.min((vertical ? t.offsetTop : t.offsetLeft) - 16, max));
+        var max = setEl.offsetWidth;
+        var off = Math.max(0, Math.min(t.offsetLeft - 16, max));
         track.style.animation = 'none';
-        track.style.transform = vertical ? 'translateY(-' + off + 'px)' : 'translateX(-' + off + 'px)';
+        track.style.transform = 'translateX(-' + off + 'px)';
       }
     });
     cell.addEventListener('focusout', function(e){
       if (!cell.contains(e.relatedTarget)){
         cell.classList.remove('focus-hold');
+        if (vertical) return;
         track.style.animation = '';
         track.style.transform = '';
       }
@@ -3551,6 +3559,9 @@
   // the animation, and again on resize because the DeFi column's height
   // depends on how its text wraps at the current column width.
   var MQ_PX_PER_SEC = 22.16;
+  var defiSetH = 0;   // one set's measured height: the wrap boundary AND the
+                      // travel the shared rate is applied to, re-measured on
+                      // resize and filter so add or remove re-derives
   var rateRetry = 0;
   function syncRate(){
     if (!mq.matches) return;   // below 981px neither band animates
@@ -3562,6 +3573,7 @@
       var r = set.getBoundingClientRect();
       var travel = vertical ? r.height : r.width;
       if (travel < 1) { pending = true; return; }  // hidden: keep the fallback
+      if (vertical) { defiSetH = travel; return; } // rAF drives this band
       track.style.setProperty('--bnt-dur', (travel / MQ_PX_PER_SEC).toFixed(2) + 's');
     });
     // measured zero because the panel was still closed: come back for it, so
@@ -3578,8 +3590,85 @@
   });
   new IntersectionObserver(function(es){
     root.classList.toggle('run', es[0].isIntersecting);
-    if (es[0].isIntersecting) syncRate();
+    if (es[0].isIntersecting) { syncRate(); startAuto(); } else { stopAuto(); }
   }, { threshold: 0.05 }).observe(root);
+
+  // ===== DeFi auto-scroll: one rAF loop writing scrollTop =====
+  // The window is a real scroll container, so the wheel, trackpad and
+  // keyboard all act on the same position this loop advances. The loop is
+  // gated by the same IntersectionObserver as the band animations, never
+  // starts under reduced motion, and skips while the pointer or focus is
+  // inside the cell or a filter is active. Wrapping subtracts exactly one
+  // measured set height, which lands on the clone pixel for pixel, in both
+  // directions so a wheel past either boundary stays seamless. A
+  // programmatic scrollTop write also cancels any leftover trackpad
+  // momentum, so a flick-and-leave decays into the auto rate instead of
+  // fighting it.
+  var win = defi.querySelector('.bnt-win');
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+  win.setAttribute('tabindex', '0');
+  win.setAttribute('role', 'region');
+  win.setAttribute('aria-label', 'Starknet DeFi integrations, scrollable list');
+  var hoverHold = false, rafId = 0, lastTs = 0;
+  // pos is the authoritative position as a float: at 22.16 px/s a frame
+  // advances 0.37px, and Chrome snaps fractional scrollTop writes to whole
+  // physical pixels, so accumulating on scrollTop itself would truncate
+  // back to the start every frame and never move
+  var pos = 0;
+  defi.addEventListener('pointerenter', function(){ hoverHold = true; });
+  defi.addEventListener('pointerleave', function(){ hoverHold = false; });
+  function wrapPos(){
+    if (defiSetH < 1 || reduced.matches || defi.classList.contains('filtered')) return;
+    if (pos >= defiSetH) pos -= defiSetH;
+    else if (pos < 0) pos += defiSetH;
+  }
+  // Best-effort boundary guard for the no-wrap modes (reduced motion or
+  // filtered), where real ends exist: cancels the wheel events that are
+  // still cancelable at a boundary. Chrome's wheel latch can bypass it
+  // (and overscroll-behavior) by latching a new gesture straight to the
+  // page when the scroller is already limit-pinned; that is a browser
+  // behavior, measured in headed Chrome, and it matches how any static
+  // scroll list ends. In normal mode the wrap keeps both ends
+  // unreachable, so containment there is absolute.
+  win.addEventListener('wheel', function(e){
+    if (!reduced.matches && !defi.classList.contains('filtered')) return;
+    var max = win.scrollHeight - win.clientHeight;
+    if (max < 2) return;
+    if ((e.deltaY > 0 && win.scrollTop >= max - 1) || (e.deltaY < 0 && win.scrollTop <= 1)) e.preventDefault();
+  }, { passive: false });
+  win.addEventListener('scroll', function(){
+    var st = win.scrollTop;
+    if (reduced.matches || defi.classList.contains('filtered')) { pos = st; return; }
+    // a scroll that lands away from pos is the reader (wheel, keys,
+    // momentum): adopt it, so the loop resumes from where they left it
+    if (Math.abs(st - pos) > 1) {
+      pos = st;
+      wrapPos();
+      if (Math.abs(win.scrollTop - pos) > 1) win.scrollTop = pos;
+    }
+  }, { passive: true });
+  function tick(ts){
+    rafId = requestAnimationFrame(tick);
+    var dt = lastTs ? Math.min(ts - lastTs, 100) : 0;
+    lastTs = ts;
+    if (hoverHold || defi.classList.contains('focus-hold')) return;
+    if (defi.classList.contains('filtered') || defiSetH < 1) return;
+    pos += MQ_PX_PER_SEC * dt / 1000;
+    wrapPos();
+    win.scrollTop = pos;
+  }
+  win.bntReset = function(){ pos = 0; };
+  function startAuto(){
+    if (rafId || !mq.matches || reduced.matches) return;
+    lastTs = 0;
+    rafId = requestAnimationFrame(tick);
+  }
+  function stopAuto(){
+    if (rafId) { cancelAnimationFrame(rafId); rafId = 0; }
+  }
+  (reduced.addEventListener ? reduced.addEventListener.bind(reduced, 'change') : reduced.addListener.bind(reduced))(function(){
+    if (reduced.matches) stopAuto(); else if (root.classList.contains('run')) startAuto();
+  });
 
   // status filters: single-select per card, scoped to that card. The
   // status key is the pill's own text (COHORT 01 shares the live pill
@@ -3593,6 +3682,10 @@
   }
   function applyFilter(cell, f){
     cell.classList.toggle('filtered', !!f);
+    var w = cell.querySelector('.bnt-win');
+    if (w) { w.scrollTop = 0; if (w.bntReset) w.bntReset(); }
+    // a filtered list is shorter: restart at the top rather than leaving
+    // the position past its end
     var shown = 0;
     var items = cell.querySelectorAll('.bnt-set:not([data-dup]) .wp-card, .bnt-cards .wp-card');
     [].forEach.call(items, function(c){
