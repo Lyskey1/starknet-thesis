@@ -658,6 +658,11 @@
   .qw-ped,.qw-obj,.qw-plinth{transition:none;}
   .qw-ch.is-on{animation:none;}
 }
+/* readiness items inside the rail's panel: the vertical timeline (rail
+   line + node dots) belonged to the stacked composition; the tabs carry
+   the sequence now */
+.qw-ch .th-st-item{padding:0;}
+.qw-ch .th-st-item::before{content:none;}
 
 /* === premium sub-patterns (step 2): compare / stathero / note / feature / video / close === */
 .th-pm-sec{--th-red:#F2787A;--th-green:#36C692;}
@@ -899,13 +904,12 @@ a.qg-card:focus-visible{outline:2px solid var(--qa);outline-offset:3px;}
 // that targets an element inside a hidden chapter surfaces that
 // chapter first (same contract as privacy's two surface handlers).
 // ============================================================
-(function(){
-  var root = document.getElementById('catalyst-chapters');
+function initQw(root){
   if (!root) return;
   var peds = [].slice.call(root.querySelectorAll('.qw-ped'));
   var chs = [].slice.call(root.querySelectorAll('.qw-ch'));
-  var shell = document.getElementById('qw-shell');
-  var panel = document.getElementById('qw-panel');
+  var shell = root.querySelector('.qw-shell');
+  var panel = root.querySelector('.qw-panel');
   function shown(){
     var c = root.querySelector('.qw-ch.is-on');
     return c ? +c.dataset.ch : 0;
@@ -942,7 +946,8 @@ a.qg-card:focus-visible{outline:2px solid var(--qa);outline-offset:3px;}
   }
   window.addEventListener('hashchange', surface);
   surface();
-})();
+}
+initQw(document.getElementById('catalyst-chapters'));
 </script>
 
 <!-- 02 THREAT -->
@@ -1087,7 +1092,28 @@ a.qg-card:focus-visible{outline:2px solid var(--qa);outline-offset:3px;}
   <p class="th-pm-eyebrow th-pm-reveal">The head start</p>
   <p class="th-q-flow th-pm-reveal">Every other major chain starts its quantum migration from zero: vulnerable proofs, vulnerable wallets, and a hard fork between them and safety. Starknet starts from three facts that are already true on mainnet today.</p>
 
-  <div class="th-st-rail th-pm-reveal">
+  <!-- The head-start rail: second instance of the qw pedestal device.
+       Three readiness arguments, one panel; argument 1 ships selected.
+       Chips stay inside the panels; the plinth labels carry the pick. -->
+  <div class="qw th-pm-reveal" id="readiness-rail">
+    <div class="qw-rail" role="tablist" aria-label="The head start, three arguments">
+      <button class="qw-ped" type="button" role="tab" data-ch="0" aria-selected="true" aria-controls="qw-panel-b" tabindex="0">
+        <span class="qw-obj" aria-hidden="true"><svg viewBox="0 0 96 84" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M39 22v40M57 22v40M28 34h40M28 50h40"/></svg></span>
+        <span class="qw-plinth"><span class="qw-label"><b>01</b>BY DESIGN</span></span>
+      </button>
+      <button class="qw-ped" type="button" role="tab" data-ch="1" aria-selected="false" aria-controls="qw-panel-b" tabindex="-1">
+        <span class="qw-obj" aria-hidden="true"><svg viewBox="0 0 96 84" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="20" y="28" width="22" height="28" rx="3"/><rect x="54" y="28" width="22" height="28" rx="3"/><path d="M44 42h8M49.5 38.5l3.5 3.5-3.5 3.5"/></svg></span>
+        <span class="qw-plinth"><span class="qw-label"><b>02</b>ACCOUNT ABSTRACTION</span></span>
+      </button>
+      <button class="qw-ped" type="button" role="tab" data-ch="2" aria-selected="false" aria-controls="qw-panel-b" tabindex="-1">
+        <span class="qw-obj" aria-hidden="true"><svg viewBox="0 0 96 84" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="48" cy="42" r="24"/><path d="M38 43l7 7 14-15"/></svg></span>
+        <span class="qw-plinth"><span class="qw-label"><b>03</b>LIVE TODAY</span></span>
+      </button>
+    </div>
+    <div class="qw-shell" style="--qw-h:394px">
+    <div class="qw-panel" id="qw-panel-b" role="tabpanel" aria-live="polite" tabindex="0">
+
+    <article class="qw-ch is-on" data-ch="0">
     <div class="th-st-item">
       <div class="th-st-top">
         <h4 id="the-proofs-were-born-post-quantum">The proofs were <span class="th-st-a">born post-quantum.</span></h4>
@@ -1095,6 +1121,9 @@ a.qg-card:focus-visible{outline:2px solid var(--qa);outline-offset:3px;}
       </div>
       <p>STARKs rely on <strong>hash functions, not elliptic curves</strong>, which is why Shor's algorithm has nothing to attack. It comes from the <a href="https://eprint.iacr.org/2018/046" target="_blank" rel="noopener noreferrer">original STARK paper</a> co-authored by StarkWare's founders in 2018. The entire proving layer, the foundation every other layer rests on and the most expensive part to change, never needs to migrate.</p>
     </div>
+    </article>
+
+    <article class="qw-ch" data-ch="1">
     <div class="th-st-item">
       <div class="th-st-top">
         <h4 id="migration-is-one-transaction-not-a">Migration is <span class="th-st-a">one transaction,</span> not a hard fork.</h4>
@@ -1120,12 +1149,19 @@ a.qg-card:focus-visible{outline:2px solid var(--qa);outline-offset:3px;}
         </div>
       </div>
     </div>
+    </article>
+
+    <article class="qw-ch" data-ch="2">
     <div class="th-st-item">
       <div class="th-st-top">
         <h4 id="post-quantum-wallets-already-running-on">Post-quantum wallets, <span class="th-st-a">already running on mainnet.</span></h4>
         <span class="th-st-chip ok">Live today</span>
       </div>
       <p><a href="https://www.s2morrow.xyz/" target="_blank" rel="noopener noreferrer">S2morrow</a> deployed a <strong>Falcon-512 post-quantum account, written in Cairo, live on Starknet mainnet</strong> and signing transactions since April 2026. <a href="https://quantumcomputingreport.com/starkware-outlines-post-quantum-cryptographic-roadmap-for-starknet-architecture/" target="_blank" rel="noopener noreferrer">OpenZeppelin is building a post-quantum account contract</a> of its own. Quantum-resistant wallets are already live.</p>
+    </div>
+    </article>
+
+    </div>
     </div>
   </div>
 
@@ -1455,6 +1491,13 @@ body.page-quantum{overflow-x:clip;}
 </section>
 
 <!-- CONCLUSION -->
+<script>
+// Second qw instance: the head-start rail in section 03 (same init,
+// same hashchange surface contract; handler count on this page is two,
+// matching privacy's two).
+initQw(document.getElementById('readiness-rail'));
+</script>
+
 <section class="th-pm-close">
   <h2 id="on-the-day-the-line-is" class="th-pm-reveal">On the day the line is drawn for everyone, most chains will discover which side they were born on. <b>Starknet already knows.</b></h2>
   <p class="th-pm-reveal">The thesis needs only two recognitions: that the quantum-security premium is <b>not yet priced in</b>, and that Starknet holds the <b>structural moat</b> to capture it.</p>
