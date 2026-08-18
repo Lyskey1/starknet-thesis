@@ -3895,10 +3895,16 @@
 // a click from an arrow key through its second argument. That maps
 // exactly onto what this block needs: arrows move the tab stop
 // without opening anything, and click (which is also what Enter
-// and Space fire on a button) toggles the card open. thRove's own
+// and Space fire on a button) selects the card. thRove's own
 // mirror() is not used, because aria-selected is the wrong
 // attribute for a group of expanding buttons; aria-expanded and
 // the roving tabindex are written here instead.
+//
+// On hover-capable devices (any-hover: hover, never a width query),
+// pointing at a card selects it after a 70ms intent delay, click is
+// an idempotent select rather than a toggle, and leaving the stack
+// keeps the last selection. Touch keeps the original tap contract,
+// toggle included, and none of the hover wiring runs there.
 // ============================================================
 (function(){
   var root = document.getElementById('lawSchema');
@@ -3911,6 +3917,9 @@
   var hint = document.getElementById('lawHint');
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
   var narrow = window.matchMedia('(max-width: 980px)');
+  // any-hover, not a width query: a touch laptop has desktop width but no
+  // reliable hover, and a tablet with a mouse attached gains one
+  var hoverable = window.matchMedia('(any-hover: hover)');
   // in these modes the CSS ships the fan open and there is no seal to re-arm
   function alwaysOpen(){ return reduce.matches || narrow.matches; }
 
@@ -3949,7 +3958,43 @@
     openIdx = (openIdx === i) ? -1 : i;   // second pick returns to fanned
     render();
   }
+  // select: open exactly card i, idempotent. This is the hover contract and
+  // the click contract on hover-capable devices: with hover having already
+  // opened the card under the pointer, a habit click must not toggle it
+  // closed. Touch keeps the toggle, where a second tap collapsing the stack
+  // is still the intended gesture.
+  function select(i){
+    cursor = i;
+    if (openIdx === i) { render(); return; }
+    openIdx = i;
+    render();
+  }
   function toFanned(){ if (openIdx >= 0) { openIdx = -1; render(); } }
+
+  // hover selects, behind an intent delay so a pointer sweeping across the
+  // fan does not fire four detail swaps: 70ms sits under the ~100ms humans
+  // read as instant but over the ~40-50ms a fast sweep spends crossing one
+  // card. Leaving the stack cancels only the PENDING intent; the settled
+  // selection stays, so crossing the stack never flickers or reverts.
+  // Last input wins between hover and keyboard: if focus is inside the
+  // group when a hover settles elsewhere, focus follows the hovered card,
+  // so no focus ring is left sitting on a card whose detail is gone
+  // (pointer-driven focus is not :focus-visible, so no ghost ring appears).
+  var hoverTimer = 0;
+  function hoverSettle(i){
+    hoverTimer = 0;
+    fan();
+    if (root.contains(document.activeElement) && document.activeElement !== cards[i]) cards[i].focus();
+    select(i);
+  }
+  cards.forEach(function(c, i){
+    c.addEventListener('pointerenter', function(ev){
+      if (!hoverable.matches || ev.pointerType === 'touch') return;
+      clearTimeout(hoverTimer);
+      hoverTimer = setTimeout(function(){ hoverSettle(i); }, 70);
+    });
+  });
+  root.addEventListener('pointerleave', function(){ clearTimeout(hoverTimer); hoverTimer = 0; });
 
   // hover and focus both unseal. Focus matters on its own: a keyboard user
   // cannot hover, so tabbing into the group has to be enough.
@@ -3962,7 +4007,10 @@
   thRove({ root: root, buttons: cards, shown: function(){ return cursor; },
     pick: function(k, fromClick){
       cursor = k;
-      if (fromClick) { fan(); open(k); } else render();   // arrows only move
+      // clicks select idempotently where hover exists (see select) and
+      // keep the toggle on touch; arrows only move, as before
+      if (fromClick) { fan(); if (hoverable.matches) select(k); else open(k); }
+      else render();
     } });
 
   // a find-in-page hit inside a closed description opens its card, so the
