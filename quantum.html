@@ -192,10 +192,16 @@
        owns the width, so the drawing goes rather than crowd it */
     .qh-scene { display: none; }
   }
-  /* DEADLINE BAND: twin of .eco-marquee / .dg-marquee / .pv-marquee. Three
-     repeated sets rather than two, for the same reason privacy needs three:
-     one set is narrower than an ultrawide viewport, so a two-set track would
-     show bare band at the loop point. The keyframe steps one third. */
+  /* DEADLINE BAND: twin of .eco-marquee / .dg-marquee / .pv-marquee. Two
+     repeated sets up to 2750px viewports, three from there (an N-set track
+     covers viewports up to N-1 set widths; one set is 2756px at 1440, so
+     two sets cover every DPR-2 laptop and 2560px desktops, while 3440px
+     ultrawides and deep zoom-out get the third set back or the band would
+     run bare at the loop point). The loop period is one set width in both
+     regimes, so rate and seam are identical. Each glass chip is a
+     composited layer (backdrop-filter, never culled inside the animated
+     track while the band is on screen), so the third set costs 10 layers
+     wherever it exists: it now exists only where it covers something. */
   .qh-marquee { border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); overflow: hidden; padding: 10px 0;
     -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
             mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent); }
@@ -204,7 +210,13 @@
   .qh-mq-set > span { /* child combinator, band-family rule: nested spans must never pick up pill styles */ font-family: var(--mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; white-space: nowrap;
     border: 1px solid rgba(var(--accent-rgb), .35); color: var(--stark-purple); padding: 9px 16px; border-radius: 99px; display: inline-flex; }
   .qh-marquee.run .qh-mq-track { animation: qhmq 70s linear infinite; }
-  @keyframes qhmq { to { transform: translateX(-33.3333%); } }
+  @keyframes qhmq { to { transform: translateX(-50%); } }
+  .qh-mq-set[data-dup] + .qh-mq-set[data-dup] { display: none; }
+  @media (min-width: 2750px) and (prefers-reduced-motion: no-preference) {
+    .qh-mq-set[data-dup] + .qh-mq-set[data-dup] { display: flex; }
+    .qh-marquee.run .qh-mq-track { animation-name: qhmq3; }
+  }
+  @keyframes qhmq3 { to { transform: translateX(-33.3333%); } }
   .qh-marquee:hover .qh-mq-track { animation-play-state: paused; }
   .qh-mq-set .chip-glass, .qh-cta.chip-glass { transition: background var(--hover-dur) var(--hover-ease), box-shadow var(--hover-dur) var(--hover-ease); }
   @media (prefers-reduced-motion: reduce) {
