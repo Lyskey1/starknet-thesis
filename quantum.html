@@ -615,7 +615,13 @@
 .qw-label{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.16em;color:var(--th-ink);white-space:nowrap;}
 .qw-label b{color:var(--th-q);font-weight:600;margin-right:7px;}
 /* panel shell: quantum's own panel material (turkey/maze family), not
-   privacy's glass import; holds the scroll fade so it cannot scroll away */
+   privacy's glass import; holds the scroll fade so it cannot scroll away.
+   The panel is NOT a scroll container by default: a zero-extent scroller
+   with overscroll-behavior:contain latches real wheel gestures and blocks
+   chaining to the page, which reads as a frozen page (measured: a
+   synthesized compositor gesture over the card grid moved the page 0px of
+   1800 with overflow-y:auto present, 1800 of 1800 without). fade() grants
+   .qw-scroll only while content actually overflows the reserve. */
 .qw-shell{position:relative;margin-top:22px;height:var(--qw-h,736px);overflow:hidden;border-radius:18px;
   border:1px solid rgba(245,242,236,.08);
   background:linear-gradient(180deg,rgba(255,255,255,.015),rgba(255,255,255,.004));}
@@ -623,7 +629,12 @@
   background:linear-gradient(180deg,transparent,rgba(7,9,16,.92));pointer-events:none;z-index:2;
   transition:opacity .3s ease;}
 .qw-shell.has-more::after{opacity:1;}
-.qw-panel{height:100%;overflow-y:auto;overscroll-behavior:contain;scroll-behavior:auto;padding:26px 30px 26px;}
+.qw-panel{height:100%;padding:26px 30px 26px;}
+/* no overscroll-behavior:contain here: measured headed at 1024, a fresh
+   gesture over the panel pinned at its limit latched to it and contain
+   blocked the chain to the page, freezing scroll again. Default chaining
+   hands the remainder to the page, which is the wanted reading flow. */
+.qw-panel.qw-scroll{overflow-y:auto;scroll-behavior:auto;}
 .qw-panel:focus-visible{outline:2px solid var(--th-q);outline-offset:-3px;}
 /* one chapter in flow at a time: hidden ones must not inflate the scroller */
 .qw-ch{display:none;position:relative;}
@@ -899,10 +910,13 @@ a.qg-card:focus-visible{outline:2px solid var(--qa);outline-offset:3px;}
     var c = root.querySelector('.qw-ch.is-on');
     return c ? +c.dataset.ch : 0;
   }
-  /* the scroller only earns a tab stop while it actually scrolls */
+  /* the panel only becomes a scroll container, and only earns a tab
+     stop, while content actually overflows the reserve: a zero-extent
+     scroller latches wheel gestures and freezes the page (see CSS note) */
   function fade(){
     var more = panel.scrollHeight - panel.clientHeight;
     var atEnd = panel.scrollTop >= more - 2;
+    panel.classList.toggle('qw-scroll', more > 4);
     shell.classList.toggle('has-more', more > 4 && !atEnd);
     panel.setAttribute('tabindex', more > 4 ? '0' : '-1');
   }
