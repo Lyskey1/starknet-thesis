@@ -579,6 +579,75 @@
 .th-pm-card:hover::before{opacity:.15;}
 @media(max-width:880px){.th-pm-grid{grid-template-columns:1fr;}.th-pm-title{font-size:38px;}.th-pm-num{font-size:48px;}}
 
+/* ===== 01: catalyst chapter rail (qw-). Privacy's wall-pedestal device
+   (pw-) recomposed for wide content: the rail runs as a triptych above a
+   full-width panel (privacy's own <=980 composition, promoted to desktop
+   because chapter 1 holds a 3-column card grid that a side panel would
+   fold to 2 columns and outgrow the reserve). One chapter in flow at a
+   time; the panel is a fixed-height scroller so switching never reflows
+   the page below. --qw-h is measured against chapter 1 (the tallest) at
+   1440 and re-verified in the commit run. Selection color is the
+   section's semantic blue (--th-q), not the page accent. */
+.qw{margin-top:34px;}
+.qw-rail{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;max-width:860px;}
+.qw-ped{position:relative;display:grid;grid-template-rows:1fr auto;justify-items:center;
+  background:none;border:0;padding:0;cursor:pointer;border-radius:14px;transition:opacity .35s ease;}
+.qw-ped:focus-visible{outline:2px solid var(--th-q);outline-offset:5px;}
+.qw-ped[aria-selected="false"]{opacity:.5;}
+.qw-ped::before{content:"";position:absolute;left:18%;right:18%;bottom:-8px;height:30px;border-radius:50%;
+  background:radial-gradient(closest-side,color-mix(in srgb,var(--th-q) 24%,transparent),transparent 72%);
+  opacity:0;transition:opacity .4s ease;pointer-events:none;}
+.qw-ped[aria-selected="true"]::before{opacity:1;}
+.qw-obj{width:74px;height:64px;color:var(--th-q);align-self:end;margin-bottom:-1px;position:relative;z-index:1;
+  transition:transform .4s cubic-bezier(.22,1,.36,1),filter .4s ease;}
+.qw-obj svg{width:100%;height:100%;display:block;}
+.qw-ped[aria-selected="true"] .qw-obj{transform:translateY(-5px);
+  filter:drop-shadow(0 0 10px color-mix(in srgb,var(--th-q) 45%,transparent));}
+.qw-plinth{width:100%;height:52px;border-radius:12px;position:relative;display:grid;place-items:center;
+  background:linear-gradient(180deg,color-mix(in srgb,var(--th-q) 15%,transparent),color-mix(in srgb,var(--th-q) 5%,transparent) 48%,color-mix(in srgb,var(--th-q) 10%,transparent));
+  border:1px solid color-mix(in srgb,var(--th-q) 34%,transparent);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.14),inset 0 0 24px color-mix(in srgb,var(--th-q) 5%,transparent);
+  transition:border-color .35s ease,background .35s ease;}
+.qw-plinth::after{content:"";position:absolute;inset:0 0 auto 0;height:46%;border-radius:12px 12px 0 0;
+  background:linear-gradient(180deg,rgba(255,255,255,.07),transparent);pointer-events:none;}
+.qw-ped[aria-selected="true"] .qw-plinth{border-color:color-mix(in srgb,var(--th-q) 60%,transparent);
+  background:linear-gradient(180deg,color-mix(in srgb,var(--th-q) 24%,transparent),color-mix(in srgb,var(--th-q) 8%,transparent) 48%,color-mix(in srgb,var(--th-q) 15%,transparent));}
+.qw-label{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.16em;color:var(--th-ink);white-space:nowrap;}
+.qw-label b{color:var(--th-q);font-weight:600;margin-right:7px;}
+/* panel shell: quantum's own panel material (turkey/maze family), not
+   privacy's glass import; holds the scroll fade so it cannot scroll away */
+.qw-shell{position:relative;margin-top:22px;height:var(--qw-h,736px);overflow:hidden;border-radius:18px;
+  border:1px solid rgba(245,242,236,.08);
+  background:linear-gradient(180deg,rgba(255,255,255,.015),rgba(255,255,255,.004));}
+.qw-shell::after{content:"";position:absolute;left:0;right:0;bottom:0;height:64px;opacity:0;
+  background:linear-gradient(180deg,transparent,rgba(7,9,16,.92));pointer-events:none;z-index:2;
+  transition:opacity .3s ease;}
+.qw-shell.has-more::after{opacity:1;}
+.qw-panel{height:100%;overflow-y:auto;overscroll-behavior:contain;scroll-behavior:auto;padding:26px 30px 26px;}
+.qw-panel:focus-visible{outline:2px solid var(--th-q);outline-offset:-3px;}
+/* one chapter in flow at a time: hidden ones must not inflate the scroller */
+.qw-ch{display:none;position:relative;}
+.qw-ch.is-on{display:block;animation:qwIn .3s ease;}
+@keyframes qwIn{from{opacity:0;transform:translateY(2px)}to{opacity:1;transform:none}}
+.qw-ch .th-q-chapter{margin-top:0;padding-top:0;}
+.qw-ch .th-pm-grid,.qw-ch .th-eo-panels,.qw-ch .th-yr-panels{margin-top:24px;}
+@media(max-width:980px){
+  .qw-shell{height:auto;overflow:visible;}
+  .qw-shell::after{content:none;}
+  .qw-panel{height:auto;overflow:visible;padding:22px 18px;}
+  .qw-obj{width:58px;height:50px;}
+  .qw-plinth{height:46px;}
+  .qw-rail{gap:10px;max-width:none;}
+}
+@media(max-width:480px){
+  .qw-label{font-size:8px;letter-spacing:.06em;}
+  .qw-plinth{height:42px;border-radius:10px;}
+}
+@media (prefers-reduced-motion: reduce){
+  .qw-ped,.qw-obj,.qw-plinth{transition:none;}
+  .qw-ch.is-on{animation:none;}
+}
+
 /* === premium sub-patterns (step 2): compare / stathero / note / feature / video / close === */
 .th-pm-sec{--th-red:#F2787A;--th-green:#36C692;}
 .th-pm-compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:40px;}
@@ -717,8 +786,31 @@ a.qg-card:focus-visible{outline:2px solid var(--qa);outline-offset:3px;}
   <div class="th-pm-head th-pm-reveal"><span class="th-pm-marker"></span><span class="th-pm-num">01</span><h2 id="nation-states-became-quantum-investors" class="th-pm-title">Nation-states became quantum <b>investors.</b></h2></div>
   <p class="th-pm-eyebrow th-pm-reveal">The catalyst</p>
 
-  <!-- chapter 1: the money -->
-  <div class="th-q-chapter th-pm-reveal">
+  <!-- The catalyst chapter rail: privacy's pedestal device (pw-), quantum
+       material. Three chapters, one panel; chapter 1 ships selected in the
+       markup so the section reads complete with no JS. The closing pivot
+       paragraph stays outside the device on purpose: it is the crescendo
+       line and every reader must cross it regardless of tab. -->
+  <div class="qw th-pm-reveal" id="catalyst-chapters">
+    <div class="qw-rail" role="tablist" aria-label="The catalyst, three chapters">
+      <button class="qw-ped" type="button" role="tab" data-ch="0" aria-selected="true" aria-controls="qw-panel" tabindex="0">
+        <span class="qw-obj" aria-hidden="true"><svg viewBox="0 0 96 84" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M44 24 A26 26 0 1 0 70 50 L44 50 Z"/><path d="M50 18 A26 26 0 0 1 76 44 L50 44 Z"/></svg></span>
+        <span class="qw-plinth"><span class="qw-label"><b>01</b>STATE EQUITY</span></span>
+      </button>
+      <button class="qw-ped" type="button" role="tab" data-ch="1" aria-selected="false" aria-controls="qw-panel" tabindex="-1">
+        <span class="qw-obj" aria-hidden="true"><svg viewBox="0 0 96 84" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="28" y="12" width="40" height="56" rx="3"/><path d="M36 26h24M36 36h24M36 46h13"/><circle cx="58" cy="54" r="7"/><path d="M58 61v9"/></svg></span>
+        <span class="qw-plinth"><span class="qw-label"><b>02</b>EXECUTIVE ORDERS</span></span>
+      </button>
+      <button class="qw-ped" type="button" role="tab" data-ch="2" aria-selected="false" aria-controls="qw-panel" tabindex="-1">
+        <span class="qw-obj" aria-hidden="true"><svg viewBox="0 0 96 84" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 16 L39 42M78 16 L57 42M48 10 L48 38"/><circle cx="48" cy="56" r="12"/><circle cx="48" cy="56" r="2.6" fill="currentColor" stroke="none"/></svg></span>
+        <span class="qw-plinth"><span class="qw-label"><b>03</b>THE YEAR 2029</span></span>
+      </button>
+    </div>
+    <div class="qw-shell" id="qw-shell">
+    <div class="qw-panel" id="qw-panel" role="tabpanel" aria-live="polite" tabindex="0">
+
+    <article class="qw-ch is-on" data-ch="0">
+  <div class="th-q-chapter">
     <h3 id="states-started-taking-equity" class="scale-title">States started taking <span>equity.</span></h3>
     <p class="scale-intro">For decades, government support for quantum computing meant research grants and patient science. In the span of a few weeks in spring 2026, that posture changed in nature.</p>
   </div>
@@ -739,13 +831,15 @@ a.qg-card:focus-visible{outline:2px solid var(--qa);outline-offset:3px;}
     <a id="france-responds" class="th-pm-card qg-card th-pm-reveal" href="https://thequantuminsider.com/2026/05/25/emmanuel-macron-announces-1-55-billion-euros-more-for-quantum-and-semiconductors/" target="_blank" rel="noopener noreferrer"><span class="th-pm-date">May 22, 2026</span><h3>France responds</h3><span class="th-pm-stat">EUR 1B</span><p>Announced by Macron from the CEA for the national quantum plan, citing the acceleration of the US and China.</p></a>
     <a id="ibm-commits" class="th-pm-card qg-card th-pm-reveal" href="https://newsroom.ibm.com/2026-06-02-ibm-commits-more-than-10-billion-to-quantum-computing,-funding-its-roadmap-from-todays-leading-systems-to-the-worlds-first-fault-tolerant-quantum-computers" target="_blank" rel="noopener noreferrer"><span class="th-pm-date">June 2, 2026</span><h3>IBM commits</h3><span class="th-pm-stat">$10B+</span><p>Over 5 years, targeting its first large-scale fault-tolerant quantum computer by 2029.</p></a>
   </div>
-  <!-- chapter 2: the state -->
-  <div class="th-q-chapter th-pm-reveal">
+    </article>
+
+    <article class="qw-ch" data-ch="1">
+  <div class="th-q-chapter">
     <h3 id="then-the-state-armed-itself" class="scale-title">Then the state <span>armed itself.</span></h3>
     <p class="scale-intro">On June 22, 2026, the White House signed two quantum executive orders the same day. One launches a national effort to build a government-scale machine. The other orders an accelerated, government-wide migration to post-quantum cryptography.</p>
   </div>
 
-  <div class="th-eo-panels th-pm-reveal">
+  <div class="th-eo-panels">
     <div class="qg-bloom" aria-hidden="true">
       <i style="--bc:var(--th-q);left:11%;top:16%;width:28%;height:68%"></i>
       <i style="--bc:var(--th-q);left:61%;top:16%;width:28%;height:68%"></i>
@@ -753,13 +847,15 @@ a.qg-card:focus-visible{outline:2px solid var(--qa);outline-offset:3px;}
     <a class="th-eo-panel qg-card" href="https://www.whitehouse.gov/presidential-actions/2026/06/ushering-in-the-next-frontier-of-quantum-innovation/" target="_blank" rel="noopener noreferrer"><span class="th-eo-label">Executive order</span><h4 id="ushering-in-the-next-frontier-of">Ushering in the Next Frontier of Quantum Innovation</h4></a>
     <a class="th-eo-panel qg-card" href="https://www.whitehouse.gov/presidential-actions/2026/06/securing-the-nation-against-advanced-cryptographic-attacks/" target="_blank" rel="noopener noreferrer"><span class="th-eo-label">Executive order</span><h4 id="securing-the-nation-against-advanced-cryptographic">Securing the Nation Against Advanced Cryptographic Attacks</h4></a>
   </div>
-  <!-- chapter 3: the convergence -->
-  <div class="th-q-chapter th-pm-reveal">
+    </article>
+
+    <article class="qw-ch" data-ch="2">
+  <div class="th-q-chapter">
     <h3 id="finally-three-of-the-biggest-names" class="scale-title">Finally, three of the biggest names in quantum converged on <span>a single year.</span></h3>
     <p class="scale-intro">The three companies actually building the machines have independently pointed to the same date.</p>
   </div>
 
-  <div class="th-yr-panels th-pm-reveal">
+  <div class="th-yr-panels">
       <div class="qg-bloom" aria-hidden="true">
         <i style="--bc:var(--th-q);left:5.5%;top:16%;width:22%;height:68%"></i>
         <i style="--bc:var(--th-q);left:39.3%;top:16%;width:22%;height:68%"></i>
@@ -769,9 +865,71 @@ a.qg-card:focus-visible{outline:2px solid var(--qa);outline-offset:3px;}
       <a class="th-yr-panel qg-card" href="https://blog.google/innovation-and-ai/technology/safety-security/cryptography-migration-timeline/" target="_blank" rel="noopener noreferrer"><span class="th-yr-name">Google</span><span class="th-yr-stat">2029</span><p>Google set an internal deadline of 2029 to migrate its own infrastructure to post-quantum cryptography.</p></a>
       <a class="th-yr-panel qg-card" href="https://newsroom.ibm.com/2026-06-02-ibm-commits-more-than-10-billion-to-quantum-computing,-funding-its-roadmap-from-todays-leading-systems-to-the-worlds-first-fault-tolerant-quantum-computers" target="_blank" rel="noopener noreferrer"><span class="th-yr-name">IBM</span><span class="th-yr-stat">2029</span><p>IBM committed more than $10 billion over five years, targeting its first large-scale fault-tolerant quantum computer by 2029.</p></a>
   </div>
+    </article>
+
+    </div>
+    </div>
+  </div>
 
   <p class="th-q-flow th-pm-reveal">When governments take equity in quantum companies, race to build the machine, and order their own defenses against it, the risk profile has changed. Meanwhile, the three biggest quantum players converged, days apart, on the same year: 2029. <b class="acc">That year is now a deadline.</b></p>
 </section>
+
+<script src="js/selector-rove.js"></script>
+<script>
+// ============================================================
+// SECTION 01 - catalyst chapter rail. Privacy's wall-pedestal
+// pattern: a triptych of plinths over one fixed-height panel,
+// exactly one chapter in flow at a time. Chapter 1 ships selected
+// in the markup so the section reads complete with no JS. The rail
+// carries the roving tab stop (thRove); arrows cycle, Enter/click
+// picks. The panel is a fixed-height scroller (see the CSS fit
+// note): switching chapters returns it to the top, and the shell
+// fade shows only while more sits below the fold. A location hash
+// that targets an element inside a hidden chapter surfaces that
+// chapter first (same contract as privacy's two surface handlers).
+// ============================================================
+(function(){
+  var root = document.getElementById('catalyst-chapters');
+  if (!root) return;
+  var peds = [].slice.call(root.querySelectorAll('.qw-ped'));
+  var chs = [].slice.call(root.querySelectorAll('.qw-ch'));
+  var shell = document.getElementById('qw-shell');
+  var panel = document.getElementById('qw-panel');
+  function shown(){
+    var c = root.querySelector('.qw-ch.is-on');
+    return c ? +c.dataset.ch : 0;
+  }
+  /* the scroller only earns a tab stop while it actually scrolls */
+  function fade(){
+    var more = panel.scrollHeight - panel.clientHeight;
+    var atEnd = panel.scrollTop >= more - 2;
+    shell.classList.toggle('has-more', more > 4 && !atEnd);
+    panel.setAttribute('tabindex', more > 4 ? '0' : '-1');
+  }
+  function select(i){
+    chs.forEach(function(c){ c.classList.toggle('is-on', +c.dataset.ch === i); });
+    rove.mirror(i);
+    panel.scrollTop = 0;
+    fade();
+  }
+  panel.addEventListener('scroll', fade);
+  window.addEventListener('resize', fade);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fade);
+  fade();
+  var rove = thRove({ root: root, buttons: peds, shown: shown,
+    pick: function(k){ select(k); } });
+  function surface(){
+    var id = (location.hash || '').slice(1);
+    if (!id) return;
+    var el = document.getElementById(id);
+    if (!el || !root.contains(el)) return;
+    var c = el.closest('.qw-ch');
+    if (c) select(+c.dataset.ch);
+  }
+  window.addEventListener('hashchange', surface);
+  surface();
+})();
+</script>
 
 <!-- 02 THREAT -->
 <div class="th-pm-div"></div>

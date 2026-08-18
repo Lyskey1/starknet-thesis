@@ -220,6 +220,9 @@
     /* privacy: wall pedestals panel shows one wall at a time */
     const pw = target.closest && target.closest('.pw-wall');
     if (pw && !pw.classList.contains('is-on')) did = clickIf(document.querySelectorAll('#wall-pedestals .pw-ped')[+pw.dataset.wall]) || did;
+    /* quantum: section 01 shows one catalyst chapter at a time */
+    const qw = target.closest && target.closest('.qw-ch');
+    if (qw && !qw.classList.contains('is-on')) did = clickIf(document.querySelectorAll('#catalyst-chapters .qw-ped')[+qw.dataset.ch]) || did;
     /* privacy: section 05's sealed stack. A hit lands on the detail item, so
        the card that owns it is the one whose aria-controls names it: click
        that and the stack unseals onto the right stage. */
