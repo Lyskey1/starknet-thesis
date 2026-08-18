@@ -125,8 +125,20 @@
   .bf-mq-set { display: flex; gap: 14px; padding-right: 14px; }
   .bf-mq-set > span { /* child combinator, band-family rule: nested spans must never pick up pill styles */ font-family: var(--mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; white-space: nowrap;
     border: 1px solid rgba(var(--accent-rgb), .35); color: var(--accent); padding: 9px 16px; border-radius: 99px; display: inline-flex; }
+  /* band-family layer rule (d6b1c2c): two sets below 3350px viewports,
+     three from there. One set is 3363px at 1440; an N-set track covers
+     viewports to (N-1) set widths, and each glass chip is a composited
+     layer that is never culled inside the animated track, so the third
+     set (13 layers) exists only where it covers something. Loop period
+     is one set width in both regimes: same rate, same seam. */
   .bf-marquee.run .bf-mq-track { animation: bfmq 70s linear infinite; }
-  @keyframes bfmq { to { transform: translateX(-33.3333%); } }
+  @keyframes bfmq { to { transform: translateX(-50%); } }
+  .bf-mq-set[data-dup] + .bf-mq-set[data-dup] { display: none; }
+  @media (min-width: 3350px) and (prefers-reduced-motion: no-preference) {
+    .bf-mq-set[data-dup] + .bf-mq-set[data-dup] { display: flex; }
+    .bf-marquee.run .bf-mq-track { animation-name: bfmq3; }
+  }
+  @keyframes bfmq3 { to { transform: translateX(-33.3333%); } }
   .bf-marquee:hover .bf-mq-track { animation-play-state: paused; }
   .bf-mq-set .chip-glass, .bf-cta.chip-glass { transition: background var(--hover-dur) var(--hover-ease), box-shadow var(--hover-dur) var(--hover-ease); }
   @media (prefers-reduced-motion: reduce) {

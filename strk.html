@@ -263,8 +263,18 @@ a.nav-logo{text-decoration:none}
 /* duration tracks the set width so the perceived scroll speed is unchanged
    by the copy edit: the set narrowed from 3177.7px to 2907.6px, so 70s
    becomes 64s and the band still travels ~45.4 px/s */
+/* band-family layer rule (d6b1c2c): two sets below 2900px viewports, three
+   from there (one set is 2908px at 1440; the third set's 10 glass-chip
+   layers exist only where they cover something). Loop period is one set
+   width in both regimes: same rate, same seam. */
 .sk-marquee.run .sk-mq-track{animation:skmq 64s linear infinite}
-@keyframes skmq{to{transform:translateX(-33.3333%)}}
+@keyframes skmq{to{transform:translateX(-50%)}}
+.sk-mq-set[data-dup]+.sk-mq-set[data-dup]{display:none}
+@media (min-width:2900px) and (prefers-reduced-motion:no-preference){
+  .sk-mq-set[data-dup]+.sk-mq-set[data-dup]{display:flex}
+  .sk-marquee.run .sk-mq-track{animation-name:skmq3}
+}
+@keyframes skmq3{to{transform:translateX(-33.3333%)}}
 .sk-marquee:hover .sk-mq-track{animation-play-state:paused}
 
 @media(max-width:1360px){.hero{padding-bottom:14px}.fan{width:520px;height:260px;right:28px}}

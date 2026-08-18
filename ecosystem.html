@@ -154,8 +154,24 @@
   .eco-mq-set { display: flex; gap: 14px; padding-right: 14px; }
   .eco-mq-set > a, .eco-mq-set > span { /* child combinators, band-family rule: nested spans must never pick up pill styles */ font-family: var(--mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; white-space: nowrap; text-decoration: none;
     border: 1px solid rgba(var(--accent-rgb), .35); color: var(--accent); padding: 9px 16px; border-radius: 99px; display: inline-flex; }
+  /* band-family layer rule (d6b1c2c): two sets below 7550px viewports,
+     three from there. One set is 7560px at 1440 with the current 56
+     project handles, so no real display ever needs the third set; it
+     stays in the DOM (buildMarquee emits set + dup + dup) as the guard.
+     CAUTION: the width is data-dependent. If the projects list shrinks
+     far enough that one set drops under a real viewport width, lower
+     this threshold to the new set width. Each glass chip is a composited
+     layer that is never culled inside the animated track, so the hidden
+     set saves 56 layers today. Loop period is one set width in both
+     regimes: same rate, same seam. */
   .eco-marquee.run .eco-mq-track { animation: ecomq 70s linear infinite; }
-  @keyframes ecomq { to { transform: translateX(-33.3333%); } }
+  @keyframes ecomq { to { transform: translateX(-50%); } }
+  .eco-mq-set[data-dup] + .eco-mq-set[data-dup] { display: none; }
+  @media (min-width: 7550px) and (prefers-reduced-motion: no-preference) {
+    .eco-mq-set[data-dup] + .eco-mq-set[data-dup] { display: flex; }
+    .eco-marquee.run .eco-mq-track { animation-name: ecomq3; }
+  }
+  @keyframes ecomq3 { to { transform: translateX(-33.3333%); } }
   .eco-marquee:hover .eco-mq-track { animation-play-state: paused; }
   @media (prefers-reduced-motion: reduce) {
     .eco-mq-track { animation: none !important; flex-wrap: wrap; width: auto; gap: 12px 0; }
@@ -2589,9 +2605,10 @@
   }
 
   // ----- hero marquee: project names from this page's own data (projects
-  // group only), repeated three times for the seamless -33.3333% loop, rebuilt when
-  // the published file is adopted. Decorative: the whole band is
-  // aria-hidden and items are not links (cards carry no per-card anchors).
+  // group only), emitted three times for the seamless loop (CSS displays
+  // two sets below 7550px viewports, see the band-family layer rule),
+  // rebuilt when the published file is adopted. Decorative: the whole band
+  // is aria-hidden and items are not links (cards carry no per-card anchors).
   function buildMarquee(){
     var band = document.getElementById('ecoMarquee');
     if (!band) return;
