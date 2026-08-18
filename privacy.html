@@ -387,20 +387,25 @@
 
   /* ============ 02: three walls (pedestal composition) ============ */
   /* A selector rail of three glass pedestals (seal, rings, discs) beside a
-     detail panel that renders the selected wall. Sized so the heading,
-     intro and both columns clear one 900px-tall viewport: 90px section pad
-     + 189px header + 520px row = 799px, inside 90vh (810px). Glass follows
-     the established recipe: gradients dense at the rim, hairline strokes,
+     detail panel that renders the selected wall. Glass follows the
+     established recipe: gradients dense at the rim, hairline strokes,
      no drop shadows; the floor halo appears under the selected pedestal
      only.
-     The panel scrolls internally rather than growing the section. Measured
-     2026-08-12 at 1440px against the 462px panel content box: wall 01
-     overflows by 144px, wall 02 by 65px, wall 03 fits. No layout in which
-     copy is not cut brings wall 01 under the budget (the most compact
-     non-cutting variant measured 606px), so the overflow is scrolled, the
-     row height is constant across selections, and the page below never
-     moves. pw- prefix. */
-  .pw { --pw-h: 500px; margin-top: 26px; }
+     The row is sized so NO wall scrolls internally. It used to be 500px
+     with the overflow scrolled inside the panel (the 2026-08-12 fit,
+     measured under Helvetica), but the Archivo re-measure of 2026-08-18
+     put all three walls over that budget at 1440px (wall 01 by 194px,
+     02 by 16px, 03 by 90px; at 1280x800: 185 / 8 / 51). With overflow the
+     normal state, a reader crossing the page with the cursor over the
+     panel scrolled it to its end and then the page stalled under them.
+     So the row now clears the tallest wall: wall 01 needs a 692px panel
+     at 1440px, 720px leaves 26px of margin there and 35px at 1280x800.
+     This deliberately gives up the old one-viewport fit for the section;
+     a section taller than the fold costs less than a stalled page. The
+     internal-scroll machinery below (.pw-scroll, the fade) stays as a
+     fallback for widths, zoom levels, or future copy this budget does
+     not cover. pw- prefix. */
+  .pw { --pw-h: 720px; margin-top: 26px; }
   .pw-grid { display: grid; grid-template-columns: minmax(0, 38%) minmax(0, 1fr); gap: 40px; height: var(--pw-h); }
   /* rail: three equal rows, so the pedestals always fill the row height */
   .pw-rail { display: grid; grid-template-rows: repeat(3, 1fr); gap: 22px; }
@@ -456,10 +461,12 @@
   /* scroll-behavior: auto opts out of the site's inherited html{smooth}: the
      wall swap replaces the content, so the return to the top must be instant
      rather than animating through copy the reader did not ask for.
-     NOT a scroll container at rest: wall 03 fits its box, and a zero-extent
-     scroller latches real wheel gestures (measured on quantum, 70db382),
-     freezing the page under the cursor. fade() grants .pw-scroll only while
-     the selected wall actually overflows. No overscroll-behavior: contain on
+     NOT a scroll container at rest: since 2026-08-18 every wall fits its box
+     (see the --pw-h note), and a zero-extent scroller latches real wheel
+     gestures (measured on quantum, 70db382), freezing the page under the
+     cursor. fade() grants .pw-scroll only while the selected wall actually
+     overflows, which at standard widths is never; it is a fallback for
+     zoom, odd widths, or future copy. No overscroll-behavior: contain on
      the scrollable state either: a fresh gesture over a limit-pinned scroller
      latches to it and contain blocks the chain, freezing one gesture later;
      default chaining hands the remainder to the page. */
@@ -2914,10 +2921,10 @@
 // Touch: tap picks, nothing sticky. Reduced motion: settled
 // states, no lift transition (CSS). A location hash that targets
 // an element inside a hidden wall surfaces that wall first.
-// The panel is a fixed-height scroller (the section holds one
-// viewport, see the CSS fit note): switching walls returns it to
-// the top, and the shell's fade shows only while more copy sits
-// below the fold.
+// The panel is fixed-height and sized to the tallest wall (see the
+// CSS --pw-h note); it only becomes a scroller if a wall outgrows
+// that budget. Switching walls returns it to the top, and the
+// shell's fade shows only while more copy sits below the fold.
 // ============================================================
 (function(){
   var root = document.getElementById('wall-pedestals');
