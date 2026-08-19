@@ -909,6 +909,57 @@
   .th-stark-doc{margin:26px auto 0;width:min(300px,86%);}
 }
 
+/* account abstraction demo (th-aa): the signature verifier module swaps
+   inside the account contract while everything else visibly stays put.
+   The three immobilities are the argument: the address, the other two
+   rows, and everything outside the container. Coral and emerald match
+   section 02's vulnerable/safe taxonomy on purpose; the container and
+   labels stay in the section blue. */
+.th-aa{font-family:'IBM Plex Mono',monospace;}
+.th-aa-addr{display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:10px 14px;border:1px solid var(--th-hair);border-radius:10px;font-size:12px;color:#F5F2EC;}
+.th-aa-addrlab{font-size:9px;letter-spacing:.14em;color:rgba(245,242,236,.5);transition:color .3s ease;}
+.th-aa-addrlab.ok{color:var(--th-green);}
+.th-aa-contract{margin-top:12px;border:1px solid rgba(61,169,252,.4);border-radius:12px;padding:12px;position:relative;
+  background:rgba(61,169,252,.04);}
+.th-aa-clabel{display:block;font-size:9px;letter-spacing:.16em;color:#3DA9FC;margin:0 0 10px 2px;}
+.th-aa-row{display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:10px 12px;border:1px solid var(--th-hair);border-radius:8px;font-size:11px;}
+.th-aa-row + .th-aa-row,.th-aa-slot + .th-aa-row{margin-top:8px;}
+.th-aa-row .nm{color:rgba(245,242,236,.75);}
+.th-aa-row .tag{font-size:8px;letter-spacing:.12em;white-space:nowrap;}
+.th-aa-row.dim{opacity:.55;}
+.th-aa-row.dim .tag{color:rgba(245,242,236,.45);}
+/* the swappable slot: a two-card track slides one module out and the
+   other in; overflow hidden keeps the motion inside the contract */
+.th-aa-slot{overflow:hidden;border-radius:8px;}
+.th-aa-track{display:flex;width:200%;transition:transform .5s cubic-bezier(.22,1,.36,1);}
+.th-aa-track.swapped{transform:translateX(-50%);}
+.th-aa-card{width:50%;flex:none;display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:10px 12px;border-radius:8px;border:1px solid;font-size:11px;}
+.th-aa-card.bad{color:var(--th-red);border-color:color-mix(in srgb,var(--th-red) 45%,transparent);
+  background:color-mix(in srgb,var(--th-red) 8%,transparent);}
+.th-aa-card.ok{color:var(--th-green);border-color:color-mix(in srgb,var(--th-green) 45%,transparent);
+  background:color-mix(in srgb,var(--th-green) 8%,transparent);}
+.th-aa-card .who{font-size:8px;letter-spacing:.12em;opacity:.75;display:block;margin-bottom:3px;}
+.th-aa-card .tag{font-size:8px;letter-spacing:.12em;white-space:nowrap;}
+.th-aa-tx{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:12px;
+  font-size:10px;letter-spacing:.14em;color:rgba(245,242,236,.6);}
+.th-aa-tx b{font-weight:500;color:rgba(245,242,236,.75);}
+#aaState.run{color:#3DA9FC;}
+#aaState.ok{color:var(--th-green);}
+.th-aa-btn{margin-top:12px;width:100%;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:#3DA9FC;background:rgba(61,169,252,.07);
+  border:1px solid rgba(61,169,252,.35);border-radius:9px;padding:11px 16px;cursor:pointer;
+  transition:background .2s ease,border-color .2s ease;}
+.th-aa-btn:hover{background:rgba(61,169,252,.14);}
+.th-aa-btn:focus-visible{outline:2px solid #3DA9FC;outline-offset:3px;}
+.th-aa-btn:disabled{opacity:.55;cursor:default;}
+@media (prefers-reduced-motion: reduce){
+  .th-aa-track{transition:none;}
+  .th-aa-addrlab{transition:none;}
+}
+
 /* === premium sub-patterns (step 2): compare / stathero / note / feature / video / close === */
 .th-pm-sec{--th-red:#F2787A;--th-green:#36C692;}
 .th-pm-compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:40px;}
@@ -1616,6 +1667,8 @@ if (window.thStickyRail) {
         <h4 id="migration-is-one-transaction-not-a">Migration is <span class="th-st-a">one transaction,</span> not a hard fork.</h4>
         <span class="th-st-chip q">Native account abstraction</span>
       </div>
+      <div class="th-stark-duo">
+        <div>
       <p>On Starknet, signature logic lives in the account contract, not in the protocol. Upgrading a wallet to post-quantum signatures is a <strong>single transaction by the user</strong>: no protocol change, no new address format, no network-wide coordination.</p>
       <div class="th-st-vs">
         <div class="th-st-col them">
@@ -1633,6 +1686,25 @@ if (window.thStickyRail) {
             <li>Same network, same wallet interface, self-custody intact</li>
             <li>One-transaction migration per user</li>
           </ul>
+        </div>
+      </div>
+        </div>
+        <div class="th-aa" role="group" aria-label="Demonstration: upgrading the signature verifier in one transaction">
+          <p class="qi-sr" aria-live="polite" id="aaAnnounce"></p>
+          <div class="th-aa-addr"><span>0x04c2...9e1f</span><span class="th-aa-addrlab" id="aaAddrLab">ADDRESS</span></div>
+          <div class="th-aa-contract">
+            <span class="th-aa-clabel">ACCOUNT CONTRACT</span>
+            <div class="th-aa-slot">
+              <div class="th-aa-track" id="aaTrack">
+                <div class="th-aa-card bad"><span><span class="who">SIGNATURE VERIFIER</span>ECDSA</span><span class="tag">QUANTUM-VULNERABLE</span></div>
+                <div class="th-aa-card ok"><span><span class="who">SIGNATURE VERIFIER</span>FALCON-512</span><span class="tag">POST-QUANTUM</span></div>
+              </div>
+            </div>
+            <div class="th-aa-row dim"><span class="nm">Nonce and replay logic</span><span class="tag">UNCHANGED</span></div>
+            <div class="th-aa-row dim"><span class="nm">Execution and calldata</span><span class="tag">UNCHANGED</span></div>
+          </div>
+          <div class="th-aa-tx"><b>1 TRANSACTION</b><span id="aaState">idle</span></div>
+          <button type="button" class="th-aa-btn" id="aaSend">Send the transaction</button>
         </div>
       </div>
     </div>
@@ -2023,6 +2095,54 @@ body.page-quantum{overflow-x:clip;}
 // pauses any player whose chapter leaves the stage, so audio cannot run
 // on from a hidden panel.
 initQw(document.getElementById('readiness-rail'));
+// account abstraction demo: one control, one polite announcement. The
+// swap slides the verifier module; the address row, the two dimmed rows
+// and everything outside the contract hold still, which is the argument.
+// Reduced motion: no slide, the settled post-swap state shows at rest
+// and the button toggles the two states instantly.
+(function(){
+  var track = document.getElementById('aaTrack');
+  if (!track) return;
+  var btn = document.getElementById('aaSend'), state = document.getElementById('aaState');
+  var addr = document.getElementById('aaAddrLab'), say = document.getElementById('aaAnnounce');
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  var busy = false, done = false;
+  function settle(){
+    track.classList.add('swapped');
+    state.textContent = 'done';
+    state.className = 'ok';
+    addr.textContent = 'ADDRESS, UNCHANGED';
+    addr.classList.add('ok');
+    btn.textContent = 'Replay';
+    done = true;
+  }
+  function rest(){
+    track.classList.remove('swapped');
+    state.textContent = 'idle';
+    state.className = '';
+    addr.textContent = 'ADDRESS';
+    addr.classList.remove('ok');
+    btn.textContent = 'Send the transaction';
+    done = false;
+  }
+  if (reduce.matches) settle();
+  btn.addEventListener('click', function(){
+    if (busy) return;
+    if (done) { rest(); if (reduce.matches) return; }
+    if (reduce.matches) { settle(); say.textContent = 'Signature verifier upgraded to Falcon-512. Address unchanged.'; return; }
+    busy = true;
+    state.textContent = 'executing';
+    state.className = 'run';
+    setTimeout(function(){
+      track.classList.add('swapped');
+      setTimeout(function(){
+        settle();
+        say.textContent = 'Signature verifier upgraded to Falcon-512. Address unchanged.';
+        busy = false;
+      }, 550);
+    }, 450);
+  });
+})();
 initQw(document.getElementById('qvVideos'));
 (function(){
   var root = document.getElementById('qvVideos');
