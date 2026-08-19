@@ -3042,8 +3042,16 @@ var VIDEOS = [
   if(window.__thTk)return;window.__thTk=true;
   var cv=document.getElementById('thTkCv');if(!cv)return;var ctx=cv.getContext('2d');
   var BASE_W=1000,BASE_H=460,W=BASE_W,H=BASE_H,padL=58,padR=34,padT=30,padB=46;
-  var ink='#F5F2EC',muted='#8b909c',q='#3DA9FC',danger='#E5484D',hair='rgba(245,242,236,.07)';
+  /* compact mode below 560 CSS px: the label set that reads at panel
+     width collides at phone width, so paddings and type scale down */
+  var CPT=false,F={axis:12,tick:11,legend:10,qday:12,after:11,line:10};
+  var muted='#8b909c',q='#3DA9FC',danger='#E5484D',em='#36C692',hair='rgba(245,242,236,.07)';
+  var GREY='#6E7480';           /* what the track record is worth after the fall */
+  var CRASH=0.78;               /* Q-day inside the frame; the tail is the point */
+  var SEC=0.20;                 /* real security level: arbitrary by design, flat,
+                                   labelled, off every gridline, claiming nothing */
   var Y0=2016,Y1=2029;
+  var reduce=window.matchMedia('(prefers-reduced-motion: reduce)');
   var statusEl=document.getElementById('thTkStatus'),confEl=document.getElementById('thTkConf'),pill=document.getElementById('thTkPill');
   function fitCanvas(){
     var rect=cv.getBoundingClientRect();
@@ -3055,51 +3063,125 @@ var VIDEOS = [
     cv.height=Math.round(cssH*dpr);
     W=cssW;H=cssH;
     ctx.setTransform(dpr,0,0,dpr,0,0);
+    CPT=W<560;
+    if(CPT){padL=36;padR=12;padT=24;padB=34;F={axis:8,tick:8,legend:8,qday:10,after:8,line:8};}
+    else{padL=58;padR=34;padT=30;padB=46;F={axis:12,tick:11,legend:10,qday:12,after:11,line:10};}
   }
-  var pts=[],crashFrac=0;
-  function build(){pts=[];var n=260,v=0.12;
-    for(var i=0;i<=n;i++){var x=i/n;var target=0.12+x*0.80;v+=(target-v)*0.06+(Math.random()-0.5)*0.012;if(v<0.05)v=0.05;pts.push({x:x,y:v});}
-    crashFrac=0.94+Math.random()*0.05;}
+  var pts=[];
+  function build(){pts=[];var n=260,jit=0;
+    for(var i=0;i<=n;i++){var x=i/n;
+      if(x>=CRASH){pts.push({x:x,y:0});continue;}
+      /* confidence compounds: a power curve, not a line, with smoothed
+         jitter so it reads as a series rather than a formula */
+      var base=0.08+0.86*Math.pow(x/CRASH,1.9);
+      jit+=((Math.random()-0.5)*0.016-jit*0.10);
+      var v=base+jit;if(v<0.04)v=0.04;if(v>0.97)v=0.97;
+      pts.push({x:x,y:v});}}
   build();
   function px(x){return padL+x*(W-padL-padR);}
   function py(y){return (H-padB)-y*(H-padT-padB);}
+  function lerp(a,b,t){return Math.round(a+(b-a)*t);}
+  function mix(c1,c2,t){return 'rgb('+lerp(c1[0],c2[0],t)+','+lerp(c1[1],c2[1],t)+','+lerp(c1[2],c2[2],t)+')';}
+  var QRGB=[61,169,252],GRGB=[110,116,128];
   function grid(){ctx.clearRect(0,0,W,H);
     ctx.strokeStyle=hair;ctx.lineWidth=1;
     for(var g=0;g<=4;g++){var yy=py(g/4);ctx.beginPath();ctx.moveTo(padL,yy);ctx.lineTo(W-padR,yy);ctx.stroke();}
     ctx.strokeStyle='rgba(245,242,236,.18)';ctx.lineWidth=1.5;
     ctx.beginPath();ctx.moveTo(padL,padT);ctx.lineTo(padL,H-padB);ctx.lineTo(W-padR,H-padB);ctx.stroke();
-    ctx.save();ctx.translate(16,H/2);ctx.rotate(-Math.PI/2);ctx.fillStyle=muted;ctx.font="500 12px 'IBM Plex Mono',monospace";ctx.textAlign='center';ctx.fillText('PERCEIVED SECURITY',0,0);ctx.restore();
-    ctx.fillStyle=muted;ctx.font="500 11px 'IBM Plex Mono',monospace";ctx.textAlign='center';
+    ctx.save();ctx.translate(16,H/2);ctx.rotate(-Math.PI/2);ctx.fillStyle=muted;ctx.font='500 '+F.axis+"px 'IBM Plex Mono',monospace";ctx.textAlign='center';ctx.fillText('CONFIDENCE',0,0);ctx.restore();
+    /* the time axis lives left of Q-day; the AFTER zone is timeless */
+    ctx.fillStyle=muted;ctx.font='500 '+F.tick+"px 'IBM Plex Mono',monospace";ctx.textAlign='center';
     var years=[2016,2020,2024,2029];
-    for(var i=0;i<years.length;i++){var fx=(years[i]-Y0)/(Y1-Y0);ctx.fillText(years[i],px(fx),H-padB+20);}}
-  function drawUpTo(p){grid();var crashIdx=null;
-    for(var i=0;i<pts.length;i++){if(pts[i].x>=crashFrac){crashIdx=i;break;}}
-    if(crashIdx===null)crashIdx=pts.length-1;
-    var revealX=p,lastDrawn=null;
-    ctx.save();ctx.shadowColor=q;ctx.shadowBlur=10;ctx.strokeStyle=q;ctx.lineWidth=2.4;ctx.lineJoin='round';ctx.lineCap='round';ctx.beginPath();var started=false;
-    for(var i=0;i<=crashIdx;i++){if(pts[i].x>revealX)break;var X=px(pts[i].x),Yp=py(pts[i].y);if(!started){ctx.moveTo(X,Yp);started=true;}else ctx.lineTo(X,Yp);lastDrawn=pts[i];}
-    ctx.stroke();ctx.restore();
-    if(lastDrawn&&revealX<crashFrac){ctx.save();ctx.shadowColor=q;ctx.shadowBlur=14;ctx.fillStyle=q;ctx.beginPath();ctx.arc(px(lastDrawn.x),py(lastDrawn.y),4.5,0,7);ctx.fill();ctx.restore();}
-    if(revealX>=crashFrac){var cxp=px(pts[crashIdx].x),cyTop=py(pts[crashIdx].y),cyBot=py(0);
-      ctx.save();ctx.shadowColor=danger;ctx.shadowBlur=16;ctx.strokeStyle=danger;ctx.lineWidth=2.6;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(cxp,cyTop);ctx.lineTo(cxp,cyBot);ctx.stroke();ctx.restore();
-      ctx.save();ctx.shadowColor=danger;ctx.shadowBlur=14;ctx.fillStyle=danger;ctx.beginPath();ctx.arc(cxp,cyBot,5,0,7);ctx.fill();ctx.restore();
-      ctx.fillStyle=danger;ctx.font="600 12px 'IBM Plex Mono',monospace";ctx.textAlign='right';ctx.fillText('Q-DAY',cxp-12,cyTop-26);
-      ctx.fillStyle=muted;ctx.font="500 10px 'IBM Plex Mono',monospace";ctx.fillText('A RANDOM DAY IN 2029',cxp-12,cyTop-12);
-      ctx.strokeStyle=danger;ctx.lineWidth=1.6;ctx.beginPath();ctx.moveTo(cxp-10,cyTop-8);ctx.lineTo(cxp-2,cyTop-2);ctx.stroke();}}
+    for(var i=0;i<years.length;i++){var fx=(years[i]-Y0)/(Y1-Y0)*CRASH;ctx.fillText(years[i],px(fx),H-padB+(CPT?14:20));}
+    ctx.fillStyle='rgba(139,144,156,.75)';ctx.font='500 '+F.after+"px 'IBM Plex Mono',monospace";
+    ctx.fillText('AFTER',px(CRASH+(1-CRASH)/2),padT+(CPT?10:16));
+    /* legend: both lines named, top left, in the chart's own tiers */
+    ctx.textAlign='left';ctx.font='500 '+F.legend+"px 'IBM Plex Mono',monospace";
+    var lgY1=padT+(CPT?8:12),lgY2=padT+(CPT?21:30),lgX=padL+(CPT?8:12),lgW=CPT?14:22;
+    ctx.strokeStyle=q;ctx.lineWidth=2.4;ctx.beginPath();ctx.moveTo(lgX,lgY1);ctx.lineTo(lgX+lgW,lgY1);ctx.stroke();
+    ctx.fillStyle=muted;ctx.fillText('PERCEIVED CONFIDENCE',lgX+lgW+8,lgY1+3);
+    ctx.strokeStyle=em;ctx.lineWidth=1.8;ctx.setLineDash([5,4]);ctx.beginPath();ctx.moveTo(lgX,lgY2);ctx.lineTo(lgX+lgW,lgY2);ctx.stroke();ctx.setLineDash([]);
+    ctx.fillText('REAL SECURITY',lgX+lgW+8,lgY2+3);
+  }
+  /* gp: 0 = live blue, 1 = the past greyed out (what it proved: nothing) */
+  function drawCurve(p,gp){
+    var col=gp>0?mix(QRGB,GRGB,gp):q;
+    var glowA=0.22*(1-gp);
+    ctx.lineJoin='round';ctx.lineCap='round';
+    /* glow as layered strokes, never shadowBlur on a full-length path */
+    for(var pass=0;pass<2;pass++){
+      if(pass===0&&glowA<=0.01)continue;
+      ctx.strokeStyle=pass===0?'rgba(61,169,252,'+glowA+')':col;
+      ctx.lineWidth=pass===0?6.5:2.4;
+      ctx.beginPath();var started=false,lastDrawn=null;
+      for(var i=0;i<pts.length;i++){if(pts[i].x>=CRASH)break;if(pts[i].x>p)break;
+        var X=px(pts[i].x),Yp=py(pts[i].y);
+        if(!started){ctx.moveTo(X,Yp);started=true;}else ctx.lineTo(X,Yp);lastDrawn=pts[i];}
+      if(started)ctx.stroke();
+    }
+    return (function(){for(var i=pts.length-1;i>=0;i--){if(pts[i].x<=p&&pts[i].x<CRASH)return pts[i];}return null;})();
+  }
+  function drawFallAndTail(p,gp){
+    if(p<CRASH)return;
+    var cxp=px(CRASH),top=null;
+    for(var i=0;i<pts.length;i++){if(pts[i].x>=CRASH){top=py(pts[i-1]?pts[i-1].y:0);break;}}
+    /* the fall */
+    ctx.strokeStyle=danger;ctx.lineWidth=2.6;ctx.lineCap='round';
+    ctx.beginPath();ctx.moveTo(cxp,top);ctx.lineTo(cxp,py(0));ctx.stroke();
+    ctx.fillStyle=danger;ctx.beginPath();ctx.arc(cxp,py(0),4.5,0,7);ctx.fill();
+    ctx.fillStyle=danger;ctx.font='600 '+F.qday+"px 'IBM Plex Mono',monospace";ctx.textAlign='right';
+    ctx.fillText('Q-DAY',cxp-10,top-12);
+    /* the flat tail: not the drop, the nothing after it */
+    var tcol=gp>0?mix(QRGB,GRGB,gp):q;
+    ctx.strokeStyle=tcol;ctx.lineWidth=2.4;
+    ctx.beginPath();ctx.moveTo(cxp,py(0));ctx.lineTo(px(1),py(0));ctx.stroke();
+  }
+  function drawSecurity(gp){
+    /* flat, dashed, labelled, and silent about its level on purpose */
+    var a=1-gp*0.45;
+    ctx.save();ctx.globalAlpha=a;
+    ctx.strokeStyle=em;ctx.lineWidth=1.8;ctx.setLineDash([5,4]);
+    ctx.beginPath();ctx.moveTo(px(0),py(SEC));ctx.lineTo(px(CRASH),py(SEC));ctx.stroke();
+    ctx.beginPath();ctx.moveTo(px(CRASH),py(SEC));ctx.lineTo(px(CRASH),py(0));ctx.stroke();
+    ctx.beginPath();ctx.moveTo(px(CRASH),py(0)-3);ctx.lineTo(px(1),py(0)-3);ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle=em;ctx.font='500 '+F.line+"px 'IBM Plex Mono',monospace";ctx.textAlign='left';
+    ctx.fillText('REAL SECURITY',px(0)+6,py(SEC)-(CPT?5:8));
+    ctx.restore();
+  }
+  function drawUpTo(p,gp){
+    grid();
+    drawSecurity(gp||0);
+    var last=drawCurve(p,gp||0);
+    if(p<CRASH&&last){ctx.fillStyle=q;ctx.beginPath();ctx.arc(px(last.x),py(last.y),4.5,0,7);ctx.fill();}
+    drawFallAndTail(p,gp||0);
+  }
   var raf=null,running=false;
-  function reset(){if(raf)cancelAnimationFrame(raf);raf=null;running=false;statusEl.textContent='secure';pill.classList.remove('broken');confEl.textContent='0%';drawUpTo(0);}
-  function play(){if(running)return;running=true;build();statusEl.textContent='secure';pill.classList.remove('broken');
-    var t0=performance.now(),dur=3600,broke=false;
-    function frame(now){var p=Math.max(0,Math.min(1,(now-t0)/dur));drawUpTo(p);
-      if(p<crashFrac){var idx=Math.min(pts.length-1,Math.floor((p/crashFrac)*pts.length));confEl.textContent=Math.round(pts[idx].y*100)+'%';}
+  function finalState(){drawUpTo(1,1);statusEl.textContent='broken';pill.classList.add('broken');confEl.textContent='0%';}
+  function reset(){if(raf)cancelAnimationFrame(raf);raf=null;running=false;
+    statusEl.textContent='secure';pill.classList.remove('broken');confEl.textContent='0%';
+    if(reduce.matches){finalState();return;}
+    drawUpTo(0,0);}
+  function play(){if(running)return;running=true;build();
+    if(reduce.matches){finalState();running=false;return;}
+    statusEl.textContent='secure';pill.classList.remove('broken');
+    /* rise to CRASH over ~2.8s, then the fall, then ~0.5s of grey-out:
+       slow enough to read as the past being revalued, not a glitch */
+    var t0=performance.now(),dur=3600,GREYD=500,broke=false;
+    function frame(now){
+      var p=Math.max(0,Math.min(1,(now-t0)/dur));           /* f0346ce clamp */
+      var gp=0;
+      if(p>=CRASH){gp=Math.max(0,Math.min(1,((now-t0)-dur*CRASH)/GREYD));}
+      drawUpTo(p,gp);
+      if(p<CRASH){var idx=Math.min(pts.length-1,Math.floor((p/CRASH)*pts.length));confEl.textContent=Math.round(pts[idx].y*100)+'%';}
       else if(!broke){broke=true;statusEl.textContent='broken';pill.classList.add('broken');confEl.textContent='0%';}
-      if(p<1)raf=requestAnimationFrame(frame);else running=false;}
+      if(p<1||gp<1)raf=requestAnimationFrame(frame);else running=false;}
     raf=requestAnimationFrame(frame);}
-  function init(){fitCanvas();drawUpTo(0);}
+  function init(){fitCanvas();if(reduce.matches){finalState();}else{drawUpTo(0,0);}}
   if(document.readyState==='complete')requestAnimationFrame(init);
   else window.addEventListener('load',function(){requestAnimationFrame(init);});
   requestAnimationFrame(init);
-  window.addEventListener('resize',function(){fitCanvas();drawUpTo(0);});
+  window.addEventListener('resize',function(){fitCanvas();if(reduce.matches){finalState();}else{drawUpTo(0,0);}});
   var playBtn=document.getElementById('thTkPlay'),resetBtn=document.getElementById('thTkReset');
   if(playBtn)playBtn.onclick=play;
   if(resetBtn)resetBtn.onclick=function(){reset();play();};
