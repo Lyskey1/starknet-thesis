@@ -220,6 +220,12 @@
     /* privacy: wall pedestals panel shows one wall at a time */
     const pw = target.closest && target.closest('.pw-wall');
     if (pw && !pw.classList.contains('is-on')) did = clickIf(document.querySelectorAll('#wall-pedestals .pw-ped')[+pw.dataset.wall]) || did;
+    /* quantum: section 02's gated beats render one at a time and rows
+       beyond the furthest reached are disabled, so clicking the row
+       cannot open them; the gate exposes an explicit-intent hook that
+       unlocks up to the target beat, same contract as hash arrival. */
+    const qb = target.closest && target.closest('.qi-beat');
+    if (qb && !qb.classList.contains('is-open') && window.__qiOpen) { window.__qiOpen(+qb.dataset.beat); did = true; }
     /* quantum: qw pedestal devices (catalyst chapters, readiness rail)
        show one panel at a time; the ped that opens it lives in the same
        device root, so scope the lookup there */
