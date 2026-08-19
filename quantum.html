@@ -2913,7 +2913,7 @@ var VIDEOS = [
   function reset(){if(raf)cancelAnimationFrame(raf);raf=null;running=false;statusEl.textContent='secure';pill.classList.remove('broken');confEl.textContent='0%';drawUpTo(0);}
   function play(){if(running)return;running=true;build();statusEl.textContent='secure';pill.classList.remove('broken');
     var t0=performance.now(),dur=3600,broke=false;
-    function frame(now){var p=Math.min(1,(now-t0)/dur);drawUpTo(p);
+    function frame(now){var p=Math.max(0,Math.min(1,(now-t0)/dur));drawUpTo(p);
       if(p<crashFrac){var idx=Math.min(pts.length-1,Math.floor((p/crashFrac)*pts.length));confEl.textContent=Math.round(pts[idx].y*100)+'%';}
       else if(!broke){broke=true;statusEl.textContent='broken';pill.classList.add('broken');confEl.textContent='0%';}
       if(p<1)raf=requestAnimationFrame(frame);else running=false;}
