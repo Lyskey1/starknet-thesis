@@ -886,6 +886,16 @@
 }
 
 
+/* the STARK paper sheet in section 03 reuses the executive order
+   treatment wholesale (same class: .05 surface, page margins, mono,
+   footer cite), so a reader recognises "a document speaking" across
+   sections. The title line takes weight: the title itself carries
+   post-quantum secure, which is the chapter's whole claim. */
+.th-stark-sheet{margin-top:22px;}
+.th-stark-sheet .t{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;letter-spacing:.02em;line-height:1.6;color:rgba(245,242,236,.88);margin:0 0 14px;}
+.th-stark-sheet .t a{color:inherit;text-decoration:underline;text-decoration-color:rgba(245,242,236,.28);text-underline-offset:3px;}
+.th-stark-sheet .t a:hover{text-decoration-color:var(--th-q);}
+
 /* === premium sub-patterns (step 2): compare / stathero / note / feature / video / close === */
 .th-pm-sec{--th-red:#F2787A;--th-green:#36C692;}
 .th-pm-compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:40px;}
@@ -1562,7 +1572,10 @@ if (window.thStickyRail) {
         <span class="qw-plinth"><span class="qw-label"><b>03</b>LIVE TODAY</span></span>
       </button>
     </div>
-    <div class="qw-shell" style="--qw-h:394px">
+    <!-- reserve re-measured 2026-08-21 with the STARK paper sheet in
+         chapter 01: needs 415px wide, 436px at the 981px worst; 464
+         clears both with 26px+ margin -->
+    <div class="qw-shell" style="--qw-h:464px">
     <div class="qw-panel" id="qw-panel-b" role="tabpanel" aria-live="polite" tabindex="0">
 
     <article class="qw-ch is-on" data-ch="0">
@@ -1572,6 +1585,15 @@ if (window.thStickyRail) {
         <span class="th-st-chip q">By design</span>
       </div>
       <p>STARKs rely on <strong>hash functions, not elliptic curves</strong>, which is why Shor's algorithm has nothing to attack. It comes from the <a href="https://eprint.iacr.org/2018/046" target="_blank" rel="noopener noreferrer">original STARK paper</a> co-authored by StarkWare's founders in 2018. The entire proving layer, the foundation every other layer rests on and the most expensive part to change, never needs to migrate.</p>
+
+      <!-- the primary source: title as evidence, one verbatim sentence.
+           The excerpt keeps the paper's own punctuation (its em dashes
+           and bracketed references); the site's no-em-dash rule governs
+           our prose, not quoted documents. -->
+      <blockquote class="th-eo-quote th-stark-sheet">
+        <p class="t"><a href="https://eprint.iacr.org/2018/046" target="_blank" rel="noopener noreferrer">Scalable, transparent, and post-quantum secure computational integrity</a></p>
+        &#8220;The computational assumptions on which the security of these constructions is founded&#8212;the existence of collision-resistant hash functions [74] for interactive solutions, and common access to a random function (&#8220;the random oracle model&#8221; [50]) for non-interactive ones [85]&#8212;are not known to be susceptible to attacks by large-scale quantum computers; we call such solutions post-quantum secure.&#8221;<cite>Eli Ben-Sasson, Iddo Bentov, Yinon Horesh, Michael Riabzev &middot; IACR ePrint 2018/046 &middot; Sec. 1</cite>
+      </blockquote>
     </div>
     </article>
 
