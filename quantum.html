@@ -581,13 +581,27 @@
 .th-eo-label{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--th-q);}
 .th-eo-panel h4{font-family:'Archivo',sans-serif;font-weight:700;font-size:18px;line-height:1.25;color:var(--th-ink);margin:0;transition:color .2s;}
 .th-eo-panel:hover h4{color:var(--th-q);}
-/* the order's own words: verbatim Federal Register text, set in mono
-   behind a hairline rule so it reads as the document speaking, not the
-   site's prose. No document imagery, no seal: the text is the artifact. */
-.th-eo-quote{margin:4px 0 0;padding:2px 0 2px 16px;border-left:2px solid var(--th-hair);
-  font-family:'IBM Plex Mono',monospace;font-size:12px;line-height:1.75;color:rgba(245,242,236,.66);}
-.th-eo-quote cite{display:block;margin-top:10px;font-style:normal;font-size:10px;letter-spacing:.14em;
-  text-transform:uppercase;color:rgba(245,242,236,.38);}
+/* the order's own words: verbatim Federal Register text presented as a
+   generic sheet resting on the card. No seal, no letterhead, no document
+   header: the paper is generic, the words are the real thing. Sheet
+   surface rgba(255,255,255,.05) flat against the card's .022 to .006
+   gradient, a faint edge, and a soft shadow below so it sits above the
+   card plane rather than reading recessed. Interior margins (26px 28px)
+   run wider than the card's own 22px padding, the way a printed page
+   holds its margins. Both sheets flex to the grid-equalized card height
+   and the citation sits at the foot like a page footer, so the shorter
+   excerpt gains page whitespace, not a shorter sheet. */
+.th-eo-quote{margin:8px 0 0;padding:26px 28px 20px;flex:1;display:flex;flex-direction:column;
+  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);border-radius:4px;
+  box-shadow:0 10px 24px -12px rgba(0,0,0,.75),0 3px 8px -4px rgba(0,0,0,.5);
+  font-family:'IBM Plex Mono',monospace;font-size:12px;line-height:1.75;color:rgba(245,242,236,.72);}
+.th-eo-quote cite{display:block;margin-top:auto;padding-top:18px;font-style:normal;font-size:10px;
+  letter-spacing:.14em;text-transform:uppercase;color:rgba(245,242,236,.38);}
+@media(max-width:480px){
+  /* the page margins would squeeze a 375px screen to a very narrow
+     column; the sheet keeps its surface and shadow, the margins tighten */
+  .th-eo-quote{padding:18px 16px 14px;}
+}
 @media(max-width:880px){.th-eo-panels{grid-template-columns:1fr;}}
 .th-yr-panels{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:26px;}
 .th-yr-panel{position:relative;overflow:hidden;display:flex;flex-direction:column;padding:22px 22px 24px;border-radius:12px;border:1px solid var(--th-hair);background:linear-gradient(180deg,rgba(255,255,255,.022),rgba(255,255,255,.006));transition:transform .28s cubic-bezier(.2,.7,.2,1),border-color .28s,box-shadow .28s;cursor:pointer;text-decoration:none;color:inherit;}
