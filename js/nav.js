@@ -38,8 +38,14 @@
   top.appendChild(close);
   ov.appendChild(top);
 
-  var list = document.createElement('nav');
+  /* div[role=navigation], not <nav>: the bare nav element is claimed by
+     the site chrome's element selector (position:fixed, paddings,
+     translucent bar, z-100), and this list wore that rule by accident;
+     .nav-ov-links now declares its own geometry. The role carries
+     identical landmark semantics with zero element-selector exposure. */
+  var list = document.createElement('div');
   list.className = 'nav-ov-links';
+  list.setAttribute('role', 'navigation');
   list.setAttribute('aria-label', 'Site');
   if (links) {
     [].forEach.call(links.querySelectorAll('a'), function (a) {
