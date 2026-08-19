@@ -610,9 +610,15 @@
    because chapter 1 holds a 3-column card grid that a side panel would
    fold to 2 columns and outgrow the reserve). One chapter in flow at a
    time; the panel is a fixed-height scroller so switching never reflows
-   the page below. --qw-h is measured against chapter 1 (the tallest) at
-   1440 and re-verified in the commit run. Selection color is the
-   section's semantic blue (--th-q), not the page accent. */
+   the page below. --qw-h is measured against the tallest chapter and
+   re-verified in the commit run. Since the four-chapter recut of
+   2026-08-19 the tallest is chapter 01 (six cards): 862px at 1240-1440
+   (the container is width-capped, so heights are flat across that range)
+   growing to 940px at 981, the last width before the shell goes auto.
+   Hence the two-step reserve on #catalyst-chapters below: 890px base,
+   968px under 1241px, 28px of margin over the measured worst in each
+   regime. Selection color is the section's semantic blue (--th-q), not
+   the page accent. */
 .qw{margin-top:34px;}
 .qw-rail{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;max-width:860px;}
 .qw-ped{position:relative;display:grid;grid-template-rows:1fr auto;justify-items:center;
@@ -693,6 +699,28 @@
 #qvVideos .qw-rail{grid-template-columns:repeat(4,minmax(0,1fr));max-width:1040px;}
 #qvVideos .qw-ch .th-pm-vcard{max-width:660px;margin:0 auto;}
 @media(max-width:980px){#qvVideos .qw-rail{grid-template-columns:repeat(4,minmax(0,1fr));}}
+/* the catalyst rail runs four pedestals since the private-capital chapter
+   (2026-08-19); scoped so the readiness rail keeps the base three-across */
+#catalyst-chapters .qw-rail{grid-template-columns:repeat(4,minmax(0,1fr));max-width:1148px;}
+@media(max-width:980px){#catalyst-chapters .qw-rail{grid-template-columns:repeat(4,minmax(0,1fr));}}
+/* reserve: see the --qw-h note above the shell rules */
+#catalyst-chapters .qw-shell{--qw-h:890px;}
+@media(max-width:1240px){#catalyst-chapters .qw-shell{--qw-h:968px;}}
+/* four 8px labels edge-to-edge read as one strip at phone widths
+   (measured 2px of plinth margin at 375), so the rail folds two-by-two */
+@media(max-width:480px){#catalyst-chapters .qw-rail{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 10px;}}
+/* company marks: editorial identification only. A mark is never recolored,
+   faded, or distorted (the Starknet-mark register lesson): a small light
+   plate does the quieting instead, so original brand color sits on its own
+   ground rather than fighting the dark hairline composition. Cards without
+   a mark still carry the top row so the six-card grid keeps one rhythm. */
+.th-pm-toprow{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:28px;}
+.th-logo-seat{display:inline-flex;align-items:center;height:28px;padding:0 10px;border-radius:8px;
+  background:rgba(245,242,236,.94);border:1px solid rgba(245,242,236,.3);flex:none;}
+.th-logo-seat img{height:14px;width:auto;display:block;}
+/* the roadmap card sits alone under the year trio, capped so a single
+   card does not balloon to panel width */
+.th-pm-grid--one{grid-template-columns:minmax(0,620px);margin-top:16px;}
 
 /* === premium sub-patterns (step 2): compare / stathero / note / feature / video / close === */
 .th-pm-sec{--th-red:#F2787A;--th-green:#36C692;}
@@ -841,15 +869,19 @@ a.qg-card:focus-visible{outline:2px solid var(--qa);outline-offset:3px;}
     <div class="qw-rail" role="tablist" aria-label="The catalyst, three chapters">
       <button class="qw-ped" type="button" role="tab" data-ch="0" aria-selected="true" aria-controls="qw-panel" tabindex="0">
         <span class="qw-obj" aria-hidden="true"><svg viewBox="0 0 96 84" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M44 24 A26 26 0 1 0 70 50 L44 50 Z"/><path d="M50 18 A26 26 0 0 1 76 44 L50 44 Z"/></svg></span>
-        <span class="qw-plinth"><span class="qw-label"><b>01</b>STATE EQUITY</span></span>
+        <span class="qw-plinth"><span class="qw-label"><b>01</b>SOVEREIGN MOVES</span></span>
       </button>
       <button class="qw-ped" type="button" role="tab" data-ch="1" aria-selected="false" aria-controls="qw-panel" tabindex="-1">
         <span class="qw-obj" aria-hidden="true"><svg viewBox="0 0 96 84" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="28" y="12" width="40" height="56" rx="3"/><path d="M36 26h24M36 36h24M36 46h13"/><circle cx="58" cy="54" r="7"/><path d="M58 61v9"/></svg></span>
         <span class="qw-plinth"><span class="qw-label"><b>02</b>EXECUTIVE ORDERS</span></span>
       </button>
       <button class="qw-ped" type="button" role="tab" data-ch="2" aria-selected="false" aria-controls="qw-panel" tabindex="-1">
+        <span class="qw-obj" aria-hidden="true"><svg viewBox="0 0 96 84" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 36v24c0 3.3 6.7 6 15 6s15-2.7 15-6V36"/><ellipse cx="33" cy="36" rx="15" ry="5.5"/><path d="M18 44c0 3.3 6.7 6 15 6s15-2.7 15-6M18 52c0 3.3 6.7 6 15 6s15-2.7 15-6"/><path d="M54 46v14c0 2.8 5.4 5 12 5s12-2.2 12-5V46"/><ellipse cx="66" cy="46" rx="12" ry="4.5"/><path d="M54 53c0 2.8 5.4 5 12 5s12-2.2 12-5"/></svg></span>
+        <span class="qw-plinth"><span class="qw-label"><b>03</b>PRIVATE CAPITAL</span></span>
+      </button>
+      <button class="qw-ped" type="button" role="tab" data-ch="3" aria-selected="false" aria-controls="qw-panel" tabindex="-1">
         <span class="qw-obj" aria-hidden="true"><svg viewBox="0 0 96 84" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 16 L39 42M78 16 L57 42M48 10 L48 38"/><circle cx="48" cy="56" r="12"/><circle cx="48" cy="56" r="2.6" fill="currentColor" stroke="none"/></svg></span>
-        <span class="qw-plinth"><span class="qw-label"><b>03</b>THE YEAR 2029</span></span>
+        <span class="qw-plinth"><span class="qw-label"><b>04</b>THE YEAR 2029</span></span>
       </button>
     </div>
     <div class="qw-shell" id="qw-shell">
@@ -858,7 +890,7 @@ a.qg-card:focus-visible{outline:2px solid var(--qa);outline-offset:3px;}
     <article class="qw-ch is-on" data-ch="0">
   <div class="th-q-chapter">
     <h3 id="states-started-taking-equity" class="scale-title">States started taking <span>equity.</span></h3>
-    <p class="scale-intro">For decades, government support for quantum computing meant research grants and patient science. In the span of a few weeks in spring 2026, that posture changed in nature.</p>
+    <p class="scale-intro">For decades, government support for quantum computing meant research grants and patient science. In the span of a few weeks in spring 2026, that posture changed in nature: equity stakes, national programs, and the first hard regulatory deadlines.</p>
   </div>
 
   <div class="th-pm-grid">
@@ -870,12 +902,36 @@ a.qg-card:focus-visible{outline:2px solid var(--qa);outline-offset:3px;}
       <i style="--bc:var(--th-q);left:39.3%;top:56%;width:22%;height:38%"></i>
       <i style="--bc:var(--th-q);left:73.1%;top:56%;width:22%;height:38%"></i>
     </div>
-    <a id="ionq-buys-its-supply-chain" class="th-pm-card qg-card th-pm-reveal" href="https://www.govconwire.com/articles/ionq-skywater-technology-quantum-tech" target="_blank" rel="noopener noreferrer"><span class="th-pm-date">January 26, 2026</span><h3>IonQ buys its supply chain</h3><span class="th-pm-stat">$1.8B</span><p>IonQ moves to acquire US chip foundry SkyWater, a pure-play quantum company vertically integrating its own hardware supply chain.</p></a>
     <a id="uk-proqure" class="th-pm-card qg-card th-pm-reveal" href="https://www.techuk.org/resource/uk-government-announces-up-to-2-billion-for-quantum-technologies.html" target="_blank" rel="noopener noreferrer"><span class="th-pm-date">March 17, 2026</span><h3>UK ProQure</h3><span class="th-pm-stat">GBP 2B</span><p>The UK's national quantum program, part of a broader wave of sovereign quantum funding.</p></a>
-    <a id="photonics-record-round" class="th-pm-card qg-card th-pm-reveal" href="https://news.crunchbase.com/venture/quantum-computing-startup-investment-data-quantinuum-ipo/" target="_blank" rel="noopener noreferrer"><span class="th-pm-date">May 2026</span><h3>Photonic's record round</h3><span class="th-pm-stat">$200M</span><p>The largest quantum funding round of 2026. Vancouver's Photonic, a photonic quantum-computing company, raises $200 million at a $2 billion valuation.</p></a>
     <a id="us-takes-equity" class="th-pm-card qg-card th-pm-reveal" href="https://www.nist.gov/news-events/news/2026/05/department-commerce-announces-letters-intent-9-companies-2-billion" target="_blank" rel="noopener noreferrer"><span class="th-pm-date">May 21, 2026</span><h3>US takes equity</h3><span class="th-pm-stat">$2B</span><p>Letters of intent across 9 quantum firms, in exchange for minority equity. The federal government became, structurally, a venture investor in quantum.</p></a>
     <a id="france-responds" class="th-pm-card qg-card th-pm-reveal" href="https://thequantuminsider.com/2026/05/25/emmanuel-macron-announces-1-55-billion-euros-more-for-quantum-and-semiconductors/" target="_blank" rel="noopener noreferrer"><span class="th-pm-date">May 22, 2026</span><h3>France responds</h3><span class="th-pm-stat">EUR 1B</span><p>Announced by Macron from the CEA for the national quantum plan, citing the acceleration of the US and China.</p></a>
-    <a id="ibm-commits" class="th-pm-card qg-card th-pm-reveal" href="https://newsroom.ibm.com/2026-06-02-ibm-commits-more-than-10-billion-to-quantum-computing,-funding-its-roadmap-from-todays-leading-systems-to-the-worlds-first-fault-tolerant-quantum-computers" target="_blank" rel="noopener noreferrer"><span class="th-pm-date">June 2, 2026</span><h3>IBM commits</h3><span class="th-pm-stat">$10B+</span><p>Over 5 years, targeting its first large-scale fault-tolerant quantum computer by 2029.</p></a>
+    <a id="france-stops-certifying-classical-crypto" class="th-pm-card qg-card th-pm-reveal" href="https://thequantuminsider.com/2026/06/18/france-says-it-will-wont-certify-security-products-that-arent-quantum-resistent-starting-in-2027/" target="_blank" rel="noopener noreferrer"><span class="th-pm-date">June 16, 2026</span><h3>France sets a certification deadline</h3><span class="th-pm-stat">2027</span><p>ANSSI, France's cybersecurity agency, announces it will stop certifying security products without quantum-resistant cryptography from 2027, and that businesses should buy only quantum-safe products by 2030. Its certification is a de facto requirement for French government agencies and critical infrastructure operators.</p></a>
+    <a id="finma-expects-a-pqc-roadmap" class="th-pm-card qg-card th-pm-reveal" href="https://www.finma.ch/en/news/2026/07/20260709-mm-am-05-26/" target="_blank" rel="noopener noreferrer"><span class="th-pm-date">July 9, 2026</span><h3>Switzerland's regulator sets a date</h3><span class="th-pm-stat">8%</span><p>FINMA Guidance 05/2026 expects supervised institutions to have a post-quantum cryptography roadmap in place by mid-2027 at the latest. Its survey of 60 Swiss financial institutions found that only 8 percent have one today.</p></a>
+    <a id="israel-opens-a-national-quantum-call" class="th-pm-card qg-card th-pm-reveal" href="https://www.timesofisrael.com/israel-earmarks-nis-100-million-for-national-quantum-computing-rd-infrastructure/" target="_blank" rel="noopener noreferrer"><span class="th-pm-date">July 20, 2026</span><h3>Israel opens a national quantum call</h3><span class="th-pm-stat">NIS 100M</span><p>The Israel Innovation Authority opens a call for proposals, worth 100 million shekels (roughly $33 million), to establish a national quantum computing R&amp;D infrastructure integrating at least three different quantum processing technologies. Applications close October 8, 2026.</p></a>
+  </div>
+    </article>
+
+    <article class="qw-ch" data-ch="2">
+  <div class="th-q-chapter">
+    <h3 id="private-money-made-the-same-bet" class="scale-title">Private money made the <span>same bet.</span></h3>
+    <p class="scale-intro">The state was not alone. Starting in September 2025, the industry's biggest names and funds committed capital at a scale quantum had never seen: record rounds, a vertical-integration acquisition, and the first real exit wave.</p>
+  </div>
+
+  <div class="th-pm-grid">
+    <div class="qg-bloom" aria-hidden="true">
+      <i style="--bc:var(--th-q);left:5.5%;top:6%;width:22%;height:38%"></i>
+      <i style="--bc:var(--th-q);left:39.3%;top:6%;width:22%;height:38%"></i>
+      <i style="--bc:var(--th-q);left:73.1%;top:6%;width:22%;height:38%"></i>
+      <i style="--bc:var(--th-q);left:5.5%;top:56%;width:22%;height:38%"></i>
+      <i style="--bc:var(--th-q);left:39.3%;top:56%;width:22%;height:38%"></i>
+      <i style="--bc:var(--th-q);left:73.1%;top:56%;width:22%;height:38%"></i>
+    </div>
+    <a id="psiquantum-raises-a-billion" class="th-pm-card qg-card th-pm-reveal" href="https://www.psiquantum.com/news-import/psiquantum-1b-fundraise" target="_blank" rel="noopener noreferrer"><span class="th-pm-toprow"><span class="th-pm-date">September 10, 2025</span></span><h3>PsiQuantum raises a billion</h3><span class="th-pm-stat">$1B</span><p>PsiQuantum closes a $1 billion Series E co-led by BlackRock, Temasek, and Baillie Gifford at a $7 billion valuation, funding its path to million-qubit, fault-tolerant machines.</p></a>
+    <a id="ionq-buys-its-supply-chain" class="th-pm-card qg-card th-pm-reveal" href="https://www.govconwire.com/articles/ionq-skywater-technology-quantum-tech" target="_blank" rel="noopener noreferrer"><span class="th-pm-toprow"><span class="th-pm-date">January 26, 2026</span><span class="th-logo-seat"><img src="assets/logos/ionq.svg" alt="IonQ" loading="lazy"></span></span><h3>IonQ buys its supply chain</h3><span class="th-pm-stat">$1.8B</span><p>IonQ moves to acquire US chip foundry SkyWater, a pure-play quantum company vertically integrating its own hardware supply chain.</p></a>
+    <a id="the-exit-market-opens" class="th-pm-card qg-card th-pm-reveal" href="https://pitchbook.brightspotcdn.com/a7/a8/a48432f54a4ca6d053fd3e4c08df/q2-2026-bit-by-qubit-global-quantum-computing-funding-hits-new-records-and-is-accelerating.pdf" target="_blank" rel="noopener noreferrer"><span class="th-pm-toprow"><span class="th-pm-date">Q1 2026</span></span><h3>The exit market opens</h3><span class="th-pm-stat">$5.55B</span><p>Four exits in one quarter: Quantum Circuits is acquired for $550 million; Infleqtion ($1.675 billion), Horizon Quantum ($503 million), and Xanadu ($2.825 billion) go public. PitchBook had described exit activity as muted through 2025.</p></a>
+    <a id="photonics-record-round" class="th-pm-card qg-card th-pm-reveal" href="https://news.crunchbase.com/venture/quantum-computing-startup-investment-data-quantinuum-ipo/" target="_blank" rel="noopener noreferrer"><span class="th-pm-toprow"><span class="th-pm-date">May 2026</span><span class="th-logo-seat"><img src="assets/logos/photonic.svg" alt="Photonic" loading="lazy"></span></span><h3>Photonic's record round</h3><span class="th-pm-stat">$200M</span><p>The largest quantum funding round of 2026. Vancouver's Photonic, a photonic quantum-computing company, raises $200 million at a $2 billion valuation.</p></a>
+    <a id="ibm-commits" class="th-pm-card qg-card th-pm-reveal" href="https://newsroom.ibm.com/2026-06-02-ibm-commits-more-than-10-billion-to-quantum-computing,-funding-its-roadmap-from-todays-leading-systems-to-the-worlds-first-fault-tolerant-quantum-computers" target="_blank" rel="noopener noreferrer"><span class="th-pm-toprow"><span class="th-pm-date">June 2, 2026</span><span class="th-logo-seat"><img src="assets/logos/ibm.svg" alt="IBM" loading="lazy"></span></span><h3>IBM commits</h3><span class="th-pm-stat">$10B+</span><p>Over 5 years, targeting its first large-scale fault-tolerant quantum computer by 2029.</p></a>
+    <a id="nvidia-becomes-a-top-deployer" class="th-pm-card qg-card th-pm-reveal" href="https://fortune.com/2026/06/29/blackrock-nvidia-temasek-betting-billions-quantum-computing/" target="_blank" rel="noopener noreferrer"><span class="th-pm-toprow"><span class="th-pm-date">June 29, 2026</span><span class="th-logo-seat"><img src="assets/logos/nvidia.svg" alt="Nvidia" loading="lazy"></span></span><h3>Nvidia becomes a top deployer</h3><span class="th-pm-stat">$1.6B</span><p>PitchBook data reported by Fortune puts Nvidia's capital deployed into quantum at $1.6 billion, second only to BlackRock's $1.7 billion. The sector's top investors are no longer specialist VCs.</p></a>
   </div>
     </article>
 
@@ -895,7 +951,7 @@ a.qg-card:focus-visible{outline:2px solid var(--qa);outline-offset:3px;}
   </div>
     </article>
 
-    <article class="qw-ch" data-ch="2">
+    <article class="qw-ch" data-ch="3">
   <div class="th-q-chapter">
     <h3 id="finally-three-of-the-biggest-names" class="scale-title">Finally, three of the biggest names in quantum converged on <span>a single year.</span></h3>
     <p class="scale-intro">The three companies actually building the machines have independently pointed to the same date.</p>
@@ -907,9 +963,13 @@ a.qg-card:focus-visible{outline:2px solid var(--qa);outline-offset:3px;}
         <i style="--bc:var(--th-q);left:39.3%;top:16%;width:22%;height:68%"></i>
         <i style="--bc:var(--th-q);left:73.1%;top:16%;width:22%;height:68%"></i>
       </div>
-      <a class="th-yr-panel qg-card" href="https://www.hpcwire.com/off-the-wire/microsoft-unveils-majorana-2-quantum-chip-targets-commercial-scale-quantum-computing-by-2029/" target="_blank" rel="noopener noreferrer"><span class="th-yr-name">Microsoft</span><span class="th-yr-stat">2029</span><p>After its Majorana 2 chip, Microsoft pulled its timeline for a scalable quantum computer forward from 2033 to 2029.</p></a>
-      <a class="th-yr-panel qg-card" href="https://blog.google/innovation-and-ai/technology/safety-security/cryptography-migration-timeline/" target="_blank" rel="noopener noreferrer"><span class="th-yr-name">Google</span><span class="th-yr-stat">2029</span><p>Google set an internal deadline of 2029 to migrate its own infrastructure to post-quantum cryptography.</p></a>
-      <a class="th-yr-panel qg-card" href="https://newsroom.ibm.com/2026-06-02-ibm-commits-more-than-10-billion-to-quantum-computing,-funding-its-roadmap-from-todays-leading-systems-to-the-worlds-first-fault-tolerant-quantum-computers" target="_blank" rel="noopener noreferrer"><span class="th-yr-name">IBM</span><span class="th-yr-stat">2029</span><p>IBM committed more than $10 billion over five years, targeting its first large-scale fault-tolerant quantum computer by 2029.</p></a>
+      <a class="th-yr-panel qg-card" href="https://www.hpcwire.com/off-the-wire/microsoft-unveils-majorana-2-quantum-chip-targets-commercial-scale-quantum-computing-by-2029/" target="_blank" rel="noopener noreferrer"><span class="th-pm-toprow"><span class="th-yr-name">Microsoft</span><span class="th-logo-seat"><img src="assets/logos/microsoft.svg" alt="Microsoft" loading="lazy"></span></span><span class="th-yr-stat">2029</span><p>After its Majorana 2 chip, Microsoft pulled its timeline for a scalable quantum computer forward from 2033 to 2029.</p></a>
+      <a class="th-yr-panel qg-card" href="https://blog.google/innovation-and-ai/technology/safety-security/cryptography-migration-timeline/" target="_blank" rel="noopener noreferrer"><span class="th-pm-toprow"><span class="th-yr-name">Google</span><span class="th-logo-seat"><img src="assets/logos/google.svg" alt="Google" loading="lazy"></span></span><span class="th-yr-stat">2029</span><p>Google set an internal deadline of 2029 to migrate its own infrastructure to post-quantum cryptography.</p></a>
+      <a class="th-yr-panel qg-card" href="https://newsroom.ibm.com/2026-06-02-ibm-commits-more-than-10-billion-to-quantum-computing,-funding-its-roadmap-from-todays-leading-systems-to-the-worlds-first-fault-tolerant-quantum-computers" target="_blank" rel="noopener noreferrer"><span class="th-pm-toprow"><span class="th-yr-name">IBM</span><span class="th-logo-seat"><img src="assets/logos/ibm.svg" alt="IBM" loading="lazy"></span></span><span class="th-yr-stat">2029</span><p>IBM committed more than $10 billion over five years, targeting its first large-scale fault-tolerant quantum computer by 2029.</p></a>
+  </div>
+
+  <div class="th-pm-grid th-pm-grid--one">
+    <a id="google-cloud-publishes-the-plan" class="th-pm-card qg-card" href="https://cloud.google.com/blog/products/identity-security/pqc-in-plaintext-google-clouds-post-quantum-cryptography-roadmap" target="_blank" rel="noopener noreferrer"><span class="th-pm-toprow"><span class="th-pm-date">August 12, 2026</span><span class="th-logo-seat"><img src="assets/logos/google-cloud.svg" alt="Google Cloud" loading="lazy"></span></span><h3>Google Cloud publishes the plan</h3><span class="th-pm-stat">2029</span><p>Google Cloud's published migration roadmap targets full post-quantum readiness by 2029: store-now-decrypt-later mitigation by the end of 2027, signature and integrity work by the end of 2028. Hybrid ML-KEM with X25519 is already live on Cloud API endpoints and load balancers. 2029 is no longer just a threat estimate; it is a vendor commitment date.</p></a>
   </div>
     </article>
 
