@@ -180,16 +180,29 @@
      rendered height plus 15%.
      Below 1361px the zone shifts right of the 84% mark: the display's
      rightmost ink reaches 88% of the viewport at 1280, so the specified left
-     edge would sit under the copy there. */
+     edge would sit under the copy there.
+     In the 1361-1560 bracket the drawing sits BELOW the display, not beside
+     it (top 50%). Measured 2026-08-19 at 1440x900: the display's second line
+     ends at x1258 while the top plate's ink starts at x1203, a 54px overlap,
+     and clearing it rightward needs +94px against 37px of viewport margin.
+     No horizontal position fixes that bracket, and shrinking would demote
+     the page's only visual, so the drawing keeps its size and drops under
+     the third line instead. */
   .qh-chandelier { position: absolute; left: 90.5%; transform: translateX(-50%);
     top: 22.5%; height: 56%; max-height: 560px; width: auto; }
   @media (max-width: 1760px) { .qh-chandelier { top: 26%; height: 50%; } }
-  @media (max-width: 1560px) { .qh-chandelier { top: 30.5%; height: 41.3%; } }
+  @media (max-width: 1560px) { .qh-chandelier { top: 50%; height: 41.3%; } }
   @media (max-width: 1360px) { .qh-chandelier { left: 94.2%; top: 32%; height: 27%; } }
-  @media (max-width: 1180px) { .qh-chandelier { left: 94%; top: 34%; height: 24%; } }
-  @media (max-width: 980px) {
-    /* the stacked layout has no free right column and the countdown card
-       owns the width, so the drawing goes rather than crowd it */
+  @media (max-width: 1210px) {
+    /* no free right column below the 1208px wrap flip. Measured 2026-08-19,
+       scanning 1181-1361: at 1207px and below the display's second line
+       takes "Starknet" and runs to 95% of the viewport (-71px into the
+       drawing); at 1208px the wrap releases it and the worst gap jumps to
+       118px. At 1024 the third line ends at 96.7%, 34px of column. The old
+       981-1180 squeeze (height 24%) had already demoted the drawing to a
+       detail. So: same rule as the stacked layout below 981px, the drawing
+       goes rather than crowd the copy. 1210 = the flip plus a 3px guard,
+       since a wrap point can shift a pixel or two with font rasterization. */
     .qh-scene { display: none; }
   }
   /* DEADLINE BAND: twin of .eco-marquee / .dg-marquee / .pv-marquee. Two
