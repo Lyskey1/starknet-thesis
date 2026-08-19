@@ -2860,7 +2860,16 @@ var VIDEOS = [
 (function(){
   if(window.__thMz)return;window.__thMz=true;
   var COLS=16,ROWS=16,N=640,cell=N/COLS;
-  var q='#3DA9FC',gray='#7a808c',wall='rgba(245,242,236,.16)',muted='#8b909c';
+  var reduce=window.matchMedia('(prefers-reduced-motion: reduce)');
+  /* Two panels, one geometry, two temperatures. The exit is the page blue
+     in BOTH frames: it is the same private key whichever machine hunts it,
+     and it must be the brightest thing in each frame. Classical material
+     is cool neutral, quantum material is the page blue. Walls are 3.5
+     maze units (about 2px rendered) at 3.2:1 / 3.1:1 against the panel
+     ground, up from 2 units at 1.53:1. */
+  var q='#3DA9FC';
+  var PC={wall:'rgba(206,214,228,.42)',walk:'rgba(200,208,222,.34)',dead:'rgba(150,158,172,.15)',head:'#D9E0EC',label:'rgba(206,214,228,.66)'};
+  var PQ={wall:'rgba(150,196,252,.46)',field:'rgba(61,169,252,.045)',label:'rgba(150,196,252,.72)'};
   function makeMaze(){
     var g=[];for(var r=0;r<ROWS;r++){g[r]=[];for(var c=0;c<COLS;c++)g[r][c]={N:true,E:true,S:true,W:true,v:false};}
     var st=[[0,0]];g[0][0].v=true;var D=[['N',-1,0,'S'],['E',0,1,'W'],['S',1,0,'N'],['W',0,-1,'E']];
@@ -2880,56 +2889,149 @@ var VIDEOS = [
     var p=[e],k=e[0]+','+e[1];while(k!=='0,0'){var pp=pv[k];if(!pp)break;p.unshift(pp);k=pp[0]+','+pp[1];}return p;}
   var maze=makeMaze(),solution=solve(maze);
   function cx(c){return c*cell+cell/2;}function cy(r){return r*cell+cell/2;}
-  function drawMaze(ctx){ctx.clearRect(0,0,N,N);ctx.strokeStyle=wall;ctx.lineWidth=2;ctx.lineCap='round';
+  function drawBase(ctx,P,withField){
+    ctx.clearRect(0,0,N,N);
+    if(withField){ctx.fillStyle=PQ.field;ctx.fillRect(0,0,N,N);}
+    ctx.strokeStyle=P.wall;ctx.lineWidth=3.5;ctx.lineCap='round';
     for(var r=0;r<ROWS;r++)for(var c=0;c<COLS;c++){var x=c*cell,y=r*cell,m=maze[r][c];ctx.beginPath();
       if(m.N){ctx.moveTo(x,y);ctx.lineTo(x+cell,y);}if(m.E){ctx.moveTo(x+cell,y);ctx.lineTo(x+cell,y+cell);}
       if(m.S){ctx.moveTo(x+cell,y+cell);ctx.lineTo(x,y+cell);}if(m.W){ctx.moveTo(x,y+cell);ctx.lineTo(x,y);}ctx.stroke();}
-    ctx.fillStyle=muted;ctx.beginPath();ctx.arc(cx(0),cy(0),cell*0.16,0,7);ctx.fill();
-    ctx.strokeStyle='rgba(245,242,236,.35)';ctx.lineWidth=2;var ex=cx(COLS-1),ey=cy(ROWS-1),s=cell*0.22;ctx.strokeRect(ex-s,ey-s,s*2,s*2);}
-  function exitGlow(ctx,col){var ex=cx(COLS-1),ey=cy(ROWS-1),s=cell*0.22;ctx.save();ctx.shadowColor=col;ctx.shadowBlur=22;ctx.fillStyle=col;ctx.fillRect(ex-s,ey-s,s*2,s*2);ctx.restore();}
+    /* origin: a small labelled dot in the page mono */
+    ctx.fillStyle=P.label;ctx.beginPath();ctx.arc(cx(0),cy(0),cell*0.14,0,7);ctx.fill();
+    ctx.font='600 17px "IBM Plex Mono",monospace';ctx.textBaseline='middle';ctx.textAlign='left';
+    ctx.fillStyle=P.label;ctx.fillText('START',cx(0)+cell*0.55,cy(0));
+    /* exit: the reader's key, the brightest thing in the frame, in the
+       page blue in both panels because it is the same key either way */
+    var ex=cx(COLS-1),ey=cy(ROWS-1);
+    ctx.save();ctx.shadowColor=q;ctx.shadowBlur=14;
+    ctx.strokeStyle=q;ctx.lineWidth=3;ctx.beginPath();ctx.arc(ex,ey,cell*0.34,0,7);ctx.stroke();
+    ctx.fillStyle=q;ctx.beginPath();ctx.arc(ex,ey,cell*0.12,0,7);ctx.fill();ctx.restore();
+    ctx.textAlign='right';ctx.fillStyle=q;ctx.fillText('EXIT',ex-cell*0.62,ey);ctx.textAlign='left';
+  }
   function fmt(ms){var s=ms/1000;if(s<10)return s.toFixed(1)+'s';if(s<600)return s.toFixed(0)+'s';var m=Math.floor(s/60);return m+'m '+Math.floor(s%60)+'s';}
 
-  var ctxC=document.getElementById('thMzC').getContext('2d');
+  /* ---------- classical: exploration that accumulates ---------- */
+  var cvC=document.getElementById('thMzC'),ctxC=cvC.getContext('2d');
   var cntC=document.getElementById('thMzCntC'),timeC=document.getElementById('thMzTimeC');
-  var cStep=null,cRAF=null,cStart=0,cCount=0,TRAIL=15,trail=[],cur=[0,0],prev=null;
+  /* the trail lives on an offscreen layer painted incrementally, so a
+     frame is base + one drawImage + head, O(1) however long the walk */
+  var trail=document.createElement('canvas'),trailCtx=trail.getContext('2d');
+  function syncTrail(){trail.width=cvC.width;trail.height=cvC.height;
+    var t=ctxC.getTransform();trailCtx.setTransform(t.a,t.b,t.c,t.d,t.e,t.f);}
+  function seg(a,b,tone){trailCtx.strokeStyle=tone;trailCtx.lineWidth=cell*0.22;trailCtx.lineCap='round';
+    trailCtx.beginPath();trailCtx.moveTo(cx(a[1]),cy(a[0]));trailCtx.lineTo(cx(b[1]),cy(b[0]));trailCtx.stroke();}
+  function eraseSeg(a,b){trailCtx.save();trailCtx.globalCompositeOperation='destination-out';
+    trailCtx.strokeStyle='rgba(0,0,0,1)';trailCtx.lineWidth=cell*0.30;trailCtx.lineCap='round';
+    trailCtx.beginPath();trailCtx.moveTo(cx(a[1]),cy(a[0]));trailCtx.lineTo(cx(b[1]),cy(b[0]));trailCtx.stroke();trailCtx.restore();}
+  /* true depth-first exploration: branches accumulate in the walk tone,
+     and when a branch dead-ends the walker backtracks and the abandoned
+     corridor dims to the dead tone. The exit square is treated as a wall
+     (the point is that walking never gets there), and when everything
+     reachable is explored the search restarts, still counting. */
+  var cStack=[],cSeen={},cur=[0,0],cCount=0,cRAF=null,cTimer=null,cStart=0,running=false;
   function isExit(n){return n[0]===ROWS-1&&n[1]===COLS-1;}
-  function resetC(){if(cStep){clearInterval(cStep);cStep=null;}if(cRAF){cancelAnimationFrame(cRAF);cRAF=null;}trail=[];cur=[0,0];prev=null;cCount=0;cntC.textContent='0';timeC.textContent='0.0s';drawMaze(ctxC);}
-  function stepC(){var ns=nb(maze,cur[0],cur[1]).filter(function(n){return !isExit(n);});
-    var fw=ns.filter(function(n){return !prev||n[0]!==prev[0]||n[1]!==prev[1];});
-    var pool=fw.length?fw:(ns.length?ns:[prev||cur]);var nx=pool[Math.floor(Math.random()*pool.length)];
-    prev=cur;cur=nx;trail.push(cur);if(trail.length>TRAIL)trail.shift();cCount++;cntC.textContent=cCount.toLocaleString();}
-  function renderC(){drawMaze(ctxC);for(var i=0;i<trail.length;i++){var a=(i+1)/trail.length;
-    ctxC.fillStyle='rgba(122,128,140,'+(0.10+a*0.28)+')';ctxC.beginPath();ctxC.arc(cx(trail[i][1]),cy(trail[i][0]),cell*0.16+a*cell*0.08,0,7);ctxC.fill();}
-    ctxC.save();ctxC.shadowColor=gray;ctxC.shadowBlur=12;ctxC.fillStyle=gray;ctxC.beginPath();ctxC.arc(cx(cur[1]),cy(cur[0]),cell*0.20,0,7);ctxC.fill();ctxC.restore();}
-  function runC(){if(cStep)return;cStart=performance.now();if(!trail.length)trail.push(cur);cStep=setInterval(stepC,80);
+  function key(n){return n[0]+','+n[1];}
+  function resetSearch(){cStack=[[0,0]];cSeen={};cSeen['0,0']=true;cur=[0,0];}
+  function stepC(){
+    var opts=nb(maze,cur[0],cur[1]).filter(function(n){return !isExit(n)&&!cSeen[key(n)];});
+    if(opts.length){var nx=opts[Math.floor(Math.random()*opts.length)];
+      seg(cur,nx,PC.walk);cSeen[key(nx)]=true;cStack.push(nx);cur=nx;}
+    else if(cStack.length>1){var popped=cStack.pop();var back=cStack[cStack.length-1];
+      eraseSeg(popped,back);seg(popped,back,PC.dead);cur=back;}
+    else{resetSearch();}
+    cCount++;cntC.textContent=cCount.toLocaleString();
+  }
+  function renderC(){drawBase(ctxC,PC,false);
+    ctxC.save();ctxC.setTransform(1,0,0,1,0,0);ctxC.drawImage(trail,0,0);ctxC.restore();
+    ctxC.save();ctxC.shadowColor=PC.head;ctxC.shadowBlur=14;ctxC.fillStyle=PC.head;
+    ctxC.beginPath();ctxC.arc(cx(cur[1]),cy(cur[0]),cell*0.20,0,7);ctxC.fill();ctxC.restore();}
+  function clearC(){trailCtx.save();trailCtx.setTransform(1,0,0,1,0,0);trailCtx.clearRect(0,0,trail.width,trail.height);trailCtx.restore();}
+  function synthC(steps){for(var i=0;i<steps;i++)stepC();}
+  function resetC(){if(cTimer){clearInterval(cTimer);cTimer=null;}if(cRAF){cancelAnimationFrame(cRAF);cRAF=null;}
+    running=false;timeC.textContent='0.0s';restC();}
+  function runC(){if(running)return;running=true;
+    if(reduce.matches){synthC(520);renderC();running=false;return;}
+    cStart=performance.now();cTimer=setInterval(stepC,70);
     (function loop(){timeC.textContent=fmt(performance.now()-cStart);renderC();cRAF=requestAnimationFrame(loop);})();}
 
-  var ctxQ=document.getElementById('thMzQ').getContext('2d');
+  /* ---------- quantum: scan, then reveal. Never parallel search. ---------- */
+  var cvQ=document.getElementById('thMzQ'),ctxQ=cvQ.getContext('2d');
+  var timeQ=document.getElementById('thMzTimeQ'),stateQ=document.getElementById('thMzStateQ');
+  var qBusy=false;
+  function tracePath(ctx){ctx.beginPath();
+    for(var j=0;j<solution.length;j++){var p=solution[j];if(j===0)ctx.moveTo(cx(p[1]),cy(p[0]));else ctx.lineTo(cx(p[1]),cy(p[0]));}}
+  function drawSolution(ctx,alpha,bloom){
+    /* glow as layered strokes, not shadowBlur: canvas blur on a path this
+       long costs a ~180ms frame at DPR 2; three strokes cost nothing */
+    ctx.save();ctx.globalAlpha=alpha;ctx.lineJoin='round';ctx.lineCap='round';
+    if(bloom){ctx.strokeStyle='rgba(61,169,252,.16)';ctx.lineWidth=cell*0.78;tracePath(ctx);ctx.stroke();
+      ctx.strokeStyle='rgba(61,169,252,.30)';ctx.lineWidth=cell*0.50;tracePath(ctx);ctx.stroke();}
+    ctx.strokeStyle=q;ctx.lineWidth=cell*0.30;tracePath(ctx);ctx.stroke();ctx.restore();}
+  function restQ(){drawBase(ctxQ,PQ,true);
+    /* the scan line parked near the top of the frame: the instrument is
+       ready, and nothing of the answer is shown. On Run the sweep starts
+       from the top edge and passes through this position in the first
+       few frames, so rest and run read as one gesture. */
+    var y=N*0.07;
+    var gr=ctxQ.createLinearGradient(0,y-46,0,y);
+    gr.addColorStop(0,'rgba(61,169,252,0)');gr.addColorStop(1,'rgba(61,169,252,.09)');
+    ctxQ.fillStyle=gr;ctxQ.fillRect(0,y-46,N,46);
+    ctxQ.strokeStyle='rgba(61,169,252,.38)';ctxQ.lineWidth=2.5;
+    ctxQ.beginPath();ctxQ.moveTo(0,y);ctxQ.lineTo(N,y);ctxQ.stroke();}
+  function labelsQ(){var ctx=ctxQ;
+    ctx.font='600 17px "IBM Plex Mono",monospace';ctx.textBaseline='middle';ctx.textAlign='left';
+    ctx.fillStyle='#EAF4FF';ctx.fillText('START',cx(0)+cell*0.55,cy(0));
+    ctx.textAlign='right';ctx.fillStyle='#EAF4FF';ctx.fillText('EXIT',cx(COLS-1)-cell*0.62,cy(ROWS-1));ctx.textAlign='left';}
+  function solvedQ(){drawBase(ctxQ,PQ,true);drawSolution(ctxQ,1,1);
+    var ex=cx(COLS-1),ey=cy(ROWS-1);
+    ctxQ.save();
+    ctxQ.fillStyle='rgba(61,169,252,.18)';ctxQ.beginPath();ctxQ.arc(ex,ey,cell*0.55,0,7);ctxQ.fill();
+    ctxQ.fillStyle='rgba(61,169,252,.35)';ctxQ.beginPath();ctxQ.arc(ex,ey,cell*0.36,0,7);ctxQ.fill();
+    ctxQ.fillStyle=q;ctxQ.beginPath();ctxQ.arc(ex,ey,cell*0.22,0,7);ctxQ.fill();ctxQ.restore();
+    labelsQ();}
+  function resetQ(){if(qBusy)return;timeQ.textContent='0.00s';
+    if(reduce.matches){stateQ.textContent='exit found';solvedQ();return;}
+    stateQ.textContent='idle';restQ();}
+  function runQ(){if(qBusy)return;qBusy=true;
+    if(reduce.matches){stateQ.textContent='exit found';timeQ.textContent='0.02s';solvedQ();qBusy=false;return;}
+    stateQ.textContent='reading';var t0=performance.now(),sweep=850;
+    (function scan(now){var p=Math.max(0,Math.min(1,(now-t0)/sweep));
+      drawBase(ctxQ,PQ,true);
+      /* one global pass: a read of the whole structure, not a search */
+      var y=p*N;
+      var gr=ctxQ.createLinearGradient(0,y-90,0,y);
+      gr.addColorStop(0,'rgba(61,169,252,0)');gr.addColorStop(1,'rgba(61,169,252,.13)');
+      ctxQ.fillStyle=gr;ctxQ.fillRect(0,Math.max(0,y-90),N,Math.min(90,y));
+      ctxQ.strokeStyle='rgba(61,169,252,'+(0.55*Math.sin(Math.max(0.02,p)*Math.PI)+0.15)+')';
+      ctxQ.lineWidth=2.5;ctxQ.beginPath();ctxQ.moveTo(0,y);ctxQ.lineTo(N,y);ctxQ.stroke();
+      if(p<1){requestAnimationFrame(scan);}
+      else{stateQ.textContent='exit found';var r0=performance.now(),rev=380;
+        (function reveal(n2){var rp=Math.max(0,Math.min(1,(n2-r0)/rev));
+          drawBase(ctxQ,PQ,true);drawSolution(ctxQ,rp,1);labelsQ();
+          if(rp<1)requestAnimationFrame(reveal);
+          else{solvedQ();timeQ.textContent=((performance.now()-t0)/1000).toFixed(2)+'s';qBusy=false;}})(performance.now());}
+    })(performance.now());
+  }
+
+  /* ---------- sizing ---------- */
   function fitSquare(canvas,context){
     var rect=canvas.getBoundingClientRect();
-    var css=rect.width|| (N);
+    var css=rect.width||(N);
     canvas.style.height=css+'px';
     var dpr=window.devicePixelRatio||1;
     canvas.width=Math.round(css*dpr);
     canvas.height=Math.round(css*dpr);
     context.setTransform((css/N)*dpr,0,0,(css/N)*dpr,0,0);
   }
-  var timeQ=document.getElementById('thMzTimeQ'),stateQ=document.getElementById('thMzStateQ');var qBusy=false;
-  function resetQ(){timeQ.textContent='0.00s';stateQ.textContent='idle';drawMaze(ctxQ);qBusy=false;}
-  function runQ(){if(qBusy)return;qBusy=true;stateQ.textContent='reading';var t0=performance.now();drawMaze(ctxQ);
-    var s0=performance.now(),sh=220;
-    (function shimmer(now){var p=Math.min(1,(now-s0)/sh);drawMaze(ctxQ);ctxQ.fillStyle='rgba(61,169,252,'+(Math.sin(p*Math.PI)*0.10)+')';ctxQ.fillRect(0,0,N,N);
-      var y=p*N;ctxQ.strokeStyle='rgba(61,169,252,'+(0.5*Math.sin(p*Math.PI))+')';ctxQ.lineWidth=2;ctxQ.beginPath();ctxQ.moveTo(0,y);ctxQ.lineTo(N,y);ctxQ.stroke();
-      if(p<1)requestAnimationFrame(shimmer);else draw();})(performance.now());
-    function draw(){stateQ.textContent='exit found';var seg=performance.now();
-      (function step(now){var k=Math.min(solution.length,Math.floor((now-seg)/14)+2);drawMaze(ctxQ);
-        ctxQ.save();ctxQ.shadowColor=q;ctxQ.shadowBlur=16;ctxQ.strokeStyle=q;ctxQ.lineWidth=cell*0.30;ctxQ.lineJoin='round';ctxQ.lineCap='round';ctxQ.beginPath();
-        for(var j=0;j<k;j++){var p=solution[j];if(j===0)ctxQ.moveTo(cx(p[1]),cy(p[0]));else ctxQ.lineTo(cx(p[1]),cy(p[0]));}ctxQ.stroke();ctxQ.restore();
-        if(k<solution.length)requestAnimationFrame(step);else{exitGlow(ctxQ,q);timeQ.textContent=((performance.now()-t0)/1000).toFixed(2)+'s';qBusy=false;}})(performance.now());}
-  }
-  function fitAll(){fitSquare(document.getElementById('thMzC'),ctxC);fitSquare(document.getElementById('thMzQ'),ctxQ);}
-  fitAll();drawMaze(ctxC);drawMaze(ctxQ);
-  window.addEventListener('resize',function(){fitAll();drawMaze(ctxC);drawMaze(ctxQ);});
+  function fitAll(){fitSquare(cvC,ctxC);fitSquare(cvQ,ctxQ);syncTrail();}
+  function restC(){clearC();resetSearch();cCount=0;
+    /* the rest stub is real search, not decoration: the counter shows its
+       steps and Run continues from them, so picture and number agree */
+    synthC(reduce.matches?520:9);
+    renderC();}
+  function bootStates(){restC();resetQ();}
+  fitAll();bootStates();
+  window.addEventListener('resize',function(){fitAll();bootStates();});
   document.getElementById('thMzRunC').onclick=runC;document.getElementById('thMzResetC').onclick=resetC;
   document.getElementById('thMzRunQ').onclick=runQ;document.getElementById('thMzResetQ').onclick=resetQ;
 })();
