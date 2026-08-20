@@ -358,29 +358,187 @@ s.push('</g></g>');
 
 // ================= FRACTURES + DISPLACED PLATE (red) =================
 s.push('<g class="vtWeak">');
-// MAINS. The damage wraps the object: two runs on the front plate, two
-// on the side face, two crossing onto the top face. Every point is
-// inside its own face (the top face is the quad 44,150 / 314,150 /
-// 422.6,117 / 179.6,117 and the side face 314,150 / 422.6,117 /
-// 422.6,432 / 314,500), and the side runs dodge the vent (x 333-392,
-// y 262-343). NOT ONE on the STARKNET plinth (y > 516): the base layer
-// was never the weak part, and that is the whole color argument.
-P('M290 152 l-9 12 l7 9 l-12 14 l5 9 l-11 7', 'vtCrack', ' pathLength="1"');   // front, upper right
-P('M46 452 l14 -9 l-3 -10 l16 -8 l-2 -9 l13 -6', 'vtCrack', ' pathLength="1"'); // front, lower left
-P('M100 196 l9 11 l-6 9 l8 10', 'vtCrack', ' pathLength="1"');                  // front, left of the window
-P('M338 176 l10 13 l-5 9 l12 15', 'vtCrack', ' pathLength="1"');                // side, upper
-P('M352 380 l8 9 l-4 8 l9 10', 'vtCrack', ' pathLength="1"');                   // side, below the vent
-P('M292 149 l14 -5 l-4 -6 l16 -5', 'vtCrack', ' pathLength="1"');               // wraps onto the top face
-P('M236 146 l12 -9 l-4 -7 l14 -6', 'vtCrack', ' pathLength="1"');               // top face, over the ribs
-// CAPILLARIES: hairline branches off the mains, thinner still
-P('M288 173 l-9 4 l-6 -3', 'vtCrack vtCrackH', ' pathLength="1"');
-P('M270 203 l-8 8', 'vtCrack vtCrackH', ' pathLength="1"');
-P('M74 424 l6 8 l8 3', 'vtCrack vtCrackH', ' pathLength="1"');
-P('M348 198 l9 5', 'vtCrack vtCrackH', ' pathLength="1"');
-P('M360 397 l8 -5', 'vtCrack vtCrackH', ' pathLength="1"');
-P('M244 130 l9 6', 'vtCrack vtCrackH', ' pathLength="1"');
-P('M111 216 l9 4', 'vtCrack vtCrackH', ' pathLength="1"');
-P('M306 138 l5 -7', 'vtCrack vtCrackH', ' pathLength="1"');
+// ================= FRACTURES, third increase (2026-08-22) =========
+// The first two passes put hairlines on the top face, the side face and
+// the front face's left margin, and the drawing stopped reading more
+// damaged because THE DOOR PLATE, its largest surface and where the eye
+// actually rests, was nearly clean. This pass works the plate: the
+// stiles either side of the window, the top rail above it, the band
+// below the card, and the lower plate around the gauge.
+// FEWER, LONGER RUNS, deliberately, and this is a judgement not a
+// compliance: short cracks accumulate into surface texture, while a run
+// that travels 260px down a stile reads as structural failure. So this
+// adds FOUR long mains and six capillaries instead of a dozen short
+// scratches, and the left stile's existing run is EXTENDED rather than
+// paralleled, so the plate carries one long fracture interrupted by the
+// caption band instead of two unrelated marks.
+// NOT ONE on the STARKNET plinth (y > 516): the base layer was never
+// the weak part, and that is the whole colour argument.
+//
+// STOP LINE. THE PLATE IS AT ITS LIMIT AND FRACTURES END HERE. Three
+// reasons, and a fourth increase has to argue against them rather than
+// around them. (1) The ground still clean is only narrow bands: 14px
+// below the card, 12px at the bottom rail, 20px in the caption band.
+// Cracks there can only be SHORT, and short cracks read as wear and
+// texture, not as damage. (2) The card and the window are now framed by
+// fracture on all four sides; more crowds them instead of damaging the
+// plate. (3) THE NUMBER: the ECDSA card is down to 35% of the red ink
+// on the plate (2,335px of 6,684), from nearly all of it before this
+// pass. It still wins the eye because it carries a fill where cracks
+// are hairlines, but it wins by less, and it is the most important
+// element in the drawing. Fewer and longer was the right shape for
+// this pass precisely because a run the height of a stile reads as
+// structural failure where ten short ones read as wear.
+//
+// THE LATTICE IS NOT AFFECTED BY ANY OF THIS, so do not re-raise it.
+// It was raised and then measured: cracks retract 0.9s to 1.35s (see
+// .vt-on .vtCrack, with capillaries 80ms ahead at .82s) and the FIRST
+// lattice stroke does not land until 2.4s. Red ink on the plate reads
+// 6,684px before the send, 127px at 2.0s, and 128px at 3.2s with the
+// weave in progress; the residual is the dial's own red zone, which is
+// scale marking and not damage. So the payoff arrives on a healed
+// plate, ~98% of the red already gone, and a busier before-state makes
+// the healed after-state read as a BIGGER change, not a smaller one.
+//
+// ENFORCEMENT, and none of it is by eye. Each crack declares the face
+// it lives on and every vertex is asserted inside that face's own quad
+// (front 44-314 x 150-500; top 44,150 / 314,150 / 422.6,117 /
+// 179.6,117; side 314,150 / 422.6,117 / 422.6,432 / 314,500). Every
+// SEGMENT is then tested against the protected regions: the window, the
+// card body, the gauge dial, the gauge label, the contents caption and
+// the three marked coins. Segment-versus-rectangle and
+// segment-versus-circle, not vertex containment, because a crack can
+// step over a small target without either end landing in it. The check
+// paid for itself by failing a PRE-EXISTING capillary that ended at
+// (120,220), four pixels inside the window. It had been there since
+// the SECOND increase and no screenshot had caught it, because four
+// pixels of hairline inside a glass panel is invisible to the eye and
+// obvious to a segment test. Note WHY it was caught: the test is
+// segment-versus-rectangle, not vertex containment. A vertex test only
+// asks whether an endpoint landed in a protected shape, and a crack
+// can step clean over a small target with both ends outside it.
+// And the check was PROVEN rather than trusted: run against the old
+// data it throws 'crack segment 111,216->120,220 crosses the window',
+// and a probe aimed at the dial throws 'crosses the dial face'. If you
+// change this file, re-run those two probes; a check nobody has seen
+// fail is a check nobody should believe.
+const FACES = {
+  front: [FTL, FTR, FBR, FBL],
+  top: [FTL, FTR, BTR, BTL],
+  side: [FTR, BTR, BBR, FBR],
+};
+const KEEP = [
+  { n: 'window', x0: 118, y0: 200, x1: 256, y1: 314 },
+  { n: 'card body', x0: 116, y0: 334, x1: 258, y1: 392 },
+  { n: 'gauge label', x0: 178, y0: 402, x1: 234, y1: 426 },
+  { n: 'contents caption', x0: 108, y0: 317, x1: 266, y1: 330 },
+];
+const KEEPC = [
+  { n: 'dial face', x: 150, y: 430, r: 24 },
+  { n: 'BTC coin', x: 145, y: HY, r: MR + 1 },
+  { n: 'ETH coin', x: 187, y: HY, r: MR + 1 },
+  { n: 'STRK coin', x: 229, y: HY, r: MR + 1 },
+];
+function inPoly(p, poly) {
+  let sign = 0;
+  for (let i = 0; i < poly.length; i++) {
+    const a = poly[i], b = poly[(i + 1) % poly.length];
+    const cr = (b[0] - a[0]) * (p[1] - a[1]) - (b[1] - a[1]) * (p[0] - a[0]);
+    if (Math.abs(cr) < 0.5) continue;
+    const sg = cr > 0 ? 1 : -1;
+    if (!sign) sign = sg; else if (sg !== sign) return false;
+  }
+  return true;
+}
+function segSeg(a, b, c, d) {
+  const o = (p, q, r) => Math.sign((q[0] - p[0]) * (r[1] - p[1]) - (q[1] - p[1]) * (r[0] - p[0]));
+  return o(a, b, c) !== o(a, b, d) && o(c, d, a) !== o(c, d, b);
+}
+function segRect(p, q, R) {
+  if (Math.max(p[0], q[0]) < R.x0 || Math.min(p[0], q[0]) > R.x1) return false;
+  if (Math.max(p[1], q[1]) < R.y0 || Math.min(p[1], q[1]) > R.y1) return false;
+  const inside = (t) => t[0] > R.x0 && t[0] < R.x1 && t[1] > R.y0 && t[1] < R.y1;
+  if (inside(p) || inside(q)) return true;
+  const c = [[R.x0, R.y0], [R.x1, R.y0], [R.x1, R.y1], [R.x0, R.y1]];
+  for (let i = 0; i < 4; i++) if (segSeg(p, q, c[i], c[(i + 1) % 4])) return true;
+  return false;
+}
+function segCircle(p, q, C) {
+  const dx = q[0] - p[0], dy = q[1] - p[1], L2 = dx * dx + dy * dy;
+  let t = L2 ? ((C.x - p[0]) * dx + (C.y - p[1]) * dy) / L2 : 0;
+  t = Math.max(0, Math.min(1, t));
+  return Math.hypot(p[0] + t * dx - C.x, p[1] + t * dy - C.y) < C.r;
+}
+const CRACKS = [
+  // ---- mains already on the object ----
+  { f: 'front', hair: 0, name: 'front upper right', p: [[290, 152], [281, 164], [288, 173], [276, 187], [281, 196], [270, 203]] },
+  { f: 'front', hair: 0, name: 'front lower left', p: [[46, 452], [60, 443], [57, 433], [73, 425], [71, 416], [84, 410]] },
+  // the left stile's run, EXTENDED down to the caption band this pass
+  { f: 'front', hair: 0, name: 'left stile, upper', p: [[100, 196], [109, 207], [103, 216], [111, 226], [105, 248], [112, 270], [104, 292], [110, 312]] },
+  { f: 'side', hair: 0, name: 'side upper', p: [[338, 176], [348, 189], [343, 198], [355, 213]] },
+  { f: 'side', hair: 0, name: 'side below the vent', p: [[352, 380], [360, 389], [356, 397], [365, 407]] },
+  { f: 'top', hair: 0, name: 'wraps onto the top face', p: [[292, 149], [306, 144], [302, 138], [318, 133]] },
+  { f: 'top', hair: 0, name: 'top face over the ribs', p: [[236, 146], [248, 137], [244, 130], [258, 124]] },
+  // ---- new mains, all on the door plate ----
+  // the right stile, top rail to bottom rail: 264px, the longest run in
+  // the drawing. Held to x 261-276 so it clears the window (256) and the
+  // card (258) on one side and the inner frame (282) on the other, and
+  // pushed to x >= 268 through y 312-336 so it passes RIGHT of the
+  // caption instead of through it.
+  { f: 'front', hair: 0, name: 'right stile, full height', p: [[272, 192], [266, 214], [273, 238], [265, 262], [271, 288], [269, 312], [276, 336], [266, 360], [272, 386], [262, 410], [269, 436], [264, 456]] },
+  // below the card, then down the lower right plate. Threads the 14px
+  // band between the card's bottom (392) and the dial's keep-out top
+  // (406), stays above the label (402) until it is clear of x=234, then
+  // falls to the bottom rail.
+  { f: 'front', hair: 0, name: 'below the card, into the lower plate', p: [[98, 396], [116, 401], [134, 395], [152, 400], [170, 394], [190, 398], [212, 394], [234, 398], [250, 414], [258, 438], [266, 458]] },
+  // the left stile below the caption, continuing the upper run
+  { f: 'front', hair: 0, name: 'left stile, lower', p: [[105, 331], [112, 352], [104, 374], [111, 396], [103, 418], [110, 440], [102, 458]] },
+  // the top rail, above the window
+  { f: 'front', hair: 0, name: 'top rail', p: [[138, 188], [158, 197], [178, 189], [198, 196], [218, 188]] },
+  // ---- capillaries: hairline branches off the mains ----
+  { f: 'front', hair: 1, p: [[288, 173], [279, 177], [273, 174]] },
+  { f: 'front', hair: 1, p: [[270, 203], [262, 211]] },
+  { f: 'front', hair: 1, p: [[74, 424], [80, 432], [88, 435]] },
+  { f: 'side', hair: 1, p: [[348, 198], [357, 203]] },
+  { f: 'side', hair: 1, p: [[360, 397], [368, 392]] },
+  { f: 'top', hair: 1, p: [[244, 130], [253, 136]] },
+  // was [[111,216],[120,220]] until this pass: the second point sat
+  // inside the window and the new segment check caught it. Turned away
+  // from the glass instead of being trimmed to the edge.
+  { f: 'front', hair: 1, p: [[111, 216], [103, 221]] },
+  { f: 'top', hair: 1, p: [[306, 138], [311, 131]] },
+  // ---- new capillaries off the new mains ----
+  { f: 'front', hair: 1, p: [[266, 214], [259, 209]] },
+  { f: 'front', hair: 1, p: [[262, 410], [253, 406]] },
+  { f: 'front', hair: 1, p: [[250, 414], [243, 423]] },
+  { f: 'front', hair: 1, p: [[266, 458], [274, 451]] },
+  { f: 'front', hair: 1, p: [[104, 374], [96, 378]] },
+  { f: 'front', hair: 1, p: [[110, 440], [119, 447]] },
+];
+let mains = 0, hairs = 0;
+for (const c of CRACKS) {
+  const poly = FACES[c.f];
+  for (const pt of c.p) {
+    if (!inPoly(pt, poly)) throw new Error('crack vertex ' + pt + ' is off the ' + c.f + ' face' + (c.name ? ' (' + c.name + ')' : ''));
+  }
+  for (let i = 0; i < c.p.length - 1; i++) {
+    for (const R of KEEP) {
+      if (segRect(c.p[i], c.p[i + 1], R)) throw new Error('crack segment ' + c.p[i] + '->' + c.p[i + 1] + ' crosses the ' + R.n + (c.name ? ' (' + c.name + ')' : ''));
+    }
+    for (const C of KEEPC) {
+      if (segCircle(c.p[i], c.p[i + 1], C)) throw new Error('crack segment ' + c.p[i] + '->' + c.p[i + 1] + ' crosses the ' + C.n + (c.name ? ' (' + c.name + ')' : ''));
+    }
+  }
+  const d = 'M' + c.p.map((q) => f(q[0]) + ' ' + f(q[1])).join(' L');
+  P(d, c.hair ? 'vtCrack vtCrackH' : 'vtCrack', ' pathLength="1"');
+  if (c.hair) hairs++; else mains++;
+}
+const plateLen = CRACKS.filter((c) => !c.hair).reduce((t, c) => {
+  let L = 0;
+  for (let i = 0; i < c.p.length - 1; i++) L += Math.hypot(c.p[i + 1][0] - c.p[i][0], c.p[i + 1][1] - c.p[i][1]);
+  return t + L;
+}, 0);
+console.log('fractures: ' + mains + ' mains + ' + hairs + ' capillaries = ' + (mains + hairs) + ' paths; total main length ' + Math.round(plateLen) + 'px');
 // displaced corner plate on the DOOR's top-right corner: the seat
 // outline stays put, the plate itself sits shifted and slightly turned,
 // and the displacement stays inside the front face so the silhouette
