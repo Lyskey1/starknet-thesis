@@ -772,21 +772,23 @@
 
 /* ===== 01: catalyst chapter rail (qw-). Privacy's wall-pedestal device
    (pw-) recomposed for wide content: the rail runs as a triptych above a
-   full-width panel (privacy's own <=980 composition, promoted to desktop
-   because chapter 1 holds a 3-column card grid that a side panel would
-   fold to 2 columns and outgrow the reserve). One chapter in flow at a
-   time; the panel is a fixed-height scroller so switching never reflows
-   the page below. --qw-h is measured against the tallest chapter and
-   re-verified in the commit run. Since the four-chapter recut of
-   2026-08-19 the tallest is chapter 01 (six cards): 862px at 1240-1440
-   (the container is width-capped, so heights are flat across that range)
-   growing toward the 981px viewport, the last width before the shell
-   goes auto. With the flag top rows (2026-08-19) chapter 01 needs 879px
-   at 1440; at 981 chapter 03 leads at 968px (the exit-card marks row).
-   Hence the two-step reserve on
-   #catalyst-chapters below: 908px base, 998px under 1241px, about 28px
-   of margin over the measured worst in each regime. Selection color is
-   the section's semantic blue (--th-q), not the page accent. */
+   full-width panel (privacy's own <=980 composition, promoted to
+   desktop). One chapter in flow at a time, and EACH CHAPTER TAKES ITS
+   OWN HEIGHT: thMorph (below, shared with the threat beats) fades the
+   outgoing content, animates the shell to the incoming chapter's
+   height, and fades the new content in; reduced motion snaps.
+   HISTORY, recorded once here for every chapter device on this page
+   (the three qw rails and the threat beats): until 2026-08-20 these
+   devices reserved the tallest chapter's height so switching never
+   moved the page below. That stopped working when single chapters
+   started carrying full-frame documents: the executive-order frames
+   put a 1457px shell over a 607px chapter and the vault put 812 over
+   145, a spread past any reasonable amount of shared air. The still
+   rail the reserve was buying is kept by the animation instead, and
+   overflow-anchor:none keeps the browser's scroll anchoring from
+   adjusting the page when the box changes height under the fold.
+   Selection color is the section's semantic blue (--th-q), not the
+   page accent. */
 .qw{margin-top:34px;}
 .qw-rail{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;max-width:860px;}
 .qw-ped{position:relative;display:grid;grid-template-rows:1fr auto;justify-items:center;
@@ -813,38 +815,21 @@
   background:linear-gradient(180deg,color-mix(in srgb,var(--th-q) 24%,transparent),color-mix(in srgb,var(--th-q) 8%,transparent) 48%,color-mix(in srgb,var(--th-q) 15%,transparent));}
 .qw-label{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.16em;color:var(--th-ink);white-space:nowrap;}
 .qw-label b{color:var(--th-q);font-weight:600;margin-right:7px;}
-/* panel shell: quantum's own panel material (turkey/maze family), not
-   privacy's glass import; holds the scroll fade so it cannot scroll away.
-   The panel is NOT a scroll container by default: a zero-extent scroller
-   with overscroll-behavior:contain latches real wheel gestures and blocks
-   chaining to the page, which reads as a frozen page (measured: a
-   synthesized compositor gesture over the card grid moved the page 0px of
-   1800 with overflow-y:auto present, 1800 of 1800 without). fade() grants
-   .qw-scroll only while content actually overflows the reserve. */
-.qw-shell{position:relative;margin-top:22px;height:var(--qw-h,736px);overflow:hidden;border-radius:18px;
+/* panel shell: quantum's own panel material (turkey/maze family). The
+   shell is auto-height (never a scroll container; a zero-extent scroller
+   latches wheel gestures and freezes the page, measured 2026-08-19);
+   overflow:hidden only matters while thMorph animates the height. */
+.qw-shell{position:relative;margin-top:22px;overflow:hidden;border-radius:18px;overflow-anchor:none;
   border:1px solid rgba(245,242,236,.08);
   background:linear-gradient(180deg,rgba(255,255,255,.015),rgba(255,255,255,.004));}
-.qw-shell::after{content:"";position:absolute;left:0;right:0;bottom:0;height:64px;opacity:0;
-  background:linear-gradient(180deg,transparent,rgba(7,9,16,.92));pointer-events:none;z-index:2;
-  transition:opacity .3s ease;}
-.qw-shell.has-more::after{opacity:1;}
-.qw-panel{height:100%;padding:26px 30px 26px;}
-/* no overscroll-behavior:contain here: measured headed at 1024, a fresh
-   gesture over the panel pinned at its limit latched to it and contain
-   blocked the chain to the page, freezing scroll again. Default chaining
-   hands the remainder to the page, which is the wanted reading flow. */
-.qw-panel.qw-scroll{overflow-y:auto;scroll-behavior:auto;}
-.qw-panel:focus-visible{outline:2px solid var(--th-q);outline-offset:-3px;}
-/* one chapter in flow at a time: hidden ones must not inflate the scroller */
+.qw-panel{padding:26px 30px 26px;}
+/* one chapter in flow at a time */
 .qw-ch{display:none;position:relative;}
-.qw-ch.is-on{display:block;animation:qwIn .3s ease;}
-@keyframes qwIn{from{opacity:0;transform:translateY(2px)}to{opacity:1;transform:none}}
+.qw-ch.is-on{display:block;}
 .qw-ch .th-q-chapter{margin-top:0;padding-top:0;}
 .qw-ch .th-pm-grid,.qw-ch .th-eo-panels,.qw-ch .th-yr-panels{margin-top:24px;}
 @media(max-width:980px){
-  .qw-shell{height:auto;overflow:visible;}
-  .qw-shell::after{content:none;}
-  .qw-panel{height:auto;overflow:visible;padding:22px 18px;}
+  .qw-panel{padding:22px 18px;}
   .qw-obj{width:58px;height:50px;}
   .qw-plinth{height:46px;}
   .qw-rail{gap:10px;max-width:none;}
@@ -875,8 +860,9 @@
    04 machine (js/sticky-rail.js) driving quantum names. The rail sticks
    under the measured nav, condenses to glyph-plus-label rows on an
    opaque fill, and the spacer takes back the height it gives up so
-   nothing below jumps. It releases naturally at the end of .qw, whose
-   height is constant across chapters (the fixed shell reserve).
+   nothing below jumps. It releases naturally at the end of .qw
+   (auto-height per chapter since 2026-08-20; the stick test reads the
+   root's top, which height changes below never move).
    Quantum-specific divergences from privacy: the label lives INSIDE the
    plinth here, so the condensed state flattens the plinth to a bare
    wrapper instead of collapsing it (privacy hides its plinth and keeps
@@ -907,50 +893,6 @@
   #catalyst-chapters.is-stuck .qw-plinth::after{content:none;}
   #catalyst-chapters.is-stuck .qw-label{overflow:hidden;text-overflow:ellipsis;}
 }
-/* reserve: see the --qw-h note above the shell rules. Re-measured
-   2026-08-22 with the seal-framed renders: the executive-orders
-   chapter now needs 1427 at base widths and GOVERNS the shell, which
-   rises 908 -> 1457 (need + 28 + 2px border). The other three
-   chapters (853 / 845 / 605) inherit 574-850px of air at base: THE
-   YEAR 2029 is 605px of content in a 1457px box. At 981 (client
-   996, sheet band) needs are 932 / 666 / 944 / 648 and 998 stands.
-   THE OPEN QUESTION, analyzed 2026-08-22 for the next session, no
-   option built yet:
-   (1) Per-chapter shell height. What breaks: every pedestal click
-   reflows the ~9000px of page below the shell by up to 850px, so
-   content the reader was tracking below the device jumps on every
-   switch; browser scroll anchoring compensates unpredictably. The
-   sticky rail itself survives (its test reads the root top, which
-   does not move), and deep links are safe (load state is
-   deterministic). Mitigable with an animated height transition on
-   measured per-chapter constants, which trades the jump for a
-   ~350ms reflow ripple per click.
-   (2) Has the fixed-tallest-shell pattern outgrown this device?
-   Its premise was chapters within ~1.5x of each other (577-827 when
-   built). Full-frame documents made the spread 2.4x, and the price
-   of stability now scales with that spread. Verdict: the pattern
-   holds for prose chapters and has outgrown a device where one
-   chapter carries documents; keeping it as-is means every future
-   document makes three other chapters taller.
-   (3) Cheaper options, best first: (a) HYBRID FLOOR: shell fixed at
-   ~908 for the three prose chapters, allowed to grow to natural
-   height only while the orders chapter is open; reflow happens only
-   entering/leaving that one chapter (~520px, animatable), the other
-   switches stay rock stable. (b) CENTER the short chapters' content
-   in the shell so the air reads as deliberate negative space; free,
-   cosmetic, does not shrink the air. (c) Internal scroll for the
-   orders chapter only, using the device's existing has-more/
-   qw-scroll affordance; cheapest, but puts a scrollbar inside a
-   document, which this page has always refused.
-   THE WHOLE PICTURE, both rails, 2026-08-22: this rail (catalyst)
-   runs 853 / 1427 / 845 / 605 in a 1457 shell; the readiness rail in
-   section 03 runs 488 / 783 / 143 in an 812 shell (was 540 before
-   the vault). Same pattern, same cause both times: one chapter
-   carrying a full-frame visual sets the shell for all. Whatever
-   answer the next session picks should be picked once and applied to
-   both rails. */
-#catalyst-chapters .qw-shell{--qw-h:1457px;}
-@media(max-width:1240px){#catalyst-chapters .qw-shell{--qw-h:998px;}}
 /* four 8px labels edge-to-edge read as one strip at phone widths
    (measured 2px of plinth margin at 375), so the rail folds two-by-two */
 @media(max-width:480px){#catalyst-chapters .qw-rail{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 10px;}}
@@ -1037,11 +979,9 @@
 .qi-glyph svg{width:100%;height:100%;display:block;stroke-width:1.9px;}
 .qi-lab{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.14em;line-height:1.5;text-transform:uppercase;}
 .qi-lab b{font-weight:600;margin-right:6px;}
-/* one beat in flow at a time; the container reserves the tallest beat's
-   height so advancing never reflows. Measured: beat 01 leads at 1191px
-   in the wide regime (1241px and up) and 1174px at the 981px worst of
-   the narrow regime, hence 1216 and 1200 with ~25px of margin. */
-.qi-beats{min-height:var(--qi-reserve,1216px);}
+/* one beat in flow at a time; each beat takes its own height and
+   thMorph animates between them (history: the qw comment above) */
+.qi-beats{overflow-anchor:none;}
 .qi-beat{display:none;}
 .qi-beat.is-open{display:block;}
 .qi-beat > :first-child{margin-top:0;}
@@ -1056,11 +996,9 @@
 .qi-next:focus-visible{outline:2px solid var(--th-q);outline-offset:3px;}
 /* polite announcer, visually hidden */
 .qi-sr{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
-@media(max-width:1240px){.qi-beats{min-height:var(--qi-reserve-narrow,1200px);}}
 @media(max-width:980px){
   .qi{display:block;}
   .qi-index{display:none;}
-  .qi-beats{min-height:0;}
   .qi-beat{display:block;}
   .qi-beat + .qi-beat{margin-top:64px;}
   /* NEXT goes with the index: with every beat visible, a control that
@@ -1395,7 +1333,7 @@ a.qg-card:focus-visible,.qg-linkcard:has(.th-eo-main:focus-visible){outline:2px 
       </button>
     </div>
     <div class="qw-shell" id="qw-shell">
-    <div class="qw-panel" id="qw-panel" role="tabpanel" aria-live="polite" tabindex="0">
+    <div class="qw-panel" id="qw-panel" role="tabpanel" aria-live="polite">
 
     <article class="qw-ch is-on" data-ch="0">
   <div class="th-q-chapter">
@@ -1507,16 +1445,61 @@ a.qg-card:focus-visible,.qg-linkcard:has(.th-eo-main:focus-visible){outline:2px 
 <script>
 // ============================================================
 // SECTION 01 - catalyst chapter rail. Privacy's wall-pedestal
-// pattern: a triptych of plinths over one fixed-height panel,
-// exactly one chapter in flow at a time. Chapter 1 ships selected
-// in the markup so the section reads complete with no JS. The rail
-// carries the roving tab stop (thRove); arrows cycle, Enter/click
-// picks. The panel is a fixed-height scroller (see the CSS fit
-// note): switching chapters returns it to the top, and the shell
-// fade shows only while more sits below the fold. A location hash
-// that targets an element inside a hidden chapter surfaces that
-// chapter first (same contract as privacy's two surface handlers).
+// pattern: a triptych of plinths over one panel, exactly one
+// chapter in flow at a time, each at its own height (history: the
+// qw CSS comment). Chapter 1 ships selected in the markup so the
+// section reads complete with no JS. The rail carries the roving
+// tab stop (thRove); arrows cycle, Enter/click picks. A location
+// hash that targets an element inside a hidden chapter surfaces
+// that chapter first, instantly (arrivals never animate).
 // ============================================================
+// thMorph: the shared chapter-switch choreography for every chapter
+// device on this page (three qw rails + the threat beats). Outgoing
+// content fades out fully BEFORE the box resizes, so no text is ever
+// visible mid-reflow; the box then animates to the incoming
+// chapter's measured height while the new content (already laid out
+// at final width, so it cannot reflow) fades in. 140ms fade, 400ms
+// height at cubic-bezier(.22,.61,.36,1): fast enough that a rapid
+// tab-through never queues, slow enough that the page below glides
+// rather than jumps. Reduced motion or instant=true snaps directly.
+// A token cancels a morph mid-flight if the reader clicks again.
+function thMorph(box, fadeEl, swap, instant){
+  var token = (box.__thmTok = (box.__thmTok || 0) + 1);
+  function clear(){
+    box.style.transition = ''; box.style.height = ''; box.style.overflow = '';
+    fadeEl.style.transition = ''; fadeEl.style.opacity = '';
+  }
+  if (instant || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    clear(); swap(); return;
+  }
+  var h0 = box.getBoundingClientRect().height;
+  fadeEl.style.transition = 'opacity .14s ease';
+  fadeEl.style.opacity = '0';
+  setTimeout(function(){
+    if (box.__thmTok !== token) return;
+    box.style.transition = 'none';
+    box.style.height = h0 + 'px';
+    box.style.overflow = 'hidden';
+    swap();
+    var h1 = box.scrollHeight + (box.offsetHeight - box.clientHeight);
+    requestAnimationFrame(function(){
+      if (box.__thmTok !== token) return;
+      box.style.transition = 'height .4s cubic-bezier(.22,.61,.36,1)';
+      box.style.height = h1 + 'px';
+      fadeEl.style.transition = 'opacity .26s ease .1s';
+      fadeEl.style.opacity = '1';
+      var tm = setTimeout(done, 520);
+      function done(){
+        clearTimeout(tm);
+        box.removeEventListener('transitionend', onEnd);
+        if (box.__thmTok !== token) return;
+        clear();
+      }
+      function onEnd(e){ if (e.target === box && e.propertyName === 'height') done(); }
+      box.addEventListener('transitionend', onEnd);
+    });
+  }, 150);
+}
 function initQw(root, onPick){
   if (!root) return;
   var peds = [].slice.call(root.querySelectorAll('.qw-ped'));
@@ -1527,26 +1510,12 @@ function initQw(root, onPick){
     var c = root.querySelector('.qw-ch.is-on');
     return c ? +c.dataset.ch : 0;
   }
-  /* the panel only becomes a scroll container, and only earns a tab
-     stop, while content actually overflows the reserve: a zero-extent
-     scroller latches wheel gestures and freezes the page (see CSS note) */
-  function fade(){
-    var more = panel.scrollHeight - panel.clientHeight;
-    var atEnd = panel.scrollTop >= more - 2;
-    panel.classList.toggle('qw-scroll', more > 4);
-    shell.classList.toggle('has-more', more > 4 && !atEnd);
-    panel.setAttribute('tabindex', more > 4 ? '0' : '-1');
-  }
-  function select(i){
-    chs.forEach(function(c){ c.classList.toggle('is-on', +c.dataset.ch === i); });
+  function select(i, instant){
     rove.mirror(i);
-    panel.scrollTop = 0;
-    fade();
+    thMorph(shell, panel, function(){
+      chs.forEach(function(c){ c.classList.toggle('is-on', +c.dataset.ch === i); });
+    }, instant);
   }
-  panel.addEventListener('scroll', fade);
-  window.addEventListener('resize', fade);
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fade);
-  fade();
   var rove = thRove({ root: root, buttons: peds, shown: shown,
     pick: function(k){ select(k); if (onPick) onPick(k); } });
   function surface(){
@@ -1555,7 +1524,7 @@ function initQw(root, onPick){
     var el = document.getElementById(id);
     if (!el || !root.contains(el)) return;
     var c = el.closest('.qw-ch');
-    if (c) select(+c.dataset.ch);
+    if (c) select(+c.dataset.ch, true);
   }
   window.addEventListener('hashchange', surface);
   surface();
@@ -1801,14 +1770,21 @@ if (window.thStickyRail) {
     opts = opts || {};
     k = Math.max(0, Math.min(3, k));
     reach(k);
-    if (gated) beats.forEach(function(b, i){ b.classList.toggle('is-open', i === k); });
     var changed = k !== current;
+    if (gated) {
+      var box = grid.querySelector('.qi-beats');
+      var apply = function(){
+        beats.forEach(function(b, i){ b.classList.toggle('is-open', i === k); });
+        /* devices size canvases from rects that read zero while hidden;
+           one synthetic resize lets each re-fit through its own listener */
+        window.dispatchEvent(new Event('resize'));
+      };
+      if (changed && !opts.instant) thMorph(box, box, apply);
+      else apply();
+    }
     current = k;
     sync();
     if (changed && announce) announce.textContent = NAMES[k];
-    /* devices size canvases from rects that read zero while hidden; one
-       synthetic resize lets each re-fit through its own listener */
-    if (gated && changed) window.dispatchEvent(new Event('resize'));
     if (opts.scroll) {
       var want = navHeight() + 24;
       var top = (gated ? grid : beats[k]).getBoundingClientRect().top;
@@ -1845,15 +1821,15 @@ if (window.thStickyRail) {
     var el = document.getElementById(id);
     if (!el || !grid.contains(el)) return;
     var b = el.closest('.qi-beat');
-    if (b) open(+b.dataset.beat, {});
+    if (b) open(+b.dataset.beat, { instant: true });
   }
   window.addEventListener('hashchange', surface);
   /* the search palette's same-page landing goes through reveal(), not the
      hash; its .qi-beat adapter calls this hook, which unlocks up to the
      target beat exactly as hash arrival does (the reader asked for it) */
-  window.__qiOpen = function(k){ open(k, {}); };
+  window.__qiOpen = function(k){ open(k, { instant: true }); };
   /* boot: session furthest, then any hash target on top of it */
-  open(Math.min(furthest(), 3), {});
+  open(Math.min(furthest(), 3), { instant: true });
   surface();
 })();
 </script>
@@ -1912,13 +1888,8 @@ if (window.thStickyRail) {
         <span class="qw-plinth"><span class="qw-label"><b>03</b>LIVE TODAY</span></span>
       </button>
     </div>
-    <!-- reserve re-measured 2026-08-22 with the vault in chapter 02:
-         needs 488 / 783 / 143 at 1440 and 488 / 707 / 143 at 981, the
-         vault chapter governs; 812 clears it with 28px of margin.
-         The fixed-shell spread question for BOTH rails is recorded in
-         one place: the #catalyst-chapters reserve comment. -->
-    <div class="qw-shell" style="--qw-h:812px">
-    <div class="qw-panel" id="qw-panel-b" role="tabpanel" aria-live="polite" tabindex="0">
+    <div class="qw-shell">
+    <div class="qw-panel" id="qw-panel-b" role="tabpanel" aria-live="polite">
 
     <article class="qw-ch is-on" data-ch="0">
     <div class="th-st-item">
@@ -2445,8 +2416,8 @@ body.page-quantum{overflow-x:clip;}
         <span class="qw-plinth"><span class="qw-label"><b>04</b>HOW LITTLE CHANGES</span></span>
       </button>
     </div>
-    <div class="qw-shell" style="--qw-h:474px">
-    <div class="qw-panel" id="qw-panel-v" role="tabpanel" aria-live="polite" tabindex="0">
+    <div class="qw-shell">
+    <div class="qw-panel" id="qw-panel-v" role="tabpanel" aria-live="polite">
 
     <article class="qw-ch is-on" data-ch="0">
     <div class="th-pm-vcard th-pm-reveal" data-qv="0">
