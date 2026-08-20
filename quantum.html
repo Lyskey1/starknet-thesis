@@ -644,6 +644,33 @@
    VERBATIM against the Federal Register before capture. The cards
    are side by side, non-negotiable: the pair is the argument, two
    orders signed the same day.
+   THE FRAME (owner's reframe, 2026-08-22): each render opens at the
+   page's navy topper band, cut at the band's own top edge (the seal
+   artwork overflows its svg box, so the band edge is the only clean
+   authentic top boundary; the reference's hairline rule does not
+   exist on the live page and inventing one would fabricate document
+   furniture). Inside the band only the seal remains, ~95px across at
+   the 465 display, crisp because it is 1:1 vector-derived pixels.
+   Removed as SITE CHROME (same rule and reporting as the audio
+   floater): the eyebrow (Presidential Actions category link + arrow)
+   and the meta row (Executive Orders byline + date). Removed as
+   DECLARED DUPLICATION, content not chrome: the page's own headline,
+   which repeats the card's h4 immediately above; a card reading
+   title-above-title is worse than this declared omission, owner's
+   ruling. No visible break marks these header removals: skipping
+   furniture at the top of a frame is not the same act as joining two
+   non-contiguous regions of the text.
+   THE ASYMMETRY IS DELIBERATE, do not "fix" it: 14412 is a STRAIGHT
+   CROP (header furniture and duplicated title removed) from the seal
+   through the end of Section 1, because its policy sentence lives in
+   Section 1, contiguous with the opening; its cite line names what
+   is visible in frame. 14413's policy sentence lives in Sec. 4(a),
+   far below its Section 1 Purpose, so that card is a MONTAGE: the
+   header frame, then a visible declared break (.th-eo-skip, hairline
+   rule broken by a mono SECTIONS 1 TO 3 OMITTED label, real HTML so
+   screen readers hear the omission), then the Sec. 4(a) passage.
+   One card straight, one card declared montage, because the two
+   orders put their policy in different sections.
    CAPTURE, so it reads as a document and not a website: the passage
    paragraph was captured from the live page with its column FORCED
    to 560px CSS at DPR 2, because a website reflows and print does
@@ -654,13 +681,11 @@
    body ink. Verified in the frames: zero colored pixels, no
    underlines, all edges white. What remains of the website is the
    typeface, the leading and the words.
-   SCALE: the column is forced to 413px so the element box is exactly
-   the 465px card measure and the render displays the page at literal
-   1:1 native scale: 16.9px body em, 12.5px caps, 9.0px x-height at
-   1x, the site's own full-width comfort. Chosen 2026-08-22 from a
-   measured table (380/340/300 gave 9.7/10.7/11.9px x-height but 615
-   to 818px cards, and 340 and below bust the 908 reserve); 413 is
-   the target scale at the shortest cards and least white. In the 881
+   SCALE: the body column is 413px inside the 465 frame, so the
+   render displays the page at literal 1:1 native scale: 16.9px body
+   em, 12.5px caps, 9.0px x-height at 1x, the site's own full-width
+   comfort (chosen 2026-08-22 from a measured table; wider columns
+   drop below the source's own comfort). In the 881
    to 1240px band and below 640px the render hides and the mono
    excerpt sheet returns; note the 413 capture reads 7.3px x-height
    even at the 376px measure, above the comfort floor, so the
@@ -688,7 +713,19 @@
    accepted with the type scale: ~302k px2 of white at 1440 (was 181k
    at the 6.84px scale); a taller white surface is what native-scale
    type on a fixed 465px measure costs. */
-.th-eo-doc{position:relative;z-index:1;width:min(465px,100%);margin:22px auto 0;}
+.th-eo-doc{position:relative;z-index:1;width:min(465px,100%);margin:22px auto 0;overflow:hidden;}
+.th-eo-doc img{border-radius:0;}
+/* the declared break in 14413's montage: joining the header region to
+   the Sec. 4(a) passage skips Sections 1 to 3, and joining two
+   non-contiguous regions of a legal document without declaring it
+   would misrepresent the document. A hairline rule broken by a mono
+   label, real HTML between the two images, so screen readers hear the
+   omission declared in reading order too. */
+.th-eo-skip{display:flex;align-items:center;gap:12px;background:#fff;padding:12px 26px;}
+.th-eo-skip::before,.th-eo-skip::after{content:"";flex:1;height:1px;background:rgba(20,26,32,.3);}
+.th-eo-skip span{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.18em;
+  text-transform:uppercase;color:rgba(20,26,32,.62);white-space:nowrap;text-decoration:none;}
+.th-eo-doc{text-decoration:none;}
 .th-eo-quote{display:none;}
 .th-eo-cite{display:block;margin-top:auto;padding-top:18px;font-family:'IBM Plex Mono',monospace;
   font-style:normal;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:rgba(245,242,236,.38);}
@@ -871,14 +908,41 @@
   #catalyst-chapters.is-stuck .qw-label{overflow:hidden;text-overflow:ellipsis;}
 }
 /* reserve: see the --qw-h note above the shell rules. Re-measured
-   2026-08-21 with the whitehouse.gov renders side by side: chapter
-   needs against the shell client at base widths (client 906): ch01
-   sovereign moves 853, ch02 executive orders 775, ch03 private
-   capital 845, ch04 the year 2029 605. At 981 (client 996, sheet
-   band): 932 / 666 / 944 / 648. Sovereign moves and private capital
-   govern with 78px of headroom over the orders; the year 2029 runs
-   ~300px short, the one remaining reserve-spread case. */
-#catalyst-chapters .qw-shell{--qw-h:908px;}
+   2026-08-22 with the seal-framed renders: the executive-orders
+   chapter now needs 1427 at base widths and GOVERNS the shell, which
+   rises 908 -> 1457 (need + 28 + 2px border). The other three
+   chapters (853 / 845 / 605) inherit 574-850px of air at base: THE
+   YEAR 2029 is 605px of content in a 1457px box. At 981 (client
+   996, sheet band) needs are 932 / 666 / 944 / 648 and 998 stands.
+   THE OPEN QUESTION, analyzed 2026-08-22 for the next session, no
+   option built yet:
+   (1) Per-chapter shell height. What breaks: every pedestal click
+   reflows the ~9000px of page below the shell by up to 850px, so
+   content the reader was tracking below the device jumps on every
+   switch; browser scroll anchoring compensates unpredictably. The
+   sticky rail itself survives (its test reads the root top, which
+   does not move), and deep links are safe (load state is
+   deterministic). Mitigable with an animated height transition on
+   measured per-chapter constants, which trades the jump for a
+   ~350ms reflow ripple per click.
+   (2) Has the fixed-tallest-shell pattern outgrown this device?
+   Its premise was chapters within ~1.5x of each other (577-827 when
+   built). Full-frame documents made the spread 2.4x, and the price
+   of stability now scales with that spread. Verdict: the pattern
+   holds for prose chapters and has outgrown a device where one
+   chapter carries documents; keeping it as-is means every future
+   document makes three other chapters taller.
+   (3) Cheaper options, best first: (a) HYBRID FLOOR: shell fixed at
+   ~908 for the three prose chapters, allowed to grow to natural
+   height only while the orders chapter is open; reflow happens only
+   entering/leaving that one chapter (~520px, animatable), the other
+   switches stay rock stable. (b) CENTER the short chapters' content
+   in the shell so the air reads as deliberate negative space; free,
+   cosmetic, does not shrink the air. (c) Internal scroll for the
+   orders chapter only, using the device's existing has-more/
+   qw-scroll affordance; cheapest, but puts a scrollbar inside a
+   document, which this page has always refused. */
+#catalyst-chapters .qw-shell{--qw-h:1457px;}
 @media(max-width:1240px){#catalyst-chapters .qw-shell{--qw-h:998px;}}
 /* four 8px labels edge-to-edge read as one strip at phone widths
    (measured 2px of plinth margin at 375), so the rail folds two-by-two */
@@ -1301,14 +1365,14 @@ a.qg-card:focus-visible,.qg-linkcard:has(.th-eo-main:focus-visible){outline:2px 
       <span class="th-pm-toprow"><span class="th-eo-label">Executive Order 14413 &middot; June 22, 2026</span></span>
       <h4 id="ushering-in-the-next-frontier-of"><a class="th-eo-main" href="https://www.whitehouse.gov/presidential-actions/2026/06/ushering-in-the-next-frontier-of-quantum-innovation/" target="_blank" rel="noopener noreferrer">Ushering in the Next Frontier of Quantum Innovation</a></h4>
       <blockquote class="th-eo-quote">&#8220;This national effort shall pursue development of a quantum computer at a scale intended to initiate the era of quantum-enabled scientific discovery, with the intent to deliver at least one such computer to a Department of Energy facility and, to the extent possible, make it available to the scientific community.&#8221;</blockquote>
-      <a class="th-doc th-eo-doc" style="--doc-tilt:0deg" href="https://www.federalregister.gov/documents/2026/06/25/2026-12910/ushering-in-the-next-frontier-of-quantum-innovation" target="_blank" rel="noopener noreferrer"><img src="assets/papers/eo-14413-wh413.webp" alt="Executive Order 14413, Sec. 4(a), as published at whitehouse.gov: &#8220;This national effort shall pursue development of a quantum computer at a scale intended to initiate the era of quantum-enabled scientific discovery, with the intent to deliver at least one such computer to a Department of Energy facility and, to the extent possible, make it available to the scientific community.&#8221; Opens the full order in the Federal Register, 91 FR 38487." width="932" height="732" loading="lazy" decoding="async"></a>
+      <a class="th-doc th-eo-doc" style="--doc-tilt:0deg" href="https://www.federalregister.gov/documents/2026/06/25/2026-12910/ushering-in-the-next-frontier-of-quantum-innovation" target="_blank" rel="noopener noreferrer"><img src="assets/papers/eo-14413-frame-head.webp" alt="Executive Order 14413 as published at whitehouse.gov: the presidential seal, the order number, and the authority formula, through &#8220;it is hereby ordered:&#8221;." width="930" height="806" loading="lazy" decoding="async"><span class="th-eo-skip"><span>Sections 1 to 3 omitted</span></span><img src="assets/papers/eo-14413-wh413.webp" alt="Sec. 4(a): &#8220;This national effort shall pursue development of a quantum computer at a scale intended to initiate the era of quantum-enabled scientific discovery, with the intent to deliver at least one such computer to a Department of Energy facility and, to the extent possible, make it available to the scientific community.&#8221; Opens the full order in the Federal Register, 91 FR 38487." width="932" height="732" loading="lazy" decoding="async"></a>
       <cite class="th-eo-cite">Sec. 4(a), the QC-ADDS Effort &middot; 91 FR 38487</cite>
     </div>
     <div class="th-eo-panel qg-card qg-linkcard">
       <span class="th-pm-toprow"><span class="th-eo-label">Executive Order 14412 &middot; June 22, 2026</span></span>
       <h4 id="securing-the-nation-against-advanced-cryptographic"><a class="th-eo-main" href="https://www.whitehouse.gov/presidential-actions/2026/06/securing-the-nation-against-advanced-cryptographic-attacks/" target="_blank" rel="noopener noreferrer">Securing the Nation Against Advanced Cryptographic Attacks</a></h4>
       <blockquote class="th-eo-quote">&#8220;It is the policy of the United States to safeguard national security and maintain technological leadership by responsibly and effectively executing the transition of Federal information systems to National Institute of Standards and Technology (NIST)-approved Federal Information Processing Standards (FIPS) for Post-Quantum Cryptography (PQC), and to assist critical infrastructure owners and operators with their transitions.&#8221;</blockquote>
-      <a class="th-doc th-eo-doc" style="--doc-tilt:0deg" href="https://www.federalregister.gov/documents/2026/06/25/2026-12909/securing-the-nation-against-advanced-cryptographic-attacks" target="_blank" rel="noopener noreferrer"><img src="assets/papers/eo-14412-wh413.webp" alt="Executive Order 14412, Sec. 1, as published at whitehouse.gov: &#8220;It is the policy of the United States to safeguard national security and maintain technological leadership by responsibly and effectively executing the transition of Federal information systems to National Institute of Standards and Technology (NIST)-approved Federal Information Processing Standards (FIPS) for Post-Quantum Cryptography (PQC), and to assist critical infrastructure owners and operators with their transitions.&#8221; Opens the full order in the Federal Register, 91 FR 38483." width="932" height="568" loading="lazy" decoding="async"></a>
+      <a class="th-doc th-eo-doc" style="--doc-tilt:0deg" href="https://www.federalregister.gov/documents/2026/06/25/2026-12909/securing-the-nation-against-advanced-cryptographic-attacks" target="_blank" rel="noopener noreferrer"><img src="assets/papers/eo-14412-frame.webp" alt="Executive Order 14412 as published at whitehouse.gov: the presidential seal, the order number, the authority formula, and Section 1 in full, ending &#8220;It is the policy of the United States to safeguard national security and maintain technological leadership by responsibly and effectively executing the transition of Federal information systems to National Institute of Standards and Technology (NIST)-approved Federal Information Processing Standards (FIPS) for Post-Quantum Cryptography (PQC), and to assist critical infrastructure owners and operators with their transitions.&#8221; Opens the full order in the Federal Register, 91 FR 38483." width="930" height="2040" loading="lazy" decoding="async"></a>
       <cite class="th-eo-cite">Sec. 1, Policy &middot; 91 FR 38483</cite>
     </div>
   </div>
