@@ -4607,12 +4607,37 @@
       // (/agg/tvl-history feesUsd, cumulative USD with the whole series
       // priced at current STRK spot), the same numbers the official
       // dashboard plots. The lifetime headline is fetched alongside as a
-      // cross-check: if the pair disagrees beyond cents, the whole card
-      // fails together (all-or-nothing), never a half-render.
+      // cross-check, and the whole card fails together (all-or-nothing),
+      // never a half-render.
+      // The check tests INTEGRITY, not simultaneity. The original guard
+      // demanded the pair agree to five cents, which only holds at the
+      // instant of a daily rollup with no activity after it, so once the
+      // pool started doing ~200+ fee actions a day the card silently
+      // fell back forever. Two real effects make the pair disagree while
+      // both endpoints are perfectly healthy, both measured 2026-08-20:
+      // (1) intraday accrual: the headline is realtime, the series is a
+      // daily snapshot (observed +$27.74, ~184 apply-actions at the
+      // 6 STRK fee); (2) repricing skew: both endpoints are STRK totals
+      // priced at spot but they reprice on unsynchronized cache
+      // boundaries (the snapshot cumulative moved 4345.26 -> 4430.66
+      // within minutes on a ~2% spot move), so the gap can point in
+      // EITHER direction: the first correction here assumed the headline
+      // could only run AHEAD of the snapshot, and it failed a live run
+      // within minutes on exactly this skew. The gap is not signed, so a
+      // directional check is as wrong as the cents check. What the pair CAN promise: the two numbers
+      // describe the same quantity within accrual + repricing skew, so
+      // the guard is a relative band (5%, $50 floor) that still catches
+      // the real failures: a unit or currency change on either endpoint
+      // (orders of magnitude), or a rollup stalled for days; a stalled
+      // date is caught by the freshness check.
       Promise.all([get('/agg/tvl-history'), get('/agg/lifetime-revenue')]).then(function(pair){
         var days = ((pair[0] && pair[0].days) || []).filter(function(x){ return typeof x.feesUsd === 'number'; });
         if (!days.length) throw new Error('empty');
-        if (Math.abs(days[days.length - 1].feesUsd - pair[1].revenueUsd) > 0.05) throw new Error('revenue pair mismatch');
+        var lastCum = days[days.length - 1].feesUsd;
+        var headline = pair[1].revenueUsd;
+        if (typeof headline !== 'number') throw new Error('revenue headline missing');
+        if (Math.abs(headline - lastCum) > Math.max(50, Math.max(headline, lastCum) * 0.05)) throw new Error('revenue pair gap out of bounds');
+        if (Date.now() - new Date(days[days.length - 1].date + 'T00:00:00Z').getTime() > 172800000) throw new Error('revenue series stale');
         // fee copy on this page states the protocol's dollar target and the
         // STRK settlement mechanism only (see js/fee-config.js, 2026-08-12);
         // no [data-fee-usd] spans remain here, so no live refresh is needed
