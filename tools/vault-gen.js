@@ -81,6 +81,130 @@ s.push('</g>');
 s.push('<g class="vtAssets">');
 s.push(`<rect x="118" y="206" width="138" height="100" rx="12" class="vtGf"/>`);
 L(130, 296, 158, 216, 'vtGl'); L(144, 298, 172, 218, 'vtGl');   // glints
+// ================= THE HOARD =================
+// The chamber holds a hoard, not three specimens in a case. THREE HERO
+// COINS at the front carry the marks and the argument; a BANK of
+// unmarked coins behind them carries the mass. The heroes are drawn in
+// one fixed position, never move and never change colour, before or
+// after; nothing in the bank animates either. Measured, not asserted:
+// across a full send sequence the hoard band changes 11 pixels out of
+// 22,344, which is antialiasing. Re-measure that way after any change
+// here rather than trusting the eye.
+// PERSPECTIVE. The interior floor is the chamber's bottom edge receded
+// toward the drawing's own vanishing point at FT of full depth, so
+// every coin at depth d rests on the baseline y = floorY(d) and the
+// floor's x-extent slides RIGHT as it recedes (the viewer sits left of
+// the object, which is why the vault's own right face is the visible
+// one). That makes the hoard a wedge, deep on the right and shallow on
+// the left: that is what a box interior looks like through a window
+// from this viewpoint, not a bug. Nothing floats: every coin either
+// sits on the floor quad or nests on the top of a coin already placed,
+// and both cases are ASSERTED below before the file is written.
+const CH = { x0: 120, y0: 208, x1: 254, y1: 303 };
+const FT = 0.075;
+const floorY = (d) => CH.y1 + (VP.y - CH.y1) * FT * d;
+const floorL = (d) => CH.x0 + (VP.x - CH.x0) * FT * d;
+const floorR = (d) => CH.x1 + (VP.x - CH.x1) * FT * d;
+// deterministic LCG: regeneration is byte-stable, so the drawing never
+// reshuffles itself between runs
+let _s = 20260820;
+const rnd = () => (_s = (_s * 1103515245 + 12345) % 2147483648) / 2147483648;
+const rr = (a, b) => a + (b - a) * rnd();
+
+const coins = [];   // {x, baseY, r, ry, cls, kind}
+function place(d, r, cls) {
+  const lo = Math.max(floorL(d), CH.x0 - r * 0.55), hi = Math.min(floorR(d), CH.x1 + r * 0.35);
+  if (hi - lo < r) return false;
+  const x = rr(lo + r * 0.2, hi - r * 0.2);
+  const k = rnd();
+  const ry = k < 0.34 ? r * 0.3 : (k < 0.58 ? r * 0.66 : r);   // lying / tilted / standing
+  coins.push({ x, baseY: floorY(d), r, ry, cls, d, on: 'floor' });
+  return true;
+}
+// three depth bands, drawn back to front so near coins occlude far ones.
+// Counts and radii are set for OVERLAP: a heap is coins hiding each
+// other, so total coin area runs past the band's own area on purpose.
+for (let i = 0; i < 13; i++) place(rr(0.72, 0.98), rr(4.6, 6.2), 'vtCoin3');
+for (let i = 0; i < 13; i++) place(rr(0.40, 0.70), rr(5.6, 7.6), 'vtCoin2');
+for (let i = 0; i < 13; i++) place(rr(0.02, 0.36), rr(7.0, 9.6), 'vtCoin1');
+// THE CREST. The floor's own recede cannot lift a coin past y~259, so
+// the heap is built up to the heroes' rims by nesting: each crest coin
+// rests on the tallest coin near its x, and stacks again if it is still
+// short. This is what makes the three heroes sit ON the hoard instead
+// of hovering over it.
+const HERO_BASE = 266.5;
+function nestAt(x, want, cls) {
+  for (let lvl = 0; lvl < 3; lvl++) {
+    let sup = null, best = 1e9;
+    for (const c of coins) {
+      if (Math.abs(c.x - x) > c.r * 1.35) continue;
+      const top = c.baseY - 2 * c.ry;
+      if (top < best) { best = top; sup = c; }
+    }
+    if (!sup) return null;
+    if (best <= want + 1) return sup;
+    const r = rr(5.4, 7.2);
+    const k = rnd();
+    const ry = k < 0.38 ? r * 0.34 : r;
+    // clamp to the same overhang invariant the assertion below enforces,
+    // so a crest coin can never end up perched off the edge of its support
+    const lim = sup.r * 1.5;
+    const nx = Math.max(sup.x - lim, Math.min(sup.x + lim, x + rr(-2, 2)));
+    const c = { x: nx, baseY: sup.baseY - 2 * sup.ry + 1.5, r, ry,
+                cls: sup.cls === 'vtCoin3' ? 'vtCoin2' : sup.cls, d: sup.d, on: sup };
+    coins.push(c);
+    if (c.baseY - 2 * c.ry <= want + 1) return c;
+  }
+  return null;
+}
+for (const hx of [142, 187, 232]) for (const dx of [-11, 0, 11]) nestAt(hx + dx, HERO_BASE - 2, 'vtCoin1');
+// two coins stand in the gaps BETWEEN the heroes, the only place the
+// hoard can be seen rising behind them
+for (const gx of [164.5, 209.5]) nestAt(gx, 244, 'vtCoin2');
+// ---- assertions: on the floor quad, or nested on a placed coin ----
+// THESE ARE LOAD-BEARING. They are not a formality: during authoring
+// they refused this file's own crest coins, which were perching past
+// the edge of the supports they were meant to rest on, and the fix was
+// to CLAMP the placement to the invariant (see nestAt) rather than
+// widen the tolerance. If a coin will not fit, move the coin; relaxing
+// a bound here buys a floating coin that no screenshot will catch,
+// because a heap hides its own mistakes.
+let onFloor = 0, nested = 0;
+for (const c of coins) {
+  if (c.on === 'floor') {
+    const dy = Math.abs(c.baseY - floorY(c.d));
+    if (dy > 0.01) throw new Error('coin base off the floor baseline by ' + dy.toFixed(2));
+    if (c.x < floorL(c.d) - c.r * 0.6 || c.x > floorR(c.d) + c.r * 0.4) throw new Error('coin base outside the floor quad at d=' + c.d.toFixed(2));
+    if (c.baseY > CH.y1 + 0.01 || c.baseY < floorY(1) - 0.01) throw new Error('coin base outside the floor depth range');
+    onFloor++;
+  } else {
+    const sup = c.on;
+    const supTop = sup.baseY - 2 * sup.ry;
+    if (Math.abs(c.baseY - supTop) > 2.01) throw new Error('nested coin not resting on its support');
+    if (Math.abs(c.x - sup.x) > sup.r * 1.6) throw new Error('nested coin overhangs its support');
+    nested++;
+  }
+}
+console.log('hoard: ' + coins.length + ' generic coins (' + onFloor + ' on the floor quad, ' + nested + ' nested), 3 hero coins');
+
+s.push('<clipPath id="vtChamber"><rect x="119" y="207" width="136" height="98" rx="11"/></clipPath>');
+s.push('<g clip-path="url(#vtChamber)">');
+// the interior floor: front edge is the chamber's own bottom, the back
+// edge is that edge receded; hairline, it only has to tell the eye
+// where the coins are standing
+PLl([[CH.x0, CH.y1], [floorL(1), floorY(1)]], 'vtFloor');
+PLl([[floorL(1), floorY(1)], [floorR(1), floorY(1)]], 'vtFloor');
+for (const c of coins) {
+  const cy = c.baseY - c.ry;
+  if (Math.abs(c.ry - c.r) < 0.01) s.push(`<circle cx="${f(c.x)}" cy="${f(cy)}" r="${f(c.r)}" class="${c.cls}"/>`);
+  else s.push(`<ellipse cx="${f(c.x)}" cy="${f(cy)}" rx="${f(c.r)}" ry="${f(c.ry)}" class="${c.cls}"/>`);
+}
+s.push('</g>');
+// hero coin bodies: opaque discs so the hoard never shows through a
+// mark. Bitcoin and Starknet bring their own rim; Ethereum is a bare
+// glyph, so it gets the rim that makes it read as the same object.
+for (const hx of [142, 187, 232]) s.push(`<circle cx="${hx}" cy="250" r="16.5" class="vtHeroDisc"/>`);
+s.push('<circle cx="187" cy="250" r="16.5" class="vtEthRing"/>');
 // Each mark carries its OWN official form (no generic ring around it),
 // all three in the neutral asset gray: the colorway is what makes the
 // color argument legible, so no mark ships in brand colors here.
@@ -132,7 +256,10 @@ s.push('<path fill-rule="evenodd" clip-rule="evenodd" d="M35.4461 15.2138C34.814
 s.push('<path fill-rule="evenodd" clip-rule="evenodd" d="M35.4462 15.2134C34.7673 13.5004 33.5054 12.0585 31.8115 10.9945C30.1279 9.94223 27.7895 9.4052 25.4724 9.86299C24.3277 10.0844 23.2187 10.5106 22.2454 11.0782C21.2766 11.6436 20.4084 12.3241 19.6569 13.0543C19.2817 13.4205 18.9411 13.8026 18.6028 14.1869L17.7258 15.3049L16.3714 17.1046C14.6447 19.4202 12.7853 22.1339 9.73396 22.938C6.73838 23.7274 5.43914 23.0283 3.61086 22.7395C3.94515 23.6026 4.35925 24.4407 4.92063 25.1781C5.47155 25.9304 6.12227 26.637 6.9313 27.2426C7.34015 27.5335 7.7718 27.8206 8.25121 28.0641C8.72843 28.2994 9.24309 28.5064 9.79242 28.6623C10.8851 28.9618 12.1152 29.0667 13.3063 28.9056C14.498 28.7466 15.637 28.369 16.6326 27.8674C17.6355 27.3706 18.5092 26.7656 19.2893 26.127C20.8401 24.8392 22.0464 23.4162 23.0653 21.9778C23.5778 21.2587 24.043 20.5259 24.4733 19.793L24.9797 18.9205C25.1345 18.6654 25.2911 18.4088 25.4502 18.1698C26.0918 17.2095 26.7194 16.4395 27.4817 15.8616C28.2335 15.2687 29.2802 14.8307 30.679 14.7289C32.072 14.626 33.6801 14.8162 35.4462 15.2134Z" class="vtStrkInk"/>');
 s.push('<path fill-rule="evenodd" clip-rule="evenodd" d="M27.91 29.4455C27.91 30.7036 28.9304 31.724 30.1885 31.724C31.4466 31.724 32.4658 30.7036 32.4658 29.4455C32.4658 28.1874 31.4466 27.167 30.1885 27.167C28.9304 27.167 27.91 28.1874 27.91 29.4455Z" class="vtStrkSw"/>');
 s.push('</g>');
-s.push(`<text x="187" y="296.5" class="vtNote">BTC &#183; ETH &#183; STRK &#183; UNCHANGED</text>`);
+// the caption moves BELOW the chamber (was y=296.5, inside it): the
+// hoard's floor band needs that space, and the label reads as the
+// chamber's caption from outside exactly as the plinth's note does.
+s.push(`<text x="187" y="320" class="vtNote">BTC &#183; ETH &#183; STRK &#183; UNCHANGED</text>`);
 s.push('</g>');
 
 // ================= BOLTS + SOCKETS =================
@@ -223,7 +350,7 @@ s.push('</g>');
 // replacement for the elliptic curve, never remove it as ornament) =======
 // clip: the two shell faces MINUS the window, the card slot and the
 // gauge, so the mesh never crosses anything that must stay readable
-s.push(`<clipPath id="vtFaces"><path clip-rule="evenodd" d="M${pts([FTL, FTR, FBR, FBL])} Z M${pts([FTR, BTR, BBR, FBR])} Z M114,202 h146 v108 h-146 Z M112,330 h150 v66 h-150 Z M120,404 h118 v52 h-118 Z"/></clipPath>`);
+s.push(`<clipPath id="vtFaces"><path clip-rule="evenodd" d="M${pts([FTL, FTR, FBR, FBL])} Z M${pts([FTR, BTR, BBR, FBR])} Z M114,202 h146 v124 h-146 Z M112,330 h150 v66 h-150 Z M120,404 h118 v52 h-118 Z"/></clipPath>`);
 s.push('<g class="vtLattice" clip-path="url(#vtFaces)">');
 let li = 0;
 for (let k = -6; k <= 3; k++) L(44 + k * 52, 560, 44 + k * 52 + 460, 100, `vtLat vtLat${li++}`, ' pathLength="1"');
