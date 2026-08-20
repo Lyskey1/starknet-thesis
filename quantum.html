@@ -609,9 +609,12 @@
    the object's height; past ~10 percent a wide object reads as crooked
    rather than placed. The paper (320x414) carries 1.5deg = 2 percent,
    deliberately calm; the head crops (360x121) shipped 1.5deg = 7.8
-   percent; the order passages (465x174-215) need 1.5 and 1.85deg to
-   stay near 7. Mirror the sign across a pair so it reads as
-   placement. */
+   percent. Exception, settled 2026-08-22: WIDE TEXT STRIPS take no
+   tilt at all (the EO renders set --doc-tilt:0deg); rotation reads
+   as a crooked rectangle on landscape text blocks, so the rule
+   applies to portrait-ish documents only and the shadow carries the
+   elevation on strips. Mirror the sign across a tilted pair so it
+   reads as placement. */
 .th-doc{display:block;transform:rotate(var(--doc-tilt,1.5deg));border-radius:3px;
   box-shadow:0 26px 60px -26px rgba(0,0,0,.9),0 8px 22px -10px rgba(0,0,0,.65),0 0 0 1px rgba(245,242,236,.09);
   transition:transform .3s ease;}
@@ -651,13 +654,20 @@
    body ink. Verified in the frames: zero colored pixels, no
    underlines, all edges white. What remains of the website is the
    typeface, the leading and the words.
-   SCALE: shown at min(465px,100%), the render displays at ONE scale
-   everywhere it appears: 12.9px body em, 9.5px caps, 6.84px x-height
-   at 1x (double at 2x), above the 6.4 comfort floor. In the 881 to
-   1240px band the card measure falls to ~363-376px, where x-height
-   drops to 5.5px, below even the 5.7 that was judged a photocopied
-   fax; there and below 640px the render hides and the mono excerpt
-   sheet returns, so sub-comfort pixels never ship. The blockquote
+   SCALE: the column is forced to 413px so the element box is exactly
+   the 465px card measure and the render displays the page at literal
+   1:1 native scale: 16.9px body em, 12.5px caps, 9.0px x-height at
+   1x, the site's own full-width comfort. Chosen 2026-08-22 from a
+   measured table (380/340/300 gave 9.7/10.7/11.9px x-height but 615
+   to 818px cards, and 340 and below bust the 908 reserve); 413 is
+   the target scale at the shortest cards and least white. In the 881
+   to 1240px band and below 640px the render hides and the mono
+   excerpt sheet returns; note the 413 capture reads 7.3px x-height
+   even at the 376px measure, above the comfort floor, so the
+   narrow-band sheet is NOT load-bearing: keeping it is the owner's
+   deliberate conservatism (2026-08-22), not a constraint. Removing
+   the 881-1240 media block would show the render there and nothing
+   would break. The blockquote
    stays in the DOM at every width: it feeds the search index, it is
    the fallback presentation, and the img alt carries the full
    verbatim sentence for screen readers where the render shows. Known
@@ -671,12 +681,13 @@
    destination the cite names) while the title links to
    whitehouse.gov (the pixels' source), so the two links carry the
    two publications and nothing is duplicated.
-   Tilts are 1.85/-1.5deg, recomputed from the .th-doc shear rule for
-   the 465x215 and 465x174 objects, not reused. Brightness cost,
-   reported and accepted with the reversal: ~181k px2 of white at
-   1440, against 125k for the stacked FR variant and 132k for the
-   STARK paper; comfort plus the pair plus a reflowed column is what
-   it costs. */
+   TILT: none, deliberately (--doc-tilt:0deg on both, 2026-08-22).
+   Rotation suits a portrait page like the paper in section 03; on a
+   wide text strip it reads as a crooked rectangle. The elevation is
+   carried by the .th-doc shadow alone. Brightness cost, reported and
+   accepted with the type scale: ~302k px2 of white at 1440 (was 181k
+   at the 6.84px scale); a taller white surface is what native-scale
+   type on a fixed 465px measure costs. */
 .th-eo-doc{position:relative;z-index:1;width:min(465px,100%);margin:22px auto 0;}
 .th-eo-quote{display:none;}
 .th-eo-cite{display:block;margin-top:auto;padding-top:18px;font-family:'IBM Plex Mono',monospace;
@@ -862,11 +873,11 @@
 /* reserve: see the --qw-h note above the shell rules. Re-measured
    2026-08-21 with the whitehouse.gov renders side by side: chapter
    needs against the shell client at base widths (client 906): ch01
-   sovereign moves 853, ch02 executive orders 627, ch03 private
+   sovereign moves 853, ch02 executive orders 775, ch03 private
    capital 845, ch04 the year 2029 605. At 981 (client 996, sheet
    band): 932 / 666 / 944 / 648. Sovereign moves and private capital
-   govern; executive orders and the year 2029 run ~230-300px short,
-   the reserve-spread flag of 2026-08-20 applies to both again. */
+   govern with 78px of headroom over the orders; the year 2029 runs
+   ~300px short, the one remaining reserve-spread case. */
 #catalyst-chapters .qw-shell{--qw-h:908px;}
 @media(max-width:1240px){#catalyst-chapters .qw-shell{--qw-h:998px;}}
 /* four 8px labels edge-to-edge read as one strip at phone widths
@@ -1290,14 +1301,14 @@ a.qg-card:focus-visible,.qg-linkcard:has(.th-eo-main:focus-visible){outline:2px 
       <span class="th-pm-toprow"><span class="th-eo-label">Executive Order 14413 &middot; June 22, 2026</span></span>
       <h4 id="ushering-in-the-next-frontier-of"><a class="th-eo-main" href="https://www.whitehouse.gov/presidential-actions/2026/06/ushering-in-the-next-frontier-of-quantum-innovation/" target="_blank" rel="noopener noreferrer">Ushering in the Next Frontier of Quantum Innovation</a></h4>
       <blockquote class="th-eo-quote">&#8220;This national effort shall pursue development of a quantum computer at a scale intended to initiate the era of quantum-enabled scientific discovery, with the intent to deliver at least one such computer to a Department of Energy facility and, to the extent possible, make it available to the scientific community.&#8221;</blockquote>
-      <a class="th-doc th-eo-doc" style="--doc-tilt:1.85deg" href="https://www.federalregister.gov/documents/2026/06/25/2026-12910/ushering-in-the-next-frontier-of-quantum-innovation" target="_blank" rel="noopener noreferrer"><img src="assets/papers/eo-14413-wh.webp" alt="Executive Order 14413, Sec. 4(a), as published at whitehouse.gov: &#8220;This national effort shall pursue development of a quantum computer at a scale intended to initiate the era of quantum-enabled scientific discovery, with the intent to deliver at least one such computer to a Department of Energy facility and, to the extent possible, make it available to the scientific community.&#8221; Opens the full order in the Federal Register, 91 FR 38487." width="1224" height="570" loading="lazy" decoding="async"></a>
+      <a class="th-doc th-eo-doc" style="--doc-tilt:0deg" href="https://www.federalregister.gov/documents/2026/06/25/2026-12910/ushering-in-the-next-frontier-of-quantum-innovation" target="_blank" rel="noopener noreferrer"><img src="assets/papers/eo-14413-wh413.webp" alt="Executive Order 14413, Sec. 4(a), as published at whitehouse.gov: &#8220;This national effort shall pursue development of a quantum computer at a scale intended to initiate the era of quantum-enabled scientific discovery, with the intent to deliver at least one such computer to a Department of Energy facility and, to the extent possible, make it available to the scientific community.&#8221; Opens the full order in the Federal Register, 91 FR 38487." width="932" height="732" loading="lazy" decoding="async"></a>
       <cite class="th-eo-cite">Sec. 4(a), the QC-ADDS Effort &middot; 91 FR 38487</cite>
     </div>
     <div class="th-eo-panel qg-card qg-linkcard">
       <span class="th-pm-toprow"><span class="th-eo-label">Executive Order 14412 &middot; June 22, 2026</span></span>
       <h4 id="securing-the-nation-against-advanced-cryptographic"><a class="th-eo-main" href="https://www.whitehouse.gov/presidential-actions/2026/06/securing-the-nation-against-advanced-cryptographic-attacks/" target="_blank" rel="noopener noreferrer">Securing the Nation Against Advanced Cryptographic Attacks</a></h4>
       <blockquote class="th-eo-quote">&#8220;It is the policy of the United States to safeguard national security and maintain technological leadership by responsibly and effectively executing the transition of Federal information systems to National Institute of Standards and Technology (NIST)-approved Federal Information Processing Standards (FIPS) for Post-Quantum Cryptography (PQC), and to assist critical infrastructure owners and operators with their transitions.&#8221;</blockquote>
-      <a class="th-doc th-eo-doc" style="--doc-tilt:-1.5deg" href="https://www.federalregister.gov/documents/2026/06/25/2026-12909/securing-the-nation-against-advanced-cryptographic-attacks" target="_blank" rel="noopener noreferrer"><img src="assets/papers/eo-14412-wh.webp" alt="Executive Order 14412, Sec. 1, as published at whitehouse.gov: &#8220;It is the policy of the United States to safeguard national security and maintain technological leadership by responsibly and effectively executing the transition of Federal information systems to National Institute of Standards and Technology (NIST)-approved Federal Information Processing Standards (FIPS) for Post-Quantum Cryptography (PQC), and to assist critical infrastructure owners and operators with their transitions.&#8221; Opens the full order in the Federal Register, 91 FR 38483." width="1224" height="460" loading="lazy" decoding="async"></a>
+      <a class="th-doc th-eo-doc" style="--doc-tilt:0deg" href="https://www.federalregister.gov/documents/2026/06/25/2026-12909/securing-the-nation-against-advanced-cryptographic-attacks" target="_blank" rel="noopener noreferrer"><img src="assets/papers/eo-14412-wh413.webp" alt="Executive Order 14412, Sec. 1, as published at whitehouse.gov: &#8220;It is the policy of the United States to safeguard national security and maintain technological leadership by responsibly and effectively executing the transition of Federal information systems to National Institute of Standards and Technology (NIST)-approved Federal Information Processing Standards (FIPS) for Post-Quantum Cryptography (PQC), and to assist critical infrastructure owners and operators with their transitions.&#8221; Opens the full order in the Federal Register, 91 FR 38483." width="932" height="568" loading="lazy" decoding="async"></a>
       <cite class="th-eo-cite">Sec. 1, Policy &middot; 91 FR 38483</cite>
     </div>
   </div>
