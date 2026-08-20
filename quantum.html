@@ -573,7 +573,7 @@
 .th-q-flow b.acc{color:var(--th-q);}
 .th-q-flow a{color:inherit;text-decoration:underline;text-underline-offset:2px;text-decoration-thickness:1px;transition:color .2s;}
 .th-q-flow a:hover{color:var(--th-q);}
-.th-eo-panels{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:26px;}
+.th-eo-panels{display:grid;grid-template-columns:1fr;gap:16px;margin-top:26px;}
 .th-eo-panel{position:relative;overflow:hidden;display:flex;flex-direction:column;gap:10px;padding:22px 22px 24px;border-radius:12px;border:1px solid var(--th-hair);background:linear-gradient(180deg,rgba(255,255,255,.022),rgba(255,255,255,.006));transition:transform .28s cubic-bezier(.2,.7,.2,1),border-color .28s,box-shadow .28s;cursor:pointer;text-decoration:none;color:inherit;}
 .th-eo-panel::before{content:"";position:absolute;top:-40%;right:-30%;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,var(--th-q) 0%,transparent 65%);opacity:.06;transition:opacity .28s;pointer-events:none;}
 .th-eo-panel:hover{transform:translateY(-5px);border-color:color-mix(in srgb,var(--th-q) 50%,transparent);box-shadow:0 26px 60px -30px var(--th-q),inset 0 0 0 1px color-mix(in srgb,var(--th-q) 18%,transparent);}
@@ -609,8 +609,9 @@
    the object's height; past ~10 percent a wide object reads as crooked
    rather than placed. The paper (320x414) carries 1.5deg = 2 percent,
    deliberately calm; the head crops (360x121) shipped 1.5deg = 7.8
-   percent; the passage strips (465x100-119) need 0.9deg to stay near
-   7. Mirror the sign across a pair so it reads as placement. */
+   percent; the passage strips (520x109-133) need 1.0 and 0.85deg to
+   stay near 7. Mirror the sign across a pair so it reads as
+   placement. */
 .th-doc{display:block;transform:rotate(var(--doc-tilt,1.5deg));border-radius:3px;
   box-shadow:0 26px 60px -26px rgba(0,0,0,.9),0 8px 22px -10px rgba(0,0,0,.65),0 0 0 1px rgba(245,242,236,.09);
   transition:transform .3s ease;}
@@ -643,20 +644,37 @@
    white row, so no glyph is sliced. 14413's crop includes the printed
    "Sec. 4" run-in heading, in the same paragraph as the quote;
    14412's "Section 1" heading sits a whole paragraph above the policy
-   sentence and is not included. Body type is 10pt in the source: at
-   the card's 465px measure it renders 8.1px caps and 5.4-5.8px
-   x-height at 1x (double at 2x), and 6.5/4.4 at the 981 worst edge.
-   At phone widths it collapses (4.0px caps at 229px), so below 560px
-   the render hides and the mono excerpt sheet returns. The blockquote
+   sentence and is not included. Body type is 10pt in the source, and
+   scale is the whole game: FR presidential documents are SINGLE
+   column (the 2026-08 fax feel was scale, not layout), and print
+   cannot reflow, so bigger type costs display width. The cards
+   therefore STACK full width: side by side caps the render at the
+   465px card measure, which is 5.7px x-height at 1x, the exact state
+   judged a photocopied fax. The pairing of the two same-day orders
+   now lives in the labels and the intro copy, not in geometry; that
+   loss was weighed and accepted for the type. Rendered from the PDFs
+   at 2400px page width, shown at min(520px,100%): 13.1px body em,
+   9.0-9.4px caps, 6.4px x-height at 1x (double at 2x). 520 was
+   chosen over 600 (7.3px x-height) to hold the two white strips to
+   ~125k px², under the STARK paper's 132k, rather than 167k; the
+   width is the brightness dial, one number. At phone widths the type
+   collapses, so below 560px the render hides and the mono excerpt
+   sheet returns. The blockquote
    therefore stays in the DOM at every width: it feeds the search
    index, it is the mobile presentation, and the img alt carries the
    full verbatim sentence for screen readers on desktop. Known cost,
    accepted: browser find-in-page cannot reach these sentences above
    560px, since display:none text is not searchable. The citation line
-   is real text (.th-eo-cite), not pixels. Tilts drop to 0.9deg on
-   these wide strips to keep the corner shear near the head crop's 7
-   percent of object height; 1.5deg would shear 12px against ~100px. */
-.th-eo-doc{position:relative;z-index:1;width:min(500px,100%);margin:22px auto 0;}
+   is real text (.th-eo-cite), not pixels. Tilts are 1.0/-0.85deg,
+   recomputed from the shear rule in the .th-doc comment for the
+   520x133 and 520x109 objects, not reused from the previous crop;
+   the angle is aspect-invariant, so it holds at any width the dial
+   picks. A whitehouse.gov variant was built and rejected 2026-08-21:
+   its text matches the FR verbatim but the render is a website
+   screenshot (its floating audio player had to be stripped from the
+   frame), it carries no official marks, and it breaks the 91 FR
+   citation pairing. */
+.th-eo-doc{position:relative;z-index:1;width:min(520px,100%);margin:22px auto 0;}
 .th-eo-quote{display:none;}
 .th-eo-cite{display:block;margin-top:auto;padding-top:18px;font-family:'IBM Plex Mono',monospace;
   font-style:normal;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:rgba(245,242,236,.38);}
@@ -835,15 +853,14 @@
   #catalyst-chapters.is-stuck .qw-label{overflow:hidden;text-overflow:ellipsis;}
 }
 /* reserve: see the --qw-h note above the shell rules. Re-measured
-   2026-08-20 with the executive-order PASSAGE CROPS (mono excerpts
-   removed): chapter needs against the shell client are now, at base
+   2026-08-21 with the executive-order passage crops STACKED full
+   width at 520px: chapter needs against the shell client at base
    widths (client 906): ch01 sovereign moves 853, ch02 executive
-   orders 529, ch03 private capital 845, ch04 the year 2029 605. At
-   981 (client 996): 932 / 497 / 944 / 648. Sovereign moves and
-   private capital govern within ~10px of each other; executive
-   orders and the year 2029 sit 300-380px below the reserve, so the
-   air under their content is a reserve spread, not missing copy.
-   Flagged 2026-08-20, deliberately not addressed yet. */
+   orders 830, ch03 private capital 845, ch04 the year 2029 605. At
+   981 (client 996): 932 / 820 / 944 / 648. The first three chapters
+   now sit within 25px of each other; only the year 2029 runs ~300px
+   short, so the reserve spread flagged 2026-08-20 has largely closed
+   itself. */
 #catalyst-chapters .qw-shell{--qw-h:908px;}
 @media(max-width:1240px){#catalyst-chapters .qw-shell{--qw-h:998px;}}
 /* four 8px labels edge-to-edge read as one strip at phone widths
@@ -1260,21 +1277,21 @@ a.qg-card:focus-visible,.qg-linkcard:has(.th-eo-main:focus-visible){outline:2px 
 
   <div class="th-eo-panels">
     <div class="qg-bloom" aria-hidden="true">
-      <i style="--bc:var(--th-q);left:11%;top:16%;width:28%;height:68%"></i>
-      <i style="--bc:var(--th-q);left:61%;top:16%;width:28%;height:68%"></i>
+      <i style="--bc:var(--th-q);left:11%;top:6%;width:78%;height:38%"></i>
+      <i style="--bc:var(--th-q);left:11%;top:56%;width:78%;height:38%"></i>
     </div>
     <div class="th-eo-panel qg-card qg-linkcard">
       <span class="th-pm-toprow"><span class="th-eo-label">Executive Order 14413 &middot; June 22, 2026</span></span>
       <h4 id="ushering-in-the-next-frontier-of"><a class="th-eo-main" href="https://www.whitehouse.gov/presidential-actions/2026/06/ushering-in-the-next-frontier-of-quantum-innovation/" target="_blank" rel="noopener noreferrer">Ushering in the Next Frontier of Quantum Innovation</a></h4>
       <blockquote class="th-eo-quote">&#8220;This national effort shall pursue development of a quantum computer at a scale intended to initiate the era of quantum-enabled scientific discovery, with the intent to deliver at least one such computer to a Department of Energy facility and, to the extent possible, make it available to the scientific community.&#8221;</blockquote>
-      <a class="th-doc th-eo-doc" style="--doc-tilt:0.9deg" href="https://www.federalregister.gov/documents/2026/06/25/2026-12910/ushering-in-the-next-frontier-of-quantum-innovation" target="_blank" rel="noopener noreferrer"><img src="assets/papers/eo-14413-sec4a.webp" alt="Executive Order 14413 as printed at 91 FR 38487: &#8220;This national effort shall pursue development of a quantum computer at a scale intended to initiate the era of quantum-enabled scientific discovery, with the intent to deliver at least one such computer to a Department of Energy facility and, to the extent possible, make it available to the scientific community.&#8221; Opens the full order in the Federal Register." width="1035" height="264" loading="lazy" decoding="async"></a>
+      <a class="th-doc th-eo-doc" style="--doc-tilt:1deg" href="https://www.federalregister.gov/documents/2026/06/25/2026-12910/ushering-in-the-next-frontier-of-quantum-innovation" target="_blank" rel="noopener noreferrer"><img src="assets/papers/eo-14413-sec4a-2400.webp" alt="Executive Order 14413 as printed at 91 FR 38487: &#8220;This national effort shall pursue development of a quantum computer at a scale intended to initiate the era of quantum-enabled scientific discovery, with the intent to deliver at least one such computer to a Department of Energy facility and, to the extent possible, make it available to the scientific community.&#8221; Opens the full order in the Federal Register." width="1553" height="396" loading="lazy" decoding="async"></a>
       <cite class="th-eo-cite">Sec. 4(a), the QC-ADDS Effort &middot; 91 FR 38487</cite>
     </div>
     <div class="th-eo-panel qg-card qg-linkcard">
       <span class="th-pm-toprow"><span class="th-eo-label">Executive Order 14412 &middot; June 22, 2026</span></span>
       <h4 id="securing-the-nation-against-advanced-cryptographic"><a class="th-eo-main" href="https://www.whitehouse.gov/presidential-actions/2026/06/securing-the-nation-against-advanced-cryptographic-attacks/" target="_blank" rel="noopener noreferrer">Securing the Nation Against Advanced Cryptographic Attacks</a></h4>
       <blockquote class="th-eo-quote">&#8220;It is the policy of the United States to safeguard national security and maintain technological leadership by responsibly and effectively executing the transition of Federal information systems to National Institute of Standards and Technology (NIST)-approved Federal Information Processing Standards (FIPS) for Post-Quantum Cryptography (PQC), and to assist critical infrastructure owners and operators with their transitions.&#8221;</blockquote>
-      <a class="th-doc th-eo-doc" style="--doc-tilt:-0.9deg" href="https://www.federalregister.gov/documents/2026/06/25/2026-12909/securing-the-nation-against-advanced-cryptographic-attacks" target="_blank" rel="noopener noreferrer"><img src="assets/papers/eo-14412-sec1.webp" alt="Executive Order 14412 as printed at 91 FR 38483: &#8220;It is the policy of the United States to safeguard national security and maintain technological leadership by responsibly and effectively executing the transition of Federal information systems to National Institute of Standards and Technology (NIST)-approved Federal Information Processing Standards (FIPS) for Post-Quantum Cryptography (PQC), and to assist critical infrastructure owners and operators with their transitions.&#8221; Opens the full order in the Federal Register." width="1035" height="216" loading="lazy" decoding="async"></a>
+      <a class="th-doc th-eo-doc" style="--doc-tilt:-0.85deg" href="https://www.federalregister.gov/documents/2026/06/25/2026-12909/securing-the-nation-against-advanced-cryptographic-attacks" target="_blank" rel="noopener noreferrer"><img src="assets/papers/eo-14412-sec1-2400.webp" alt="Executive Order 14412 as printed at 91 FR 38483: &#8220;It is the policy of the United States to safeguard national security and maintain technological leadership by responsibly and effectively executing the transition of Federal information systems to National Institute of Standards and Technology (NIST)-approved Federal Information Processing Standards (FIPS) for Post-Quantum Cryptography (PQC), and to assist critical infrastructure owners and operators with their transitions.&#8221; Opens the full order in the Federal Register." width="1553" height="324" loading="lazy" decoding="async"></a>
       <cite class="th-eo-cite">Sec. 1, Policy &middot; 91 FR 38483</cite>
     </div>
   </div>
