@@ -299,10 +299,11 @@ s.push(`<circle cx="187" cy="${f(HY)}" r="${MR}" class="vtEthRing"/>`);
   s.push('</g>');
 }
 s.push('</g>');
-// the caption sits just below the glass, between the chamber and the
-// card: outside the window because at 7.5px mono it runs ~155px wide
-// and the chamber's interior is only 134
-s.push(`<text x="187" y="326" class="vtNote">BTC &#183; ETH &#183; STRK &#183; UNCHANGED</text>`);
+// no contents caption here any more (deleted 2026-08-22). The band
+// between the glass (bottom 314) and the card (top 334) is now 20px of
+// bare plate, crossed only by the right stile's run, which matches the
+// 14px of bare plate below the card: the plate keeps a rhythm of
+// module, gap, module rather than module, label, module.
 s.push('</g>');
 
 // ================= BOLTS + SOCKETS =================
@@ -343,8 +344,17 @@ s.push(`<circle cx="150" cy="430" r="2.2" class="vtD"/>`);
 // and the dial itself out to x=172 on the left. The original centered
 // position at y=463 ran into the door's inner frame line at y=464.
 // Two short lines instead of one long one keeps the right margin.
-s.push(`<text x="180" y="410" class="vtNote vtNoteL">VERIFIER</text>`);
-s.push(`<text x="180" y="421" class="vtNote vtNoteL">INTEGRITY</text>`);
+// the label carries the TENSE, and it is the drawing's only hedge on it
+// since the Q-day stamp and the contents caption were deleted. The dial
+// reads the shell's condition, so saying WHEN it reads is what a gauge
+// label is for, and it dates the fractures by implication instead of by
+// disclaimer. Same slot, same two lines, same width envelope as
+// VERIFIER / INTEGRITY (9 and 8 characters against 8 and 9), so the
+// keep-out rect is unchanged. The card's SHOR-BREAKABLE tag was the
+// alternative and was rejected: it would break the before/after
+// parallel with the new card's LATTICE.
+s.push(`<text x="180" y="410" class="vtNote vtNoteL">INTEGRITY</text>`);
+s.push(`<text x="180" y="421" class="vtNote vtNoteL">AT Q-DAY</text>`);
 s.push('</g>');
 
 // ================= VERIFIER CARD SLOT =================
@@ -368,10 +378,12 @@ s.push('<g class="vtWeak">');
 // FEWER, LONGER RUNS, deliberately, and this is a judgement not a
 // compliance: short cracks accumulate into surface texture, while a run
 // that travels 260px down a stile reads as structural failure. So this
-// adds FOUR long mains and six capillaries instead of a dozen short
-// scratches, and the left stile's existing run is EXTENDED rather than
-// paralleled, so the plate carries one long fracture interrupted by the
-// caption band instead of two unrelated marks.
+// added FOUR long mains and six capillaries instead of a dozen short
+// scratches, and each stile now carries one full-height fracture.
+// THE PRINCIPLE HAS PAID TWICE. The second time was merging the left
+// stile: the count went from 11 mains to 10 while total main length
+// went UP, 1,128px to 1,149px. Fewer paths carrying more fracture is
+// the shape to aim for here, every time.
 // NOT ONE on the STARKNET plinth (y > 516): the base layer was never
 // the weak part, and that is the whole colour argument.
 //
@@ -431,7 +443,6 @@ const KEEP = [
   { n: 'window', x0: 118, y0: 200, x1: 256, y1: 314 },
   { n: 'card body', x0: 116, y0: 334, x1: 258, y1: 392 },
   { n: 'gauge label', x0: 178, y0: 402, x1: 234, y1: 426 },
-  { n: 'contents caption', x0: 108, y0: 317, x1: 266, y1: 330 },
 ];
 const KEEPC = [
   { n: 'dial face', x: 150, y: 430, r: 24 },
@@ -473,26 +484,35 @@ const CRACKS = [
   // ---- mains already on the object ----
   { f: 'front', hair: 0, name: 'front upper right', p: [[290, 152], [281, 164], [288, 173], [276, 187], [281, 196], [270, 203]] },
   { f: 'front', hair: 0, name: 'front lower left', p: [[46, 452], [60, 443], [57, 433], [73, 425], [71, 416], [84, 410]] },
-  // the left stile's run, EXTENDED down to the caption band this pass
-  { f: 'front', hair: 0, name: 'left stile, upper', p: [[100, 196], [109, 207], [103, 216], [111, 226], [105, 248], [112, 270], [104, 292], [110, 312]] },
+  // the left stile, ONE CONTINUOUS RUN top to bottom (merged 2026-08-22).
+  // THE SPLIT WAS A SCAR, NOT A DECISION. It used to be two runs, upper
+  // 196-312 and lower 331-458, and the only reason was that the
+  // contents caption's keep-out sat across y 317-330; the gap described
+  // nothing about the door. Deleting the caption exposed it, and the
+  // two are now joined, so the plate carries a full-height fracture on
+  // each stile, which is what a door under load would actually do.
+  // Worth looking for elsewhere: a keep-out that moves or disappears
+  // leaves geometry shaped around something that is no longer there.
+  { f: 'front', hair: 0, name: 'left stile, full height', p: [[100, 196], [109, 207], [103, 216], [111, 226], [105, 248], [112, 270], [104, 292], [110, 312], [103, 334], [110, 356], [102, 378], [109, 400], [101, 422], [108, 444], [102, 460]] },
   { f: 'side', hair: 0, name: 'side upper', p: [[338, 176], [348, 189], [343, 198], [355, 213]] },
   { f: 'side', hair: 0, name: 'side below the vent', p: [[352, 380], [360, 389], [356, 397], [365, 407]] },
   { f: 'top', hair: 0, name: 'wraps onto the top face', p: [[292, 149], [306, 144], [302, 138], [318, 133]] },
   { f: 'top', hair: 0, name: 'top face over the ribs', p: [[236, 146], [248, 137], [244, 130], [258, 124]] },
   // ---- new mains, all on the door plate ----
-  // the right stile, top rail to bottom rail: 264px, the longest run in
-  // the drawing. Held to x 261-276 so it clears the window (256) and the
-  // card (258) on one side and the inner frame (282) on the other, and
-  // pushed to x >= 268 through y 312-336 so it passes RIGHT of the
-  // caption instead of through it.
-  { f: 'front', hair: 0, name: 'right stile, full height', p: [[272, 192], [266, 214], [273, 238], [265, 262], [271, 288], [269, 312], [276, 336], [266, 360], [272, 386], [262, 410], [269, 436], [264, 456]] },
+  // the right stile, top rail to bottom rail. Held to x 261-276 so it
+  // clears the window (256) and the card (258) on one side and the
+  // inner frame (282) on the other.
+  // REROUTED 2026-08-22: it used to be pushed out to x>=268 through
+  // y 312-336 to pass right of the contents caption. The caption is
+  // gone, so that dogleg was avoiding empty space; it is back in the
+  // corridor and the jog is an even ~7px all the way down instead of
+  // an 11px kink at a label band that no longer exists.
+  { f: 'front', hair: 0, name: 'right stile, full height', p: [[272, 192], [266, 214], [273, 238], [265, 262], [271, 288], [264, 312], [271, 336], [263, 360], [270, 386], [262, 410], [269, 436], [264, 456]] },
   // below the card, then down the lower right plate. Threads the 14px
   // band between the card's bottom (392) and the dial's keep-out top
   // (406), stays above the label (402) until it is clear of x=234, then
   // falls to the bottom rail.
   { f: 'front', hair: 0, name: 'below the card, into the lower plate', p: [[98, 396], [116, 401], [134, 395], [152, 400], [170, 394], [190, 398], [212, 394], [234, 398], [250, 414], [258, 438], [266, 458]] },
-  // the left stile below the caption, continuing the upper run
-  { f: 'front', hair: 0, name: 'left stile, lower', p: [[105, 331], [112, 352], [104, 374], [111, 396], [103, 418], [110, 440], [102, 458]] },
   // the top rail, above the window
   { f: 'front', hair: 0, name: 'top rail', p: [[138, 188], [158, 197], [178, 189], [198, 196], [218, 188]] },
   // ---- capillaries: hairline branches off the mains ----
@@ -512,8 +532,8 @@ const CRACKS = [
   { f: 'front', hair: 1, p: [[262, 410], [253, 406]] },
   { f: 'front', hair: 1, p: [[250, 414], [243, 423]] },
   { f: 'front', hair: 1, p: [[266, 458], [274, 451]] },
-  { f: 'front', hair: 1, p: [[104, 374], [96, 378]] },
-  { f: 'front', hair: 1, p: [[110, 440], [119, 447]] },
+  { f: 'front', hair: 1, p: [[102, 378], [94, 382]] },
+  { f: 'front', hair: 1, p: [[108, 444], [117, 451]] },
 ];
 let mains = 0, hairs = 0;
 for (const c of CRACKS) {
@@ -551,7 +571,7 @@ s.push('</g>');
 // replacement for the elliptic curve, never remove it as ornament) =======
 // clip: the two shell faces MINUS the window, the card slot and the
 // gauge, so the mesh never crosses anything that must stay readable
-s.push(`<clipPath id="vtFaces"><path clip-rule="evenodd" d="M${pts([FTL, FTR, FBR, FBL])} Z M${pts([FTR, BTR, BBR, FBR])} Z M114,202 h146 v124 h-146 Z M112,330 h150 v66 h-150 Z M120,404 h118 v52 h-118 Z"/></clipPath>`);
+s.push(`<clipPath id="vtFaces"><path clip-rule="evenodd" d="M${pts([FTL, FTR, FBR, FBL])} Z M${pts([FTR, BTR, BBR, FBR])} Z M114,198 h146 v118 h-146 Z M112,330 h150 v66 h-150 Z M120,404 h118 v52 h-118 Z"/></clipPath>`);
 s.push('<g class="vtLattice" clip-path="url(#vtFaces)">');
 let li = 0;
 for (let k = -6; k <= 3; k++) L(44 + k * 52, 560, 44 + k * 52 + 460, 100, `vtLat vtLat${li++}`, ' pathLength="1"');
@@ -559,13 +579,20 @@ for (let k = 0; k <= 9; k++) L(-16 + k * 52, 100, -16 + k * 52 + 460, 560, `vtLa
 s.push('</g>');
 
 // ================= ANNOTATION =================
-s.push(`<text x="44" y="104" class="vtNote vtNoteL">WALLET / ACCOUNT CONTRACT</text>`);
-// the tense, carried as a drawing annotation rather than a disclaimer:
-// four words of mono in the opposite top corner read as a revision stamp
-// on a plan. Right-anchored at 456 to mirror the heading's 44. It
-// replaced a sentence under the drawing that asserted more than it
-// needed to; the fractures are the future tense, this dates them.
-s.push(`<text x="456" y="104" class="vtNote vtNoteR">SHOWN AS OF Q-DAY</text>`);
+// NO TITLE IN HERE, deliberately. It lived in this drawing first as a
+// 7.5px corner annotation and then briefly as a 16px centred heading,
+// and both were wrong for the same reason: the other labels scale with
+// the drawing because they ANNOTATE it, while a heading sits ABOVE it.
+// At 375 the drawing scales by 0.546 and a 16px title rendered at
+// 8.7px, which is not a title. It is HTML now (.th-vt-title in
+// quantum.html), alongside the status line and the button, so it holds
+// its size at every width. The viewBox was cropped from '0 0 500 620'
+// to '0 92 500 528' when the title left, because the headroom it had
+// been sitting in would otherwise have become a gap: nothing is drawn
+// above y=117, the top face's back edge.
+// SHOWN AS OF Q-DAY is gone too (2026-08-22). The tense rides the gauge
+// label now, and the status line's tail names the account's state:
+// quantum-vulnerable, a susceptibility rather than a present injury.
 
 fs.writeFileSync('vault-inner.svg.txt', s.join('\n      '));
 console.log('lines:', s.length, 'lattice strokes:', li, 'bytes:', s.join('').length);

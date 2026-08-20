@@ -1100,7 +1100,16 @@
 .vtStrkSw{fill:rgba(245,242,236,.34);}
 .vtNote{fill:rgba(245,242,236,.42);font-size:7.5px;letter-spacing:.14em;text-anchor:middle;}
 .vtNoteL{text-anchor:start;}
-.vtNoteR{text-anchor:end;}
+/* the drawing's title: the largest type in the visual, centred above the
+   object. Neutral ink on purpose, because the shell recolours on send
+   and a blue or emerald title would join an argument it is not part of. */
+/* the drawing's heading. HTML, not SVG: the labels inside the drawing
+   scale with it because they annotate it, but a heading sits above it
+   and has to hold its size, and at 375 the drawing scales by 0.546,
+   which turned a 16px SVG title into 8.7px. Same mono, same
+   letter-spacing, same neutral ink as the annotation it replaces. */
+.th-vt-title{margin:0 0 14px;text-align:center;font-family:'IBM Plex Mono',monospace;
+  font-size:13px;font-weight:500;letter-spacing:.18em;color:rgba(245,242,236,.6);}
 /* bolts: withdrawn and red before; thrown into their sockets, emerald */
 .vtSock{fill:none;stroke:rgba(245,242,236,.35);stroke-width:.6;}
 .vtBolt{fill:color-mix(in srgb,var(--th-red) 16%,transparent);stroke:var(--th-red);stroke-width:1.05;
@@ -1173,7 +1182,7 @@
 .vt-on .vtLat18{transition-delay:4.02s;}
 .vt-on .vtLat19{transition-delay:4.11s;}
 /* caption, status, controls */
-.th-vt-tx{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:12px;
+.th-vt-tx{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:4px 12px;margin-top:12px;
   font-size:10px;letter-spacing:.14em;color:rgba(245,242,236,.6);}
 .th-vt-tx b{font-weight:500;color:rgba(245,242,236,.75);}
 #vtState.run{color:#3DA9FC;}
@@ -1959,11 +1968,12 @@ if (window.thStickyRail) {
       </div>
         </div>
         <div class="th-vt" role="group" aria-label="Demonstration: the account is a vault, and one transaction swaps its signature verifier">
+          <p class="th-vt-title">WALLET / ACCOUNT CONTRACT</p>
           <p class="qi-sr" aria-live="polite" id="vtSay"></p>
           <!-- GENERATED DRAWING: tools/vault-gen.js is the source of truth for
                this SVG geometry (a single vanishing point computes every
                receding edge). Do not hand-edit the paths; regenerate. -->
-          <svg id="vtSvg" viewBox="0 0 500 620" role="img" focusable="false" aria-label="Line drawing of a vault holding BTC, ETH and STRK tokens behind glass, standing on an emerald plinth marked Starknet. Before the upgrade the blue shell carries red fractures, withdrawn bolts and an ECDSA verifier card. After one transaction the verifier reads Falcon-512, the bolts are thrown, the fractures are closed and an emerald lattice is woven across the shell. The assets and the plinth never change.">
+          <svg id="vtSvg" viewBox="0 92 500 528" role="img" focusable="false" aria-label="Line drawing of a vault holding BTC, ETH and STRK tokens behind glass, standing on an emerald plinth marked Starknet. Before the upgrade the blue shell carries red fractures, withdrawn bolts and an ECDSA verifier card. After one transaction the verifier reads Falcon-512, the bolts are thrown, the fractures are closed and an emerald lattice is woven across the shell. The assets and the plinth never change.">
       <g class="vtPlinth">
       <polygon points="20,516 372,516 495.4,432.5 185.6,432.5" class="vtP2"/>
       <polygon points="20,516 372,516 372,564 20,564" class="vtP1"/>
@@ -2108,7 +2118,6 @@ if (window.thStickyRail) {
       <path fill-rule="evenodd" clip-rule="evenodd" d="M27.91 29.4455C27.91 30.7036 28.9304 31.724 30.1885 31.724C31.4466 31.724 32.4658 30.7036 32.4658 29.4455C32.4658 28.1874 31.4466 27.167 30.1885 27.167C28.9304 27.167 27.91 28.1874 27.91 29.4455Z" class="vtStrkSw"/>
       </g>
       </g>
-      <text x="187" y="326" class="vtNote">BTC &#183; ETH &#183; STRK &#183; UNCHANGED</text>
       </g>
       <g class="vtBolts">
       <path d="M300 208 h10 v16 h-10" class="vtSock"/>
@@ -2138,8 +2147,8 @@ if (window.thStickyRail) {
       <path d="M168.8 423.2 A20 20 0 0 1 166.4 441.5" class="vtGg"/>
       <line x1="150" y1="430" x2="150" y2="415.5" class="vtNeedle"/>
       <circle cx="150" cy="430" r="2.2" class="vtD"/>
-      <text x="180" y="410" class="vtNote vtNoteL">VERIFIER</text>
-      <text x="180" y="421" class="vtNote vtNoteL">INTEGRITY</text>
+      <text x="180" y="410" class="vtNote vtNoteL">INTEGRITY</text>
+      <text x="180" y="421" class="vtNote vtNoteL">AT Q-DAY</text>
       </g>
       <g class="vtSlotG">
       <rect x="116" y="334" width="142" height="58" rx="8" class="vtD"/>
@@ -2151,14 +2160,13 @@ if (window.thStickyRail) {
       <g class="vtWeak">
       <path d="M290 152 L281 164 L288 173 L276 187 L281 196 L270 203" class="vtCrack" pathLength="1"/>
       <path d="M46 452 L60 443 L57 433 L73 425 L71 416 L84 410" class="vtCrack" pathLength="1"/>
-      <path d="M100 196 L109 207 L103 216 L111 226 L105 248 L112 270 L104 292 L110 312" class="vtCrack" pathLength="1"/>
+      <path d="M100 196 L109 207 L103 216 L111 226 L105 248 L112 270 L104 292 L110 312 L103 334 L110 356 L102 378 L109 400 L101 422 L108 444 L102 460" class="vtCrack" pathLength="1"/>
       <path d="M338 176 L348 189 L343 198 L355 213" class="vtCrack" pathLength="1"/>
       <path d="M352 380 L360 389 L356 397 L365 407" class="vtCrack" pathLength="1"/>
       <path d="M292 149 L306 144 L302 138 L318 133" class="vtCrack" pathLength="1"/>
       <path d="M236 146 L248 137 L244 130 L258 124" class="vtCrack" pathLength="1"/>
-      <path d="M272 192 L266 214 L273 238 L265 262 L271 288 L269 312 L276 336 L266 360 L272 386 L262 410 L269 436 L264 456" class="vtCrack" pathLength="1"/>
+      <path d="M272 192 L266 214 L273 238 L265 262 L271 288 L264 312 L271 336 L263 360 L270 386 L262 410 L269 436 L264 456" class="vtCrack" pathLength="1"/>
       <path d="M98 396 L116 401 L134 395 L152 400 L170 394 L190 398 L212 394 L234 398 L250 414 L258 438 L266 458" class="vtCrack" pathLength="1"/>
-      <path d="M105 331 L112 352 L104 374 L111 396 L103 418 L110 440 L102 458" class="vtCrack" pathLength="1"/>
       <path d="M138 188 L158 197 L178 189 L198 196 L218 188" class="vtCrack" pathLength="1"/>
       <path d="M288 173 L279 177 L273 174" class="vtCrack vtCrackH" pathLength="1"/>
       <path d="M270 203 L262 211" class="vtCrack vtCrackH" pathLength="1"/>
@@ -2172,12 +2180,12 @@ if (window.thStickyRail) {
       <path d="M262 410 L253 406" class="vtCrack vtCrackH" pathLength="1"/>
       <path d="M250 414 L243 423" class="vtCrack vtCrackH" pathLength="1"/>
       <path d="M266 458 L274 451" class="vtCrack vtCrackH" pathLength="1"/>
-      <path d="M104 374 L96 378" class="vtCrack vtCrackH" pathLength="1"/>
-      <path d="M110 440 L119 447" class="vtCrack vtCrackH" pathLength="1"/>
+      <path d="M102 378 L94 382" class="vtCrack vtCrackH" pathLength="1"/>
+      <path d="M108 444 L117 451" class="vtCrack vtCrackH" pathLength="1"/>
       <polygon points="236,188 280,188 280,238 236,231" class="vtSeat"/>
       <g class="vtPlate"><polygon points="236,188 280,188 280,238 236,231" class="vtPlateP"/></g>
       </g>
-      <clipPath id="vtFaces"><path clip-rule="evenodd" d="M44,150 314,150 314,500 44,500 Z M314,150 422.6,117 422.6,432 314,500 Z M114,202 h146 v124 h-146 Z M112,330 h150 v66 h-150 Z M120,404 h118 v52 h-118 Z"/></clipPath>
+      <clipPath id="vtFaces"><path clip-rule="evenodd" d="M44,150 314,150 314,500 44,500 Z M314,150 422.6,117 422.6,432 314,500 Z M114,198 h146 v118 h-146 Z M112,330 h150 v66 h-150 Z M120,404 h118 v52 h-118 Z"/></clipPath>
       <g class="vtLattice" clip-path="url(#vtFaces)">
       <line x1="-268" y1="560" x2="192" y2="100" class="vtLat vtLat0" pathLength="1"/>
       <line x1="-216" y1="560" x2="244" y2="100" class="vtLat vtLat1" pathLength="1"/>
@@ -2200,10 +2208,8 @@ if (window.thStickyRail) {
       <line x1="400" y1="100" x2="860" y2="560" class="vtLat vtLat18" pathLength="1"/>
       <line x1="452" y1="100" x2="912" y2="560" class="vtLat vtLat19" pathLength="1"/>
       </g>
-      <text x="44" y="104" class="vtNote vtNoteL">WALLET / ACCOUNT CONTRACT</text>
-      <text x="456" y="104" class="vtNote vtNoteR">SHOWN AS OF Q-DAY</text>
           </svg>
-          <div class="th-vt-tx"><b>1 transaction migration</b><span id="vtState">ready</span></div>
+          <div class="th-vt-tx"><b>1 transaction migration</b><span id="vtState">quantum-vulnerable</span></div>
           <button type="button" class="th-vt-btn" id="vtSend">Send the transaction</button>
         </div>
       </div>
@@ -2621,7 +2627,7 @@ initQw(document.getElementById('readiness-rail'));
     if (busy) return;
     if (done) {
       svg.classList.remove('vt-on');
-      state.textContent = 'ready';
+      state.textContent = 'quantum-vulnerable';
       state.className = '';
       btn.textContent = 'Send the transaction';
       say.textContent = '';
