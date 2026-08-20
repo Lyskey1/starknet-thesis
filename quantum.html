@@ -1075,14 +1075,20 @@
 /* assets: neutral gray, unchanged throughout */
 .vtGf{fill:rgba(245,242,236,.02);stroke-width:1.7;}
 .vtGl{stroke:rgba(245,242,236,.16);stroke-width:.6;}
-.vtTok{fill:none;stroke:rgba(245,242,236,.5);stroke-width:1.4;}
 .vtMk{fill:none;stroke:rgba(245,242,236,.66);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;}
 .vtMkh{fill:none;stroke:rgba(245,242,236,.4);stroke-width:.8;}
-.vtStrkDisc{fill:none;stroke:rgba(245,242,236,.5);stroke-width:2.2;}
+/* the three marks are official geometry in the neutral gray colorway
+   (see the generator's notes for each one's source and licence). Stroke
+   widths are pre-transform, so each is set to render at ~1.4px after
+   its own scale: Starknet 1.7 x 0.825, Bitcoin 2.7 x 0.5157. */
+.vtStrkDisc{fill:none;stroke:rgba(245,242,236,.5);stroke-width:1.7;}
+.vtBtcDisc{fill:none;stroke:rgba(245,242,236,.5);stroke-width:2.7;}
+.vtBtcB{fill:rgba(245,242,236,.66);}
 .vtStrkInk{fill:rgba(245,242,236,.66);}
 .vtStrkSw{fill:rgba(245,242,236,.34);}
 .vtNote{fill:rgba(245,242,236,.42);font-size:7.5px;letter-spacing:.14em;text-anchor:middle;}
 .vtNoteL{text-anchor:start;}
+.vtNoteR{text-anchor:end;}
 /* bolts: withdrawn and red before; thrown into their sockets, emerald */
 .vtSock{fill:none;stroke:rgba(245,242,236,.35);stroke-width:.6;}
 .vtBolt{fill:color-mix(in srgb,var(--th-red) 16%,transparent);stroke:var(--th-red);stroke-width:1.05;
@@ -1121,7 +1127,10 @@
 /* the weak parts: red, and the only things that visibly change */
 .vtCrack{fill:none;stroke:var(--th-red);stroke-width:1.05;stroke-linejoin:round;
   stroke-dasharray:1;stroke-dashoffset:0;}
+.vtCrackH{stroke-width:.6;opacity:.85;}
 .vt-on .vtCrack{stroke-dashoffset:1;transition:stroke-dashoffset .45s ease .9s;}
+/* capillaries close a beat before the mains they branch off */
+.vt-on .vtCrackH{transition-delay:.82s;}
 .vtSeat{fill:none;stroke:var(--th-red);stroke-width:.6;stroke-dasharray:3 3;opacity:.85;}
 .vt-on .vtSeat{opacity:0;transition:opacity .3s ease 1s;}
 .vtPlate{transform:translate(6px,-5px) rotate(2deg);transform-origin:280px 238px;}
@@ -1152,7 +1161,6 @@
 .vt-on .vtLat18{transition-delay:4.02s;}
 .vt-on .vtLat19{transition-delay:4.11s;}
 /* caption, status, controls */
-.th-vt-cap{margin:10px 2px 0;font-size:8.5px;letter-spacing:.08em;line-height:1.6;color:rgba(245,242,236,.4);text-transform:uppercase;}
 .th-vt-tx{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:12px;
   font-size:10px;letter-spacing:.14em;color:rgba(245,242,236,.6);}
 .th-vt-tx b{font-weight:500;color:rgba(245,242,236,.75);}
@@ -1990,18 +1998,16 @@ if (window.thStickyRail) {
       <rect x="118" y="206" width="138" height="100" rx="12" class="vtGf"/>
       <line x1="130" y1="296" x2="158" y2="216" class="vtGl"/>
       <line x1="144" y1="298" x2="172" y2="218" class="vtGl"/>
-      <circle cx="142" cy="250" r="16.5" class="vtTok"/>
-      <circle cx="187" cy="250" r="16.5" class="vtTok"/>
-      <circle cx="232" cy="250" r="16.5" class="vtTok"/>
-      <path d="M137 242 h6.5 a4.4 4.4 0 0 1 0 8.8 h-6.5 z M137 250.8 h7.5 a4.6 4.6 0 0 1 0 9.2 h-7.5 z M137 240.5 v21" class="vtMk"/>
-      <line x1="139.5" y1="238" x2="139.5" y2="242" class="vtMk"/>
-      <line x1="143.5" y1="238" x2="143.5" y2="242" class="vtMk"/>
-      <line x1="139.5" y1="261.5" x2="139.5" y2="265.5" class="vtMk"/>
-      <line x1="143.5" y1="261.5" x2="143.5" y2="265.5" class="vtMk"/>
-      <polyline points="187,238 196.5,252 187,258.5 177.5,252 187,238" class="vtMk"/>
-      <polyline points="178.5,255.5 187,265 195.5,255.5" class="vtMk"/>
-      <line x1="177.5" y1="252" x2="196.5" y2="252" class="vtMkh"/>
-      <g transform="translate(219.4,237.4) scale(0.63)" class="vtStrk">
+      <g transform="translate(124.747,233.104) scale(0.84359)"><g transform="matrix(0.61129216,0,0,0.61129216,-118.80398,-25.96802)">
+      <path d="m258.845 82.989c-4.274 17.143-21.637 27.576-38.782 23.301-17.138-4.274-27.571-21.638-23.295-38.78 4.272-17.145 21.635-27.579 38.775-23.305 17.144 4.274 27.576 21.64 23.302 38.784z" class="vtBtcDisc"/>
+      <path d="m241.91 70.689c0.637-4.258-2.605-6.547-7.038-8.074l1.438-5.768-3.511-0.875-1.4 5.616c-0.923-0.23-1.871-0.447-2.813-0.662l1.41-5.653-3.509-0.875-1.439 5.766c-0.764-0.174-1.514-0.346-2.242-0.527l0.004-0.018-4.842-1.209-0.934 3.75c0 0 2.605 0.597 2.55 0.634 1.422 0.355 1.679 1.296 1.636 2.042l-1.638 6.571c0.098 0.025 0.225 0.061 0.365 0.117-0.117-0.029-0.242-0.061-0.371-0.092l-2.296 9.205c-0.174 0.432-0.615 1.08-1.609 0.834 0.035 0.051-2.552-0.637-2.552-0.637l-1.743 4.019 4.569 1.139c0.85 0.213 1.683 0.436 2.503 0.646l-1.453 5.834 3.507 0.875 1.439-5.772c0.958 0.26 1.888 0.5 2.798 0.726l-1.434 5.745 3.511 0.875 1.453-5.823c5.987 1.133 10.489 0.676 12.384-4.739 1.527-4.36-0.076-6.875-3.226-8.515 2.294-0.529 4.022-2.038 4.483-5.155zm-8.022 11.249c-1.085 4.36-8.426 2.003-10.806 1.412l1.928-7.729c2.38 0.594 10.012 1.77 8.878 6.317zm1.086-11.312c-0.99 3.966-7.1 1.951-9.082 1.457l1.748-7.01c1.982 0.494 8.365 1.416 7.334 5.553z" class="vtBtcB"/>
+      </g></g>
+      <polyline points="187,233.5 197.1,250.3 187,256.3 176.9,250.3 187,233.5" class="vtMk"/>
+      <line x1="187" y1="233.5" x2="187" y2="256.3" class="vtMkh"/>
+      <polyline points="176.9,252.2 187,258.2 197.1,252.2" class="vtMk"/>
+      <polyline points="176.9,252.2 187,266.5 197.1,252.2" class="vtMk"/>
+      <line x1="187" y1="258.2" x2="187" y2="266.5" class="vtMkh"/>
+      <g transform="translate(215.466,232.829) scale(0.825)" class="vtStrk">
       <path d="M0.294582 20.813C0.294582 31.719 9.13542 40.5598 20.0414 40.5598C30.9474 40.5598 39.7888 31.719 39.7888 20.813C39.7888 9.90701 30.9474 1.06616 20.0414 1.06616C9.13542 1.06616 0.294582 9.907 0.294582 20.813Z" class="vtStrkDisc"/>
       <path fill-rule="evenodd" clip-rule="evenodd" d="M11.2193 16.1014L11.713 14.5761C11.8133 14.2659 12.0582 14.0245 12.3695 13.9293L13.9023 13.4579C14.1145 13.3931 14.1162 13.0938 13.9057 13.0256L12.3799 12.5319C12.0702 12.4315 11.8288 12.1867 11.7331 11.8753L11.2623 10.3425C11.1975 10.1309 10.8982 10.1286 10.8299 10.3397L10.3362 11.865C10.2359 12.1746 9.991 12.416 9.67963 12.5118L8.14688 12.9826C7.93472 13.0479 7.93243 13.3467 8.14344 13.4149L9.66931 13.9086C9.97896 14.009 10.2204 14.2544 10.3161 14.5658L10.7869 16.0979C10.8517 16.3101 11.151 16.3124 11.2193 16.1014Z" class="vtStrkInk"/>
       <path fill-rule="evenodd" clip-rule="evenodd" d="M35.4461 15.2138C34.8142 14.5072 33.828 14.1093 32.8693 13.9462C31.9028 13.7895 30.8896 13.804 29.9355 13.9735C28.0051 14.3001 26.2514 15.0994 24.7219 16.0854C23.9276 16.5694 23.2502 17.1293 22.5484 17.6996C22.2103 17.988 21.902 18.2952 21.5809 18.5979L20.7036 19.4708C19.7504 20.4672 18.8108 21.3747 17.9017 22.127C16.989 22.8758 16.1356 23.4444 15.2947 23.8416C14.4542 24.2408 13.5549 24.4755 12.3828 24.5131C11.221 24.5541 9.84635 24.3444 8.376 23.9983C6.89774 23.6537 5.34543 23.1625 3.61075 22.7399C4.21602 24.4191 5.12749 25.903 6.2977 27.2594C7.48164 28.5923 8.96003 29.8072 10.8592 30.6062C12.7309 31.4229 15.0831 31.716 17.2825 31.2737C19.4877 30.8493 21.4229 29.8288 22.9871 28.6487C24.5553 27.4565 25.8241 26.0984 26.8937 24.6866C27.189 24.2965 27.3452 24.0782 27.5589 23.7733L28.1494 22.8985C28.5599 22.3573 28.9335 21.7412 29.3397 21.2051C30.1362 20.0822 30.9214 18.9607 31.8339 17.9274C32.2932 17.4033 32.7773 16.902 33.349 16.4203C33.6342 16.1851 33.9423 15.955 34.2835 15.7477C34.6299 15.5241 34.9957 15.3491 35.4461 15.2138Z" class="vtStrkSw"/>
@@ -2038,7 +2044,8 @@ if (window.thStickyRail) {
       <path d="M168.8 423.2 A20 20 0 0 1 166.4 441.5" class="vtGg"/>
       <line x1="150" y1="430" x2="150" y2="415.5" class="vtNeedle"/>
       <circle cx="150" cy="430" r="2.2" class="vtD"/>
-      <text x="150" y="463" class="vtNote">VERIFIER INTEGRITY</text>
+      <text x="180" y="410" class="vtNote vtNoteL">VERIFIER</text>
+      <text x="180" y="421" class="vtNote vtNoteL">INTEGRITY</text>
       </g>
       <g class="vtSlotG">
       <rect x="116" y="334" width="142" height="58" rx="8" class="vtD"/>
@@ -2050,11 +2057,23 @@ if (window.thStickyRail) {
       <g class="vtWeak">
       <path d="M290 152 l-9 12 l7 9 l-12 14 l5 9 l-11 7" class="vtCrack" pathLength="1"/>
       <path d="M46 452 l14 -9 l-3 -10 l16 -8 l-2 -9 l13 -6" class="vtCrack" pathLength="1"/>
+      <path d="M100 196 l9 11 l-6 9 l8 10" class="vtCrack" pathLength="1"/>
       <path d="M338 176 l10 13 l-5 9 l12 15" class="vtCrack" pathLength="1"/>
+      <path d="M352 380 l8 9 l-4 8 l9 10" class="vtCrack" pathLength="1"/>
+      <path d="M292 149 l14 -5 l-4 -6 l16 -5" class="vtCrack" pathLength="1"/>
+      <path d="M236 146 l12 -9 l-4 -7 l14 -6" class="vtCrack" pathLength="1"/>
+      <path d="M288 173 l-9 4 l-6 -3" class="vtCrack vtCrackH" pathLength="1"/>
+      <path d="M270 203 l-8 8" class="vtCrack vtCrackH" pathLength="1"/>
+      <path d="M74 424 l6 8 l8 3" class="vtCrack vtCrackH" pathLength="1"/>
+      <path d="M348 198 l9 5" class="vtCrack vtCrackH" pathLength="1"/>
+      <path d="M360 397 l8 -5" class="vtCrack vtCrackH" pathLength="1"/>
+      <path d="M244 130 l9 6" class="vtCrack vtCrackH" pathLength="1"/>
+      <path d="M111 216 l9 4" class="vtCrack vtCrackH" pathLength="1"/>
+      <path d="M306 138 l5 -7" class="vtCrack vtCrackH" pathLength="1"/>
       <polygon points="236,188 280,188 280,238 236,231" class="vtSeat"/>
       <g class="vtPlate"><polygon points="236,188 280,188 280,238 236,231" class="vtPlateP"/></g>
       </g>
-      <clipPath id="vtFaces"><path clip-rule="evenodd" d="M44,150 314,150 314,500 44,500 Z M314,150 422.6,117 422.6,432 314,500 Z M114,202 h146 v108 h-146 Z M112,330 h150 v66 h-150 Z M122,402 h56 v66 h-56 Z"/></clipPath>
+      <clipPath id="vtFaces"><path clip-rule="evenodd" d="M44,150 314,150 314,500 44,500 Z M314,150 422.6,117 422.6,432 314,500 Z M114,202 h146 v108 h-146 Z M112,330 h150 v66 h-150 Z M120,404 h118 v52 h-118 Z"/></clipPath>
       <g class="vtLattice" clip-path="url(#vtFaces)">
       <line x1="-268" y1="560" x2="192" y2="100" class="vtLat vtLat0" pathLength="1"/>
       <line x1="-216" y1="560" x2="244" y2="100" class="vtLat vtLat1" pathLength="1"/>
@@ -2077,10 +2096,10 @@ if (window.thStickyRail) {
       <line x1="400" y1="100" x2="860" y2="560" class="vtLat vtLat18" pathLength="1"/>
       <line x1="452" y1="100" x2="912" y2="560" class="vtLat vtLat19" pathLength="1"/>
       </g>
-      <text x="44" y="104" class="vtNote vtNoteL">ACCOUNT CONTRACT &#183; THE SHELL THE USER OWNS</text>
+      <text x="44" y="104" class="vtNote vtNoteL">WALLET / ACCOUNT CONTRACT</text>
+      <text x="456" y="104" class="vtNote vtNoteR">SHOWN AS OF Q-DAY</text>
           </svg>
-          <p class="th-vt-cap">Drawn in the future tense: the fractures are how the shell reads once a cryptographically relevant quantum computer exists.</p>
-          <div class="th-vt-tx"><b>1 TRANSACTION</b><span id="vtState">idle</span></div>
+          <div class="th-vt-tx"><b>1 transaction migration</b><span id="vtState">ready</span></div>
           <button type="button" class="th-vt-btn" id="vtSend">Send the transaction</button>
         </div>
       </div>
@@ -2498,7 +2517,7 @@ initQw(document.getElementById('readiness-rail'));
     if (busy) return;
     if (done) {
       svg.classList.remove('vt-on');
-      state.textContent = 'idle';
+      state.textContent = 'ready';
       state.className = '';
       btn.textContent = 'Send the transaction';
       say.textContent = '';

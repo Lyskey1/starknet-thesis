@@ -81,20 +81,51 @@ s.push('</g>');
 s.push('<g class="vtAssets">');
 s.push(`<rect x="118" y="206" width="138" height="100" rx="12" class="vtGf"/>`);
 L(130, 296, 158, 216, 'vtGl'); L(144, 298, 172, 218, 'vtGl');   // glints
-for (const cx of [142, 187, 232]) s.push(`<circle cx="${cx}" cy="250" r="16.5" class="vtTok"/>`);
-// BTC: monoline B with the two bar stubs
-P('M137 242 h6.5 a4.4 4.4 0 0 1 0 8.8 h-6.5 z M137 250.8 h7.5 a4.6 4.6 0 0 1 0 9.2 h-7.5 z M137 240.5 v21', 'vtMk');
-L(139.5, 238, 139.5, 242, 'vtMk'); L(143.5, 238, 143.5, 242, 'vtMk');
-L(139.5, 261.5, 139.5, 265.5, 'vtMk'); L(143.5, 261.5, 143.5, 265.5, 'vtMk');
-// ETH: faceted diamond
-PLl([[187, 238], [196.5, 252], [187, 258.5], [177.5, 252], [187, 238]], 'vtMk');
-PLl([[178.5, 255.5], [187, 265], [195.5, 255.5]], 'vtMk');
-L(177.5, 252, 196.5, 252, 'vtMkh');
+// Each mark carries its OWN official form (no generic ring around it),
+// all three in the neutral asset gray: the colorway is what makes the
+// color argument legible, so no mark ships in brand colors here.
+// BITCOIN: public domain. Path data lifted verbatim from
+// assets/img/bitcoin-logo.svg (itself verbatim from bitcoin.org's
+// press-kit logotop.svg), disc rendered as a gray outline instead of
+// the orange fill, the B as gray ink. Not redrawn. Sized to a 33px
+// disc: 33/39.119 = 0.84359, origin (0.893,0.469) placed at (125.5,233.5).
+s.push('<g transform="translate(124.747,233.104) scale(0.84359)"><g transform="matrix(0.61129216,0,0,0.61129216,-118.80398,-25.96802)">');
+s.push('<path d="m258.845 82.989c-4.274 17.143-21.637 27.576-38.782 23.301-17.138-4.274-27.571-21.638-23.295-38.78 4.272-17.145 21.635-27.579 38.775-23.305 17.144 4.274 27.576 21.64 23.302 38.784z" class="vtBtcDisc"/>');
+s.push('<path d="m241.91 70.689c0.637-4.258-2.605-6.547-7.038-8.074l1.438-5.768-3.511-0.875-1.4 5.616c-0.923-0.23-1.871-0.447-2.813-0.662l1.41-5.653-3.509-0.875-1.439 5.766c-0.764-0.174-1.514-0.346-2.242-0.527l0.004-0.018-4.842-1.209-0.934 3.75c0 0 2.605 0.597 2.55 0.634 1.422 0.355 1.679 1.296 1.636 2.042l-1.638 6.571c0.098 0.025 0.225 0.061 0.365 0.117-0.117-0.029-0.242-0.061-0.371-0.092l-2.296 9.205c-0.174 0.432-0.615 1.08-1.609 0.834 0.035 0.051-2.552-0.637-2.552-0.637l-1.743 4.019 4.569 1.139c0.85 0.213 1.683 0.436 2.503 0.646l-1.453 5.834 3.507 0.875 1.439-5.772c0.958 0.26 1.888 0.5 2.798 0.726l-1.434 5.745 3.511 0.875 1.453-5.823c5.987 1.133 10.489 0.676 12.384-4.739 1.527-4.36-0.076-6.875-3.226-8.515 2.294-0.529 4.022-2.038 4.483-5.155zm-8.022 11.249c-1.085 4.36-8.426 2.003-10.806 1.412l1.928-7.729c2.38 0.594 10.012 1.77 8.878 6.317zm1.086-11.312c-0.99 3.966-7.1 1.951-9.082 1.457l1.748-7.01c1.982 0.494 8.365 1.416 7.334 5.553z" class="vtBtcB"/>');
+s.push('</g></g>');
+// ETHEREUM: no branded asset file is copied; the octahedron is DRAWN
+// from the mark's canonical proportions (fractions of its own height:
+// width 0.61404, upper waist 0.50927, upper inner vertex 0.69069,
+// lower shoulders 0.56747, lower inner vertex 0.74879), monoline, gray.
+// LICENCE POSITION, checked 2026-08-20 (not legal advice, just what the
+// pages say): ethereum.org/en/assets carries the downloadable logo
+// files with NO licence statement on the page. ethereum.org's terms of
+// use license non-code content, "such as data files, text, music,
+// audio files or other sounds, photographs, videos, or other images",
+// under CC BY 4.0, but reserve marks separately: "the Foundation logo
+// and all related names, logos, product and service names, designs and
+// slogans" ... "You must not use such marks without the prior written
+// permission of the Foundation." So the permissive content licence and
+// the reserved-marks clause point opposite ways for a logo file, and
+// we hold no written permission. Hence the shape is drawn from
+// geometry rather than lifted from their file, which is also why this
+// stays a monoline gray glyph and never the brand colorway. Bitcoin
+// (public domain) and Starknet (ours) are lifted verbatim; only this
+// one is drawn.
+{
+  const H = 33, cx = 187, top = 250 - H / 2, hw = 0.30702 * H;
+  const y = (fr) => top + fr * H;
+  PLl([[cx, y(0)], [cx + hw, y(0.50927)], [cx, y(0.69069)], [cx - hw, y(0.50927)], [cx, y(0)]], 'vtMk');
+  L(cx, y(0), cx, y(0.69069), 'vtMkh');
+  PLl([[cx - hw, y(0.56747)], [cx, y(0.74879)], [cx + hw, y(0.56747)]], 'vtMk');
+  PLl([[cx - hw, y(0.56747)], [cx, y(1)], [cx + hw, y(0.56747)]], 'vtMk');
+  L(cx, y(0.74879), cx, y(1), 'vtMkh');
+}
 // STRK: official Starknet mark geometry (assets/img/starknet-mark.svg,
 // itself lifted verbatim from starknet.io's theme asset), inlined and
 // rendered in the visual's neutral asset gray, the same colorway rule
 // the site applied to Xanadu's color-delegating logo. Not redrawn.
-s.push('<g transform="translate(219.4,237.4) scale(0.63)" class="vtStrk">');
+s.push('<g transform="translate(215.466,232.829) scale(0.825)" class="vtStrk">');
 s.push('<path d="M0.294582 20.813C0.294582 31.719 9.13542 40.5598 20.0414 40.5598C30.9474 40.5598 39.7888 31.719 39.7888 20.813C39.7888 9.90701 30.9474 1.06616 20.0414 1.06616C9.13542 1.06616 0.294582 9.907 0.294582 20.813Z" class="vtStrkDisc"/>');
 s.push('<path fill-rule="evenodd" clip-rule="evenodd" d="M11.2193 16.1014L11.713 14.5761C11.8133 14.2659 12.0582 14.0245 12.3695 13.9293L13.9023 13.4579C14.1145 13.3931 14.1162 13.0938 13.9057 13.0256L12.3799 12.5319C12.0702 12.4315 11.8288 12.1867 11.7331 11.8753L11.2623 10.3425C11.1975 10.1309 10.8982 10.1286 10.8299 10.3397L10.3362 11.865C10.2359 12.1746 9.991 12.416 9.67963 12.5118L8.14688 12.9826C7.93472 13.0479 7.93243 13.3467 8.14344 13.4149L9.66931 13.9086C9.97896 14.009 10.2204 14.2544 10.3161 14.5658L10.7869 16.0979C10.8517 16.3101 11.151 16.3124 11.2193 16.1014Z" class="vtStrkInk"/>');
 s.push('<path fill-rule="evenodd" clip-rule="evenodd" d="M35.4461 15.2138C34.8142 14.5072 33.828 14.1093 32.8693 13.9462C31.9028 13.7895 30.8896 13.804 29.9355 13.9735C28.0051 14.3001 26.2514 15.0994 24.7219 16.0854C23.9276 16.5694 23.2502 17.1293 22.5484 17.6996C22.2103 17.988 21.902 18.2952 21.5809 18.5979L20.7036 19.4708C19.7504 20.4672 18.8108 21.3747 17.9017 22.127C16.989 22.8758 16.1356 23.4444 15.2947 23.8416C14.4542 24.2408 13.5549 24.4755 12.3828 24.5131C11.221 24.5541 9.84635 24.3444 8.376 23.9983C6.89774 23.6537 5.34543 23.1625 3.61075 22.7399C4.21602 24.4191 5.12749 25.903 6.2977 27.2594C7.48164 28.5923 8.96003 29.8072 10.8592 30.6062C12.7309 31.4229 15.0831 31.716 17.2825 31.2737C19.4877 30.8493 21.4229 29.8288 22.9871 28.6487C24.5553 27.4565 25.8241 26.0984 26.8937 24.6866C27.189 24.2965 27.3452 24.0782 27.5589 23.7733L28.1494 22.8985C28.5599 22.3573 28.9335 21.7412 29.3397 21.2051C30.1362 20.0822 30.9214 18.9607 31.8339 17.9274C32.2932 17.4033 32.7773 16.902 33.349 16.4203C33.6342 16.1851 33.9423 15.955 34.2835 15.7477C34.6299 15.5241 34.9957 15.3491 35.4461 15.2138Z" class="vtStrkSw"/>');
@@ -133,7 +164,17 @@ s.push(`<circle cx="150" cy="430" r="18.5" class="vtH"/>`);
 }
 s.push(`<line x1="150" y1="430" x2="150" y2="415.5" class="vtNeedle"/>`);
 s.push(`<circle cx="150" cy="430" r="2.2" class="vtD"/>`);
-s.push(`<text x="150" y="463" class="vtNote">VERIFIER INTEGRITY</text>`);
+// GAUGE LABEL BAND: y 404-421, x 180-232, and it is threading a gap.
+// Bounds, so the next person to move it knows what is around it:
+// the card slot's bottom edge at y=392 above, the plinth's receding
+// top-face edge at y=432 below (it crosses this area THROUGH the
+// transparent shell, which a screenshot caught after a first attempt
+// at y=427/438 landed on it), the bolt column at x=278 to the right,
+// and the dial itself out to x=172 on the left. The original centered
+// position at y=463 ran into the door's inner frame line at y=464.
+// Two short lines instead of one long one keeps the right margin.
+s.push(`<text x="180" y="410" class="vtNote vtNoteL">VERIFIER</text>`);
+s.push(`<text x="180" y="421" class="vtNote vtNoteL">INTEGRITY</text>`);
 s.push('</g>');
 
 // ================= VERIFIER CARD SLOT =================
@@ -147,9 +188,29 @@ s.push('</g></g>');
 
 // ================= FRACTURES + DISPLACED PLATE (red) =================
 s.push('<g class="vtWeak">');
-P('M290 152 l-9 12 l7 9 l-12 14 l5 9 l-11 7', 'vtCrack', ' pathLength="1"');
-P('M46 452 l14 -9 l-3 -10 l16 -8 l-2 -9 l13 -6', 'vtCrack', ' pathLength="1"');
-P('M338 176 l10 13 l-5 9 l12 15', 'vtCrack', ' pathLength="1"');
+// MAINS. The damage wraps the object: two runs on the front plate, two
+// on the side face, two crossing onto the top face. Every point is
+// inside its own face (the top face is the quad 44,150 / 314,150 /
+// 422.6,117 / 179.6,117 and the side face 314,150 / 422.6,117 /
+// 422.6,432 / 314,500), and the side runs dodge the vent (x 333-392,
+// y 262-343). NOT ONE on the STARKNET plinth (y > 516): the base layer
+// was never the weak part, and that is the whole color argument.
+P('M290 152 l-9 12 l7 9 l-12 14 l5 9 l-11 7', 'vtCrack', ' pathLength="1"');   // front, upper right
+P('M46 452 l14 -9 l-3 -10 l16 -8 l-2 -9 l13 -6', 'vtCrack', ' pathLength="1"'); // front, lower left
+P('M100 196 l9 11 l-6 9 l8 10', 'vtCrack', ' pathLength="1"');                  // front, left of the window
+P('M338 176 l10 13 l-5 9 l12 15', 'vtCrack', ' pathLength="1"');                // side, upper
+P('M352 380 l8 9 l-4 8 l9 10', 'vtCrack', ' pathLength="1"');                   // side, below the vent
+P('M292 149 l14 -5 l-4 -6 l16 -5', 'vtCrack', ' pathLength="1"');               // wraps onto the top face
+P('M236 146 l12 -9 l-4 -7 l14 -6', 'vtCrack', ' pathLength="1"');               // top face, over the ribs
+// CAPILLARIES: hairline branches off the mains, thinner still
+P('M288 173 l-9 4 l-6 -3', 'vtCrack vtCrackH', ' pathLength="1"');
+P('M270 203 l-8 8', 'vtCrack vtCrackH', ' pathLength="1"');
+P('M74 424 l6 8 l8 3', 'vtCrack vtCrackH', ' pathLength="1"');
+P('M348 198 l9 5', 'vtCrack vtCrackH', ' pathLength="1"');
+P('M360 397 l8 -5', 'vtCrack vtCrackH', ' pathLength="1"');
+P('M244 130 l9 6', 'vtCrack vtCrackH', ' pathLength="1"');
+P('M111 216 l9 4', 'vtCrack vtCrackH', ' pathLength="1"');
+P('M306 138 l5 -7', 'vtCrack vtCrackH', ' pathLength="1"');
 // displaced corner plate on the DOOR's top-right corner: the seat
 // outline stays put, the plate itself sits shifted and slightly turned,
 // and the displacement stays inside the front face so the silhouette
@@ -162,7 +223,7 @@ s.push('</g>');
 // replacement for the elliptic curve, never remove it as ornament) =======
 // clip: the two shell faces MINUS the window, the card slot and the
 // gauge, so the mesh never crosses anything that must stay readable
-s.push(`<clipPath id="vtFaces"><path clip-rule="evenodd" d="M${pts([FTL, FTR, FBR, FBL])} Z M${pts([FTR, BTR, BBR, FBR])} Z M114,202 h146 v108 h-146 Z M112,330 h150 v66 h-150 Z M122,402 h56 v66 h-56 Z"/></clipPath>`);
+s.push(`<clipPath id="vtFaces"><path clip-rule="evenodd" d="M${pts([FTL, FTR, FBR, FBL])} Z M${pts([FTR, BTR, BBR, FBR])} Z M114,202 h146 v108 h-146 Z M112,330 h150 v66 h-150 Z M120,404 h118 v52 h-118 Z"/></clipPath>`);
 s.push('<g class="vtLattice" clip-path="url(#vtFaces)">');
 let li = 0;
 for (let k = -6; k <= 3; k++) L(44 + k * 52, 560, 44 + k * 52 + 460, 100, `vtLat vtLat${li++}`, ' pathLength="1"');
@@ -170,7 +231,13 @@ for (let k = 0; k <= 9; k++) L(-16 + k * 52, 100, -16 + k * 52 + 460, 560, `vtLa
 s.push('</g>');
 
 // ================= ANNOTATION =================
-s.push(`<text x="44" y="104" class="vtNote vtNoteL">ACCOUNT CONTRACT &#183; THE SHELL THE USER OWNS</text>`);
+s.push(`<text x="44" y="104" class="vtNote vtNoteL">WALLET / ACCOUNT CONTRACT</text>`);
+// the tense, carried as a drawing annotation rather than a disclaimer:
+// four words of mono in the opposite top corner read as a revision stamp
+// on a plan. Right-anchored at 456 to mirror the heading's 44. It
+// replaced a sentence under the drawing that asserted more than it
+// needed to; the fractures are the future tense, this dates them.
+s.push(`<text x="456" y="104" class="vtNote vtNoteR">SHOWN AS OF Q-DAY</text>`);
 
 fs.writeFileSync('vault-inner.svg.txt', s.join('\n      '));
 console.log('lines:', s.length, 'lattice strokes:', li, 'bytes:', s.join('').length);
