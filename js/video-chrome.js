@@ -91,13 +91,21 @@ function thVideoChrome(cfg) {
     var bar = document.createElement('div');
     bar.className = 'vctl';
     bar.innerHTML =
+      /* the two timecodes are aria-hidden because the slider already
+         carries the same information in aria-valuetext, spelled out as
+         words. Leaving them exposed cost twice: a reader met "0:00" and
+         "1:13" as loose text next to a slider that then said the same
+         thing, and on quantum the films panel is an aria-live region, so
+         every chapter change announced "0:00 0:55" BEFORE the title of
+         the film it had just moved to. Hidden, the change announces the
+         title alone, and nothing is lost. */
       '<div class="vctl-prog">' +
-        '<span class="vctl-t is-cur">0:00</span>' +
+        '<span class="vctl-t is-cur" aria-hidden="true">0:00</span>' +
         '<div class="vctl-track" role="slider" tabindex="0" aria-label="Seek" ' +
              'aria-valuemin="0" aria-valuemax="0" aria-valuenow="0" aria-valuetext="0 minutes 0 seconds">' +
           '<span class="vctl-rail"></span><span class="vctl-fill"></span><span class="vctl-handle"></span>' +
         '</div>' +
-        '<span class="vctl-t is-dur">0:00</span>' +
+        '<span class="vctl-t is-dur" aria-hidden="true">0:00</span>' +
       '</div>' +
       '<div class="vctl-btns">' +
         '<button type="button" class="vctl-b is-prev" aria-label="Previous ' + noun + '">' + I.prev + '</button>' +
