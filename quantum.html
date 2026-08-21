@@ -2326,7 +2326,20 @@ if (window.thStickyRail) {
     <div class="th-st-item">
       <div class="th-st-top">
         <h4 id="post-quantum-wallets-already-running-on">Post-quantum accounts are <span class="th-st-a">already live on Mainnet.</span></h4>
-        <span class="th-st-chip warn">Experimental</span>
+        <!-- No status chip here, removed 2026-08-21, and the reason is a scope
+             mismatch worth remembering rather than a matter of taste. The chip
+             read "Experimental" and sat beside a heading that covers BOTH
+             implementations, while the caveat it carried is true of only one of
+             them: OpenZeppelin's verifiers describe themselves as experimental
+             and unaudited, S2morrow's status is a separate question the chip
+             silently swept in. A chip inherits the scope of whatever it sits
+             next to, so a per-record caveat cannot live at chapter level. The
+             caveat survives where its scope is exact, on the record card
+             itself, as the EXPERIMENTAL AND UNAUDITED banner; that banner was
+             confirmed present before this chip was removed, and a pixel scan
+             of the whole card puts every red pixel inside its box, so it is
+             still the only red there. We do not present unaudited code without
+             it. -->
       </div>
       <!-- CORRECTION 2026-08-21, then PARTLY REVERSED the same day; read both
              halves. The sentence here used to read that S2morrow had deployed a
@@ -2383,7 +2396,18 @@ if (window.thStickyRail) {
              gives 4.2x and 16.9%. Publishing either version would mean
              taking a side between an announcement and the code it
              describes, on numbers from an unaudited implementation. -->
-        <p><a href="https://x.com/StarkWareLtd/status/2079955780019864015" target="_blank" rel="noopener noreferrer">On <strong>22 July 2026 an OpenZeppelin Falcon-512 account executed a real transfer on Starknet mainnet</strong></a>, for a fee of <strong>1.93 STRK</strong>, a few cents. Two teams wrote Falcon-512 accounts in Cairo independently, and neither needed the protocol to change: <span class="th-claim" data-perishable="third-party" data-src="https://www.linkedin.com/posts/starkware_post-quantum-wallets-are-now-live-on-starknet-activity-7445099734052225024-MUUi" data-checked="2026-08-21" data-says="And now, S2morrow is live on Starknet Mainnet, using Falcon-512, a NIST-standardized post-quantum signature scheme." data-noun-ok="StarkWare April"><a href="https://www.linkedin.com/posts/starkware_post-quantum-wallets-are-now-live-on-starknet-activity-7445099734052225024-MUUi" target="_blank" rel="noopener noreferrer">StarkWare announced <strong>S2morrow live on Starknet Mainnet</strong> with Falcon-512 in April 2026</a></span>, and OpenZeppelin's account ran in July. Signature logic lives in the account, so shipping a post-quantum one takes nobody's permission.</p>
+        <!-- ORDER IS CHRONOLOGY THEN ARGUMENT, restructured 2026-08-21. It
+             used to run July, the argument, April, then back to July, so the
+             timeline and the point were interleaved and the reader had to
+             reassemble both. It now goes first thing, second thing, what the
+             two together prove.
+             TENSE IS PER SOURCE and the rewrite does not level it: April is a
+             DATED ANNOUNCEMENT, so it is written as one ("StarkWare announced")
+             and not as continuous operation; July is an ON-CHAIN TRANSACTION,
+             so it is written as a completed event with its fee. Neither
+             sentence contains a continuity marker, which is what the temporal
+             check tests for. -->
+        <p><span class="th-claim" data-perishable="third-party" data-src="https://www.linkedin.com/posts/starkware_post-quantum-wallets-are-now-live-on-starknet-activity-7445099734052225024-MUUi" data-checked="2026-08-21" data-says="And now, S2morrow is live on Starknet Mainnet, using Falcon-512, a NIST-standardized post-quantum signature scheme." data-noun-ok="StarkWare April"><a href="https://www.linkedin.com/posts/starkware_post-quantum-wallets-are-now-live-on-starknet-activity-7445099734052225024-MUUi" target="_blank" rel="noopener noreferrer">In April 2026 StarkWare announced <strong>S2morrow live on Starknet Mainnet</strong>, using Falcon-512</a></span>. <a href="https://x.com/StarkWareLtd/status/2079955780019864015" target="_blank" rel="noopener noreferrer">Three months later, on <strong>22 July 2026, an OpenZeppelin Falcon-512 account executed a real transfer on Starknet mainnet</strong></a>, for a fee of <strong>1.93 STRK</strong>, a few cents. Two teams wrote Falcon-512 accounts in Cairo independently, and neither needed the protocol to change: signature logic lives in the account, so shipping a post-quantum one takes nobody's permission.</p>
         <!-- PERISHABLE CLAIM, first application of the pattern proposed
              2026-08-21. The attributes are inert in the browser and exist so
              the claim can be re-checked rather than quietly aging: data-src is
