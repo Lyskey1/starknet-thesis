@@ -1482,6 +1482,69 @@ window.ADMIN_GATE=on;})();
     <div class="nacc-item" id="usage">
       <button class="nacc-head" aria-expanded="false" aria-controls="usage-body"><span class="nacc-title">Usage</span><span class="nacc-count"></span><i class="ti ti-chevron-down nacc-chev"></i></button>
       <div class="nacc-body" id="usage-body"><div class="nacc-inner"><div class="cells">
+        <!-- DAILY AND WEEKLY USERS: why the headline is a dated single day and
+             NOT a median, and why the 2026-08-06 break is not what it looks
+             like. Both were investigated on 2026-08-22. Read this before
+             changing either card.
+
+             1. THE HEADLINE STAYS THE LATEST DAY, DATED. The obvious
+             improvement is a median, and it is a trap, because the series is
+             BIMODAL rather than noisy: of the 30 days to Aug 20, sixteen sat
+             above 10k and thirteen below 3k. A median of that lands in
+             whichever mode holds more days, so it reports a level the network
+             almost never occupies, and it then moves on window mechanics
+             rather than on events. Holding the network perfectly still:
+
+                                        +0d      +3d      +7d     +14d
+               30d median, trough holds  13,093    2,163    1,805    1,800
+               30d median, spike holds   13,093   13,093   13,468   20,440
+                7d median, trough holds   1,776    1,800    1,800    1,800
+                7d median, spike holds    1,776   23,000   23,000   23,000
+
+             The 30-day median falls 83% in three days with nothing happening,
+             because the high days are the OLD ones and age out first. A
+             headline that moves like that with no news is worse than the
+             volatility it was meant to fix. The dated single day is honest
+             and self-limiting: it names the day it is about, and the chart
+             behind the card carries the shape.
+
+             2. THE AUG 6 BREAK IS REAL, NOT A DEFINITION CHANGE. daa fell 88%
+             (15,295 to 1,779 median either side) and stayed down thirteen
+             days. It looks exactly like a methodology change and it is not.
+             Five tests, all pointing the same way:
+               - growthepie is open source; no commit in gtp-backend or gtp-dna
+                 between Aug 1 and Aug 12 touches Starknet or address counting.
+               - companion metrics moved WITH it: txcount -29%, app fees -14%,
+                 fees paid -9%, blob size -19%. A counting change would leave
+                 those alone.
+               - it recovered: Aug 20 printed 23,261, +1168% in a day, the
+                 largest up-move in the series and back above the old plateau.
+                 A redefinition cannot un-redefine itself.
+               - the implied cohort is coherent: 13,516 addresses left carrying
+                 2.4 transactions each and almost no fees, while 1,779 stayed
+                 doing 44.5 each. Two populations, only the light one left.
+               - it is a Starknet outlier, not a pipeline fault: of 28 chains
+                 with readings on both dates the median absolute move was 19%
+                 and only two fell more than 60%.
+             So the series is ONE consistent measurement and can be plotted as
+             one line. Do not re-litigate this without new evidence.
+
+             3. THE HONEST NON-CAMPAIGN READING IS 1,700 TO 2,200 A DAY. That
+             is the floor that held for thirteen consecutive days once the
+             light cohort stopped, and it is what Starknet looks like without a
+             campaign attached. It is recorded here deliberately and is NOT put
+             on the page: publishing it would mean defending a "real users"
+             statistic we invented, which is worse than showing the chart.
+
+             4. TWO THINGS COULD NOT BE ESTABLISHED and stay stated rather than
+             smoothed over. There is no per-app attribution for the pre-Aug-6
+             cohort: Prism names Focus Tree at 26,297 users on 1.00
+             transactions each for the Aug 20 window, which matches that
+             spike's size and shape, but Prism keeps only 7 days and
+             growthepie's contract labels are EVM-only, so the July plateau is
+             unattributed. And the recovery rests on ONE observation: the feed
+             lags two days, Aug 20 was still the latest point on Aug 22, so
+             whether Aug 21 held is unknown. -->
         <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="Daily users" data-chart-series="dailyusers"><div class="cell-top"><span class="cl">Daily users</span></div><div class="cv" data-stat="dau">13.2K</div><div class="cs">Active addresses / day</div></div>
         <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="Weekly users" data-chart-series="weeklyusers"><div class="cell-top"><span class="cl">Weekly users</span></div><div class="cv" data-stat="wau">43.4K</div><div class="cs">Active addresses / 7d</div></div>
         <!-- committed snapshot, no live source: see the M entry comment -->
