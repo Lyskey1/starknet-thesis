@@ -1311,6 +1311,77 @@ a.qg-card:focus-visible,.qg-linkcard:has(.th-eo-main:focus-visible){outline:2px 
 .qv-ph{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--th-muted);font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;pointer-events:none;}
 .qv-ph[hidden]{display:none;}
 .qv-ph i{font-size:26px;color:color-mix(in srgb,var(--th-q) 55%,transparent);}
+/* ---- custom media controls (vctl-), ported from privacy's section 02
+   player. Same structure, same weights, same behaviour; the accent is not
+   hardcoded in either page. Privacy defines --em as var(--accent), so the
+   bar takes the PAGE accent by construction: emerald there, quantum's blue
+   here, with no per-page colour edits. Privacy-local variables it relied on
+   (--line, --hover-dur, --hover-ease) are not defined on this page, so their
+   values are inlined rather than inherited from nothing.
+   HOSTING, checked 2026-08-21 before any of this was written, because custom
+   chrome is only portable if the media is: all four films are served from
+   Cloudflare R2 (pub-3274162cfa1d48728621d5ec2d0906ad.r2.dev), which returns
+   200 with video/mp4, advertises Accept-Ranges: bytes and answers a range
+   request with a real 206. Seeking therefore works. The bucket sends no CORS
+   headers, which is fine: playback, transport and seeking need none. It would
+   only matter for canvas pixel reads or text tracks, neither of which this
+   bar does. The gitignored local videos/ directory is the master copy, not
+   what production plays.
+   The bar exists only once a slot has a source: .has-video is toggled in
+   applyCard, the one place that already knows. */
+#qvVideos .vctl{position:absolute;left:0;right:0;bottom:0;z-index:3;padding:34px 14px 11px;
+  background:linear-gradient(180deg,transparent,rgba(0,0,0,.55) 42%,rgba(0,0,0,.86));
+  opacity:1;transition:opacity .25s ease;}
+#qvVideos .th-pm-vcard:not(.has-video) .vctl{display:none;}
+#qvVideos .frame.is-idle .vctl{opacity:0;pointer-events:none;}
+#qvVideos .vctl-prog{display:flex;align-items:center;gap:11px;}
+#qvVideos .vctl-t{font-family:'IBM Plex Mono',monospace;font-size:11px;line-height:1;color:rgba(245,242,236,.82);
+  font-variant-numeric:tabular-nums;min-width:40px;}
+#qvVideos .vctl-t.is-dur{text-align:right;}
+#qvVideos .vctl-track{position:relative;flex:1;height:16px;display:flex;align-items:center;cursor:pointer;}
+#qvVideos .vctl-rail,#qvVideos .vctl-fill{position:absolute;height:3px;border-radius:2px;transition:height .16s ease;}
+#qvVideos .vctl-rail{left:0;right:0;background:rgba(245,242,236,.20);}
+#qvVideos .vctl-fill{left:0;width:0;background:var(--accent);}
+#qvVideos .vctl-handle{position:absolute;left:0;width:11px;height:11px;border-radius:50%;background:var(--accent);
+  transform:translateX(-50%);opacity:0;pointer-events:none;
+  box-shadow:0 0 10px rgba(var(--accent-rgb),.7);transition:opacity .16s ease;}
+#qvVideos .vctl-track:hover .vctl-rail,#qvVideos .vctl-track:hover .vctl-fill,
+#qvVideos .vctl-track.is-drag .vctl-rail,#qvVideos .vctl-track.is-drag .vctl-fill{height:5px;}
+#qvVideos .vctl-track:hover .vctl-handle,#qvVideos .vctl-track.is-drag .vctl-handle,
+#qvVideos .vctl-track:focus-visible .vctl-handle{opacity:1;}
+#qvVideos .vctl-track:focus-visible{outline:2px solid var(--accent);outline-offset:4px;border-radius:4px;}
+#qvVideos .vctl-btns{display:flex;align-items:center;gap:6px;margin-top:9px;}
+#qvVideos .vctl-b{width:32px;height:32px;flex:none;display:grid;place-items:center;padding:0;
+  border:0;background:none;color:rgba(245,242,236,.88);cursor:pointer;border-radius:50%;
+  transition:color .18s ease,background .18s ease;}
+#qvVideos .vctl-b svg{width:17px;height:17px;display:block;}
+#qvVideos .vctl-b:hover{color:var(--accent);background:rgba(245,242,236,.09);}
+#qvVideos .vctl-b:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+#qvVideos .vctl-b[disabled]{opacity:.3;cursor:default;}
+#qvVideos .vctl-b[disabled]:hover{color:rgba(245,242,236,.88);background:none;}
+/* the filled play button: the one solid control in the cluster, so the eye
+   finds it before the outlines either side of it */
+#qvVideos .vctl-play{width:40px;height:40px;background:var(--accent);color:#04121F;}
+#qvVideos .vctl-play svg{width:18px;height:18px;}
+#qvVideos .vctl-play:hover{color:#04121F;background:var(--accent);filter:brightness(1.1);}
+#qvVideos .vctl-right{margin-left:auto;display:flex;align-items:center;gap:6px;}
+/* Fullscreen targets the PANEL, the one parent all four cards share, never a
+   card's own frame. Privacy learned this the hard way (its note, 2026-08-13):
+   prev and next swap which card is in flow, and here the qw engine does it
+   with display:none, so a frame that has just been hidden would fullscreen to
+   an empty screen. The prefixed selectors stay separate rules on purpose: one
+   unknown pseudo-class invalidates a whole selector list. */
+#qw-panel-v:fullscreen{width:100%;height:100%;background:#000;padding:0;display:grid;place-items:center;}
+#qw-panel-v:fullscreen .qw-ch:not(.is-on){display:none;}
+#qw-panel-v:fullscreen .th-pm-vcard{max-width:none;width:100%;height:100%;border:0;border-radius:0;}
+#qw-panel-v:fullscreen .frame{aspect-ratio:auto;height:100vh;}
+#qw-panel-v:fullscreen .meta{display:none;}
+#qw-panel-v:-webkit-full-screen{width:100%;height:100%;background:#000;padding:0;}
+#qw-panel-v:-webkit-full-screen .th-pm-vcard{max-width:none;width:100%;height:100%;border:0;border-radius:0;}
+#qw-panel-v:-webkit-full-screen .frame{aspect-ratio:auto;height:100vh;}
+@media (prefers-reduced-motion: reduce){
+  #qvVideos .vctl,#qvVideos .vctl-rail,#qvVideos .vctl-fill,#qvVideos .vctl-handle,#qvVideos .vctl-b{transition:none;}
+}
 .th-pm-vid-admin{display:flex;justify-content:flex-end;margin-top:18px;margin-bottom:-22px;}
 .qv-editor{border-top:1px solid var(--th-hair);padding:14px 18px 16px;display:flex;flex-direction:column;gap:11px;}
 .qv-editor[hidden]{display:none;}
@@ -2736,7 +2807,7 @@ body.page-quantum{overflow-x:clip;}
     <div class="th-pm-vcard th-pm-reveal" data-qv="0">
       <div class="frame">
         <div class="qv-ph"><i class="ti ti-movie" aria-hidden="true"></i><span>No video set</span></div>
-        <video class="qv-player" controls preload="metadata" playsinline hidden></video>
+        <video class="qv-player" tabindex="0" preload="metadata" playsinline hidden></video>
       </div>
       <div class="meta"><h4 class="qv-title">Starknet's strength against the quantum threat, and what are the missing pieces</h4></div>
     </div>
@@ -2746,7 +2817,7 @@ body.page-quantum{overflow-x:clip;}
     <div class="th-pm-vcard th-pm-reveal" data-qv="1">
       <div class="frame">
         <div class="qv-ph"><i class="ti ti-movie" aria-hidden="true"></i><span>No video set</span></div>
-        <video class="qv-player" controls preload="metadata" playsinline hidden></video>
+        <video class="qv-player" tabindex="0" preload="metadata" playsinline hidden></video>
       </div>
       <div class="meta"><h4 class="qv-title">Starknet's seamless migration to post-quantum security</h4></div>
     </div>
@@ -2756,7 +2827,7 @@ body.page-quantum{overflow-x:clip;}
     <div class="th-pm-vcard th-pm-reveal" data-qv="2">
       <div class="frame">
         <div class="qv-ph"><i class="ti ti-movie" aria-hidden="true"></i><span>No video set</span></div>
-        <video class="qv-player" controls preload="metadata" playsinline hidden></video>
+        <video class="qv-player" tabindex="0" preload="metadata" playsinline hidden></video>
       </div>
       <div class="meta"><h4 class="qv-title">Post-quantum by design: the ZK-STARK white paper called it eight years ago</h4></div>
     </div>
@@ -2766,7 +2837,7 @@ body.page-quantum{overflow-x:clip;}
     <div class="th-pm-vcard th-pm-reveal" data-qv="3">
       <div class="frame">
         <div class="qv-ph"><i class="ti ti-movie" aria-hidden="true"></i><span>No video set</span></div>
-        <video class="qv-player" controls preload="metadata" playsinline hidden></video>
+        <video class="qv-player" tabindex="0" preload="metadata" playsinline hidden></video>
       </div>
       <div class="meta"><h4 class="qv-title">How little Starknet needs to change to go post-quantum</h4></div>
     </div>
@@ -2827,6 +2898,202 @@ initQw(document.getElementById('readiness-rail'));
   });
 })();
 initQw(document.getElementById('qvVideos'));
+// ============================================================
+// FILM PLAYER CHROME (vctl-), ported from privacy's section 02 player.
+// The native control bar is replaced so the player speaks the page's
+// language: accent fill, hairline rail, mono tabular timecodes, inline
+// SVG icons at the site's stroke weight. Two rows over a bottom scrim
+// so they stay legible on any frame.
+// WHY THIS IS PORTABLE AT ALL, established before it was written: the
+// films stream from Cloudflare R2, which answers with video/mp4,
+// Accept-Ranges: bytes and a real 206 to a range request, so seeking
+// works against the deployed media. No CORS headers, which playback and
+// transport do not need. See the CSS note for the full check.
+// PILLS STAY IN SYNC BY DELEGATION, not by duplication: prev and next
+// do not select anything themselves, they .click() the neighbouring
+// pedestal and let the qw rail do what it already does, which is move
+// the selection, mirror the roving tab stop, set aria-selected and let
+// the existing hush() pause the player being left behind. One
+// selection state serves the rail and the transport, so they cannot
+// disagree. The buttons clamp rather than wrap: at either end the
+// control is disabled, so four films read as an ordered set.
+// ============================================================
+(function(){
+  var root = document.getElementById('qvVideos');
+  if (!root) return;
+  var panel = root.querySelector('.qw-panel');
+  var cards = [].slice.call(root.querySelectorAll('.th-pm-vcard'));
+  var peds = [].slice.call(root.querySelectorAll('.qw-ped'));
+  if (!panel || !cards.length || !peds.length) return;
+  function fsEl(){ return document.fullscreenElement || document.webkitFullscreenElement || null; }
+  var IDLE_MS = 2500, STEP = 5;
+  var I = {
+    prev: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M18.5 5.5v13L9 12l9.5-6.5z" fill="currentColor" stroke="none"/><path d="M5.8 5.2v13.6"/></svg>',
+    next: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 5.5v13L15 12 5.5 5.5z" fill="currentColor" stroke="none"/><path d="M18.2 5.2v13.6"/></svg>',
+    play: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7.5 4.9v14.2L19.4 12 7.5 4.9z"/></svg>',
+    pause: '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="6.6" y="5" width="3.6" height="14" rx="1"/><rect x="13.8" y="5" width="3.6" height="14" rx="1"/></svg>',
+    vol: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 9.2h3.2L12 5.4v13.2L7.7 14.8H4.5z"/><path d="M15.6 9.4a3.7 3.7 0 0 1 0 5.2"/><path d="M18.1 6.9a7.2 7.2 0 0 1 0 10.2"/></svg>',
+    mute: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 9.2h3.2L12 5.4v13.2L7.7 14.8H4.5z"/><path d="m16.2 9.8 4.4 4.4M20.6 9.8l-4.4 4.4"/></svg>',
+    fs: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 9V4.5H9M15 4.5h4.5V9M19.5 15v4.5H15M9 19.5H4.5V15"/></svg>',
+    fsx: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4.5V9H4.5M19.5 9H15V4.5M15 19.5V15h4.5M4.5 15H9v4.5"/></svg>'
+  };
+  function fmt(t){
+    if (!isFinite(t) || t < 0) t = 0;
+    var m = Math.floor(t / 60), sec = Math.floor(t % 60);
+    return m + ':' + (sec < 10 ? '0' : '') + sec;
+  }
+  function spoken(t){
+    if (!isFinite(t) || t < 0) t = 0;
+    var m = Math.floor(t / 60), sec = Math.floor(t % 60);
+    return m + ' minute' + (m === 1 ? '' : 's') + ' ' + sec + ' second' + (sec === 1 ? '' : 's');
+  }
+
+  cards.forEach(function(card){
+    var index = +card.dataset.qv;
+    var frame = card.querySelector('.frame');
+    var v = card.querySelector('.qv-player');
+    if (!frame || !v) return;
+
+    var bar = document.createElement('div');
+    bar.className = 'vctl';
+    bar.innerHTML =
+      '<div class="vctl-prog">' +
+        '<span class="vctl-t is-cur">0:00</span>' +
+        '<div class="vctl-track" role="slider" tabindex="0" aria-label="Seek" ' +
+             'aria-valuemin="0" aria-valuemax="0" aria-valuenow="0" aria-valuetext="0 minutes 0 seconds">' +
+          '<span class="vctl-rail"></span><span class="vctl-fill"></span><span class="vctl-handle"></span>' +
+        '</div>' +
+        '<span class="vctl-t is-dur">0:00</span>' +
+      '</div>' +
+      '<div class="vctl-btns">' +
+        '<button type="button" class="vctl-b is-prev" aria-label="Previous film">' + I.prev + '</button>' +
+        '<button type="button" class="vctl-b vctl-play is-play" aria-label="Play">' + I.play + '</button>' +
+        '<button type="button" class="vctl-b is-next" aria-label="Next film">' + I.next + '</button>' +
+        '<button type="button" class="vctl-b is-mute" aria-label="Mute">' + I.vol + '</button>' +
+        '<span class="vctl-right">' +
+          '<button type="button" class="vctl-b is-fs" aria-label="Enter fullscreen">' + I.fs + '</button>' +
+        '</span>' +
+      '</div>';
+    frame.appendChild(bar);
+
+    var cur = bar.querySelector('.is-cur'), dur = bar.querySelector('.is-dur');
+    var track = bar.querySelector('.vctl-track'), fill = bar.querySelector('.vctl-fill');
+    var handle = bar.querySelector('.vctl-handle');
+    var bPlay = bar.querySelector('.is-play'), bPrev = bar.querySelector('.is-prev');
+    var bNext = bar.querySelector('.is-next'), bMute = bar.querySelector('.is-mute');
+    var bFs = bar.querySelector('.is-fs');
+
+    bPrev.disabled = index === 0;
+    bNext.disabled = index === peds.length - 1;
+
+    function paint(){
+      var d = isFinite(v.duration) ? v.duration : 0;
+      var pct = d ? (v.currentTime / d) * 100 : 0;
+      fill.style.width = pct + '%';
+      handle.style.left = pct + '%';
+      cur.textContent = fmt(v.currentTime);
+      dur.textContent = fmt(d);
+      track.setAttribute('aria-valuemax', String(Math.floor(d)));
+      track.setAttribute('aria-valuenow', String(Math.floor(v.currentTime)));
+      track.setAttribute('aria-valuetext', spoken(v.currentTime) + ' of ' + spoken(d));
+    }
+    function syncPlay(){
+      var playing = !v.paused && !v.ended;
+      bPlay.innerHTML = playing ? I.pause : I.play;
+      bPlay.setAttribute('aria-label', playing ? 'Pause' : 'Play');
+      if (!playing) show(); else idle();
+    }
+    function syncMute(){
+      bMute.innerHTML = v.muted ? I.mute : I.vol;
+      bMute.setAttribute('aria-label', v.muted ? 'Unmute' : 'Mute');
+    }
+
+    /* auto-hide only while playing; any pointer or focus activity inside
+       the frame brings the bar back for another full interval */
+    var idleTimer = null;
+    function show(){ frame.classList.remove('is-idle'); if (idleTimer) clearTimeout(idleTimer); idleTimer = null; }
+    function idle(){
+      show();
+      if (v.paused || v.ended) return;
+      idleTimer = setTimeout(function(){ frame.classList.add('is-idle'); }, IDLE_MS);
+    }
+    frame.addEventListener('pointermove', idle);
+    frame.addEventListener('pointerleave', function(){ if (!v.paused && !v.ended) frame.classList.add('is-idle'); });
+    frame.addEventListener('focusin', show);
+    frame.addEventListener('pointerdown', idle);
+
+    v.addEventListener('loadedmetadata', paint);
+    v.addEventListener('timeupdate', paint);
+    v.addEventListener('durationchange', paint);
+    v.addEventListener('play', syncPlay);
+    v.addEventListener('pause', syncPlay);
+    v.addEventListener('ended', syncPlay);
+    v.addEventListener('volumechange', syncMute);
+
+    function toggle(){ if (v.paused || v.ended) { v.play(); } else { v.pause(); } }
+    bPlay.addEventListener('click', toggle);
+    v.addEventListener('click', toggle);
+    v.addEventListener('keydown', function(ev){
+      if (ev.key === ' ' || ev.key === 'Spacebar' || ev.key === 'Enter') { ev.preventDefault(); toggle(); }
+    });
+    bMute.addEventListener('click', function(){ v.muted = !v.muted; });
+    /* stepping delegates to the rail: the pedestal's own handler moves the
+       selection, so the pills can never drift out of step with the player */
+    bPrev.addEventListener('click', function(){ if (index > 0) peds[index - 1].click(); });
+    bNext.addEventListener('click', function(){ if (index < peds.length - 1) peds[index + 1].click(); });
+
+    bFs.addEventListener('click', function(){
+      if (fsEl()) { (document.exitFullscreen || document.webkitExitFullscreen).call(document); }
+      else { (panel.requestFullscreen || panel.webkitRequestFullscreen).call(panel); }
+    });
+    function syncFs(){
+      var on = fsEl() === panel;
+      bFs.innerHTML = on ? I.fsx : I.fs;
+      bFs.setAttribute('aria-label', on ? 'Exit fullscreen' : 'Enter fullscreen');
+    }
+    document.addEventListener('fullscreenchange', syncFs);
+    document.addEventListener('webkitfullscreenchange', syncFs);
+
+    /* seek: click the rail, drag the handle, or use the keys */
+    function seekTo(clientX){
+      var r = track.getBoundingClientRect();
+      var d = isFinite(v.duration) ? v.duration : 0;
+      if (!d || !r.width) return;
+      var pct = Math.min(1, Math.max(0, (clientX - r.left) / r.width));
+      v.currentTime = pct * d;
+      paint();
+    }
+    track.addEventListener('pointerdown', function(ev){
+      if (ev.button != null && ev.button !== 0) return;
+      track.classList.add('is-drag');
+      track.setPointerCapture && track.setPointerCapture(ev.pointerId);
+      seekTo(ev.clientX);
+      ev.preventDefault();
+    });
+    track.addEventListener('pointermove', function(ev){
+      if (track.classList.contains('is-drag')) seekTo(ev.clientX);
+    });
+    ['pointerup', 'pointercancel'].forEach(function(t){
+      track.addEventListener(t, function(){ track.classList.remove('is-drag'); });
+    });
+    track.addEventListener('keydown', function(ev){
+      var d = isFinite(v.duration) ? v.duration : 0;
+      if (!d) return;
+      var k = ev.key, t = null;
+      if (k === 'ArrowRight' || k === 'ArrowUp') t = Math.min(d, v.currentTime + STEP);
+      else if (k === 'ArrowLeft' || k === 'ArrowDown') t = Math.max(0, v.currentTime - STEP);
+      else if (k === 'Home') t = 0;
+      else if (k === 'End') t = d;
+      if (t === null) return;
+      ev.preventDefault();
+      v.currentTime = t;
+      paint();
+      idle();
+    });
+
+    paint(); syncPlay(); syncMute(); syncFs();
+  });
+})();
 (function(){
   var root = document.getElementById('qvVideos');
   if (!root) return;
@@ -3637,6 +3904,8 @@ var VIDEOS = [
     var live = blobs[i] || (st.src || '');   // prefer session preview, else saved path/URL
     if(live){ video.src = live; video.hidden = false; ph.hidden = true; }
     else { video.removeAttribute('src'); try{ video.load(); }catch(e){} video.hidden = true; ph.hidden = false; }
+    /* gates the custom control bar: no source, no chrome (see the vctl CSS) */
+    c.classList.toggle('has-video', !!live);
   }
   function applyAll(){ cards.forEach(function(_,i){ applyCard(i); }); }
 
