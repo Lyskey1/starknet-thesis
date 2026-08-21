@@ -2257,18 +2257,37 @@ if (window.thStickyRail) {
         <h4 id="post-quantum-wallets-already-running-on">Post-quantum accounts are <span class="th-st-a">already live on Mainnet.</span></h4>
         <span class="th-st-chip warn">Experimental</span>
       </div>
-      <!-- CORRECTION 2026-08-21. This sentence used to read that S2morrow had
-             deployed a Falcon-512 account "live on Starknet mainnet and signing
-             transactions since April 2026". That could not be sourced: the
+      <!-- CORRECTION 2026-08-21, then PARTLY REVERSED the same day; read both
+             halves. The sentence here used to read that S2morrow had deployed a
+             Falcon-512 account "live on Starknet mainnet and signing
+             transactions since April 2026", and it was retracted because it
+             could not be sourced: the
              project's own repository was last pushed 2026-03-05, before the
              asserted date, and documents devnet and Sepolia flows only; its
              site presents a browser demo with a network selector and no
              deployed address; StarkWare's own status page (quantum.starkware.co)
              does not list the project at all; and the article cited beside it
              does not mention it. Secondary coverage describes mainnet as
-             "targeted for Q2 2026", which is a target, not a deployment. What
-             replaces it is only what the repository and the site actually
-             show. -->
+             "targeted for Q2 2026", which is a target, not a deployment.
+             THE SOURCE WAS THEN FOUND, and the retraction was too broad. The
+             April 2026 announcement exists on StarkWare's LinkedIn and says,
+             verbatim: "And now, S2morrow is live on Starknet Mainnet, using
+             Falcon-512, a NIST-standardized post-quantum signature scheme.
+             Real transactions can already be signed and verified on Starknet
+             using post-quantum cryptography." It names the project AND the
+             network, so the mainnet claim was supported all along; what was
+             never supported was the ONGOING tense, "signing transactions
+             since April 2026", which turns a dated announcement into a
+             continuing operational fact. The same announcement exists on X
+             (x.com/StarkWareLtd/status/2039336873982599426) where it is
+             auth-walled and could not be read; LinkedIn was readable, and
+             that is why the first check failed. Lesson worth keeping: when one
+             platform is auth-walled, the same announcement is often readable
+             on another, and "could not be sourced" should mean "could not be
+             sourced anywhere", not "could not be sourced where I looked".
+             This paragraph now carries only what the repository and the site
+             show; the dated Mainnet claim lives in the closing sentence with
+             its source and its checked-date. -->
         <div class="th-stark-duo">
         <div>
         <!-- EVERY FIGURE HERE WAS READ OFF THE CHAIN OR OUT OF THE
@@ -2293,7 +2312,39 @@ if (window.thStickyRail) {
              gives 4.2x and 16.9%. Publishing either version would mean
              taking a side between an announcement and the code it
              describes, on numbers from an unaudited implementation. -->
-        <p><a href="https://x.com/StarkWareLtd/status/2079955780019864015" target="_blank" rel="noopener noreferrer">On <strong>22 July 2026 an OpenZeppelin Falcon-512 account executed a real transfer on Starknet mainnet</strong></a>, for a fee of <strong>1.93 STRK</strong>, a few cents. Two teams wrote Falcon-512 accounts in Cairo independently, OpenZeppelin here and <a href="https://www.s2morrow.xyz/" target="_blank" rel="noopener noreferrer">S2morrow</a> alongside it, and neither needed the protocol to change. Signature logic lives in the account, so shipping a post-quantum one takes nobody's permission.</p>
+        <p><a href="https://x.com/StarkWareLtd/status/2079955780019864015" target="_blank" rel="noopener noreferrer">On <strong>22 July 2026 an OpenZeppelin Falcon-512 account executed a real transfer on Starknet mainnet</strong></a>, for a fee of <strong>1.93 STRK</strong>, a few cents. Two teams wrote Falcon-512 accounts in Cairo independently, and neither needed the protocol to change: <span class="th-claim" data-perishable="third-party" data-src="https://www.linkedin.com/posts/starkware_post-quantum-wallets-are-now-live-on-starknet-activity-7445099734052225024-MUUi" data-checked="2026-08-21" data-says="And now, S2morrow is live on Starknet Mainnet, using Falcon-512, a NIST-standardized post-quantum signature scheme." data-noun-ok="StarkWare April"><a href="https://www.linkedin.com/posts/starkware_post-quantum-wallets-are-now-live-on-starknet-activity-7445099734052225024-MUUi" target="_blank" rel="noopener noreferrer">StarkWare announced <strong>S2morrow live on Starknet Mainnet</strong> with Falcon-512 in April 2026</a></span>, and OpenZeppelin's account ran in July. Signature logic lives in the account, so shipping a post-quantum one takes nobody's permission.</p>
+        <!-- PERISHABLE CLAIM, first application of the pattern proposed
+             2026-08-21. The attributes are inert in the browser and exist so
+             the claim can be re-checked rather than quietly aging: data-src is
+             where it came from, data-checked is the date a HUMAN last
+             confirmed the source still says this (not the publication date),
+             and data-says is the verbatim sentence that supports it. The
+             proper-noun test was run for real against data-says, and it
+             flagged two tokens: "StarkWare" and "April". Both were inspected
+             and both are accepted, which is why data-noun-ok lists them
+             explicitly rather than the quote being padded to make the check
+             go quiet. They are the source's METADATA, not claims the body has
+             to support: StarkWare is the author (see the URL) and April 2026
+             is the publication date. The two words that mattered, "S2morrow"
+             and "Mainnet", are both in the quoted sentence, which is the whole
+             reason this claim can be written at all. Refinement this exposed
+             for the proposal: the check should compare against data-says PLUS
+             the source's author and date, or it will flag attribution and
+             dating on every well-written claim. Tense is deliberately the one the post supports, a
+             dated announcement, NOT "in production since April 2026": the
+             announcement is evidence that it was live in April 2026 and is
+             not evidence of continuous operation since.
+             ASYMMETRY OF EVIDENCE, RECORDED AS A DECISION AND NOT AN
+             OVERSIGHT: the two records in this chapter are presented as
+             parallel but do not rest on the same strength of evidence. The
+             OpenZeppelin claim rests on an on-chain transaction with a block
+             number, a fee and a signature length anyone can re-derive from a
+             public RPC. This one rests on a project announcement, which is a
+             weaker instrument: it cannot be re-derived, only re-read, and it
+             was true on its date rather than continuously. The owner holds a
+             transaction hash for this record and has chosen not to publish it.
+             That choice is why the asymmetry exists. A future reader should
+             not read it as a gap someone forgot to close. -->
         </div>
         <a class="th-rc" href="https://voyager.online/tx/0x72ae4404b44ad78de65bdc460f8cc87fea4a15ce93e07a37c6a68e9adb0a4b3" target="_blank" rel="noopener noreferrer" aria-label="Open transaction 0x72ae4404b44ad78de65bdc460f8cc87fea4a15ce93e07a37c6a68e9adb0a4b3 on Voyager: an OpenZeppelin Falcon-512 account executing a transfer on Starknet mainnet on 22 July 2026, fee 1.93 STRK, carrying a 31-felt signature where ECDSA carries two. The implementation is experimental and unaudited.">
           <!-- GENERATED: tools/record-gen.js is the source of truth for this
