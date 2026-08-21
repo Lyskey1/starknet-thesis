@@ -1024,6 +1024,14 @@
   font-family:'IBM Plex Mono',monospace;font-size:12px;line-height:1.75;color:rgba(245,242,236,.66);}
 .th-stark-pull cite{display:block;margin-top:10px;font-style:normal;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:rgba(245,242,236,.38);}
 .th-stark-doc{justify-self:center;align-self:center;width:min(320px,100%);}
+/* .th-duo-mid centres the TEXT column against a tall visual instead of
+   top-aligning it. Opt-in by class because .th-stark-duo is shared by three
+   chapters and the other two want their default: the paper chapter's copy is
+   long enough to fill its side, and the vault chapter's is too. Only the
+   record chapter has a short paragraph beside a 320px card, which left the
+   left column ending 176px above the card's foot. Inert below 981px, where
+   the duo is display:block and the two sides stack. */
+.th-duo-mid > :first-child{align-self:center;}
 @media(max-width:980px){
   .th-stark-duo{display:block;}
   .th-stark-doc{margin:26px auto 0;width:min(300px,86%);}
@@ -2326,20 +2334,26 @@ if (window.thStickyRail) {
     <div class="th-st-item">
       <div class="th-st-top">
         <h4 id="post-quantum-wallets-already-running-on">Post-quantum accounts are <span class="th-st-a">already live on Mainnet.</span></h4>
-        <!-- No status chip here, removed 2026-08-21, and the reason is a scope
-             mismatch worth remembering rather than a matter of taste. The chip
-             read "Experimental" and sat beside a heading that covers BOTH
-             implementations, while the caveat it carried is true of only one of
-             them: OpenZeppelin's verifiers describe themselves as experimental
-             and unaudited, S2morrow's status is a separate question the chip
-             silently swept in. A chip inherits the scope of whatever it sits
-             next to, so a per-record caveat cannot live at chapter level. The
-             caveat survives where its scope is exact, on the record card
-             itself, as the EXPERIMENTAL AND UNAUDITED banner; that banner was
-             confirmed present before this chip was removed, and a pixel scan
-             of the whole card puts every red pixel inside its box, so it is
-             still the only red there. We do not present unaudited code without
-             it. -->
+        <!-- THE SCOPE RULE, and it applies site-wide, not just here:
+             A CHIP INHERITS THE SCOPE OF WHATEVER IT SITS BESIDE. A chip next
+             to a heading qualifies everything that heading covers. So a
+             caveat, a status or a hedge that is true of only ONE item cannot
+             live at heading level; it has to sit on the item it describes, or
+             it silently extends itself to the item it does not. Check the
+             pairing before adding a chip anywhere on this site that puts one
+             next to a heading, which is most of them.
+             This chapter is where the rule was learned, 2026-08-21. It carried
+             an "Experimental" chip beside a heading covering BOTH
+             implementations, while the caveat is true of one: OpenZeppelin's
+             verifiers describe themselves as experimental and unaudited, and
+             S2morrow's status is a separate question the chip swept in without
+             saying so. That is very likely why it read badly.
+             The caveat now lives where its scope is exact, on the record card
+             as the EXPERIMENTAL AND UNAUDITED banner. That banner was
+             confirmed present BEFORE the chip was removed, not after, and a
+             pixel scan of the whole card puts every red pixel inside its box,
+             so it is still the only red there. We do not present unaudited
+             code without it. -->
       </div>
       <!-- CORRECTION 2026-08-21, then PARTLY REVERSED the same day; read both
              halves. The sentence here used to read that S2morrow had deployed a
@@ -2372,7 +2386,7 @@ if (window.thStickyRail) {
              This paragraph now carries only what the repository and the site
              show; the dated Mainnet claim lives in the closing sentence with
              its source and its checked-date. -->
-        <div class="th-stark-duo">
+        <div class="th-stark-duo th-duo-mid">
         <div>
         <!-- EVERY FIGURE HERE WAS READ OFF THE CHAIN OR OUT OF THE
              IMPLEMENTATION'S OWN REPOSITORY on 2026-08-21, not quoted from
