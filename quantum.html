@@ -1877,6 +1877,41 @@ if (window.thStickyRail) {
 .th-st-chip{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;padding:5px 11px;border-radius:999px;border:1px solid;white-space:nowrap;}
 .th-st-chip.q{color:#3DA9FC;border-color:rgba(61,169,252,.35);background:rgba(61,169,252,.07);}
 .th-st-chip.ok{color:#36C692;border-color:rgba(54,198,146,.35);background:rgba(54,198,146,.07);}
+/* a third chip state, for a record that is real but not blessed. Neutral
+   rather than red on purpose: unaudited means not yet vouched for, and a
+   red chip beside a working mainnet transaction would read as broken. */
+.th-st-chip.warn{color:rgba(245,242,236,.66);border-color:rgba(245,242,236,.22);background:rgba(245,242,236,.04);}
+/* THE RECORD (rc-): section 03 chapter 03. A receipt for one transaction,
+   sharing the vault's line grammar and weight ladder so the chapters read
+   as one family, but flat: a mechanism gets a vanishing point and motion,
+   a record gets neither. tools/record-gen.js owns the geometry AND the
+   values; every number in it was read off the chain. */
+.th-rc{display:block;justify-self:center;align-self:center;width:min(440px,100%);
+  border-radius:12px;transition:transform .3s ease;}
+.th-rc:hover{transform:translateY(-3px);}
+.th-rc:focus-visible{outline:2px solid var(--th-q);outline-offset:4px;}
+.th-rc svg{display:block;width:100%;height:auto;}
+.th-rc svg text{font-family:'IBM Plex Mono',monospace;}
+.rcPanel{fill:rgba(255,255,255,.015);stroke:rgba(245,242,236,.28);stroke-width:1.7;}
+.rcRule{stroke:rgba(245,242,236,.14);stroke-width:.6;}
+.rcHead{fill:rgba(245,242,236,.6);font-size:9px;letter-spacing:.18em;}
+.rcOk{fill:var(--th-green);}
+.rcEnd{text-anchor:end;}
+/* the fee is the number the eye should land on: it answers the unspoken
+   objection that post-quantum signatures are prohibitively expensive */
+.rcHero{fill:#F5F2EC;font-size:52px;font-weight:600;letter-spacing:-.01em;}
+.rcUnit{fill:var(--th-green);font-size:20px;font-weight:500;letter-spacing:.06em;}
+.rcLab{fill:rgba(245,242,236,.42);font-size:7.5px;letter-spacing:.14em;}
+.rcRow{fill:rgba(245,242,236,.75);font-size:9.5px;letter-spacing:.1em;}
+.rcNote{fill:rgba(245,242,236,.5);font-size:8px;letter-spacing:.12em;}
+/* one block per felt, same pitch on both rows, so the size difference is
+   the picture and not the caption */
+.rcBlkOld{fill:rgba(245,242,236,.28);}
+.rcBlkNew{fill:color-mix(in srgb,var(--th-green) 78%,transparent);}
+/* the caveat is the only red on the record, so it cannot be skipped */
+.rcWarnBox{fill:color-mix(in srgb,var(--th-red) 7%,transparent);stroke:color-mix(in srgb,var(--th-red) 42%,transparent);stroke-width:1.05;}
+.rcWarn{fill:var(--th-red);font-size:7.5px;letter-spacing:.14em;text-anchor:middle;}
+@media (prefers-reduced-motion: reduce){.th-rc,.th-rc:hover{transform:none;transition:none;}}
 .th-st-item p{max-width:66ch;font-size:14.5px;line-height:1.65;color:#8b909c;}
 .th-st-item p strong{color:#F5F2EC;font-weight:600;}
 .th-st-item p a{color:#F5F2EC;text-decoration:underline;text-decoration-color:rgba(245,242,236,.3);text-underline-offset:3px;}
@@ -2219,8 +2254,8 @@ if (window.thStickyRail) {
     <article class="qw-ch" data-ch="2">
     <div class="th-st-item">
       <div class="th-st-top">
-        <h4 id="post-quantum-wallets-already-running-on">Post-quantum wallets, <span class="th-st-a">already running on mainnet.</span></h4>
-        <span class="th-st-chip ok">Live today</span>
+        <h4 id="post-quantum-wallets-already-running-on">A post-quantum account <span class="th-st-a">has already run on mainnet.</span></h4>
+        <span class="th-st-chip warn">Experimental</span>
       </div>
       <!-- CORRECTION 2026-08-21. This sentence used to read that S2morrow had
              deployed a Falcon-512 account "live on Starknet mainnet and signing
@@ -2234,7 +2269,93 @@ if (window.thStickyRail) {
              "targeted for Q2 2026", which is a target, not a deployment. What
              replaces it is only what the repository and the site actually
              show. -->
-        <p><a href="https://www.s2morrow.xyz/" target="_blank" rel="noopener noreferrer">S2morrow</a> is a <strong>Falcon-512 verifier implementation written in Cairo</strong>, MIT-licensed, with a <a href="https://github.com/feltroidprime/s2morrow" target="_blank" rel="noopener noreferrer">public repository</a> and a browser demo that generates keys, signs, and verifies. <a href="https://quantumcomputingreport.com/starkware-outlines-post-quantum-cryptographic-roadmap-for-starknet-architecture/" target="_blank" rel="noopener noreferrer">OpenZeppelin is building a post-quantum account contract</a> of its own.</p>
+        <div class="th-stark-duo">
+        <div>
+        <!-- EVERY FIGURE HERE WAS READ OFF THE CHAIN OR OUT OF THE
+             IMPLEMENTATION'S OWN REPOSITORY on 2026-08-21, not quoted from
+             an announcement. Ledger: the transaction is an INVOKE v3 in
+             block 12156522, timestamp 1784717185 = 2026-07-22 10:46 UTC,
+             confirmed against two independent public RPC endpoints; its
+             actual_fee is 0x1aba6437b7129348 FRI = 1.925961981 STRK; its
+             signature array is 31 felts, where Starknet ECDSA is (r, s) =
+             2. StarkWare's own status page lists one account entry,
+             "Demonstrated on mainnet - OpenZeppelin Falcon-512 account".
+             The caveat is the repository's own words, verbatim:
+             "Experimental and unaudited. This repository is intended for
+             research and benchmarking."
+             DELIBERATELY ABSENT, and do not add them back without a
+             source: (1) a dollar figure. The fee is about $0.05 at our own
+             live STRK price and was quoted as $0.06 on the day; a
+             live-derived number would visibly disagree with the source we
+             cite, so the STRK amount stands alone and prose carries the
+             sense of scale. (2) The "2x cheaper / 21.6% faster" benchmark
+             pair. Neither could be derived: the repository's own snapshot
+             gives 4.2x and 16.9%. Publishing either version would mean
+             taking a side between an announcement and the code it
+             describes, on numbers from an unaudited implementation. -->
+        <p>On <strong>22 July 2026 an OpenZeppelin Falcon-512 account executed a real transfer on Starknet mainnet</strong>, for a fee of <strong>1.93 STRK</strong>, a few cents. The signature it carried is 31 felts where an ECDSA signature is two: evidence in the transaction itself, not a claim about it, that a lattice scheme authorised the transfer rather than an elliptic curve. StarkWare's own status page lists the account as demonstrated on mainnet, and <a href="https://github.com/OpenZeppelin/cairo-pq-verifiers" target="_blank" rel="noopener noreferrer">the implementation</a> describes itself as experimental and unaudited, intended for research and benchmarking. That is its real status and it is still the point: two teams wrote Falcon-512 accounts in Cairo independently, OpenZeppelin here and <a href="https://www.s2morrow.xyz/" target="_blank" rel="noopener noreferrer">S2morrow</a> alongside it, and neither needed the protocol to change. Signature logic lives in the account, so shipping a post-quantum one takes nobody's permission.</p>
+        </div>
+        <a class="th-rc" href="https://voyager.online/tx/0x72ae4404b44ad78de65bdc460f8cc87fea4a15ce93e07a37c6a68e9adb0a4b3" target="_blank" rel="noopener noreferrer" aria-label="Open transaction 0x72ae4404b44ad78de65bdc460f8cc87fea4a15ce93e07a37c6a68e9adb0a4b3 on Voyager: an OpenZeppelin Falcon-512 account executing a transfer on Starknet mainnet on 22 July 2026, fee 1.93 STRK, carrying a 31-felt signature where ECDSA carries two. The implementation is experimental and unaudited.">
+          <!-- GENERATED: tools/record-gen.js is the source of truth for this
+               record's geometry and for every value in it. Do not hand-edit;
+               regenerate. Flat by design, no vanishing point and no
+               animation: chapter 02 draws a mechanism, this reports a
+               transaction that already happened. -->
+          <svg id="rcSvg" viewBox="0 0 440 320" role="img" focusable="false" aria-hidden="true">
+        <rect x="8" y="8" width="424" height="304" rx="12" class="rcPanel"/>
+        <text x="26" y="34" class="rcHead rcOk">STARKNET MAINNET</text>
+        <text x="414" y="34" class="rcHead rcEnd">22 JULY 2026</text>
+        <line x1="26" y1="48" x2="414" y2="48" class="rcRule"/>
+        <text x="26" y="116" class="rcHero">1.93</text>
+        <text x="162" y="116" class="rcUnit">STRK</text>
+        <text x="26" y="138" class="rcLab">TRANSACTION FEE, PAID ON MAINNET</text>
+        <line x1="26" y1="156" x2="414" y2="156" class="rcRule"/>
+        <text x="26" y="178" class="rcLab">SIGNATURE CARRIED</text>
+        <text x="26" y="205" class="rcRow">ECDSA</text>
+        <rect x="132" y="196" width="4.8" height="11" rx="1.5" class="rcBlkOld"/>
+        <rect x="138.6" y="196" width="4.8" height="11" rx="1.5" class="rcBlkOld"/>
+        <text x="414" y="205" class="rcNote rcEnd">2 FELTS</text>
+        <text x="26" y="231" class="rcRow">FALCON-512</text>
+        <rect x="132" y="222" width="4.8" height="11" rx="1.5" class="rcBlkNew"/>
+        <rect x="138.6" y="222" width="4.8" height="11" rx="1.5" class="rcBlkNew"/>
+        <rect x="145.2" y="222" width="4.8" height="11" rx="1.5" class="rcBlkNew"/>
+        <rect x="151.8" y="222" width="4.8" height="11" rx="1.5" class="rcBlkNew"/>
+        <rect x="158.4" y="222" width="4.8" height="11" rx="1.5" class="rcBlkNew"/>
+        <rect x="165" y="222" width="4.8" height="11" rx="1.5" class="rcBlkNew"/>
+        <rect x="171.6" y="222" width="4.8" height="11" rx="1.5" class="rcBlkNew"/>
+        <rect x="178.2" y="222" width="4.8" height="11" rx="1.5" class="rcBlkNew"/>
+        <rect x="184.8" y="222" width="4.8" height="11" rx="1.5" class="rcBlkNew"/>
+        <rect x="191.4" y="222" width="4.8" height="11" rx="1.5" class="rcBlkNew"/>
+        <rect x="198" y="222" width="4.8" height="11" rx="1.5" class="rcBlkNew"/>
+        <rect x="204.6" y="222" width="4.8" height="11" rx="1.5" class="rcBlkNew"/>
+        <rect x="211.2" y="222" width="4.8" height="11" rx="1.5" class="rcBlkNew"/>
+        <rect x="217.8" y="222" width="4.8" height="11" rx="1.5" class="rcBlkNew"/>
+        <rect x="224.4" y="222" width="4.8" height="11" rx="1.5" class="rcBlkNew"/>
+        <rect x="231" y="222" width="4.8" height="11" rx="1.5" class="rcBlkNew"/>
+        <rect x="237.6" y="222" width="4.8" height="11" rx="1.5" class="rcBlkNew"/>
+        <rect x="244.2" y="222" width="4.8" height="11" rx="1.5" class="rcBlkNew"/>
+        <rect x="250.8" y="222" width="4.8" height="11" rx="1.5" class="rcBlkNew"/>
+        <rect x="257.4" y="222" width="4.8" height="11" rx="1.5" class="rcBlkNew"/>
+        <rect x="264" y="222" width="4.8" height="11" rx="1.5" class="rcBlkNew"/>
+        <rect x="270.6" y="222" width="4.8" height="11" rx="1.5" class="rcBlkNew"/>
+        <rect x="277.2" y="222" width="4.8" height="11" rx="1.5" class="rcBlkNew"/>
+        <rect x="283.8" y="222" width="4.8" height="11" rx="1.5" class="rcBlkNew"/>
+        <rect x="290.4" y="222" width="4.8" height="11" rx="1.5" class="rcBlkNew"/>
+        <rect x="297" y="222" width="4.8" height="11" rx="1.5" class="rcBlkNew"/>
+        <rect x="303.6" y="222" width="4.8" height="11" rx="1.5" class="rcBlkNew"/>
+        <rect x="310.2" y="222" width="4.8" height="11" rx="1.5" class="rcBlkNew"/>
+        <rect x="316.8" y="222" width="4.8" height="11" rx="1.5" class="rcBlkNew"/>
+        <rect x="323.4" y="222" width="4.8" height="11" rx="1.5" class="rcBlkNew"/>
+        <rect x="330" y="222" width="4.8" height="11" rx="1.5" class="rcBlkNew"/>
+        <text x="414" y="231" class="rcNote rcEnd">31 FELTS</text>
+        <line x1="26" y1="250" x2="414" y2="250" class="rcRule"/>
+        <text x="26" y="268" class="rcLab">BLOCK 12156522</text>
+        <text x="414" y="268" class="rcLab rcEnd">0x72ae4404…b0a4b3</text>
+        <rect x="26" y="280" width="388" height="22" rx="5" class="rcWarnBox"/>
+        <text x="220" y="295" class="rcWarn">EXPERIMENTAL AND UNAUDITED · RESEARCH AND BENCHMARKING</text>
+          </svg>
+        </a>
+        </div>
     </div>
     </article>
 
