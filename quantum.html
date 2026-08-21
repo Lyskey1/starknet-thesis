@@ -1319,9 +1319,10 @@ a.qg-card:focus-visible,.qg-linkcard:has(.th-eo-main:focus-visible){outline:2px 
 .qv-ph{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--th-muted);font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;pointer-events:none;}
 .qv-ph[hidden]{display:none;}
 .qv-ph i{font-size:26px;color:color-mix(in srgb,var(--th-q) 55%,transparent);}
-/* ---- custom media controls (vctl-), ported from privacy's section 02
-   player. Same structure, same weights, same behaviour; the accent is not
-   hardcoded in either page. Privacy defines --em as var(--accent), so the
+/* ---- custom media controls (vctl-). The BEHAVIOUR is shared with
+   privacy's section 02 player and lives in js/video-chrome.js; these are
+   this page's own rules for it, which is the whole reason the engine takes
+   its DOM names as configuration. The accent is not hardcoded in either page. Privacy defines --em as var(--accent), so the
    bar takes the PAGE accent by construction: emerald there, quantum's blue
    here, with no per-page colour edits. Privacy-local variables it relied on
    (--line, --hover-dur, --hover-ease) are not defined on this page, so their
@@ -1387,6 +1388,28 @@ a.qg-card:focus-visible,.qg-linkcard:has(.th-eo-main:focus-visible){outline:2px 
 #qw-panel-v:-webkit-full-screen{width:100%;height:100%;background:#000;padding:0;}
 #qw-panel-v:-webkit-full-screen .th-pm-vcard{max-width:none;width:100%;height:100%;border:0;border-radius:0;}
 #qw-panel-v:-webkit-full-screen .frame{aspect-ratio:auto;height:100vh;}
+/* the narrow step-down, the same one privacy runs below the same 560px.
+   NOT a fit fix, and the first version of this comment claimed it was on
+   the strength of a bad metric: .vctl-btns is a flex row that always
+   fills its box, so its scrollWidth can never exceed it and "no slack"
+   was an artifact of measuring the wrong thing. Measured properly at a
+   true 375, the full-size cluster occupies 168px of 243 with 57px spare,
+   so it was never close to overflowing. What the step-down actually buys
+   is frame: the bar drops from 110px to 91px, giving 19px back to the
+   video on the width where the video is smallest. It is kept for that and
+   for parity, since one device behaving two ways across two pages is the
+   duplication this extraction removed. The row keeps EVERY control; the
+   buttons and gaps step down, nothing is dropped. */
+@media (max-width:560px){
+  #qvVideos .vctl{padding:26px 9px 8px;}
+  #qvVideos .vctl-b{width:28px;height:28px;}
+  #qvVideos .vctl-b svg{width:15px;height:15px;}
+  #qvVideos .vctl-play{width:34px;height:34px;}
+  #qvVideos .vctl-play svg{width:16px;height:16px;}
+  #qvVideos .vctl-btns{gap:3px;margin-top:7px;}
+  #qvVideos .vctl-t{font-size:10px;min-width:34px;}
+  #qvVideos .vctl-prog{gap:8px;}
+}
 @media (prefers-reduced-motion: reduce){
   #qvVideos .vctl,#qvVideos .vctl-rail,#qvVideos .vctl-fill,#qvVideos .vctl-handle,#qvVideos .vctl-b{transition:none;}
 }
@@ -1550,6 +1573,7 @@ a.qg-card:focus-visible,.qg-linkcard:has(.th-eo-main:focus-visible){outline:2px 
 
 <script src="js/selector-rove.js"></script>
 <script src="js/sticky-rail.js"></script>
+<script src="js/video-chrome.js"></script>
 <script>
 // ============================================================
 // SECTION 01 - catalyst chapter rail. Privacy's wall-pedestal
@@ -2880,7 +2904,7 @@ body.page-quantum{overflow-x:clip;}
     <div class="th-pm-vcard th-pm-reveal" data-qv="0">
       <div class="frame">
         <div class="qv-ph"><i class="ti ti-movie" aria-hidden="true"></i><span>No video set</span></div>
-        <video class="qv-player" tabindex="0" preload="metadata" playsinline hidden></video>
+        <video class="qv-player" tabindex="0" preload="none" playsinline hidden poster="assets/posters/quantum-video-01.jpg"></video>
       </div>
       <div class="meta"><h4 class="qv-title">Starknet's strength against the quantum threat, and what are the missing pieces</h4></div>
     </div>
@@ -2890,7 +2914,7 @@ body.page-quantum{overflow-x:clip;}
     <div class="th-pm-vcard th-pm-reveal" data-qv="1">
       <div class="frame">
         <div class="qv-ph"><i class="ti ti-movie" aria-hidden="true"></i><span>No video set</span></div>
-        <video class="qv-player" tabindex="0" preload="metadata" playsinline hidden></video>
+        <video class="qv-player" tabindex="0" preload="none" playsinline hidden poster="assets/posters/quantum-video-02.jpg"></video>
       </div>
       <div class="meta"><h4 class="qv-title">Starknet's seamless migration to post-quantum security</h4></div>
     </div>
@@ -2900,7 +2924,7 @@ body.page-quantum{overflow-x:clip;}
     <div class="th-pm-vcard th-pm-reveal" data-qv="2">
       <div class="frame">
         <div class="qv-ph"><i class="ti ti-movie" aria-hidden="true"></i><span>No video set</span></div>
-        <video class="qv-player" tabindex="0" preload="metadata" playsinline hidden></video>
+        <video class="qv-player" tabindex="0" preload="none" playsinline hidden poster="assets/posters/quantum-video-03.jpg"></video>
       </div>
       <div class="meta"><h4 class="qv-title">Post-quantum by design: the ZK-STARK white paper called it eight years ago</h4></div>
     </div>
@@ -2910,7 +2934,7 @@ body.page-quantum{overflow-x:clip;}
     <div class="th-pm-vcard th-pm-reveal" data-qv="3">
       <div class="frame">
         <div class="qv-ph"><i class="ti ti-movie" aria-hidden="true"></i><span>No video set</span></div>
-        <video class="qv-player" tabindex="0" preload="metadata" playsinline hidden></video>
+        <video class="qv-player" tabindex="0" preload="none" playsinline hidden poster="assets/posters/quantum-video-04.jpg"></video>
       </div>
       <div class="meta"><h4 class="qv-title">How little Starknet needs to change to go post-quantum</h4></div>
     </div>
@@ -2972,201 +2996,33 @@ initQw(document.getElementById('readiness-rail'));
 })();
 initQw(document.getElementById('qvVideos'));
 // ============================================================
-// FILM PLAYER CHROME (vctl-), ported from privacy's section 02 player.
-// The native control bar is replaced so the player speaks the page's
-// language: accent fill, hairline rail, mono tabular timecodes, inline
-// SVG icons at the site's stroke weight. Two rows over a bottom scrim
-// so they stay legible on any frame.
-// WHY THIS IS PORTABLE AT ALL, established before it was written: the
-// films stream from Cloudflare R2, which answers with video/mp4,
-// Accept-Ranges: bytes and a real 206 to a range request, so seeking
-// works against the deployed media. No CORS headers, which playback and
-// transport do not need. See the CSS note for the full check.
-// PILLS STAY IN SYNC BY DELEGATION, not by duplication: prev and next
-// do not select anything themselves, they .click() the neighbouring
-// pedestal and let the qw rail do what it already does, which is move
-// the selection, mirror the roving tab stop, set aria-selected and let
-// the existing hush() pause the player being left behind. One
-// selection state serves the rail and the transport, so they cannot
-// disagree. The buttons clamp rather than wrap: at either end the
-// control is disabled, so four films read as an ordered set.
+// FILM PLAYER CHROME. The bar is not implemented here: it lives in
+// js/video-chrome.js, shared with privacy's section 02 player, which
+// is where it was written first. Porting it to this page meant
+// EXTRACTING it rather than copying it, because a second copy of 180
+// lines means every later fix landing twice or, worse, once. This
+// page supplies only the four names its own markup uses, plus the
+// noun the transport speaks.
+// STEPPING DELEGATES TO THE RAIL. Previous and next click the
+// neighbouring PEDESTAL rather than selecting anything themselves, so
+// the qw rail does what it already does: move the selection, mirror
+// the roving tab stop, set aria-selected, and let hush() pause the
+// film being left behind. One selection state serves the pills and
+// the transport, so they cannot disagree in either direction.
+// FULLSCREEN TAKES THE PANEL, the one parent all four films share.
+// Never a card's own frame: the qw engine swaps chapters with
+// display:none, and a frame that has just been hidden would go
+// fullscreen to an empty screen. Privacy documented that trap on
+// 2026-08-13 after shipping it.
 // ============================================================
-(function(){
-  var root = document.getElementById('qvVideos');
-  if (!root) return;
-  var panel = root.querySelector('.qw-panel');
-  var cards = [].slice.call(root.querySelectorAll('.th-pm-vcard'));
-  var peds = [].slice.call(root.querySelectorAll('.qw-ped'));
-  if (!panel || !cards.length || !peds.length) return;
-  function fsEl(){ return document.fullscreenElement || document.webkitFullscreenElement || null; }
-  var IDLE_MS = 2500, STEP = 5;
-  var I = {
-    prev: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M18.5 5.5v13L9 12l9.5-6.5z" fill="currentColor" stroke="none"/><path d="M5.8 5.2v13.6"/></svg>',
-    next: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 5.5v13L15 12 5.5 5.5z" fill="currentColor" stroke="none"/><path d="M18.2 5.2v13.6"/></svg>',
-    play: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7.5 4.9v14.2L19.4 12 7.5 4.9z"/></svg>',
-    pause: '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="6.6" y="5" width="3.6" height="14" rx="1"/><rect x="13.8" y="5" width="3.6" height="14" rx="1"/></svg>',
-    vol: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 9.2h3.2L12 5.4v13.2L7.7 14.8H4.5z"/><path d="M15.6 9.4a3.7 3.7 0 0 1 0 5.2"/><path d="M18.1 6.9a7.2 7.2 0 0 1 0 10.2"/></svg>',
-    mute: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 9.2h3.2L12 5.4v13.2L7.7 14.8H4.5z"/><path d="m16.2 9.8 4.4 4.4M20.6 9.8l-4.4 4.4"/></svg>',
-    fs: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 9V4.5H9M15 4.5h4.5V9M19.5 15v4.5H15M9 19.5H4.5V15"/></svg>',
-    fsx: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4.5V9H4.5M19.5 9H15V4.5M15 19.5V15h4.5M4.5 15H9v4.5"/></svg>'
-  };
-  function fmt(t){
-    if (!isFinite(t) || t < 0) t = 0;
-    var m = Math.floor(t / 60), sec = Math.floor(t % 60);
-    return m + ':' + (sec < 10 ? '0' : '') + sec;
-  }
-  function spoken(t){
-    if (!isFinite(t) || t < 0) t = 0;
-    var m = Math.floor(t / 60), sec = Math.floor(t % 60);
-    return m + ' minute' + (m === 1 ? '' : 's') + ' ' + sec + ' second' + (sec === 1 ? '' : 's');
-  }
-
-  cards.forEach(function(card){
-    var index = +card.dataset.qv;
-    var frame = card.querySelector('.frame');
-    var v = card.querySelector('.qv-player');
-    if (!frame || !v) return;
-
-    var bar = document.createElement('div');
-    bar.className = 'vctl';
-    bar.innerHTML =
-      '<div class="vctl-prog">' +
-        '<span class="vctl-t is-cur">0:00</span>' +
-        '<div class="vctl-track" role="slider" tabindex="0" aria-label="Seek" ' +
-             'aria-valuemin="0" aria-valuemax="0" aria-valuenow="0" aria-valuetext="0 minutes 0 seconds">' +
-          '<span class="vctl-rail"></span><span class="vctl-fill"></span><span class="vctl-handle"></span>' +
-        '</div>' +
-        '<span class="vctl-t is-dur">0:00</span>' +
-      '</div>' +
-      '<div class="vctl-btns">' +
-        '<button type="button" class="vctl-b is-prev" aria-label="Previous film">' + I.prev + '</button>' +
-        '<button type="button" class="vctl-b vctl-play is-play" aria-label="Play">' + I.play + '</button>' +
-        '<button type="button" class="vctl-b is-next" aria-label="Next film">' + I.next + '</button>' +
-        '<button type="button" class="vctl-b is-mute" aria-label="Mute">' + I.vol + '</button>' +
-        '<span class="vctl-right">' +
-          '<button type="button" class="vctl-b is-fs" aria-label="Enter fullscreen">' + I.fs + '</button>' +
-        '</span>' +
-      '</div>';
-    frame.appendChild(bar);
-
-    var cur = bar.querySelector('.is-cur'), dur = bar.querySelector('.is-dur');
-    var track = bar.querySelector('.vctl-track'), fill = bar.querySelector('.vctl-fill');
-    var handle = bar.querySelector('.vctl-handle');
-    var bPlay = bar.querySelector('.is-play'), bPrev = bar.querySelector('.is-prev');
-    var bNext = bar.querySelector('.is-next'), bMute = bar.querySelector('.is-mute');
-    var bFs = bar.querySelector('.is-fs');
-
-    bPrev.disabled = index === 0;
-    bNext.disabled = index === peds.length - 1;
-
-    function paint(){
-      var d = isFinite(v.duration) ? v.duration : 0;
-      var pct = d ? (v.currentTime / d) * 100 : 0;
-      fill.style.width = pct + '%';
-      handle.style.left = pct + '%';
-      cur.textContent = fmt(v.currentTime);
-      dur.textContent = fmt(d);
-      track.setAttribute('aria-valuemax', String(Math.floor(d)));
-      track.setAttribute('aria-valuenow', String(Math.floor(v.currentTime)));
-      track.setAttribute('aria-valuetext', spoken(v.currentTime) + ' of ' + spoken(d));
-    }
-    function syncPlay(){
-      var playing = !v.paused && !v.ended;
-      bPlay.innerHTML = playing ? I.pause : I.play;
-      bPlay.setAttribute('aria-label', playing ? 'Pause' : 'Play');
-      if (!playing) show(); else idle();
-    }
-    function syncMute(){
-      bMute.innerHTML = v.muted ? I.mute : I.vol;
-      bMute.setAttribute('aria-label', v.muted ? 'Unmute' : 'Mute');
-    }
-
-    /* auto-hide only while playing; any pointer or focus activity inside
-       the frame brings the bar back for another full interval */
-    var idleTimer = null;
-    function show(){ frame.classList.remove('is-idle'); if (idleTimer) clearTimeout(idleTimer); idleTimer = null; }
-    function idle(){
-      show();
-      if (v.paused || v.ended) return;
-      idleTimer = setTimeout(function(){ frame.classList.add('is-idle'); }, IDLE_MS);
-    }
-    frame.addEventListener('pointermove', idle);
-    frame.addEventListener('pointerleave', function(){ if (!v.paused && !v.ended) frame.classList.add('is-idle'); });
-    frame.addEventListener('focusin', show);
-    frame.addEventListener('pointerdown', idle);
-
-    v.addEventListener('loadedmetadata', paint);
-    v.addEventListener('timeupdate', paint);
-    v.addEventListener('durationchange', paint);
-    v.addEventListener('play', syncPlay);
-    v.addEventListener('pause', syncPlay);
-    v.addEventListener('ended', syncPlay);
-    v.addEventListener('volumechange', syncMute);
-
-    function toggle(){ if (v.paused || v.ended) { v.play(); } else { v.pause(); } }
-    bPlay.addEventListener('click', toggle);
-    v.addEventListener('click', toggle);
-    v.addEventListener('keydown', function(ev){
-      if (ev.key === ' ' || ev.key === 'Spacebar' || ev.key === 'Enter') { ev.preventDefault(); toggle(); }
-    });
-    bMute.addEventListener('click', function(){ v.muted = !v.muted; });
-    /* stepping delegates to the rail: the pedestal's own handler moves the
-       selection, so the pills can never drift out of step with the player */
-    bPrev.addEventListener('click', function(){ if (index > 0) peds[index - 1].click(); });
-    bNext.addEventListener('click', function(){ if (index < peds.length - 1) peds[index + 1].click(); });
-
-    bFs.addEventListener('click', function(){
-      if (fsEl()) { (document.exitFullscreen || document.webkitExitFullscreen).call(document); }
-      else { (panel.requestFullscreen || panel.webkitRequestFullscreen).call(panel); }
-    });
-    function syncFs(){
-      var on = fsEl() === panel;
-      bFs.innerHTML = on ? I.fsx : I.fs;
-      bFs.setAttribute('aria-label', on ? 'Exit fullscreen' : 'Enter fullscreen');
-    }
-    document.addEventListener('fullscreenchange', syncFs);
-    document.addEventListener('webkitfullscreenchange', syncFs);
-
-    /* seek: click the rail, drag the handle, or use the keys */
-    function seekTo(clientX){
-      var r = track.getBoundingClientRect();
-      var d = isFinite(v.duration) ? v.duration : 0;
-      if (!d || !r.width) return;
-      var pct = Math.min(1, Math.max(0, (clientX - r.left) / r.width));
-      v.currentTime = pct * d;
-      paint();
-    }
-    track.addEventListener('pointerdown', function(ev){
-      if (ev.button != null && ev.button !== 0) return;
-      track.classList.add('is-drag');
-      track.setPointerCapture && track.setPointerCapture(ev.pointerId);
-      seekTo(ev.clientX);
-      ev.preventDefault();
-    });
-    track.addEventListener('pointermove', function(ev){
-      if (track.classList.contains('is-drag')) seekTo(ev.clientX);
-    });
-    ['pointerup', 'pointercancel'].forEach(function(t){
-      track.addEventListener(t, function(){ track.classList.remove('is-drag'); });
-    });
-    track.addEventListener('keydown', function(ev){
-      var d = isFinite(v.duration) ? v.duration : 0;
-      if (!d) return;
-      var k = ev.key, t = null;
-      if (k === 'ArrowRight' || k === 'ArrowUp') t = Math.min(d, v.currentTime + STEP);
-      else if (k === 'ArrowLeft' || k === 'ArrowDown') t = Math.max(0, v.currentTime - STEP);
-      else if (k === 'Home') t = 0;
-      else if (k === 'End') t = d;
-      if (t === null) return;
-      ev.preventDefault();
-      v.currentTime = t;
-      paint();
-      idle();
-    });
-
-    paint(); syncPlay(); syncMute(); syncFs();
-  });
-})();
+var qvFilmChrome = thVideoChrome({
+  root: document.getElementById('qvVideos'),
+  slots: '.th-pm-vcard',
+  indexKey: 'qv',
+  steps: document.querySelectorAll('#qvVideos .qw-ped'),
+  fullscreen: document.getElementById('qw-panel-v'),
+  noun: 'film'
+});
 (function(){
   var root = document.getElementById('qvVideos');
   if (!root) return;
@@ -3958,6 +3814,27 @@ var VIDEOS = [
     cards.forEach(function(c, i){ c.insertAdjacentHTML('beforeend', qvEd(qvPh[i] || '')); });
   }
   var defaults = cards.map(function(c){ return (c.querySelector('.qv-title').textContent || '').trim(); });
+  /* the poster each slot ships with, and it exists because preload is
+     none: with nothing decoded the browser paints an empty black box, and
+     four black boxes read as broken rather than as unstarted.
+     Each one is the film's OWN frame, cut from videos/optimized, which was
+     confirmed byte-identical to what the R2 bucket serves, so the still
+     matches the film and not an earlier edit of it. The frame was chosen by
+     sampling 30 timestamps per film and taking the one with the fewest
+     bright pixels in the lower third, which is where the burned-in
+     subtitles sit: 01 at 8.68s reaches zero, 02 at 19.19s and 04 at 22.89s
+     round to zero, and 03 at 28.01s is that film's floor at 0.34% because
+     it carries a subtitle in all 30 samples. What is left of a caption
+     falls inside the control bar's own scrim.
+     Two harness traps are recorded here because both produced wrong
+     posters before they were caught. python3 -m http.server serves no
+     Range support, so every currentTime assignment was refused and the
+     first four stills were all frame 0 while the log claimed t=1s; a
+     range-capable server was needed to seek at all. And
+     requestVideoFrameCallback never fires for a paused video in headless
+     Chrome, so waiting on it hangs: a settle delay after 'seeked' is what
+     lets the new frame reach the canvas. */
+  var posters = cards.map(function(c){ return c.querySelector('.qv-player').getAttribute('poster') || ''; });
   var blobs = {}; // session-only object URLs per index, never persisted
 
   function load(){ try{ var raw = localStorage.getItem(KEY); var a = raw ? JSON.parse(raw) : []; return Array.isArray(a) ? a : []; }catch(e){ return []; } }
@@ -3965,7 +3842,18 @@ var VIDEOS = [
   var state = load(); // [{ src, title }]
 
   // one-time prefill for all four slots; only when the slot has never been saved or cleared
-  var seeds = { 0: { src: "https://pub-3274162cfa1d48728621d5ec2d0906ad.r2.dev/eli-1.mp4", title: "Starknet's strength against the quantum threat, and what are the missing pieces" }, 1: { src: "https://pub-3274162cfa1d48728621d5ec2d0906ad.r2.dev/eli-2.mp4", title: "Starknet's seamless migration to post-quantum security" }, 2: { src: "https://pub-3274162cfa1d48728621d5ec2d0906ad.r2.dev/Eli-3.mp4", title: "Post-quantum by design: the ZK-STARK white paper called it eight years ago" }, 3: { src: "https://pub-3274162cfa1d48728621d5ec2d0906ad.r2.dev/eli-4.mp4", title: "How little Starknet needs to change to go post-quantum" } };
+  /* dur is the film's length in SECONDS, read off each file on
+     2026-08-21 with the media loaded. It exists so the control bar can
+     print a total without fetching anything: preload is none, so the
+     browser knows no duration until the reader asks. It is a hint and
+     never overrides the media, which replaces it the moment real
+     metadata lands, and applyCard withholds it from any slot pointing
+     somewhere other than its seeded file.
+     FLOORED, not rounded, because the bar formats with Math.floor: the
+     exact lengths are 73.429, 55.296, 58.909 and 72.910, and seeding a
+     rounded 59 for the third would print 0:59 and then visibly correct
+     itself to 0:58 as soon as the media loaded. */
+  var seeds = { 0: { src: "https://pub-3274162cfa1d48728621d5ec2d0906ad.r2.dev/eli-1.mp4", dur: 73, title: "Starknet's strength against the quantum threat, and what are the missing pieces" }, 1: { src: "https://pub-3274162cfa1d48728621d5ec2d0906ad.r2.dev/eli-2.mp4", dur: 55, title: "Starknet's seamless migration to post-quantum security" }, 2: { src: "https://pub-3274162cfa1d48728621d5ec2d0906ad.r2.dev/Eli-3.mp4", dur: 58, title: "Post-quantum by design: the ZK-STARK white paper called it eight years ago" }, 3: { src: "https://pub-3274162cfa1d48728621d5ec2d0906ad.r2.dev/eli-4.mp4", dur: 72, title: "How little Starknet needs to change to go post-quantum" } };
   var seeded = false;
   Object.keys(seeds).forEach(function(k){ if(state[k] == null){ state[k] = seeds[k]; seeded = true; } });
   if(seeded) save();
@@ -3979,6 +3867,19 @@ var VIDEOS = [
     else { video.removeAttribute('src'); try{ video.load(); }catch(e){} video.hidden = true; ph.hidden = false; }
     /* gates the custom control bar: no source, no chrome (see the vctl CSS) */
     c.classList.toggle('has-video', !!live);
+    /* the length hint travels with the seeded file and nothing else: a
+       slot pointing at a custom URL or a local preview has no known
+       length, and printing the seed's would be printing a wrong number */
+    var sd = seeds[i];
+    var seeded = !!(sd && live === sd.src);
+    if (seeded && sd.dur) video.dataset.dur = String(sd.dur);
+    else video.removeAttribute('data-dur');
+    /* the poster is this film's own frame, so it travels with this film
+       only: a slot pointing at a custom URL or a local preview shows no
+       poster rather than the previous film's picture */
+    if (seeded && posters[i]) video.setAttribute('poster', posters[i]);
+    else video.removeAttribute('poster');
+    if (window.qvFilmChrome) qvFilmChrome.refresh();
   }
   function applyAll(){ cards.forEach(function(_,i){ applyCard(i); }); }
 

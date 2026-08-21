@@ -1766,6 +1766,9 @@
      they stay legible on any frame. Prev/next move between the four videos
      rather than seeking, and drive the same chips, so one selection state
      serves both. The bar only exists once a slot actually has a source. */
+  /* BEHAVIOUR IS SHARED: js/video-chrome.js drives every .vctl-* node
+     below, on this page and on quantum. These rules stay here because they
+     are this page's, --em and all. */
   .vctl { position: absolute; left: 0; right: 0; bottom: 0; z-index: 3; padding: 34px 14px 11px;
     background: linear-gradient(180deg, transparent, rgba(0,0,0,.55) 42%, rgba(0,0,0,.86));
     opacity: 1; transition: opacity .25s ease; }
@@ -2301,28 +2304,28 @@
       <div class="video-slot pv-vcard is-on" data-pv="0">
         <div class="frame">
           <div class="qv-ph"><span>VIDEO 01 — TO BE ADDED</span></div>
-          <video class="qv-player" tabindex="0" preload="metadata" playsinline hidden poster="assets/posters/privacy-video-01.jpg"></video>
+          <video class="qv-player" tabindex="0" preload="none" playsinline hidden poster="assets/posters/privacy-video-01.jpg"></video>
         </div>
         <div class="meta"><h4 id="how-starknets-zk-architecture-works-in" class="qv-title">How Starknet's ZK architecture works in practice</h4></div>
       </div>
       <div class="video-slot pv-vcard" data-pv="1">
         <div class="frame">
           <div class="qv-ph"><span>VIDEO 02 — TO BE ADDED</span></div>
-          <video class="qv-player" tabindex="0" preload="metadata" playsinline hidden poster="assets/posters/privacy-video-02.jpg"></video>
+          <video class="qv-player" tabindex="0" preload="none" playsinline hidden poster="assets/posters/privacy-video-02.jpg"></video>
         </div>
         <div class="meta"><h4 id="zk-stark-under-the-hood-starknets" class="qv-title">ZK-STARK Under the Hood: Starknet's Sequencer</h4></div>
       </div>
       <div class="video-slot pv-vcard" data-pv="2">
         <div class="frame">
           <div class="qv-ph"><span>VIDEO 03 — TO BE ADDED</span></div>
-          <video class="qv-player" tabindex="0" preload="metadata" playsinline hidden poster="assets/posters/privacy-video-03.jpg"></video>
+          <video class="qv-player" tabindex="0" preload="none" playsinline hidden poster="assets/posters/privacy-video-03.jpg"></video>
         </div>
         <div class="meta"><h4 id="zk-stark-under-the-hood-starknets-2" class="qv-title">ZK-STARK Under the Hood: Starknet's Prover</h4></div>
       </div>
       <div class="video-slot pv-vcard" data-pv="3">
         <div class="frame">
           <div class="qv-ph"><span>VIDEO 04 — TO BE ADDED</span></div>
-          <video class="qv-player" tabindex="0" preload="metadata" playsinline hidden poster="assets/posters/privacy-video-04.jpg"></video>
+          <video class="qv-player" tabindex="0" preload="none" playsinline hidden poster="assets/posters/privacy-video-04.jpg"></video>
         </div>
         <div class="meta"><h4 id="zk-stark-under-the-hood-proof" class="qv-title">ZK-STARK Under the Hood: Proof Verification on Ethereum</h4></div>
       </div>
@@ -2842,6 +2845,7 @@
      blocks that consume it (a deferred load would run after them) -->
 <script src="js/selector-rove.js"></script>
 <script src="js/sticky-rail.js"></script>
+<script src="js/video-chrome.js"></script>
 <script>
 // ============================================================
 // SECTION 01 - stacked glass planes. The stack assembles once on
@@ -3164,184 +3168,23 @@
 // keys. Fullscreen takes the frame, not the video, so the bar
 // travels with it.
 // ============================================================
-(function(){
-  var grid = document.getElementById('pvVideos');
-  var slots = [].slice.call(document.querySelectorAll('#pvVideos .video-slot'));
-  var chips = [].slice.call(document.querySelectorAll('.pvv-chip'));
-  if (!grid || !slots.length || !chips.length) return;
-  function fsEl(){ return document.fullscreenElement || document.webkitFullscreenElement || null; }
-  var IDLE_MS = 2500, STEP = 5;
-  var SVG = 'http://www.w3.org/2000/svg';
-  var I = {
-    prev: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M18.5 5.5v13L9 12l9.5-6.5z" fill="currentColor" stroke="none"/><path d="M5.8 5.2v13.6"/></svg>',
-    next: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 5.5v13L15 12 5.5 5.5z" fill="currentColor" stroke="none"/><path d="M18.2 5.2v13.6"/></svg>',
-    play: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7.5 4.9v14.2L19.4 12 7.5 4.9z"/></svg>',
-    pause: '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="6.6" y="5" width="3.6" height="14" rx="1"/><rect x="13.8" y="5" width="3.6" height="14" rx="1"/></svg>',
-    vol: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 9.2h3.2L12 5.4v13.2L7.7 14.8H4.5z"/><path d="M15.6 9.4a3.7 3.7 0 0 1 0 5.2"/><path d="M18.1 6.9a7.2 7.2 0 0 1 0 10.2"/></svg>',
-    mute: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 9.2h3.2L12 5.4v13.2L7.7 14.8H4.5z"/><path d="m16.2 9.8 4.4 4.4M20.6 9.8l-4.4 4.4"/></svg>',
-    fs: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 9V4.5H9M15 4.5h4.5V9M19.5 15v4.5H15M9 19.5H4.5V15"/></svg>',
-    fsx: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4.5V9H4.5M19.5 9H15V4.5M15 19.5V15h4.5M4.5 15H9v4.5"/></svg>'
-  };
-  function fmt(t){
-    if (!isFinite(t) || t < 0) t = 0;
-    var m = Math.floor(t / 60), sec = Math.floor(t % 60);
-    return m + ':' + (sec < 10 ? '0' : '') + sec;
-  }
-  function spoken(t){
-    var m = Math.floor(t / 60), sec = Math.floor(t % 60);
-    return m + ' minute' + (m === 1 ? '' : 's') + ' ' + sec + ' second' + (sec === 1 ? '' : 's');
-  }
-
-  slots.forEach(function(slot){
-    var index = +slot.dataset.pv;
-    var frame = slot.querySelector('.frame');
-    var v = slot.querySelector('.qv-player');
-    if (!frame || !v) return;
-
-    var bar = document.createElement('div');
-    bar.className = 'vctl';
-    bar.innerHTML =
-      '<div class="vctl-prog">' +
-        '<span class="vctl-t is-cur">0:00</span>' +
-        '<div class="vctl-track" role="slider" tabindex="0" aria-label="Seek" ' +
-             'aria-valuemin="0" aria-valuemax="0" aria-valuenow="0" aria-valuetext="0 minutes 0 seconds">' +
-          '<span class="vctl-rail"></span><span class="vctl-fill"></span><span class="vctl-handle"></span>' +
-        '</div>' +
-        '<span class="vctl-t is-dur">0:00</span>' +
-      '</div>' +
-      '<div class="vctl-btns">' +
-        '<button type="button" class="vctl-b is-prev" aria-label="Previous video">' + I.prev + '</button>' +
-        '<button type="button" class="vctl-b vctl-play is-play" aria-label="Play">' + I.play + '</button>' +
-        '<button type="button" class="vctl-b is-next" aria-label="Next video">' + I.next + '</button>' +
-        '<button type="button" class="vctl-b is-mute" aria-label="Mute">' + I.vol + '</button>' +
-        '<span class="vctl-right">' +
-          '<button type="button" class="vctl-b is-fs" aria-label="Enter fullscreen">' + I.fs + '</button>' +
-        '</span>' +
-      '</div>';
-    frame.appendChild(bar);
-
-    var cur = bar.querySelector('.is-cur'), dur = bar.querySelector('.is-dur');
-    var track = bar.querySelector('.vctl-track'), fill = bar.querySelector('.vctl-fill');
-    var handle = bar.querySelector('.vctl-handle');
-    var bPlay = bar.querySelector('.is-play'), bPrev = bar.querySelector('.is-prev');
-    var bNext = bar.querySelector('.is-next'), bMute = bar.querySelector('.is-mute');
-    var bFs = bar.querySelector('.is-fs');
-
-    /* prev and next clamp: at either end the button is disabled rather than
-       wrapping, so the four videos read as an ordered set */
-    bPrev.disabled = index === 0;
-    bNext.disabled = index === chips.length - 1;
-
-    function paint(){
-      var d = isFinite(v.duration) ? v.duration : 0;
-      var pct = d ? (v.currentTime / d) * 100 : 0;
-      fill.style.width = pct + '%';
-      handle.style.left = pct + '%';
-      cur.textContent = fmt(v.currentTime);
-      dur.textContent = fmt(d);
-      track.setAttribute('aria-valuemax', String(Math.floor(d)));
-      track.setAttribute('aria-valuenow', String(Math.floor(v.currentTime)));
-      track.setAttribute('aria-valuetext', spoken(v.currentTime) + ' of ' + spoken(d));
-    }
-    function syncPlay(){
-      var playing = !v.paused && !v.ended;
-      bPlay.innerHTML = playing ? I.pause : I.play;
-      bPlay.setAttribute('aria-label', playing ? 'Pause' : 'Play');
-      if (!playing) show();
-      else idle();
-    }
-    function syncMute(){
-      bMute.innerHTML = v.muted ? I.mute : I.vol;
-      bMute.setAttribute('aria-label', v.muted ? 'Unmute' : 'Mute');
-    }
-
-    /* auto-hide: only while playing, and any pointer or focus activity
-       inside the frame brings the bar back for another full interval */
-    var idleTimer = null;
-    function show(){ frame.classList.remove('is-idle'); if (idleTimer) clearTimeout(idleTimer); idleTimer = null; }
-    function idle(){
-      show();
-      if (v.paused || v.ended) return;
-      idleTimer = setTimeout(function(){ frame.classList.add('is-idle'); }, IDLE_MS);
-    }
-    frame.addEventListener('pointermove', idle);
-    frame.addEventListener('pointerleave', function(){ if (!v.paused && !v.ended) frame.classList.add('is-idle'); });
-    frame.addEventListener('focusin', show);
-    frame.addEventListener('pointerdown', idle);
-
-    v.addEventListener('loadedmetadata', paint);
-    v.addEventListener('timeupdate', paint);
-    v.addEventListener('durationchange', paint);
-    v.addEventListener('play', syncPlay);
-    v.addEventListener('pause', syncPlay);
-    v.addEventListener('ended', syncPlay);
-    v.addEventListener('volumechange', syncMute);
-
-    function toggle(){ if (v.paused || v.ended) { v.play(); } else { v.pause(); } }
-    bPlay.addEventListener('click', toggle);
-    v.addEventListener('click', toggle);
-    /* Space and Enter reach the player itself, which is focusable */
-    v.addEventListener('keydown', function(ev){
-      if (ev.key === ' ' || ev.key === 'Spacebar' || ev.key === 'Enter') { ev.preventDefault(); toggle(); }
-    });
-    bMute.addEventListener('click', function(){ v.muted = !v.muted; });
-    bPrev.addEventListener('click', function(){ if (index > 0) chips[index - 1].click(); });
-    bNext.addEventListener('click', function(){ if (index < chips.length - 1) chips[index + 1].click(); });
-
-    bFs.addEventListener('click', function(){
-      if (fsEl()) { (document.exitFullscreen || document.webkitExitFullscreen).call(document); }
-      else { (grid.requestFullscreen || grid.webkitRequestFullscreen).call(grid); }
-    });
-    /* every slot runs this on every fullscreenchange, so the bar the reader
-       lands on after a switch never claims "Enter fullscreen" from inside it */
-    function syncFs(){
-      var on = fsEl() === grid;
-      bFs.innerHTML = on ? I.fsx : I.fs;
-      bFs.setAttribute('aria-label', on ? 'Exit fullscreen' : 'Enter fullscreen');
-    }
-    document.addEventListener('fullscreenchange', syncFs);
-    document.addEventListener('webkitfullscreenchange', syncFs);
-
-    /* seek: click anywhere on the rail, drag the handle, or use the keys */
-    function seekTo(clientX){
-      var r = track.getBoundingClientRect();
-      var d = isFinite(v.duration) ? v.duration : 0;
-      if (!d || !r.width) return;
-      var pct = Math.min(1, Math.max(0, (clientX - r.left) / r.width));
-      v.currentTime = pct * d;
-      paint();
-    }
-    track.addEventListener('pointerdown', function(ev){
-      if (ev.button != null && ev.button !== 0) return;
-      track.classList.add('is-drag');
-      track.setPointerCapture && track.setPointerCapture(ev.pointerId);
-      seekTo(ev.clientX);
-      ev.preventDefault();
-    });
-    track.addEventListener('pointermove', function(ev){
-      if (track.classList.contains('is-drag')) seekTo(ev.clientX);
-    });
-    ['pointerup', 'pointercancel'].forEach(function(t){
-      track.addEventListener(t, function(){ track.classList.remove('is-drag'); });
-    });
-    track.addEventListener('keydown', function(ev){
-      var d = isFinite(v.duration) ? v.duration : 0;
-      if (!d) return;
-      var k = ev.key, t = null;
-      if (k === 'ArrowRight' || k === 'ArrowUp') t = Math.min(d, v.currentTime + STEP);
-      else if (k === 'ArrowLeft' || k === 'ArrowDown') t = Math.max(0, v.currentTime - STEP);
-      else if (k === 'Home') t = 0;
-      else if (k === 'End') t = d;
-      if (t === null) return;
-      ev.preventDefault();
-      v.currentTime = t;
-      paint();
-      idle();
-    });
-
-    paint(); syncPlay(); syncMute(); syncFs();
-  });
-})();
+/* The bar itself now lives in js/video-chrome.js. It was written here
+   first and quantum's films needed the same device, so it was extracted
+   rather than copied: one implementation, two pages, and this page's own
+   CSS contract (.pv-vcard, .video-slot, --em) untouched.
+   FULLSCREEN TAKES THE GRID, the one parent all four slots share, never a
+   single slot's frame: the chips swap which slot is displayed, and an
+   element that has just been display:none leaves an empty screen showing
+   the page behind. Fixed 2026-08-13 after exactly that shipped, and the
+   reason the engine takes the target as configuration. */
+var pvVideoChrome = thVideoChrome({
+  root: document.getElementById('pvVideos'),
+  slots: '.video-slot',
+  indexKey: 'pv',
+  steps: document.querySelectorAll('.pvv-chip'),
+  fullscreen: document.getElementById('pvVideos'),
+  noun: 'video'
+});
 
 // ============================================================
 // SECTION 03 - architecture videos. One player at a time: the chips
@@ -4805,7 +4648,18 @@
   cards.forEach(function(c){ defaults[idx(c)] = (c.querySelector('.qv-title').textContent || '').trim(); });
 
   // one-time prefill; only when the slot has never been saved or cleared
-  var seeds = { 0: { src: "https://pub-3274162cfa1d48728621d5ec2d0906ad.r2.dev/privacy-intro.mp4", title: "How Starknet's ZK architecture works in practice" }, 1: { src: "https://pub-3274162cfa1d48728621d5ec2d0906ad.r2.dev/Starknet-sequencer.mp4", title: "ZK-STARK Under the Hood: Starknet's Sequencer" }, 2: { src: "https://pub-3274162cfa1d48728621d5ec2d0906ad.r2.dev/Starknet-prover.mp4", title: "ZK-STARK Under the Hood: Starknet's Prover" }, 3: { src: "https://pub-3274162cfa1d48728621d5ec2d0906ad.r2.dev/Ethereum-Starknet.mp4", title: "ZK-STARK Under the Hood: Proof Verification on Ethereum" } };
+  /* dur is the video's length in SECONDS, read off each file on
+     2026-08-21 with the media loaded, so the control bar can print a
+     total without fetching anything. preload is none: the browser knows
+     no duration until the reader asks. It is a hint, replaced the moment
+     real metadata lands, and withheld from any slot pointing somewhere
+     other than its seeded file.
+     FLOOR, NOT ROUND, and that is the whole reason these are not the
+     obvious numbers. The bar formats with Math.floor, so a 162.679s file
+     prints 2:42; seeding the rounded 163 printed 2:43 and then visibly
+     corrected itself to 2:42 the moment real metadata arrived. Measured
+     exactly: 162.679, 144.869, 146.819, 208.677. */
+  var seeds = { 0: { src: "https://pub-3274162cfa1d48728621d5ec2d0906ad.r2.dev/privacy-intro.mp4", dur: 162, title: "How Starknet's ZK architecture works in practice" }, 1: { src: "https://pub-3274162cfa1d48728621d5ec2d0906ad.r2.dev/Starknet-sequencer.mp4", dur: 144, title: "ZK-STARK Under the Hood: Starknet's Sequencer" }, 2: { src: "https://pub-3274162cfa1d48728621d5ec2d0906ad.r2.dev/Starknet-prover.mp4", dur: 146, title: "ZK-STARK Under the Hood: Starknet's Prover" }, 3: { src: "https://pub-3274162cfa1d48728621d5ec2d0906ad.r2.dev/Ethereum-Starknet.mp4", dur: 208, title: "ZK-STARK Under the Hood: Proof Verification on Ethereum" } };
   var seeded = false;
   Object.keys(seeds).forEach(function(k){ if (state[k] == null) { state[k] = seeds[k]; seeded = true; } });
   if (seeded) save();
@@ -4823,6 +4677,13 @@
     var live = blobs[i] || (st.src || ''); // prefer session preview, else saved path/URL
     if (live) { video.src = live; video.hidden = false; ph.hidden = true; c.classList.add('has-video'); }
     else { video.removeAttribute('src'); try { video.load(); } catch(e){} video.hidden = true; ph.hidden = false; c.classList.remove('has-video'); }
+    /* the length hint travels with the seeded file and nothing else: a
+       slot pointing at a custom URL or a local preview has no known
+       length, and printing the seed's would be printing a wrong number */
+    var sd = seeds[i];
+    if (sd && live === sd.src && sd.dur) video.dataset.dur = String(sd.dur);
+    else video.removeAttribute('data-dur');
+    if (window.pvVideoChrome) pvVideoChrome.refresh();
   }
   cards.forEach(applyCard);
 
