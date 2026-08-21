@@ -3345,7 +3345,13 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
           if (r.metric_key === 'aa_last7d' && r.date > dw) { dw = r.date; wau = r.value; }
         });
         if (!ok(dau) || !ok(wau)) throw 0;
-        return { dau: dau, wau: wau };
+        /* the dates were already being tracked to pick the latest row and then
+           thrown away. They are the one thing that makes these two numbers
+           readable: an active-address count is a claim about a PARTICULAR DAY,
+           and both are volatile enough that an undated one misleads. Each
+           metric carries its own date because the two feeds can land on
+           different days. */
+        return { dau: dau, wau: wau, dauAt: Date.parse(dd + 'T00:00:00Z'), wauAt: Date.parse(dw + 'T00:00:00Z') };
       }));
     var pAct = wrap(getJson('https://l2beat.com/api/scaling/activity/starknet?range=max')
       .then(function(d){
@@ -3410,6 +3416,17 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
       var cg = r[0], endur = r[1], tvl = r[2], tvs = r[3], stables = r[4], apprev = r[5],
           chainrev = r[6], gtp = r[7], act = r[8], npm = r[9], s20tx = r[10], s20tvl = r[11], s20vol = r[12], s20rev = r[13], bt = r[14], voy = r[15];
       var stamped = false;
+      /* writes a metric's own data date into its sub-label. Mirrors the
+         account-contracts note below; the difference is that this date is the
+         day the MEASUREMENT covers, not the day a human checked it, so the
+         wording says which day the number is for rather than when it was
+         verified. UTC, because growthepie's dates are calendar days. */
+      function gtpSub(series, prefix, at){
+        if (!isFinite(at)) return;
+        var el = document.querySelector('.cell[data-chart-series="' + series + '"] .cs');
+        if (el) el.textContent = prefix + new Date(at).toLocaleDateString('en-US',
+          { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+      }
       function stamp(pk){
         var now = Date.now();
         state.updated = now;
@@ -3449,7 +3466,16 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
       if (stables) { state.stables = stables; stamp('stables'); }
       if (apprev) { state.apprev = apprev; stamp('apprev'); }
       if (chainrev) { state.chainrev = chainrev; stamp('chainrev'); }
-      if (gtp) { state.dau = gtp.dau; state.wau = gtp.wau; stamp('gtp'); }
+      if (gtp) {
+        state.dau = gtp.dau; state.wau = gtp.wau; stamp('gtp');
+        /* same rule as account contracts: the sub renders the date the DATA
+           carries, so the note can never claim a freshness the number does not
+           have, and the static markup keeps its undated wording for every
+           fallback world. daa is one calendar day; aa_last7d is the seven days
+           ENDING on its date, so the two read differently on purpose. */
+        gtpSub('dailyusers', 'Active addresses / day · ', gtp.dauAt);
+        gtpSub('weeklyusers', 'Active addresses / 7d · to ', gtp.wauAt);
+      }
       if (act) { state.totaltx = act.totaltx; state.tps = act.tps; stamp('act'); }
       if (npm) { state.downloads = npm; stamp('npm'); }
       // one call pair, one coherent cluster: block time and total blocks
