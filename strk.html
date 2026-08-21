@@ -1544,7 +1544,54 @@ window.ADMIN_GATE=on;})();
              growthepie's contract labels are EVM-only, so the July plateau is
              unattributed. And the recovery rests on ONE observation: the feed
              lags two days, Aug 20 was still the latest point on Aug 22, so
-             whether Aug 21 held is unknown. -->
+             whether Aug 21 held is unknown.
+
+             5. WHY THESE TWO CARDS CARRY NO DELTA BADGE, and the general
+             lesson, which is bigger than these two cards. A badge here is a
+             first-point-versus-last-point comparison, so the window edges
+             decide the answer. Measured on Aug 22, the SAME metric on the SAME
+             day reads:
+
+               daily users            window                          reads
+                 as published         30D, Jul 23 -> Aug 20          +53.5%
+                 post-break only      Aug 07 -> Aug 20             +1185.1%
+                 post-break, no spike Aug 07 -> Aug 19                 +1.3%
+                 pre-break only       Jul 06 -> Aug 05                 -8.6%
+                 7D                   Aug 14 -> Aug 20             +1010.8%
+                 7D, no spike         Aug 13 -> Aug 19                 +3.1%
+
+               weekly users           window                          reads
+                 as published         30D, Jul 23 -> Aug 20          -34.8%
+                 post-break only      Aug 07 -> Aug 20               -31.1%
+                 post-break, no spike Aug 07 -> Aug 19               -81.9%
+                 pre-break only       Jul 06 -> Aug 05               -21.8%
+                 7D                   Aug 14 -> Aug 20              +273.1%
+                 7D, no spike         Aug 13 -> Aug 19                 +2.0%
+
+             Anything from +1.3% to +1185% for one metric on one day. That
+             spread is not a quirk of these two cards; it is what
+             endpoint-to-endpoint deltas do to ANY volatile series once a
+             regime change sits inside the window. The true within-regime
+             signal is the flat one, +1.3% and +2.0%, which is what thirteen
+             stable days should read as.
+
+             AND THE WORST NUMBER IN THAT TABLE WAS +53.5%, the one we were
+             publishing. Not because it was the largest, but because it was the
+             only one that looked PLAUSIBLE. A reader sees "+53.5% 30D" and
+             concludes the network grew by half in a month; what happened is
+             that it fell 88%, sat flat for thirteen days, and had one big day.
+             Correct arithmetic, false narrative. +1185% announces its own
+             absurdity and would be caught; +53.5% would be restored by a
+             future reader without a second thought. If you are about to do
+             that, this paragraph is addressed to you.
+
+             The badge is withheld by the BREAKS registry in the sparkline
+             code, not deleted, and it returns by itself once its window clears
+             Aug 6, around 2026-09-05. It will then read large for a fortnight
+             while the Aug 20 spike is still inside the window. That is
+             accepted deliberately: real movement on a volatile metric is not a
+             distortion, and special-casing this card against the others would
+             be one. -->
         <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="Daily users" data-chart-series="dailyusers"><div class="cell-top"><span class="cl">Daily users</span></div><div class="cv" data-stat="dau">13.2K</div><div class="cs">Active addresses / day</div></div>
         <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="Weekly users" data-chart-series="weeklyusers"><div class="cell-top"><span class="cl">Weekly users</span></div><div class="cv" data-stat="wau">43.4K</div><div class="cs">Active addresses / 7d</div></div>
         <!-- committed snapshot, no live source: see the M entry comment -->
@@ -2663,6 +2710,27 @@ root.querySelectorAll('.cell').forEach(c=>io.observe(c));
 (function(){
   const BADGE7=['price','mcap','tvl','tvs','stables','p_tvl','valuestaked','circstaked'];
   const NO_BADGE=['netflow']; /* its value is already a signed delta */
+  /* STRUCTURAL BREAKS. A delta badge is a first-point-versus-last-point
+     comparison, so a window straddling a regime change reports a step as a
+     trend. This is NOT a workaround for bad data: the 2026-08-06 break in
+     Starknet's active addresses was investigated on 2026-08-22 and found
+     REAL, not definitional. daa fell 88% and held for thirteen days while a
+     large cohort of light users stopped; growthepie changed nothing (open
+     repos, no relevant commit), companion metrics fell with it, and the
+     series recovered +1168% on Aug 20, which a redefinition could not do.
+     The full evidence is in the Daily users card's comment.
+     The value is THE DAY THE BREAK HAPPENED, and the guard compares ON OR
+     BEFORE, because that day is itself transitional and a window opening on
+     it still straddles the change.
+     The guard is SELF-HEALING by design: the badge is withheld only while its
+     own window still reaches back to the break, so both cards go quiet now and
+     light up again on their own once the 30-day window clears Aug 6, around
+     2026-09-06, spanning one regime. Nobody has to remember to undo it.
+     WHAT TO WATCH: if Aug 20 turns out to begin a new plateau rather than
+     being a single campaign day, that is a SECOND break and earns a second
+     entry here, dated 2026-08-20. As of 2026-08-22 the feed still ended Aug
+     20, so the recovery rests on one observation and this is unresolved. */
+  const BREAKS={dailyusers:'2026-08-06',weeklyusers:'2026-08-06'};
   const acc=document.getElementById('statsAcc');if(!acc)return;
   const gd=document.createElement('div');
   gd.innerHTML='<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="sparkFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#A78BFA" stop-opacity="0.22"/><stop offset="1" stop-color="#A78BFA" stop-opacity="0"/></linearGradient></defs></svg>';
@@ -2729,6 +2797,18 @@ root.querySelectorAll('.cell').forEach(c=>io.observe(c));
         if(w.length>=2&&covered){win=w;label=wl;break;}
       }
       if(!win)win=finite;
+      /* withhold the badge while its window straddles a known regime change:
+         across one, the number is arithmetically right and narratively false.
+         The empty span is hidden by .cdelta:empty, so the card simply carries
+         no badge rather than a zero. */
+      const brk=BREAKS[key];
+      /* ON OR BEFORE, not before. The registry holds the day the break
+         HAPPENED, and that day is itself transitional: Aug 6 read 4,390
+         between Aug 5's 17,880 and Aug 7's 1,810, so a window opening on it
+         still straddles the change. Caught by time-travelling the clock to
+         Sep 4, where a strict < let the badge back with +429.9% off that
+         transitional day as its baseline. */
+      if(brk&&win[0][0]<=Date.parse(brk))return;
       const first=win[0][1],last=win[win.length-1][1],d=last-first,m=map[key];
       if(!isFinite(d))return;
       const good=x=>h.invert?x<=0:x>=0; // down-is-good metrics color-flip only
