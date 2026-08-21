@@ -847,11 +847,40 @@
    the sequence now */
 .qw-ch .th-st-item{padding:0;}
 .qw-ch .th-st-item::before{content:none;}
-/* the film rail runs four pedestals; the single card keeps the size it
-   had in the two-column grid rather than ballooning to panel width */
-#qvVideos .qw-rail{grid-template-columns:repeat(4,minmax(0,1fr));max-width:1040px;}
+/* THE FILM RAIL IS PRIVACY'S PILL ROW, not the pedestal plates the other
+   three chapter devices use, so the two pages' video sections read as one
+   component rather than two takes on it. The values are privacy's
+   .pvv-chips / .pvv-chip verbatim, restated in this page's token names:
+   mono 11px at .12em tracking, a 99px hairline pill, 9px/15px padding,
+   10px gaps, centred, wrapping. The icons and the 01-04 numbering are
+   gone from the markup because privacy's tabs carry neither.
+   SCOPED TO #qvVideos ON PURPOSE: .qw-ped, .qw-obj, .qw-plinth and
+   .qw-label are shared with the catalyst, threat-index and readiness
+   rails, which keep their plinths and icons. The button keeps the .qw-ped
+   class so initQw, thRove and the transport's step targets stay wired to
+   the same element; only its appearance changes.
+   Wrapping rather than scrolling is also a fix: the pedestal row overflowed
+   its container by 44px at 375 and had to be scrolled sideways to reach
+   the fourth film. */
+#qvVideos .qw-rail{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;max-width:none;}
+#qvVideos .qw-ped{display:inline-flex;align-items:center;justify-content:center;
+  font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--th-muted);background:transparent;border:1px solid var(--th-hair);border-radius:99px;
+  padding:9px 15px;white-space:nowrap;opacity:1;border-radius:99px;
+  transition:color .22s ease,border-color .22s ease,background .22s ease;}
+#qvVideos .qw-ped::before{content:none;}
+#qvVideos .qw-ped[aria-selected="false"]{opacity:1;}
+#qvVideos .qw-ped:hover{color:var(--th-ink);border-color:rgba(var(--accent-rgb),.40);}
+#qvVideos .qw-ped[aria-selected="true"]{color:var(--accent);border-color:rgba(var(--accent-rgb),.62);
+  background:rgba(var(--accent-rgb),.10);}
+#qvVideos .qw-ped:focus-visible{outline:2px solid var(--accent);outline-offset:3px;}
+#qvVideos .qw-label{font-family:inherit;font-size:inherit;letter-spacing:inherit;color:inherit;white-space:nowrap;}
 #qvVideos .qw-ch .th-pm-vcard{max-width:660px;margin:0 auto;}
-@media(max-width:980px){#qvVideos .qw-rail{grid-template-columns:repeat(4,minmax(0,1fr));}}
+@media(max-width:480px){
+  #qvVideos .qw-rail{gap:7px;}
+  #qvVideos .qw-ped{font-size:9.5px;letter-spacing:.06em;padding:8px 11px;}
+  #qvVideos .qw-label{font-size:inherit;letter-spacing:inherit;}
+}
 /* the catalyst rail runs four pedestals since the private-capital chapter
    (2026-08-19); scoped so the readiness rail keeps the base three-across */
 #catalyst-chapters .qw-rail{grid-template-columns:repeat(4,minmax(0,1fr));max-width:1148px;}
@@ -1380,14 +1409,36 @@ a.qg-card:focus-visible,.qg-linkcard:has(.th-eo-main:focus-visible){outline:2px 
    with display:none, so a frame that has just been hidden would fullscreen to
    an empty screen. The prefixed selectors stay separate rules on purpose: one
    unknown pseudo-class invalidates a whole selector list. */
-#qw-panel-v:fullscreen{width:100%;height:100%;background:#000;padding:0;display:grid;place-items:center;}
+/* PLACE-ITEMS:CENTER WAS THE BUG, fixed 2026-08-21 after the panel went
+   fullscreen to a black screen with nothing on it. The request always
+   succeeded and document.fullscreenElement was always correct; what
+   failed was the layout inside. place-items:center sets justify-items to
+   center, which makes each .qw-ch a shrink-to-fit grid item, and the card
+   inside asks for width:100% of a parent that is sizing itself to its
+   content. That resolves to zero, so the chain measured 0x900 for the
+   chapter, the card and the video alike: a full-viewport black panel
+   containing a zero-width film. Intrinsic video size does NOT rescue it,
+   which was checked rather than assumed, because the collapse happens
+   above the video: with metadata loaded and an intrinsic 1280x720 the
+   measurement was still 0x900. So the items stretch now, the way
+   privacy's do, and .qw-ch is given the height explicitly.
+   The shell's overflow:hidden does NOT interfere: a fullscreen element is
+   promoted to the top layer and is not clipped by an ancestor, which the
+   panel's own 1440x900 box confirmed while its contents were collapsed.
+   The prefixed selectors stay separate rules on purpose: one unknown
+   pseudo-class invalidates a whole selector list. */
+#qw-panel-v:fullscreen{width:100%;height:100%;background:#000;padding:0;display:grid;grid-template-rows:100%;}
+#qw-panel-v:fullscreen .qw-ch{width:100%;height:100%;min-width:0;}
 #qw-panel-v:fullscreen .qw-ch:not(.is-on){display:none;}
-#qw-panel-v:fullscreen .th-pm-vcard{max-width:none;width:100%;height:100%;border:0;border-radius:0;}
-#qw-panel-v:fullscreen .frame{aspect-ratio:auto;height:100vh;}
+#qw-panel-v:fullscreen .th-pm-vcard{max-width:none;width:100%;height:100%;margin:0;border:0;border-radius:0;}
+#qw-panel-v:fullscreen .frame{aspect-ratio:auto;height:100%;}
 #qw-panel-v:fullscreen .meta{display:none;}
-#qw-panel-v:-webkit-full-screen{width:100%;height:100%;background:#000;padding:0;}
-#qw-panel-v:-webkit-full-screen .th-pm-vcard{max-width:none;width:100%;height:100%;border:0;border-radius:0;}
-#qw-panel-v:-webkit-full-screen .frame{aspect-ratio:auto;height:100vh;}
+#qw-panel-v:-webkit-full-screen{width:100%;height:100%;background:#000;padding:0;display:grid;grid-template-rows:100%;}
+#qw-panel-v:-webkit-full-screen .qw-ch{width:100%;height:100%;min-width:0;}
+#qw-panel-v:-webkit-full-screen .qw-ch:not(.is-on){display:none;}
+#qw-panel-v:-webkit-full-screen .th-pm-vcard{max-width:none;width:100%;height:100%;margin:0;border:0;border-radius:0;}
+#qw-panel-v:-webkit-full-screen .frame{aspect-ratio:auto;height:100%;}
+#qw-panel-v:-webkit-full-screen .meta{display:none;}
 /* the narrow step-down, the same one privacy runs below the same 560px.
    NOT a fit fix, and the first version of this comment claimed it was on
    the strength of a bad metric: .vctl-btns is a flex row that always
@@ -2881,20 +2932,16 @@ body.page-quantum{overflow-x:clip;}
   <div class="qw th-pm-reveal" id="qvVideos">
     <div class="qw-rail" role="tablist" aria-label="Four films, one player">
       <button class="qw-ped" type="button" role="tab" data-ch="0" aria-selected="true" aria-controls="qw-panel-v" tabindex="0">
-        <span class="qw-obj" aria-hidden="true"><svg viewBox="0 0 96 84" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M48 16l22 8v17c0 14-9 24-22 29-13-5-22-15-22-29V24z"/><path d="M39 41l7 7 12-13"/></svg></span>
-        <span class="qw-plinth"><span class="qw-label"><b>01</b>THE THREAT</span></span>
+        <span class="qw-label">THE THREAT</span>
       </button>
       <button class="qw-ped" type="button" role="tab" data-ch="1" aria-selected="false" aria-controls="qw-panel-v" tabindex="-1">
-        <span class="qw-obj" aria-hidden="true"><svg viewBox="0 0 96 84" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M26 32h36M55 25l7 7-7 7"/><path d="M70 52H34M41 45l-7 7 7 7"/></svg></span>
-        <span class="qw-plinth"><span class="qw-label"><b>02</b>THE MIGRATION</span></span>
+        <span class="qw-label">THE MIGRATION</span>
       </button>
       <button class="qw-ped" type="button" role="tab" data-ch="2" aria-selected="false" aria-controls="qw-panel-v" tabindex="-1">
-        <span class="qw-obj" aria-hidden="true"><svg viewBox="0 0 96 84" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M33 14h21l13 13v43H33z"/><path d="M54 14v13h13"/><path d="M41 42h15M41 52h15"/></svg></span>
-        <span class="qw-plinth"><span class="qw-label"><b>03</b>THE WHITE PAPER</span></span>
+        <span class="qw-label">THE WHITE PAPER</span>
       </button>
       <button class="qw-ped" type="button" role="tab" data-ch="3" aria-selected="false" aria-controls="qw-panel-v" tabindex="-1">
-        <span class="qw-obj" aria-hidden="true"><svg viewBox="0 0 96 84" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M48 22 70 60H26z"/><path d="M41 50h14"/></svg></span>
-        <span class="qw-plinth"><span class="qw-label"><b>04</b>HOW LITTLE CHANGES</span></span>
+        <span class="qw-label">HOW LITTLE CHANGES</span>
       </button>
     </div>
     <div class="qw-shell">
