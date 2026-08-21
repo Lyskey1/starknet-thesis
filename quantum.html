@@ -862,6 +862,9 @@
    Wrapping rather than scrolling is also a fix: the pedestal row overflowed
    its container by 44px at 375 and had to be scrolled sideways to reach
    the fourth film. */
+#qvVideos .qv-head{position:relative;text-align:center;margin-bottom:32px;}
+#qvVideos .qv-vtitle{font-family:var(--display);font-weight:700;font-size:clamp(20px,2.2vw,24px);line-height:1.3;}
+#qvVideos .qv-vtitle .em{color:var(--accent);}
 #qvVideos .qw-rail{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;max-width:none;}
 #qvVideos .qw-ped{display:inline-flex;align-items:center;justify-content:center;
   font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;
@@ -2930,6 +2933,9 @@ body.page-quantum{overflow-x:clip;}
        root (cards bind positionally inside it); the grid class goes, the
        device classes come. A deselected chapter pauses its player. -->
   <div class="qw th-pm-reveal" id="qvVideos">
+    <div class="qv-head">
+      <div class="qv-vtitle">The core of <span class="em">Starknet's quantum case.</span></div>
+    </div>
     <div class="qw-rail" role="tablist" aria-label="Four films, one player">
       <button class="qw-ped" type="button" role="tab" data-ch="0" aria-selected="true" aria-controls="qw-panel-v" tabindex="0">
         <span class="qw-label">THE THREAT</span>
