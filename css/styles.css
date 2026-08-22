@@ -186,6 +186,24 @@
   @media (prefers-reduced-motion: reduce) {
     .btn.nav-cta::after { transition: none; opacity: 0; }
     .btn.nav-cta:active { transform: none; }
+    /* Two infinite decorative loops defined further down this file were
+       running through a reduced-motion preference on every page that loads
+       it: measured still running on index, quantum, privacy, btcfi,
+       ecosystem and digest. Neither carries information. The chevron bobs to
+       say "expandable" and the dot pulses to say "live", and both states are
+       already carried by the control's own markup and label, so stopping
+       them leaves each at its resting frame, chevron at translateY(0) and
+       dot at full opacity, and nothing disappears.
+       !important IS LOAD-BEARING HERE, not a shortcut. This block sits at
+       line 186 and the two animations are declared around lines 1380 and
+       1670, at identical specificity: a media query adds none. Without it
+       the later declaration wins on source order and the override silently
+       does nothing, which is exactly what the first attempt at this did.
+       Verified by measurement, not by reading. (strk was the one page
+       already unaffected, because it re-declares .status .dot inline after
+       this file loads.) */
+    .news-flashy .news-chevron { animation: none !important; }
+    .status .dot { animation: none !important; }
   }
   /* Nav search trigger (the only other rules in this file the search
      feature is allowed to own). Visible label + shortcut hint on desktop,
