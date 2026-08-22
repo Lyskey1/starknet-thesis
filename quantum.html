@@ -1004,32 +1004,37 @@
 .th-pm-card--wide p{grid-area:body;max-width:760px;margin-top:12px;}
 @media(max-width:880px){.th-pm-card--wide{display:flex;flex-direction:column;}.th-pm-card--wide p{max-width:none;}}
 
-/* ===== 02: gated beat progression (qi-). One beat renders at a time,
-   forward is earned (NEXT unlocks the next row permanently for the
-   session), back is free. The four beats are an argument: beat 01
-   introduces the maze's exit, beat 02's turkey is what "unlike the
-   turkey" leans on, so order is guaranteed structurally without
-   rewriting copy. The index is the map: rows up to the furthest beat
-   reached are clickable, rows beyond are disabled and out of the tab
-   order. Arriving by hash unlocks everything up to the target beat,
-   because the reader asked for it explicitly. Desktop only: below
-   981px the index disappears, gating is off, all four beats stack as
-   a linear read and NEXT becomes a scroll-to-next convenience. */
+/* ===== 02: four beats (qi-), one rendered at a time, every row
+   reachable in any order. The index is the map and all four rows are
+   always clickable.
+   THE GATE IS GONE. It shipped 2026-08-19 and was removed 2026-08-22;
+   see the engine comment further down for what it was and why removing
+   it cost no height. This block described it in the present tense for
+   several hours after it stopped existing, which is why the engine
+   comment now carries the history and this one carries only what the
+   CSS actually does.
+   The four beats are still an argument in order: beat 01 introduces the
+   maze's exit and beat 02's turkey is what "unlike the turkey" leans
+   on, but that order is now the reader's to follow or skip.
+   Below 981px the index disappears and all four beats stack as a linear
+   read. NEXT goes with the index there (.qi-adv is display:none), so it
+   exists on desktop only; an earlier version of this note claimed it
+   degraded to a scroll-to-next convenience on narrow, which the CSS
+   two hundred lines below had never agreed with. */
 .qi{display:grid;grid-template-columns:212px minmax(0,1fr);gap:0 40px;align-items:start;margin-top:34px;}
 .qi-index{position:sticky;top:var(--qi-stick-top,100px);}
 .qi-index ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;}
 .qi-row{display:flex;align-items:center;gap:12px;padding:9px 10px;border-radius:10px;width:100%;
   background:none;border:1px solid transparent;text-align:left;cursor:pointer;
-  /* unlocked-inactive #6b81a0 measures 5.0:1; the glyphs take the same
+  /* inactive #6b81a0 measures 5.0:1; the glyphs take the same
      currentColor, with the stroke bumped for optical parity (a 1.5px
-     hairline reads darker than 10px mono at the same color) */
+     hairline reads darker than 10px mono at the same color). It was
+     "unlocked-inactive" while a locked state existed to contrast with;
+     there is only one inactive state now. */
   color:#6b81a0;transition:color .25s ease,background .25s ease;}
 .qi-row:hover{color:color-mix(in srgb,var(--th-q) 70%,#6b81a0);}
 .qi-row[aria-current="true"]{color:var(--th-q);background:color-mix(in srgb,var(--th-q) 7%,transparent);
   border-color:color-mix(in srgb,var(--th-q) 22%,transparent);}
-/* locked: dimmer than unlocked-inactive, disabled so it leaves the tab
-   order (WCAG exempts disabled controls from contrast minimums; the
-   measured 2.5:1 is deliberate visual locking, reported not hidden) */
 .qi-row:focus-visible{outline:2px solid var(--th-q);outline-offset:2px;}
 .qi-glyph{width:26px;height:26px;flex:none;}
 .qi-glyph svg{width:100%;height:100%;display:block;stroke-width:1.9px;}
