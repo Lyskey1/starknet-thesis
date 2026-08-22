@@ -289,13 +289,31 @@
     }
     reveal(target, entry);
     setTimeout(() => {
-      target.scrollIntoView({ behavior: REDUCE ? 'auto' : 'smooth', block: 'center' });
+      const settle = () => target.scrollIntoView({ behavior: REDUCE ? 'auto' : 'smooth', block: 'center' });
+      settle();
       landedFlash(target);
       /* some toggles attach their handlers lazily (deferred engines): give
          the page a beat after scrolling, then reveal again — idempotent,
-         reveal() only acts on still-closed state */
-      setTimeout(() => reveal(target, entry), 700);
-      setTimeout(() => reveal(target, entry), 1600);
+         reveal() only acts on still-closed state.
+         AND RE-SCROLL IF THAT REVEAL MOVED THE TARGET. This is the whole
+         reason the late passes exist: a container that opens after the
+         scroll changes the document height, and the landing we already
+         performed is then wrong by however much the container grew.
+         Measured on quantum before this guard: a hit inside a collapsed
+         chapter finished 1,390px BELOW the viewport once the chapter
+         animated open, and a hit in the news block finished 948px ABOVE it
+         once the tweets loaded. Same defect, opposite directions.
+         The guard is deliberately conservative: it re-scrolls only when the
+         target has left the viewport ENTIRELY, so a page that settled
+         correctly gets no second jolt, and a few pixels of drift is left
+         alone. */
+      const offscreen = () => {
+        const r = target.getBoundingClientRect();
+        return r.bottom < 0 || r.top > (window.innerHeight || 0);
+      };
+      const late = () => { reveal(target, entry); if (offscreen()) settle(); };
+      setTimeout(late, 700);
+      setTimeout(late, 1600);
     }, 120);
   }
 
