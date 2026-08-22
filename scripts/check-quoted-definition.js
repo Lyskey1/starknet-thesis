@@ -3,15 +3,17 @@
    Aegis metric definition on strk.html's Apps card.
 
    Why this needs a gate at all. We publish a metric whose definition we cannot
-   state, so the card quotes Aegis's own wording instead. A quote is only worth
-   printing if it is exact, and this particular string lives in THREE places
-   that can drift apart independently:
-     1. data-says on #pdaPanel        (the perishable-claim record)
-     2. the static <q id="pdaDef">    (what renders before/without the seed)
-     3. definitionQuoted.text in the seed, which the renderer copies into <q>
-   The rendered text therefore equals data-says if and only if all three agree,
-   which is what this asserts. Checking the three sources is equivalent to
-   checking the DOM and needs no browser, so it can run in the normal build.
+   state, so the provenance is recorded instead: data-says on #pdaPanel holds
+   Aegis's exact wording with data-checked beside it, and definitionQuoted in
+   the seed holds the same string with its own checked date. Two records of one
+   quote, maintained by different hands (one in markup, one written by the
+   refresh script), which is exactly the shape that drifts. This asserts they
+   are byte-identical.
+   NOTHING RENDERS THE QUOTE TODAY. The card showed it until 2026-08-22 and the
+   block was removed on the owner's call; only the data keeps it. When it was
+   rendered there was a third copy, a static <q id="pdaDef">, and this check
+   asserted all three agreed so the DOM had to equal data-says. If the quote
+   ever goes back on the page, restore that third comparison.
 
    It also refuses an em dash anywhere in the Apps panel's own prose. The site
    rule is no em dashes; this enforces it where the rule was actually broken
@@ -35,7 +37,12 @@ const at = html.indexOf('id="pdaPanel"');
 if (at === -1) fail(`could not find id="pdaPanel" in ${HTML}`);
 const metaAt = html.indexOf('tk-meta', at);
 if (metaAt === -1) fail('could not find the panel footer (tk-meta) after #pdaPanel');
-const panel = html.slice(at, html.indexOf('</div>', metaAt));
+const panelRaw = html.slice(at, html.indexOf('</div>', metaAt));
+/* HTML comments are stripped before either test below. They are not rendered,
+   so an em dash in one breaks no rule, and the note explaining this check
+   necessarily mentions the <q> element it is looking for. Testing the raw
+   slice made the guard fire on its own documentation. */
+const panel = panelRaw.replace(/<!--[\s\S]*?-->/g, '');
 
 /* 1. the attribute */
 const saysM = /data-says="([^"]*)"/.exec(panel);
@@ -43,13 +50,14 @@ if (!saysM) fail('no data-says attribute on #pdaPanel');
 const says = saysM[1];
 if (!says.trim()) fail('data-says is empty');
 
-/* 2. the static fallback inside <q> */
-const qM = /<q id="pdaDef">([\s\S]*?)<\/q>/.exec(panel);
-if (!qM) fail('no <q id="pdaDef"> in the panel');
-const qText = qM[1].trim();
+/* the quote must not be rendered again without restoring the comparison above */
+if (/<q\b/.test(panel)) {
+  fail('a <q> element is back in the panel. The quote is rendered again, so\n' +
+       '  restore the assertion that its text equals data-says (see the header).');
+}
 
-/* 3. the seed the renderer copies from. Absent is allowed: the workflow may
-   not have run in a fresh checkout, and the static fallback still governs. */
+/* 2. the seed the refresh script writes. Absent is allowed: a fresh checkout
+   may not have run the workflow yet. */
 let seedText = null;
 if (fs.existsSync(SEED)) {
   let seed;
@@ -60,21 +68,19 @@ if (fs.existsSync(SEED)) {
 }
 
 const show = (s) => JSON.stringify(s);
-if (qText !== says) {
-  fail(`the rendered quote would not equal data-says.\n` +
-       `  <q>       ${show(qText)}\n  data-says ${show(says)}`);
-}
 if (seedText !== null && seedText !== says) {
-  fail(`the seed's definitionQuoted.text does not equal data-says, so the\n` +
-       `  renderer would overwrite <q> with a different string.\n` +
+  fail(`the seed's definitionQuoted.text does not equal data-says. The two\n` +
+       `  provenance records disagree about what Aegis actually said.\n` +
        `  seed      ${show(seedText)}\n  data-says ${show(says)}`);
 }
 
-/* our prose around the quote, with the quote itself removed first */
-const ourProse = panel.replace(/<q id="pdaDef">[\s\S]*?<\/q>/, '').replace(/data-says="[^"]*"/, '');
+/* our prose, with the quoted attribute itself removed first: if Aegis ever
+   write an em dash we reproduce it, so only our own words are linted */
+const ourProse = panel.replace(/data-says="[^"]*"/, '');
 if (/—|&mdash;/.test(ourProse)) {
   fail('an em dash appears in the Apps panel\'s own prose. The site rule is no\n' +
        '  em dashes; use a comma or a period. (The quoted string itself is exempt.)');
 }
 
-console.log(`quoted definition: 3 copies agree, ${says.length} chars, no em dash in our prose`);
+console.log(`quoted definition: ${seedText === null ? 'attribute only (no seed)' : 'seed and attribute agree'}, ` +
+  `${says.length} chars, not rendered, no em dash in our prose`);

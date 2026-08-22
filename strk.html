@@ -574,9 +574,6 @@ a.chip:hover{background:var(--acc);border-color:var(--acc);color:#0A0A0A}
 .pda-narrow{display:none}
 .pda-note{margin-top:14px;font-family:var(--mono),monospace;font-size:11px;line-height:1.65;
   letter-spacing:.04em;color:var(--muted)}
-.pda-note q{color:var(--ink,#F5F2EC);font-style:normal}
-.pda-scope{margin-top:10px}
-.pda-note a{color:var(--muted);text-decoration:none;border-bottom:1px solid rgba(245,242,236,.2)}
 @media(max-width:640px){
   /* the bar is the first thing to go: the two figures ARE the argument, and
      a 40px bar encodes nothing a reader can read.
@@ -1692,14 +1689,16 @@ window.ADMIN_GATE=on;})();
       <div class="ptitle">Who the network's users are using</div>
       <div class="pda-heads"><span>#</span><span>App</span><span>Active users</span><span>Users</span><span><i class="pda-wide">TX / user</i><i class="pda-narrow">TX/user</i></span></div>
       <div class="pda-rows" id="pdaRows"><div class="pda-note">Ranking unavailable.</div></div>
-      <div class="pda-note">
-        <q id="pdaDef">Daily Active Users - rankings by user engagement and account creations</q>. The metric as <a href="https://aegis-starknet-dashboard.vercel.app/leaderboard/dau-leaderboard" target="_blank" rel="noopener noreferrer">Prism by Aegis</a> defines it, in their words<span id="pdaDefChecked"></span>.
-        We do not restate it, because how a user is counted here is theirs to say.
-      </div>
-      <!-- what the reader is looking at a slice OF. The counts come from the
-           seed (rendered rows, and Aegis's own sourceMeta.total) so the
-           sentence cannot drift from the table above it. -->
-      <div class="pda-note pda-scope" id="pdaScope">Top ten of the protocols Prism tracks, ranked by their active users figure.</div>
+      <!-- The quoted definition and the scope line were rendered here until
+           2026-08-22 and were removed on the owner's call. The PROVENANCE
+           stays in the data rather than on the page: data-says and
+           data-checked above still carry Aegis's exact wording and the day a
+           human read it, and definitionQuoted in the seed carries the same
+           string with its own checked date. Nothing renders them now.
+           If either is ever put back on the page, restore the assertion in
+           scripts/check-quoted-definition.js that the rendered <q> equals
+           data-says; today that check compares the seed against the attribute
+           only, because there is no rendered copy to compare. -->
       <div class="tk-meta">
         <span id="pdaStamp">24h window</span>
         <a href="https://aegis-starknet-dashboard.vercel.app/leaderboard/dau-leaderboard" target="_blank" rel="noopener noreferrer">Data: Prism by Aegis &#8599;</a>
@@ -1770,21 +1769,7 @@ window.ADMIN_GATE=on;})();
         st.textContent=(dv.window||'24h')+' window \u00b7 '+
           new Date(dv.fetched).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric',timeZone:'UTC'});
       }
-      /* the definition is a quote a human took off their dashboard on a date,
-         not a field the API serves, so it prints WITH that date */
-      var dq=d.definitionQuoted||{}, def=document.getElementById('pdaDef');
-      if(def&&dq.text) def.textContent=dq.text;
-      var sc=document.getElementById('pdaScope');
-      var totalTracked=(d.sourceMeta||{}).total;
-      if(sc&&isFinite(totalTracked)){
-        sc.textContent='Top '+apps.length+' of the '+totalTracked+
-          ' protocols Prism tracks, ranked by their active users figure.';
-      }
-      var dc=document.getElementById('pdaDefChecked');
-      if(dc&&dq.checked){
-        dc.textContent=', read '+new Date(dq.checked+'T00:00:00Z')
-          .toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric',timeZone:'UTC'});
-      }
+
     }).catch(function(){ /* the static unavailable line stays */ });
   })();
 
