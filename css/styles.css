@@ -194,14 +194,28 @@
        already carried by the control's own markup and label, so stopping
        them leaves each at its resting frame, chevron at translateY(0) and
        dot at full opacity, and nothing disappears.
-       !important IS LOAD-BEARING HERE, not a shortcut. This block sits at
-       line 186 and the two animations are declared around lines 1380 and
-       1670, at identical specificity: a media query adds none. Without it
-       the later declaration wins on source order and the override silently
-       does nothing, which is exactly what the first attempt at this did.
-       Verified by measurement, not by reading. (strk was the one page
-       already unaffected, because it re-declares .status .dot inline after
-       this file loads.) */
+       DO NOT REMOVE THE !important. Someone will try, because a blanket
+       !important usually is a shortcut. Here it is the only thing that makes
+       these two lines do anything at all, for a reason that is easy to miss:
+       A MEDIA QUERY ADDS NO SPECIFICITY. This block sits at line 186.
+       .news-flashy .news-chevron is declared again around line 1380 and
+       .status .dot around line 1670, at IDENTICAL specificity (0,2,0). Equal
+       specificity is settled by source order, and those declarations come
+       later, so without !important the override loses every time and fails
+       SILENTLY: the CSS parses, the rule exists, the animation keeps running.
+       Wrapping a rule in a media query feels like it should win. It does not.
+       THIS WAS CAUGHT BY MEASURING, NOT BY READING. The first version of this
+       change was exactly these two selectors without !important. It looked
+       correct, it was reviewed as a line-by-line diff, and it was completely
+       inert: all six affected pages still animated under the preference. The
+       habit that surfaced it is worth keeping for anything in this shared
+       file, because it is loaded by seven pages and a silent no-op here is
+       indistinguishable from a fix until someone measures the computed style:
+       show the diff line by line, then verify the diff does what it says on
+       every page that loads the file, before pushing.
+       (strk was the one page already unaffected, because it re-declares
+       .status .dot inline after this file loads and wins the same
+       source-order contest.) */
     .news-flashy .news-chevron { animation: none !important; }
     .status .dot { animation: none !important; }
   }
