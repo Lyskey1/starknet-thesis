@@ -1902,7 +1902,20 @@ if (window.thStickyRail) {
       <ul><li>ECDSA signatures (Bitcoin, Ethereum)</li><li>BLS consensus signatures</li><li>KZG commitments</li><li>Pairing-based SNARKs (Groth16, Plonk)</li><li>Optimistic rollups, sidechains</li></ul></div>
     <div class="th-pm-side qg-card" style="--c:var(--th-green)"><h4 id="quantum-safe">Quantum-safe</h4>
       <ul><li>zk-STARK proofs</li><li>Hash-based commitments (BLAKE2)</li><li>Post-quantum signatures (Falcon, ML-DSA)</li></ul>
-      <p class="note">In <a href="https://arxiv.org/abs/2603.28846" target="_blank" rel="noopener noreferrer">the paper's own risk chart</a>, zk-STARK is the only proving category in production today not flagged as quantum-vulnerable by Google. Starknet's proving system is named explicitly as resistant.</p></div>
+      <!-- THE STRONGEST CLAIM ON THE PAGE, so it carries the most provenance.
+           It said "in production TODAY", which extended a dated chart to the
+           present. The paper refuses that extension in its own words: it calls
+           the figure "a point-in-time assessment of the ecosystem's risk
+           profile" and notes that "protocols frequently upgrade and change
+           their proving architectures". So the claim is dated to the chart and
+           the caveat is stated rather than hidden.
+           The exclusivity survives because it is the source's own word: the
+           caption reads "Only protocols utilizing zkSTARKs (green) employ
+           hash-based proofs...". Starknet being named is a separate sentence in
+           the same paper, so both quotes are in data-says rather than one being
+           waved through as an accepted noun. Verified 2026-08-22 against the
+           v2 full text, not the abstract. -->
+      <p class="note th-claim" data-perishable="third-party" data-src="https://arxiv.org/abs/2603.28846" data-checked="2026-08-22" data-says="Only protocols utilizing zkSTARKs (green) employ hash-based proofs that are currently believed to be resistant to quantum attacks. | Indeed, some zk-rollups, such as Starknet, use hash-based protocols which are believed to be resistant to quantum cryptanalysis." data-noun-ok="Google March">In <a href="https://arxiv.org/abs/2603.28846" target="_blank" rel="noopener noreferrer">the paper's March 2026 risk chart</a>, zk-STARK is the only proving category not flagged as quantum-vulnerable by Google, and Starknet's proving system is named explicitly as resistant. The authors call the chart a point-in-time assessment.</p></div>
   </div>
   </div>
 
