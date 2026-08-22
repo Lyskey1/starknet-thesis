@@ -1606,15 +1606,81 @@
   .seal.is-open .seal-card.is-on[data-i="1"] { transform: translate(-50%,-50%) rotate(0deg) scale(1.06); }
   .seal.is-open .seal-card.is-on[data-i="2"] { transform: translate(-50%,-50%) rotate(0deg) scale(1.06); }
   .seal.is-open .seal-card.is-on[data-i="3"] { transform: translate(-50%,-50%) rotate(0deg) scale(1.06); }
-  /* the reserved detail region */
-  .seal-detail { margin-top: 12px; height: var(--seal-detail-h, 200px);
-    border-top: 1px solid var(--line); padding-top: 14px; }
-  .sd-head { font-family: var(--mono); font-size: 11px; letter-spacing: .16em;
-    color: var(--em); min-height: 16px; }
+  /* THE PANEL IS THE CARD, OPENED. It used to be a full-width hairline rule
+     with the text under it, which read as a caption beneath a row rather than
+     as the contents of the thing that was clicked: nothing tied the two
+     together, and with nothing picked it was a rule over 200px of nothing.
+     It now takes the ACTIVE CARD'S OWN treatment, the same border and the
+     same fill, so the relationship is carried by material rather than by
+     proximity. Both values are the card's, not new ones:
+       .seal-card.is-on { border-color: var(--em);
+                          background: rgba(var(--accent-rgb), .07) }
+     and the radius is .seal-card's 12px.
+     DO NOT RE-PROPOSE CONSTRAINING THE PANEL TO THE DECK. It looks like the
+     obvious third fix and it is already true: measured before anything was
+     changed, the panel and the stage are the SAME BOX, x=748 w=520 at 1440.
+     There is no misalignment to correct, and narrowing the panel would invent
+     one.
+     THE EMPTY STATE IS WHY THE TREATMENT IS SCOPED TO .has-open. The engine
+     starts at openIdx -1 with nothing picked, and in that state the old
+     construction was a full-width rule sitting over 200px of nothing, which
+     is a good part of why the region read as dropped in empty space. The
+     border and fill arrive only with a card, so the fanned state stays an
+     empty reserved region rather than an accent box with no content in it. */
+  .seal-detail { position: relative; margin-top: 12px;
+    height: var(--seal-detail-h, 200px); padding: 13px 15px;
+    border: 1px solid transparent; border-radius: 12px;
+    transition: border-color var(--hover-dur) var(--hover-ease),
+                background var(--hover-dur) var(--hover-ease); }
+  .seal.has-open .seal-detail { border-color: var(--em);
+    background: rgba(var(--accent-rgb), .07); }
+  /* and a hairline from the opened card down to it, so the eye has a path.
+     The drop is derived, not measured in: the stage is --seal-stage-h, the
+     opened card is --seal-card-h scaled 1.06 and centred on the stage, so the
+     space under it is half the difference, plus this panel's own margin.
+     A NOTCH IS THE OBVIOUS THING TO REACH FOR AND IT CANNOT WORK HERE. This
+     is a constraint, not a preference. The panel's fill is translucent, 7%
+     accent, so any notch overlapping the top border shows that border running
+     straight through the triangle. Every escape route requires an opaque fill
+     matching whatever sits behind the panel, which means inventing a colour
+     that then has to be maintained against the page background. A broken or
+     stepped rule fails for the same reason from the other direction. The
+     connector needs no fill, so it has none of this. */
+  .seal-detail::before { content: ""; position: absolute; left: var(--sd-notch, 12.5%);
+    bottom: 100%; width: 1px;
+    height: calc((var(--seal-stage-h, 224px) - var(--seal-card-h, 162px) * 1.06) / 2 + 12px);
+    background: linear-gradient(180deg, transparent, var(--em));
+    opacity: 0; transition: opacity var(--hover-dur) var(--hover-ease),
+                            left var(--hover-dur) var(--hover-ease); }
+  .seal.has-open .seal-detail::before { opacity: .85; }
+  /* the head repeats the opened card's own two lines verbatim, and the card is
+     right there, lit, with a line drawn to this panel. It stays in the DOM
+     and stays the live region, so what a screen reader hears on a card change
+     is unchanged; it is only taken off the screen. */
+  .sd-head { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+    overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; border: 0; }
+  /* margin-top was 8px to clear the head above it. The head is off-screen now,
+     so the lede is the first visible thing in the panel and that margin is
+     dead space at the top of the card. Removing it also buys back the 2px
+     card 04 was overflowing its reserved height by at 981, where the panel's
+     new side padding rewrapped its longest bullet. */
   .sd-item .sn-sum { font-family: var(--sans); font-size: 12.5px; color: var(--muted);
-    line-height: 1.6; margin-top: 8px; }
+    line-height: 1.6; margin-top: 0; }
+  /* HANGING INDENT, and the unit is doing real work here. The marker is a
+     literal "· " in the text rather than a list marker (list-style is none and
+     the ul has no padding), so without this a wrapped line ran back underneath
+     the middot and the middot stopped reading as a marker at all. It wrapped
+     on one bullet at 981 and two at 375.
+     2ch is exact rather than approximate BECAUSE THE LIST IS MONOSPACE: one ch
+     is one character advance in IBM Plex Mono, so two of them is precisely the
+     middot plus its space, and continuation lines land on the first letter of
+     the line above. In a proportional face this would have to be an em guess
+     that drifts with the glyph; if this list ever stops being mono, that is
+     the line to revisit. Letter-spacing rides on top of both and cancels out,
+     since it applies to the indent and the text equally. */
   .sd-item ul { list-style: none; font-family: var(--mono); font-size: 11.5px;
     color: var(--muted); line-height: 1.9; letter-spacing: .03em; margin-top: 8px; }
+  .sd-item li { padding-left: 2ch; text-indent: -2ch; }
   @media (max-width: 980px) {
     /* The arc flattens to a column below 980px: a rotated overlap is
        unreadable at 375px. */
@@ -1632,7 +1698,16 @@
     .seal.is-open.has-open .seal-card[data-i="3"]:not(.is-on) { transform: none; }
     .seal.is-open.has-open .seal-card:not(.is-on) { filter: none; opacity: .62; }
     .seal-card { flex-direction: row; align-items: baseline; gap: 12px; min-height: 44px; }
-    .seal-detail { height: var(--seal-detail-h-narrow, 256px); }
+    /* the deck reflows to a stacked column here, so the opened card is no
+       longer above a known x and is often not adjacent to the panel at all.
+       The connector is dropped and the card treatment carries the whole
+       relationship, which is why that treatment had to work on its own. */
+    /* tighter padding in the narrow column: the side padding costs text width
+       where there is least of it, and card 02 is five bullets deep. Measured:
+       it overflowed the narrow reservation by 2px at 375 with the desktop
+       padding, and clears with 4px to spare at these values. */
+    .seal-detail { height: var(--seal-detail-h-narrow, 256px); padding: 11px 12px; }
+    .seal-detail::before { display: none; }
   }
   @media (prefers-reduced-motion: reduce) {
     /* same fanned arc as everyone else, arrived at instantly: the arc is
@@ -3711,6 +3786,7 @@ var pvVideoChrome = thVideoChrome({
   var cards = [].slice.call(root.querySelectorAll('.seal-card'));
   var items = cards.map(function(c){ return document.getElementById(c.getAttribute('aria-controls')); });
   var head = document.getElementById('lawDetailHead');
+  var detail = document.getElementById('lawDetail');
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
   var narrow = window.matchMedia('(max-width: 980px)');
   // any-hover, not a width query: a touch laptop has desktop width but no
@@ -3734,6 +3810,10 @@ var pvVideoChrome = thVideoChrome({
     // the live region carries the opened card's name only, so a screen reader
     // hears one title rather than the whole stage
     head.textContent = openIdx >= 0 ? items[openIdx].getAttribute('data-title') : '';
+    // aim the connector at the opened card. The cards sit at 12.5% + 25%*i of
+    // the stage and the panel is the same box, so the card's centre and this
+    // percentage are the same point; verified by measurement, not assumed.
+    if (openIdx >= 0) detail.style.setProperty('--sd-notch', (12.5 + 25 * openIdx) + '%');
   }
   function fan(){
     if (root.classList.contains('is-open')) return;
