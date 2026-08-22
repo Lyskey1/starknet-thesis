@@ -996,16 +996,12 @@
      currentColor, with the stroke bumped for optical parity (a 1.5px
      hairline reads darker than 10px mono at the same color) */
   color:#6b81a0;transition:color .25s ease,background .25s ease;}
-.qi-row:hover:not(:disabled){color:color-mix(in srgb,var(--th-q) 70%,#6b81a0);}
+.qi-row:hover{color:color-mix(in srgb,var(--th-q) 70%,#6b81a0);}
 .qi-row[aria-current="true"]{color:var(--th-q);background:color-mix(in srgb,var(--th-q) 7%,transparent);
   border-color:color-mix(in srgb,var(--th-q) 22%,transparent);}
 /* locked: dimmer than unlocked-inactive, disabled so it leaves the tab
    order (WCAG exempts disabled controls from contrast minimums; the
    measured 2.5:1 is deliberate visual locking, reported not hidden) */
-.qi-row:disabled{color:#42566d;cursor:default;}
-.qi-row:disabled .qi-lock{display:block;}
-.qi-lock{display:none;width:11px;height:11px;margin-left:auto;flex:none;}
-.qi-lock svg{width:100%;height:100%;display:block;}
 .qi-row:focus-visible{outline:2px solid var(--th-q);outline-offset:2px;}
 .qi-glyph{width:26px;height:26px;flex:none;}
 .qi-glyph svg{width:100%;height:100%;display:block;stroke-width:1.9px;}
@@ -1757,10 +1753,10 @@ if (window.thStickyRail) {
      semantics with zero element-selector exposure. -->
     <div class="qi-index" role="navigation" aria-label="The threat, four beats">
       <ul>
-        <li><button type="button" class="qi-row" aria-current="true" data-beat="0" data-target="one-key-two-machines"><span class="qi-glyph" aria-hidden="true"><svg viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h20v20H7V7h12v12h-8v-8h4"/><circle cx="13.5" cy="14.5" r="1.5" fill="currentColor" stroke="none"/></svg></span><span class="qi-lab"><b>01</b>HOW THE KEY<br>BREAKS</span><span class="qi-lock" aria-hidden="true"><svg viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="1.5" y="4.5" width="8" height="5.5" rx="1"/><path d="M3.5 4.5V3a2 2 0 0 1 4 0v1.5"/></svg></span></button></li>
-        <li><button type="button" class="qi-row" data-beat="1" data-target="safe-every-single-day-right-up" disabled><span class="qi-glyph" aria-hidden="true"><svg viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 19 Q10 17 15.5 9.5"/><path d="M16 9.5 V21.5"/><circle cx="5.4" cy="18.5" r="1.1" fill="currentColor" stroke="none"/><circle cx="9.4" cy="17.1" r="1.1" fill="currentColor" stroke="none"/><circle cx="13" cy="13.8" r="1.1" fill="currentColor" stroke="none"/><path d="M19.4 4.6l3.2 3.2M22.6 4.6l-3.2 3.2"/></svg></span><span class="qi-lab"><b>02</b>WHY SAFE DAYS<br>PROVE NOTHING</span><span class="qi-lock" aria-hidden="true"><svg viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="1.5" y="4.5" width="8" height="5.5" rx="1"/><path d="M3.5 4.5V3a2 2 0 0 1 4 0v1.5"/></svg></span></button></li>
-        <li><button type="button" class="qi-row" data-beat="2" data-target="the-cost-of-the-attack-is" disabled><span class="qi-glyph" aria-hidden="true"><svg viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22V5M9 22V10M14 22v-7M19 22v-4"/><path d="M15.5 5.5 22 12.5M22 12.5l-.4-4M22 12.5l-4-.4"/></svg></span><span class="qi-lab"><b>03</b>THE COST IS<br>COLLAPSING</span><span class="qi-lock" aria-hidden="true"><svg viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="1.5" y="4.5" width="8" height="5.5" rx="1"/><path d="M3.5 4.5V3a2 2 0 0 1 4 0v1.5"/></svg></span></button></li>
-        <li><button type="button" class="qi-row" data-beat="3" data-target="what-breaks-what-holds" disabled><span class="qi-glyph" aria-hidden="true"><svg viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 3v20" stroke-dasharray="2 2.6" stroke-width="1"/><path d="M9.5 7H4v12h5.5"/><path d="M8 7l-1.6 4.4L8.6 14l-1.8 3.6L8.5 19"/><path d="M16.5 7H22v12h-5.5"/></svg></span><span class="qi-lab"><b>04</b>WHAT BREAKS,<br>WHAT HOLDS</span><span class="qi-lock" aria-hidden="true"><svg viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="1.5" y="4.5" width="8" height="5.5" rx="1"/><path d="M3.5 4.5V3a2 2 0 0 1 4 0v1.5"/></svg></span></button></li>
+        <li><button type="button" class="qi-row" aria-current="true" data-beat="0" data-target="one-key-two-machines"><span class="qi-glyph" aria-hidden="true"><svg viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h20v20H7V7h12v12h-8v-8h4"/><circle cx="13.5" cy="14.5" r="1.5" fill="currentColor" stroke="none"/></svg></span><span class="qi-lab"><b>01</b>HOW THE KEY<br>BREAKS</span></button></li>
+        <li><button type="button" class="qi-row" data-beat="1" data-target="safe-every-single-day-right-up"><span class="qi-glyph" aria-hidden="true"><svg viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 19 Q10 17 15.5 9.5"/><path d="M16 9.5 V21.5"/><circle cx="5.4" cy="18.5" r="1.1" fill="currentColor" stroke="none"/><circle cx="9.4" cy="17.1" r="1.1" fill="currentColor" stroke="none"/><circle cx="13" cy="13.8" r="1.1" fill="currentColor" stroke="none"/><path d="M19.4 4.6l3.2 3.2M22.6 4.6l-3.2 3.2"/></svg></span><span class="qi-lab"><b>02</b>WHY SAFE DAYS<br>PROVE NOTHING</span></button></li>
+        <li><button type="button" class="qi-row" data-beat="2" data-target="the-cost-of-the-attack-is"><span class="qi-glyph" aria-hidden="true"><svg viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22V5M9 22V10M14 22v-7M19 22v-4"/><path d="M15.5 5.5 22 12.5M22 12.5l-.4-4M22 12.5l-4-.4"/></svg></span><span class="qi-lab"><b>03</b>THE COST IS<br>COLLAPSING</span></button></li>
+        <li><button type="button" class="qi-row" data-beat="3" data-target="what-breaks-what-holds"><span class="qi-glyph" aria-hidden="true"><svg viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 3v20" stroke-dasharray="2 2.6" stroke-width="1"/><path d="M9.5 7H4v12h5.5"/><path d="M8 7l-1.6 4.4L8.6 14l-1.8 3.6L8.5 19"/><path d="M16.5 7H22v12h-5.5"/></svg></span><span class="qi-lab"><b>04</b>WHAT BREAKS,<br>WHAT HOLDS</span></button></li>
       </ul>
     </div>
     <p class="qi-sr" aria-live="polite" id="qiAnnounce"></p>
@@ -1888,23 +1884,42 @@ if (window.thStickyRail) {
 
 <script>
 // ============================================================
-// SECTION 02 - gated beat progression. One beat renders at a
-// time; NEXT advances and unlocks the next index row permanently
-// for the SESSION (sessionStorage, not localStorage: a mid-session
-// reload should not punish the reader, but the argument deserves a
-// fresh read on a new visit). Back is free: any reached row stays
-// clickable. Rows beyond the furthest reached carry the disabled
-// attribute, so they leave the tab order rather than only dimming.
-// Arriving by hash (deep link or the search palette's #s: scheme)
-// unlocks everything up to the target beat and opens it: the
-// reader asked for it explicitly. Beat changes are announced once
-// via a polite live region. Devices re-init on open through their
-// own resize listeners (one synthetic resize per open): the maze
-// and turkey size canvases from getBoundingClientRect, which reads
-// zero behind display:none, the exact class of bug that made the
-// marquees measure zero behind a closed panel.
-// Below 981px gating is off in CSS (all beats stack, index gone)
-// and NEXT degrades to a scroll-to-next convenience.
+// SECTION 02 - four beats, one rendered at a time, all four
+// reachable in any order.
+//
+// THE GATE IS GONE, and this note is here so it is not rebuilt.
+// It shipped 2026-08-19 in 969785d and was removed 2026-08-22.
+// Rows beyond the furthest reached carried the disabled attribute
+// and a padlock, NEXT was the only way to unlock the next one, and
+// sessionStorage key 'qiThreatBeat' held the furthest beat reached.
+// All of it is deleted, including the key, which is no longer
+// written or read by anything.
+//
+// IT WAS NOT BUYING THE HEIGHT IT WAS CREDITED WITH, which is the
+// thing to understand before reintroducing it. Two separate
+// mechanisms were doing two different jobs: the GATE decided which
+// rows you could click, and the ACCORDION (.qi-beat.is-open)
+// decides how many beats render. The saving came entirely from the
+// accordion. Measured at 1440 on the day the gate came out: all
+// four beats open at once is 4046px, one beat at a time is 977 to
+// 1457px depending on which is open, and removing the gate changed
+// the section height by ZERO because the accordion is untouched.
+// Locking rows never saved a pixel; it only decided who could
+// reach them.
+//
+// NEXT STAYS. It is not gate machinery: it opens the following
+// beat, scrolls to it and stamps the hash, which is the
+// read-in-order path for someone who does not want to go back to
+// the index between beats. It exists only at >=981px, where
+// .qi-adv is visible; below that the index and NEXT are both
+// hidden and every beat stacks.
+//
+// Beat changes are announced once via a polite live region.
+// Devices re-init on open through their own resize listeners (one
+// synthetic resize per open): the maze and turkey size canvases
+// from getBoundingClientRect, which reads zero behind
+// display:none, the exact class of bug that made the marquees
+// measure zero behind a closed panel.
 // ============================================================
 (function(){
   var grid = document.getElementById('threat-index-grid');
@@ -1932,30 +1947,17 @@ if (window.thStickyRail) {
   var rT = null;
   window.addEventListener('resize', function(){ clearTimeout(rT); rT = setTimeout(setStickTop, 150); });
 
-  var KEY = 'qiThreatBeat';
-  function furthest(){
-    try { return Math.min(3, Math.max(0, +sessionStorage.getItem(KEY) || 0)); } catch(e){ return 0; }
-  }
-  function reach(k){
-    try { if (k > furthest()) sessionStorage.setItem(KEY, String(k)); } catch(e){}
-  }
   var current = 0;
   function sync(){
-    var f = furthest();
     rows.forEach(function(r, k){
-      var locked = gated && k > f;
-      r.disabled = locked;
       if (k === current) r.setAttribute('aria-current', 'true');
       else r.removeAttribute('aria-current');
-      r.setAttribute('tabindex', k === current ? '0' : (locked ? '-1' : '-1'));
+      r.setAttribute('tabindex', k === current ? '0' : '-1');
     });
-    /* roving tab stop: the current row is the group's single stop */
-    rows[current].setAttribute('tabindex', '0');
   }
   function open(k, opts){
     opts = opts || {};
     k = Math.max(0, Math.min(3, k));
-    reach(k);
     var changed = k !== current;
     if (gated) {
       var box = grid.querySelector('.qi-beats');
@@ -1980,13 +1982,12 @@ if (window.thStickyRail) {
     if (opts.hash) history.replaceState(null, '', '#' + rows[k].dataset.target);
   }
   rows.forEach(function(r, k){
-    r.addEventListener('click', function(){ if (!r.disabled) open(k, { scroll: true, hash: true }); });
+    r.addEventListener('click', function(){ open(k, { scroll: true, hash: true }); });
     r.addEventListener('keydown', function(ev){
       var d = ev.key === 'ArrowDown' || ev.key === 'ArrowRight' ? 1 : ev.key === 'ArrowUp' || ev.key === 'ArrowLeft' ? -1 : 0;
       if (!d) return;
       ev.preventDefault();
-      var n = k;
-      do { n = (n + d + rows.length) % rows.length; } while (rows[n].disabled && n !== k);
+      var n = (k + d + rows.length) % rows.length;
       rows.forEach(function(x, j){ x.setAttribute('tabindex', j === n ? '0' : '-1'); });
       rows[n].focus();
     });
@@ -1997,9 +1998,9 @@ if (window.thStickyRail) {
       open(k + 1, { scroll: true, hash: true });
     });
   });
-  /* hash arrival: a target inside beat k unlocks up to k and opens it.
-     Runs on load and on hashchange, so the search palette's #s: scheme
-     (which sets the hash and then scrolls) lands on a rendered beat. */
+  /* hash arrival: a target inside beat k opens it. Runs on load and on
+     hashchange, so the search palette's #s: scheme (which sets the hash and
+     then scrolls) lands on a rendered beat. */
   function surface(){
     var id = (location.hash || '').slice(1);
     if (!id) return;
@@ -2011,11 +2012,11 @@ if (window.thStickyRail) {
   }
   window.addEventListener('hashchange', surface);
   /* the search palette's same-page landing goes through reveal(), not the
-     hash; its .qi-beat adapter calls this hook, which unlocks up to the
-     target beat exactly as hash arrival does (the reader asked for it) */
+     hash, because a same-page hit uses replaceState and fires no hashchange;
+     its .qi-beat adapter calls this hook to open the beat holding the hit */
   window.__qiOpen = function(k){ open(k, { instant: true }); };
-  /* boot: session furthest, then any hash target on top of it */
-  open(Math.min(furthest(), 3), { instant: true });
+  /* boot: the first beat, then any hash target on top of it */
+  open(0, { instant: true });
   surface();
 })();
 </script>
