@@ -863,6 +863,21 @@
    its container by 44px at 375 and had to be scrolled sideways to reach
    the fourth film. */
 #qvVideos .qv-head{position:relative;text-align:center;margin-bottom:32px;}
+/* the byline: who is speaking, said once, under the player. Same grammar as
+   privacy's .vg-written caption under its grid, in this page's tokens. */
+#qvVideos .qv-byline{display:block;text-align:center;margin-top:18px;
+  font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--th-muted);}
+/* EDIT VIDEOS sits beside the heading rather than alone above it, which is
+   where privacy puts it (.vg-head .pv-vadmin). Absolute so it cannot pull the
+   centred heading off centre; static and centred beneath it once the column is
+   too narrow to hold both on one line. */
+#qvVideos .qv-head .th-pm-vid-admin{position:absolute;right:0;top:50%;
+  transform:translateY(-50%);margin:0;}
+@media(max-width:760px){
+  #qvVideos .qv-head .th-pm-vid-admin{position:static;transform:none;
+    justify-content:center;margin:14px 0 0;}
+}
 #qvVideos .qv-vtitle{font-family:var(--display);font-weight:700;font-size:clamp(20px,2.2vw,24px);line-height:1.3;}
 #qvVideos .qv-vtitle .em{color:var(--accent);}
 #qvVideos .qw-rail{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;max-width:none;}
@@ -2924,11 +2939,27 @@ body.page-quantum{overflow-x:clip;}
 <!-- VIDEOS -->
 <div class="th-pm-div"></div>
 <section class="th-pm-sec">
-  <div class="th-pm-head th-pm-reveal"><span class="th-pm-marker"></span>
-    <span class="th-pm-title" style="margin-top:0">Eli Ben-Sasson on the <b>quantum era.</b></span></div>
-  <p class="th-pm-eyebrow th-pm-reveal">From the source</p>
-  <p class="th-pm-intro th-pm-reveal">StarkWare's co-founder and CEO on why STARKs were built for this moment.</p>
-
+  <!-- THE SECTION LEADS WITH THE DEVICE, matching privacy's video section:
+       heading, pills, player, nothing before them. It used to stack a section
+       title ("Eli Ben-Sasson on the quantum era"), a FROM THE SOURCE eyebrow,
+       an intro line and the EDIT VIDEOS control above the heading, which put
+       501px between the top of the section and the top of the player and left
+       the player short of the first screen at 1440x900.
+       THE ATTRIBUTION THOSE LINES CARRIED IS NOT LOST, it moved below the
+       player as a byline (.qv-byline).
+       THE BYLINE BELONGS TO THE DEVICE, NOT TO ANY FILM, and that is the rule
+       to keep. The speaker is the same in all four, so naming him is a
+       property of the player rather than of a film, which is why it is one
+       line under the whole thing instead of a line inside each card. IT MUST
+       NOT MIGRATE INTO THE SEEDS TABLE. That table is admin-editable and
+       holds what each film IS; putting an editorial fact in it would repeat
+       the attribution four times and hand it to whoever next renames a video.
+       THIS IS A PORT, NOT AN INVENTION: privacy already ends its own grid
+       with a mono caption line (.vg-written, "PREFER IT WRITTEN? ..."), so a
+       caption under the player is that page's existing grammar and
+       .qv-byline is its values in this page's tokens.
+       The trade is accepted deliberately: the reader learns who is speaking
+       as they meet him rather than before, which is what privacy does. -->
 
   <!-- Third qw instance: one film at a time. #qvVideos stays the engine
        root (cards bind positionally inside it); the grid class goes, the
@@ -2996,6 +3027,18 @@ body.page-quantum{overflow-x:clip;}
 
     </div>
     </div>
+    <!-- A STATUS CLAIM ABOUT A PERSON, so it is dated like one. It was moved
+         here from the deleted intro rather than newly written, which is
+         exactly the shape that rots unnoticed: a title is true until it is
+         not, and nothing on the page would have shown its age. Verified
+         against StarkWare's own management list on 2026-08-22, which reads
+         "Eli Ben-Sasson Co-Founder, CEO". Re-read it before trusting the
+         date, and move data-checked when you do. -->
+    <p class="qv-byline"
+       data-perishable
+       data-src="https://starkware.co/team/"
+       data-checked="2026-08-22"
+       data-says="Eli Ben-Sasson Co-Founder, CEO">Eli Ben-Sasson &middot; StarkWare co-founder and CEO</p>
   </div>
 </section>
 
@@ -3864,7 +3907,9 @@ var VIDEOS = [
       '<div class="qv-actions"><button type="button" class="qv-btn primary qv-save">Save</button><button type="button" class="qv-btn qv-clear">Clear</button></div>' +
     '</div>'; };
     var qvPh = ['eli-1.mp4', 'eli-2.mp4', 'Eli-3.mp4', 'eli-4.mp4'];
-    grid.insertAdjacentHTML('beforebegin', '<div class="th-pm-vid-admin"><button type="button" class="news-edit-btn" id="qvEditBtn" aria-expanded="false"><i class="ti ti-pencil" aria-hidden="true"></i> <span id="qvEditBtnLabel">Edit videos</span></button></div>');
+    /* into the heading row, privacy's position, rather than alone above it */
+    var qvHead = grid.querySelector('.qv-head') || grid;
+    qvHead.insertAdjacentHTML('beforeend', '<div class="th-pm-vid-admin"><button type="button" class="news-edit-btn" id="qvEditBtn" aria-expanded="false"><i class="ti ti-pencil" aria-hidden="true"></i> <span id="qvEditBtnLabel">Edit videos</span></button></div>');
     cards.forEach(function(c, i){ c.insertAdjacentHTML('beforeend', qvEd(qvPh[i] || '')); });
   }
   var defaults = cards.map(function(c){ return (c.querySelector('.qv-title').textContent || '').trim(); });
