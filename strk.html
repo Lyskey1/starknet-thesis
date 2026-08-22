@@ -539,6 +539,65 @@ a.chip:hover{background:var(--acc);border-color:var(--acc);color:#0A0A0A}
 .tk-track i{display:block;height:100%;border-radius:3px;background:linear-gradient(90deg,#6D4FD0,#A78BFA);transition:width .6s cubic-bezier(.22,.61,.36,1)}
 .tk-meta{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:10px;font-family:var(--mono),monospace;font-size:11px;letter-spacing:.06em;color:var(--muted)}
 .tk-meta a{color:var(--muted);text-decoration:none;border-bottom:1px solid rgba(245,242,236,.2)}
+/* --- per-app active users (Prism by Aegis), strk.html Apps group ---
+   Ranked rows in the section's existing grammar: the tk-track bar, mono
+   tabular figures, hairline rules. The bar encodes USERS, which is what the
+   ranking claims to be about; the number beside it is TRANSACTIONS PER USER,
+   which is what the ranking is actually measuring, and the two disagree
+   violently at the top. That second column is not decoration, it is the
+   honesty of the chart: on 2026-08-22 the leader had 19x the users of Ekubo
+   while its users did 1.07 transactions each against Ekubo's 65.42, and
+   Ekubo did more transactions in total than the leader. Without the column a
+   reader would take the ranking for an activity ordering, which it inverts. */
+.pda-rows{margin-top:16px;display:flex;flex-direction:column}
+.pda-row{display:grid;grid-template-columns:26px minmax(96px,1.1fr) minmax(60px,2fr) 68px 74px;
+  align-items:center;gap:12px;padding:9px 0;border-top:1px solid rgba(245,242,236,.07)}
+.pda-row:first-child{border-top:0}
+.pda-rank{font-family:var(--mono),monospace;font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}
+.pda-name{min-width:0}
+.pda-name b{display:block;font-weight:600;font-size:13.5px;color:var(--white);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pda-name span{font-family:var(--mono),monospace;font-size:9.5px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--muted)}
+.pda-bar{height:6px;border-radius:3px;background:rgba(245,242,236,.08);overflow:hidden}
+.pda-bar i{display:block;height:100%;border-radius:3px;
+  background:linear-gradient(90deg,#6D4FD0,#A78BFA);transition:width .6s cubic-bezier(.22,.61,.36,1)}
+.pda-users,.pda-tpu{font-family:var(--mono),monospace;font-size:12px;text-align:right;
+  font-variant-numeric:tabular-nums;color:var(--white)}
+.pda-tpu{color:var(--muted)}
+.pda-tpu b{color:var(--acc-2);font-weight:600}
+.pda-heads{display:grid;grid-template-columns:26px minmax(96px,1.1fr) minmax(60px,2fr) 68px 74px;
+  gap:12px;font-family:var(--mono),monospace;font-size:9.5px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--muted);padding-bottom:6px}
+.pda-heads span:nth-child(4),.pda-heads span:nth-child(5){text-align:right}
+.pda-heads i{font-style:normal}
+.pda-narrow{display:none}
+.pda-note{margin-top:14px;font-family:var(--mono),monospace;font-size:11px;line-height:1.65;
+  letter-spacing:.04em;color:var(--muted)}
+.pda-note q{color:var(--ink,#F5F2EC);font-style:normal}
+.pda-scope{margin-top:10px}
+.pda-note a{color:var(--muted);text-decoration:none;border-bottom:1px solid rgba(245,242,236,.2)}
+@media(max-width:640px){
+  /* the bar is the first thing to go: the two figures ARE the argument, and
+     a 40px bar encodes nothing a reader can read.
+     The numeric columns are then trimmed to what they actually need, because
+     the first pass left the name column 71px against the 97px the longest
+     app name wants, and truncated "Extended App" to "Extended...". Users tops
+     out around 46px at this size and tx/user around 30px, so 56 and 50 with
+     an 8px gap give the name 103px and every current name fits whole. */
+  .pda-row,.pda-heads{grid-template-columns:22px minmax(0,1fr) 56px 50px;gap:8px}
+  .pda-bar{display:none}
+  .pda-heads span:nth-child(3){display:none}
+  .pda-heads span:nth-child(4),.pda-heads span:nth-child(5){text-align:right}
+  .pda-name b{font-size:12.5px}
+  .pda-users,.pda-tpu{font-size:11px}
+  /* the spaces around the slash are what pushed this header onto two lines
+     once its column gave width back to the names; the label abbreviates
+     rather than the column widening again */
+  .pda-wide{display:none}
+  .pda-narrow{display:inline}
+}
+@media (prefers-reduced-motion: reduce){.pda-bar i{transition:none}}
 .tk-meta a:hover{color:var(--white)}
 
 /* --- section 04: stats accordion --- */
@@ -1604,6 +1663,53 @@ window.ADMIN_GATE=on;})();
       </div></div></div>
     </div>
 
+    <!-- PER-APP ACTIVE USERS. Third-party data: it is Aegis's, not ours, and
+         the attribution is in the panel rather than a footnote for that
+         reason. The numbers are read at build time by
+         scripts/refresh-prism-dau.mjs and committed to
+         assets/data/prism-dau-seed.json, so no reader's browser ever touches
+         Aegis at runtime and a bad day upstream leaves the last good ranking
+         standing with its own date.
+         THE DEFINITION IS THEIRS, VERBATIM, and that is deliberate. We do not
+         know how uniqueUsers is computed, so the panel quotes Aegis's own
+         wording and attributes it rather than paraphrasing it into a
+         definition we would then own. Two unexplained properties are on the
+         record in the refresh script and are the subject of an outstanding
+         question to Aegis: rows where users exceed transactions, and a figure
+         that barely moves between the 24h and 7d windows.
+         THE SECOND COLUMN IS THE POINT. Ranking apps by users puts a one-tap
+         app far above the exchange doing most of the network's transactions,
+         so transactions per user is shown beside it. See the CSS note. -->
+    <div class="nacc-item" id="apps">
+      <button class="nacc-head" aria-expanded="false" aria-controls="apps-body"><span class="nacc-title">Apps</span><span class="nacc-count"></span><i class="ti ti-chevron-down nacc-chev"></i></button>
+      <div class="nacc-body" id="apps-body"><div class="nacc-inner"><div class="nacc-panels">
+    <div class="panel" id="pdaPanel"
+         data-perishable
+         data-src="https://aegis-starknet-dashboard.vercel.app/leaderboard/dau-leaderboard"
+         data-checked="2026-08-22"
+         data-says="Daily Active Users - rankings by user engagement and account creations">
+      <div class="eyebrow">Active users by app</div>
+      <div class="ptitle">Who the network's users are using</div>
+      <div class="pda-heads"><span>#</span><span>App</span><span>Active users</span><span>Users</span><span><i class="pda-wide">TX / user</i><i class="pda-narrow">TX/user</i></span></div>
+      <div class="pda-rows" id="pdaRows"><div class="pda-note">Ranking unavailable.</div></div>
+      <div class="pda-note">
+        <q id="pdaDef">Daily Active Users - rankings by user engagement and account creations</q>
+        &mdash; the metric as <a href="https://aegis-starknet-dashboard.vercel.app/leaderboard/dau-leaderboard" target="_blank" rel="noopener noreferrer">Prism by Aegis</a> defines it, in their words<span id="pdaDefChecked"></span>.
+        We do not restate it, because how a user is counted here is theirs to say.
+      </div>
+      <!-- what the reader is looking at a slice OF. The counts come from the
+           seed (rendered rows, and Aegis's own sourceMeta.total) so the
+           sentence cannot drift from the table above it. -->
+      <div class="pda-note pda-scope" id="pdaScope">Top ten of the protocols Prism tracks, ranked by their active users figure.</div>
+      <div class="tk-meta">
+        <span id="pdaStamp">24h window</span>
+        <a href="https://aegis-starknet-dashboard.vercel.app/leaderboard/dau-leaderboard" target="_blank" rel="noopener noreferrer">Data: Prism by Aegis &#8599;</a>
+      </div>
+    </div>
+      </div></div></div>
+    </div>
+
+
     <div class="nacc-item" id="defi">
       <button class="nacc-head" aria-expanded="false" aria-controls="defi-body"><span class="nacc-title">DeFi</span><span class="nacc-count"></span><i class="ti ti-chevron-down nacc-chev"></i></button>
       <div class="nacc-body" id="defi-body"><div class="nacc-inner"><div class="cells">
@@ -1629,6 +1735,60 @@ window.ADMIN_GATE=on;})();
 
   </div>
   <script>
+  /* PER-APP ACTIVE USERS: render the committed seed. Same-origin only; this
+     never touches Aegis. A missing or malformed seed leaves the panel's
+     static heading, attribution and definition standing and prints an honest
+     unavailable line in place of rows, rather than hiding the group, because
+     this section's rule is that rendered == configured. */
+  (function(){
+    var rows=document.getElementById('pdaRows'); if(!rows) return;
+    var nf=function(n){return n.toLocaleString('en-US');};
+    fetch('assets/data/prism-dau-seed.json',{cache:'no-store'}).then(function(r){
+      if(!r.ok) throw 0; return r.json();
+    }).then(function(d){
+      var apps=(d.apps||[]).filter(function(a){return a&&isFinite(a.users)&&isFinite(a.txs);}).slice(0,10);
+      if(!apps.length) throw 0;
+      var max=apps.reduce(function(m,a){return Math.max(m,a.users);},0)||1;
+      rows.innerHTML=apps.map(function(a,i){
+        var tpu=a.users?(a.txs/a.users):0;
+        /* one decimal below ten, none above: 1.07 and 65 are both the point,
+           but 65.42 implies a precision the ranking does not have */
+        var tpuTxt=tpu<10?tpu.toFixed(2):Math.round(tpu);
+        return '<div class="pda-row">'+
+          '<span class="pda-rank">'+(i+1)+'</span>'+
+          '<span class="pda-name"><b>'+a.name.replace(/[<&]/g,'')+'</b><span>'+(a.category||'').replace(/[<&]/g,'')+'</span></span>'+
+          '<span class="pda-bar"><i style="width:'+(a.users/max*100).toFixed(1)+'%"></i></span>'+
+          '<span class="pda-users">'+nf(a.users)+'</span>'+
+          '<span class="pda-tpu"><b>'+tpuTxt+'</b></span>'+
+          '</div>';
+      }).join('');
+      /* the seed keeps Aegis's own meta under sourceMeta and everything we
+         compute under derived, so read from derived deliberately: the window
+         printed here is the one we ASKED for, which the refresh script has
+         already checked against theirs. */
+      var dv=d.derived||{}, st=document.getElementById('pdaStamp');
+      if(st&&dv.fetched){
+        st.textContent=(dv.window||'24h')+' window \u00b7 '+
+          new Date(dv.fetched).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric',timeZone:'UTC'});
+      }
+      /* the definition is a quote a human took off their dashboard on a date,
+         not a field the API serves, so it prints WITH that date */
+      var dq=d.definitionQuoted||{}, def=document.getElementById('pdaDef');
+      if(def&&dq.text) def.textContent=dq.text;
+      var sc=document.getElementById('pdaScope');
+      var totalTracked=(d.sourceMeta||{}).total;
+      if(sc&&isFinite(totalTracked)){
+        sc.textContent='Top '+apps.length+' of the '+totalTracked+
+          ' protocols Prism tracks, ranked by their active users figure.';
+      }
+      var dc=document.getElementById('pdaDefChecked');
+      if(dc&&dq.checked){
+        dc.textContent=', read '+new Date(dq.checked+'T00:00:00Z')
+          .toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric',timeZone:'UTC'});
+      }
+    }).catch(function(){ /* the static unavailable line stays */ });
+  })();
+
   /* TEMPORARY cleanup (droppable in a future pass): the short-lived
      accordion persistence of 2026-08-12 wrote snt.acc.* keys; purge them
      from visitors' storage once, then storage is never touched again. */

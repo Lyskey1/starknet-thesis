@@ -1,0 +1,65 @@
+# Daily refresh of the PER-APP ACTIVE USERS seed (strk.html, Apps group).
+#
+# LIVE. Runs daily and commits assets/data/prism-dau-seed.json when the
+# ranking changes.
+#
+# THE ENDPOINT IS UNDOCUMENTED AND MAY CHANGE OR DISAPPEAR WITHOUT NOTICE.
+# api-internal-prism.aegisanalytics.xyz is not a published API: it is the host
+# the Prism dashboard calls, it carries no version in its path, no
+# cache-control, and no documentation (every doc path on it 404s, including
+# the root). Aegis's own docs advertise a separate key-based "API & SDK
+# Reference"; if that becomes available, move BASE in the script to it and
+# pass the key from a repository secret rather than staying on this host.
+# Treat a run failure as expected maintenance, not an incident.
+#
+# Nothing breaks on the page when it does change. The script validates hard
+# and writes only on success, so a failed or malformed fetch fails the run
+# visibly and commits nothing: the site keeps its last verified ranking and
+# the panel's note keeps that seed's own date. The page reads a committed
+# same-origin JSON, so no reader's browser ever calls Aegis, a bad day
+# upstream cannot slow or break the page, and their logs never see our
+# readers.
+#
+# Pushes use the workflow's own GITHUB_TOKEN (contents: write) — no new
+# secrets — and GITHUB_TOKEN pushes do not retrigger workflows, so there is no
+# recursion. Each commit redeploys the static site via the Vercel
+# integration, which is how the fresh seed reaches production. Same shape as
+# refresh-accounts-seed.yml, which is the precedent.
+#
+# NOTE ON THE SCHEDULE: 06:07, not 06:00, because refresh-digest.yml holds
+# 06:00 and both workflows push to main. A genuine overlap means one push is
+# rejected as non-fast-forward and that run's data waits for tomorrow. The
+# accounts refresh sits at 04:17 for the same reason: nothing here shares a
+# slot, and nothing sits on the top of the hour.
+name: refresh per-app active users seed
+
+on:
+  schedule:
+    - cron: '7 6 * * *' # daily, 06:07 UTC — offset from refresh-digest.yml's 06:00 so the two never race to push main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: fetch, validate, write seed
+        run: node scripts/refresh-prism-dau.mjs
+      - name: commit when changed
+        run: |
+          if git diff --quiet assets/data/prism-dau-seed.json 2>/dev/null \
+             && git ls-files --error-unmatch assets/data/prism-dau-seed.json >/dev/null 2>&1; then
+            echo "seed unchanged, nothing to commit"; exit 0
+          fi
+          leader=$(node -e "const s=require('./assets/data/prism-dau-seed.json');console.log(s.apps[0].name+' '+s.apps[0].users)")
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/data/prism-dau-seed.json
+          git commit -m "data: per-app active users seed refresh, leader $leader, source Prism by Aegis"
+          git push
