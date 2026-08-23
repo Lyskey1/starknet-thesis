@@ -383,6 +383,7 @@
        number + name    #F7931A .75 -> 1.0           [5.2 -> 8.6]
        cost line        #E0524A 1.0 -> #FC8181 1.0   [5.2 -> 8.1]
        one-liner        #F5F2EC .48 -> .78           [4.6 -> 10.8]
+       note (card 02)   #F5F2EC .48 -> .70           [4.6 -> 8.7]
        solid arc        #F7931A .22 -> .95, 1.7->2.4px
        dashed remainder #F5F2EC .14 -> .26, 1.15px
        leader           #F5F2EC .16 -> #F7931A .8
@@ -462,6 +463,20 @@
                color: rgba(245,242,236,0.48); transition: color .18s ease; }
   .bgap-cost { display: block; font-family: var(--mono); font-size: 11.5px; line-height: 1.5;
                letter-spacing: 0.02em; color: #E0524A; margin-top: 10px; transition: color .18s ease; }
+  /* ONE CARD CARRIES A NOTE ROW and the asymmetry is deliberate. Folding the
+     removed panel back into the cards left exactly one orphan: Satoshi's 2010
+     remark that ZK proofs could make Bitcoin "much better". It is not a
+     description of the privacy gap and it is not a cost, so it fits neither
+     existing row; it is evidence that Bitcoin's own author saw the gap. Giving
+     every card an empty row to keep them symmetrical would be worse. */
+  /* .48 and not lower, even though the ladder wants the note below the
+     one-liner: it is permanently visible text, so the 4.6:1 floor binds and
+     .42 measured 3.74:1. It separates from the one-liner by italic and by
+     12.5px against 13.5px instead of by value, which is the right trade. */
+  .bgap-note { display: block; font-family: var(--sans); font-style: italic; font-size: 12.5px;
+               line-height: 1.5; color: rgba(245,242,236,0.48); margin-top: 10px;
+               transition: color .18s ease; }
+  .bgap-card.is-on .bgap-note { color: rgba(245,242,236,0.7); }
   .bgap-card:hover .bgap-title { color: rgba(245,242,236,0.84); }
   .bgap-card:hover .bgap-one   { color: rgba(245,242,236,0.62); }
   .bgap-card.is-on .bgap-meta  { color: var(--accent); }
@@ -470,26 +485,15 @@
   .bgap-card.is-on .bgap-cost  { color: #FC8181; }
   .bgap-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 6px; border-radius: 3px; }
 
-  /* the panel. .problem-item still carries the anchor ids and the verbatim
-     bodies so the search index keeps all four entries, so its card chrome from
-     the shared styles.css is undone here rather than by editing that file.
-     max-width so the rule reads as a hairline inside the device and not as
-     another full-bleed section turn like .gap-turn's below it. */
-  .bgap-panel { margin-top: 30px; border-top: 1px solid var(--border); padding-top: 24px; max-width: 860px; }
-  .page-btcfi .bgap-item { display: none; background: none; border: 0; border-radius: 0;
-                           padding: 0; transform: none; box-shadow: none; }
-  .page-btcfi .bgap-item.is-on { display: block; }
-  .page-btcfi .bgap-item:hover { border: 0; box-shadow: none; transform: none; }
-  /* A LABEL, NOT A HEADLINE. The selected card already carries this exact
-     string as its title, so rendering it again at display weight read as a
-     duplicate. It stays in the DOM as an h3 because the search index takes
-     each card entry's title from the first heading inside .problem-item, and
-     losing it would change four index titles; it is simply demoted to a mono
-     label that introduces the body. Do not delete it to remove the repetition. */
-  .page-btcfi .bgap-item h3 { font-family: var(--mono); font-size: 11px; font-weight: 400;
-                              text-transform: uppercase; letter-spacing: 0.2em;
-                              margin-bottom: 12px; color: rgba(var(--accent-rgb),0.75); }
-  .page-btcfi .bgap-item p  { font-family: var(--sans); font-size: 15px; line-height: 1.7; color: rgba(245,242,236,0.62); }
+  /* THE CARDS ARE THE .problem-item ELEMENTS NOW. The panel below the device
+     was removed once every card carried its one-liner and its cost line, so
+     the four anchor ids and the four index entries moved onto the cards
+     themselves. That drags in the card chrome .problem-item carries in the
+     shared styles.css, which has to be undone here rather than by editing that
+     file. :hover is the one that needs the extra class: .problem-item:hover is
+     (0,2,0) and would otherwise beat .bgap-card on transform and box-shadow. */
+  .page-btcfi .bgap-card { border-radius: 0; box-shadow: none; transform: none; }
+  .page-btcfi .bgap-card:hover { box-shadow: none; transform: none; }
 
   /* Selection is the only thing that moves, so this kills all of it and the end
      state renders immediately. Declared after the rules it overrides, in the
@@ -498,7 +502,7 @@
      the shared styles.css inert until it carried !important.) */
   @media (prefers-reduced-motion: reduce) {
     .bgap-solid, .bgap-dash, .bgap-lead, .bgap-node,
-    .bgap-meta, .bgap-title, .bgap-one, .bgap-cost { transition: none; }
+    .bgap-meta, .bgap-title, .bgap-one, .bgap-cost, .bgap-note { transition: none; }
   }
 
   /* The flat bar belongs to the <=860 list only. DECLARED BEFORE that media
@@ -526,7 +530,6 @@
     .bgap-bar i:last-child  { width: 44%; border-top: 1.15px dashed rgba(245,242,236,0.12); margin-left: 5px; }
     .bgap-card.is-on .bgap-bar i:first-child { border-top: 2.4px solid rgba(var(--accent-rgb),0.95); }
     .bgap-card.is-on .bgap-bar i:last-child  { border-top-color: rgba(245,242,236,0.26); }
-    .bgap-panel { margin-top: 26px; }
   }
 
   /* 01's internal turn.
@@ -660,7 +663,7 @@
   .page-btcfi .btcg-card>:not(.btcg-bloom){position:relative;z-index:1;}
   /* orange behind the 001-004 cards */
   /* one blob, centred on the core, so the core reads as the light source the
-     spokes come out of. Was four blobs laid out for the 2x2 card grid this
+     arcs come out of. Was four blobs laid out for the 2x2 card grid this
      device replaced; that grid is gone and those positions had nothing left to
      sit behind. */
   .page-btcfi .btcg-bloom-bgap i{--bc:#F7931A;left:30%;top:8%;width:40%;height:62%;}
@@ -847,43 +850,46 @@
   <div class="th-pm-head"><span class="th-pm-marker"></span><span class="th-pm-num">01</span><h2 id="bitcoins-unfinished-mission" class="th-pm-title">Bitcoin's unfinished mission</h2></div>
   <p class="th-pm-eyebrow">Problem</p>
 
-  <!-- THE RADIAL GAP DEVICE (.bgap). Replaces the 2x2 capability grid.
-       WHY RADIAL AND NOT A STACK. Every spoke runs SOLID from the core and
-       then continues DASHED before stopping short of its label. The solid run
-       is what Bitcoin does; the dashed remainder is the shortfall. That is the
-       whole argument of section 01 in one geometry, and it is a more accurate
-       claim than the grid made: Bitcoin does these four things, it just does
-       not do them far enough. DO NOT redraw this as four empty slots or four
-       crosses, which would say absence, and absence is not true.
-       THE NODE RING sits exactly at the solid/dashed junction. It is the
-       measurement point, not decoration: it marks how far Bitcoin's own reach
-       gets before the gap starts.
-       ALL FOUR ONE-LINERS ARE PERMANENT. The grid showed four problems at
-       once, and a device that hides three of four would cost the reader
-       three-quarters of the argument at a glance. Selection only opens the
-       full description; it never gates the headline.
-       COLOUR CARRIES THE ARGUMENT, same discipline as quantum's vault. The
-       core is NEUTRAL INK, not orange. Three reasons, in order of weight:
-       (1) precedent, the vault renders both official marks in neutral asset
-       gray and records that one exception for a brand colour breaks the rule
-       that makes the colour argument legible; (2) the page accent IS Bitcoin
-       orange, so tinting the Bitcoin mark orange states nothing the mark does
-       not already state, and it welds the core to the spokes so the eye loses
-       the subject; (3) with the core neutral, orange is free to mean one
-       thing only, THE GAP. Hence the solid run is neutral (fact: Bitcoin's
-       reach) and only the dashed remainder is accent (argument: the
-       shortfall). Do not "fix" the core to orange.
-       LINE WEIGHTS follow the vault's one ladder, and every stroke is
-       non-scaling so the ladder holds identically at every width:
-       silhouette 2.2 (the mark), structure 1.7 (solid spoke), detail 1.05
-       (dashed spoke, node, hub ring).
-       AT <=860px IT IS NOT A RADIAL DIAGRAM. Four text blocks cannot sit
-       around a core at 375 and stay legible, so the spokes become stacked
-       rows, each keeping its own solid-then-dashed bar running left to right
-       and stopping short. Same claim, different geometry. It is deliberately
-       not a shrunken radial. -->
+  <!-- THE BROKEN-ORBIT GAP DEVICE (.bgap). Replaced the 2x2 capability grid,
+       then replaced a flat spoke version of itself. THE VALUES AND THE COLOUR
+       RULES LIVE IN THE CSS BLOCK, not here; this is the argument and the
+       history.
+       WHY ORBITS. An incomplete ring IS a shortfall rather than a figure for
+       one. Each gap runs solid from the core, breaks, continues as a faint
+       dashed remainder and never closes, and a faint FULL reference ring sits
+       at the same radius showing where it should have reached. The claim is
+       shortfall, not absence: Bitcoin does these four things, it just does not
+       do them far enough. Do not redraw this as empty slots or crosses.
+       WHAT THE HISTORY IS FOR. This was spokes before, and the core was
+       NEUTRAL INK on quantum's vault precedent. Both were wrong and both were
+       argued at length, so they should not be re-proposed as fresh ideas.
+       Spokes read too plain. Neutral read as switched off, because on quantum
+       gray MEANT unchanged and the colour argument depended on it, while here
+       it only drained the one colour the object owns. The core is the accent
+       and the brightest thing in the composition, and the solid run carries
+       the colour while the dashed remainder falls into dim: an earlier cut had
+       that inverted, which put the only colour in the drawing on its thinnest,
+       most broken strokes.
+       ALL FOUR CARDS ARE FULLY LEGIBLE WITHOUT INTERACTION. Every card carries
+       its number, name, title, one-liner and cost line permanently. There is
+       no panel: it was removed once the cards carried enough, and the four
+       anchor ids and index entries moved onto the cards, which is why each
+       button is also a .problem-item. Selection now changes emphasis only,
+       nothing is revealed or hidden, and that is why the group is a listbox of
+       options rather than tabs.
+       THE COST LINES ARE PARAPHRASES OF THE OLD PANEL BODIES, checked sentence
+       by sentence against them when the panel was removed. Nothing was
+       dropped: the intentionality of the script limit, the address-to-identity
+       mechanism, "base layer" and "at scale", the Google attribution on 2029
+       and Satoshi's 2010 remark all moved onto the cards. If a card is edited,
+       do not quietly lose the attribution on 2029 or the Satoshi note; they
+       are the only sourcing those two claims have on this page.
+       AT <=860px IT IS NOT A RADIAL DIAGRAM. Four cards cannot orbit a core at
+       375 and stay legible, so the arcs are dropped outright and each row
+       keeps a flat solid-then-dashed bar that stops short. Same claim,
+       different geometry, deliberately not a shrunken radial. -->
   <div class="bgap" id="bgap">
-    <div class="bgap-stage" role="tablist" aria-label="Bitcoin's four capability gaps">
+    <div class="bgap-stage" role="listbox" aria-label="Bitcoin's four capability gaps">
       <div class="btcg-bloom btcg-bloom-bgap" aria-hidden="true"><i></i></div>
       <svg class="bgap-lines" viewBox="0 0 1000 540" aria-hidden="true" focusable="false" preserveAspectRatio="xMidYMid meet">
         <g class="bgap-sp" data-gap="0">
@@ -923,64 +929,43 @@
           </g>
         </svg>
       </span>
-      <button type="button" class="bgap-card bgap-p0" data-gap="0" role="tab"
-              id="bgapTab0" aria-posinset="1" aria-setsize="4"
-              aria-selected="true" aria-controls="not-expressive" tabindex="0">
+      <button type="button" class="bgap-card problem-item bgap-p0" id="not-expressive" data-gap="0" role="option"
+              aria-posinset="1" aria-setsize="4"
+              aria-selected="true" tabindex="0">
         <span class="bgap-meta"><span class="bgap-idx" aria-hidden="true">01</span><span class="bgap-name" id="bgapName0">Expressiveness</span></span>
         <span class="bgap-title">Not expressive</span>
-        <span class="bgap-one">no smart contracts, no lending markets, no automated strategies</span>
+        <span class="bgap-one">Bitcoin's scripting layer was intentionally limited: no smart contracts, no lending markets, no automated strategies</span>
         <span class="bgap-cost">everything advanced is built elsewhere</span>
         <span class="bgap-bar" aria-hidden="true"><i></i><i></i></span>
       </button>
-      <button type="button" class="bgap-card bgap-p1" data-gap="1" role="tab"
-              id="bgapTab1" aria-posinset="2" aria-setsize="4"
-              aria-selected="false" aria-controls="not-private" tabindex="-1">
+      <button type="button" class="bgap-card problem-item bgap-p1" id="not-private" data-gap="1" role="option"
+              aria-posinset="2" aria-setsize="4"
+              aria-selected="false" tabindex="-1">
         <span class="bgap-meta"><span class="bgap-idx" aria-hidden="true">02</span><span class="bgap-name" id="bgapName1">Privacy</span></span>
         <span class="bgap-title">Not private</span>
-        <span class="bgap-one">every balance, counterparty and transaction is permanently traceable</span>
-        <span class="bgap-cost">spending and positions cannot stay private</span>
+        <span class="bgap-one">public by default: every balance, counterparty and transaction is permanently traceable, and one address linked to an identity exposes the whole history</span>
+        <span class="bgap-cost">spending, payroll and DeFi positions cannot stay private</span>
+        <span class="bgap-note">Satoshi noted in 2010 that ZK proofs could make Bitcoin "much better."</span>
         <span class="bgap-bar" aria-hidden="true"><i></i><i></i></span>
       </button>
-      <button type="button" class="bgap-card bgap-p2" data-gap="2" role="tab"
-              id="bgapTab2" aria-posinset="3" aria-setsize="4"
-              aria-selected="false" aria-controls="not-scalable-enough" tabindex="-1">
+      <button type="button" class="bgap-card problem-item bgap-p2" id="not-scalable-enough" data-gap="2" role="option"
+              aria-posinset="3" aria-setsize="4"
+              aria-selected="false" tabindex="-1">
         <span class="bgap-meta"><span class="bgap-idx" aria-hidden="true">03</span><span class="bgap-name" id="bgapName2">Scale</span></span>
         <span class="bgap-title">Not scalable enough</span>
         <span class="bgap-one">slow blocks, fee spikes, a handful of transactions per second</span>
-        <span class="bgap-cost">never designed for global financial activity</span>
+        <span class="bgap-cost">Bitcoin's base layer was never designed for global financial activity at scale</span>
         <span class="bgap-bar" aria-hidden="true"><i></i><i></i></span>
       </button>
-      <button type="button" class="bgap-card bgap-p3" data-gap="3" role="tab"
-              id="bgapTab3" aria-posinset="4" aria-setsize="4"
-              aria-selected="false" aria-controls="not-quantum-resistant" tabindex="-1">
+      <button type="button" class="bgap-card problem-item bgap-p3" id="not-quantum-resistant" data-gap="3" role="option"
+              aria-posinset="4" aria-setsize="4"
+              aria-selected="false" tabindex="-1">
         <span class="bgap-meta"><span class="bgap-idx" aria-hidden="true">04</span><span class="bgap-name" id="bgapName3">Quantum</span></span>
         <span class="bgap-title">Not quantum-resistant</span>
-        <span class="bgap-one">the cryptographic risk could be relevant as early as 2029</span>
+        <span class="bgap-one">Google researchers warn the cryptographic risk could be relevant as early as 2029</span>
         <span class="bgap-cost">urgent for an asset built to last centuries</span>
         <span class="bgap-bar" aria-hidden="true"><i></i><i></i></span>
       </button>
-    </div>
-    <div class="bgap-panel">
-      <div id="not-expressive" class="problem-item bgap-item is-on" data-gap="0"
-           role="tabpanel" aria-labelledby="bgapName0">
-        <h3>Not expressive</h3>
-        <p>Bitcoin's scripting layer was intentionally limited. No smart contracts, no lending markets, no automated strategies. Everything advanced must be built elsewhere.</p>
-      </div>
-      <div id="not-private" class="problem-item bgap-item" data-gap="1"
-           role="tabpanel" aria-labelledby="bgapName1" hidden>
-        <h3>Not private</h3>
-        <p>Bitcoin is public by default: every balance, counterparty and transaction is permanently traceable. Once an address is linked to an identity, an entire financial history follows, which makes spending, payroll and DeFi positions impossible to keep private. As Satoshi himself noted in 2010: ZK proofs could make Bitcoin "much better."</p>
-      </div>
-      <div id="not-scalable-enough" class="problem-item bgap-item" data-gap="2"
-           role="tabpanel" aria-labelledby="bgapName2" hidden>
-        <h3>Not scalable enough</h3>
-        <p>Slow block times. Fee spikes. A handful of transactions per second. Bitcoin's base layer was never designed for global financial activity at scale.</p>
-      </div>
-      <div id="not-quantum-resistant" class="problem-item bgap-item" data-gap="3"
-           role="tabpanel" aria-labelledby="bgapName3" hidden>
-        <h3>Not quantum-resistant</h3>
-        <p>Google researchers warn the cryptographic risk could be relevant as early as 2029. For an asset built to last centuries, this is an urgent short-term concern.</p>
-      </div>
     </div>
   </div>
 
@@ -3192,7 +3177,7 @@
 /* section 01's radial gap device. Selection only; the diagram itself is
    static markup, nothing here draws it.
    NOTHING ANIMATES ON ITS OWN. There is no timer, no observer and no
-   autoplay: the only state change is a user selecting a spoke, and the
+   autoplay: the only state change is a user selecting a card, and the
    transitions that carry it are declared in CSS and switched off wholesale
    under prefers-reduced-motion.
    The four panels are the SAME .problem-item elements the old grid used, ids
@@ -3202,26 +3187,21 @@
 (function(){
   var root = document.getElementById('bgap');
   if (!root || !window.thRove) return;
-  var spokes = [].slice.call(root.querySelectorAll('.bgap-card'));
-  var items  = [].slice.call(root.querySelectorAll('.bgap-item'));
+  var cards  = [].slice.call(root.querySelectorAll('.bgap-card'));
   var svgs   = [].slice.call(root.querySelectorAll('.bgap-sp'));
-  if (!spokes.length) return;
+  if (!cards.length) return;
   var cur = 0;
 
   function select(i){
     cur = i;
-    spokes.forEach(function(b, k){ b.classList.toggle('is-on', k === i); });
+    cards.forEach(function(b, k){ b.classList.toggle('is-on', k === i); });
     svgs.forEach(function(g, k){ g.classList.toggle('is-on', k === i); });
-    items.forEach(function(p, k){
-      p.classList.toggle('is-on', k === i);
-      if (k === i) { p.removeAttribute('hidden'); } else { p.setAttribute('hidden', ''); }
-    });
     rove.mirror(i);
   }
 
   var rove = window.thRove({
     root: root,
-    buttons: spokes,
+    buttons: cards,
     shown: function(){ return cur; },
     pick: function(i){ select(i); }
   });
@@ -3231,15 +3211,15 @@
      the browser's native anchor jump does none of that. Runs on load and on
      hashchange. The search palette's same-page landing does not fire
      hashchange (it uses replaceState), which is why search.js also carries a
-     .bgap-item adapter that clicks the matching spoke. */
+     .bgap-card adapter that selects the matching card. */
   function surface(){
     var id = (location.hash || '').slice(1);
     if (!id) return;
     if (id.indexOf('s:') === 0) id = decodeURIComponent(id.split(':')[1] || '');
     var el = document.getElementById(id);
     if (!el) return;
-    var item = el.closest('.bgap-item');
-    if (item) select(+item.dataset.gap);
+    var card = el.closest('.bgap-card');
+    if (card) select(+card.dataset.gap);
   }
   window.addEventListener('hashchange', surface);
 

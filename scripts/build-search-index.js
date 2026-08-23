@@ -181,7 +181,7 @@ const CARD_SPECS = {
   ecosystem: [],
   digest: [],
 };
-const TITLE_CLASSES = ['mode-item-title', 'metric-label', 'step-name', 'catalyst-tag', 'wp-t', 'cl', 'ptitle', 'bh-title', 'tx', 'k', 'lt', 'lb', 'lbl', 'pmx-t'];
+const TITLE_CLASSES = ['mode-item-title', 'metric-label', 'step-name', 'catalyst-tag', 'bgap-title', 'wp-t', 'cl', 'ptitle', 'bh-title', 'tx', 'k', 'lt', 'lb', 'lbl', 'pmx-t'];
 
 function titleFor(node) {
   /* an explicit data-title wins: used where the visible title lives in a

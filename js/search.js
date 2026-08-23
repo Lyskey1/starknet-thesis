@@ -242,8 +242,8 @@
        The panel keeps the old grid's card id, so a hit still lands on the
        .problem-item; the spoke that opens it is the one carrying the same
        data-gap index. */
-    const bgp = target.closest && target.closest('.bgap-item');
-    if (bgp && bgp.hasAttribute('hidden')) did = clickIf(document.querySelectorAll('#bgap .bgap-card')[+bgp.dataset.gap]) || did;
+    const bgc = target.closest && target.closest('.bgap-card');
+    if (bgc && !bgc.classList.contains('is-on')) did = clickIf(bgc) || did;
     /* privacy: bills panel shows one bill at a time */
     const bill = target.closest && target.closest('.bstk-bill');
     if (bill && !bill.classList.contains('is-on')) did = clickIf(document.querySelectorAll('#bills .bstk-tab')[+bill.dataset.bill]) || did;
