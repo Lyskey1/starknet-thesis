@@ -474,15 +474,20 @@
      effective contrast, not the alpha. */
   .bgap-mesh line { stroke: rgba(var(--accent-rgb),0.12); stroke-width: 1; }
   .bgap-glints path { stroke: rgba(var(--accent-rgb),0.45); stroke-width: 1.6; stroke-linecap: round; }
-  /* SPEED IS CALIBRATED AGAINST A CLOCK'S SECOND HAND, which is 6 deg/s and
-     is plainly trackable in peripheral vision. The glints started at 96s,
-     which is 3.75 deg/s, 0.62x a second hand: same perceptual class, and this
-     is meant to be ambient, not a demo. 160s puts them at 2.25 deg/s, 0.38x,
-     which sits under it. The mesh is slower again at 260s. If either is ever
-     sped up, check it against that ratio rather than against how it feels in
-     a single glance while you are already looking at it. */
-  .bgap.run .bgap-mesh   { animation: bgapSpin 260s linear infinite; }
-  .bgap.run .bgap-glints { animation: bgapSpin 160s linear infinite; }
+  /* SPEED, AND THE USEFUL NUMBER IS WHERE IT LANDED, NOT THE THEORY.
+     The calibration: a clock's second hand is 6 deg/s and is plainly trackable
+     in peripheral vision, so the ratio to it is the unit worth thinking in.
+     WHAT ACTUALLY HAPPENED: 0.38x a second hand (glints 160s, 2.25 deg/s) READ
+     AS COMPLETELY STATIC to the owner, even after the layers were made
+     visible. 0.62x (glints 96s, 3.75 deg/s, 10.2 px/s at the outer orbit) is
+     where it landed and is what shipped. The mesh is proportional at 156s,
+     0.38x. Treat 0.38x as the floor below which this device reads as frozen
+     and 0.62x as the shipped setting, not as a ceiling that was reluctantly
+     accepted; the earlier retreat from 96s was made when the glints were at
+     0.32 alpha under a 0.34 mask floor, i.e. barely visible, which is not the
+     object being judged now. */
+  .bgap.run .bgap-mesh   { animation: bgapSpin 156s linear infinite; }
+  .bgap.run .bgap-glints { animation: bgapSpin 96s linear infinite; }
   @keyframes bgapSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
   /* the flat overlay. Breaks and leaders live here, unrotated, so a node stays
