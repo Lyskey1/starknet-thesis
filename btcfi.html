@@ -447,48 +447,76 @@
                 -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.80) 34%, #000 62%);
                 mask-image: linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.80) 34%, #000 62%); }
   .bgap-plane > svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; overflow: visible; }
-  .bgap-orbits path, .bgap-orbits circle, .bgap-mesh line, .bgap-glints path,
+  .bgap-orbits path, .bgap-orbits circle, .bgap-mesh line, .bgap-anim .bgap-tseg,
   .bgap-leads path, .bgap-leads circle { vector-effect: non-scaling-stroke; fill: none; }
 
-  /* the two moving layers. Whole-element transforms so each gets its own
-     compositor layer; the animation is declared ONLY under .run, so off screen
-     nothing is animating at all rather than animating invisibly. Two speeds so
-     the mesh and the glints never look mechanically locked together. */
-    /* EFFECTIVE CONTRAST IS THE NUMBER THAT MATTERS, NOT THE ALPHA. Both figures
-     figures below are MEASURED from rendered pixels against the #0A0A0A ground
-     with the plane mask applied, brightest pixel in the far half and the near
-     half. They are not the alpha and they are not alpha x mask floor: the
-     layers do not reach the top of the gradient, so computing it analytically
-     understates them by about 0.1.
-       mesh   alpha 0.12  ->  1.20:1 far   1.22:1 near
-       glints alpha 0.45  ->  2.34:1 far   2.58:1 near
-     Headroom: glints can go to 0.60 and still sit under the card one-liners at
-     4.6:1, which is the ordering that keeps the argument legible.
-     THE LESSON, and it is not "the values were too low". Three separately
-     defensible decisions multiplied into an indefensible product: the mesh was
-     pulled 0.10 -> 0.07 and the glints 0.5 -> 0.32 so they would not compete
-     with the selected arc, and then a depth mask was added over both at a 0.34
-     floor. Each was right on its own. Nobody computed the product, and the
-     product was 1.02:1 on the mesh, which is invisible. The device ran
-     perfectly and looked frozen. When any of these three change, recompute the
-     effective contrast, not the alpha. */
-  .bgap-mesh line { stroke: rgba(var(--accent-rgb),0.12); stroke-width: 1; }
-  .bgap-glints path { stroke: rgba(var(--accent-rgb),0.45); stroke-width: 1.6; stroke-linecap: round; }
-  /* SPEED, AND THE USEFUL NUMBER IS WHERE IT LANDED, NOT THE THEORY.
-     The calibration: a clock's second hand is 6 deg/s and is plainly trackable
-     in peripheral vision, so the ratio to it is the unit worth thinking in.
-     WHAT ACTUALLY HAPPENED: 0.38x a second hand (glints 160s, 2.25 deg/s) READ
-     AS COMPLETELY STATIC to the owner, even after the layers were made
-     visible. 0.62x (glints 96s, 3.75 deg/s, 10.2 px/s at the outer orbit) is
-     where it landed and is what shipped. The mesh is proportional at 156s,
-     0.38x. Treat 0.38x as the floor below which this device reads as frozen
-     and 0.62x as the shipped setting, not as a ceiling that was reluctantly
-     accepted; the earlier retreat from 96s was made when the glints were at
-     0.32 alpha under a 0.34 mask floor, i.e. barely visible, which is not the
-     object being judged now. */
-  .bgap.run .bgap-mesh   { animation: bgapSpin 156s linear infinite; }
-  .bgap.run .bgap-glints { animation: bgapSpin 96s linear infinite; }
-  @keyframes bgapSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  /* THE LIVE LAYERS: mesh wave, comets, dust. One rAF engine (the section-01
+     script at the foot of the page) drives all three; this stylesheet carries
+     only their fallbacks, their colours and the halo pulse. WHY JS REPLACED
+     THE WHOLE-LAYER CSS SPIN: the owner read the spinning version as static
+     TWICE, at two speeds, even after the layers were made visible. What was
+     missing was not more speed, it was travelling light: a head with a
+     decaying tail, size and z-order that change with depth, a brightness wave
+     on the mesh. Every one of those is a per-element value that follows the
+     object's CURRENT angle, which a whole-element compositor transform cannot
+     express. The engine is gated by the same IntersectionObserver (it starts
+     and STOPS the rAF itself, not just a class) and never runs under
+     prefers-reduced-motion (one static frame is drawn, no loop). */
+    /* EFFECTIVE CONTRAST IS THE NUMBER THAT MATTERS, NOT THE ALPHA. The
+     figures below are MEASURED from rendered pixels (headless capture,
+     isolated per layer) against the local ground -- page black plus bloom --
+     with the plane's depth mask applied. They are not the alpha and not
+     alpha x mask floor; measure, do not derive.
+       mesh wave      trough 1.17:1 (far)     crest 1.71:1 (near)
+       comet head     far 3.2:1 at ~4.7px     near 7.7:1 at ~8.3px dia
+       selected head  13.7:1 (white core dot over the accent head)
+       trail seg 1    7.2:1 near / 2.7:1 far, to 1.06:1 at seg 10: the tail
+                      dissolves into the ground inside its 26 degrees
+       dust           near 1.5-1.6:1, far 1.12:1 (fades out on purpose)
+       ticks          1.13:1 near, 1.11:1 far -- instrument frame, kept quiet
+     The mesh trough is the wave's minimum and sits on the 1.15:1 floor; the
+     selected arc at 1.0/3px still owns the drawing. THE LESSON FROM LAST
+     PASS STILL BINDS: three defensible dimming steps once multiplied to
+     1.02:1 and the device looked frozen while running perfectly. The engine
+     therefore writes ABSOLUTE alphas as inline style (stroke-opacity /
+     opacity) over strokes and fills declared at 1.0, so the only remaining
+     multiplier is the depth mask -- and the numbers above are measured
+     through it. When retuning, re-measure the pixels. */
+  /* no-JS fallback: stroke at 1.0, alpha carried by stroke-opacity so the
+     engine's inline stroke-opacity REPLACES it instead of multiplying it. */
+  .bgap-mesh line { stroke: rgba(var(--accent-rgb),1); stroke-opacity: 0.12; stroke-width: 1; }
+  .bgap-plane-near { z-index: 2; pointer-events: none; }
+  .bgap-tseg  { stroke: rgba(var(--accent-rgb),1); stroke-linecap: round; }
+  .bgap-ghead { fill: rgba(var(--accent-rgb),1); stroke: none; }
+  /* the white-hot inner dot is SELECTION's mark on the glint: opacity 0 on
+     the other three, so the selected comet is the only two-tone object in
+     the field and survives the motion at a glance. */
+  .bgap-gcore { fill: #F5F2EC; stroke: none; }
+  .bgap-ghalo { fill: url(#bgapGlowGrad); stroke: none; }
+  .bgap-dust circle { stroke: none; }
+  .bgap-ticks { stroke: rgba(245,242,236,0.10); stroke-width: 1; }
+  /* SPEED CALIBRATION, kept in the unit that matters: a clock's second hand
+     runs 6 deg/s and is plainly trackable in peripheral vision.
+     HISTORY: 0.38x a second hand (160s) read as COMPLETELY STATIC to the
+     owner; 0.62x (96s, 3.75 deg/s, 10.2 px/s at the outer orbit) ALSO still
+     read as static and flat -- bare dots at any of these speeds are not
+     motion the eye can hold. The comet heads now run, differentiated so the
+     four orbits visibly live at different rates, inner fastest as orbits are:
+       orbit 01  r124  32s  11.25 deg/s  1.88x a second hand  (~30 px/s @1240)
+       orbit 02  r148  40s   9.00 deg/s  1.50x
+       orbit 03  r172  50s   7.20 deg/s  1.20x
+       orbit 04  r196  60s   6.00 deg/s  1.00x  (~25 px/s @1240)
+     The mesh turns at 130s (0.28x, 2.2x slower than the slowest head): it is
+     the ground the comets move against, not a mover itself. These periods
+     live in the ORB table in the engine; this comment is the calibration
+     record, keep them in step. */
+  /* (5) the halo pulses: an opacity-only modulation of the SAME .btcg-bloom
+     layer, not a second glow, breathing around its resting .18 on a 5.2s
+     cycle. Declared only under .run so offscreen nothing animates; hidden
+     <=980 with every other bloom; killed under reduced motion below. No
+     scale, no filter change: those would repaint a 58px-blurred layer. */
+  .bgap.run .btcg-bloom-bgap i { animation: bgapHalo 5.2s ease-in-out infinite; }
+  @keyframes bgapHalo { 0%, 100% { opacity: .13; } 50% { opacity: .23; } }
 
   /* the flat overlay. Breaks and leaders live here, unrotated, so a node stays
      a circle instead of becoming an ellipse and a leader can reach a card that
@@ -598,7 +626,9 @@
      adds NO specificity: that is the trap that made the reduced-motion fix in
      the shared styles.css inert until it carried !important.) */
   @media (prefers-reduced-motion: reduce) {
-    .bgap-mesh, .bgap-glints { animation: none !important; }
+    /* the halo pulse is the only CSS animation left on the device (the engine
+       checks the same media query itself and never starts its loop). */
+    .btcg-bloom-bgap i { animation: none !important; }
     .bgap-solid, .bgap-dash, .bgap-lead, .bgap-node,
     .bgap-meta, .bgap-title, .bgap-one, .bgap-cost, .bgap-note { transition: none; }
   }
@@ -992,6 +1022,13 @@
       <div class="btcg-bloom btcg-bloom-bgap" aria-hidden="true"><i></i></div>
       <div class="bgap-plane">
         <svg class="bgap-orbits" viewBox="0 0 1000 540" aria-hidden="true" focusable="false" preserveAspectRatio="xMidYMid meet">
+          <!-- (6) chronometer ticks: a static ring of 60 fine ticks (majors
+               every 30 deg) just outside the outermost reference ring
+               (r196 -> ticks at 204-212.5). Instrument framing, zero motion
+               cost: one path, never touched by the engine, dimmed by the same
+               depth mask as everything else in the plane. Ink, not accent:
+               the frame is the instrument, the accent belongs to the light. -->
+          <path class="bgap-ticks" d="M704.0,270.0L712.5,270.0 M704.4,291.5L709.3,292.0 M701.0,312.7L705.9,313.8 M695.4,333.5L700.2,335.0 M687.7,353.6L692.3,355.6 M676.7,372.0L684.0,376.3 M666.3,390.8L670.3,393.7 M652.7,407.5L656.4,410.9 M637.5,422.7L640.9,426.4 M620.8,436.3L623.7,440.3 M602.0,446.7L606.3,454.0 M583.6,457.7L585.6,462.3 M563.5,465.4L565.0,470.2 M542.7,471.0L543.8,475.9 M521.5,474.4L522.0,479.3 M500.0,474.0L500.0,482.5 M478.5,474.4L478.0,479.3 M457.3,471.0L456.2,475.9 M436.5,465.4L435.0,470.2 M416.4,457.7L414.4,462.3 M398.0,446.7L393.8,454.0 M379.2,436.3L376.3,440.3 M362.5,422.7L359.1,426.4 M347.3,407.5L343.6,410.9 M333.7,390.8L329.7,393.7 M323.3,372.0L316.0,376.3 M312.3,353.6L307.7,355.6 M304.6,333.5L299.8,335.0 M299.0,312.7L294.1,313.8 M295.6,291.5L290.7,292.0 M296.0,270.0L287.5,270.0 M295.6,248.5L290.7,248.0 M299.0,227.3L294.1,226.2 M304.6,206.5L299.8,205.0 M312.3,186.4L307.7,184.4 M323.3,168.0L316.0,163.7 M333.7,149.2L329.7,146.3 M347.3,132.5L343.6,129.1 M362.5,117.3L359.1,113.6 M379.2,103.7L376.3,99.7 M398.0,93.3L393.7,86.0 M416.4,82.3L414.4,77.7 M436.5,74.6L435.0,69.8 M457.3,69.0L456.2,64.1 M478.5,65.6L478.0,60.7 M500.0,66.0L500.0,57.5 M521.5,65.6L522.0,60.7 M542.7,69.0L543.8,64.1 M563.5,74.6L565.0,69.8 M583.6,82.3L585.6,77.7 M602.0,93.3L606.3,86.0 M620.8,103.7L623.7,99.7 M637.5,117.3L640.9,113.6 M652.7,132.5L656.4,129.1 M666.3,149.2L670.3,146.3 M676.7,168.0L684.0,163.7 M687.7,186.4L692.3,184.4 M695.4,206.5L700.2,205.0 M701.0,227.3L705.9,226.2 M704.4,248.5L709.3,248.0"/>
           <g class="bgap-sp" data-gap="0">
             <circle class="bgap-ref" cx="500" cy="270" r="124"/>
             <path class="bgap-solid" d="M601.6,341.1 A124,124 0 1,1 412.3,182.3"/>
@@ -1013,7 +1050,17 @@
             <path class="bgap-dash" d="M361.4,408.6 A196,196 0 0,1 449.3,80.7"/>
           </g>
         </svg>
+        <!-- (3) the mesh breathes. The lines are wrapped in a group the engine
+             rotates (130s) while it drives each line's stroke-opacity from the
+             line's CURRENT world angle, so the near half glows and the far
+             half falls away and the rotation reads as a wave of light
+             travelling around the plane, not lines changing position. The
+             stylesheet keeps a static stroke-opacity as the no-JS fallback;
+             the engine overrides it with inline style, which is the ABSOLUTE
+             alpha (the stroke itself is at 1.0), so there is no CSS-alpha x
+             JS-opacity product to mis-multiply. -->
         <svg class="bgap-mesh" viewBox="0 0 1000 540" aria-hidden="true" focusable="false" preserveAspectRatio="xMidYMid meet">
+          <g class="bgap-meshg">
           <line x1="611.0" y1="270.0" x2="709.0" y2="270.0"/>
           <line x1="607.2" y1="298.7" x2="701.9" y2="324.1"/>
           <line x1="596.1" y1="325.5" x2="681.0" y2="374.5"/>
@@ -1038,17 +1085,47 @@
           <line x1="578.5" y1="191.5" x2="647.8" y2="122.2"/>
           <line x1="596.1" y1="214.5" x2="681.0" y2="165.5"/>
           <line x1="607.2" y1="241.3" x2="701.9" y2="215.9"/>
+          </g>
         </svg>
-        <svg class="bgap-glints" viewBox="0 0 1000 540" aria-hidden="true" focusable="false" preserveAspectRatio="xMidYMid meet">
-          <path d="M624.0,270.0 A124,124 0 0,1 615.0,316.5"/>
-          <path d="M557.8,406.2 A148,148 0 0,1 502.6,418.0"/>
-          <path d="M380.5,393.7 A172,172 0 0,1 342.9,340.0"/>
-          <path d="M317.0,199.8 A196,196 0 0,1 356.7,136.3"/>
+        <!-- (1)(2)(4) the comet + dust layer, FAR half. The engine (section-01
+             script at the foot of the page) builds one comet per orbit (a head,
+             a soft glow and a 26-degree tail of fading arc segments) and the
+             dust field in here, and per frame rotates each as a rigid group
+             about (500,270), which is one transform write per object rather
+             than per-segment path rewrites. The old static glint arcs that
+             lived here were the "bare dots painted on" the owner rejected;
+             they are gone, not dimmed. -->
+        <svg class="bgap-anim bgap-anim-far" viewBox="0 0 1000 540" aria-hidden="true" focusable="false" preserveAspectRatio="xMidYMid meet">
+          <defs>
+            <radialGradient id="bgapGlowGrad">
+              <stop offset="0" style="stop-color:var(--accent,#F7931A)" stop-opacity=".5"/>
+              <stop offset=".55" style="stop-color:var(--accent,#F7931A)" stop-opacity=".14"/>
+              <stop offset="1" style="stop-color:var(--accent,#F7931A)" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <g class="bgap-dust"></g>
+          <g class="bgap-comets"></g>
         </svg>
         <span class="bgap-anchor" data-gap="0"></span>
         <span class="bgap-anchor" data-gap="1"></span>
         <span class="bgap-anchor" data-gap="2"></span>
         <span class="bgap-anchor" data-gap="3"></span>
+      </div>
+      <!-- (2) THE NEAR HALF PASSES IN FRONT OF THE CORE. A second copy of the
+           tilted plane at z-index 2 against the core's 1 (and under the
+           leaders' 2-by-source-order and the cards' 3). The engine reparents a
+           comet into it while its head is on the near half of the plane and
+           back when it returns to the far half, so a glint's glow slides OVER
+           the core's lower edge and halo on the near pass and BEHIND them on
+           the far pass. Same class, so it inherits the tilt, the mask and the
+           <=860 display:none for free. Dust stays in the far layer: its radii
+           start at 112 units, which after the 54deg foreshortening clears the
+           core disc (r~62 units projected) on the near pass, so it never
+           needs the z-flip and never pops behind the disc. -->
+      <div class="bgap-plane bgap-plane-near" aria-hidden="true">
+        <svg class="bgap-anim bgap-anim-near" viewBox="0 0 1000 540" focusable="false" preserveAspectRatio="xMidYMid meet">
+          <g class="bgap-comets"></g>
+        </svg>
       </div>
       <svg class="bgap-leads" aria-hidden="true" focusable="false"></svg>
       <span class="bgap-core" aria-hidden="true">
@@ -3304,16 +3381,24 @@
 })();
 </script>
 <script>
-/* section 01's radial gap device. Selection only; the diagram itself is
-   static markup, nothing here draws it.
-   NOTHING ANIMATES ON ITS OWN. There is no timer, no observer and no
-   autoplay: the only state change is a user selecting a card, and the
-   transitions that carry it are declared in CSS and switched off wholesale
-   under prefers-reduced-motion.
+/* section 01's radial gap device: selection, leaders, and the motion engine.
+   TWO KINDS OF STATE, kept separate on purpose. Selection is user-driven and
+   carried by CSS classes and transitions, exactly as before; the breaks, the
+   nodes, the leaders and the cards still never move. The MOTION is the engine
+   at the bottom of this closure: one rAF loop driving a comet per orbit (head
+   + fading 26-degree tail), the near/far z-flip across the core, the mesh
+   brightness wave and the dust field -- the first rAF loop on this page, and
+   it earns it: every one of those is a per-element value that follows the
+   object's current angle, which the old whole-layer CSS spin could not
+   express and which the owner twice read as static. The loop is gated by the
+   IntersectionObserver (started and STOPPED, not just a class), never starts
+   under prefers-reduced-motion (one static frame is drawn instead, trails at
+   fixed positions), and stops outright at <=860 where the plane is
+   display:none. Speeds and measured contrasts are documented next to the ORB
+   table below and in the stylesheet's calibration comments.
    The four panels are the SAME .problem-item elements the old grid used, ids
-   and prose intact, so the search index still finds four cards here. hidden is
-   set as well as the class because hidden is what keeps a collapsed panel out
-   of the tab order and out of the accessibility tree. */
+   and prose intact, so the search index still finds four cards here (84
+   btcfi entries; the engine builds only aria-hidden geometry, no ids). */
 (function(){
   var root = document.getElementById('bgap');
   if (!root || !window.thRove) return;
@@ -3328,6 +3413,11 @@
     markLeads(i);
     svgs.forEach(function(g, k){ g.classList.toggle('is-on', k === i); });
     rove.mirror(i);
+    /* the selected comet lifts with its orbit (white-hot core dot, brighter
+       head and tail). While the loop runs the next frame picks `cur` up on
+       its own; when it is not running (reduced motion, offscreen) this
+       redraws the one static frame so selection still lands. */
+    engineRefresh();
   }
 
   /* ---- leaders, drawn to the PROJECTED break points ----
@@ -3407,6 +3497,206 @@
     });
   }
 
+  /* ==== THE MOTION ENGINE ==== comets, z-depth, mesh wave, dust.
+     GEOMETRY: everything is a rigid object rotating about the SVG centre
+     (500,270), so a frame writes ONE transform per object (4 comets, 34 dust,
+     1 mesh group) plus a handful of scalar opacities/radii -- no per-frame
+     path rewrites. The depth model is the plane's own: a point at angle a
+     (SVG y-down, 0 = +x, increasing clockwise) has depth d = (1+sin a)/2,
+     0 at the far top, 1 at the near bottom.
+     THE TRAIL is 26 degrees of arc in 10 segments, width 3.1px tapering to
+     1.0px, opacity decaying (1-k/10)^1.5 from the head back. It follows the
+     ellipse because it IS the ellipse: segments are arcs at the orbit's own
+     radius, rotated with the head. WHERE A TRAIL CROSSES THE 50-degree OPEN
+     GAP it fades to 0.25x across the gap (gapDip below) so it never bridges
+     the one fact each orbit exists to show. The head itself crosses at full
+     value, as the old glints always did: the head is an object passing the
+     gap, the trail is light that would otherwise redraw the missing arc.
+     THE Z-FLIP: while a comet's head is on the near half (sin > 0) it lives
+     in the .bgap-plane-near copy (z 2, in front of the core's 1); on the far
+     half it lives back here behind the core. +-0.06 hysteresis so it cannot
+     flap at the boundary. The flip happens at the plane's left/right
+     extremes, 350px+ from the core, where the 26-degree tail straddling the
+     boundary for a moment has nothing to mis-occlude.
+     DUST is 34 particles, deterministic (golden-ratio strides, NO
+     Math.random: a reload must not reshuffle the sky), radii 112-218 so the
+     nearest pass clears the projected core disc (~r62) and never pops behind
+     it, periods 70-140s so it drifts under the glints, one in three in the
+     accent, the rest ink. Updated every SECOND frame: at these speeds 30Hz is
+     indistinguishable and it halves the dust's scripting cost.
+     VALUES: depth scales the head radius 2.5->4.4 units (~4.7->8.3px
+     diameter at 1440, where the letterbox is height-bound at sc~0.95; x1.25
+     selected) and its opacity 0.62->0.95; the mesh wave runs stroke-opacity
+     MESH_LO->MESH_HI through the same depth term. All alphas are written as
+     inline style over strokes/fills declared at 1.0 -- ABSOLUTE values, so
+     the depth mask stays the only multiplier (measured results live in the
+     stylesheet's effective-contrast comment; re-measure before retuning). */
+  var DEGR = Math.PI / 180;
+  /* periods: see the SPEED CALIBRATION comment in the stylesheet. 0.62x a
+     second hand still read as static; these run 1.0x-1.88x, differentiated. */
+  var ORB = [
+    { r: 124, T: 32, a0: 150 },
+    { r: 148, T: 40, a0: 20  },
+    { r: 172, T: 50, a0: 265 },
+    { r: 196, T: 60, a0: 80  }
+  ];
+  /* centre of each orbit's 50-degree open gap: breakAngle + 145 (the solid
+     arc runs 190 degrees, the dashed remainder 120, the void is the rest). */
+  var GAPC = [10, 100, 190, 280];
+  var TRAIL_DEG = 26, SEGS = 10, SEGA = TRAIL_DEG / SEGS;
+  /* MESH_LO 0.18, not 0.16: at 0.16 the far trough measured 1.13:1 through
+     the depth mask, under the 1.15:1 floor. Measured 2026-08: 0.18 -> 1.16:1
+     trough, 0.34 -> 1.64:1 crest. */
+  var MESH_T = 130, MESH_LO = 0.18, MESH_HI = 0.34;
+  var DUST_N = 34;
+
+  var farSvg = root.querySelector('.bgap-anim-far');
+  var nearSvg = root.querySelector('.bgap-anim-near');
+  var meshG = root.querySelector('.bgap-meshg');
+  var meshLines = [].slice.call(root.querySelectorAll('.bgap-mesh line'));
+  var plane = root.querySelector('.bgap-plane');
+  var mqReduce = window.matchMedia ? matchMedia('(prefers-reduced-motion: reduce)') : null;
+  var mqNarrow = window.matchMedia ? matchMedia('(max-width: 980px)') : null;
+  var comets = null, dust = null, dustG = null;
+  var rafId = 0, running = false, visible = false, frameN = 0;
+
+  function upt(r, a){ return (500 + r * Math.cos(a * DEGR)).toFixed(2) + ',' + (270 + r * Math.sin(a * DEGR)).toFixed(2); }
+
+  function build(){
+    if (comets || !farSvg || !nearSvg) return;
+    var farC = farSvg.querySelector('.bgap-comets');
+    var nearC = nearSvg.querySelector('.bgap-comets');
+    dustG = farSvg.querySelector('.bgap-dust');
+    comets = ORB.map(function(o){
+      var g = document.createElementNS(SVGNS, 'g'), segs = [];
+      for (var k = SEGS - 1; k >= 0; k--){
+        var p = document.createElementNS(SVGNS, 'path');
+        p.setAttribute('class', 'bgap-tseg');
+        p.setAttribute('d', 'M' + upt(o.r, -(k + 1) * SEGA) + ' A' + o.r + ',' + o.r + ' 0 0,1 ' + upt(o.r, -k * SEGA));
+        p.style.strokeWidth = (3.1 - k * 0.23).toFixed(2) + 'px';
+        p.style.opacity = '0';
+        segs[k] = p;
+        g.appendChild(p);
+      }
+      function dot(cls, r){
+        var c = document.createElementNS(SVGNS, 'circle');
+        c.setAttribute('class', cls);
+        c.setAttribute('cx', 500 + o.r); c.setAttribute('cy', 270); c.setAttribute('r', r);
+        g.appendChild(c);
+        return c;
+      }
+      var halo = dot('bgap-ghalo', 14), head = dot('bgap-ghead', 3), core = dot('bgap-gcore', 1.4);
+      core.style.opacity = '0';
+      farC.appendChild(g);
+      return { g: g, o: o, segs: segs, halo: halo, head: head, core: core, near: false, farC: farC, nearC: nearC };
+    });
+    dust = [];
+    for (var i = 0; i < DUST_N; i++){
+      var f1 = (i * 0.6180339887) % 1, f2 = (i * 0.7548776662) % 1, f3 = (i * 0.3247179572) % 1;
+      var d = { r: 112 + 106 * f1, T: 70 + 70 * f2, a0: (i * 137.508) % 360, acc: i % 3 === 0 };
+      var c = document.createElementNS(SVGNS, 'circle');
+      c.setAttribute('cx', (500 + d.r).toFixed(1)); c.setAttribute('cy', 270);
+      c.setAttribute('r', (0.9 + 0.9 * f3).toFixed(2));
+      c.style.fill = d.acc ? 'var(--accent, #F7931A)' : '#F5F2EC';
+      c.style.opacity = '0';
+      d.el = c;
+      dustG.appendChild(c);
+      dust.push(d);
+    }
+  }
+
+  function gapDip(a, gc){
+    var dd = Math.abs(((a - gc) % 360 + 540) % 360 - 180);
+    return dd >= 27 ? 1 : 0.25 + 0.75 * (dd / 27);
+  }
+
+  function renderFrame(t){
+    var narrow = mqNarrow && mqNarrow.matches;
+    if (!narrow && meshG){
+      var M = (t * 360 / MESH_T) % 360;
+      meshG.setAttribute('transform', 'rotate(' + M.toFixed(2) + ' 500 270)');
+      for (var j = 0; j < meshLines.length; j++){
+        var mo = MESH_LO + (MESH_HI - MESH_LO) * (1 + Math.sin((j * 15 + M) * DEGR)) / 2;
+        var ml = meshLines[j];
+        if (Math.abs((ml.__o || 0) - mo) > 0.012){ ml.__o = mo; ml.style.strokeOpacity = mo.toFixed(3); }
+      }
+    }
+    for (var i = 0; i < comets.length; i++){
+      var c = comets[i], th = (c.o.a0 + 360 * t / c.o.T) % 360;
+      c.g.setAttribute('transform', 'rotate(' + th.toFixed(2) + ' 500 270)');
+      var s = Math.sin(th * DEGR), dpt = (1 + s) / 2, sel = i === cur;
+      if (!c.near && s > 0.06){ c.nearC.appendChild(c.g); c.near = true; }
+      else if (c.near && s < -0.06){ c.farC.appendChild(c.g); c.near = false; }
+      var hr = (2.5 + 1.9 * dpt) * (sel ? 1.25 : 1);
+      c.head.setAttribute('r', hr.toFixed(2));
+      c.head.style.opacity = Math.min(1, (0.62 + 0.33 * dpt) * (sel ? 1.3 : 1)).toFixed(3);
+      c.halo.setAttribute('r', (hr * 4.2).toFixed(1));
+      c.halo.style.opacity = Math.min(1, (0.30 + 0.45 * dpt) * (sel ? 1.35 : 1)).toFixed(3);
+      c.core.setAttribute('r', (hr * 0.42).toFixed(2));
+      c.core.style.opacity = sel ? '0.95' : '0';
+      var tb = (sel ? 1.45 : 1) * (0.55 + 0.45 * dpt);
+      for (var k = 0; k < SEGS; k++){
+        var so = Math.min(1, Math.pow(1 - (k + 0.5) / SEGS, 1.5) * 0.9 * tb * gapDip(th - (k + 0.5) * SEGA, GAPC[i]));
+        var sp = c.segs[k];
+        if (Math.abs((sp.__o || 0) - so) > 0.02){ sp.__o = so; sp.style.opacity = so.toFixed(3); }
+      }
+    }
+    if (!narrow && ((frameN & 1) === 0 || !running)){
+      for (var q = 0; q < dust.length; q++){
+        var dp = dust[q], ta = (dp.a0 + 360 * t / dp.T) % 360;
+        dp.el.setAttribute('transform', 'rotate(' + ta.toFixed(2) + ' 500 270)');
+        var od = (dp.acc ? 0.30 : 0.20) * (0.35 + 0.65 * (1 + Math.sin(ta * DEGR)) / 2);
+        if (Math.abs((dp.__o || 0) - od) > 0.02){ dp.__o = od; dp.el.style.opacity = od.toFixed(3); }
+      }
+    }
+    frameN++;
+  }
+
+  function tick(now){
+    var pf = window.__bgapProf, a = pf ? performance.now() : 0;
+    renderFrame(now / 1000);
+    if (pf){ pf.ms += performance.now() - a; pf.n++; }
+    rafId = requestAnimationFrame(tick);
+  }
+  function start(){ if (running) return; running = true; rafId = requestAnimationFrame(tick); }
+  function stop(){ if (!running) return; running = false; cancelAnimationFrame(rafId); }
+
+  /* 861-980: measured, not guessed (numbers in the session report): glints
+     and their trails survive because they are the life the owner asked for
+     and their cost is a fraction of the budget; dust and the mesh rotation
+     are dropped because they are the widest per-frame loops for the least
+     salience at that size, and the blooms (halo included) are already gone
+     at <=980. The mesh keeps its depth-graded opacities as a STATIC frame so
+     the plane keeps its depth without the per-frame wave. */
+  function staticMesh(){
+    if (!meshG) return;
+    meshG.setAttribute('transform', 'rotate(0 500 270)');
+    for (var j = 0; j < meshLines.length; j++){
+      var mo = MESH_LO + (MESH_HI - MESH_LO) * (1 + Math.sin(j * 15 * DEGR)) / 2;
+      meshLines[j].__o = mo;
+      meshLines[j].style.strokeOpacity = mo.toFixed(3);
+    }
+  }
+
+  function engineUpdate(){
+    if (!farSvg || !nearSvg) return;
+    if (!plane || !plane.clientWidth){ stop(); return; } /* <=860: plane is display:none, the list owns the story */
+    build();
+    var narrow = mqNarrow && mqNarrow.matches;
+    if (dustG) dustG.style.display = narrow ? 'none' : '';
+    if (narrow) staticMesh();
+    if (mqReduce && mqReduce.matches){ stop(); renderFrame(0); return; } /* one still frame, trails at fixed positions */
+    if (visible) start(); else stop();
+    if (!running) renderFrame(performance.now() / 1000);
+  }
+
+  function engineRefresh(){
+    if (comets && !running) renderFrame(mqReduce && mqReduce.matches ? 0 : performance.now() / 1000);
+  }
+
+  if (mqNarrow && mqNarrow.addEventListener) mqNarrow.addEventListener('change', engineUpdate);
+  if (mqReduce && mqReduce.addEventListener) mqReduce.addEventListener('change', engineUpdate);
+
   var rove = window.thRove({
     root: root,
     buttons: cards,
@@ -3434,16 +3724,24 @@
   select(0);
   surface();
   drawLeads(); markLeads(cur);
+  engineUpdate(); /* builds the comets and dust and paints the first frame
+                     before the observer fires, so scrolling into the section
+                     never shows an empty plane */
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ drawLeads(); markLeads(cur); });
-  var rt; window.addEventListener('resize', function(){ clearTimeout(rt); rt = setTimeout(function(){ drawLeads(); markLeads(cur); }, 120); });
+  var rt; window.addEventListener('resize', function(){ clearTimeout(rt); rt = setTimeout(function(){ drawLeads(); markLeads(cur); engineUpdate(); }, 120); });
 
-  /* motion gate, same pattern as this page's marquee and hero loop: the
-     animation is declared only under .run, so off screen the mesh is not
-     animating at all rather than animating out of sight. */
+  /* motion gate, same pattern as this page's marquee and hero loop, but this
+     one carries a rAF: the observer starts and STOPS the loop itself via
+     engineUpdate (cancelAnimationFrame, not just a class), and .run gates the
+     halo's CSS pulse the same way the sibling bands gate theirs. Off screen,
+     nothing runs at all. */
   if ('IntersectionObserver' in window) {
-    new IntersectionObserver(function(es){ root.classList.toggle('run', es[0].isIntersecting); },
-      { threshold: 0 }).observe(root);
-  } else { root.classList.add('run'); }
+    new IntersectionObserver(function(es){
+      visible = es[0].isIntersecting;
+      root.classList.toggle('run', visible);
+      engineUpdate();
+    }, { threshold: 0 }).observe(root);
+  } else { visible = true; root.classList.add('run'); engineUpdate(); }
 })();
 </script>
 </body>
