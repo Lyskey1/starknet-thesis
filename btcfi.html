@@ -323,23 +323,62 @@
   /* (6) Threat section redesign — flat hairline cards, red (#E0524A)
      used only as a restrained signal (thin left bar + "Risk 0X" label),
      white headings, grey body; warning box → clean pull-quote. */
+  /* SCOPED TO .page-btcfi, NOT TO .threat. These rules used to hang off a
+     `.threat` ancestor, and there is no THREAT section any more: the three
+     surviving risk cards live inside 01 now. .page-btcfi keeps the same
+     (0,2,0) specificity, so it still beats the `.threat-card { grid-column:
+     span 2 }` rule in the shared styles.css that the grid-column line below
+     exists to override. Do not shorten it to a bare `.threat-card`, that
+     drops to (0,1,0) and the span-2 rule wins. */
   .threat-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin-top: 46px; }
-  .threat .threat-card {
+  .page-btcfi .threat-card {
     grid-column: auto; /* override the old .threat-card span-2 rule from styles.css */
     position: relative; border: 1px solid var(--border); border-radius: 8px;
     padding: 28px 26px 28px 30px; background: rgba(255,255,255,0.014);
     transition: border-color .2s, box-shadow .2s, transform .2s;
   }
-  .threat .threat-card::before {
+  .page-btcfi .threat-card::before {
     content: ''; position: absolute; left: 0; top: 22px; bottom: 22px;
     width: 2px; background: #E0524A; border-radius: 2px; opacity: .85;
   }
-  .threat .threat-card:hover { border-color: rgba(224,82,74,0.4); box-shadow: 0 10px 36px rgba(224,82,74,0.07); transform: translateY(-3px); }
-  .threat .threat-card .idx { display: block; font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: #E0524A; margin-bottom: 14px; }
-  .threat .threat-card h3 { font-family: var(--sans); font-weight: 600; font-size: 18px; color: var(--white); margin-bottom: 10px; line-height: 1.25; }
-  .threat .threat-card p { font-family: var(--sans); font-size: 14px; color: rgba(245,242,236,0.58); line-height: 1.65; }
+  .page-btcfi .threat-card:hover { border-color: rgba(224,82,74,0.4); box-shadow: 0 10px 36px rgba(224,82,74,0.07); transform: translateY(-3px); }
+  .page-btcfi .threat-card .idx { display: block; font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: #E0524A; margin-bottom: 14px; }
+  /* h4, NOT h3. The risk cards sit under the .gap-turn h3 now, so an h3 here
+     would put a heading under a heading of the same level. Changing the tag
+     also drops the `.threat-card h3` rule in the shared styles.css, which is
+     fine and was already the case in effect: this rule overrode every property
+     that one sets (family, size, weight, colour, margin, line-height). The
+     global `* { margin: 0 }` reset means h4 brings no UA margin with it. The
+     search index is indifferent, it extracts cards by class, not by tag. */
+  .page-btcfi .threat-card h4 { font-family: var(--sans); font-weight: 600; font-size: 18px; color: var(--white); margin-bottom: 10px; line-height: 1.25; }
+  .page-btcfi .threat-card p { font-family: var(--sans); font-size: 14px; color: rgba(245,242,236,0.58); line-height: 1.65; }
   @media (max-width: 920px) { .threat-grid { grid-template-columns: 1fr 1fr; } }
   @media (max-width: 600px) { .threat-grid { grid-template-columns: 1fr; } }
+
+  /* 01's internal turn.
+     IT REUSES .scale-label + .scale-title, the sub-heading pair every sub-block
+     in section 03 already uses. The first version of this invented its own
+     style, 28px sans with a coral eyebrow, and it was scrapped: the page
+     already had a sub-heading system, and a second one would have produced
+     exactly the one-off caption this device exists to avoid. A heading reads
+     as a heading because the page has taught the reader what its headings look
+     like. 38px display under the 52px section title is that hierarchy.
+     THE ASYMMETRIC GAPS ARE THE MECHANISM, not the type size. 62px above the
+     rule, 28px from the title to the cards, against the grid's own 46px
+     default. The heading sits closer to what it heads than to what precedes
+     it, and that spacing alone is what stops the eye reading it as a footer on
+     the orange grid above. If anything here gets "tidied" to a uniform gap,
+     the device stops working and the type size will not save it.
+     THE RULE IS ABOVE, NOT BELOW, for the same reason. A rule below would
+     close the grid above and caption it. A rule above opens a new argument.
+     The coral label is the third signal: the muted grey default belongs to the
+     block it sits in, coral belongs to the cards below, so the label binds
+     downward with the rest of the device. */
+  .gap-turn { margin-top: 62px; padding-top: 34px; border-top: 1px solid var(--border); }
+  .gap-turn .scale-label { color: #E0524A; }
+  .gap-turn .scale-title { margin-bottom: 0; }
+  .gap-turn + .threat-grid { margin-top: 28px; }
+  @media (max-width: 880px) { .gap-turn { margin-top: 46px; padding-top: 26px; } }
 
   .risk-quote { margin-top: 36px; border-left: 3px solid #E0524A; padding: 6px 0 6px 34px; max-width: 1000px; }
   .risk-quote .tag { display: block; font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: #E0524A; margin-bottom: 16px; }
@@ -451,14 +490,14 @@
   .page-btcfi .btcg-bloom-problem i:nth-child(2){left:57%;top:9%;width:36%;height:33%;}
   .page-btcfi .btcg-bloom-problem i:nth-child(3){left:7%;top:58%;width:36%;height:33%;}
   .page-btcfi .btcg-bloom-problem i:nth-child(4){left:57%;top:58%;width:36%;height:33%;}
-  /* coral behind the five risk cards; the sixth grid cell is empty and
-     deliberately gets no blob */
+  /* coral behind the three risk cards. Was five blobs over two rows; the
+     merge into 01 cut the grid to a single row of three, so rows two's blobs
+     went with the cards they sat behind and the remaining three grew to fill
+     the row's full height instead of its top third. */
   .page-btcfi .btcg-bloom-threat i{--bc:#E0524A;}
-  .page-btcfi .btcg-bloom-threat i:nth-child(1){left:4.5%;top:8%;width:24%;height:32%;}
-  .page-btcfi .btcg-bloom-threat i:nth-child(2){left:38%;top:8%;width:24%;height:32%;}
-  .page-btcfi .btcg-bloom-threat i:nth-child(3){left:71.5%;top:8%;width:24%;height:32%;}
-  .page-btcfi .btcg-bloom-threat i:nth-child(4){left:4.5%;top:56%;width:24%;height:32%;}
-  .page-btcfi .btcg-bloom-threat i:nth-child(5){left:38%;top:56%;width:24%;height:32%;}
+  .page-btcfi .btcg-bloom-threat i:nth-child(1){left:4.5%;top:12%;width:24%;height:72%;}
+  .page-btcfi .btcg-bloom-threat i:nth-child(2){left:38%;top:12%;width:24%;height:72%;}
+  .page-btcfi .btcg-bloom-threat i:nth-child(3){left:71.5%;top:12%;width:24%;height:72%;}
   /* coral inside the deeper-risk panel */
   .page-btcfi .btcg-bloom-quote i{--bc:#E0524A;left:8%;top:12%;width:45%;height:76%;}
   /* strkBTC row: orange, violet, violet — the three cards read as equals,
@@ -589,6 +628,45 @@
 <div class="section-divider"></div>
 
 <!-- ============================================================ -->
+<!-- 01 — THE GAP, AND WHAT IT COSTS  (was PROBLEM, plus the surviving half of
+     the deleted THREAT section)
+     Three sections of problem and one of answer was not a structure, it was
+     what the page accreted into. PROBLEM and THREAT made one argument at two
+     levels, the capability gap and its price, so they are one section now.
+     WHAT WAS CUT, and why only these two:
+       - "The quantum clock is ticking" was the THIRD quantum block on the
+         page. #not-quantum-resistant states the capability gap and
+         #quantum-risk-is-pricing-in-now states the timing, which is 02's
+         job. The third restated both and nothing else.
+       - "Full transparency is a liability" and #not-private were the same
+         sentence twice, so they are one card; #not-private carries the
+         merged text and the Satoshi citation.
+     Both ids are gone for good. That was a deliberate call, not an oversight:
+     two index entries, no inbound links anywhere in the repo, and phantom
+     spans would keep dead anchors alive forever.
+     WHAT IT ACTUALLY COST, against what was predicted when the shape was
+     approved. This section was estimated at 1,420px and came in at 1,655, a
+     235px miss, for two reasons worth remembering the next time a merge is
+     costed: (1) folding the transparency card into #not-private grew the
+     problem grid's FIRST ROW from 236 to 284px, and a grid row is as tall as
+     its tallest card, so merged copy costs the row, not the card; (2) the turn
+     device is 112px, not the ~90 assumed, because it landed on the page's
+     38px display sub-heading rather than the 28px sans first drafted.
+     The whole restructure took the page from 11,223px to 10,701px, which is
+     4.7%. Measure this with a FULL scroll to the bottom and a settle: a
+     partial scroll leaves the lazy news and metrics blocks unresolved and
+     reports ~90px light. It was approved for legibility, not for size, and it should not be
+     read later as a failed size reduction. The real height levers on this page
+     are the ecosystem card grid (1,194px), the track record timeline (745px)
+     and the hero (928px). -->
+
+<!-- THE NESTING WAS THE REAL FIND, and it is in section 03, not here. The
+     privacy modes and the decade-long track record were both children of the
+     SCALABILITY CHART's container. Nothing chose that; it accreted. Un-nesting
+     them is most of what makes the new shape readable, and it is worth
+     checking for the same pattern before adding any block to this page: put it
+     where it belongs in the argument, not inside whatever container happens to
+     be open. -->
 <!-- PROBLEM -->
 <!-- ============================================================ -->
 <section class="problem">
@@ -604,7 +682,7 @@
     <div id="not-private" class="problem-item btcg-card">
       <span class="problem-num">002</span>
       <h3>Not private</h3>
-      <p>Every transaction leaves a permanent trace. Balances, counterparties, and strategies are visible to anyone. As Satoshi himself noted in 2010: ZK proofs could make Bitcoin "much better."</p>
+      <p>Bitcoin is public by default: every balance, counterparty and transaction is permanently traceable. Once an address is linked to an identity, an entire financial history follows, which makes spending, payroll and DeFi positions impossible to keep private. As Satoshi himself noted in 2010: ZK proofs could make Bitcoin "much better."</p>
     </div>
     <div id="not-scalable-enough" class="problem-item btcg-card">
       <span class="problem-num">003</span>
@@ -617,6 +695,47 @@
       <p>Google researchers warn the cryptographic risk could be relevant as early as 2029. For an asset built to last centuries, this is an urgent short-term concern.</p>
     </div>
     <div class="btcg-bloom btcg-bloom-problem" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+  </div>
+
+  <!-- THE TURN. Section 01 makes two arguments, not one: the capability gap
+       above (orange, 001-004) and what that gap already costs below (coral,
+       Risk 01-03). This heads the second one.
+       THE ID IS LOAD-BEARING. The deleted THREAT section's h2 held
+       #the-market-risk-if-bitcoin-stays and it lives on this h3 now. That is
+       what took the restructure from three dead anchors down to two: the
+       words stay a searchable heading in the index, and any external link to
+       that anchor still lands. It is not a phantom span kept alive for an old
+       link, it is the heading the row beneath it actually needs, which is why
+       this is better than keeping the anchor artificially. DO NOT change this
+       id to match the visible text of some later rewrite, and do not drop it
+       when editing the heading. The search index never renames an existing
+       id, so nothing will warn you. -->
+  <!-- Heading levels: this is h3 under the section h2, and the risk cards
+       below are h4 under it. -->
+
+
+  <div class="gap-turn">
+    <p class="scale-label">What it costs</p>
+    <h3 id="the-market-risk-if-bitcoin-stays" class="scale-title">The market risk if Bitcoin stays idle</h3>
+  </div>
+
+  <div class="threat-grid">
+    <div id="centralized-wrappers-dominate" class="threat-card btcg-card btcg-coral">
+      <span class="idx">Risk 01</span>
+      <h4>Centralized wrappers dominate</h4>
+      <p>WBTC and its alternatives control most Bitcoin in DeFi. These rely on custodians, legal agreements, and institutional trust, the exact model Bitcoin was built to replace.</p>
+    </div>
+    <div id="trust-assumptions-everywhere" class="threat-card btcg-card btcg-coral">
+      <span class="idx">Risk 02</span>
+      <h4>Trust assumptions everywhere</h4>
+      <p>Bridges introduce layers of custodial risk. Without a trustless settlement path, "Bitcoin DeFi" remains a marketing claim built on the same fragile infrastructure as traditional finance.</p>
+    </div>
+    <div id="fragmented-liquidity" class="threat-card btcg-card btcg-coral">
+      <span class="idx">Risk 03</span>
+      <h4>Fragmented liquidity</h4>
+      <p>Bitcoin's capital is scattered across dozens of chains with no unified DeFi layer. This reduces efficiency, increases friction, and splits ecosystems that should compound on each other.</p>
+    </div>
+    <div class="btcg-bloom btcg-bloom-threat" aria-hidden="true"><i></i><i></i><i></i></div>
   </div>
 
   <div class="big-stat">
@@ -656,46 +775,11 @@
       <p>What was research a decade ago is now production-grade. STARK proofs are battle-tested, account abstraction is live, and protocol-level privacy has reached production. After more than ten years of building the exact stack Bitcoin needs, the pieces finally exist at the same time. This is the moment where solving Bitcoin's limitations moves from theory to execution.</p>
     </div>
   </div>
-</section>
 
-<div class="section-divider"></div>
-
-<!-- ============================================================ -->
-<!-- THREAT -->
-<!-- ============================================================ -->
-<section class="threat">
-  <div class="th-pm-head"><span class="th-pm-marker"></span><span class="th-pm-num">03</span><h2 id="the-market-risk-if-bitcoin-stays" class="th-pm-title">The market risk if Bitcoin stays idle</h2></div>
-  <p class="th-pm-eyebrow">Threat</p>
-
-  <div class="threat-grid">
-    <div id="centralized-wrappers-dominate" class="threat-card btcg-card btcg-coral">
-      <span class="idx">Risk 01</span>
-      <h3>Centralized wrappers dominate</h3>
-      <p>WBTC and its alternatives control most Bitcoin in DeFi. These rely on custodians, legal agreements, and institutional trust, the exact model Bitcoin was built to replace.</p>
-    </div>
-    <div id="trust-assumptions-everywhere" class="threat-card btcg-card btcg-coral">
-      <span class="idx">Risk 02</span>
-      <h3>Trust assumptions everywhere</h3>
-      <p>Bridges introduce layers of custodial risk. Without a trustless settlement path, "Bitcoin DeFi" remains a marketing claim built on the same fragile infrastructure as traditional finance.</p>
-    </div>
-    <div id="fragmented-liquidity" class="threat-card btcg-card btcg-coral">
-      <span class="idx">Risk 03</span>
-      <h3>Fragmented liquidity</h3>
-      <p>Bitcoin's capital is scattered across dozens of chains with no unified DeFi layer. This reduces efficiency, increases friction, and splits ecosystems that should compound on each other.</p>
-    </div>
-    <div id="the-quantum-clock-is-ticking" class="threat-card btcg-card btcg-coral">
-      <span class="idx">Risk 04</span>
-      <h3>The quantum clock is ticking</h3>
-      <p>As quantum computing advances, today's cryptographic assumptions may no longer hold, with researchers flagging the risk as early as 2029. Bitcoin is famously slow to upgrade, so an asset meant to last for decades is exposed precisely where it can react the slowest.</p>
-    </div>
-    <div id="full-transparency-is-a-liability" class="threat-card btcg-card btcg-coral">
-      <span class="idx">Risk 05</span>
-      <h3>Full transparency is a liability</h3>
-      <p>Bitcoin is public by default: every balance, counterparty and transaction is permanently traceable. Once an address is linked to an identity, an entire financial history follows. For an asset meant to be used, not just held, this lack of privacy makes real-world spending, payroll, and DeFi positions impossible to keep private.</p>
-    </div>
-    <div class="btcg-bloom btcg-bloom-threat" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
-  </div>
-
+  <!-- The deeper-risk quote closes 02, not 01. It arrived here when the
+       THREAT section was merged into 01: it is not a fifth risk card, it is
+       the cost of missing the moment, so it belongs at the end of the timing
+       argument and immediately before the answer. -->
   <div id="the-deeper-risk" class="risk-quote btcg-card btcg-coral">
     <div class="btcg-bloom btcg-bloom-quote" aria-hidden="true"><i></i></div>
     <span class="tag">The deeper risk</span>
@@ -711,7 +795,7 @@
 <div class="solution">
   <div class="solution-inner">
 
-    <div class="th-pm-head"><span class="th-pm-marker"></span><span class="th-pm-num">04</span><h2 id="defi-scale-privacy-resilience-all-four" class="th-pm-title">DeFi. Scale. Privacy. <em>Resilience.</em><br>All four. All one stack.</h2></div>
+    <div class="th-pm-head"><span class="th-pm-marker"></span><span class="th-pm-num">03</span><h2 id="defi-scale-privacy-resilience-all-four" class="th-pm-title">DeFi. Scale. Privacy. <em>Resilience.</em><br>All four. All one stack.</h2></div>
     <p class="th-pm-eyebrow">How Starknet fixes it</p>
 
     <!-- ============================================================ -->
