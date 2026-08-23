@@ -355,177 +355,178 @@
   @media (max-width: 920px) { .threat-grid { grid-template-columns: 1fr 1fr; } }
   @media (max-width: 600px) { .threat-grid { grid-template-columns: 1fr; } }
 
-  /* ---- section 01's radial gap device. Geometry notes live on the markup. ----
-     The stage is aspect-locked to the lines SVG's own 1000x500 viewBox, which
-     is what lets the absolutely-positioned HTML labels stay registered with
-     the SVG spoke ends at every width without a resize listener. If the aspect
-     ratio and the viewBox ever disagree, the spokes will point at nothing. */
-  .bgap { margin-top: 44px; position: relative; }
-  .bgap-stage { position: relative; width: 100%; aspect-ratio: 1000 / 440; }
-  .bgap-lines { position: absolute; inset: 0; width: 100%; height: 100%; display: block; overflow: visible; }
-  .bgap-lines line, .bgap-lines circle { vector-effect: non-scaling-stroke; fill: none; }
+  /* ---- section 01: BROKEN ORBITS. Geometry notes live on the markup. ----
+     WHY ORBITS RATHER THAN SPOKES. An incomplete ring IS a shortfall; it does
+     not stand for one. Each gap gets an arc that runs solid, stops at a break,
+     continues as a faint dashed remainder and never closes. THE FAINT FULL
+     REFERENCE RING AT THE SAME RADIUS IS LOAD-BEARING: it is where the arc
+     should have reached, and without it the arcs read as decoration rather
+     than as something falling short. Do not remove it to reduce clutter.
+     FOUR RADII, NOT ONE. The four arcs are concentric at 104/134/164/194 with
+     01 innermost, so the device reads as an orrery and each arc owns a ring
+     the eye can follow all the way round. One shared radius would have made
+     four segments of a single ring, which says "one thing divided" rather than
+     "four things each falling short".
+     EACH BREAK SITS IN ITS OWN CARD'S QUADRANT (225/315/45/135 degrees,
+     SVG y-down) so its leader is short and unambiguous. Arcs are 310 degrees
+     drawn against 50 open; the numbers are deliberately identical across all
+     four because this is a diagram, not a chart, and unequal openings would
+     claim a measurement we have not made.
+     THE HUB RING IS GONE. The old spoke version had one at r=76; with four
+     reference rings the innermost orbit is the collar, and a fifth concentric
+     circle was clutter. Removed rather than dimmed.
 
-  /* THE VALUE LADDER, and this is the whole design. An earlier cut put almost
-     everything in one gray band and the device read flat. Six levels now, by
-     perceived luminance on the #0A0A0A ground, brightest at the core and
-     falling outward:
-     AT REST (contrast against #0A0A0A in brackets):
-       1 core mark        #F7931A solid fill  [8.6]     the subject
-       2 gap name         #F5F2EC 0.62        [6.6]
-       3 one-liner        #F5F2EC 0.48        [4.6]
-       4 solid spoke      #F7931A 0.34, 1.7px [1.9]     Bitcoin's reach
-       5 hub ring         #F7931A 0.20, 1.4px [1.4]
-       6 dashed remainder #F5F2EC 0.12, 1.15px[1.3]     the shortfall
-     SELECTED lifts the whole spoke: name 1.0 [17.7], one-liner 0.78 [10.6],
-     solid spoke 0.95 at 2.2px [7.8], dashed 0.26, node fills accent, index
-     turns accent. The core outranks the gap name on area, not on contrast:
-     a 130px filled disc against 13px of mono type is not a close call.
-     COLOUR SITS ON THE SOLID RUN, NOT THE DASHED ONE. The first version had
-     this backwards: the only colour on the diagram was on its thinnest, most
-     broken strokes, so the reach looked like the afterthought. Bitcoin's reach
-     now carries weight and light and then visibly runs out of road into dim.
-     Do not re-invert this.
-     Unselected is a real drop across five properties at once, not a border
-     tweak: the spoke loses colour and weight, the node empties, the name and
-     one-liner fall roughly 50%. The selected gap has to be readable at a
-     glance from across the room. */
-  .bgap-hub   { stroke: rgba(var(--accent-rgb),0.20); stroke-width: 1.4; }
-  .bgap-solid { stroke: rgba(var(--accent-rgb),0.34); stroke-width: 1.7; stroke-linecap: round; transition: stroke .18s ease, stroke-width .18s ease; }
-  .bgap-dash  { stroke: rgba(245,242,236,0.12); stroke-width: 1.15; stroke-dasharray: 4 7; stroke-linecap: round; transition: stroke .18s ease; }
-  .bgap-node  { stroke: rgba(var(--accent-rgb),0.4); stroke-width: 1.05; fill: var(--black); transition: stroke .18s ease, fill .18s ease; }
-  .bgap-sp.is-on .bgap-solid { stroke: rgba(var(--accent-rgb),0.95); stroke-width: 2.2; }
+     THE VALUE LADDER, contrast measured against the #0A0A0A ground.
+     Resting -> selected:
+       core mark        #F7931A disc, #F5F2EC B      [8.6 / 17.7]  static
+       card title       #F5F2EC .62 -> 1.0           [7.0 -> 17.7]
+       number + name    #F7931A .75 -> 1.0           [5.2 -> 8.6]
+       cost line        #E0524A 1.0 -> #FC8181 1.0   [5.2 -> 8.1]
+       one-liner        #F5F2EC .48 -> .78           [4.6 -> 10.8]
+       solid arc        #F7931A .22 -> .95, 1.7->2.4px
+       dashed remainder #F5F2EC .14 -> .26, 1.15px
+       leader           #F5F2EC .16 -> #F7931A .8
+       reference ring   #F7931A .07 -> .20            [1.1 -> 1.4]
+     The unselected arcs and the reference rings sit low ON PURPOSE. Twelve
+     curved strokes share this stage (four rings, four solid arcs, four dashed
+     remainders) and a first pass had the unselected arcs at .22 higher and the
+     rings at .10, which turned the centre into noise and buried the selected
+     arc in it. The selected arc has to own the drawing; everything else is the
+     field it is read against.
+     THE RULE, unchanged and still the rule: separation comes from RAISING the
+     selected state, never from dimming the rest below legibility. Every one of
+     the four text rows is permanently visible, so every one of them clears
+     4.6:1 at rest. The cost line is the tight one: #E0524A tops out at 5.16:1
+     even at full opacity, which is why it rests at 1.0 and takes its selected
+     step by moving to #FC8181, the lighter coral already used by
+     .threat-card h3 in the shared stylesheet. No new colour was introduced. */
+  .bgap { margin-top: 44px; position: relative; }
+  .bgap-stage { position: relative; width: 100%; aspect-ratio: 1000 / 540; }
+  .bgap-lines { position: absolute; inset: 0; width: 100%; height: 100%; display: block; overflow: visible; }
+  .bgap-lines path, .bgap-lines circle { vector-effect: non-scaling-stroke; fill: none; }
+  .bgap-ref   { stroke: rgba(var(--accent-rgb),0.07); stroke-width: 1; }
+  .bgap-solid { stroke: rgba(var(--accent-rgb),0.22); stroke-width: 1.7; stroke-linecap: round; transition: stroke .18s ease, stroke-width .18s ease; }
+  .bgap-dash  { stroke: rgba(245,242,236,0.14); stroke-width: 1.15; stroke-dasharray: 4 7; stroke-linecap: round; transition: stroke .18s ease; }
+  .bgap-lead  { stroke: rgba(245,242,236,0.16); stroke-width: 1.05; transition: stroke .18s ease, stroke-width .18s ease; }
+  .bgap-node  { stroke: rgba(245,242,236,0.3); stroke-width: 1.05; fill: var(--black); transition: stroke .18s ease, fill .18s ease; }
+  /* the SELECTED gap's target ring lifts with it. This is the ring that says
+     where the arc should have reached, so it has to be readable exactly when
+     someone is reading that gap; the other three stay at ghost level or the
+     centre turns back into noise. */
+  .bgap-sp.is-on .bgap-ref   { stroke: rgba(var(--accent-rgb),0.20); }
+  .bgap-sp.is-on .bgap-solid { stroke: rgba(var(--accent-rgb),0.95); stroke-width: 2.4; }
   .bgap-sp.is-on .bgap-dash  { stroke: rgba(245,242,236,0.26); }
+  .bgap-sp.is-on .bgap-lead  { stroke: rgba(var(--accent-rgb),0.8); stroke-width: 1.2; }
   .bgap-sp.is-on .bgap-node  { stroke: var(--accent); fill: var(--accent); }
 
-  /* THE CORE IS THE ACCENT AND THE BRIGHTEST THING HERE. It was neutral ink on
-     the quantum vault's precedent, and that precedent does not transfer: there
-     gray MEANT unchanged and the colour argument depended on it, here it means
-     nothing and only drains the one colour the object owns. A gray Bitcoin
-     mark on black reads as switched off.
-     Filled, not outlined, because that is the mark's canonical form and it is
-     what gives the centre mass without a gradient: flat accent disc, white B,
-     which is the real colourway rather than a recolour. An earlier cut knocked
-     the B out in the page ground so the glyph read as cut out of the disc,
-     which was the safer and more site-native choice; it lost because the whole
-     point of this element is to be the brightest thing in the composition and
-     white is brighter. If it ever starts reading as a pasted-in brand asset,
-     `fill: var(--black)` on .bgap-btc-b is the way back.
-     NO ELEMENTS WERE ADDED TO FIX THE FLATNESS, and that is worth knowing
-     because the instinct when something reads flat is always to add a shape.
-     This was going to get a denser hub disc behind the mark; filling the mark
-     made it unnecessary and it was never built. The fix was values, one
-     geometry change (the mark is filled and larger rather than outlined) and
-     retuning a layer that already existed. Element count is unchanged: 8
-     lines, 5 circles, 4 buttons, 2 SVGs. If this ever reads flat again, look
-     at the value ladder before reaching for a fifth thing.
-     PRESENCE COMES FROM THE HALO, WHICH IS NOT A NEW ELEMENT AND NOT A NEW
-     TECHNIQUE. It is the page's own .btcg-bloom, the same blurred
-     radial-gradient layer the card grids use, moved inside the stage and
-     retuned to sit on the core: tighter, and .18 against the .05 the grids
-     run at, because a bloom tuned to tint a whole card grid is invisible
-     behind a single 130px object. Blooms are already dropped at <=980 for the
-     paint budget, which is exactly where the radial stops existing anyway. */
+  /* the core. Accent disc, white B: the mark's real colourway, and the
+     brightest thing in the composition because it is the subject. It was
+     neutral once on quantum's precedent and that precedent does not transfer
+     (there gray MEANT unchanged); it is not coming back.
+     PRESENCE IS THE PAGE'S OWN .btcg-bloom, not a gradient of ours: the same
+     blurred radial layer the card grids use, parented to the stage so it
+     centres on the core, at .18 against the grids' .05 because a bloom tuned
+     to tint a whole grid is invisible behind one 125px object. Blooms are
+     already dropped at <=980 for the paint budget, which is where the orbits
+     stop existing anyway. */
   .bgap-core { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%);
-               width: 12.95%; aspect-ratio: 1 / 1; display: block; pointer-events: none; z-index: 1; }
+               width: 12.4%; aspect-ratio: 1 / 1; display: block; pointer-events: none; z-index: 1; }
   .bgap-btc { width: 100%; height: 100%; display: block; }
   .bgap-btc-disc { fill: var(--accent); stroke: none; }
   .bgap-btc-b    { fill: var(--white); }
   .page-btcfi .btcg-bloom-bgap { z-index: 0; }
-  .page-btcfi .btcg-bloom-bgap i { --bc: var(--accent); opacity: .18; left: 27%; top: 4%; width: 46%; height: 92%; }
+  .page-btcfi .btcg-bloom-bgap i { --bc: var(--accent); opacity: .18; left: 30%; top: 14%; width: 40%; height: 72%; }
 
-  /* the four labels. Mirrored alignment so each block hugs the core it hangs
-     off, which is what makes the composition read as radial rather than as
-     four captions in the corners. */
-  .bgap-spoke { position: absolute; width: 26%; background: none; border: 0; padding: 0;
-                font: inherit; color: inherit; cursor: pointer; display: block; }
-  .bgap-p0 { left: 1.5%;  top: 3.2%; text-align: right; }
-  .bgap-p1 { right: 1.5%; top: 3.2%; text-align: left; }
-  .bgap-p2 { right: 1.5%; bottom: 3.2%; text-align: left; }
-  .bgap-p3 { left: 1.5%;  bottom: 3.2%; text-align: right; }
-  /* THE RULE, and it is a rule and not a one-off: SEPARATION COMES FROM RAISING
-     THE SELECTED STATE, NEVER FROM DIMMING THE REST BELOW LEGIBILITY. The
-     one-liners are required to be readable without interaction, so their
-     resting value is a measured floor, not an aesthetic choice.
-     THE NUMBER IS 4.6:1. A first pass set the resting one-liner to 0.30 alpha
-     because it looked right in the composition; measured against the #0A0A0A
-     ground that is 2.44:1, which is not a readable body value at 13.5px. 0.48
-     is 4.6:1 and holds. If this device ever needs more contrast between the
-     selected gap and the other three, take it out of the selected state's
-     headroom, not out of this floor. Measure, do not eyeball: the whole reason
-     the earlier version read flat is that every value in it was picked by eye. */
-  .bgap-idx  { display: block; font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em;
-               color: rgba(245,242,236,0.28); margin-bottom: 7px; transition: color .18s ease; }
-  .bgap-name { display: block; font-family: var(--mono); font-size: 13px; letter-spacing: 0.2em;
-               text-transform: uppercase; color: rgba(245,242,236,0.62); margin-bottom: 9px;
+  /* the four cards. Real HTML over the SVG, never foreignObject: this is the
+     keyboard and screen-reader surface and it has to be a real button.
+     Mirrored alignment, and the accent bar sits on the edge facing the core so
+     the bar, the leader and the break all line up on the same side. */
+  .bgap-card { position: absolute; width: 26.5%; background: none; border: 0; padding: 0;
+               font: inherit; color: inherit; cursor: pointer; display: block; }
+  .bgap-p0 { left: 1.5%;  top: 3.7%;  text-align: right; padding-right: 15px; border-right: 2px solid rgba(var(--accent-rgb),0.28); }
+  .bgap-p1 { right: 1.5%; top: 3.7%;  text-align: left;  padding-left: 15px;  border-left:  2px solid rgba(var(--accent-rgb),0.28); }
+  .bgap-p2 { right: 1.5%; bottom: 3.7%; text-align: left;  padding-left: 15px;  border-left:  2px solid rgba(var(--accent-rgb),0.28); }
+  .bgap-p3 { left: 1.5%;  bottom: 3.7%; text-align: right; padding-right: 15px; border-right: 2px solid rgba(var(--accent-rgb),0.28); }
+  .bgap-card.is-on { border-color: var(--accent); }
+  .bgap-p0.is-on, .bgap-p3.is-on { border-right-width: 3px; }
+  .bgap-p1.is-on, .bgap-p2.is-on { border-left-width: 3px; }
+
+  .bgap-meta { display: block; font-family: var(--mono); font-size: 11px; letter-spacing: 0.2em;
+               text-transform: uppercase; color: rgba(var(--accent-rgb),0.75); margin-bottom: 9px;
                transition: color .18s ease; }
+  .bgap-idx  { opacity: .75; margin-right: 9px; }
+  .bgap-title { display: block; font-family: var(--display); font-size: 19px; font-weight: 700;
+                text-transform: uppercase; letter-spacing: -0.01em; line-height: 1.15;
+                color: rgba(245,242,236,0.62); margin-bottom: 9px; transition: color .18s ease; }
   .bgap-one  { display: block; font-family: var(--sans); font-size: 13.5px; line-height: 1.55;
                color: rgba(245,242,236,0.48); transition: color .18s ease; }
-  .bgap-spoke:hover .bgap-name { color: rgba(245,242,236,0.82); }
-  .bgap-spoke:hover .bgap-one  { color: rgba(245,242,236,0.62); }
-  .bgap-spoke.is-on .bgap-name { color: var(--white); }
-  .bgap-spoke.is-on .bgap-one  { color: rgba(245,242,236,0.78); }
-  .bgap-spoke.is-on .bgap-idx  { color: var(--accent); }
-  .bgap-bar { display: none; }
-  .bgap-spoke:focus-visible { outline: 2px solid var(--accent); outline-offset: 6px; border-radius: 3px; }
+  .bgap-cost { display: block; font-family: var(--mono); font-size: 11.5px; line-height: 1.5;
+               letter-spacing: 0.02em; color: #E0524A; margin-top: 10px; transition: color .18s ease; }
+  .bgap-card:hover .bgap-title { color: rgba(245,242,236,0.84); }
+  .bgap-card:hover .bgap-one   { color: rgba(245,242,236,0.62); }
+  .bgap-card.is-on .bgap-meta  { color: var(--accent); }
+  .bgap-card.is-on .bgap-title { color: var(--white); }
+  .bgap-card.is-on .bgap-one   { color: rgba(245,242,236,0.78); }
+  .bgap-card.is-on .bgap-cost  { color: #FC8181; }
+  .bgap-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 6px; border-radius: 3px; }
 
   /* the panel. .problem-item still carries the anchor ids and the verbatim
      bodies so the search index keeps all four entries, so its card chrome from
-     the shared styles.css has to be undone here rather than by editing that
-     file. (0,2,0) beats (0,1,0), which is why these are .bgap-item and not
-     bare overrides. */
-  /* max-width, so this rule reads as a hairline inside the device and not as
-     another full-bleed section turn like .gap-turn's further down. Same line,
-     different measure, different level. */
+     the shared styles.css is undone here rather than by editing that file.
+     max-width so the rule reads as a hairline inside the device and not as
+     another full-bleed section turn like .gap-turn's below it. */
   .bgap-panel { margin-top: 30px; border-top: 1px solid var(--border); padding-top: 24px; max-width: 860px; }
   .page-btcfi .bgap-item { display: none; background: none; border: 0; border-radius: 0;
-                           padding: 0; transform: none; box-shadow: none; max-width: 860px; }
+                           padding: 0; transform: none; box-shadow: none; }
   .page-btcfi .bgap-item.is-on { display: block; }
   .page-btcfi .bgap-item:hover { border: 0; box-shadow: none; transform: none; }
-  .page-btcfi .bgap-item h3 { font-family: var(--display); font-size: 19px; font-weight: 700;
-                              text-transform: uppercase; letter-spacing: -0.01em; margin-bottom: 9px; color: var(--white); }
+  /* A LABEL, NOT A HEADLINE. The selected card already carries this exact
+     string as its title, so rendering it again at display weight read as a
+     duplicate. It stays in the DOM as an h3 because the search index takes
+     each card entry's title from the first heading inside .problem-item, and
+     losing it would change four index titles; it is simply demoted to a mono
+     label that introduces the body. Do not delete it to remove the repetition. */
+  .page-btcfi .bgap-item h3 { font-family: var(--mono); font-size: 11px; font-weight: 400;
+                              text-transform: uppercase; letter-spacing: 0.2em;
+                              margin-bottom: 12px; color: rgba(var(--accent-rgb),0.75); }
   .page-btcfi .bgap-item p  { font-family: var(--sans); font-size: 15px; line-height: 1.7; color: rgba(245,242,236,0.62); }
 
-  /* AT <=860 THE DEVICE IS A LIST, NOT A SHRUNKEN RADIAL. The core sits above
-     the rows at reduced size, the spoke SVG is dropped entirely, and each row
-     draws its own solid-then-dashed bar that stops short of the row's right
-     edge. The shortfall reading survives; the radial geometry does not, because
-     four legible text blocks cannot orbit a core at 375. */
-  @media (max-width: 860px) {
-    .bgap-stage { aspect-ratio: auto; display: flex; flex-direction: column; gap: 0; }
-    .bgap-lines { display: none; }
-    .bgap-core { position: static; transform: none; width: 96px; height: 96px; margin: 0 auto 30px; }
-    .bgap-spoke { position: static; width: 100%; text-align: left; padding: 18px 0 20px;
-                  border-top: 1px solid var(--border);
-                  display: grid; grid-template-columns: auto 1fr; column-gap: 13px; }
-    .bgap-p0 { border-top: 0; padding-top: 0; }
-    /* the bar goes BETWEEN the name and the one-liner. Below the one-liner it
-       read as a rule separating rows; here it reads as this gap's own measure,
-       which is the whole point of it. */
-    .bgap-idx  { grid-column: 1; grid-row: 1; margin-bottom: 0; }
-    .bgap-name { grid-column: 2; grid-row: 1; margin-bottom: 0; }
-    .bgap-bar  { grid-column: 1 / -1; grid-row: 2; }
-    .bgap-one  { grid-column: 1 / -1; grid-row: 3; margin-top: 11px; }
-    .bgap-bar { display: flex; align-items: center; margin-top: 13px; width: 100%; }
-    .bgap-bar i { display: block; height: 0; }
-    /* solid run then dashed remainder, stopping short of the row's right edge:
-       the same claim the spokes make, laid flat. The 22% tail is left empty on
-       purpose, it is the gap. */
-    .bgap-bar i:first-child { width: 34%; border-top: 1.7px solid rgba(var(--accent-rgb),0.34); }
-    .bgap-bar i:last-child  { width: 44%; border-top: 1.15px dashed rgba(245,242,236,0.12); margin-left: 5px; }
-    .bgap-spoke.is-on .bgap-bar i:first-child { border-top: 2.2px solid rgba(var(--accent-rgb),0.95); }
-    .bgap-spoke.is-on .bgap-bar i:last-child  { border-top-color: rgba(245,242,236,0.26); }
-    .bgap-panel { margin-top: 26px; }
+  /* Selection is the only thing that moves, so this kills all of it and the end
+     state renders immediately. Declared after the rules it overrides, in the
+     same file, so it wins on source order at equal specificity. (A media query
+     adds NO specificity: that is the trap that made the reduced-motion fix in
+     the shared styles.css inert until it carried !important.) */
+  @media (prefers-reduced-motion: reduce) {
+    .bgap-solid, .bgap-dash, .bgap-lead, .bgap-node,
+    .bgap-meta, .bgap-title, .bgap-one, .bgap-cost { transition: none; }
   }
 
-  /* Selection is the only thing that moves here, so this kills all of it and
-     the end state renders immediately. Declared in btcfi's own block, after
-     the rules it overrides, so it wins on source order at equal specificity.
-     (A media query adds NO specificity: that is the trap that made the
-     reduced-motion fix in the shared styles.css inert until it carried
-     !important. These are same-file and later, so they do not need it.) */
-  @media (prefers-reduced-motion: reduce) {
-    .bgap-solid, .bgap-dash, .bgap-node,
-    .bgap-idx, .bgap-name, .bgap-one { transition: none; }
+  /* The flat bar belongs to the <=860 list only. DECLARED BEFORE that media
+     query on purpose: a media query adds NO specificity, so if this sat after
+     the block it would beat it on source order at equal specificity and the
+     bar would never render at any width. It did exactly that once. */
+  .bgap-bar { display: none; }
+
+  /* AT <=860 IT IS A LIST, NOT SHRUNKEN ORBITS. Four cards cannot orbit a core
+     at 375 and stay legible, so the arcs are dropped outright and each row
+     keeps a flat bar that runs solid then dashed and stops short. Same claim,
+     flat geometry, and the accent edge bar becomes the row's left border. */
+  @media (max-width: 860px) {
+    .bgap-stage { aspect-ratio: auto; display: flex; flex-direction: column; }
+    .bgap-lines { display: none; }
+    .bgap-core { position: static; transform: none; width: 96px; height: 96px; margin: 0 auto 30px; }
+    .bgap-card { position: static; width: 100%; text-align: left; padding: 18px 0 20px 16px;
+                 border: 0; border-left: 2px solid rgba(var(--accent-rgb),0.28);
+                 border-top: 1px solid var(--border); }
+    .bgap-p0 { border-top: 0; padding-top: 0; }
+    .bgap-p0.is-on, .bgap-p1.is-on, .bgap-p2.is-on, .bgap-p3.is-on { border-left-width: 3px; border-right-width: 0; }
+    .bgap-bar { display: flex; align-items: center; margin-top: 13px; width: 100%; }
+    .bgap-bar i { display: block; height: 0; }
+    .bgap-bar i:first-child { width: 34%; border-top: 1.7px solid rgba(var(--accent-rgb),0.34); }
+    .bgap-bar i:last-child  { width: 44%; border-top: 1.15px dashed rgba(245,242,236,0.12); margin-left: 5px; }
+    .bgap-card.is-on .bgap-bar i:first-child { border-top: 2.4px solid rgba(var(--accent-rgb),0.95); }
+    .bgap-card.is-on .bgap-bar i:last-child  { border-top-color: rgba(245,242,236,0.26); }
+    .bgap-panel { margin-top: 26px; }
   }
 
   /* 01's internal turn.
@@ -884,28 +885,35 @@
   <div class="bgap" id="bgap">
     <div class="bgap-stage" role="tablist" aria-label="Bitcoin's four capability gaps">
       <div class="btcg-bloom btcg-bloom-bgap" aria-hidden="true"><i></i></div>
-      <svg class="bgap-lines" viewBox="0 0 1000 440" aria-hidden="true" focusable="false" preserveAspectRatio="xMidYMid meet">
-        <circle class="bgap-hub" cx="500" cy="220" r="82"/>
-      <g class="bgap-sp" data-gap="0">
-        <line class="bgap-solid" x1="430.7" y1="176.2" x2="358.0" y2="130.2"/>
-        <line class="bgap-dash" x1="352.1" y1="126.5" x2="281.9" y2="82.2"/>
-        <circle class="bgap-node" cx="358.0" cy="130.2" r="4.8"/>
-      </g>
-      <g class="bgap-sp" data-gap="1">
-        <line class="bgap-solid" x1="569.3" y1="176.2" x2="642.0" y2="130.2"/>
-        <line class="bgap-dash" x1="647.9" y1="126.5" x2="718.1" y2="82.2"/>
-        <circle class="bgap-node" cx="642.0" cy="130.2" r="4.8"/>
-      </g>
-      <g class="bgap-sp" data-gap="2">
-        <line class="bgap-solid" x1="569.3" y1="263.8" x2="642.0" y2="309.8"/>
-        <line class="bgap-dash" x1="647.9" y1="313.5" x2="718.1" y2="357.8"/>
-        <circle class="bgap-node" cx="642.0" cy="309.8" r="4.8"/>
-      </g>
-      <g class="bgap-sp" data-gap="3">
-        <line class="bgap-solid" x1="430.7" y1="263.8" x2="358.0" y2="309.8"/>
-        <line class="bgap-dash" x1="352.1" y1="313.5" x2="281.9" y2="357.8"/>
-        <circle class="bgap-node" cx="358.0" cy="309.8" r="4.8"/>
-      </g>
+      <svg class="bgap-lines" viewBox="0 0 1000 540" aria-hidden="true" focusable="false" preserveAspectRatio="xMidYMid meet">
+        <g class="bgap-sp" data-gap="0">
+          <circle class="bgap-ref" cx="500" cy="270" r="104"/>
+          <path class="bgap-solid" d="M585.2,329.7 A104,104 0 1,1 426.5,196.5"/>
+          <path class="bgap-dash" d="M426.5,196.5 A104,104 0 0,1 600.5,243.1"/>
+          <path class="bgap-lead" d="M422.3,192.3 C394.7,164.7 336,95 281,95"/>
+          <circle class="bgap-node" cx="426.5" cy="196.5" r="4.4"/>
+        </g>
+        <g class="bgap-sp" data-gap="1">
+          <circle class="bgap-ref" cx="500" cy="270" r="134"/>
+          <path class="bgap-solid" d="M423.1,379.8 A134,134 0 1,1 594.8,175.2"/>
+          <path class="bgap-dash" d="M594.8,175.2 A134,134 0 0,1 534.7,399.4"/>
+          <path class="bgap-lead" d="M599.0,171.0 C626.6,143.4 664,95 719,95"/>
+          <circle class="bgap-node" cx="594.8" cy="175.2" r="4.4"/>
+        </g>
+        <g class="bgap-sp" data-gap="2">
+          <circle class="bgap-ref" cx="500" cy="270" r="164"/>
+          <path class="bgap-solid" d="M365.7,175.9 A164,164 0 1,1 616.0,386.0"/>
+          <path class="bgap-dash" d="M616.0,386.0 A164,164 0 0,1 341.6,312.4"/>
+          <path class="bgap-lead" d="M620.2,390.2 C647.8,417.8 664,445 719,445"/>
+          <circle class="bgap-node" cx="616.0" cy="386.0" r="4.4"/>
+        </g>
+        <g class="bgap-sp" data-gap="3">
+          <circle class="bgap-ref" cx="500" cy="270" r="194"/>
+          <path class="bgap-solid" d="M611.3,111.1 A194,194 0 1,1 362.8,407.2"/>
+          <path class="bgap-dash" d="M362.8,407.2 A194,194 0 0,1 449.8,82.6"/>
+          <path class="bgap-lead" d="M358.6,411.4 C331.0,439.0 336,445 281,445"/>
+          <circle class="bgap-node" cx="362.8" cy="407.2" r="4.4"/>
+        </g>
       </svg>
       <span class="bgap-core" aria-hidden="true">
         <svg class="bgap-btc" viewBox="0.893 0.469 39.119 39.123" focusable="false">
@@ -915,56 +923,64 @@
           </g>
         </svg>
       </span>
-    <button type="button" class="bgap-spoke bgap-p0" data-gap="0" role="tab"
-            id="bgapTab0" aria-posinset="1" aria-setsize="4" aria-selected="true" aria-controls="not-expressive" tabindex="0">
-      <span class="bgap-idx" aria-hidden="true">01</span>
-      <span class="bgap-name" id="bgapName0">Expressiveness</span>
-      <span class="bgap-one">no smart contracts, no lending markets, no automated strategies</span>
-      <span class="bgap-bar" aria-hidden="true"><i></i><i></i></span>
-    </button>
-    <button type="button" class="bgap-spoke bgap-p1" data-gap="1" role="tab"
-            id="bgapTab1" aria-posinset="2" aria-setsize="4" aria-selected="false" aria-controls="not-private" tabindex="-1">
-      <span class="bgap-idx" aria-hidden="true">02</span>
-      <span class="bgap-name" id="bgapName1">Privacy</span>
-      <span class="bgap-one">every balance, counterparty and transaction is permanently traceable</span>
-      <span class="bgap-bar" aria-hidden="true"><i></i><i></i></span>
-    </button>
-    <button type="button" class="bgap-spoke bgap-p2" data-gap="2" role="tab"
-            id="bgapTab2" aria-posinset="3" aria-setsize="4" aria-selected="false" aria-controls="not-scalable-enough" tabindex="-1">
-      <span class="bgap-idx" aria-hidden="true">03</span>
-      <span class="bgap-name" id="bgapName2">Scale</span>
-      <span class="bgap-one">slow blocks, fee spikes, a handful of transactions per second</span>
-      <span class="bgap-bar" aria-hidden="true"><i></i><i></i></span>
-    </button>
-    <button type="button" class="bgap-spoke bgap-p3" data-gap="3" role="tab"
-            id="bgapTab3" aria-posinset="4" aria-setsize="4" aria-selected="false" aria-controls="not-quantum-resistant" tabindex="-1">
-      <span class="bgap-idx" aria-hidden="true">04</span>
-      <span class="bgap-name" id="bgapName3">Quantum</span>
-      <span class="bgap-one">the cryptographic risk could be relevant as early as 2029</span>
-      <span class="bgap-bar" aria-hidden="true"><i></i><i></i></span>
-    </button>
+      <button type="button" class="bgap-card bgap-p0" data-gap="0" role="tab"
+              id="bgapTab0" aria-posinset="1" aria-setsize="4"
+              aria-selected="true" aria-controls="not-expressive" tabindex="0">
+        <span class="bgap-meta"><span class="bgap-idx" aria-hidden="true">01</span><span class="bgap-name" id="bgapName0">Expressiveness</span></span>
+        <span class="bgap-title">Not expressive</span>
+        <span class="bgap-one">no smart contracts, no lending markets, no automated strategies</span>
+        <span class="bgap-cost">everything advanced is built elsewhere</span>
+        <span class="bgap-bar" aria-hidden="true"><i></i><i></i></span>
+      </button>
+      <button type="button" class="bgap-card bgap-p1" data-gap="1" role="tab"
+              id="bgapTab1" aria-posinset="2" aria-setsize="4"
+              aria-selected="false" aria-controls="not-private" tabindex="-1">
+        <span class="bgap-meta"><span class="bgap-idx" aria-hidden="true">02</span><span class="bgap-name" id="bgapName1">Privacy</span></span>
+        <span class="bgap-title">Not private</span>
+        <span class="bgap-one">every balance, counterparty and transaction is permanently traceable</span>
+        <span class="bgap-cost">spending and positions cannot stay private</span>
+        <span class="bgap-bar" aria-hidden="true"><i></i><i></i></span>
+      </button>
+      <button type="button" class="bgap-card bgap-p2" data-gap="2" role="tab"
+              id="bgapTab2" aria-posinset="3" aria-setsize="4"
+              aria-selected="false" aria-controls="not-scalable-enough" tabindex="-1">
+        <span class="bgap-meta"><span class="bgap-idx" aria-hidden="true">03</span><span class="bgap-name" id="bgapName2">Scale</span></span>
+        <span class="bgap-title">Not scalable enough</span>
+        <span class="bgap-one">slow blocks, fee spikes, a handful of transactions per second</span>
+        <span class="bgap-cost">never designed for global financial activity</span>
+        <span class="bgap-bar" aria-hidden="true"><i></i><i></i></span>
+      </button>
+      <button type="button" class="bgap-card bgap-p3" data-gap="3" role="tab"
+              id="bgapTab3" aria-posinset="4" aria-setsize="4"
+              aria-selected="false" aria-controls="not-quantum-resistant" tabindex="-1">
+        <span class="bgap-meta"><span class="bgap-idx" aria-hidden="true">04</span><span class="bgap-name" id="bgapName3">Quantum</span></span>
+        <span class="bgap-title">Not quantum-resistant</span>
+        <span class="bgap-one">the cryptographic risk could be relevant as early as 2029</span>
+        <span class="bgap-cost">urgent for an asset built to last centuries</span>
+        <span class="bgap-bar" aria-hidden="true"><i></i><i></i></span>
+      </button>
     </div>
     <div class="bgap-panel">
-    <div id="not-expressive" class="problem-item bgap-item is-on" data-gap="0"
-         role="tabpanel" aria-labelledby="bgapName0">
-      <h3>Not expressive</h3>
-      <p>Bitcoin's scripting layer was intentionally limited. No smart contracts, no lending markets, no automated strategies. Everything advanced must be built elsewhere.</p>
-    </div>
-    <div id="not-private" class="problem-item bgap-item" data-gap="1"
-         role="tabpanel" aria-labelledby="bgapName1" hidden>
-      <h3>Not private</h3>
-      <p>Bitcoin is public by default: every balance, counterparty and transaction is permanently traceable. Once an address is linked to an identity, an entire financial history follows, which makes spending, payroll and DeFi positions impossible to keep private. As Satoshi himself noted in 2010: ZK proofs could make Bitcoin "much better."</p>
-    </div>
-    <div id="not-scalable-enough" class="problem-item bgap-item" data-gap="2"
-         role="tabpanel" aria-labelledby="bgapName2" hidden>
-      <h3>Not scalable enough</h3>
-      <p>Slow block times. Fee spikes. A handful of transactions per second. Bitcoin's base layer was never designed for global financial activity at scale.</p>
-    </div>
-    <div id="not-quantum-resistant" class="problem-item bgap-item" data-gap="3"
-         role="tabpanel" aria-labelledby="bgapName3" hidden>
-      <h3>Not quantum-resistant</h3>
-      <p>Google researchers warn the cryptographic risk could be relevant as early as 2029. For an asset built to last centuries, this is an urgent short-term concern.</p>
-    </div>
+      <div id="not-expressive" class="problem-item bgap-item is-on" data-gap="0"
+           role="tabpanel" aria-labelledby="bgapName0">
+        <h3>Not expressive</h3>
+        <p>Bitcoin's scripting layer was intentionally limited. No smart contracts, no lending markets, no automated strategies. Everything advanced must be built elsewhere.</p>
+      </div>
+      <div id="not-private" class="problem-item bgap-item" data-gap="1"
+           role="tabpanel" aria-labelledby="bgapName1" hidden>
+        <h3>Not private</h3>
+        <p>Bitcoin is public by default: every balance, counterparty and transaction is permanently traceable. Once an address is linked to an identity, an entire financial history follows, which makes spending, payroll and DeFi positions impossible to keep private. As Satoshi himself noted in 2010: ZK proofs could make Bitcoin "much better."</p>
+      </div>
+      <div id="not-scalable-enough" class="problem-item bgap-item" data-gap="2"
+           role="tabpanel" aria-labelledby="bgapName2" hidden>
+        <h3>Not scalable enough</h3>
+        <p>Slow block times. Fee spikes. A handful of transactions per second. Bitcoin's base layer was never designed for global financial activity at scale.</p>
+      </div>
+      <div id="not-quantum-resistant" class="problem-item bgap-item" data-gap="3"
+           role="tabpanel" aria-labelledby="bgapName3" hidden>
+        <h3>Not quantum-resistant</h3>
+        <p>Google researchers warn the cryptographic risk could be relevant as early as 2029. For an asset built to last centuries, this is an urgent short-term concern.</p>
+      </div>
     </div>
   </div>
 
@@ -3186,7 +3202,7 @@
 (function(){
   var root = document.getElementById('bgap');
   if (!root || !window.thRove) return;
-  var spokes = [].slice.call(root.querySelectorAll('.bgap-spoke'));
+  var spokes = [].slice.call(root.querySelectorAll('.bgap-card'));
   var items  = [].slice.call(root.querySelectorAll('.bgap-item'));
   var svgs   = [].slice.call(root.querySelectorAll('.bgap-sp'));
   if (!spokes.length) return;
