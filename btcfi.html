@@ -1016,6 +1016,14 @@
      crisp, full height and coral in every state, hover included */
   .page-btcfi .risk-quote.btcg-card,
   .page-btcfi .risk-quote.btcg-card:hover{border-left:3px solid #E0524A;}
+  /* the <1% band: the deeper-risk rules verbatim with coral swapped for the
+     accent. Padding is the risk-quote's shipped 36/44 rhythm (the shared
+     .big-stat's 48px loses at specificity); the rail is the same 3px solid,
+     crisp in every state; the bloom mirrors .btcg-bloom-quote's geometry. */
+  .page-btcfi .big-stat.btcg-card{padding:36px 44px 38px;}
+  .page-btcfi .big-stat.btcg-card,
+  .page-btcfi .big-stat.btcg-card:hover{border-left:3px solid var(--accent);}
+  .page-btcfi .btcg-bloom-stat i{--bc:var(--accent);left:8%;top:12%;width:45%;height:76%;}
   /* fallback for engines without backdrop-filter: a slightly more opaque
      deliberate solid surface */
   @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))){
@@ -1554,7 +1562,18 @@
        sourced on the paragraph (Spark, Q1 2026: 0.46% strict, ~0.8% by the
        generous definition -- both sides of the same-round measurement stay
        under 1%). -->
-  <div class="big-stat">
+  <!-- THE BAND IS THE DEEPER-RISK BOX'S SIBLING BY CLASS, NOT BY COPY: it
+       joins .btcg-card, the page's one glass recipe, so the two surfaces
+       cannot drift apart -- same ink-glass fill, hairline, blur, inset
+       highlight set, top-light ::after, hover grammar and (zero) radius by
+       reference. The deeper-risk box adds .btcg-coral to swap --ba to coral;
+       this band adds nothing, because .btcg-card's default --ba IS the page
+       accent. The old shared .big-stat skin (rgba(accent,.15) fill + .3 full
+       border -- the muddy brown) loses to the class at specificity, and the
+       accent ambience comes the same way the coral one does: a btcg-bloom
+       child mirroring .btcg-bloom-quote's geometry. -->
+  <div class="big-stat btcg-card">
+    <div class="btcg-bloom btcg-bloom-stat" aria-hidden="true"><i></i></div>
     <div class="big-stat-num">&lt;1%</div>
     <p class="big-stat-label th-claim" data-perishable="third-party"
        data-src="https://www.spark.money/research/btcfi-bitcoin-defi-landscape-2026"
