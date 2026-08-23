@@ -244,6 +244,10 @@
        data-gap index. */
     const bgc = target.closest && target.closest('.bgap-card');
     if (bgc && !bgc.classList.contains('is-on')) did = clickIf(bgc) || did;
+    /* btcfi: the risk podiums show one risk panel at a time. Same contract
+       as privacy's .pmv-panel: the panel names its tab via aria-labelledby. */
+    const brk = target.closest && target.closest('.brk-panel');
+    if (brk && brk.hidden) did = clickIf(document.getElementById(brk.getAttribute('aria-labelledby'))) || did;
     /* privacy: bills panel shows one bill at a time */
     const bill = target.closest && target.closest('.bstk-bill');
     if (bill && !bill.classList.contains('is-on')) did = clickIf(document.querySelectorAll('#bills .bstk-tab')[+bill.dataset.bill]) || did;

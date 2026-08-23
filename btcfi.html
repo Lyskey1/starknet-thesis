@@ -320,40 +320,125 @@
   .tl-detail, .tl-detail.btc { border-color: rgba(var(--accent-rgb),0.3); background: rgba(var(--accent-rgb),0.04); }
   .tl-detail-year, .tl-detail.btc .tl-detail-year { color: var(--accent); }
 
-  /* (6) Threat section redesign — flat hairline cards, red (#E0524A)
-     used only as a restrained signal (thin left bar + "Risk 0X" label),
-     white headings, grey body; warning box → clean pull-quote. */
-  /* SCOPED TO .page-btcfi, NOT TO .threat. These rules used to hang off a
-     `.threat` ancestor, and there is no THREAT section any more: the three
-     surviving risk cards live inside 01 now. .page-btcfi keeps the same
-     (0,2,0) specificity, so it still beats the `.threat-card { grid-column:
-     span 2 }` rule in the shared styles.css that the grid-column line below
-     exists to override. Do not shorten it to a bare `.threat-card`, that
-     drops to (0,1,0) and the span-2 rule wins. */
-  .threat-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin-top: 46px; }
-  .page-btcfi .threat-card {
-    grid-column: auto; /* override the old .threat-card span-2 rule from styles.css */
-    position: relative; border: 1px solid var(--border); border-radius: 8px;
-    padding: 28px 26px 28px 30px; background: rgba(255,255,255,0.014);
-    transition: border-color .2s, box-shadow .2s, transform .2s;
+  /* (6) THE RISK PODIUMS (.brk): privacy's pedestal selector (.pmv), this
+     page's hand. WHAT IS REUSED FROM THE REFERENCE, deliberately verbatim:
+     the plinth geometry (elliptical top face <i> over a cylinder wall <u>,
+     the same radii and the same inset-white highlight set, which is the
+     entire volume read), the floor halo ::before, the icon lift + drop-shadow
+     glow on selection, the 24-grid/1.1-stroke icon discipline, the mono
+     label, and the pmv height-animated stage. WHAT IS ADAPTED: glass comes
+     from THIS page's shipped recipe (the btcg-card values: .032 fill, .07
+     hairline, blur 16 sat 112) instead of privacy's --card-glass-* tokens,
+     which do not exist here; the accent is this page's --accent; and the
+     dropped .threat-card class means the shared styles.css span-2/h3 rules
+     no longer need overriding at all (the old (0,2,0) armor is gone WITH its
+     target -- do not resurrect the class name for styling).
+     VALUES, measured against #0A0A0A after render, not derived:
+       title   .62 -> 1.0 white     [~7:1 -> ~17:1], same ladder as .bgap-title,
+                                     so the 4.6:1 floor holds UNSELECTED
+       label   #E0524A 1.0 always; selected moves to #FC8181 -- the cost-line
+               grammar, because coral tops out at 5.16:1 and cannot afford an
+               opacity step (the compute-the-product lesson: text never dims
+               by a wrapper opacity here, each state sets its own colour)
+       icon/plinth  .5 -> 1.0 (graphics, no text floor)
+     SELECTION IS TABS, NOT LISTBOX: the panel really is revealed/hidden. */
+  .brk { margin-top: 46px; position: relative; }
+  .brk-row { position: relative; display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 18px; }
+  .brk-row > .btcg-bloom { z-index: 0; }
+  .brk-ped { position: relative; z-index: 1; display: grid; grid-template-rows: 1fr auto auto auto;
+    justify-items: center; background: none; border: 0; padding: 0 6px 6px; margin: 0;
+    font: inherit; color: inherit; cursor: pointer; border-radius: 14px; }
+  .brk-ped:focus-visible { outline: 2px solid var(--accent); outline-offset: 5px; }
+  /* floor halo, selected only. On the PLINTH's ::after, not the button's
+     ::before as in the reference: this button has a flexible icon row above
+     the plinth (the reference's rows are fixed), so only the plinth itself
+     is a stable anchor for a floor glow. */
+  .brk-plinth::after { content: ""; position: absolute; left: -10%; right: -10%; top: -4px; bottom: -16px;
+    border-radius: 50%; background: radial-gradient(closest-side, rgba(var(--accent-rgb), .22), transparent 72%);
+    opacity: 0; transition: opacity .4s ease; pointer-events: none; }
+  .brk-ped[aria-selected="true"] .brk-plinth::after { opacity: 1; }
+  .brk-obj { width: 62px; height: 62px; color: var(--accent); align-self: end; margin-bottom: 6px;
+    position: relative; z-index: 2; opacity: .5;
+    transition: transform .4s cubic-bezier(.22,1,.36,1), filter .4s ease, opacity var(--hover-dur) var(--hover-ease); }
+  .brk-obj svg { width: 100%; height: 100%; display: block; }
+  .brk-ped[aria-selected="true"] .brk-obj { opacity: 1; transform: translateY(-6px);
+    filter: drop-shadow(0 0 10px rgba(var(--accent-rgb), .45)); }
+  .brk-ped:hover .brk-obj { opacity: .8; }
+  /* the plinth: reference geometry, this page's glass */
+  .brk-plinth { position: relative; width: 100%; max-width: 200px; height: 46px; z-index: 1;
+    opacity: .55; transition: opacity var(--hover-dur) var(--hover-ease); }
+  .brk-ped[aria-selected="true"] .brk-plinth { opacity: 1; }
+  .brk-plinth i, .brk-plinth u { position: absolute; left: 0; right: 0; display: block; }
+  .brk-plinth u { top: 13px; bottom: 0; border-radius: 0 0 50% 50% / 0 0 26px 26px;
+    background: rgba(245,242,236,.032); border: 1px solid rgba(245,242,236,.1); border-top: 0;
+    -webkit-backdrop-filter: blur(16px) saturate(112%);
+    backdrop-filter: blur(16px) saturate(112%);
+    box-shadow: inset 0 -1px 0 rgba(255,255,255,.22), inset 0 0 24px rgba(255,255,255,.05);
+    transition: border-color var(--hover-dur) var(--hover-ease); }
+  .brk-plinth i { top: 0; height: 26px; border-radius: 50%;
+    background: rgba(245,242,236,.032); border: 1px solid rgba(245,242,236,.1);
+    -webkit-backdrop-filter: blur(16px) saturate(112%);
+    backdrop-filter: blur(16px) saturate(112%);
+    box-shadow: inset -1px -1px 0 rgba(255,255,255,.42), inset 1px 1px 0 rgba(255,255,255,.10),
+      inset 0 1px 0 rgba(255,255,255,.26), inset 0 0 24px rgba(255,255,255,.05);
+    transition: border-color var(--hover-dur) var(--hover-ease), background var(--hover-dur) var(--hover-ease); }
+  .brk-ped[aria-selected="true"] .brk-plinth i,
+  .brk-ped[aria-selected="true"] .brk-plinth u { border-color: rgba(var(--accent-rgb), .55); }
+  .brk-ped[aria-selected="true"] .brk-plinth i { background: rgba(var(--accent-rgb), .12); }
+  .brk-label { font-family: var(--mono); font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase;
+    color: #E0524A; margin-top: 14px; white-space: nowrap; transition: color .18s ease; }
+  .brk-label b { font-weight: 600; margin-right: 7px; }
+  .brk-ped[aria-selected="true"] .brk-label { color: #FC8181; }
+  .brk-title { display: block; font-family: var(--sans); font-weight: 600; font-size: 15px;
+    line-height: 1.3; color: rgba(245,242,236,.62); margin-top: 8px; max-width: 24ch; text-align: center;
+    text-wrap: balance; transition: color .18s ease; }
+  .brk-ped[aria-selected="true"] .brk-title { color: var(--white); }
+  .brk-ped:hover .brk-title { color: rgba(245,242,236,.84); }
+  /* the panel: pmv's height-animated stage, one risk's body at a time, the
+     old cards' coral grammar (left bar + Risk NN eyebrow) kept intact */
+  .brk-stage { margin-top: 30px; border-top: 1px solid var(--border); padding-top: 26px;
+    overflow: hidden; transition: height .42s var(--hover-ease); }
+  .brk-panel[hidden] { display: none; }
+  .brk-panel { position: relative; padding: 2px 0 2px 30px; max-width: 860px; }
+  .brk-panel::before { content: ''; position: absolute; left: 0; top: 4px; bottom: 4px;
+    width: 2px; background: #E0524A; border-radius: 2px; opacity: .85; }
+  .brk-panel .idx { display: block; font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em;
+    text-transform: uppercase; color: #E0524A; margin-bottom: 10px; }
+  .brk-panel p { font-family: var(--sans); font-size: 15px; color: rgba(245,242,236,0.75); line-height: 1.7; }
+  /* index title source: a real h4 (heading order under the .gap-turn h3
+     holds), visually clipped because the podium column already shows it */
+  .brk-sr { position: absolute; width: 1px; height: 1px; overflow: hidden;
+    clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; margin: 0; }
+  @media (max-width: 700px) {
+    .brk-row { gap: 10px; }
+    .brk-obj { width: 48px; height: 48px; }
+    .brk-plinth { height: 38px; max-width: 150px; }
+    .brk-plinth i { height: 20px; }
+    .brk-plinth u { top: 10px; }
+    .brk-label { font-size: 9px; letter-spacing: .07em; }
+    .brk-title { font-size: 12.5px; }
   }
-  .page-btcfi .threat-card::before {
-    content: ''; position: absolute; left: 0; top: 22px; bottom: 22px;
-    width: 2px; background: #E0524A; border-radius: 2px; opacity: .85;
+  /* AT <=560 THE PODIUMS GO, THE CLAIMS STAY: three columns cannot hold
+     three multi-line titles legibly at 375, so each pedestal becomes a flat
+     selector row (icon + label + title) and the panel keeps working below --
+     the same flat-at-small doctrine as the gap device's <=860 list. */
+  @media (max-width: 560px) {
+    .brk-row { display: flex; flex-direction: column; gap: 0; }
+    /* selection takes the accent left bar, the same mark the gap device's
+       <=860 list uses, so the two flat lists share one selection grammar */
+    .brk-ped { display: flex; align-items: center; justify-content: flex-start; gap: 14px;
+      text-align: left; padding: 13px 4px 13px 10px; border-radius: 0; border-top: 1px solid var(--border);
+      border-left: 2px solid transparent; }
+    .brk-ped:first-of-type { border-top: 0; }
+    .brk-ped[aria-selected="true"] { border-left-color: rgba(var(--accent-rgb), .9); }
+    .brk-row > .btcg-bloom { display: none; }
+    .brk-plinth { display: none; }
+    .brk-obj { width: 30px; height: 30px; flex: 0 0 auto; align-self: center; margin-bottom: 0; }
+    .brk-ped[aria-selected="true"] .brk-obj { transform: none; }
+    .brk-label { margin-top: 0; flex: 0 0 auto; min-width: 108px; }
+    .brk-title { margin-top: 0; text-align: left; text-wrap: wrap; max-width: none; }
+    .brk-stage { margin-top: 18px; }
   }
-  .page-btcfi .threat-card:hover { border-color: rgba(224,82,74,0.4); box-shadow: 0 10px 36px rgba(224,82,74,0.07); transform: translateY(-3px); }
-  .page-btcfi .threat-card .idx { display: block; font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: #E0524A; margin-bottom: 14px; }
-  /* h4, NOT h3. The risk cards sit under the .gap-turn h3 now, so an h3 here
-     would put a heading under a heading of the same level. Changing the tag
-     also drops the `.threat-card h3` rule in the shared styles.css, which is
-     fine and was already the case in effect: this rule overrode every property
-     that one sets (family, size, weight, colour, margin, line-height). The
-     global `* { margin: 0 }` reset means h4 brings no UA margin with it. The
-     search index is indifferent, it extracts cards by class, not by tag. */
-  .page-btcfi .threat-card h4 { font-family: var(--sans); font-weight: 600; font-size: 18px; color: var(--white); margin-bottom: 10px; line-height: 1.25; }
-  .page-btcfi .threat-card p { font-family: var(--sans); font-size: 14px; color: rgba(245,242,236,0.58); line-height: 1.65; }
-  @media (max-width: 920px) { .threat-grid { grid-template-columns: 1fr 1fr; } }
-  @media (max-width: 600px) { .threat-grid { grid-template-columns: 1fr; } }
 
   /* ---- section 01: BROKEN ORBITS. Geometry notes live on the markup. ----
      WHY ORBITS RATHER THAN SPOKES. An incomplete ring IS a shortfall; it does
@@ -631,6 +716,9 @@
     .btcg-bloom-bgap i { animation: none !important; }
     .bgap-solid, .bgap-dash, .bgap-lead, .bgap-node,
     .bgap-meta, .bgap-title, .bgap-one, .bgap-cost, .bgap-note { transition: none; }
+    .brk-ped, .brk-plinth::after, .brk-obj, .brk-plinth, .brk-plinth i, .brk-plinth u,
+    .brk-label, .brk-title, .brk-stage { transition: none; }
+    .brk-ped[aria-selected="true"] .brk-obj { transform: none; }
   }
 
   /* The flat bar belongs to the <=860 list only. DECLARED BEFORE that media
@@ -683,7 +771,7 @@
   .gap-turn { margin-top: 62px; padding-top: 34px; border-top: 1px solid var(--border); }
   .gap-turn .scale-label { color: #E0524A; }
   .gap-turn .scale-title { margin-bottom: 0; }
-  .gap-turn + .threat-grid { margin-top: 28px; }
+  .gap-turn + .brk { margin-top: 28px; }
   @media (max-width: 880px) { .gap-turn { margin-top: 46px; padding-top: 26px; } }
 
   .risk-quote { margin-top: 36px; border-left: 3px solid #E0524A; padding: 6px 0 6px 34px; max-width: 1000px; }
@@ -784,7 +872,7 @@
      bleeding under a violet card produced brown mud on the landing, and
      the strkBTC row mixes both hues. In-grid layers are absolutely
      positioned, so they occupy no grid cell. */
-  .page-btcfi .threat-grid,.page-btcfi .modes{position:relative;}
+  .page-btcfi .modes{position:relative;} /* .brk-row carries its own position:relative for the threat bloom */
   .page-btcfi .btcg-bloom{position:absolute;inset:0;z-index:0;pointer-events:none;filter:blur(58px);}
   .page-btcfi .btcg-bloom i{position:absolute;border-radius:50%;background:radial-gradient(closest-side,var(--bc),transparent 70%);opacity:.05;}
   /* the two single panels carry their bloom inside the card, so it can
@@ -1198,23 +1286,77 @@
     <h3 id="the-market-risk-if-bitcoin-stays" class="scale-title">The market risk if Bitcoin stays idle</h3>
   </div>
 
-  <div class="threat-grid">
-    <div id="centralized-wrappers-dominate" class="threat-card btcg-card btcg-coral">
-      <span class="idx">Risk 01</span>
-      <h4>Centralized wrappers dominate</h4>
-      <p>WBTC and its alternatives control most Bitcoin in DeFi. These rely on custodians, legal agreements, and institutional trust, the exact model Bitcoin was built to replace.</p>
+  <!-- THE RISK PODIUMS (.brk). Replaced the three flat risk cards with
+       privacy's pedestal-selector grammar (.pmv, privacy.html section 04):
+       glass plinth (elliptical top face over a cylinder wall), floating line
+       icon above, mono label below, floor halo under the selected one. Same
+       hand, this page's accent. WHAT DIFFERS FROM THE REFERENCE, on purpose:
+       the card TITLES stay permanently visible under the labels, because
+       these are three arguments, not three chapters -- a reader who never
+       clicks must still see all three claims; and there is no sticky
+       machinery, because three one-paragraph panels never put the selector
+       out of reach.
+       THE IDS ARE LOAD-BEARING and live on the PANELS: the search index
+       extracts these three by class brk-panel (build-search-index.js), reads
+       the title from the visually-hidden h4 and keeps the Risk NN eyebrow in
+       the body, so the three entries stay byte-identical to the old cards'.
+       Body copy is VERBATIM from the old cards; do not rewrite it here
+       without knowing it is the only place these three claims are argued.
+       Selection is tabs, not listbox: unlike the gap device above, content
+       here really is revealed and hidden, so tab/tabpanel is the honest
+       grammar, and search.js carries a .brk-panel adapter (same contract as
+       privacy's .pmv-panel) so palette hits open the right risk. -->
+  <div class="brk" id="brk">
+    <div class="brk-row" role="tablist" aria-label="Market risks if Bitcoin stays idle">
+      <div class="btcg-bloom btcg-bloom-threat" aria-hidden="true"><i></i><i></i><i></i></div>
+      <button class="brk-ped" type="button" role="tab" id="brkTab01" data-r="0"
+              aria-selected="true" aria-controls="centralized-wrappers-dominate" tabindex="0">
+        <!-- WRAPPERS: a coin held inside a custody frame. NOTE: the icon spec
+             in the brief was cut off; these three are this pass's own designs
+             in the reference's stroke discipline (24 grid, 1.1 stroke, round
+             caps, one heavier .55-opacity detail) and are the first thing to
+             redraw if the owner's spec differs. -->
+        <span class="brk-obj" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.7"/><path d="M3.6 8V5.6a2 2 0 0 1 2-2H8M16 3.6h2.4a2 2 0 0 1 2 2V8M20.4 16v2.4a2 2 0 0 1-2 2H16M8 20.4H5.6a2 2 0 0 1-2-2V16"/><path d="M10.9 9.6v-1M13.1 9.6v-1M10.9 15.4v-1M13.1 15.4v-1" stroke-width="1.6" stroke-linecap="butt" opacity=".55"/></svg></span>
+        <span class="brk-plinth" aria-hidden="true"><u></u><i></i></span>
+        <span class="brk-label"><b>Risk 01</b>WRAPPERS</span>
+        <span class="brk-title">Centralized wrappers dominate</span>
+      </button>
+      <button class="brk-ped" type="button" role="tab" id="brkTab02" data-r="1"
+              aria-selected="false" aria-controls="trust-assumptions-everywhere" tabindex="-1">
+        <!-- TRUST: a bridge, the copy's own metaphor -- deck on an arch, the
+             thing every wrapped path stands on. -->
+        <span class="brk-obj" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"><path d="M2.8 15.2h18.4"/><path d="M5.9 15.2v-4.4M18.1 15.2v-4.4M12 15.2v-2.6"/><path d="M4.2 10.9c2.4-2.5 4.8-3.7 7.8-3.7s5.4 1.2 7.8 3.7"/><path d="M4 19h3M10.5 19h3M17 19h3" stroke-width="1.6" stroke-linecap="butt" opacity=".55"/></svg></span>
+        <span class="brk-plinth" aria-hidden="true"><u></u><i></i></span>
+        <span class="brk-label"><b>Risk 02</b>TRUST</span>
+        <span class="brk-title">Trust assumptions everywhere</span>
+      </button>
+      <button class="brk-ped" type="button" role="tab" id="brkTab03" data-r="2"
+              aria-selected="false" aria-controls="fragmented-liquidity" tabindex="-1">
+        <!-- LIQUIDITY: one pool broken into disconnected arcs, fragments
+             drifting off. -->
+        <span class="brk-obj" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 6A6.6 6.6 0 0 1 18.4 10.7"/><path d="M18.4 14.1A6.6 6.6 0 0 1 10.3 18.8"/><path d="M7.3 17.1A6.6 6.6 0 0 1 7.3 7.7"/><circle cx="20.9" cy="5.2" r="1"/><circle cx="3.3" cy="18" r="1"/><path d="M19.5 18.8h1.9M4.1 4.9h1.9" stroke-width="1.6" stroke-linecap="butt" opacity=".55"/></svg></span>
+        <span class="brk-plinth" aria-hidden="true"><u></u><i></i></span>
+        <span class="brk-label"><b>Risk 03</b>LIQUIDITY</span>
+        <span class="brk-title">Fragmented liquidity</span>
+      </button>
     </div>
-    <div id="trust-assumptions-everywhere" class="threat-card btcg-card btcg-coral">
-      <span class="idx">Risk 02</span>
-      <h4>Trust assumptions everywhere</h4>
-      <p>Bridges introduce layers of custodial risk. Without a trustless settlement path, "Bitcoin DeFi" remains a marketing claim built on the same fragile infrastructure as traditional finance.</p>
+    <div class="brk-stage" id="brkStage">
+      <div class="brk-panel" id="centralized-wrappers-dominate" role="tabpanel" aria-labelledby="brkTab01">
+        <span class="idx">Risk 01</span>
+        <h4 class="brk-sr">Centralized wrappers dominate</h4>
+        <p>WBTC and its alternatives control most Bitcoin in DeFi. These rely on custodians, legal agreements, and institutional trust, the exact model Bitcoin was built to replace.</p>
+      </div>
+      <div class="brk-panel" id="trust-assumptions-everywhere" role="tabpanel" aria-labelledby="brkTab02" hidden>
+        <span class="idx">Risk 02</span>
+        <h4 class="brk-sr">Trust assumptions everywhere</h4>
+        <p>Bridges introduce layers of custodial risk. Without a trustless settlement path, "Bitcoin DeFi" remains a marketing claim built on the same fragile infrastructure as traditional finance.</p>
+      </div>
+      <div class="brk-panel" id="fragmented-liquidity" role="tabpanel" aria-labelledby="brkTab03" hidden>
+        <span class="idx">Risk 03</span>
+        <h4 class="brk-sr">Fragmented liquidity</h4>
+        <p>Bitcoin's capital is scattered across dozens of chains with no unified DeFi layer. This reduces efficiency, increases friction, and splits ecosystems that should compound on each other.</p>
+      </div>
     </div>
-    <div id="fragmented-liquidity" class="threat-card btcg-card btcg-coral">
-      <span class="idx">Risk 03</span>
-      <h4>Fragmented liquidity</h4>
-      <p>Bitcoin's capital is scattered across dozens of chains with no unified DeFi layer. This reduces efficiency, increases friction, and splits ecosystems that should compound on each other.</p>
-    </div>
-    <div class="btcg-bloom btcg-bloom-threat" aria-hidden="true"><i></i><i></i><i></i></div>
   </div>
 
   <div class="big-stat">
@@ -3742,6 +3884,77 @@
       engineUpdate();
     }, { threshold: 0 }).observe(root);
   } else { visible = true; root.classList.add('run'); engineUpdate(); }
+})();
+</script>
+<script>
+/* the risk podiums (.brk). Selection machinery is privacy's pmv, minus the
+   sticky rail (three one-paragraph panels never scroll the selector out of
+   reach): thRove for the roving tabs, and the stage measures the incoming
+   panel off-layout and animates its own height so the <1% band below never
+   jumps. Reduced motion: instant swap, no height animation.
+   HASH ARRIVAL: the three panel ids are the old risk cards' load-bearing
+   anchors (the search index never renames an id), so an inbound link to
+   #trust-assumptions-everywhere must SELECT risk 02, not just scroll to a
+   hidden panel. Same contract as the gap device above; the palette's
+   same-page landing goes through search.js's .brk-panel adapter instead. */
+(function(){
+  var root = document.getElementById('brk');
+  if (!root || !window.thRove) return;
+  var stage = document.getElementById('brkStage');
+  var peds = [].slice.call(root.querySelectorAll('.brk-ped'));
+  var panels = [].slice.call(root.querySelectorAll('.brk-panel'));
+  if (!peds.length || peds.length !== panels.length) return;
+  var reduce = window.matchMedia ? matchMedia('(prefers-reduced-motion: reduce)') : { matches: false };
+  var settling = null;
+
+  function shown(){
+    for (var i = 0; i < panels.length; i++) if (!panels[i].hidden) return i;
+    return 0;
+  }
+  function measure(el){
+    /* off-layout, so the outgoing panel's height is never involved */
+    var prevH = stage.style.height;
+    stage.style.height = 'auto';
+    var wasHidden = el.hidden;
+    el.hidden = false;
+    var h = el.getBoundingClientRect().height;
+    el.hidden = wasHidden;
+    stage.style.height = prevH;
+    return h;
+  }
+  function select(i){
+    if (i === shown()) { rove.mirror(i); return; }
+    var next = panels[i];
+    rove.mirror(i);
+    if (reduce.matches) {
+      panels.forEach(function(p, k){ p.hidden = k !== i; });
+      stage.style.height = '';
+      return;
+    }
+    var from = stage.getBoundingClientRect().height;
+    var to = measure(next);
+    panels.forEach(function(p, k){ p.hidden = k !== i; });
+    stage.style.height = from + 'px';
+    /* force the start frame before the target, or both writes collapse
+       into one and there is nothing to animate */
+    void stage.offsetHeight;
+    stage.style.height = to + 'px';
+    if (settling) clearTimeout(settling);
+    settling = setTimeout(function(){ stage.style.height = ''; settling = null; }, 460);
+  }
+  var rove = window.thRove({ root: root, buttons: peds, shown: shown, pick: select });
+
+  function surface(){
+    var id = (location.hash || '').slice(1);
+    if (!id) return;
+    if (id.indexOf('s:') === 0) id = decodeURIComponent(id.split(':')[1] || '');
+    var el = document.getElementById(id);
+    if (!el) return;
+    var panel = el.closest('.brk-panel');
+    if (panel) select(panels.indexOf(panel));
+  }
+  window.addEventListener('hashchange', surface);
+  surface();
 })();
 </script>
 </body>

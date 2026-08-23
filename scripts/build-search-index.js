@@ -163,7 +163,11 @@ const CARD_SPECS = {
   btcfi: [
     { cls: 'problem-item', kind: 'card' },
     { cls: 'catalyst-item', kind: 'card' },
-    { cls: 'threat-card', kind: 'card' },
+    /* the risk podium panels (was threat-card until the 2026-08 podium
+       rebuild). Each panel keeps the old card's id, its Risk NN eyebrow and
+       a visually-hidden h4 for the title, so the three entries stay
+       byte-identical across the redesign. */
+    { cls: 'brk-panel', kind: 'card' },
     { cls: 'risk-quote', kind: 'card' },
     { cls: 'mode-item', kind: 'card' },
     { cls: 'roadmap-step', kind: 'card' },
