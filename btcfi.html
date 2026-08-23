@@ -912,25 +912,30 @@
   .gap-turn + .brk { margin-top: 28px; }
   @media (max-width: 880px) { .gap-turn { margin-top: 46px; padding-top: 26px; } }
 
-  /* THE DEEPER RISK is an EDITORIAL ASIDE, not a section paragraph: it ran
-     the full content width at a ~130ch measure and the strongest sentence on
-     the page drowned at the bottom of a six-line wall. Now: the box narrows
-     to 680px, the body holds ~56ch, and the closing sentence is PROMOTED out
-     of the paragraph into its own block behind a short coral hairline --
-     structural emphasis; the <b> it used to carry was removed WITH the
-     promotion because doubling the emphasis would shout. The narrowness is
-     deliberate: being narrower than the column is what marks an aside.
-     LEFT-ALIGNED to the section's content column, not centered: every block
-     in this section anchors left and the 3px coral rail is a left-edge
-     device -- centering would orphan it. The rail and the glass tint keep
-     their shipped values (the rail lives on .page-btcfi .risk-quote.btcg-card
+  /* THE DEEPER RISK is an EDITORIAL ASIDE, not a section paragraph: it once
+     ran the full content width at an ~85ch measure and the strongest
+     sentence on the page drowned at the bottom of a six-line wall. The body
+     holds ~78ch (a four-line paragraph), and the closing sentence is
+     PROMOTED out of the paragraph into its own ~60ch two-line block behind a
+     short coral hairline -- structural emphasis; the <b> it used to carry
+     was removed WITH the promotion because doubling the emphasis would
+     shout. CALIBRATION HISTORY, keep it: the first reframe went to 680px /
+     56ch left-aligned and OVERSHOT -- the owner read it as a tall sliver
+     against a dead right zone. 960px CENTERED ON THE CONTENT COLUMN (auto
+     margins in the column, not the viewport) is the owner-approved setting;
+     the left-alignment argument (the coral rail as a left-edge device) lost
+     to the dead zone in practice. The rail and the glass tint keep their
+     shipped values (the rail lives on .page-btcfi .risk-quote.btcg-card
      below); this block is geometry and type only. Nothing here animates. */
-  .risk-quote { margin-top: 36px; border-left: 3px solid #E0524A; padding: 36px 44px 38px; max-width: 680px; }
+  .risk-quote { margin: 36px auto 0; border-left: 3px solid #E0524A; padding: 36px 44px 38px; max-width: 960px; }
   .risk-quote .tag { display: block; font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: #E0524A; margin-bottom: 18px; }
-  .risk-quote p { font-family: var(--sans); font-size: 14px; font-weight: 400; line-height: 1.75; color: rgba(245,242,236,0.85); max-width: 56ch; }
+  .risk-quote p { font-family: var(--sans); font-size: 14px; font-weight: 400; line-height: 1.75; color: rgba(245,242,236,0.85); max-width: 78ch; }
   .risk-quote .em { color: var(--accent); font-weight: 600; }
   .risk-quote .rq-rule { width: 120px; height: 1px; background: rgba(224,82,74,0.45); margin: 24px 0; }
-  .risk-quote .rq-close { font-size: 16.5px; font-weight: 500; line-height: 1.6; color: var(--white); max-width: 46ch; }
+  /* 64ch, not the brief's "roughly 60ch": the brief's stated OUTCOME is a
+     two-line close and 60ch wraps this sentence to three; 64 is the
+     smallest measure that holds two. The outcome wins over the estimate. */
+  .risk-quote .rq-close { font-size: 16.5px; font-weight: 500; line-height: 1.6; color: var(--white); max-width: 64ch; }
   @media (max-width: 560px) { .risk-quote { padding: 30px 22px; } }
 
   /* (7) Footer disclaimer centered */
