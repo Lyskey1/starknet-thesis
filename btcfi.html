@@ -912,11 +912,26 @@
   .gap-turn + .brk { margin-top: 28px; }
   @media (max-width: 880px) { .gap-turn { margin-top: 46px; padding-top: 26px; } }
 
-  .risk-quote { margin-top: 36px; border-left: 3px solid #E0524A; padding: 6px 0 6px 34px; max-width: 1000px; }
-  .risk-quote .tag { display: block; font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: #E0524A; margin-bottom: 16px; }
-  .risk-quote p { font-family: var(--sans); font-size: 18px; font-weight: 400; line-height: 1.7; color: rgba(245,242,236,0.85); }
-  .risk-quote b { font-weight: 600; color: var(--white); }
+  /* THE DEEPER RISK is an EDITORIAL ASIDE, not a section paragraph: it ran
+     the full content width at a ~130ch measure and the strongest sentence on
+     the page drowned at the bottom of a six-line wall. Now: the box narrows
+     to 680px, the body holds ~56ch, and the closing sentence is PROMOTED out
+     of the paragraph into its own block behind a short coral hairline --
+     structural emphasis; the <b> it used to carry was removed WITH the
+     promotion because doubling the emphasis would shout. The narrowness is
+     deliberate: being narrower than the column is what marks an aside.
+     LEFT-ALIGNED to the section's content column, not centered: every block
+     in this section anchors left and the 3px coral rail is a left-edge
+     device -- centering would orphan it. The rail and the glass tint keep
+     their shipped values (the rail lives on .page-btcfi .risk-quote.btcg-card
+     below); this block is geometry and type only. Nothing here animates. */
+  .risk-quote { margin-top: 36px; border-left: 3px solid #E0524A; padding: 36px 44px 38px; max-width: 680px; }
+  .risk-quote .tag { display: block; font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: #E0524A; margin-bottom: 18px; }
+  .risk-quote p { font-family: var(--sans); font-size: 14px; font-weight: 400; line-height: 1.75; color: rgba(245,242,236,0.85); max-width: 56ch; }
   .risk-quote .em { color: var(--accent); font-weight: 600; }
+  .risk-quote .rq-rule { width: 120px; height: 1px; background: rgba(224,82,74,0.45); margin: 24px 0; }
+  .risk-quote .rq-close { font-size: 16.5px; font-weight: 500; line-height: 1.6; color: var(--white); max-width: 46ch; }
+  @media (max-width: 560px) { .risk-quote { padding: 30px 22px; } }
 
   /* (7) Footer disclaimer centered */
   footer.site-footer .disclaimer { text-align: center; margin-left: auto; margin-right: auto; }
@@ -1713,7 +1728,9 @@
   <div id="the-deeper-risk" class="risk-quote btcg-card btcg-coral">
     <div class="btcg-bloom btcg-bloom-quote" aria-hidden="true"><i></i></div>
     <span class="tag">The deeper risk</span>
-    <p>The deeper risk is that Satoshi's original vision never gets fulfilled. Bitcoin was never meant to be only digital gold. The whitepaper described a <span class="em">peer-to-peer electronic cash system</span>, a decentralized currency. And the people who need that most, by sheer numbers, are the unbanked and those in emerging economies: precisely those most sensitive to gas fees, speed, and friction. If Bitcoin's execution layer stays unsolved or gets captured by opaque intermediaries, <b>the asset survives, but its founding promise to billions of people quietly dies.</b></p>
+    <p>The deeper risk is that Satoshi's original vision never gets fulfilled. Bitcoin was never meant to be only digital gold. The whitepaper described a <span class="em">peer-to-peer electronic cash system</span>, a decentralized currency. And the people who need that most, by sheer numbers, are the unbanked and those in emerging economies: precisely those most sensitive to gas fees, speed, and friction.</p>
+    <div class="rq-rule" aria-hidden="true"></div>
+    <p class="rq-close">If Bitcoin's execution layer stays unsolved or gets captured by opaque intermediaries, the asset survives, but its founding promise to billions of people quietly dies.</p>
   </div>
 </section>
 
