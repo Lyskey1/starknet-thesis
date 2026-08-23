@@ -440,6 +440,131 @@
     .brk-stage { margin-top: 18px; }
   }
 
+  /* ---- section 02: THE CHRONOMETER (.cat). Anatomy and state grammar are
+     documented on the markup; this block is geometry and the value ladder.
+     VALUES, measured from rendered pixels (see the calibration discipline in
+     section 01's comments -- measure the product, never the alpha):
+       active arc    accent 1.0 / 2.5px + 13px glow at .13 + ink dash flow
+       dimmed arc    accent stroke-opacity .32
+       chip          active: accent fill, #0A0A0A numeral; dimmed: dark fill,
+                     accent .4 ring, ink .55 numeral
+       key           active var(--accent); dimmed ink .55 (permanent text,
+                     4.6:1 floor binds -- measured in the session report)
+       ticks         fine ink .26, medium ink .5, quadrant accent .9 x2px
+     THE HAND IS THE ONLY PER-FRAME WRITE: one compositor transform on the
+     prebuilt hand group and one on the trail wedge. Everything else is CSS
+     animation gated under .run (dust rotation, dash flow, halo pulse,
+     progress bar) or a once-per-15s class flip. */
+  .cat { margin-top: 12px; }
+  .cat-grid { display: grid; grid-template-columns: minmax(0, 460px) minmax(0, 1fr); gap: 58px; align-items: center; }
+  .cat-dial-wrap { position: relative; width: 100%; max-width: 460px; aspect-ratio: 1 / 1; }
+  .page-btcfi .btcg-bloom-cat i { --bc: var(--accent); left: 12%; top: 12%; width: 76%; height: 76%; opacity: .16; }
+  /* the halo breathes on the same 5.2s pulse the orbit device's bloom uses */
+  .cat.run .btcg-bloom-cat i { animation: bgapHalo 5.2s ease-in-out infinite; }
+  /* the radar trail: SVG cannot run a gradient along an arc; a conic
+     gradient can. A wedge that fades up to the hand's zero position,
+     rotated with the same transform the hand gets, under the svg. */
+  .cat-trail { position: absolute; left: 19.5%; top: 19.5%; width: 61%; height: 61%; border-radius: 50%;
+    background: conic-gradient(from 308deg, rgba(var(--accent-rgb),0) 0deg, rgba(var(--accent-rgb),.14) 52deg, rgba(var(--accent-rgb),0) 52.5deg);
+    pointer-events: none; will-change: transform; }
+  .cat-svg { position: relative; width: 100%; height: 100%; display: block; z-index: 1; }
+  .cat-svg :is(path, circle, line) { vector-effect: non-scaling-stroke; fill: none; stroke: rgba(245,242,236,1); stroke-width: 1; }
+  .cat-bezel  { stroke-opacity: .16; }
+  /* minute track: 60 dashes around r161 (circumference 1011.6 => 16.86/step) */
+  .cat-track  { stroke: rgba(var(--accent-rgb),1); stroke-opacity: .28; stroke-dasharray: 2.2 14.66; }
+  .cat-tick-f { stroke-opacity: .26; }
+  .cat-tick-m { stroke-opacity: .5; }
+  .cat-tick-q { stroke: rgba(var(--accent-rgb),1); stroke-opacity: .9; stroke-width: 2; }
+  .cat-dust circle { fill: rgba(245,242,236,.8); stroke: none; }
+  .cat-dust .acc { fill: rgba(var(--accent-rgb),.9); }
+  .cat-dust-el { position: absolute; inset: 0; pointer-events: none; will-change: transform; }
+  .cat-dust-el svg { width: 100%; height: 100%; display: block; }
+  .cat.run .cat-dust-el { animation: catDust 240s linear infinite; }
+  @keyframes catDust { to { transform: rotate(360deg); } }
+  .cat-sec { cursor: pointer; }
+  .cat-sec .cat-glow { pointer-events: stroke; } /* the 13px ghost stroke is the hit area */
+  .cat-arc  { stroke: rgba(var(--accent-rgb),1); stroke-opacity: .32; stroke-width: 2; stroke-linecap: round;
+    transition: stroke-opacity .35s ease, stroke-width .35s ease; }
+  .cat-glow { stroke: rgba(var(--accent-rgb),1); stroke-opacity: 0; stroke-width: 13; stroke-linecap: round;
+    transition: stroke-opacity .45s ease; }
+  .cat-flow-el { position: absolute; inset: 0; pointer-events: none; z-index: 2; }
+  .cat-flow-el svg { width: 100%; height: 100%; display: block; }
+  .cat-flow { vector-effect: non-scaling-stroke; fill: none;
+    stroke: rgba(245,242,236,.6); stroke-opacity: 0; stroke-width: 2.6; stroke-dasharray: 3 21; stroke-linecap: round; }
+  .cat-sec.is-on .cat-arc  { stroke-opacity: 1; stroke-width: 2.5; }
+  .cat-sec.is-on .cat-glow { stroke-opacity: .13; }
+  .cat.run .cat-flow.is-on { stroke-opacity: 1; animation: catFlow 3.4s linear infinite; }
+  @keyframes catFlow { to { stroke-dashoffset: -24; } }
+  .cat-chip { fill: #0A0A0A; stroke: rgba(var(--accent-rgb),.4); pointer-events: all;
+    transition: fill .35s ease, stroke .35s ease; }
+  .cat-num  { fill: rgba(245,242,236,.55); stroke: none; font-family: var(--mono); font-size: 9.5px;
+    letter-spacing: .06em; text-anchor: middle; transition: fill .35s ease; }
+  .cat-sec.is-on .cat-chip { fill: rgb(var(--accent-rgb)); stroke: rgb(var(--accent-rgb)); }
+  .cat-sec.is-on .cat-num  { fill: #0A0A0A; }
+  .cat-hand-el { position: absolute; inset: 0; pointer-events: none; will-change: transform; z-index: 2; }
+  .cat-hand-el svg { width: 100%; height: 100%; display: block; }
+  .cat-hand-main, .cat-hand-tail { vector-effect: non-scaling-stroke; fill: none; }
+  .cat-hand-main { stroke: rgba(var(--accent-rgb),.95); stroke-width: 1.6; stroke-linecap: round; }
+  .cat-hand-tail { stroke: rgba(var(--accent-rgb),.5); stroke-width: 2.6; stroke-linecap: round; }
+  .cat-hub { fill: #0A0A0A; stroke: rgba(var(--accent-rgb),.9); stroke-width: 1; vector-effect: non-scaling-stroke; }
+  .cat-hub-dot { fill: rgb(var(--accent-rgb)); stroke: none; }
+  /* NOW + counter are HTML in their own layer (z3): they must paint over
+     the rotating hand layer, and text in the dial svg cannot */
+  .cat-center { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+    z-index: 3; pointer-events: none; display: flex; flex-direction: column; align-items: center; gap: 30px; }
+  .cat-now { font-family: var(--mono); font-size: 14.5px; letter-spacing: .32em; text-indent: .32em;
+    color: rgba(245,242,236,.88); }
+  .cat-count { font-family: var(--mono); font-size: 11px; letter-spacing: .14em; text-indent: .14em;
+    color: rgba(245,242,236,.4); }
+  .cat-count b { font-weight: 500; color: rgb(var(--accent-rgb)); }
+  .cat-keys { position: absolute; inset: 0; pointer-events: none; }
+  .cat-key { position: absolute; transform: translate(-50%,-50%); pointer-events: auto;
+    background: none; border: 0; padding: 6px 8px; cursor: pointer;
+    font-family: var(--mono); font-size: 11px; letter-spacing: .18em; color: rgba(245,242,236,.55);
+    transition: color .2s ease; }
+  .cat-key:hover { color: rgba(245,242,236,.85); }
+  .cat-key[aria-selected="true"] { color: var(--accent); }
+  .cat-key:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 3px; }
+  .cat-panel { min-width: 0; position: relative; }
+  .cat-head { display: flex; justify-content: flex-end; margin-bottom: 16px; }
+  .cat-mode { font-family: var(--mono); font-size: 10.5px; letter-spacing: .18em; color: var(--accent);
+    padding: 7px 15px; border-radius: 99px; cursor: pointer; transition: color .2s ease; }
+  .cat-mode[aria-pressed="true"] { color: rgba(245,242,236,.75); }
+  /* the panel states ARE the old timeline entries: same class (the index
+     extracts catalyst-item), same ids, same tag/h3/p. The shared timeline
+     chrome (padding, separator, node dot) is undone here at (0,3,0) against
+     the shared sheet's (0,1,0); the type rules themselves are kept. */
+  .page-btcfi .cat-states .catalyst-item { padding: 0; border-bottom: 0; }
+  .page-btcfi .cat-states .catalyst-item::before { display: none; }
+  .cat-states .catalyst-item h3 { font-size: clamp(22px, 2.2vw, 27px); }
+  /* the states box carries a JS-measured min-height (max of the four
+     panels), so a 15s auto-swap never moves the progress bar, the deeper-
+     risk quote, or the reader's scroll position. */
+  .cat-prog { height: 1px; background: rgba(245,242,236,.12); margin-top: 28px; overflow: hidden; }
+  .cat-prog i { display: block; height: 100%; background: var(--accent); transform-origin: left center; transform: scaleX(0); }
+  .cat.run .cat-prog i.go { animation: catProg 15s linear forwards; }
+  @keyframes catProg { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  .cat.paused .cat-prog { opacity: 0; }
+  .cat.hold .cat-prog i.go { animation-play-state: paused; }
+  @media (max-width: 980px) {
+    .cat-grid { grid-template-columns: 1fr; gap: 36px; }
+    .cat-dial-wrap { max-width: 420px; margin: 0 auto; }
+    /* the sweep stays (one compositor transform); the dust goes with the
+       blooms this page already drops here -- measured, both are cheap, but
+       nothing ambient should outrank the argument at phone-adjacent sizes */
+    .cat-dust-el { display: none; }
+  }
+  /* AT <=560 THE DIAL GOES, THE ARGUMENTS STAY: four states render stacked
+     as the list treatment, pure CSS -- an author display:block beats the
+     hidden attribute's UA rule -- so no machinery survives to need JS. */
+  @media (max-width: 560px) {
+    .cat-dial-wrap, .cat-head, .cat-prog { display: none; }
+    .page-btcfi .cat-states .catalyst-item[hidden] { display: block; }
+    .page-btcfi .cat-states .catalyst-item { padding: 24px 0; border-top: 1px solid var(--border); }
+    .page-btcfi .cat-states .catalyst-item:first-child { border-top: 0; padding-top: 4px; }
+    .cat-states { min-height: 0 !important; }
+  }
+
   /* ---- section 01: BROKEN ORBITS. Geometry notes live on the markup. ----
      WHY ORBITS RATHER THAN SPOKES. An incomplete ring IS a shortfall; it does
      not stand for one. Each gap gets an arc that runs solid, stops at a break,
@@ -719,6 +844,15 @@
     .brk-ped, .brk-plinth::after, .brk-obj, .brk-plinth, .brk-plinth i, .brk-plinth u,
     .brk-label, .brk-title, .brk-stage { transition: none; }
     .brk-ped[aria-selected="true"] .brk-obj { transform: none; }
+    /* chronometer: no sweep (the script never starts its loop and parks the
+       hand at the active sector's midpoint), and none of the ambient CSS
+       animations either. The AUTO/PAUSED chip hides because there is no
+       auto-advance to toggle; the progress bar with it. */
+    .cat.run .cat-dust-el, .cat.run .btcg-bloom-cat i,
+    .cat.run .cat-flow.is-on, .cat.run .cat-prog i.go { animation: none !important; }
+    .cat-flow { stroke-opacity: 0 !important; }
+    .cat-trail, .cat-head, .cat-prog { display: none; }
+    .cat-arc, .cat-glow, .cat-chip, .cat-num, .cat-key, .cat-mode { transition: none; }
   }
 
   /* The flat bar belongs to the <=860 list only. DECLARED BEFORE that media
@@ -1392,26 +1526,154 @@
   <div class="th-pm-head"><span class="th-pm-marker"></span><span class="th-pm-num">02</span><h2 id="why-the-moment-is-now" class="th-pm-title">Why the moment is now</h2></div>
   <p class="th-pm-eyebrow">Catalyst</p>
 
-  <div class="catalyst-list">
-    <div id="bitcoin-holders-want-more-than-hodling" class="catalyst-item">
-      <span class="catalyst-tag">Demand signal</span>
-      <h3>Bitcoin holders want more than HODLing</h3>
-      <p>The desire is real and growing: borrow against BTC, access stablecoins, earn yield, preserve privacy, get better UX, all without giving up custody, security, or the values that made Bitcoin worth holding in the first place.</p>
+  <!-- THE CHRONOMETER (.cat). Replaced the four-entry vertical timeline,
+       which cost ~2000px of scroll for four paragraphs. The section's own
+       copy names the device: "the clock is already running." A dial on the
+       left, a reading panel on the right; the sweep hand does one revolution
+       per 60s and DRIVES the content: entering a sector makes that catalyst
+       active (arc lights, chip and key light, panel swaps, counter updates).
+       15s per catalyst is read-time for these bodies, so a passive reader
+       sees all four arguments with zero clicks.
+       STATE GRAMMAR. AUTO: selection follows the hand. Clicking a sector,
+       chip or key PINS that catalyst and sets PAUSED -- the hand keeps
+       sweeping, it is a clock, only selection-follows-hand disengages; the
+       AUTO/PAUSED chip above the panel shows and toggles it. Hovering the
+       panel (or focusing anything in the device) HOLDS auto-advance so text
+       is never swapped under a reader's eyes, and releases on leave.
+       THE IDS ARE LOAD-BEARING: the four panel states keep the timeline
+       entries' ids, class (catalyst-item, which the search index extracts),
+       tag spans, real h3 headings and verbatim bodies, so the four index
+       entries are byte-identical across the rebuild and hash/palette
+       arrival lands on a state the script can select (PAUSED, per the
+       arrival contract). search.js carries a .cat-state adapter on the same
+       aria-labelledby contract as .pmv-panel and .brk-panel.
+       BUDGET. Per-frame work is the hand rotation only: one rAF writing one
+       compositor transform to the hand group and one to the trail wedge (a
+       conic-gradient div under the svg -- SVG cannot gradient along an arc,
+       CSS can). Sector redraw and panel swap happen at most once per 15s or
+       on click. The progress hairline is a CSS animation restarted per
+       sector, not a per-frame write. Dust is a static group on one slow CSS
+       rotation; the halo reuses the bloom layer and the bgapHalo pulse. The
+       IntersectionObserver starts and STOPS the rAF itself and freezes the
+       clock's elapsed time; reduced motion gets no loop at all, the hand
+       parked at the active sector's midpoint, click-only selection.
+       AT <=980 the dial stacks over the panel, keeps the sweep, drops the
+       dust (and the bloom is already gone). AT <=560 the dial goes entirely
+       and the four states render stacked as the list treatment, pure CSS
+       (display:block beats the hidden attribute), so with the dial gone
+       there is no interactive machinery left to explain. -->
+  <div class="cat" id="catDial">
+    <div class="cat-grid">
+    <div class="cat-dial-wrap" aria-hidden="false">
+      <div class="btcg-bloom btcg-bloom-cat" aria-hidden="true"><i></i></div>
+      <div class="cat-trail" aria-hidden="true"></div>
+      <!-- dust rides its own layer for the same reason the hand does: a CSS
+           rotation on an inner svg <g> is not composited and would repaint
+           the whole dial every frame of its 240s spin. A whole-element
+           rotation on this wrapper costs zero paint. -->
+      <div class="cat-dust-el" aria-hidden="true"><svg viewBox="0 0 440 440" focusable="false"><g class="cat-dust"><circle cx="248.0" cy="220.0" r="0.80" opacity="0.10" class="acc"/><circle cx="162.0" cy="273.1" r="1.09" opacity="0.22"/><circle cx="224.1" cy="172.8" r="1.38" opacity="0.18"/><circle cx="279.6" cy="297.8" r="1.68" opacity="0.14" class="acc"/><circle cx="154.3" cy="208.4" r="1.07" opacity="0.10"/><circle cx="249.9" cy="201.0" r="1.36" opacity="0.22"/><circle cx="197.7" cy="303.1" r="1.65" opacity="0.18" class="acc"/><circle cx="194.8" cy="171.4" r="1.05" opacity="0.15"/><circle cx="319.0" cy="256.2" r="1.34" opacity="0.11"/><circle cx="151.5" cy="248.3" r="1.63" opacity="0.23" class="acc"/><circle cx="238.1" cy="181.2" r="1.02" opacity="0.19"/><circle cx="248.0" cy="309.2" r="1.31" opacity="0.15"/><circle cx="166.2" cy="188.8" r="1.61" opacity="0.11" class="acc"/><circle cx="250.1" cy="213.4" r="1.00" opacity="0.23"/><circle cx="173.1" cy="286.7" r="1.29" opacity="0.19"/><circle cx="213.6" cy="170.2" r="1.58" opacity="0.15" class="acc"/></g></svg></div>
+      <svg class="cat-svg" viewBox="0 0 440 440" aria-hidden="true" focusable="false">
+        <circle class="cat-bezel" cx="220" cy="220" r="170"/>
+        <circle class="cat-track" cx="220" cy="220" r="161"/>
+        <path class="cat-tick-f" d="M227.6 74.2L227.9 69.2M235.3 74.8L235.8 69.8M242.8 75.8L243.6 70.9M250.4 77.2L251.4 72.3M265.1 81.1L266.7 76.4M272.3 83.7L274.1 79.0M279.4 86.6L281.4 82.1M286.3 89.9L288.6 85.5M299.5 97.6L302.2 93.4M305.8 101.9L308.8 97.8M311.9 106.5L315.0 102.7M317.7 111.5L321.0 107.8M328.5 122.3L332.2 119.0M333.5 128.1L337.3 125.0M338.1 134.2L342.2 131.2M342.4 140.5L346.6 137.8M350.1 153.7L354.5 151.4M353.4 160.6L357.9 158.6M356.3 167.7L361.0 165.9M358.9 174.9L363.6 173.3M362.8 189.6L367.7 188.6M364.2 197.2L369.1 196.4M365.2 204.7L370.2 204.2M365.8 212.4L370.8 212.1M365.8 227.6L370.8 227.9M365.2 235.3L370.2 235.8M364.2 242.8L369.1 243.6M362.8 250.4L367.7 251.4M358.9 265.1L363.6 266.7M356.3 272.3L361.0 274.1M353.4 279.4L357.9 281.4M350.1 286.3L354.5 288.6M342.4 299.5L346.6 302.2M338.1 305.8L342.2 308.8M333.5 311.9L337.3 315.0M328.5 317.7L332.2 321.0M317.7 328.5L321.0 332.2M311.9 333.5L315.0 337.3M305.8 338.1L308.8 342.2M299.5 342.4L302.2 346.6M286.3 350.1L288.6 354.5M279.4 353.4L281.4 357.9M272.3 356.3L274.1 361.0M265.1 358.9L266.7 363.6M250.4 362.8L251.4 367.7M242.8 364.2L243.6 369.1M235.3 365.2L235.8 370.2M227.6 365.8L227.9 370.8M212.4 365.8L212.1 370.8M204.7 365.2L204.2 370.2M197.2 364.2L196.4 369.1M189.6 362.8L188.6 367.7M174.9 358.9L173.3 363.6M167.7 356.3L165.9 361.0M160.6 353.4L158.6 357.9M153.7 350.1L151.4 354.5M140.5 342.4L137.8 346.6M134.2 338.1L131.2 342.2M128.1 333.5L125.0 337.3M122.3 328.5L119.0 332.2M111.5 317.7L107.8 321.0M106.5 311.9L102.7 315.0M101.9 305.8L97.8 308.8M97.6 299.5L93.4 302.2M89.9 286.3L85.5 288.6M86.6 279.4L82.1 281.4M83.7 272.3L79.0 274.1M81.1 265.1L76.4 266.7M77.2 250.4L72.3 251.4M75.8 242.8L70.9 243.6M74.8 235.3L69.8 235.8M74.2 227.6L69.2 227.9M74.2 212.4L69.2 212.1M74.8 204.7L69.8 204.2M75.8 197.2L70.9 196.4M77.2 189.6L72.3 188.6M81.1 174.9L76.4 173.3M83.7 167.7L79.0 165.9M86.6 160.6L82.1 158.6M89.9 153.7L85.5 151.4M97.6 140.5L93.4 137.8M101.9 134.2L97.8 131.2M106.5 128.1L102.7 125.0M111.5 122.3L107.8 119.0M122.3 111.5L119.0 107.8M128.1 106.5L125.0 102.7M134.2 101.9L131.2 97.8M140.5 97.6L137.8 93.4M153.7 89.9L151.4 85.5M160.6 86.6L158.6 82.1M167.7 83.7L165.9 79.0M174.9 81.1L173.3 76.4M189.6 77.2L188.6 72.3M197.2 75.8L196.4 70.9M204.7 74.8L204.2 69.8M212.4 74.2L212.1 69.2"/>
+        <path class="cat-tick-m" d="M257.0 81.9L259.3 73.2M291.5 96.2L296.0 88.4M321.1 118.9L327.5 112.5M343.8 148.5L351.6 144.0M358.1 183.0L366.8 180.7M358.1 257.0L366.8 259.3M343.8 291.5L351.6 296.0M321.1 321.1L327.5 327.5M291.5 343.8L296.0 351.6M257.0 358.1L259.3 366.8M183.0 358.1L180.7 366.8M148.5 343.8L144.0 351.6M118.9 321.1L112.5 327.5M96.2 291.5L88.4 296.0M81.9 257.0L73.2 259.3M81.9 183.0L73.2 180.7M96.2 148.5L88.4 144.0M118.9 118.9L112.5 112.5M148.5 96.2L144.0 88.4M183.0 81.9L180.7 73.2"/>
+        <path class="cat-tick-q" d="M220.0 80.0L220.0 66.0M360.0 220.0L374.0 220.0M220.0 360.0L220.0 374.0M80.0 220.0L66.0 220.0"/>
+        <g class="cat-sec" data-c="0">
+          <path class="cat-glow" d="M233.2 94.7A126 126 0 0 1 345.3 206.8"/>
+          <path class="cat-arc" d="M233.2 94.7A126 126 0 0 1 345.3 206.8"/>
+          <circle class="cat-chip" cx="309.1" cy="130.9" r="11.5"/>
+          <text class="cat-num" x="309.1" y="134.5">01</text>
+        </g>
+        <g class="cat-sec" data-c="1">
+          <path class="cat-glow" d="M345.3 233.2A126 126 0 0 1 233.2 345.3"/>
+          <path class="cat-arc" d="M345.3 233.2A126 126 0 0 1 233.2 345.3"/>
+          <circle class="cat-chip" cx="309.1" cy="309.1" r="11.5"/>
+          <text class="cat-num" x="309.1" y="312.70000000000005">02</text>
+        </g>
+        <g class="cat-sec" data-c="2">
+          <path class="cat-glow" d="M206.8 345.3A126 126 0 0 1 94.7 233.2"/>
+          <path class="cat-arc" d="M206.8 345.3A126 126 0 0 1 94.7 233.2"/>
+          <circle class="cat-chip" cx="130.9" cy="309.1" r="11.5"/>
+          <text class="cat-num" x="130.9" y="312.70000000000005">03</text>
+        </g>
+        <g class="cat-sec" data-c="3">
+          <path class="cat-glow" d="M94.7 206.8A126 126 0 0 1 206.8 94.7"/>
+          <path class="cat-arc" d="M94.7 206.8A126 126 0 0 1 206.8 94.7"/>
+          <circle class="cat-chip" cx="130.9" cy="130.9" r="11.5"/>
+          <text class="cat-num" x="130.9" y="134.5">04</text>
+        </g>
+      </svg>
+      <!-- the hand lives OUTSIDE the dial svg on purpose: a CSS transform
+           on an inner SVG <g> is NOT composited in Chromium and repainted
+           the whole 460px dial every frame (measured 1.04ms paint/frame).
+           A whole-element transform on this wrapper div gets its own
+           compositor layer, same as the trail wedge: rotation costs zero
+           paint. Do not move these lines back inside the dial svg. -->
+      <!-- the dash flow animates stroke-dashoffset, which is inherently
+           paint work; it lives on its own layer so that paint never touches
+           the dial. One path per sector; only the active one is visible. -->
+      <div class="cat-flow-el" aria-hidden="true"><svg viewBox="0 0 440 440" focusable="false">
+        <path class="cat-flow" data-c="0" d="M233.2 94.7A126 126 0 0 1 345.3 206.8"/>
+        <path class="cat-flow" data-c="1" d="M345.3 233.2A126 126 0 0 1 233.2 345.3"/>
+        <path class="cat-flow" data-c="2" d="M206.8 345.3A126 126 0 0 1 94.7 233.2"/>
+        <path class="cat-flow" data-c="3" d="M94.7 206.8A126 126 0 0 1 206.8 94.7"/>
+      </svg></div>
+      <div class="cat-hand-el" id="catHand" aria-hidden="true">
+        <svg viewBox="0 0 440 440" focusable="false">
+          <line class="cat-hand-main" x1="220" y1="220" x2="220" y2="88"/>
+          <line class="cat-hand-tail" x1="220" y1="220" x2="220" y2="246"/>
+          <!-- the hub rides in the rotating layer: a centered circle is
+               rotation-invariant, so it caps the shaft without costing a
+               third layer -->
+          <circle class="cat-hub" cx="220" cy="220" r="6"/>
+          <circle class="cat-hub-dot" cx="220" cy="220" r="2.2"/>
+        </svg>
+      </div>
+      <div class="cat-center" aria-hidden="true"><span class="cat-now">NOW</span><span class="cat-count"><b id="catCount">01</b> / 04</span></div>
+      <div class="cat-keys" role="tablist" aria-label="Four catalysts">
+        <button class="cat-key" type="button" id="catTab1" data-c="0" role="tab"
+                aria-selected="true" tabindex="0" aria-controls="bitcoin-holders-want-more-than-hodling"
+                aria-label="01 — Demand signal: Bitcoin holders want more than HODLing" style="left:81.5%;top:18.5%">DEMAND</button>
+        <button class="cat-key" type="button" id="catTab2" data-c="1" role="tab"
+                aria-selected="false" tabindex="-1" aria-controls="institutional-capital-is-arriving-and-it"
+                aria-label="02 — Technical unlock: Institutional capital is arriving, and it wants to work" style="left:81.5%;top:81.5%">CAPITAL</button>
+        <button class="cat-key" type="button" id="catTab3" data-c="2" role="tab"
+                aria-selected="false" tabindex="-1" aria-controls="quantum-risk-is-pricing-in-now"
+                aria-label="03 — Urgency: Quantum risk is pricing in now" style="left:18.5%;top:81.5%">URGENCY</button>
+        <button class="cat-key" type="button" id="catTab4" data-c="3" role="tab"
+                aria-selected="false" tabindex="-1" aria-controls="the-technology-to-fix-bitcoin-is"
+                aria-label="04 — Strategic window: The technology to fix Bitcoin is finally ready" style="left:18.5%;top:18.5%">WINDOW</button>
+      </div>
     </div>
-    <div id="institutional-capital-is-arriving-and-it" class="catalyst-item">
-      <span class="catalyst-tag">Technical unlock</span>
-      <h3>Institutional capital is arriving, and it wants to work</h3>
-      <p>With spot ETFs and corporate treasuries, Bitcoin has entered the balance sheets of the largest financial players in the world. This capital does not want to sit idle: it wants secure, non-custodial ways to earn, collateralize, and deploy BTC. The demand is institutional-grade. What's missing is institutional-grade infrastructure.</p>
+    <div class="cat-panel" id="catPanel">
+      <div class="cat-head">
+        <button class="cat-mode chip-glass" id="catMode" type="button" aria-pressed="false"
+                aria-label="Auto-advance: on. Press to pause selection on the current catalyst.">AUTO</button>
+      </div>
+      <div class="cat-states">
+      <div id="bitcoin-holders-want-more-than-hodling" class="catalyst-item cat-state" role="tabpanel" aria-labelledby="catTab1">
+        <span class="catalyst-tag">Demand signal</span>
+        <h3>Bitcoin holders want more than HODLing</h3>
+        <p>The desire is real and growing: borrow against BTC, access stablecoins, earn yield, preserve privacy, get better UX, all without giving up custody, security, or the values that made Bitcoin worth holding in the first place.</p>
+      </div>
+      <div id="institutional-capital-is-arriving-and-it" class="catalyst-item cat-state" role="tabpanel" aria-labelledby="catTab2" hidden>
+        <span class="catalyst-tag">Technical unlock</span>
+        <h3>Institutional capital is arriving, and it wants to work</h3>
+        <p>With spot ETFs and corporate treasuries, Bitcoin has entered the balance sheets of the largest financial players in the world. This capital does not want to sit idle: it wants secure, non-custodial ways to earn, collateralize, and deploy BTC. The demand is institutional-grade. What's missing is institutional-grade infrastructure.</p>
+      </div>
+      <div id="quantum-risk-is-pricing-in-now" class="catalyst-item cat-state" role="tabpanel" aria-labelledby="catTab3" hidden>
+        <span class="catalyst-tag">Urgency</span>
+        <h3>Quantum risk is pricing in now</h3>
+        <p>Capriole estimates that Bitcoin may already be trading with a 20% quantum discount factor for 2026. This is alarming for a specific reason: Bitcoin is notoriously slow to upgrade, often taking years to reach consensus on any change, while governments, Big Tech, and researchers have converged on the same window, with quantum risk becoming relevant as early as 2029. The clock is already running, and Bitcoin has the least room to wait.</p>
+      </div>
+      <div id="the-technology-to-fix-bitcoin-is" class="catalyst-item cat-state" role="tabpanel" aria-labelledby="catTab4" hidden>
+        <span class="catalyst-tag">Strategic window</span>
+        <h3>The technology to fix Bitcoin is finally ready</h3>
+        <p>What was research a decade ago is now production-grade. STARK proofs are battle-tested, account abstraction is live, and protocol-level privacy has reached production. After more than ten years of building the exact stack Bitcoin needs, the pieces finally exist at the same time. This is the moment where solving Bitcoin's limitations moves from theory to execution.</p>
+      </div>
+      </div>
+      <div class="cat-prog" aria-hidden="true"><i id="catProgI"></i></div>
     </div>
-    <div id="quantum-risk-is-pricing-in-now" class="catalyst-item">
-      <span class="catalyst-tag">Urgency</span>
-      <h3>Quantum risk is pricing in now</h3>
-      <p>Capriole estimates that Bitcoin may already be trading with a 20% quantum discount factor for 2026. This is alarming for a specific reason: Bitcoin is notoriously slow to upgrade, often taking years to reach consensus on any change, while governments, Big Tech, and researchers have converged on the same window, with quantum risk becoming relevant as early as 2029. The clock is already running, and Bitcoin has the least room to wait.</p>
-    </div>
-    <div id="the-technology-to-fix-bitcoin-is" class="catalyst-item">
-      <span class="catalyst-tag">Strategic window</span>
-      <h3>The technology to fix Bitcoin is finally ready</h3>
-      <p>What was research a decade ago is now production-grade. STARK proofs are battle-tested, account abstraction is live, and protocol-level privacy has reached production. After more than ten years of building the exact stack Bitcoin needs, the pieces finally exist at the same time. This is the moment where solving Bitcoin's limitations moves from theory to execution.</p>
     </div>
   </div>
 
@@ -3973,6 +4235,169 @@
   }
   window.addEventListener('hashchange', surface);
   surface();
+})();
+</script>
+<script>
+/* section 02's chronometer (.cat). The hand drives the content: one rAF
+   writing one compositor transform each to the hand group and the trail
+   wedge; entering a new 90-degree sector (every 15s of the 60s revolution)
+   swaps the active catalyst -- unless PAUSED (a click pinned one; the hand
+   never stops, only selection-follows-hand disengages) or HELD (pointer
+   over the panel, or focus anywhere in the device: text must never swap
+   under a reader). The IntersectionObserver starts and STOPS the rAF and
+   freezes the clock's elapsed time, so offscreen costs nothing and re-entry
+   resumes mid-sweep. Reduced motion: no loop ever starts; the hand parks at
+   the active sector's midpoint and selection is click-only.
+   ANNOUNCEMENT POLICY: there is no live region on purpose. Auto-swaps flip
+   hidden attributes and aria-selected silently -- a screen reader with
+   focus outside the device hears nothing every 15s, and focus INSIDE the
+   device holds auto-advance entirely, so swaps simply do not happen while
+   an AT user is in here. State changes are announced only as the natural
+   consequence of the user's own activation (the focused tab's
+   aria-selected flip, the mode button's aria-pressed flip). */
+(function(){
+  var root = document.getElementById('catDial');
+  if (!root || !window.thRove) return;
+  var wrap  = root.querySelector('.cat-dial-wrap');
+  var hand  = document.getElementById('catHand');
+  var trail = root.querySelector('.cat-trail');
+  var keys  = [].slice.call(root.querySelectorAll('.cat-key'));
+  var secs  = [].slice.call(root.querySelectorAll('.cat-sec'));
+  var flows = [].slice.call(root.querySelectorAll('.cat-flow'));
+  var states = [].slice.call(root.querySelectorAll('.cat-state'));
+  var statesBox = root.querySelector('.cat-states');
+  var count = document.getElementById('catCount');
+  var modeB = document.getElementById('catMode');
+  var progI = document.getElementById('catProgI');
+  var panel = document.getElementById('catPanel');
+  var mqReduce = window.matchMedia ? matchMedia('(prefers-reduced-motion: reduce)') : { matches: false };
+  var cur = 0, auto = true, hold = false, visible = false, running = false;
+  var elapsed = 0, lastT = 0, rafId = 0, handSec = 0;
+
+  function setHand(a){
+    var tf = 'rotate(' + a.toFixed(2) + 'deg)';
+    hand.style.transform = tf;
+    trail.style.transform = tf;
+  }
+  function park(){ setHand(45 + cur * 90); }
+  function restartProg(){
+    if (!auto || mqReduce.matches) return;
+    progI.classList.remove('go');
+    void progI.offsetWidth; /* commit the removal or both writes coalesce */
+    progI.classList.add('go');
+  }
+  function select(i){
+    cur = i;
+    states.forEach(function(p, k){ p.hidden = k !== i; });
+    secs.forEach(function(g, k){ g.classList.toggle('is-on', k === i); });
+    flows.forEach(function(f, k){ f.classList.toggle('is-on', k === i); });
+    count.textContent = '0' + (i + 1);
+    rove.mirror(i);
+    restartProg();
+    if (mqReduce.matches){ park(); return; }
+    /* selection landing while the clock has not started (initial select,
+       hash arrival before the observer fires) SEEDS the clock to the
+       sector's midpoint instead of parking a hand that would then jump
+       back to zero on start. While running, the hand is never touched:
+       it is a clock. */
+    if (!running){
+      elapsed = (i * 90 + 45) / 360 * 60000;
+      handSec = i;
+      park();
+    }
+  }
+  function setMode(a){
+    auto = a;
+    root.classList.toggle('paused', !a);
+    modeB.textContent = a ? 'AUTO' : 'PAUSED';
+    modeB.setAttribute('aria-pressed', a ? 'false' : 'true');
+    modeB.setAttribute('aria-label', a
+      ? 'Auto-advance: on. Press to pause selection on the current catalyst.'
+      : 'Auto-advance: paused. Press to let the hand drive the selection again.');
+  }
+  function pin(i){ setMode(false); select(i); }
+
+  function tick(now){
+    var pf = window.__catProf, t0 = pf ? performance.now() : 0;
+    elapsed += now - lastT; lastT = now;
+    var a = (elapsed / 60000 * 360) % 360;
+    setHand(a);
+    var s = Math.floor(a / 90) % 4;
+    if (s !== handSec){
+      handSec = s;
+      if (auto && !hold) select(s);
+    }
+    if (pf){ pf.ms += performance.now() - t0; pf.n++; }
+    rafId = requestAnimationFrame(tick);
+  }
+  function start(){ if (running) return; running = true; lastT = performance.now(); rafId = requestAnimationFrame(tick); }
+  function stop(){ if (!running) return; running = false; cancelAnimationFrame(rafId); }
+  function update(){
+    if (mqReduce.matches || !wrap || !wrap.clientWidth){ stop(); park(); return; } /* <=560: the dial is display:none, the list owns the story */
+    if (visible) start(); else stop();
+  }
+
+  /* the panel reserves the tallest state's height once (and on resize), so
+     a 15s swap never moves the progress bar or the deeper-risk quote */
+  function reserve(){
+    if (!statesBox) return;
+    var h = 0;
+    states.forEach(function(p){
+      var was = p.hidden;
+      p.hidden = false;
+      h = Math.max(h, p.offsetHeight);
+      p.hidden = was;
+    });
+    if (h) statesBox.style.minHeight = h + 'px';
+  }
+
+  function setHold(v){
+    hold = v;
+    root.classList.toggle('hold', v);
+    /* releasing the hold re-syncs selection to wherever the hand is now */
+    if (!v && auto && !mqReduce.matches && handSec !== cur) select(handSec);
+  }
+  panel.addEventListener('mouseenter', function(){ setHold(true); });
+  panel.addEventListener('mouseleave', function(){ setHold(false); });
+  root.addEventListener('focusin', function(){ setHold(true); });
+  root.addEventListener('focusout', function(e){ if (!root.contains(e.relatedTarget)) setHold(false); });
+
+  var rove = window.thRove({ root: root, buttons: keys, shown: function(){ return cur; }, pick: pin });
+  secs.forEach(function(g){ g.addEventListener('click', function(){ pin(+g.dataset.c); }); });
+  modeB.addEventListener('click', function(){
+    if (auto) { pin(cur); }
+    else { setMode(true); select(handSec); }
+  });
+
+  /* hash / palette arrival on a catalyst id selects it and sets PAUSED.
+     The palette path arrives via search.js's .cat-state adapter, which
+     clicks the controlling tab and therefore lands in pin() too. */
+  function surface(){
+    var id = (location.hash || '').slice(1);
+    if (!id) return;
+    if (id.indexOf('s:') === 0) id = decodeURIComponent(id.split(':')[1] || '');
+    var el = document.getElementById(id);
+    if (!el) return;
+    var st = el.closest('.cat-state');
+    if (st) pin(states.indexOf(st));
+  }
+  window.addEventListener('hashchange', surface);
+
+  if (mqReduce.matches) setMode(false); /* no auto-advance exists; the chip is display:none in CSS */
+  select(0);
+  surface();
+  reserve();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(reserve);
+  var rt; window.addEventListener('resize', function(){ clearTimeout(rt); rt = setTimeout(function(){ reserve(); update(); }, 120); });
+  if (mqReduce.addEventListener) mqReduce.addEventListener('change', update);
+
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(function(es){
+      visible = es[0].isIntersecting;
+      root.classList.toggle('run', visible);
+      update();
+    }, { threshold: 0 }).observe(root);
+  } else { visible = true; root.classList.add('run'); update(); }
 })();
 </script>
 </body>

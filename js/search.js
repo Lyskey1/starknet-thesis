@@ -248,6 +248,10 @@
        as privacy's .pmv-panel: the panel names its tab via aria-labelledby. */
     const brk = target.closest && target.closest('.brk-panel');
     if (brk && brk.hidden) did = clickIf(document.getElementById(brk.getAttribute('aria-labelledby'))) || did;
+    /* btcfi: the chronometer shows one catalyst at a time; clicking the tab
+       also pins it (PAUSED), which is the arrival contract. */
+    const cat = target.closest && target.closest('.cat-state');
+    if (cat && cat.hidden) did = clickIf(document.getElementById(cat.getAttribute('aria-labelledby'))) || did;
     /* privacy: bills panel shows one bill at a time */
     const bill = target.closest && target.closest('.bstk-bill');
     if (bill && !bill.classList.contains('is-on')) did = clickIf(document.querySelectorAll('#bills .bstk-tab')[+bill.dataset.bill]) || did;

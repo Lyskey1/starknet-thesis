@@ -116,7 +116,11 @@ function isExcluded(n) {
   for (let x = n; x; x = x.parent) {
     if (!x.tag) continue;
     if (x.tag === 'nav' || x.tag === 'footer' || x.tag === 'script' || x.tag === 'style' || x.tag === 'head') return true;
-    if (x.attrs && (x.attrs.id === 'ecoModal' || hasClass(x, 'eco-modal-backdrop') || hasClass(x, 'eco-admin') || hasClass(x, 'news-editor') || hasClass(x, 'news-admin-bar') || hasClass(x, 'nav-overlay'))) return true;
+    if (x.attrs && (x.attrs.id === 'ecoModal' || hasClass(x, 'eco-modal-backdrop') || hasClass(x, 'eco-admin') || hasClass(x, 'news-editor') || hasClass(x, 'news-admin-bar') || hasClass(x, 'nav-overlay')
+      /* btcfi chronometer: the dial svg's chip numerals / NOW / counter are
+         instrument decoration (aria-hidden in the DOM), and the AUTO chip is
+         a control; neither is content. The one-word KEYS stay extractable. */
+      || hasClass(x, 'cat-svg') || hasClass(x, 'cat-mode'))) return true;
   }
   return false;
 }
