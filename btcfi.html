@@ -93,11 +93,7 @@
      Permanent motion is only the HTML today-dot pulse under .bfc-on
      (observer-gated), a compositor transform/opacity on its own layer. */
   .page-btcfi .chart-toggle { align-items: center; }
-  .bfc-log { font-family: var(--mono); font-size: 10px; letter-spacing: .16em; color: rgba(245,242,236,.45);
-    border: 1px solid rgba(245,242,236,.16); border-radius: 99px; padding: 5px 11px; margin-left: 10px; align-self: center; }
   .page-btcfi .bfc-wrap { position: relative; }
-  .bfc-src { font-family: var(--mono); font-size: 10px; letter-spacing: .14em; text-transform: uppercase;
-    color: rgba(245,242,236,.38); margin-top: 12px; }
   .bfc-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0);
     clip-path: inset(50%); white-space: nowrap; }
   #scaleChart text { font-family: var(--mono); letter-spacing: .1em; stroke: none; }
@@ -179,7 +175,6 @@
     .bfc-vol, .bfc-schip-t { font-size: 24px; letter-spacing: .06em; }
     .bfc-schip rect { display: none; }
     #scaleChart text { letter-spacing: .05em; }
-    .bfc-log { display: none; }
   }
   @media (prefers-reduced-motion: reduce) {
     .bfc-run .bfc-traj, .bfc-run .bfc-glow, .bfc-run .bfc-late, .bfc-run .bfc-pt, .bfc-run .bfc-dot,
@@ -1907,7 +1902,6 @@
       <div class="chart-toggle" role="tablist" aria-label="Chart view">
         <button class="toggle-btn active" data-view="tps" role="tab" aria-selected="true">Throughput (TPS)</button>
         <button class="toggle-btn" data-view="cost" role="tab" aria-selected="false">Cost per transfer</button>
-        <span class="bfc-log" aria-hidden="true">LOG SCALE</span>
       </div>
 
       <div class="chart-wrap bfc-wrap" id="bfcWrap">
@@ -1915,8 +1909,6 @@
         <div class="bfc-today" id="bfcToday" aria-hidden="true"><i></i></div>
         <span class="bfc-chip" id="bfcChip" aria-hidden="true">~140X THE FLOOR</span>
       </div>
-      <p class="bfc-src">SRC &mdash; HISTORICAL: PUBLIC NETWORK DATA &middot; PROJECTIONS: STARKNET ROADMAP &middot; LOG SCALE</p>
-
       <!-- the chart's data, readable and searchable; the panel is decoration
            over these numbers -->
       <!-- the clip wrapper is a DIV, not the table itself: a table refuses
