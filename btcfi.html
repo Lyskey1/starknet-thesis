@@ -364,20 +364,74 @@
   .bgap-stage { position: relative; width: 100%; aspect-ratio: 1000 / 440; }
   .bgap-lines { position: absolute; inset: 0; width: 100%; height: 100%; display: block; overflow: visible; }
   .bgap-lines line, .bgap-lines circle { vector-effect: non-scaling-stroke; fill: none; }
-  .bgap-hub   { stroke: rgba(245,242,236,0.13); stroke-width: 1.05; }
-  .bgap-solid { stroke: rgba(245,242,236,0.34); stroke-width: 1.7; stroke-linecap: round; transition: stroke .18s ease; }
-  .bgap-dash  { stroke: rgba(247,147,26,0.5); stroke-width: 1.2; stroke-dasharray: 4 7; stroke-linecap: round; transition: stroke .18s ease; }
-  .bgap-node  { stroke: rgba(245,242,236,0.4); stroke-width: 1.05; fill: var(--bg); transition: stroke .18s ease, fill .18s ease; }
-  .bgap-sp.is-on .bgap-solid { stroke: rgba(245,242,236,0.62); }
-  .bgap-sp.is-on .bgap-dash  { stroke: var(--accent); }
+
+  /* THE VALUE LADDER, and this is the whole design. An earlier cut put almost
+     everything in one gray band and the device read flat. Six levels now, by
+     perceived luminance on the #0A0A0A ground, brightest at the core and
+     falling outward:
+     AT REST (contrast against #0A0A0A in brackets):
+       1 core mark        #F7931A solid fill  [8.6]     the subject
+       2 gap name         #F5F2EC 0.62        [6.6]
+       3 one-liner        #F5F2EC 0.48        [4.6]
+       4 solid spoke      #F7931A 0.34, 1.7px [1.9]     Bitcoin's reach
+       5 hub ring         #F7931A 0.20, 1.4px [1.4]
+       6 dashed remainder #F5F2EC 0.12, 1.15px[1.3]     the shortfall
+     SELECTED lifts the whole spoke: name 1.0 [17.7], one-liner 0.78 [10.6],
+     solid spoke 0.95 at 2.2px [7.8], dashed 0.26, node fills accent, index
+     turns accent. The core outranks the gap name on area, not on contrast:
+     a 130px filled disc against 13px of mono type is not a close call.
+     COLOUR SITS ON THE SOLID RUN, NOT THE DASHED ONE. The first version had
+     this backwards: the only colour on the diagram was on its thinnest, most
+     broken strokes, so the reach looked like the afterthought. Bitcoin's reach
+     now carries weight and light and then visibly runs out of road into dim.
+     Do not re-invert this.
+     Unselected is a real drop across five properties at once, not a border
+     tweak: the spoke loses colour and weight, the node empties, the name and
+     one-liner fall roughly 50%. The selected gap has to be readable at a
+     glance from across the room. */
+  .bgap-hub   { stroke: rgba(var(--accent-rgb),0.20); stroke-width: 1.4; }
+  .bgap-solid { stroke: rgba(var(--accent-rgb),0.34); stroke-width: 1.7; stroke-linecap: round; transition: stroke .18s ease, stroke-width .18s ease; }
+  .bgap-dash  { stroke: rgba(245,242,236,0.12); stroke-width: 1.15; stroke-dasharray: 4 7; stroke-linecap: round; transition: stroke .18s ease; }
+  .bgap-node  { stroke: rgba(var(--accent-rgb),0.4); stroke-width: 1.05; fill: var(--black); transition: stroke .18s ease, fill .18s ease; }
+  .bgap-sp.is-on .bgap-solid { stroke: rgba(var(--accent-rgb),0.95); stroke-width: 2.2; }
+  .bgap-sp.is-on .bgap-dash  { stroke: rgba(245,242,236,0.26); }
   .bgap-sp.is-on .bgap-node  { stroke: var(--accent); fill: var(--accent); }
 
-  /* the core. Neutral ink by decision, see the markup comment. */
+  /* THE CORE IS THE ACCENT AND THE BRIGHTEST THING HERE. It was neutral ink on
+     the quantum vault's precedent, and that precedent does not transfer: there
+     gray MEANT unchanged and the colour argument depended on it, here it means
+     nothing and only drains the one colour the object owns. A gray Bitcoin
+     mark on black reads as switched off.
+     Filled, not outlined, because that is the mark's canonical form and it is
+     what gives the centre mass without a gradient: flat accent disc, white B,
+     which is the real colourway rather than a recolour. An earlier cut knocked
+     the B out in the page ground so the glyph read as cut out of the disc,
+     which was the safer and more site-native choice; it lost because the whole
+     point of this element is to be the brightest thing in the composition and
+     white is brighter. If it ever starts reading as a pasted-in brand asset,
+     `fill: var(--black)` on .bgap-btc-b is the way back.
+     NO ELEMENTS WERE ADDED TO FIX THE FLATNESS, and that is worth knowing
+     because the instinct when something reads flat is always to add a shape.
+     This was going to get a denser hub disc behind the mark; filling the mark
+     made it unnecessary and it was never built. The fix was values, one
+     geometry change (the mark is filled and larger rather than outlined) and
+     retuning a layer that already existed. Element count is unchanged: 8
+     lines, 5 circles, 4 buttons, 2 SVGs. If this ever reads flat again, look
+     at the value ladder before reaching for a fifth thing.
+     PRESENCE COMES FROM THE HALO, WHICH IS NOT A NEW ELEMENT AND NOT A NEW
+     TECHNIQUE. It is the page's own .btcg-bloom, the same blurred
+     radial-gradient layer the card grids use, moved inside the stage and
+     retuned to sit on the core: tighter, and .18 against the .05 the grids
+     run at, because a bloom tuned to tint a whole card grid is invisible
+     behind a single 130px object. Blooms are already dropped at <=980 for the
+     paint budget, which is exactly where the radial stops existing anyway. */
   .bgap-core { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%);
-               width: 112px; height: 112px; display: block; pointer-events: none; }
+               width: 12.95%; aspect-ratio: 1 / 1; display: block; pointer-events: none; z-index: 1; }
   .bgap-btc { width: 100%; height: 100%; display: block; }
-  .bgap-btc-disc { fill: none; stroke: rgba(245,242,236,0.55); stroke-width: 2.2; vector-effect: non-scaling-stroke; }
-  .bgap-btc-b    { fill: rgba(245,242,236,0.78); }
+  .bgap-btc-disc { fill: var(--accent); stroke: none; }
+  .bgap-btc-b    { fill: var(--white); }
+  .page-btcfi .btcg-bloom-bgap { z-index: 0; }
+  .page-btcfi .btcg-bloom-bgap i { --bc: var(--accent); opacity: .18; left: 27%; top: 4%; width: 46%; height: 92%; }
 
   /* the four labels. Mirrored alignment so each block hugs the core it hangs
      off, which is what makes the composition read as radial rather than as
@@ -388,16 +442,29 @@
   .bgap-p1 { right: 1.5%; top: 3.2%; text-align: left; }
   .bgap-p2 { right: 1.5%; bottom: 3.2%; text-align: left; }
   .bgap-p3 { left: 1.5%;  bottom: 3.2%; text-align: right; }
+  /* THE RULE, and it is a rule and not a one-off: SEPARATION COMES FROM RAISING
+     THE SELECTED STATE, NEVER FROM DIMMING THE REST BELOW LEGIBILITY. The
+     one-liners are required to be readable without interaction, so their
+     resting value is a measured floor, not an aesthetic choice.
+     THE NUMBER IS 4.6:1. A first pass set the resting one-liner to 0.30 alpha
+     because it looked right in the composition; measured against the #0A0A0A
+     ground that is 2.44:1, which is not a readable body value at 13.5px. 0.48
+     is 4.6:1 and holds. If this device ever needs more contrast between the
+     selected gap and the other three, take it out of the selected state's
+     headroom, not out of this floor. Measure, do not eyeball: the whole reason
+     the earlier version read flat is that every value in it was picked by eye. */
   .bgap-idx  { display: block; font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em;
-               color: rgba(245,242,236,0.3); margin-bottom: 7px; transition: color .18s ease; }
+               color: rgba(245,242,236,0.28); margin-bottom: 7px; transition: color .18s ease; }
   .bgap-name { display: block; font-family: var(--mono); font-size: 13px; letter-spacing: 0.2em;
                text-transform: uppercase; color: rgba(245,242,236,0.62); margin-bottom: 9px;
                transition: color .18s ease; }
   .bgap-one  { display: block; font-family: var(--sans); font-size: 13.5px; line-height: 1.55;
-               color: rgba(245,242,236,0.45); transition: color .18s ease; }
-  .bgap-spoke:hover .bgap-name, .bgap-spoke.is-on .bgap-name { color: var(--white); }
-  .bgap-spoke:hover .bgap-one,  .bgap-spoke.is-on .bgap-one  { color: rgba(245,242,236,0.66); }
-  .bgap-spoke.is-on .bgap-idx { color: var(--accent); }
+               color: rgba(245,242,236,0.48); transition: color .18s ease; }
+  .bgap-spoke:hover .bgap-name { color: rgba(245,242,236,0.82); }
+  .bgap-spoke:hover .bgap-one  { color: rgba(245,242,236,0.62); }
+  .bgap-spoke.is-on .bgap-name { color: var(--white); }
+  .bgap-spoke.is-on .bgap-one  { color: rgba(245,242,236,0.78); }
+  .bgap-spoke.is-on .bgap-idx  { color: var(--accent); }
   .bgap-bar { display: none; }
   .bgap-spoke:focus-visible { outline: 2px solid var(--accent); outline-offset: 6px; border-radius: 3px; }
 
@@ -426,7 +493,7 @@
   @media (max-width: 860px) {
     .bgap-stage { aspect-ratio: auto; display: flex; flex-direction: column; gap: 0; }
     .bgap-lines { display: none; }
-    .bgap-core { position: static; transform: none; width: 84px; height: 84px; margin: 0 auto 30px; }
+    .bgap-core { position: static; transform: none; width: 96px; height: 96px; margin: 0 auto 30px; }
     .bgap-spoke { position: static; width: 100%; text-align: left; padding: 18px 0 20px;
                   border-top: 1px solid var(--border);
                   display: grid; grid-template-columns: auto 1fr; column-gap: 13px; }
@@ -443,10 +510,10 @@
     /* solid run then dashed remainder, stopping short of the row's right edge:
        the same claim the spokes make, laid flat. The 22% tail is left empty on
        purpose, it is the gap. */
-    .bgap-bar i:first-child { width: 34%; border-top: 1.7px solid rgba(245,242,236,0.34); }
-    .bgap-bar i:last-child  { width: 44%; border-top: 1.2px dashed rgba(247,147,26,0.5); margin-left: 5px; }
-    .bgap-spoke.is-on .bgap-bar i:first-child { border-top-color: rgba(245,242,236,0.62); }
-    .bgap-spoke.is-on .bgap-bar i:last-child  { border-top-color: var(--accent); }
+    .bgap-bar i:first-child { width: 34%; border-top: 1.7px solid rgba(var(--accent-rgb),0.34); }
+    .bgap-bar i:last-child  { width: 44%; border-top: 1.15px dashed rgba(245,242,236,0.12); margin-left: 5px; }
+    .bgap-spoke.is-on .bgap-bar i:first-child { border-top: 2.2px solid rgba(var(--accent-rgb),0.95); }
+    .bgap-spoke.is-on .bgap-bar i:last-child  { border-top-color: rgba(245,242,236,0.26); }
     .bgap-panel { margin-top: 26px; }
   }
 
@@ -816,27 +883,28 @@
        not a shrunken radial. -->
   <div class="bgap" id="bgap">
     <div class="bgap-stage" role="tablist" aria-label="Bitcoin's four capability gaps">
+      <div class="btcg-bloom btcg-bloom-bgap" aria-hidden="true"><i></i></div>
       <svg class="bgap-lines" viewBox="0 0 1000 440" aria-hidden="true" focusable="false" preserveAspectRatio="xMidYMid meet">
-        <circle class="bgap-hub" cx="500" cy="220" r="78"/>
+        <circle class="bgap-hub" cx="500" cy="220" r="82"/>
       <g class="bgap-sp" data-gap="0">
-        <line class="bgap-solid" x1="434.1" y1="178.3" x2="360.5" y2="131.8"/>
-        <line class="bgap-dash" x1="354.6" y1="128.1" x2="281.9" y2="82.2"/>
-        <circle class="bgap-node" cx="360.5" cy="131.8" r="4.6"/>
+        <line class="bgap-solid" x1="430.7" y1="176.2" x2="358.0" y2="130.2"/>
+        <line class="bgap-dash" x1="352.1" y1="126.5" x2="281.9" y2="82.2"/>
+        <circle class="bgap-node" cx="358.0" cy="130.2" r="4.8"/>
       </g>
       <g class="bgap-sp" data-gap="1">
-        <line class="bgap-solid" x1="565.9" y1="178.3" x2="639.5" y2="131.8"/>
-        <line class="bgap-dash" x1="645.4" y1="128.1" x2="718.1" y2="82.2"/>
-        <circle class="bgap-node" cx="639.5" cy="131.8" r="4.6"/>
+        <line class="bgap-solid" x1="569.3" y1="176.2" x2="642.0" y2="130.2"/>
+        <line class="bgap-dash" x1="647.9" y1="126.5" x2="718.1" y2="82.2"/>
+        <circle class="bgap-node" cx="642.0" cy="130.2" r="4.8"/>
       </g>
       <g class="bgap-sp" data-gap="2">
-        <line class="bgap-solid" x1="565.9" y1="261.7" x2="639.5" y2="308.2"/>
-        <line class="bgap-dash" x1="645.4" y1="311.9" x2="718.1" y2="357.8"/>
-        <circle class="bgap-node" cx="639.5" cy="308.2" r="4.6"/>
+        <line class="bgap-solid" x1="569.3" y1="263.8" x2="642.0" y2="309.8"/>
+        <line class="bgap-dash" x1="647.9" y1="313.5" x2="718.1" y2="357.8"/>
+        <circle class="bgap-node" cx="642.0" cy="309.8" r="4.8"/>
       </g>
       <g class="bgap-sp" data-gap="3">
-        <line class="bgap-solid" x1="434.1" y1="261.7" x2="360.5" y2="308.2"/>
-        <line class="bgap-dash" x1="354.6" y1="311.9" x2="281.9" y2="357.8"/>
-        <circle class="bgap-node" cx="360.5" cy="308.2" r="4.6"/>
+        <line class="bgap-solid" x1="430.7" y1="263.8" x2="358.0" y2="309.8"/>
+        <line class="bgap-dash" x1="352.1" y1="313.5" x2="281.9" y2="357.8"/>
+        <circle class="bgap-node" cx="358.0" cy="309.8" r="4.8"/>
       </g>
       </svg>
       <span class="bgap-core" aria-hidden="true">
@@ -898,7 +966,6 @@
       <p>Google researchers warn the cryptographic risk could be relevant as early as 2029. For an asset built to last centuries, this is an urgent short-term concern.</p>
     </div>
     </div>
-    <div class="btcg-bloom btcg-bloom-bgap" aria-hidden="true"><i></i></div>
   </div>
 
   <!-- THE TURN. Section 01 makes two arguments, not one: the capability gap
