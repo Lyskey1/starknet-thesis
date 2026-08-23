@@ -437,10 +437,15 @@
                 perspective: 1500px; perspective-origin: 50% 50%; }
   .bgap-plane { position: absolute; inset: 0; transform: rotateX(var(--tilt, 54deg));
                 transform-style: preserve-3d;
-                /* depth falloff: the far half of the plane recedes. A static
-                   mask, composited once with the layer, not a per-frame cost. */
-                -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.34) 0%, rgba(0,0,0,0.72) 34%, #000 62%);
-                mask-image: linear-gradient(to bottom, rgba(0,0,0,0.34) 0%, rgba(0,0,0,0.72) 34%, #000 62%); }
+                /* Depth falloff: the far half recedes. A static mask, composited
+                   once with the layer, not a per-frame cost. THE FLOOR IS 0.55,
+                   NOT 0.34. At 0.34 it cut the mesh to 1.02:1 at the top of the
+                   plane, which is 2% brighter than the ground: a depth gradient
+                   that makes half the object invisible is not a depth gradient.
+                   Whatever this is retuned to, compute the product with the
+                   layer alphas below, not the mask on its own. */
+                -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.80) 34%, #000 62%);
+                mask-image: linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.80) 34%, #000 62%); }
   .bgap-plane > svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; overflow: visible; }
   .bgap-orbits path, .bgap-orbits circle, .bgap-mesh line, .bgap-glints path,
   .bgap-leads path, .bgap-leads circle { vector-effect: non-scaling-stroke; fill: none; }
@@ -449,8 +454,26 @@
      compositor layer; the animation is declared ONLY under .run, so off screen
      nothing is animating at all rather than animating invisibly. Two speeds so
      the mesh and the glints never look mechanically locked together. */
-  .bgap-mesh line { stroke: rgba(var(--accent-rgb),0.07); stroke-width: 1; }
-  .bgap-glints path { stroke: rgba(var(--accent-rgb),0.32); stroke-width: 1.6; stroke-linecap: round; }
+    /* EFFECTIVE CONTRAST IS THE NUMBER THAT MATTERS, NOT THE ALPHA. Both figures
+     figures below are MEASURED from rendered pixels against the #0A0A0A ground
+     with the plane mask applied, brightest pixel in the far half and the near
+     half. They are not the alpha and they are not alpha x mask floor: the
+     layers do not reach the top of the gradient, so computing it analytically
+     understates them by about 0.1.
+       mesh   alpha 0.12  ->  1.20:1 far   1.22:1 near
+       glints alpha 0.45  ->  2.34:1 far   2.58:1 near
+     Headroom: glints can go to 0.60 and still sit under the card one-liners at
+     4.6:1, which is the ordering that keeps the argument legible.
+     THE LESSON, and it is not "the values were too low". Three separately
+     defensible decisions multiplied into an indefensible product: the mesh was
+     pulled 0.10 -> 0.07 and the glints 0.5 -> 0.32 so they would not compete
+     with the selected arc, and then a depth mask was added over both at a 0.34
+     floor. Each was right on its own. Nobody computed the product, and the
+     product was 1.02:1 on the mesh, which is invisible. The device ran
+     perfectly and looked frozen. When any of these three change, recompute the
+     effective contrast, not the alpha. */
+  .bgap-mesh line { stroke: rgba(var(--accent-rgb),0.12); stroke-width: 1; }
+  .bgap-glints path { stroke: rgba(var(--accent-rgb),0.45); stroke-width: 1.6; stroke-linecap: round; }
   /* SPEED IS CALIBRATED AGAINST A CLOCK'S SECOND HAND, which is 6 deg/s and
      is plainly trackable in peripheral vision. The glints started at 96s,
      which is 3.75 deg/s, 0.62x a second hand: same perceptual class, and this
