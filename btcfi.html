@@ -82,6 +82,112 @@
      that uses the control. Same values as .bf-cta and .news-toggle above, so
      the ring matches every other focusable thing on the page. */
   .toggle-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+  /* ---- section 04 instrument panel (.bfc). Design notes on the markup,
+     data notes on the renderer. All lettering mono caps; every class is
+     bfc- so the shared chart classes in styles.css are simply unused here.
+     THE REVEAL: base state (no classes) is the END state, so no-JS and
+     no-observer still show a finished chart; .bfc-run applies the draw-in
+     (trajectory dashoffset 1.7s, then area/projection fade, then points
+     cascade on --i, then the chip), .bfc-fast is the 0.6s toggle re-run.
+     Permanent motion is only the HTML today-dot pulse under .bfc-on
+     (observer-gated), a compositor transform/opacity on its own layer. */
+  .page-btcfi .chart-toggle { align-items: center; }
+  .bfc-log { font-family: var(--mono); font-size: 10px; letter-spacing: .16em; color: rgba(245,242,236,.45);
+    border: 1px solid rgba(245,242,236,.16); border-radius: 99px; padding: 5px 11px; margin-left: 10px; align-self: center; }
+  .page-btcfi .bfc-wrap { position: relative; }
+  .bfc-src { font-family: var(--mono); font-size: 10px; letter-spacing: .14em; text-transform: uppercase;
+    color: rgba(245,242,236,.38); margin-top: 12px; }
+  .bfc-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0);
+    clip-path: inset(50%); white-space: nowrap; }
+  #scaleChart text { font-family: var(--mono); letter-spacing: .1em; stroke: none; }
+  .bfc-bracket { stroke: rgba(245,242,236,.28); stroke-width: 1.5; fill: none; }
+  .bfc-grid { stroke: rgba(245,242,236,.09); stroke-dasharray: 2 6; }
+  .bfc-glab { fill: rgba(245,242,236,.45); font-size: 10.5px; }
+  .bfc-axis { fill: rgba(245,242,236,.5); font-size: 10.5px; }
+  .bfc-tick { stroke: rgba(245,242,236,.3); }
+  .bfc-projzone { fill: rgba(139,92,246,.035); }
+  .bfc-projdiv { stroke: rgba(139,92,246,.35); stroke-width: 1; stroke-dasharray: 4 5; }
+  .bfc-todaylab { fill: rgba(245,242,236,.55); font-size: 10px; }
+  .bfc-projlab { fill: rgba(139,92,246,.6); font-size: 10px; }
+  /* bounds: the forbidden band (hatch + solid accent lid) and the desirable
+     floor (clean line, no hatch) */
+  .bfc-bound { stroke: var(--accent); stroke-width: 2; }
+  .bfc-bound-lab { fill: rgba(var(--accent-rgb),.9); font-size: 11.5px; letter-spacing: .14em; }
+  .bfc-floor { stroke: #8B5CF6; stroke-width: 2; }
+  .bfc-floor-lab { fill: rgba(196,181,253,.95); font-size: 11.5px; letter-spacing: .14em; }
+  /* trajectories: crisp line over a wide soft underglow */
+  .bfc-traj { stroke: #8B5CF6; stroke-width: 2.4; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .bfc-glow { stroke: rgba(139,92,246,.12); stroke-width: 9; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .bfc-traj-btc { stroke: var(--accent); stroke-width: 2.2; }
+  .bfc-glow-btc { stroke: rgba(var(--accent-rgb),.10); }
+  .bfc-projline { stroke: #8B5CF6; stroke-width: 2; fill: none; stroke-dasharray: 3 7; opacity: .8; stroke-linecap: round; }
+  .bfc-projline-btc { stroke: var(--accent); opacity: .65; }
+  .bfc-pt { fill: #0A0A0A; stroke: #8B5CF6; stroke-width: 1.8; }
+  .bfc-pt-proj { opacity: .55; }
+  .bfc-pt-today { fill: #8B5CF6; }
+  .bfc-dot { fill: var(--accent); stroke: none; opacity: .8; }
+  .bfc-vlab { fill: rgba(196,181,253,.95); font-size: 11px; }
+  .bfc-vlab-proj { fill: rgba(139,92,246,.6); }
+  .bfc-schip rect { fill: rgba(247,147,26,.1); stroke: rgba(var(--accent-rgb),.45); }
+  .bfc-schip-t { fill: var(--accent); font-size: 10.5px; letter-spacing: .1em; }
+  .bfc-vol { fill: rgba(var(--accent-rgb),.7); font-size: 10.5px; letter-spacing: .12em; }
+  /* reveal */
+  .bfc-run .bfc-traj, .bfc-run .bfc-glow { stroke-dasharray: 1000; stroke-dashoffset: 1000;
+    animation: bfcDraw 1.7s cubic-bezier(.35,.4,.25,1) forwards; }
+  @keyframes bfcDraw { to { stroke-dashoffset: 0; } }
+  .bfc-run .bfc-late { opacity: 0; animation: bfcIn .5s ease forwards; animation-delay: 1.55s; }
+  .bfc-run .bfc-pt, .bfc-run .bfc-dot { animation-delay: calc(1.65s + var(--i, 0) * .09s); }
+  .bfc-run .bfc-schip, .bfc-run .bfc-vol { animation-delay: 2.15s; }
+  @keyframes bfcIn { to { opacity: 1; } }
+  .bfc-run .bfc-pt-proj, .bfc-run .bfc-projline { animation-name: bfcInDim; }
+  @keyframes bfcInDim { to { opacity: .65; } }
+  .bfc-fast .bfc-traj, .bfc-fast .bfc-glow { animation-duration: .6s; }
+  .bfc-fast .bfc-late { animation-delay: .5s; animation-duration: .3s; }
+  .bfc-fast .bfc-pt, .bfc-fast .bfc-dot { animation-delay: calc(.55s + var(--i, 0) * .04s); }
+  .bfc-fast .bfc-schip, .bfc-fast .bfc-vol { animation-delay: .75s; }
+  /* the HTML today dot + chip; the chip fades in with the reveal */
+  .bfc-today { position: absolute; width: 12px; height: 12px; margin: -6px 0 0 -6px; pointer-events: none; }
+  .bfc-today i { position: absolute; inset: 2px; border-radius: 50%; background: #8B5CF6;
+    box-shadow: 0 0 10px rgba(139,92,246,.8); }
+  .bfc-today::after { content: ''; position: absolute; inset: 0; border-radius: 50%;
+    border: 1.5px solid rgba(139,92,246,.75); opacity: 0; }
+  /* in the cost view the today marker rides the BITCOIN trajectory, so it
+     wears the accent, not violet */
+  .bfc-view-cost .bfc-today i { background: var(--accent); box-shadow: 0 0 10px rgba(var(--accent-rgb),.8); }
+  .bfc-view-cost .bfc-today::after { border-color: rgba(var(--accent-rgb),.75); }
+  .bfc-on .bfc-today::after { animation: bfcPulse 2.8s ease-out infinite; }
+  @keyframes bfcPulse { 0% { transform: scale(.7); opacity: .9; } 70% { transform: scale(2.5); opacity: 0; } 100% { opacity: 0; } }
+  .bfc-chip { position: absolute; transform: translate(-108%, -155%); white-space: nowrap; pointer-events: none;
+    font-family: var(--mono); font-size: 10px; letter-spacing: .14em; color: #C4B5FD;
+    background: rgba(139,92,246,.12); border: 1px solid rgba(139,92,246,.45); border-radius: 4px; padding: 5px 9px; }
+  .bfc-run .bfc-chip { opacity: 0; animation: bfcIn .5s ease 2.3s forwards; }
+  .bfc-fast .bfc-chip { animation-delay: .8s; }
+  @media (max-width: 560px) {
+    /* the 0.36x letterbox renders desktop-sized svg text at ~4px, so the
+       small tier RE-SIZES the lettering in viewBox units (24-26u ~ 9px
+       rendered) and thins to the labels that carry the story: axis, grid
+       values, the two bound labels, the spike text and the volatile note.
+       Per-point value labels hide entirely -- their numbers live in the
+       chip, the bound labels and the accessible table -- which is also the
+       no-overlap guarantee at this width. The chip moves above the plot. */
+    .bfc-chip { left: auto !important; top: 6px !important; right: 6px; transform: none; }
+    .bfc-minor, .bfc-vlab { display: none; }
+    .bfc-glab, .bfc-axis { font-size: 24px; }
+    .bfc-todaylab, .bfc-projlab { font-size: 22px; }
+    .bfc-bound-lab, .bfc-floor-lab { font-size: 26px; letter-spacing: .06em; }
+    .bfc-vol, .bfc-schip-t { font-size: 24px; letter-spacing: .06em; }
+    .bfc-schip rect { display: none; }
+    #scaleChart text { letter-spacing: .05em; }
+    .bfc-log { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .bfc-run .bfc-traj, .bfc-run .bfc-glow, .bfc-run .bfc-late, .bfc-run .bfc-pt, .bfc-run .bfc-dot,
+    .bfc-run .bfc-chip, .bfc-on .bfc-today::after { animation: none !important; }
+    .bfc-run .bfc-traj, .bfc-run .bfc-glow { stroke-dasharray: none; stroke-dashoffset: 0; }
+    .bfc-run .bfc-late, .bfc-run .bfc-chip { opacity: 1; }
+    .bfc-run .bfc-pt-proj, .bfc-run .bfc-projline { opacity: .65; }
+  }
   .bf-cta--muted { border-color: var(--border);
     box-shadow: inset 0 1px 0 rgba(255,255,255,.5), inset -1px -1px 0 rgba(255,255,255,.30),
       inset 1px 1px 0 rgba(255,255,255,.12), inset 0 10px 18px -8px rgba(255,255,255,.18),
@@ -1777,20 +1883,59 @@
       <h3 id="bitcoin-settles-starknet-scales" class="scale-title">Bitcoin settles. <span>Starknet scales.</span></h3>
       <p class="scale-intro">Bitcoin's base layer is capped at around 7 transactions per second, by design, and that's a feature, not a bug: it keeps Bitcoin decentralized and secure as the settlement layer. But it means Bitcoin can't be the execution layer. Its fees are also unpredictable, spiking as high as ~$128 during the April 2024 halving. Starknet absorbs the execution: throughput climbing toward 10,000+ TPS while fees stay locked under $0.01, permanently.</p>
 
-      <div class="chart-toggle" role="tablist">
-        <button class="toggle-btn active" data-view="tps">Throughput (TPS)</button>
-        <button class="toggle-btn" data-view="cost">Cost per transfer</button>
+      <!-- THE INSTRUMENT PANEL. Not two rival lines: in each view one series
+           is a BOUND and the other a TRAJECTORY, and they speak different
+           grammar. Throughput: Bitcoin is the bound (a hatched forbidden
+           band pinned at ~7 TPS -- a zone, not a curve) and Starknet is the
+           trajectory (crisp violet line over a soft underglow, area falling
+           away beneath, hollow rings, one solid pulsing TODAY point carrying
+           the ~140x chip: 1000/7 = 142.9, rounded DOWN). Cost inverts the
+           inversion: Starknet is the bound (a clean floor line at <$0.01,
+           NO hatch -- hatch marks forbidden zones and this floor is the
+           desirable one) and Bitcoin is the volatile trajectory. The time
+           axis is PROPORTIONAL TO ACTUAL TIME (the old chart spaced points
+           evenly per index and printed 2025 twice); the acceleration now
+           reads as an acceleration. The spike value is ~$128, not the old
+           unsourced ~$90: 2024-04-20 average fee $128.45 (The Block,
+           Forbes), the figure this page's own intro already cites.
+           The TODAY dot pulse and its chip are HTML overlays positioned by
+           JS, not SVG children: permanent motion must be a compositor
+           animation on its own layer (the chronometer lesson -- transforms
+           inside an svg repaint the svg). Data lives in the visually-hidden
+           table below the panel, searchable and readable; the svg is a
+           labeled image. -->
+      <div class="chart-toggle" role="tablist" aria-label="Chart view">
+        <button class="toggle-btn active" data-view="tps" role="tab" aria-selected="true">Throughput (TPS)</button>
+        <button class="toggle-btn" data-view="cost" role="tab" aria-selected="false">Cost per transfer</button>
+        <span class="bfc-log" aria-hidden="true">LOG SCALE</span>
       </div>
 
-      <div class="chart-wrap">
-        <svg id="scaleChart" viewBox="0 0 900 480" role="img" aria-label="Comparison of Bitcoin and Starknet throughput and transaction cost over time"></svg>
+      <div class="chart-wrap bfc-wrap" id="bfcWrap">
+        <svg id="scaleChart" viewBox="0 0 900 480" role="img" aria-label="Throughput over time, log scale: Starknet's trajectory from 1 TPS in September 2022 to about 1,000 TPS today, projected toward 4,000 and 10,000+; Bitcoin's base layer holds a ceiling of about 7 TPS"></svg>
+        <div class="bfc-today" id="bfcToday" aria-hidden="true"><i></i></div>
+        <span class="bfc-chip" id="bfcChip" aria-hidden="true">~140X THE FLOOR</span>
       </div>
+      <p class="bfc-src">SRC &mdash; HISTORICAL: PUBLIC NETWORK DATA &middot; PROJECTIONS: STARKNET ROADMAP &middot; LOG SCALE</p>
 
-      <div class="chart-legend">
-        <div class="legend-item"><span class="legend-dot" style="background:#F7931A;"></span> Bitcoin (base layer)</div>
-        <div class="legend-item"><span class="legend-dot" style="background:#8B5CF6;"></span> Starknet</div>
-        <div class="legend-item" style="color:rgba(139,92,246,0.5);"><span style="font-family:var(--mono),monospace; font-size:11px;">— — —</span> Projection</div>
-      </div>
+      <!-- the chart's data, readable and searchable; the panel is decoration
+           over these numbers -->
+      <!-- the clip wrapper is a DIV, not the table itself: a table refuses
+           widths below min-content, so the sr-clip pattern on the table
+           element left a ~1250px box overflowing the page at 375 -->
+      <div class="bfc-sr"><table>
+        <caption>Bitcoin and Starknet, throughput and cost per transfer over time</caption>
+        <thead><tr><th>Date</th><th>Starknet throughput, TPS</th><th>Bitcoin base layer, TPS</th><th>Bitcoin cost per transfer</th><th>Starknet cost per transfer</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>September 2022</td><td>1</td><td>about 7</td><td>about $1 to $3</td><td>$0.24</td><td>realized</td></tr>
+          <tr><td>March 2023</td><td>5</td><td>about 7</td><td>about $1 to $5</td><td>$0.22</td><td>realized</td></tr>
+          <tr><td>December 2023</td><td>18</td><td>about 7</td><td>about $2 to $15</td><td>$0.05</td><td>realized</td></tr>
+          <tr><td>April 2024 (halving)</td><td>70</td><td>about 7</td><td>spiked to about $128 average</td><td>$0.02</td><td>realized</td></tr>
+          <tr><td>2025</td><td>85</td><td>about 7</td><td>volatile, about $1 to $22</td><td>under $0.01</td><td>realized</td></tr>
+          <tr><td>Today (August 2026)</td><td>about 1,000 &mdash; about 140 times Bitcoin's ceiling</td><td>about 7</td><td>volatile, unpredictable</td><td>under $0.01</td><td>realized</td></tr>
+          <tr><td>Late 2026</td><td>about 4,000</td><td>about 7</td><td>volatile, can spike far higher</td><td>under $0.01</td><td>projection</td></tr>
+          <tr><td>2027 and beyond</td><td>10,000 and above</td><td>about 7</td><td>volatile, can spike far higher</td><td>under $0.01</td><td>projection</td></tr>
+        </tbody>
+      </table></div>
 
       <!-- strkBTC / Privacy -->
       <div class="tl-section">
@@ -2167,183 +2312,256 @@
 </footer>
 
 <script>
+/* SECTION 04 INSTRUMENT PANEL. Design notes live on the markup; this is the
+   renderer. REBUILT IN PLACE: the old chart was already library-free inline
+   SVG, so "rebuild vs restyle" meant replacing this render pass, nothing
+   else. Geometry: x is PROPORTIONAL TO TIME (decimal years, T0 Sep-2022 to
+   T1 2028); both views share the axis so the TODAY divider never moves.
+   Reveal: CSS animations under .bfc-run, added once by the observer (or
+   .bfc-fast on toggle re-runs, 0.6s -- a bare swap read as a pop, the short
+   draw reads as the instrument re-measuring). Base state without classes is
+   the END state, so no-JS/no-IO shows the finished chart. Permanent motion
+   is ONLY the HTML today-dot pulse, gated by the same observer. */
 (function() {
   var svg = document.getElementById('scaleChart');
   if (!svg) return;
   var NS = 'http://www.w3.org/2000/svg';
+  var wrap = document.getElementById('bfcWrap');
+  var todayEl = document.getElementById('bfcToday');
+  var chipEl = document.getElementById('bfcChip');
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  var labels = ['Sep 22','Mar 23','Dec 23','Jan 24','2025','2025','2026','2027'];
-  var data = {
-    tps: {
-      btc:  [5, 6, 7, 7, 7, 7, 7, 7],
-      strk: [1, 5, 18, 70, 85, 1000, 4000, 10000],
-      btcLabels:  ['', '', '', '', '', '', '', '~7'],
-      strkLabels: ['1', '5', '18', '70', '85', '1k', '4k', '10k+'],
-      logMin: 0, logMax: 4,
-      grid: [{v:1,t:'1'},{v:10,t:'10'},{v:100,t:'100'},{v:1000,t:'1k'},{v:10000,t:'10k'}]
-    },
-    cost: {
-      btc:  [1.2, 2.5, 8, 90, 3, 0.62, 2, 2],
-      strk: [0.24, 0.22, 0.05, 0.02, 0.01, 0.006, 0.005, 0.005],
-      btcDense: [
-        {x:0.0, v:1.2}, {x:0.35, v:3}, {x:0.7, v:1.4}, {x:1.1, v:4.5},
-        {x:1.5, v:1.8}, {x:1.9, v:9}, {x:2.2, v:2.5}, {x:2.55, v:15},
-        {x:2.8, v:4}, {x:3.0, v:90}, {x:3.15, v:16}, {x:3.4, v:5},
-        {x:3.75, v:2.2}, {x:4.1, v:6}, {x:4.45, v:1.5}, {x:4.75, v:4.5}, {x:5.0, v:1},
-        {x:5.2, v:7}, {x:5.4, v:1.3}, {x:5.6, v:22}, {x:5.75, v:3},
-        {x:5.9, v:135}, {x:6.05, v:14}, {x:6.2, v:2}, {x:6.4, v:48},
-        {x:6.55, v:5}, {x:6.7, v:1.4}, {x:6.85, v:75}, {x:7.0, v:9}
-      ],
-      btcDenseLabels: [
-        {x:3.0, t:'~$90', dy:-14},
-        {x:5.9, t:'↑ can spike far higher', dy:-12},
-        {x:6.85, t:'volatile · unpredictable', dy:-12}
-      ],
-      btcLabels:  ['', '', '', '', '', '', '', ''],
-      strkLabels: ['$0.24', '$0.22', '', '', '<$0.01', '', '', '<$0.01'],
-      logMin: -3, logMax: 2.3,
-      grid: [{v:0.001,t:'$0.001'},{v:0.01,t:'$0.01'},{v:0.1,t:'$0.10'},{v:1,t:'$1'},{v:10,t:'$10'},{v:100,t:'$100'}]
-    }
+  var W = 900, H = 480, L = 64, R = 856, T = 36, B = 402;
+  var T0 = 2022.72, T1 = 2028.0, TODAY = 2026.64;
+
+  /* Starknet throughput trajectory. Dates are the old chart's own labels
+     made proportional (Sep 22 / Mar 23 / Dec 23 / Jan 24 / 2025), then:
+     ~1K TPS is TODAY's realized figure (starknet.io, "handles 1,000+ TPS");
+     ~4K lands late 2026 (v0.14.3 "+2x" May 2026 + v0.15 "+2x" Sep 2026 per
+     starknet.io version-releases); 10K+ is the decentralization roadmap's
+     Malachite figure, 2027+. The old chart dated 4K "2026" and 10K+ "2027"
+     with evenly spaced points; the proportional axis is what makes the
+     recent acceleration READ as one. */
+  var TPS = [
+    { t: 2022.72, v: 1,     l: '1' },
+    { t: 2023.17, v: 5,     l: '5' },
+    { t: 2023.92, v: 18,    l: '18' },
+    { t: 2024.04, v: 70,    l: '70' },
+    { t: 2025.2,  v: 85,    l: '85' },
+    { t: TODAY,   v: 1000,  l: '~1K', today: true },
+    { t: 2026.95, v: 4000,  l: '4K · PROJ', proj: true },
+    { t: 2027.6,  v: 10000, l: '10K+ · PROJ', proj: true }
+  ];
+
+  /* Bitcoin cost texture, in the old chart's index space (0..7), remapped to
+     time through ANCHORS below. THE SPIKE IS ~$128, NOT THE OLD ~$90: the
+     2024-04-20 average fee was $128.45 (The Block, Forbes) and this page's
+     own intro already says ~$128 -- the chart contradicted its own prose.
+     Points past index 5 are PROJECTED TEXTURE (illustrative volatility, no
+     printed values), drawn dashed and dimmed in the projection zone. */
+  var DENSE = [
+    {x:0.0, v:1.2}, {x:0.35, v:3}, {x:0.7, v:1.4}, {x:1.1, v:4.5},
+    {x:1.5, v:1.8}, {x:1.9, v:9}, {x:2.2, v:2.5}, {x:2.55, v:15},
+    {x:2.8, v:4}, {x:3.0, v:128}, {x:3.15, v:16}, {x:3.4, v:5},
+    {x:3.75, v:2.2}, {x:4.1, v:6}, {x:4.45, v:1.5}, {x:4.75, v:4.5}, {x:5.0, v:1},
+    {x:5.2, v:7}, {x:5.4, v:1.3}, {x:5.6, v:22}, {x:5.75, v:3},
+    {x:5.9, v:135}, {x:6.05, v:14}, {x:6.2, v:2}, {x:6.4, v:48},
+    {x:6.55, v:5}, {x:6.7, v:1.4}, {x:6.85, v:75}, {x:7.0, v:9}
+  ];
+  /* index-to-year anchors; index 3 sits at the April 2024 halving so the
+     spike lands where it happened */
+  var ANCH = [2022.72, 2023.17, 2023.92, 2024.3, 2025.2, TODAY, 2027.0, 2028.0];
+  function tOf(xi) {
+    var i = Math.min(Math.floor(xi), ANCH.length - 2);
+    return ANCH[i] + (ANCH[i + 1] - ANCH[i]) * (xi - i);
+  }
+
+  var CFG = {
+    tps:  { logMin: 0,  logMax: 4.15,
+            grid: [[1,'1'],[10,'10'],[100,'100'],[1000,'1K'],[10000,'10K']],
+            aria: "Throughput over time, log scale: Starknet's trajectory from 1 TPS in September 2022 to about 1,000 TPS today, projected toward 4,000 and 10,000 plus; Bitcoin's base layer holds a ceiling of about 7 TPS" },
+    cost: { logMin: -3, logMax: 2.45,
+            grid: [[0.001,'$0.001'],[0.01,'$0.01'],[0.1,'$0.10'],[1,'$1'],[10,'$10'],[100,'$100']],
+            aria: "Cost per transfer over time, log scale: Bitcoin's fee is volatile, spiking to about 128 dollars average at the April 2024 halving and unpredictable ahead; Starknet holds a floor locked under one cent" }
   };
 
-  var W = 900, H = 480;
-  var L = 70, R = 850, T = 40, B = 410;
-  var n = labels.length;
-  var projStartIdx = 5;
-
-  function x(i) { return L + (R - L) * (i / (n - 1)); }
-  function y(v, cfg) {
-    var lv = Math.log(Math.max(v, Math.pow(10, cfg.logMin))) / Math.LN10;
-    var frac = (lv - cfg.logMin) / (cfg.logMax - cfg.logMin);
-    return B - (B - T) * frac;
+  function xT(t) { return L + (R - L) * (t - T0) / (T1 - T0); }
+  function yV(v, c) {
+    var lv = Math.log(Math.max(v, Math.pow(10, c.logMin))) / Math.LN10;
+    return B - (B - T) * ((lv - c.logMin) / (c.logMax - c.logMin));
   }
-
-  function el(tag, attrs) {
+  function el(tag, attrs, cls) {
     var e = document.createElementNS(NS, tag);
     for (var k in attrs) e.setAttribute(k, attrs[k]);
+    if (cls) e.setAttribute('class', cls);
     return e;
   }
-
-  function findV(pts, xv) {
-    for (var i = 0; i < pts.length; i++) { if (Math.abs(pts[i].x - xv) < 0.001) return pts[i].v; }
-    return 1;
+  function txt(x, y, s, cls, anchor) {
+    var e = el('text', { x: x, y: y, 'text-anchor': anchor || 'start' }, cls);
+    e.textContent = s;
+    return e;
   }
-
-  function buildPath(arr, cfg) {
+  function smooth(pts) {
     var d = '';
-    for (var i = 0; i < arr.length; i++) {
-      var px = x(i), py = y(arr[i], cfg);
-      if (i === 0) { d += 'M' + px + ',' + py; }
+    for (var i = 0; i < pts.length; i++) {
+      if (i === 0) d = 'M' + pts[i][0] + ',' + pts[i][1];
       else {
-        var prx = x(i-1), pry = y(arr[i-1], cfg);
-        var cx = (prx + px) / 2;
-        d += ' C' + cx + ',' + pry + ' ' + cx + ',' + py + ' ' + px + ',' + py;
+        var cx = (pts[i - 1][0] + pts[i][0]) / 2;
+        d += ' C' + cx + ',' + pts[i - 1][1] + ' ' + cx + ',' + pts[i][1] + ' ' + pts[i][0] + ',' + pts[i][1];
       }
     }
     return d;
   }
 
-  var groups = {};
-
-  function render() {
-    while (svg.firstChild) svg.removeChild(svg.firstChild);
-
-    var projZone = el('rect', {x: x(projStartIdx), y: T, width: R - x(projStartIdx), height: B - T, class: 'proj-zone'});
-    svg.appendChild(projZone);
-    var projDiv = el('line', {x1: x(projStartIdx), y1: T, x2: x(projStartIdx), y2: B, stroke: 'rgba(139,92,246,0.25)', 'stroke-width': 1, 'stroke-dasharray': '4 4'});
-    svg.appendChild(projDiv);
-    var projTxt = el('text', {x: x(projStartIdx) + 8, y: T + 14, class: 'proj-label'});
-    projTxt.textContent = 'Projection';
-    svg.appendChild(projTxt);
-
-    ['tps','cost'].forEach(function(view) {
-      var cfg = data[view];
-      var g = el('g', {opacity: view === current ? '1' : '0', 'pointer-events': view === current ? 'auto' : 'none'});
-
-      cfg.grid.forEach(function(gr) {
-        var gy = y(gr.v, cfg);
-        g.appendChild(el('line', {x1: L, y1: gy, x2: R, y2: gy, class: 'chart-grid'}));
-        var gt = el('text', {x: L - 12, y: gy + 4, class: 'chart-grid-label', 'text-anchor': 'end'});
-        gt.textContent = gr.t;
-        g.appendChild(gt);
-      });
-
-      ['btc','strk'].forEach(function(chain) {
-        var color = chain === 'btc' ? '#F7931A' : '#8B5CF6';
-
-        if (view === 'cost' && chain === 'btc') {
-          var pts = cfg.btcDense;
-          var dSolid = '', dProj = '';
-          for (var i = 0; i < pts.length; i++) {
-            var px = x(pts[i].x), py = y(pts[i].v, cfg);
-            if (pts[i].x <= projStartIdx) {
-              dSolid += (dSolid === '' ? 'M' : 'L') + px + ',' + py;
-            }
-            if (pts[i].x >= projStartIdx) {
-              dProj += (dProj === '' ? 'M' : 'L') + px + ',' + py;
-            }
-          }
-          g.appendChild(el('path', {d: dSolid, class: 'chart-line', stroke: color, 'stroke-width': 2.5}));
-          g.appendChild(el('path', {d: dProj, class: 'chart-line', stroke: color, 'stroke-width': 2.5, 'stroke-dasharray': '2 6', opacity: 0.9}));
-          for (var i = 0; i < pts.length; i++) {
-            g.appendChild(el('circle', {cx: x(pts[i].x), cy: y(pts[i].v, cfg), r: 3, fill: color, class: 'chart-dot', opacity: 0.85}));
-          }
-          cfg.btcDenseLabels.forEach(function(lb) {
-            var tl = el('text', {x: x(lb.x), y: y(findV(pts, lb.x), cfg) + lb.dy, class: 'chart-vlabel', fill: color, 'text-anchor': 'middle', 'font-size': '12'});
-            tl.textContent = lb.t;
-            g.appendChild(tl);
-          });
-          return;
-        }
-
-        var arr = cfg[chain];
-        var solid = arr.slice(0, projStartIdx + 1);
-        var pSolid = el('path', {d: buildPath(solid, cfg), class: 'chart-line', stroke: color});
-        g.appendChild(pSolid);
-
-        var projArr = arr.slice(projStartIdx);
-        var dProj = '';
-        for (var j = 0; j < projArr.length; j++) {
-          var gi = projStartIdx + j;
-          var px = x(gi), py = y(projArr[j], cfg);
-          if (j === 0) { dProj += 'M' + px + ',' + py; }
-          else {
-            var prx = x(gi-1), pry = y(projArr[j-1], cfg);
-            var cx = (prx + px) / 2;
-            dProj += ' C' + cx + ',' + pry + ' ' + cx + ',' + py + ' ' + px + ',' + py;
-          }
-        }
-        var pProj = el('path', {d: dProj, class: 'chart-line', stroke: color, 'stroke-dasharray': '2 6', opacity: 0.85});
-        g.appendChild(pProj);
-
-        for (var i = 0; i < arr.length; i++) {
-          var dot = el('circle', {cx: x(i), cy: y(arr[i], cfg), r: 5, fill: color, class: 'chart-dot'});
-          g.appendChild(dot);
-          var lbl = cfg[chain + 'Labels'][i];
-          if (lbl) {
-            var above = chain === 'strk';
-            if (view === 'cost' && chain === 'strk') above = false;
-            var ty = above ? y(arr[i], cfg) - 14 : y(arr[i], cfg) + 24;
-            var tl = el('text', {x: x(i), y: ty, class: 'chart-vlabel', fill: color, 'text-anchor': 'middle'});
-            tl.textContent = lbl;
-            g.appendChild(tl);
-          }
-        }
-      });
-
-      svg.appendChild(g);
-      groups[view] = g;
+  function frame(g, cfg) {
+    /* corner brackets, oscilloscope style */
+    var A = 16;
+    [['M' + L + ',' + (T + A) + ' V' + T + ' H' + (L + A)],
+     ['M' + (R - A) + ',' + T + ' H' + R + ' V' + (T + A)],
+     ['M' + R + ',' + (B - A) + ' V' + B + ' H' + (R - A)],
+     ['M' + (L + A) + ',' + B + ' H' + L + ' V' + (B - A)]].forEach(function(d) {
+      g.appendChild(el('path', { d: d[0] }, 'bfc-bracket'));
     });
+    /* y grid, dashed, mono labels */
+    cfg.grid.forEach(function(gr) {
+      var gy = yV(gr[0], cfg);
+      g.appendChild(el('line', { x1: L, y1: gy, x2: R, y2: gy }, 'bfc-grid'));
+      g.appendChild(txt(L - 10, gy + 3.5, gr[1], 'bfc-glab', 'end'));
+    });
+    /* x axis: ticks at year boundaries, proportional; SEP 22 marks the origin */
+    g.appendChild(txt(L, B + 24, 'SEP 22', 'bfc-axis bfc-axis-origin'));
+    for (var yr = 2023; yr <= 2028; yr++) {
+      var ax = xT(yr);
+      g.appendChild(el('line', { x1: ax, y1: B, x2: ax, y2: B + 6 }, 'bfc-tick'));
+      /* 2023 keeps its tick but not its label: it sits 42 units from the
+         SEP 22 origin label and the two collide */
+      if (yr > 2023) g.appendChild(txt(ax, B + 24, String(yr), 'bfc-axis' + (yr >= 2027 ? ' bfc-minor' : ''), 'middle'));
+    }
+    /* projection zone + today divider */
+    var tx = xT(TODAY);
+    g.appendChild(el('rect', { x: tx, y: T, width: R - tx, height: B - T }, 'bfc-projzone'));
+    g.appendChild(el('line', { x1: tx, y1: T, x2: tx, y2: B }, 'bfc-projdiv'));
+    g.appendChild(txt(tx - 7, T + 13, 'TODAY', 'bfc-todaylab', 'end'));
+    g.appendChild(txt(tx + 8, T + 13, 'PROJECTION', 'bfc-projlab'));
+  }
 
-    for (var i = 0; i < n; i++) {
-      var ax = el('text', {x: x(i), y: B + 28, class: 'chart-axis', 'text-anchor': 'middle'});
-      ax.textContent = labels[i];
-      svg.appendChild(ax);
+  function render(view) {
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    svg.setAttribute('aria-label', CFG[view].aria);
+    var cfg = CFG[view];
+
+    var defs = el('defs', {});
+    var pat = el('pattern', { id: 'bfcHatch', width: 7, height: 7, patternUnits: 'userSpaceOnUse', patternTransform: 'rotate(45)' });
+    pat.appendChild(el('line', { x1: 0, y1: 0, x2: 0, y2: 7, stroke: 'rgba(247,147,26,0.16)', 'stroke-width': 1 }));
+    defs.appendChild(pat);
+    var grad = el('linearGradient', { id: 'bfcArea', x1: 0, y1: 0, x2: 0, y2: 1 });
+    grad.appendChild(el('stop', { offset: '0', 'stop-color': '#8B5CF6', 'stop-opacity': '0.20' }));
+    grad.appendChild(el('stop', { offset: '1', 'stop-color': '#8B5CF6', 'stop-opacity': '0' }));
+    defs.appendChild(grad);
+    svg.appendChild(defs);
+
+    var g = el('g', {});
+    frame(g, cfg);
+
+    if (view === 'tps') {
+      /* THE BOUND: a forbidden zone, not a curve */
+      var y7 = yV(7, cfg);
+      g.appendChild(el('rect', { x: L, y: y7, width: R - L, height: B - y7, fill: 'url(#bfcHatch)' }));
+      g.appendChild(el('line', { x1: L, y1: y7, x2: R, y2: y7 }, 'bfc-bound'));
+      /* label placed past the trajectory's early climb (it exits the band
+         around 2024), so the words never sit under the line */
+      g.appendChild(txt(xT(2024.55), y7 + 22, 'BASE LAYER CEILING · ~7 TPS', 'bfc-bound-lab'));
+
+      /* THE TRAJECTORY */
+      var solid = [], proj = [];
+      TPS.forEach(function(p) {
+        var pt = [xT(p.t), yV(p.v, cfg)];
+        if (!p.proj) solid.push(pt);
+        if (p.proj || p.today) proj.push(pt);
+      });
+      var dSolid = smooth(solid);
+      g.appendChild(el('path', { d: dSolid + ' V' + B + ' H' + solid[0][0] + ' Z', fill: 'url(#bfcArea)', stroke: 'none' }, 'bfc-area bfc-late'));
+      g.appendChild(el('path', { d: dSolid, pathLength: 1000 }, 'bfc-glow'));
+      g.appendChild(el('path', { d: dSolid, pathLength: 1000 }, 'bfc-traj'));
+      g.appendChild(el('path', { d: smooth(proj) }, 'bfc-projline bfc-late'));
+      TPS.forEach(function(p, i) {
+        var px = xT(p.t), py = yV(p.v, cfg);
+        var cls = 'bfc-pt bfc-late' + (p.proj ? ' bfc-pt-proj' : '');
+        var c = el('circle', { cx: px, cy: py, r: p.today ? 5 : 4.2, style: '--i:' + i }, cls + (p.today ? ' bfc-pt-today' : ''));
+        g.appendChild(c);
+        var lifted = p.today; /* the chip owns the today annotation; number label sits below-right */
+        g.appendChild(txt(px + (i === 0 ? 8 : 0), py - 13, lifted ? '' : p.l,
+          'bfc-vlab bfc-late' + (p.proj ? ' bfc-vlab-proj' : '') + (i < 3 ? ' bfc-minor' : ''), i === 0 ? 'start' : 'middle'));
+      });
+    } else {
+      /* THE BOUND, inverted: the desirable floor, NO hatch */
+      var yf = yV(0.01, cfg);
+      g.appendChild(el('line', { x1: L, y1: yf, x2: R, y2: yf }, 'bfc-floor'));
+      g.appendChild(txt(L + 14, yf + 20, 'STARKNET · LOCKED UNDER $0.01', 'bfc-floor-lab'));
+
+      /* THE TRAJECTORY: volatile orange */
+      var sPts = [], pPts = [];
+      DENSE.forEach(function(p) {
+        var t = tOf(p.x), pt = [xT(t), yV(p.v, cfg)];
+        if (t <= TODAY + 1e-6) sPts.push(pt);
+        if (t >= TODAY - 1e-6) pPts.push(pt);
+      });
+      function poly(pts) { return pts.map(function(p, i) { return (i ? 'L' : 'M') + p[0] + ',' + p[1]; }).join(''); }
+      g.appendChild(el('path', { d: poly(sPts), pathLength: 1000 }, 'bfc-glow bfc-glow-btc'));
+      g.appendChild(el('path', { d: poly(sPts), pathLength: 1000 }, 'bfc-traj bfc-traj-btc'));
+      g.appendChild(el('path', { d: poly(pPts) }, 'bfc-projline bfc-projline-btc bfc-late'));
+      DENSE.forEach(function(p, i) {
+        var t = tOf(p.x);
+        g.appendChild(el('circle', { cx: xT(t), cy: yV(p.v, cfg), r: 2.4, style: '--i:' + (i % 8) },
+          'bfc-dot bfc-late' + (t > TODAY ? ' bfc-pt-proj' : '')));
+      });
+      /* spike chip, inside bounds */
+      var sx = xT(tOf(3.0)), sy = yV(128, cfg);
+      var chip = el('g', {}, 'bfc-schip bfc-late');
+      chip.appendChild(el('rect', { x: sx - 62, y: sy - 34, width: 124, height: 21, rx: 4 }));
+      chip.appendChild(txt(sx, sy - 19.5, '~$128 · APR 24 HALVING', 'bfc-schip-t', 'middle'));
+      g.appendChild(chip);
+      /* the annotation that used to clip at the right edge: one line,
+         end-anchored inside the plot at every width by construction */
+      /* one line, end-anchored inside the plot at every width by
+         construction, on its own row BELOW the TODAY/PROJECTION row so the
+         three labels can never collide */
+      g.appendChild(txt(R - 10, T + 31, 'VOLATILE · CAN SPIKE HIGHER', 'bfc-vol bfc-late', 'end'));
+    }
+
+    svg.appendChild(g);
+    wrap.classList.toggle('bfc-view-cost', view === 'cost');
+    placeToday(view, cfg);
+  }
+
+  /* the pulsing TODAY dot (and the tps chip) are HTML on their own
+     compositor layers; position them from the svg's rendered box */
+  function placeToday(view, cfg) {
+    if (!wrap || !todayEl) return;
+    var v = view === 'tps' ? 1000 : 1;
+    var sb = svg.getBoundingClientRect(), wb = wrap.getBoundingClientRect();
+    if (!sb.width) return;
+    var px = (sb.left - wb.left) + xT(TODAY) / W * sb.width;
+    var py = (sb.top - wb.top) + yV(v, cfg) / H * sb.height;
+    todayEl.style.left = px.toFixed(1) + 'px';
+    todayEl.style.top = py.toFixed(1) + 'px';
+    if (chipEl) {
+      chipEl.style.display = view === 'tps' ? '' : 'none';
+      chipEl.style.left = px.toFixed(1) + 'px';
+      chipEl.style.top = py.toFixed(1) + 'px';
     }
   }
 
-  var current = 'tps';
-  render();
+  var current = 'tps', revealed = false;
+  function classesFor(kind) { /* kind: 'first' | 'fast' */
+    wrap.classList.remove('bfc-run', 'bfc-fast');
+    if (reduce) return; /* end state, no draw-in, no pulse (pulse killed in CSS) */
+    void wrap.offsetWidth;
+    wrap.classList.add('bfc-run');
+    if (kind === 'fast') wrap.classList.add('bfc-fast');
+  }
+
+  render(current);
 
   var btns = document.querySelectorAll('.toggle-btn');
   btns.forEach(function(btn) {
@@ -2351,13 +2569,32 @@
       var view = btn.getAttribute('data-view');
       if (view === current) return;
       current = view;
-      btns.forEach(function(b) { b.classList.remove('active'); });
-      btn.classList.add('active');
-      for (var k in groups) {
-        groups[k].setAttribute('opacity', k === current ? '1' : '0');
-        groups[k].setAttribute('pointer-events', k === current ? 'auto' : 'none');
-      }
+      btns.forEach(function(b) {
+        var on = b === btn;
+        b.classList.toggle('active', on);
+        b.setAttribute('aria-selected', on ? 'true' : 'false');
+      });
+      render(current);
+      if (revealed) classesFor('fast');
     });
+  });
+
+  /* reveal once; the observer also gates the pulse so nothing animates
+     offscreen */
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(function(es, io) {
+      wrap.classList.toggle('bfc-on', es[0].isIntersecting);
+      if (es[0].isIntersecting && !revealed) {
+        revealed = true;
+        classesFor('first');
+      }
+    }, { threshold: 0.25 }).observe(wrap);
+  } else { revealed = true; wrap.classList.add('bfc-on'); classesFor('first'); }
+
+  var rt;
+  window.addEventListener('resize', function() {
+    clearTimeout(rt);
+    rt = setTimeout(function() { placeToday(current, CFG[current]); }, 120);
   });
 })();
 </script>
