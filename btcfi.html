@@ -402,23 +402,88 @@
      step by moving to #FC8181, the lighter coral already used by
      .threat-card h3 in the shared stylesheet. No new colour was introduced. */
   .bgap { margin-top: 44px; position: relative; }
-  .bgap-stage { position: relative; width: 100%; aspect-ratio: 1000 / 540; }
-  .bgap-lines { position: absolute; inset: 0; width: 100%; height: 100%; display: block; overflow: visible; }
-  .bgap-lines path, .bgap-lines circle { vector-effect: non-scaling-stroke; fill: none; }
+  /* THE TILT IS CSS 3D, NOT A SHADER, and that was a deliberate correction.
+     The landing "funnel" (js/convergence.js) looks volumetric but is a 2D polar
+     distance field: no camera, no vanishing point, no mesh, no travelling
+     nodes, just additive glow and radial falloff under a tone map. There is no
+     3D in it to reuse. The site's real 3D vocabulary is privacy.html's bills
+     stack, .bstk-stage perspective + .bstk-iso rotateX + preserve-3d, and this
+     is built on that. It buys a genuine vanishing point, costs no shader, no
+     WebGL fallback path and no rAF, and the motion is a compositor transform
+     rather than per-frame paint, which is the only version worth running
+     mid-page on a page that already drops its blooms at 980.
+
+     WHAT MOVES AND WHAT DOES NOT, and this is the rule to keep: THE THING
+     CARRYING THE ARGUMENT STAYS STILL, THE THING CARRYING LIFE MOVES. The four
+     breaks, their nodes, their leaders and the cards never rotate. Only the
+     meridian mesh and the glints turn. The instinct with a rotating device is
+     to rotate all of it; that would drag every break to a new place on every
+     frame, cost per-frame JS to keep the cards registered, and make the one
+     thing the device exists to show the one thing you cannot fix your eye on.
+     Do not put the arcs or the nodes in a spinning group. */
+  /* THE STAGE HEIGHT IS DRIVEN BY THE CARDS, not by a fixed aspect ratio, and
+     that is the whole reason it is a grid. A fixed 1000/540 left the tallest
+     card pair 5px apart at 981 and overlapping by 49px at 900, and no single
+     aspect fixes the band: 861 needs 1000/870 and 1100 needs 1000/537. Two
+     rows of auto height cannot collide at any width, at any font size, in any
+     browser, which hand-tuned breakpoints cannot promise.
+     The orbit plane overlays the whole grid and letterboxes its 1000x540
+     viewBox inside it, so the orbits stay sized to the width and simply gain
+     air when the cards are tall. The break anchors are placed off that
+     letterbox in JS, which is what makes the stage free to be any shape. */
+  .bgap-stage { position: relative; width: 100%;
+                display: grid; grid-template-columns: 27.5% 1fr 27.5%;
+                grid-template-rows: auto auto; row-gap: 54px; padding: 6px 0 10px;
+                perspective: 1500px; perspective-origin: 50% 50%; }
+  .bgap-plane { position: absolute; inset: 0; transform: rotateX(var(--tilt, 54deg));
+                transform-style: preserve-3d;
+                /* depth falloff: the far half of the plane recedes. A static
+                   mask, composited once with the layer, not a per-frame cost. */
+                -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.34) 0%, rgba(0,0,0,0.72) 34%, #000 62%);
+                mask-image: linear-gradient(to bottom, rgba(0,0,0,0.34) 0%, rgba(0,0,0,0.72) 34%, #000 62%); }
+  .bgap-plane > svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; overflow: visible; }
+  .bgap-orbits path, .bgap-orbits circle, .bgap-mesh line, .bgap-glints path,
+  .bgap-leads path, .bgap-leads circle { vector-effect: non-scaling-stroke; fill: none; }
+
+  /* the two moving layers. Whole-element transforms so each gets its own
+     compositor layer; the animation is declared ONLY under .run, so off screen
+     nothing is animating at all rather than animating invisibly. Two speeds so
+     the mesh and the glints never look mechanically locked together. */
+  .bgap-mesh line { stroke: rgba(var(--accent-rgb),0.07); stroke-width: 1; }
+  .bgap-glints path { stroke: rgba(var(--accent-rgb),0.32); stroke-width: 1.6; stroke-linecap: round; }
+  /* SPEED IS CALIBRATED AGAINST A CLOCK'S SECOND HAND, which is 6 deg/s and
+     is plainly trackable in peripheral vision. The glints started at 96s,
+     which is 3.75 deg/s, 0.62x a second hand: same perceptual class, and this
+     is meant to be ambient, not a demo. 160s puts them at 2.25 deg/s, 0.38x,
+     which sits under it. The mesh is slower again at 260s. If either is ever
+     sped up, check it against that ratio rather than against how it feels in
+     a single glance while you are already looking at it. */
+  .bgap.run .bgap-mesh   { animation: bgapSpin 260s linear infinite; }
+  .bgap.run .bgap-glints { animation: bgapSpin 160s linear infinite; }
+  @keyframes bgapSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+  /* the flat overlay. Breaks and leaders live here, unrotated, so a node stays
+     a circle instead of becoming an ellipse and a leader can reach a card that
+     is not in the tilted plane. JS measures where each break LANDS after the
+     browser's own projection and draws to that, so there is no second copy of
+     the projection maths anywhere. */
+  .bgap-leads { position: absolute; inset: 0; width: 100%; height: 100%; display: block; overflow: visible; z-index: 2; pointer-events: none; }
+  .bgap-anchor { position: absolute; width: 0; height: 0; }
+
   .bgap-ref   { stroke: rgba(var(--accent-rgb),0.07); stroke-width: 1; }
-  .bgap-solid { stroke: rgba(var(--accent-rgb),0.22); stroke-width: 1.7; stroke-linecap: round; transition: stroke .18s ease, stroke-width .18s ease; }
+  .bgap-solid { stroke: rgba(var(--accent-rgb),0.16); stroke-width: 1.7; stroke-linecap: round; transition: stroke .18s ease, stroke-width .18s ease; }
   .bgap-dash  { stroke: rgba(245,242,236,0.14); stroke-width: 1.15; stroke-dasharray: 4 7; stroke-linecap: round; transition: stroke .18s ease; }
-  .bgap-lead  { stroke: rgba(245,242,236,0.16); stroke-width: 1.05; transition: stroke .18s ease, stroke-width .18s ease; }
-  .bgap-node  { stroke: rgba(245,242,236,0.3); stroke-width: 1.05; fill: var(--black); transition: stroke .18s ease, fill .18s ease; }
+  .bgap-leads .bgap-lead { stroke: rgba(245,242,236,0.16); stroke-width: 1.05; transition: stroke .18s ease, stroke-width .18s ease; }
+  .bgap-leads .bgap-node { stroke: rgba(245,242,236,0.3); stroke-width: 1.05; fill: var(--black); transition: stroke .18s ease, fill .18s ease; }
   /* the SELECTED gap's target ring lifts with it. This is the ring that says
      where the arc should have reached, so it has to be readable exactly when
      someone is reading that gap; the other three stay at ghost level or the
      centre turns back into noise. */
   .bgap-sp.is-on .bgap-ref   { stroke: rgba(var(--accent-rgb),0.20); }
-  .bgap-sp.is-on .bgap-solid { stroke: rgba(var(--accent-rgb),0.95); stroke-width: 2.4; }
+  .bgap-sp.is-on .bgap-solid { stroke: rgba(var(--accent-rgb),1); stroke-width: 3; }
   .bgap-sp.is-on .bgap-dash  { stroke: rgba(245,242,236,0.26); }
-  .bgap-sp.is-on .bgap-lead  { stroke: rgba(var(--accent-rgb),0.8); stroke-width: 1.2; }
-  .bgap-sp.is-on .bgap-node  { stroke: var(--accent); fill: var(--accent); }
+  .bgap-sp.is-on .bgap-leads .bgap-lead { stroke: rgba(var(--accent-rgb),0.8); stroke-width: 1.2; }
+  .bgap-sp.is-on .bgap-leads .bgap-node { stroke: var(--accent); fill: var(--accent); }
 
   /* the core. Accent disc, white B: the mark's real colourway, and the
      brightest thing in the composition because it is the subject. It was
@@ -430,6 +495,9 @@
      to tint a whole grid is invisible behind one 125px object. Blooms are
      already dropped at <=980 for the paint budget, which is where the orbits
      stop existing anyway. */
+  /* the core does NOT tilt. An orrery faces its sun: foreshortening the mark
+     would cost the brightest, most legible object in the composition for a
+     depth cue the orbits already carry. */
   .bgap-core { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%);
                width: 12.4%; aspect-ratio: 1 / 1; display: block; pointer-events: none; z-index: 1; }
   .bgap-btc { width: 100%; height: 100%; display: block; }
@@ -442,12 +510,13 @@
      keyboard and screen-reader surface and it has to be a real button.
      Mirrored alignment, and the accent bar sits on the edge facing the core so
      the bar, the leader and the break all line up on the same side. */
-  .bgap-card { position: absolute; width: 26.5%; background: none; border: 0; padding: 0;
-               font: inherit; color: inherit; cursor: pointer; display: block; }
-  .bgap-p0 { left: 1.5%;  top: 3.7%;  text-align: right; padding-right: 15px; border-right: 2px solid rgba(var(--accent-rgb),0.28); }
-  .bgap-p1 { right: 1.5%; top: 3.7%;  text-align: left;  padding-left: 15px;  border-left:  2px solid rgba(var(--accent-rgb),0.28); }
-  .bgap-p2 { right: 1.5%; bottom: 3.7%; text-align: left;  padding-left: 15px;  border-left:  2px solid rgba(var(--accent-rgb),0.28); }
-  .bgap-p3 { left: 1.5%;  bottom: 3.7%; text-align: right; padding-right: 15px; border-right: 2px solid rgba(var(--accent-rgb),0.28); }
+  .bgap-card { position: relative; z-index: 3; background: none; border: 0; padding: 0;
+               font: inherit; color: inherit; cursor: pointer; display: block; align-self: start; }
+  .bgap-p0 { grid-column: 1; grid-row: 1; text-align: right; padding-right: 15px; border-right: 2px solid rgba(var(--accent-rgb),0.28); }
+  .bgap-p1 { grid-column: 3; grid-row: 1; text-align: left;  padding-left: 15px;  border-left:  2px solid rgba(var(--accent-rgb),0.28); }
+  .bgap-p2 { grid-column: 3; grid-row: 2; text-align: left;  padding-left: 15px;  border-left:  2px solid rgba(var(--accent-rgb),0.28); }
+  .bgap-p3 { grid-column: 1; grid-row: 2; text-align: right; padding-right: 15px; border-right: 2px solid rgba(var(--accent-rgb),0.28); }
+  .bgap-p2, .bgap-p3 { align-self: end; }
   .bgap-card.is-on { border-color: var(--accent); }
   .bgap-p0.is-on, .bgap-p3.is-on { border-right-width: 3px; }
   .bgap-p1.is-on, .bgap-p2.is-on { border-left-width: 3px; }
@@ -501,6 +570,7 @@
      adds NO specificity: that is the trap that made the reduced-motion fix in
      the shared styles.css inert until it carried !important.) */
   @media (prefers-reduced-motion: reduce) {
+    .bgap-mesh, .bgap-glints { animation: none !important; }
     .bgap-solid, .bgap-dash, .bgap-lead, .bgap-node,
     .bgap-meta, .bgap-title, .bgap-one, .bgap-cost, .bgap-note { transition: none; }
   }
@@ -516,10 +586,11 @@
      keeps a flat bar that runs solid then dashed and stops short. Same claim,
      flat geometry, and the accent edge bar becomes the row's left border. */
   @media (max-width: 860px) {
-    .bgap-stage { aspect-ratio: auto; display: flex; flex-direction: column; }
-    .bgap-lines { display: none; }
+    .bgap-stage { display: flex; flex-direction: column; perspective: none; row-gap: 0; padding: 0;
+                  grid-template-columns: none; grid-template-rows: none; }
+    .bgap-plane, .bgap-leads { display: none; }
     .bgap-core { position: static; transform: none; width: 96px; height: 96px; margin: 0 auto 30px; }
-    .bgap-card { position: static; width: 100%; text-align: left; padding: 18px 0 20px 16px;
+    .bgap-card { position: static; width: 100%; text-align: left; padding: 18px 0 20px 16px; align-self: auto;
                  border: 0; border-left: 2px solid rgba(var(--accent-rgb),0.28);
                  border-top: 1px solid var(--border); }
     .bgap-p0 { border-top: 0; padding-top: 0; }
@@ -891,36 +962,67 @@
   <div class="bgap" id="bgap">
     <div class="bgap-stage" role="listbox" aria-label="Bitcoin's four capability gaps">
       <div class="btcg-bloom btcg-bloom-bgap" aria-hidden="true"><i></i></div>
-      <svg class="bgap-lines" viewBox="0 0 1000 540" aria-hidden="true" focusable="false" preserveAspectRatio="xMidYMid meet">
-        <g class="bgap-sp" data-gap="0">
-          <circle class="bgap-ref" cx="500" cy="270" r="104"/>
-          <path class="bgap-solid" d="M585.2,329.7 A104,104 0 1,1 426.5,196.5"/>
-          <path class="bgap-dash" d="M426.5,196.5 A104,104 0 0,1 600.5,243.1"/>
-          <path class="bgap-lead" d="M422.3,192.3 C394.7,164.7 336,95 281,95"/>
-          <circle class="bgap-node" cx="426.5" cy="196.5" r="4.4"/>
-        </g>
-        <g class="bgap-sp" data-gap="1">
-          <circle class="bgap-ref" cx="500" cy="270" r="134"/>
-          <path class="bgap-solid" d="M423.1,379.8 A134,134 0 1,1 594.8,175.2"/>
-          <path class="bgap-dash" d="M594.8,175.2 A134,134 0 0,1 534.7,399.4"/>
-          <path class="bgap-lead" d="M599.0,171.0 C626.6,143.4 664,95 719,95"/>
-          <circle class="bgap-node" cx="594.8" cy="175.2" r="4.4"/>
-        </g>
-        <g class="bgap-sp" data-gap="2">
-          <circle class="bgap-ref" cx="500" cy="270" r="164"/>
-          <path class="bgap-solid" d="M365.7,175.9 A164,164 0 1,1 616.0,386.0"/>
-          <path class="bgap-dash" d="M616.0,386.0 A164,164 0 0,1 341.6,312.4"/>
-          <path class="bgap-lead" d="M620.2,390.2 C647.8,417.8 664,445 719,445"/>
-          <circle class="bgap-node" cx="616.0" cy="386.0" r="4.4"/>
-        </g>
-        <g class="bgap-sp" data-gap="3">
-          <circle class="bgap-ref" cx="500" cy="270" r="194"/>
-          <path class="bgap-solid" d="M611.3,111.1 A194,194 0 1,1 362.8,407.2"/>
-          <path class="bgap-dash" d="M362.8,407.2 A194,194 0 0,1 449.8,82.6"/>
-          <path class="bgap-lead" d="M358.6,411.4 C331.0,439.0 336,445 281,445"/>
-          <circle class="bgap-node" cx="362.8" cy="407.2" r="4.4"/>
-        </g>
-      </svg>
+      <div class="bgap-plane">
+        <svg class="bgap-orbits" viewBox="0 0 1000 540" aria-hidden="true" focusable="false" preserveAspectRatio="xMidYMid meet">
+          <g class="bgap-sp" data-gap="0">
+            <circle class="bgap-ref" cx="500" cy="270" r="124"/>
+            <path class="bgap-solid" d="M601.6,341.1 A124,124 0 1,1 412.3,182.3"/>
+            <path class="bgap-dash" d="M412.3,182.3 A124,124 0 0,1 619.8,237.9"/>
+          </g>
+          <g class="bgap-sp" data-gap="1">
+            <circle class="bgap-ref" cx="500" cy="270" r="148"/>
+            <path class="bgap-solid" d="M415.1,391.2 A148,148 0 1,1 604.7,165.3"/>
+            <path class="bgap-dash" d="M604.7,165.3 A148,148 0 0,1 538.3,413.0"/>
+          </g>
+          <g class="bgap-sp" data-gap="2">
+            <circle class="bgap-ref" cx="500" cy="270" r="172"/>
+            <path class="bgap-solid" d="M359.1,171.3 A172,172 0 1,1 621.6,391.6"/>
+            <path class="bgap-dash" d="M621.6,391.6 A172,172 0 0,1 333.9,314.5"/>
+          </g>
+          <g class="bgap-sp" data-gap="3">
+            <circle class="bgap-ref" cx="500" cy="270" r="196"/>
+            <path class="bgap-solid" d="M612.4,109.4 A196,196 0 1,1 361.4,408.6"/>
+            <path class="bgap-dash" d="M361.4,408.6 A196,196 0 0,1 449.3,80.7"/>
+          </g>
+        </svg>
+        <svg class="bgap-mesh" viewBox="0 0 1000 540" aria-hidden="true" focusable="false" preserveAspectRatio="xMidYMid meet">
+          <line x1="611.0" y1="270.0" x2="709.0" y2="270.0"/>
+          <line x1="607.2" y1="298.7" x2="701.9" y2="324.1"/>
+          <line x1="596.1" y1="325.5" x2="681.0" y2="374.5"/>
+          <line x1="578.5" y1="348.5" x2="647.8" y2="417.8"/>
+          <line x1="555.5" y1="366.1" x2="604.5" y2="451.0"/>
+          <line x1="528.7" y1="377.2" x2="554.1" y2="471.9"/>
+          <line x1="500.0" y1="381.0" x2="500.0" y2="479.0"/>
+          <line x1="471.3" y1="377.2" x2="445.9" y2="471.9"/>
+          <line x1="444.5" y1="366.1" x2="395.5" y2="451.0"/>
+          <line x1="421.5" y1="348.5" x2="352.2" y2="417.8"/>
+          <line x1="403.9" y1="325.5" x2="319.0" y2="374.5"/>
+          <line x1="392.8" y1="298.7" x2="298.1" y2="324.1"/>
+          <line x1="389.0" y1="270.0" x2="291.0" y2="270.0"/>
+          <line x1="392.8" y1="241.3" x2="298.1" y2="215.9"/>
+          <line x1="403.9" y1="214.5" x2="319.0" y2="165.5"/>
+          <line x1="421.5" y1="191.5" x2="352.2" y2="122.2"/>
+          <line x1="444.5" y1="173.9" x2="395.5" y2="89.0"/>
+          <line x1="471.3" y1="162.8" x2="445.9" y2="68.1"/>
+          <line x1="500.0" y1="159.0" x2="500.0" y2="61.0"/>
+          <line x1="528.7" y1="162.8" x2="554.1" y2="68.1"/>
+          <line x1="555.5" y1="173.9" x2="604.5" y2="89.0"/>
+          <line x1="578.5" y1="191.5" x2="647.8" y2="122.2"/>
+          <line x1="596.1" y1="214.5" x2="681.0" y2="165.5"/>
+          <line x1="607.2" y1="241.3" x2="701.9" y2="215.9"/>
+        </svg>
+        <svg class="bgap-glints" viewBox="0 0 1000 540" aria-hidden="true" focusable="false" preserveAspectRatio="xMidYMid meet">
+          <path d="M624.0,270.0 A124,124 0 0,1 615.0,316.5"/>
+          <path d="M557.8,406.2 A148,148 0 0,1 502.6,418.0"/>
+          <path d="M380.5,393.7 A172,172 0 0,1 342.9,340.0"/>
+          <path d="M317.0,199.8 A196,196 0 0,1 356.7,136.3"/>
+        </svg>
+        <span class="bgap-anchor" data-gap="0"></span>
+        <span class="bgap-anchor" data-gap="1"></span>
+        <span class="bgap-anchor" data-gap="2"></span>
+        <span class="bgap-anchor" data-gap="3"></span>
+      </div>
+      <svg class="bgap-leads" aria-hidden="true" focusable="false"></svg>
       <span class="bgap-core" aria-hidden="true">
         <svg class="bgap-btc" viewBox="0.893 0.469 39.119 39.123" focusable="false">
           <g transform="matrix(0.61129216,0,0,0.61129216,-118.80398,-25.96802)">
@@ -3195,8 +3297,86 @@
   function select(i){
     cur = i;
     cards.forEach(function(b, k){ b.classList.toggle('is-on', k === i); });
+    markLeads(i);
     svgs.forEach(function(g, k){ g.classList.toggle('is-on', k === i); });
     rove.mirror(i);
+  }
+
+  /* ---- leaders, drawn to the PROJECTED break points ----
+     The orbit plane is CSS-3D tilted, so a break no longer sits where its SVG
+     coordinate says. Rather than reimplement the browser's projection, a
+     zero-size .bgap-anchor rides each break inside the tilted plane and
+     getBoundingClientRect() reports where it actually landed. The browser is
+     the single source of truth for the projection; there is no second copy of
+     the maths to drift. Recomputed on resize and after fonts settle, never per
+     frame: the tilt is static, only the mesh turns. */
+  var leads = root.querySelector('.bgap-leads');
+  var anchors = [].slice.call(root.querySelectorAll('.bgap-anchor'));
+  var stage = root.querySelector('.bgap-stage');
+  var SVGNS = 'http://www.w3.org/2000/svg';
+
+  /* Where each break actually sits, in the SVG's own user units. The SVGs use
+     preserveAspectRatio xMidYMid meet, so the drawn area is letterboxed inside
+     the plane box; the anchors are placed from that letterbox rather than from
+     a percentage of the stage, which leaves the stage aspect free to change per
+     breakpoint without the breaks sliding off their arcs. The 3D projection is
+     still entirely the browser's: these are placed flat inside the tilted
+     plane and then measured with getBoundingClientRect. */
+  var VB_W = 1000, VB_H = 540;
+  var BREAK_XY = {"0": [412.3, 182.3], "1": [604.7, 165.3], "2": [621.6, 391.6], "3": [361.4, 408.6]};
+  function placeAnchors(){
+    var pl = root.querySelector('.bgap-plane');
+    if (!pl) return;
+    var w = pl.clientWidth, h = pl.clientHeight;
+    if (!w || !h) return;
+    var sc = Math.min(w / VB_W, h / VB_H);
+    var ox = (w - VB_W * sc) / 2, oy = (h - VB_H * sc) / 2;
+    anchors.forEach(function(a){
+      var xy = BREAK_XY[a.dataset.gap];
+      if (!xy) return;
+      a.style.left = (ox + xy[0] * sc).toFixed(1) + 'px';
+      a.style.top  = (oy + xy[1] * sc).toFixed(1) + 'px';
+    });
+  }
+
+  function drawLeads(){
+    placeAnchors();
+    if (!leads || !stage || getComputedStyle(leads).display === 'none') return;
+    var sb = stage.getBoundingClientRect();
+    if (!sb.width) return;
+    while (leads.firstChild) leads.removeChild(leads.firstChild);
+    anchors.forEach(function(a){
+      var k = +a.dataset.gap, card = cards[k];
+      if (!card) return;
+      var ab = a.getBoundingClientRect(), cb = card.getBoundingClientRect();
+      var bx = ab.left - sb.left, by = ab.top - sb.top;
+      var left = (cb.left + cb.right) / 2 < sb.width / 2 + sb.left;
+      /* the card's inner edge is the one facing the core, which is where its
+         accent bar sits, so the leader lands on the bar */
+      var cx = (left ? cb.right : cb.left) - sb.left;
+      var cy = (cb.top + cb.height / 2) - sb.top;
+      var dx = bx - sb.width / 2, dy = by - sb.height / 2;
+      var m = Math.hypot(dx, dy) || 1;
+      var g = document.createElementNS(SVGNS, 'g');
+      g.setAttribute('class', 'bgap-ld' + (k === cur ? ' is-on' : ''));
+      g.dataset.gap = k;
+      var p = document.createElementNS(SVGNS, 'path');
+      p.setAttribute('class', 'bgap-lead');
+      /* leaves the break along its own radius, arrives at the card horizontally */
+      p.setAttribute('d', 'M' + (bx + dx / m * 6).toFixed(1) + ',' + (by + dy / m * 6).toFixed(1) +
+        ' C' + (bx + dx / m * 46).toFixed(1) + ',' + (by + dy / m * 46).toFixed(1) +
+        ' ' + (cx + (left ? 52 : -52)).toFixed(1) + ',' + cy.toFixed(1) +
+        ' ' + cx.toFixed(1) + ',' + cy.toFixed(1));
+      var c = document.createElementNS(SVGNS, 'circle');
+      c.setAttribute('class', 'bgap-node');
+      c.setAttribute('cx', bx.toFixed(1)); c.setAttribute('cy', by.toFixed(1)); c.setAttribute('r', '4.4');
+      g.appendChild(p); g.appendChild(c); leads.appendChild(g);
+    });
+  }
+  function markLeads(i){
+    [].forEach.call(leads ? leads.children : [], function(g){
+      g.classList.toggle('is-on', +g.dataset.gap === i);
+    });
   }
 
   var rove = window.thRove({
@@ -3225,6 +3405,17 @@
 
   select(0);
   surface();
+  drawLeads(); markLeads(cur);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ drawLeads(); markLeads(cur); });
+  var rt; window.addEventListener('resize', function(){ clearTimeout(rt); rt = setTimeout(function(){ drawLeads(); markLeads(cur); }, 120); });
+
+  /* motion gate, same pattern as this page's marquee and hero loop: the
+     animation is declared only under .run, so off screen the mesh is not
+     animating at all rather than animating out of sight. */
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(function(es){ root.classList.toggle('run', es[0].isIntersecting); },
+      { threshold: 0 }).observe(root);
+  } else { root.classList.add('run'); }
 })();
 </script>
 </body>
