@@ -58,6 +58,10 @@
   .bf-inner { width: 100%; max-width: 1160px; margin: 0 auto; padding: 0 32px; position: relative; z-index: 1; }
   .hero-eyebrow { font-size: 13px; letter-spacing: .04em; margin-bottom: 22px; position: relative; }
   .hero-title { font-size: clamp(34px,5.4vw,76px); line-height: .98; margin-bottom: 26px; max-width: none; position: relative; }
+  /* live idle-capital slots: tabular digits so $1.4T/$1.5T/$1.6T occupy the
+     same width and a live commit can never shift a line; nowrap so the
+     figure never breaks across lines */
+  .idle-cap { font-variant-numeric: tabular-nums; white-space: nowrap; }
   .hero-subtitle { font-size: 18px; max-width: 620px; margin: 22px 0 0; line-height: 1.7; position: relative; }
 
   /* CTAs: twin of .eco-cta / .pv-cta / .qh-cta on the shared dark glass tier
@@ -1129,7 +1133,15 @@
   <div class="bf-inner">
     <p class="hero-eyebrow">Bitcoin's next chapter</p>
     <h1 id="bitcoin-is-the-best-asset-to" class="hero-title">Bitcoin is the <em>best asset</em> to hold.<br>It's time to make it<br>the best to <em>use</em>.</h1>
-    <p class="hero-subtitle">$1.3T in capital sitting idle. Starknet is building the execution layer Bitcoin has always needed: private, scalable, and built to last.</p>
+    <!-- THE FIGURE IS THE SAME LIVE SLOT AS THE <1% BAND'S, same fallback,
+         same as-of: two perishable figures telling one story must be one
+         number. It was a hardcoded "$1.3T", true at a $1.3T market cap and
+         stale at $1.55T. If this line's length changes again, re-run the
+         PROVE label's width x height matrix (see the hero scene comments):
+         the subline's reach into the scene is part of that contract. -->
+    <p class="hero-subtitle">More than <span class="idle-cap" data-idle-cap data-perishable="live"
+       data-src="https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&amp;vs_currencies=usd&amp;include_market_cap=true"
+       data-checked="2026-08-23" data-as-of="2026-08-23">$1.5T</span> in capital sitting idle. Starknet is building the execution layer Bitcoin has always needed: private, scalable, and built to last.</p>
     <div class="bf-ctas">
       <a class="bf-cta chip-glass" href="#bitcoins-unfinished-mission">The unfinished mission <i aria-hidden="true">&rarr;</i></a>
       <a class="bf-cta bf-cta--muted chip-glass" href="#defi-scale-privacy-resilience-all-four">See the stack <i aria-hidden="true">&rarr;</i></a>
@@ -1511,9 +1523,26 @@
     </div>
   </div>
 
+  <!-- THE DOLLAR TRANSLATION IS A LIVE SLOT (.idle-cap), fed by the metrics
+       engine's existing CoinGecko call (see the idle-capital module in the
+       engine below): idle = market cap x 0.99, rendered "more than $X.XT"
+       ROUNDED DOWN to one decimal so the sentence stays defensible whatever
+       the market does; if the cap fell below ~$1.52T the same rule degrades
+       the figure to $1.4T on its own. The markup text is the committed
+       fallback and its data-as-of is the fallback's verified date; a fetch
+       failure changes nothing, never an empty slot. The share itself is
+       sourced on the paragraph (Spark, Q1 2026: 0.46% strict, ~0.8% by the
+       generous definition -- both sides of the same-round measurement stay
+       under 1%). -->
   <div class="big-stat">
     <div class="big-stat-num">&lt;1%</div>
-    <p class="big-stat-label"><strong>Less than 1% of all Bitcoin participates in DeFi.</strong> Bitcoin is the largest pool of capital in crypto, yet most of it remains financially inactive. Not because demand is missing. Because the infrastructure doesn't exist yet.</p>
+    <p class="big-stat-label th-claim" data-perishable="third-party"
+       data-src="https://www.spark.money/research/btcfi-bitcoin-defi-landscape-2026"
+       data-checked="2026-08-23"
+       data-says="the broader BTCFi ecosystem fared slightly better but still declined roughly 10%, from a cumulative 101,721 BTC to approximately 91,332 BTC | That represents just 0.46% of all Bitcoin in circulation | Even using a generous definition that includes Babylon staking and all wrapped BTC variants, the figure reaches only about 0.8% of supply"
+       data-noun-ok="BTCFi Babylon Q1 Spark"><strong>Less than 1% of all Bitcoin participates in DeFi.</strong> At today's market cap, that is more than <span class="idle-cap" data-idle-cap data-perishable="live"
+       data-src="https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&amp;vs_currencies=usd&amp;include_market_cap=true"
+       data-checked="2026-08-23" data-as-of="2026-08-23">$1.5T</span> in capital sitting idle. Bitcoin is the largest pool of capital in crypto, yet most of it remains financially inactive. Not because demand is missing. Because the infrastructure doesn't exist yet.</p>
   </div>
 </section>
 
@@ -2962,7 +2991,8 @@
      Sources: token supplies via free public Starknet RPCs (Lava primary,
      Cartridge + 1RPC fallbacks), BTC staked via the Endur dashboard API,
      encrypted strkBTC via the STRK20 backend (proxies Starkscan),
-     BTC/USD via CoinGecko simple-price. No keys anywhere. -->
+     BTC/USD + market cap via CoinGecko simple-price (the market cap feeds
+     the idle-capital slots in the hero and the <1% band). No keys anywhere. -->
 <script>
 (function(){
   var row = document.getElementById('btcMetrics');
@@ -3238,6 +3268,49 @@
       .then(function(r){ if (!r.ok) throw new Error(url); return r.json(); });
   }
 
+  /* ---- THE IDLE-CAPITAL SLOTS (hero subline + <1% band) ----
+     One claim, two surfaces, one number: idle = BTC market cap x 0.99 (the
+     complement of the sourced <1% participation share -- share-of-market-cap,
+     NEVER TVL arithmetic), rendered "$X.XT" with the decimal ROUNDED DOWN so
+     "more than $X.XT" stays true whatever the market does; the same rule is
+     the degradation guard (cap under ~$1.52T renders $1.4T on its own, the
+     sentence can never overstate). Slot text in the markup is the committed
+     fallback with its own data-as-of; this module only ever REPLACES it with
+     a cache or live reading and stamps the as-of date, so a fetch failure
+     leaves a dated, truthful sentence, never an empty slot.
+     IDLE_BREAKS is this claim's break-date registry, same contract as strk's
+     sparkline BREAKS: if the participation basis breaks (the share reaching
+     1%+ in a same-round measurement), set the date; the slots then freeze on
+     the committed fallback (a dated historical reading) instead of rendering
+     live math from a multiplier that no longer holds, until the copy is
+     rewritten. Sourcing for the share lives on the band paragraph
+     (data-src, Spark Q1 2026: 0.46% strict, ~0.8% generous). */
+  var IDLE_FALLBACK = { mcapUsd: 1.55e12, verified: '2026-08-23' };
+  var IDLE_KEY = 'btcfiIdleCap_v1';
+  var IDLE_BREAKS = { participation: null };
+  var idleEls = document.querySelectorAll('[data-idle-cap]');
+  function idleText(mcap){ return '$' + (Math.floor(mcap * 0.99 / 1e11) / 10).toFixed(1) + 'T'; }
+  function idleRender(mcap, at){
+    if (IDLE_BREAKS.participation) return;
+    var txt = idleText(mcap);
+    var day = new Date(at).toISOString().slice(0, 10);
+    [].forEach.call(idleEls, function(el){
+      if (el.textContent !== txt) el.textContent = txt;
+      el.setAttribute('data-as-of', day);
+    });
+  }
+  function idleCommit(mcap, at, live){
+    if (!isFinite(mcap) || mcap < 2e11 || mcap > 2e13) return; // absurd API value: keep the last truthful reading
+    idleRender(mcap, at);
+    if (live) { try { localStorage.setItem(IDLE_KEY, JSON.stringify({ mcapUsd: mcap, at: at })); } catch (e) {} }
+  }
+  (function(){
+    var c = null;
+    try { c = JSON.parse(localStorage.getItem(IDLE_KEY) || 'null'); } catch (e) {}
+    if (c && isFinite(c.mcapUsd) && c.at) idleCommit(c.mcapUsd, c.at, false);
+    else idleRender(IDLE_FALLBACK.mcapUsd, Date.parse(IDLE_FALLBACK.verified));
+  })();
+
   function refresh(){
     // build a candidate off-screen, starting from the current snapshot; nothing
     // on screen changes until the candidate is committed wholesale at the end
@@ -3250,8 +3323,13 @@
       next.prov[group] = { origin: 'live', at: now }; // failed groups keep their previous provenance
       stamped = true;
     }
-    var pPrice = getJson('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd')
-      .then(function(d){ if (d.bitcoin && d.bitcoin.usd) { next.btcUsd = d.bitcoin.usd; stamp('price'); } })
+    var pPrice = getJson('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_market_cap=true')
+      .then(function(d){
+        if (d.bitcoin && d.bitcoin.usd) { next.btcUsd = d.bitcoin.usd; stamp('price'); }
+        /* the idle-capital slots ride the SAME request (one extra query
+           param, zero extra calls) and the same hourly cadence */
+        if (d.bitcoin && d.bitcoin.usd_market_cap) idleCommit(d.bitcoin.usd_market_cap, Date.now(), true);
+      })
       .catch(function(){});
     // All-or-nothing for the aggregate group: the five supplies land together
     // or not at all, so the total always equals the sum of the rows shown next
