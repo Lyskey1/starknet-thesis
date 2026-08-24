@@ -255,6 +255,12 @@
     /* privacy: bills panel shows one bill at a time */
     const bill = target.closest && target.closest('.bstk-bill');
     if (bill && !bill.classList.contains('is-on')) did = clickIf(document.querySelectorAll('#bills .bstk-tab')[+bill.dataset.bill]) || did;
+    /* btcfi: the bridge roadmap fan keeps one card front; the engine exposes
+       an explicit-intent hook (same contract as quantum's __qiOpen). Without
+       the engine (reduced motion / no JS) the grid shows all four, so there
+       is nothing to reveal and the hook is simply absent. */
+    const brs = target.closest && target.closest('.roadmap-step');
+    if (brs && window.__brsFront) { window.__brsFront(brs.id); did = true; }
     /* generic reveal-on-scroll blocks become visible once scrolled to */
     return did;
   }
