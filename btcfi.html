@@ -1079,6 +1079,109 @@
   .th-pm-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:var(--accent);margin-top:16px;opacity:.85;}
   @media(max-width:880px){.th-pm-title{font-size:38px;}.th-pm-num{font-size:48px;}}
 
+  /* ===== Staking column (bsk- prefix). One shared column split 25/75 —
+     replaces the two disconnected consensus bars. Base state (no classes)
+     is the END state so no-JS renders finished; the engine adds .bsk-pre
+     (initial state) then .bsk-on (reveal) once, via IntersectionObserver,
+     and never adds .bsk-pre under prefers-reduced-motion. All animation is
+     transform/opacity transitions — compositor-only, nothing runs after
+     the reveal completes. */
+  .bsk-visual { flex-shrink: 0; width: 348px; }
+  .bsk-cap, .bsk-sig, .bsk-pct {
+    font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.16em;
+  }
+  .bsk-cap { font-size: 10px; color: rgba(245,242,236,0.45); margin-bottom: 12px; }
+  .bsk-col {
+    position: relative; width: 72px; height: 224px;
+    border: 1px solid rgba(245,242,236,0.16); border-radius: 6px;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.01)),
+      rgba(14,15,19,0.6);
+  }
+  .bsk-seg { position: relative; }
+  .bsk-seg-btc  { height: 25%; }
+  .bsk-seg-strk { height: 75%; }
+  .bsk-fill { position: absolute; inset: 0; display: block; }
+  .bsk-seg-btc .bsk-fill {
+    background: rgba(var(--accent-rgb), 0.16);
+    border-radius: 5px 5px 0 0;
+    transform-origin: top;
+    transition: transform 0.9s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+  .bsk-seg-strk .bsk-fill {
+    background: rgba(139, 92, 246, 0.14);
+    border-radius: 0 0 5px 5px;
+    transform-origin: bottom;
+    transition: transform 1.2s cubic-bezier(0.22, 0.61, 0.36, 1) 0.15s;
+  }
+  /* the 25/75 boundary: one solid accent line, the join of the composition */
+  .bsk-line {
+    position: absolute; left: 0; right: 0; top: 25%; height: 1.5px;
+    margin-top: -0.75px; background: var(--accent); display: block;
+  }
+  .bsk-pct {
+    position: absolute; left: 0; width: 100%; top: 50%; transform: translateY(-50%);
+    text-align: center; font-size: 12px; font-weight: 600;
+  }
+  .bsk-seg-btc  .bsk-pct { color: var(--orange); }
+  .bsk-seg-strk .bsk-pct { color: #C4B5FD; }
+  /* role labels: leader tick to the segment's vertical center. These carry
+     the consolidated middle-paragraph copy (see the panel comment). */
+  .bsk-role {
+    position: absolute; left: calc(100% + 34px); top: 50%; transform: translateY(-50%);
+    width: 232px; font-size: 12.5px; line-height: 1.55; color: rgba(245,242,236,0.55);
+  }
+  .bsk-role b { display: block; font-family: var(--mono); font-size: 11px;
+    letter-spacing: 0.14em; font-weight: 600; margin-bottom: 3px; }
+  .bsk-seg-btc  .bsk-role b { color: var(--orange); }
+  .bsk-seg-strk .bsk-role b { color: #C4B5FD; }
+  .bsk-role::before {
+    content: ''; position: absolute; right: 100%; margin-right: 10px; top: 50%;
+    width: 16px; height: 1px; background: rgba(245,242,236,0.3);
+  }
+  .bsk-sig { font-size: 10px; color: rgba(245,242,236,0.5); margin-top: 16px; }
+  /* fade cascade: line and percents just after the growth, roles next, the
+     signature last */
+  .bsk-fade { opacity: 1; }
+  .bsk-cap  { transition: opacity 0.5s ease 0.1s; }
+  .bsk-line { transition: opacity 0.5s ease 1.0s; }
+  .bsk-pct  { transition: opacity 0.5s ease 1.1s; }
+  .bsk-seg-btc  .bsk-role { transition: opacity 0.5s ease 1.25s; }
+  .bsk-seg-strk .bsk-role { transition: opacity 0.5s ease 1.4s; }
+  .bsk-sig  { transition: opacity 0.5s ease 1.55s; }
+  /* pre-reveal state, applied by JS only, released by .bsk-on */
+  .bsk-pre:not(.bsk-on) .bsk-fill { transform: scaleY(0); }
+  .bsk-pre:not(.bsk-on) .bsk-fade { opacity: 0; }
+  @media (max-width: 860px) {
+    .bsk-visual { width: 100%; max-width: 348px; }
+  }
+  /* 375: the vertical column wastes ~150px of height under stacked text, so
+     the composition goes HORIZONTAL — one split band, 25 left / 75 right,
+     same exact proportions, roles as legend rows beneath. The pre-reveal
+     override swaps the growth axis to match. */
+  @media (max-width: 560px) {
+    .staking-band { padding: 32px 24px; }
+    .bsk-visual { max-width: none; }
+    .bsk-col { width: 100%; height: 64px; display: flex; }
+    .bsk-seg-btc  { width: 25%; height: 100%; }
+    .bsk-seg-strk { width: 75%; height: 100%; }
+    .bsk-seg-btc .bsk-fill  { border-radius: 5px 0 0 5px; transform-origin: left; }
+    .bsk-seg-strk .bsk-fill { border-radius: 0 5px 5px 0; transform-origin: right; }
+    .bsk-line { left: 25%; top: 0; bottom: 0; width: 1.5px; height: auto;
+      margin: 0 0 0 -0.75px; }
+    /* legend rows span the full band; each role's % width resolves against
+       its own segment (25% and 75% wide), hence 400% and 133.34% */
+    .bsk-role { top: calc(100% + 14px); left: 0; transform: none; width: 400%; }
+    .bsk-seg-strk .bsk-role { top: calc(100% + 64px); left: -33.34%; width: 133.34%; }
+    .bsk-role b { display: inline; margin-right: 7px; }
+    .bsk-role::before { position: static; display: inline-block; width: 8px; height: 8px;
+      border-radius: 2px; margin: 0 8px 0 0; vertical-align: baseline; }
+    .bsk-seg-btc  .bsk-role::before { background: rgba(var(--accent-rgb), 0.7); }
+    .bsk-seg-strk .bsk-role::before { background: rgba(139, 92, 246, 0.7); }
+    .bsk-sig { margin-top: 126px; }
+    .bsk-pre:not(.bsk-on) .bsk-fill { transform: scaleX(0); }
+  }
+
   /* ===== Bridge roadmap fan (brs- prefix). The static four-column grid in
      the markup IS the reduced-motion and no-JS rendering: every rule below is
      scoped under .brs-on, which only the engine adds, and the engine bails
@@ -2217,18 +2320,45 @@
              data-checked="2026-08-23"
              data-says="the Starknet ecosystem launched BTC staking, making Starknet the first Rollup to tether its security directly to Bitcoin | Bitcoin holders can now stake their BTC to secure Starknet and earn STRK rewards, launching a dual-token consensus model where STRK represents 75% and BTC 25% of the network&#39;s total security weight"
              data-noun-ok="Starknet BTC STRK">Since late 2025, Bitcoin can be staked natively on Starknet to help secure the network and earn rewards. Not custodial lending. Not a yield farm. Starknet is the first rollup to tether its security directly to Bitcoin: BTC and STRK stake together, at 25% and 75% of total staking power.</p>
-          <p style="margin-top:12px;">BTC carries <strong style="color:var(--orange);">25%</strong> of consensus weight (monetary security), STRK carries <strong style="color:#C4B5FD;">75%</strong> (network economics).</p>
+          <!-- COPY CONSOLIDATION (owner-approved, 2026-08-24). The middle
+               paragraph — "BTC carries 25% of consensus weight (monetary
+               security), STRK carries 75% (network economics)." — moved into
+               the column's role labels to the right: the same information
+               reads as BTC "Consensus weight, monetary security" / STRK
+               "Network economics, reward engine" beside the 25/75 segments.
+               The information moved, it did not vanish; do not re-add the
+               paragraph here without removing it there. The first paragraph's
+               "BTC and STRK stake together, at 25% and 75% of total staking
+               power" is now the visual's source of truth.
+               THE SIGNATURE "ONE SECURITY BUDGET, STAKED TOGETHER" IS
+               OWNER-APPROVED EDITORIAL COPY (2026-08-24), NOT SOURCE-
+               CONTAINED: "security budget" is standard PoS vocabulary used
+               as a signature; the factual load is carried by the contained
+               first paragraph above. If this panel ever gains data-perishable
+               / data-says attributes, the signature must not be cited as a
+               sourced claim. -->
           <p style="margin-top:12px;">Because rewards come from protocol economics, this yield is <strong>sustainable</strong> and tied directly to STRK's economy: as more STRK is staked, and as STRK appreciates, BTC staking rewards grow with it.</p>
         </div>
-        <div class="consensus-visual">
-          <div class="consensus-bar">
-            <div class="bar-fill bar-btc">25%</div>
-            <div class="bar-name">BTC</div>
+        <!-- One shared column, not two bars: 25 + 75 = 100% of ONE staking
+             power, and the copy says "stake together" — two separate bars
+             read as rivals, one split column reads as a composition. The
+             segment heights are the device's only job: exactly 25% / 75%. -->
+        <div class="bsk-visual">
+          <p class="bsk-cap bsk-fade">Total staking power</p>
+          <div class="bsk-col">
+            <div class="bsk-seg bsk-seg-btc">
+              <i class="bsk-fill" aria-hidden="true"></i>
+              <span class="bsk-pct bsk-fade">25%</span>
+              <span class="bsk-role bsk-fade"><b>BTC</b> Consensus weight, monetary security</span>
+            </div>
+            <div class="bsk-seg bsk-seg-strk">
+              <i class="bsk-fill" aria-hidden="true"></i>
+              <span class="bsk-pct bsk-fade">75%</span>
+              <span class="bsk-role bsk-fade"><b>STRK</b> Network economics, reward engine</span>
+            </div>
+            <i class="bsk-line bsk-fade" aria-hidden="true"></i>
           </div>
-          <div class="consensus-bar">
-            <div class="bar-fill bar-strk">75%</div>
-            <div class="bar-name">STRK</div>
-          </div>
+          <p class="bsk-sig bsk-fade">One security budget, staked together</p>
         </div>
       </div>
 
@@ -2719,6 +2849,24 @@
     clearTimeout(rt);
     rt = setTimeout(function() { placeToday(current, CFG[current]); }, 120);
   });
+})();
+</script>
+
+<script>
+/* STAKING COLUMN REVEAL. One-shot: IO adds .bsk-on, the CSS transitions do
+   the rest, and nothing runs afterwards — no rAF, no listeners left behind.
+   Reduced motion (or no JS): .bsk-pre is never added, so the base end state
+   renders immediately. */
+(function() {
+  var band = document.getElementById('native-btc-staking-a-first-for');
+  if (!band || !('IntersectionObserver' in window)) return;
+  if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  band.classList.add('bsk-pre');
+  new IntersectionObserver(function(es, io) {
+    if (!es[0].isIntersecting) return;
+    band.classList.add('bsk-on');
+    io.disconnect();
+  }, { threshold: 0.35 }).observe(band);
 })();
 </script>
 
