@@ -48,7 +48,7 @@
   list.setAttribute('role', 'navigation');
   list.setAttribute('aria-label', 'Site');
   [].forEach.call(links, function (group) {
-    [].forEach.call(group.querySelectorAll('a:not(.nav-cta)'), function (a) {
+    [].forEach.call(group.querySelectorAll('a'), function (a) {
       list.appendChild(a.cloneNode(true)); /* keeps umami attrs + .active */
     });
   });
