@@ -1,0 +1,104 @@
+/* ===== Navbar (ui-upgrade) =====
+   Layout: full-width bar, links spread evenly, two-line uppercase wordmark
+   centred with social icons beneath, last item carries an arrow.
+   Branding: Starknet PQ Hub. infinite-blue bar, white-flare text, lilac for
+   secondary, IBM Plex Sans, hairline rule, square-dot arrow glyph. */
+:root {
+  --pq-infinite: #0c0c4f;
+  --pq-cosmic: #1c1c84;
+  --pq-galaxy: #3f8cff;
+  --pq-lilac: #cdcde8;
+  --pq-lavender: #a1a1d6;
+  --pq-flare: #fbfbfb;
+  --pq-coral: #ec796b;
+  --pq-sans: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+  --pq-nav-h: 120px;
+}
+
+nav.pq-nav {
+  position: sticky; top: 0; left: 0; right: 0; z-index: 100;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  height: var(--pq-nav-h);
+  padding: 0 44px;
+  gap: 0;
+  background: var(--pq-infinite);
+  backdrop-filter: none;
+  border-bottom: 1px solid rgba(205,205,232,.18);
+  font-family: var(--pq-sans);
+}
+nav.pq-nav .nav-links {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 24px; flex-wrap: nowrap;
+}
+nav.pq-nav .nav-links.pq-left  { padding-right: 56px; }
+nav.pq-nav .nav-links.pq-right { padding-left: 56px; }
+nav.pq-nav .nav-links a,
+nav.pq-nav .nav-cta {
+  font-family: var(--pq-sans);
+  font-size: 15px; font-weight: 500; line-height: 1;
+  letter-spacing: .14em; text-transform: uppercase;
+  color: var(--pq-lilac); text-decoration: none;
+  transition: color .2s;
+  display: inline-flex; align-items: center; gap: 9px;
+}
+nav.pq-nav .nav-links a:hover, nav.pq-nav .nav-cta:hover { color: var(--pq-flare); }
+nav.pq-nav .nav-links a.active { color: var(--pq-flare); text-decoration: underline; text-underline-offset: 6px; text-decoration-thickness: 1px; }
+
+/* CTA: reset the old .btn skin entirely; PQ hub arrow is three squares */
+nav.pq-nav .btn.nav-cta, nav.pq-nav .btn.nav-cta:hover {
+  background: none; border: 0; padding: 0; border-radius: 0; box-shadow: none; transform: none;
+  color: var(--pq-lilac); overflow: visible;
+}
+nav.pq-nav .btn.nav-cta:hover { color: var(--pq-flare); }
+nav.pq-nav .btn.nav-cta::before, nav.pq-nav .btn.nav-cta::after { display: none; }
+nav.pq-nav .pq-arrow { width: 12px; height: 12px; fill: currentColor; flex: none; transition: transform .3s; }
+nav.pq-nav .btn.nav-cta:hover .pq-arrow { transform: translateX(2px); }
+
+/* wordmark */
+nav.pq-nav .pq-brand { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+nav.pq-nav .nav-logo {
+  display: flex; flex-direction: column; align-items: center;
+  font-family: var(--pq-sans); font-weight: 500;
+  font-size: 30px; line-height: .92; letter-spacing: .06em;
+  text-transform: uppercase; text-align: center;
+  color: var(--pq-flare); text-decoration: none; white-space: nowrap;
+}
+nav.pq-nav .nav-logo b { display: block; font-weight: 500; color: var(--pq-flare); }
+nav.pq-nav .pq-social { display: flex; align-items: center; justify-content: center; gap: 14px; }
+nav.pq-nav .pq-social a, nav.pq-nav .pq-social button {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 22px; height: 22px; color: var(--pq-lavender); background: none; border: 0; padding: 0; cursor: pointer;
+  transition: color .2s;
+}
+nav.pq-nav .pq-social a:hover, nav.pq-nav .pq-social button:hover { color: var(--pq-flare); }
+nav.pq-nav .pq-social svg { width: 16px; height: 16px; fill: currentColor; }
+nav.pq-nav .pq-social .ns-label, nav.pq-nav .pq-social .ns-kbd { display: none; }
+
+/* burger (mobile) inherits from styles.css; make it visible on blue */
+nav.pq-nav .nav-burger span { background: var(--pq-flare); }
+nav.pq-nav .nav-burger { grid-column: 3; justify-self: end; }
+
+/* the old chrome assumed a fixed 70px bar; the sticky bar now occupies flow,
+   so trim the page-top offsets it compensated for */
+body .landing { padding-top: 72px; }
+body .hero { padding-top: 72px; }
+
+@media (max-width: 1180px) {
+  :root { --pq-nav-h: 104px; }
+  nav.pq-nav { padding: 0 28px; }
+  nav.pq-nav .nav-links a, nav.pq-nav .nav-cta { font-size: 13px; letter-spacing: .1em; }
+  nav.pq-nav .nav-links.pq-left  { padding-right: 32px; }
+  nav.pq-nav .nav-links.pq-right { padding-left: 32px; }
+  nav.pq-nav .nav-logo { font-size: 24px; }
+}
+@media (max-width: 860px) {
+  :root { --pq-nav-h: 84px; }
+  nav.pq-nav { grid-template-columns: 1fr auto; height: var(--pq-nav-h); padding: 0 16px; }
+  nav.pq-nav .nav-links { display: none; }
+  nav.pq-nav .pq-brand { grid-column: 1; justify-self: start; align-items: flex-start; }
+  nav.pq-nav .nav-logo { align-items: flex-start; text-align: left; font-size: 20px; }
+  nav.pq-nav .nav-burger { grid-column: 2; }
+  nav.pq-nav .pq-social { display: none; }
+}

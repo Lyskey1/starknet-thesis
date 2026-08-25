@@ -9,7 +9,7 @@
   'use strict';
   var nav = document.querySelector('nav');
   if (!nav || document.querySelector('.nav-overlay')) return;
-  var links = nav.querySelector('.nav-links');
+  var links = nav.querySelectorAll('.nav-links');
   var cta = nav.querySelector('.nav-cta');
 
   /* burger (44x44 tap target; shown by CSS on mobile only) */
@@ -47,11 +47,11 @@
   list.className = 'nav-ov-links';
   list.setAttribute('role', 'navigation');
   list.setAttribute('aria-label', 'Site');
-  if (links) {
-    [].forEach.call(links.querySelectorAll('a'), function (a) {
+  [].forEach.call(links, function (group) {
+    [].forEach.call(group.querySelectorAll('a:not(.nav-cta)'), function (a) {
       list.appendChild(a.cloneNode(true)); /* keeps umami attrs + .active */
     });
-  }
+  });
   ov.appendChild(list);
 
   if (cta) {
