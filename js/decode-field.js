@@ -60,7 +60,7 @@
         var res = since < HOLD ? 1 : since < HOLD + FADE ? 1 - (since - HOLD) / FADE : 0;
         if (t === ' ' || t === undefined) continue;
         if (res > 0 && (res >= 0.999 || Math.random() < res)) {
-          var a = (0.3 + 0.32 * Math.min(1, since / 180)) * (0.4 + 0.6 * res);
+          var a = (0.26 + 0.24 * Math.min(1, since / 180)) * (0.4 + 0.6 * res);
           ctx.fillStyle = 'rgba(251,251,251,' + a + ')';
           ctx.fillText(t, x, y);
         } else {
