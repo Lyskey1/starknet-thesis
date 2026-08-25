@@ -47,24 +47,31 @@
     }
   }
 
+  var WAKE_V = 380, WAKE_T = 3.2;               /* px per second, seconds alive */
+  function wake(r, t) {
+    /* release wake: a decaying train of crests travelling outward. Returns
+       {d: density contribution, s: radial shove in px} */
+    var since = t - releaseAt;
+    if (since < 0 || since > WAKE_T) return { d: 0, s: 0 };
+    var front = since * WAKE_V;
+    var behind = front - r;                        /* >0 once the front has passed this ring */
+    if (behind < -60) return { d: 0, s: 0 };
+    var env = Math.exp(-Math.max(0, behind) / 260) * (1 - since / WAKE_T);
+    var osc = Math.cos(behind / 26);               /* crest, trough, crest ... rambling through */
+    var lead = behind < 0 ? 1 + behind / 60 : 1;   /* soft leading edge */
+    return { d: env * lead * (0.55 + 0.45 * osc), s: env * lead * osc * 14 };
+  }
   function density(r, t) {
-    /* base sparsity + slow outward ripple + hold fill + release pulse */
+    /* base sparsity + slow outward ripple + hold fill + release wake */
     var wave = 0.5 + 0.5 * Math.sin(r * 0.045 - t * 1.6);
     var base = 0.14 + 0.22 * wave * wave;
-    var since = t - releaseAt;
-    var pulse = 0;
-    if (since >= 0 && since < 2.4) {
-      var front = since * 420;                     /* px per second */
-      var d = Math.abs(r - front);
-      pulse = Math.max(0, 1 - d / 90) * (1 - since / 2.4);
-    }
-    return Math.min(1, base + hold * (1 - base) + pulse * 0.9);
+    return Math.min(1, base + hold * (1 - base) + wake(r, t).d * 0.95);
   }
 
   function draw(now) {
     var t = (now - t0) / 1000;
     if (holding) hold = Math.min(1, (now - holdStart) / 1400);
-    else hold = Math.max(0, hold - 0.03);
+    else hold = Math.max(0, hold - 0.012);        /* slow drain: the wake does the thinning */
     if (reduced) { hold = 1; t = 0; }
 
     ctx.clearRect(0, 0, W, H);
@@ -75,7 +82,8 @@
       var ring = rings[i];
       var rot = ring.phase + t * ring.speed * ring.dir;
       var dens = density(ring.r, t);
-      var wobble = Math.sin(ring.r * 0.045 - t * 1.6) * 2.2 * (1 - hold);
+      var wk = wake(ring.r, t);
+      var wobble = Math.sin(ring.r * 0.045 - t * 1.6) * 2.2 * (1 - hold) + wk.s;
       var r = ring.r + wobble;
 
       /* dotted guide ring between text rings */
@@ -96,7 +104,7 @@
       for (var k = 0; k < chars.length; k++) {
         var c = chars[k];
         if (c.ch === ' ' || c.th > dens) continue;
-        var a = c.a + rot;
+        var a = c.a + rot + wk.s * 0.0025 * Math.sin(k);   /* slight angular jostle in the wake */
         var x = cx + Math.cos(a) * r, y = cy + Math.sin(a) * r;
         if (x < -10 || y < -10 || x > W + 10 || y > H + 10) continue;
         ctx.globalAlpha = 0.55 + 0.45 * Math.min(1, (dens - c.th) * 6);
