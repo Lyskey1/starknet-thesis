@@ -32,7 +32,7 @@ const wash = new THREE.Mesh(
       uBg: { value: linear('#0d0d0d') },
       uFlameA: { value: linear('#c53400') },
       uFlameB: { value: linear('#e07a4a') },
-      uFlameAmt: { value: 0.42 }
+      uFlameAmt: { value: 0.72 }
     },
     vertexShader: `varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position, 1.0); }`,
     fragmentShader: `
@@ -52,9 +52,9 @@ const wash = new THREE.Mesh(
         vec3 flame = 1.5 * uFlameA * w.x;
         flame *= w.y;
         flame += uFlameB * w.z;
-        flame *= smoothstep(0.25, 1.0, abs(uv.y));
-        float md = smoothstep(-0.7, 1.0, -uv.y * uv.x);
-        flame *= md * md;
+        flame *= mix(0.45, 1.0, smoothstep(0.0, 1.0, abs(uv.y)));
+        float md = smoothstep(-1.0, 1.0, -uv.y * uv.x);
+        flame *= mix(0.4, 1.0, md);   // softened: the squared mask left most of the frame black
         vec3 bg = uBg * (1.0 - 0.4 * length(uv));
         gl_FragColor = vec4(bg + flame * uFlameAmt, 1.0);
       }`
@@ -79,7 +79,7 @@ const motes = (() => {
     uniforms: {
       uTime: { value: 0 }, uRes: { value: new THREE.Vector2(1, 1) },
       uSpread: { value: 3.4 }, uFadeNear: { value: 2.4 }, uFadeFar: { value: 4.6 },
-      uColor: { value: linear('#ffb08a') }, uAlpha: { value: 0.5 }
+      uColor: { value: linear('#ffb08a') }, uAlpha: { value: 0.62 }
     },
     vertexShader: `
       attribute float size; uniform float uTime; uniform vec2 uRes;

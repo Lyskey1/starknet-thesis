@@ -20,7 +20,13 @@
      every gang — a fixed radius with a 360/count step packed 23 cards tight
      and spread 11 of them apart. */
   var GAP_RATIO = 1.34, RADIUS_MIN = 2.2, RADIUS_MAX = 6.5;
-  var DRAG = 0.16, DAMP = 0.94, REST = 0.05, SNAP = 0.14, FADE_FROM = 58, FADE_TO = 92;
+  var DRAG = 0.16, DAMP = 0.94, REST = 0.05, SNAP = 0.14;
+  /* How many cards stay lit either side of the front one. A FIXED angular
+     fade (58deg to 92deg) showed ten cards for an 18-strong gang and six for
+     an 11-strong one, because the step between cards is 360/count: the same
+     angle spans fewer cards when there are fewer of them. Counting cards
+     instead fills the frame identically for every gang. */
+  var FADE_FROM_CARDS = 3.5, FADE_TO_CARDS = 4.7;
   var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   mount.innerHTML =
@@ -121,7 +127,8 @@
     cards.forEach(function (c, i) {
       var away = Math.abs(wrap(c.base + rot));
       if (away < bestAway) { bestAway = away; best = i; }
-      var fade = 1 - Math.min(1, Math.max(0, (away - FADE_FROM) / (FADE_TO - FADE_FROM)));
+      var from = step * FADE_FROM_CARDS, to = step * FADE_TO_CARDS;
+      var fade = 1 - Math.min(1, Math.max(0, (away - from) / Math.max(to - from, 0.001)));
       c.el.style.transform = 'rotateY(' + c.base + 'deg) translateZ(' + (-radius) + 'px)';
       c.el.style.opacity = fade.toFixed(3);
       c.el.classList.toggle('is-front', away < step * 0.5);
