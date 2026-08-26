@@ -2,6 +2,7 @@
 
 import { Bloom, EffectComposer } from "@react-three/postprocessing";
 import { KernelSize } from "postprocessing";
+import * as THREE from "three";
 
 /**
  * Bloom over the additive particle forms.
@@ -17,7 +18,13 @@ export const Postprocessing = () => {
   return (
     // `enabled={false}` would still build the composer, so callers omit this
     // component entirely on the weakest tier.
-    <EffectComposer renderPriority={2}>
+    // 8-bit framebuffers on purpose. The default is RGBA16F, and on Chrome 151's
+    // ANGLE/Metal backend (Apple silicon) the half-float bloom chain resolves to
+    // a black final composite: every draw lands in the mip RTs and the screen
+    // gets nothing (verified 2026-08-26 by sampling the default framebuffer).
+    // SwiftShader hides it, real GPUs do not. The visible cost is a little
+    // banding in the bloom falloff, which the film-grain-free dark ground hides.
+    <EffectComposer renderPriority={2} frameBufferType={THREE.UnsignedByteType}>
       <Bloom
         intensity={0.6}
         kernelSize={KernelSize.MEDIUM}
