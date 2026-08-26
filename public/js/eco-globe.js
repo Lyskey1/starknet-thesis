@@ -19,7 +19,7 @@ if (MOUNT) {
         '<p>Every project, every voice, on one chain.</p>' +
       '</div>' +
       '<div class="eg-copy eg-copy-b"><h2>Powered by Starknet</h2>' +
-        '<p>The teams and the voices shipping the network, all in one place.</p></div>' +
+        '<p>Every project shipping on the network, in one place.</p></div>' +
       '<div class="eg-stats"><div><span>Projects</span><b class="eg-n-p">0</b></div>' +
         '<div><span>Voices</span><b class="eg-n-v">0</b></div></div>' +
       '<div class="eg-hint">Scroll to explore</div>' +
@@ -123,18 +123,24 @@ if (MOUNT) {
   }
 
   function scatter(list) {
+    /* Three concentric rings turned by the golden angle: an ordered field
+       reads as a system where the random scatter read as clutter. The middle
+       band is left clear so the copy is never covered. */
+    const RINGS = [{ r: 4.2, z: -8.5 }, { r: 6.4, z: -12.5 }, { r: 8.6, z: -17 }];
+    const per = Math.ceil(list.length / RINGS.length);
     list.forEach((acc, i) => {
-      const a = Math.abs(Math.sin((i + 1) * 12.9898) * 43758.5453 % 1);
-      const b = Math.abs(Math.sin((i + 1) * 78.233) * 12345.678 % 1);
-      const c = Math.abs(Math.sin((i + 1) * 39.425) * 6789.1 % 1);
-      const ring = 4.6 + c * 5.2;                       // out of the middle, where the copy sits
-      const ang = a * Math.PI * 2;
+      const band = Math.min(RINGS.length - 1, Math.floor(i / per));
+      const k = i - band * per;
+      const def = RINGS[band];
+      const ang = k * 2.39996 + band * 0.9;
+      const c = (i % 7) / 7;
+      const seed = Math.abs(Math.sin((i + 1) * 12.9898) * 43758.5453 % 1);
+      let yy = Math.sin(ang) * def.r * 0.55;
+      if (Math.abs(yy) < 1.5) yy += yy < 0 ? -1.5 : 1.5;
       const spr = new THREE.Sprite(new THREE.SpriteMaterial({ map: tile(acc), transparent: true, opacity: 0, depthWrite: false }));
-      var yy = (b - 0.5) * 7.2;
-      if (Math.abs(yy) < 1.5 && ring < 6.4) yy += yy < 0 ? -1.8 : 1.8;   // keep the headline's band clear
-      spr.position.set(Math.cos(ang) * ring, yy, -7.5 - c * 15.5);
-      spr.scale.setScalar(0.72 + c * 0.5);
-      spr.userData = { acc, base: spr.position.clone(), seed: a, hover: 0, size: spr.scale.x };
+      spr.position.set(Math.cos(ang) * def.r, yy, def.z - c * 2.2);
+      spr.scale.setScalar(0.30 + c * 0.08);   // small: a field of marks, not a wall of faces
+      spr.userData = { acc, base: spr.position.clone(), seed, hover: 0, size: spr.scale.x };
       scene.add(spr); tiles.push(spr);
     });
   }
@@ -204,9 +210,9 @@ if (MOUNT) {
       d.hover += ((s === hovered ? 1 : 0) - d.hover) * 0.16;
       s.material.opacity = arrive * (0.72 + 0.28 * d.hover);
       s.visible = arrive > 0.002;
-      s.scale.setScalar(d.size * (1 + d.hover * 0.28));
-      s.position.set(d.base.x + Math.sin(t * 0.35 + d.seed * 6.28) * 0.16,
-                     d.base.y + Math.cos(t * 0.29 + d.seed * 6.28) * 0.14,
+      s.scale.setScalar(d.size * (1 + d.hover * 0.55));
+      s.position.set(d.base.x + Math.sin(t * 0.3 + d.seed * 6.28) * 0.07,
+                     d.base.y + Math.cos(t * 0.26 + d.seed * 6.28) * 0.06,
                      d.base.z);
     });
 
@@ -240,7 +246,7 @@ if (MOUNT) {
     const voices = ['starkware', 'snf', 'builders', 'shitposter'].flatMap(k => data[k] || []);
     MOUNT.querySelector('.eg-n-p').textContent = projects.length;
     MOUNT.querySelector('.eg-n-v').textContent = voices.length;
-    scatter(projects.concat(voices));
+    scatter(projects);   // the voices have their own act (the ring); this field is the projects
     resize(); readScroll();
     if (reduced) { p = target; renderer.render(scene, camera); }
     else requestAnimationFrame(frame);
