@@ -47,7 +47,7 @@ export const FinancialSection = () => {
         from={CARD_REVEAL.from}
         to={CARD_REVEAL.to}
         config={CARD_REVEAL.config}
-        className="relative h-full w-full origin-bottom border border-white/10 bg-white text-black max-lg:flex max-lg:flex-col max-lg:gap-[1rem] max-lg:p-[1.5rem] max-sm:p-[1.25rem]"
+        className="relative h-full w-full origin-bottom border border-[#262626] bg-[#141414] text-[#fafafa] max-lg:flex max-lg:flex-col max-lg:gap-[1rem] max-lg:p-[1.5rem] max-sm:p-[1.25rem]"
       >
         <TextEngine
           tag="h2"
@@ -72,7 +72,7 @@ export const FinancialSection = () => {
               that never renders wider than ~27vw, and the project already
               configures AVIF/WebP + device sizes in `next.config.ts`. Served raw it
               was the single heaviest asset on the page — heavier than the scene. */}
-          <div className="flex h-full w-full items-center justify-center bg-[#0d0d0d]">
+          <div className="flex h-full w-full items-center justify-center bg-[#0d0d0d] border border-[#262626]">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/assets/img/stark-logo.png" alt="Starknet" className="block w-[55%] max-w-[16rem]" />
           </div>

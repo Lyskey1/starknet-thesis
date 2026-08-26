@@ -113,6 +113,13 @@ export const CARD_ROW: Interaction = {
 };
 
 /** A control on a white surface (the cookie banner's primary). */
+/** FAQ row on the dark card: tints with light, not ink. */
+export const CARD_ROW_DARK: Interaction = {
+  rest: { backgroundColor: alpha(0) },
+  hover: { backgroundColor: alpha(0.05) },
+  press: { backgroundColor: alpha(0.09) },
+};
+
 export const SOLID_INVERSE: Interaction = {
   rest: { backgroundColor: CHALK, color: INK, opacity: 1 },
   hover: { opacity: 0.85 },

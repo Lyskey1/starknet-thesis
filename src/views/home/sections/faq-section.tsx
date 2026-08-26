@@ -7,7 +7,7 @@ import TextEngine from "spring-text-engine";
 import { Inview } from "@/components/animation/springs/in-view";
 import { PressableButton } from "@/components/ui/pressable";
 import type { FaqCopy } from "@/data/home";
-import { CARD_ROW } from "@/lib/springs/interaction";
+import { CARD_ROW_DARK } from "@/lib/springs/interaction";
 import { CARD_REVEAL, LETTER_REVEAL, UNIT_REVEAL } from "../reveal";
 
 interface FaqItemProps {
@@ -51,7 +51,7 @@ const FaqItem = ({ question, answer, open, onToggle }: FaqItemProps) => {
   const marker = useSpring({ rotate: open ? 45 : 0, config: config.stiff });
 
   return (
-    <li className="border-b border-black/15">
+    <li className="border-b border-[#262626]">
       <h3 className="m-0">
         {/* The whole row is the control, so it takes the hover — a question that
             only lights up when the cursor is exactly on its text reads as broken.
@@ -61,7 +61,7 @@ const FaqItem = ({ question, answer, open, onToggle }: FaqItemProps) => {
           onClick={onToggle}
           aria-expanded={open}
           aria-controls={id}
-          interaction={CARD_ROW}
+          interaction={CARD_ROW_DARK}
           className="flex w-full items-center justify-between gap-[1.111vw] px-[0.75vw] py-[1.667vw] text-left max-lg:gap-[1rem] max-lg:px-[0.5rem] max-lg:py-[1rem]"
         >
           <span className="font-tag text-[1.111vw] leading-[1.2] uppercase max-lg:text-[0.875rem]">
@@ -72,8 +72,8 @@ const FaqItem = ({ question, answer, open, onToggle }: FaqItemProps) => {
             className="relative block size-[1.389vw] shrink-0 max-lg:size-[1rem]"
             style={marker}
           >
-            <span className="absolute top-1/2 left-0 h-px w-full -translate-y-1/2 bg-black" />
-            <span className="absolute top-0 left-1/2 h-full w-px -translate-x-1/2 bg-black" />
+            <span className="absolute top-1/2 left-0 h-px w-full -translate-y-1/2 bg-[#fafafa]" />
+            <span className="absolute top-0 left-1/2 h-full w-px -translate-x-1/2 bg-[#fafafa]" />
           </animated.span>
         </PressableButton>
       </h3>
@@ -154,7 +154,7 @@ export const FaqSection = ({ copy }: FaqSectionProps) => {
         from={CARD_REVEAL.from}
         to={CARD_REVEAL.to}
         config={CARD_REVEAL.config}
-        className="relative flex w-full origin-bottom flex-col items-center border border-white/10 bg-white pt-[2.222vw] pb-[3.056vw] text-black max-lg:px-[1.5rem] max-lg:pt-[2rem] max-lg:pb-[2.5rem] max-sm:px-[1.25rem]"
+        className="relative flex w-full origin-bottom flex-col items-center border border-[#262626] bg-[#141414] pt-[2.222vw] pb-[3.056vw] text-[#fafafa] max-lg:px-[1.5rem] max-lg:pt-[2rem] max-lg:pb-[2.5rem] max-sm:px-[1.25rem]"
       >
         <FaqAsterisk />
 
@@ -175,7 +175,7 @@ export const FaqSection = ({ copy }: FaqSectionProps) => {
           from={UNIT_REVEAL.from}
           to={UNIT_REVEAL.to}
           config={UNIT_REVEAL.config}
-          className="m-0 mt-[4.167vw] flex w-[42.778vw] list-none flex-col border-t border-black/15 p-0 max-lg:mt-[2rem] max-lg:w-full"
+          className="m-0 mt-[4.167vw] flex w-[42.778vw] list-none flex-col border-t border-[#262626] p-0 max-lg:mt-[2rem] max-lg:w-full"
         >
           {copy.items.map((item, index) => (
             <FaqItem
