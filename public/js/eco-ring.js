@@ -14,7 +14,12 @@
     { id: 'builders', label: 'Builders' },
     { id: 'shitposter', label: 'Shitposters' }
   ];
-  var RATIO = 1.36, RADIUS_MULT = 3, ARC_DEPTH = 0.7;
+  var RATIO = 1.36, ARC_DEPTH = 0.7;
+  /* Gap between neighbouring card CENTRES, as a share of a card's width. The
+     radius is then solved from the member count so this gap is identical for
+     every gang — a fixed radius with a 360/count step packed 23 cards tight
+     and spread 11 of them apart. */
+  var GAP_RATIO = 1.34, RADIUS_MIN = 2.2, RADIUS_MAX = 6.5;
   var DRAG = 0.16, DAMP = 0.94, REST = 0.05, SNAP = 0.14, FADE_FROM = 58, FADE_TO = 92;
   var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -61,7 +66,10 @@
     var share = w < 640 ? 0.52 : w < 1024 ? 0.3 : 0.17;
     cardW = Math.max(150, Math.min(w * share, stage.clientHeight * 0.46));
     cardH = cardW * RATIO;
-    radius = cardW * RADIUS_MULT;
+    var n = Math.max(cards.length, 3);
+    /* chord = 2·r·sin(π/n): solve r for the gap we want between centres */
+    var mult = (GAP_RATIO / 2) / Math.sin(Math.PI / n);
+    radius = cardW * Math.max(RADIUS_MIN, Math.min(RADIUS_MAX, mult));
     stage.style.perspective = Math.max(900, w * 1.15) + 'px';
     var push = radius * (1 - ARC_DEPTH);
     ringEl.style.transform = 'translateZ(' + push + 'px) rotateY(' + rot + 'deg)';

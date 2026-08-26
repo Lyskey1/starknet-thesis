@@ -740,9 +740,7 @@
      (body::after) dithers it for free. The scene is per-page; the shell
      around it is a twin of digest.html's. -->
 <section id="ecoGlobe"></section>
-<div class="eco-subnav">
-  <div class="eco-pills" id="ecoPills"></div>
-</div>
+
 
 <!-- SECTIONS (rendered from data) -->
 <div class="es-block" id="ecoRing"></div>
@@ -2015,6 +2013,7 @@
   var sectionsEl = document.getElementById('ecoSections');
 
   function renderPills(){
+    if (!pillsEl) return;   // the category bar was removed from the page
     pillsEl.innerHTML = GROUPS.map(function(g){
       var cats = data.filter(function(c){ return (c.group || 'projects') === g.id; });
       if (!cats.length) return '';
@@ -2598,6 +2597,7 @@
 </script>
 
 <script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.185.0/build/three.module.js"}}</script>
+<script type="module" src="js/eco-backdrop.js"></script>
 <script type="module" src="js/eco-globe.js"></script>
 <script defer src="js/eco-ring.js"></script>
 </body>
