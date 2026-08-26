@@ -124,7 +124,7 @@ export const BRAIN_CONFIG = {
   colorDeep: "#0d0604",
   /** Cursor "neuron" highlight. */
   colorCursor: "#ff8a4a",
-  centerRadius: 0.37,
+  centerRadius: 0.16,
   centerFalloff: 4,
   size: 0.067,
   synapseRate: 0.1,
@@ -139,7 +139,7 @@ export const BRAIN_CONFIG = {
   /** Radians the brain swivels toward the cursor. */
   cursorTilt: 0.22,
   /** How far scrolling past the assembled brain turns it, in radians. */
-  scrollSpin: 2.4,
+  scrollSpin: 0.8,
   /**
    * Resting rotation about the vertical axis, tuned so the formed brain reads as
    * a lateral (side) profile as it comes in. (The source's own "-90° profile" was

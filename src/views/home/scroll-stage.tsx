@@ -138,7 +138,7 @@ export const ScrollStage = ({ loader, faq, footer }: ScrollStageProps) => {
           {/* Trailing space (not a track). Half a track keeps the closing content
               — and the outro-driven brain burst — right after the spin ends at
               clock 4, so there is no dead scroll where the brain sits still. */}
-          <div className="relative" style={{ height: toLvh(0.5) }} />
+          <div className="relative" style={{ height: toLvh(1.1) }} />
         </div>
 
         <div className="relative z-10">
