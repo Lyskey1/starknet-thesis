@@ -59,7 +59,7 @@
   function measure() {
     var w = window.innerWidth;
     var share = w < 640 ? 0.52 : w < 1024 ? 0.3 : 0.17;
-    cardW = Math.max(150, Math.min(w * share, stage.clientHeight * 0.52));
+    cardW = Math.max(150, Math.min(w * share, stage.clientHeight * 0.46));
     cardH = cardW * RATIO;
     radius = cardW * RADIUS_MULT;
     stage.style.perspective = Math.max(900, w * 1.15) + 'px';

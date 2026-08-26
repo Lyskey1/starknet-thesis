@@ -198,7 +198,7 @@
      top "THE PROJECTS" row clips behind the nav). Solid --black bg + z-index
      under the nav so the grid scrolls under it, never through it. */
   .eco-subnav {
-    position: sticky; top: 86px; z-index: 90;
+    position: static; top: 86px; z-index: 90;
     /* liquid glass, sticky-bar variant: a real backdrop blur (the 127
        colored avatar cards scroll beneath this bar) over a deliberately
        heavy scrim. The scrim is not optional: pill text is the muted
@@ -579,12 +579,12 @@
   /* the mobile nav bar (64px) starts at 860px — the subnav offset must
      follow it there, not at 768px, or a 22px float gap opens in between */
   @media (max-width: 860px) {
-    .eco-subnav { top: 64px; }
+    .eco-subnav { top: auto; }
   }
   @media (max-width: 768px) {
     /* subnav sits under the 64px mobile nav; the PILLS row scrolls (with a
        right-edge fade), while the Edit button wraps onto its own row */
-    .eco-subnav { padding: 10px 16px; top: 64px; overflow: visible; flex-wrap: wrap; }
+    .eco-subnav { padding: 10px 16px; top: auto; overflow: visible; flex-wrap: wrap; }
     .eco-pills { flex: 1 1 100%; max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch;
       background:
         linear-gradient(270deg, var(--black, #0d0d0d) 0, transparent 36px) right center/36px 100% no-repeat local,
@@ -739,79 +739,6 @@
      hero falloff works. No canvas, no assets; the site grain
      (body::after) dithers it for free. The scene is per-page; the shell
      around it is a twin of digest.html's. -->
-<div class="hero eco-hero">
-  <div class="eco-scene" aria-hidden="true">
-    <svg class="eco-net" viewBox="0 0 1440 520" preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false">
-      <!-- upper tier: satellites, their cross-links, and faint links down
-           into the main band. Hidden below 981px, where the slice crop
-           already leaves only the band. Kept at y>=246 so a very wide
-           viewport (which crops from the top) still shows them. -->
-      <g class="eco-sat">
-        <polyline class="lk2" points="196,268 452,248 688,292 930,252 1180,282 1392,246"/>
-        <line class="lk2" x1="196" y1="268" x2="104" y2="412"/>
-        <line class="lk2" x1="452" y1="248" x2="430" y2="444"/>
-        <line class="lk2" x1="688" y1="292" x2="652" y2="438"/>
-        <line class="lk2" x1="930" y1="252" x2="988" y2="400"/>
-        <line class="lk2" x1="1180" y1="282" x2="1208" y2="388"/>
-        <line class="lk2" x1="1392" y1="246" x2="1440" y2="404"/>
-        <circle class="ns" cx="196" cy="268" r="1.7"/>
-        <circle class="ns br" cx="452" cy="248" r="1.8" style="--d:6.4s;--dl:1.6s"/>
-        <circle class="ns" cx="688" cy="292" r="1.7"/>
-        <circle class="ns" cx="930" cy="252" r="1.7"/>
-        <circle class="ns br" cx="1180" cy="282" r="1.8" style="--d:5.7s;--dl:.4s"/>
-        <circle class="ns" cx="1392" cy="246" r="1.7"/>
-      </g>
-      <!-- main band: the continuous polyline, then cross-links, then the
-           three low junction runs that thicken the bottom -->
-      <polyline class="lk1" points="0,448 104,412 212,462 318,398 430,444 540,384 652,438 764,394 876,454 988,400 1098,448 1208,388 1320,436 1440,404"/>
-      <line class="lk1" x1="104" y1="412" x2="430" y2="444"/>
-      <line class="lk1" x1="318" y1="398" x2="652" y2="438"/>
-      <line class="lk1" x1="540" y1="384" x2="876" y2="454"/>
-      <line class="lk1" x1="764" y1="394" x2="1098" y2="448"/>
-      <line class="lk1" x1="988" y1="400" x2="1320" y2="436"/>
-      <polyline class="lk1" points="104,412 160,492 212,462"/>
-      <polyline class="lk1" points="430,444 596,484 652,438"/>
-      <polyline class="lk1" points="876,454 1042,490 1098,448"/>
-      <!-- primary nodes: tier 2 sit low on the polyline, tier 3 ride its
-           peaks and read further back -->
-      <circle class="nd2" cx="0" cy="448" r="2.6"/>
-      <circle class="nd3" cx="104" cy="412" r="2"/>
-      <circle class="nd2 br" cx="212" cy="462" r="2.6" style="--d:4.2s;--dl:0s"/>
-      <circle class="nd3" cx="318" cy="398" r="2"/>
-      <circle class="nd2" cx="430" cy="444" r="2.6"/>
-      <circle class="nd3" cx="540" cy="384" r="2"/>
-      <circle class="nd2" cx="652" cy="438" r="2.6"/>
-      <circle class="nd3" cx="764" cy="394" r="2"/>
-      <circle class="nd2 br" cx="876" cy="454" r="2.6" style="--d:5.1s;--dl:2.3s"/>
-      <circle class="nd3" cx="988" cy="400" r="2"/>
-      <circle class="nd2" cx="1098" cy="448" r="2.6"/>
-      <circle class="nd3" cx="1208" cy="388" r="2"/>
-      <circle class="nd2 br" cx="1320" cy="436" r="2.6" style="--d:6.9s;--dl:1.2s"/>
-      <circle class="nd3" cx="1440" cy="404" r="2"/>
-      <!-- junction nodes: lowest, biggest, brightest -->
-      <circle class="nd1 br" cx="160" cy="492" r="3.2" style="--d:4.8s;--dl:.8s"/>
-      <circle class="nd1" cx="596" cy="484" r="3.2"/>
-      <circle class="nd1 br" cx="1042" cy="490" r="3.2" style="--d:4.5s;--dl:2.8s"/>
-    </svg>
-    <div class="eco-scrim"></div>
-  </div>
-  <div class="eco-hero-inner">
-    <p class="hero-eyebrow">The ecosystem</p>
-    <h1 id="the-people-building-shaping-starknet" class="hero-title">The people building<br>&amp; shaping <em>Starknet</em>.</h1>
-    <p class="hero-subtitle">Everything worth following to stay on top of the Starknet ecosystem, from the core teams and the projects shipping, to the builders and the degens.</p>
-    <div class="eco-ctas">
-      <a class="eco-cta chip-glass" href="#group-projects">Browse the projects <i aria-hidden="true">&rarr;</i></a>
-      <a class="eco-cta eco-cta--muted chip-glass" href="#group-people">Meet the voices <i aria-hidden="true">&rarr;</i></a>
-    </div>
-  </div>
-</div>
-
-<!-- project-name marquee: decorative band built from the page's own
-     project data after it resolves (aria-hidden: every name repeats in
-     the sections below) -->
-<div class="eco-marquee" id="ecoMarquee" aria-hidden="true"><div class="eco-mq-track"></div></div>
-
-<!-- STICKY CATEGORY NAV (admin edit controls are injected when the admin gate is on) -->
 <section id="ecoGlobe"></section>
 <div class="eco-subnav">
   <div class="eco-pills" id="ecoPills"></div>

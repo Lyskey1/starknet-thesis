@@ -9,7 +9,8 @@ const MOUNT = document.getElementById('ecoGlobe');
 if (MOUNT) {
   const ACC = new THREE.Color('#c53400'), WARM = new THREE.Color('#e07a4a'), INK = new THREE.Color('#fafafa');
   const COUNT = matchMedia('(max-width: 860px)').matches ? 14000 : 34000;
-  const R = 3.2;
+  const R = 2.95;  // sphere radius; the camera distance sets how big it reads
+const SHELL_Y = -1.45;   // sits the sphere below the copy, as the reference does
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   MOUNT.innerHTML =
@@ -40,7 +41,7 @@ if (MOUNT) {
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(46, 1, 0.05, 90);
-  const shell = new THREE.Group(); scene.add(shell);
+  const shell = new THREE.Group(); shell.position.y = SHELL_Y; scene.add(shell);
 
   /* ---- the shell: motes on a sphere, a touch of radial jitter so it reads
      as a cloud with a surface rather than as a hard ball ---- */
@@ -56,9 +57,9 @@ if (MOUNT) {
       pos[i * 3 + 1] = y * rad;
       pos[i * 3 + 2] = Math.sin(th) * rr * rad;
       const t = Math.abs(Math.sin(i * 12.9898) * 43758.5453 % 1);
-      c.copy(t > 0.78 ? INK : t > 0.45 ? WARM : ACC).multiplyScalar(0.5 + t * 0.75);
+      c.copy(t > 0.62 ? INK : t > 0.3 ? WARM : ACC).multiplyScalar(0.72 + t * 0.6);
       col[i * 3] = c.r; col[i * 3 + 1] = c.g; col[i * 3 + 2] = c.b;
-      siz[i] = 0.55 + t * 0.95;
+      siz[i] = 0.6 + t * 1.05;
     }
     const g = new THREE.BufferGeometry();
     g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
@@ -72,10 +73,10 @@ if (MOUNT) {
         void main(){ vC = color; vec4 mv = modelViewMatrix * vec4(position,1.0);
           float d = -mv.z; vF = smoothstep(0.5, 3.0, d) * (1.0 - smoothstep(16.0, 26.0, d));
           gl_Position = projectionMatrix * mv;
-          gl_PointSize = max(1.0, aSize * uPix * (uH/900.0) * (9.5 / max(d, 0.5))); }`,
+          gl_PointSize = max(1.0, aSize * uPix * (uH/900.0) * (12.0 / max(d, 0.5))); }`,
       fragmentShader: `varying vec3 vC; varying float vF; uniform float uFade;
         void main(){ float d = length(gl_PointCoord - 0.5); if (d > 0.5) discard;
-          float a = (1.0 - smoothstep(0.30, 0.5, d)) * uFade * vF * 0.85;
+          float a = (1.0 - smoothstep(0.30, 0.5, d)) * uFade * vF;
           if (a < 0.01) discard; gl_FragColor = vec4(vC, a); }`,
       vertexColors: true
     });
@@ -126,20 +127,26 @@ if (MOUNT) {
     /* Three concentric rings turned by the golden angle: an ordered field
        reads as a system where the random scatter read as clutter. The middle
        band is left clear so the copy is never covered. */
-    const RINGS = [{ r: 4.2, z: -8.5 }, { r: 6.4, z: -12.5 }, { r: 8.6, z: -17 }];
-    const per = Math.ceil(list.length / RINGS.length);
+    /* A jittered grid, not rings: rings banded the field into arcs with holes
+       between them. Each cell gets one project nudged off its centre, which
+       gives an even spread that still reads as scattered. The middle cells are
+       pushed aside so the copy is never covered. */
+    const N = list.length;
+    const cols = Math.ceil(Math.sqrt(N * 1.7));
+    const rows = Math.ceil(N / cols);
+    const SPAN_X = 13.5, SPAN_Y = 8.2;
     list.forEach((acc, i) => {
-      const band = Math.min(RINGS.length - 1, Math.floor(i / per));
-      const k = i - band * per;
-      const def = RINGS[band];
-      const ang = k * 2.39996 + band * 0.9;
-      const c = (i % 7) / 7;
-      const seed = Math.abs(Math.sin((i + 1) * 12.9898) * 43758.5453 % 1);
-      let yy = Math.sin(ang) * def.r * 0.55;
-      if (Math.abs(yy) < 1.5) yy += yy < 0 ? -1.5 : 1.5;
+      const cx = i % cols, cy = Math.floor(i / cols);
+      const j1 = Math.abs(Math.sin((i + 1) * 12.9898) * 43758.5453 % 1);
+      const j2 = Math.abs(Math.sin((i + 1) * 78.233) * 12345.678 % 1);
+      const j3 = Math.abs(Math.sin((i + 1) * 39.425) * 6789.1 % 1);
+      let x = ((cx + 0.5) / cols - 0.5) * SPAN_X + (j1 - 0.5) * (SPAN_X / cols) * 0.85;
+      let yy = ((cy + 0.5) / rows - 0.5) * SPAN_Y + (j2 - 0.5) * (SPAN_Y / rows) * 0.85;
+      if (Math.abs(x) < 3.6 && Math.abs(yy) < 1.5) x += x < 0 ? -2.6 : 2.6;   // clear the copy
+      const seed = j1;
       const spr = new THREE.Sprite(new THREE.SpriteMaterial({ map: tile(acc), transparent: true, opacity: 0, depthWrite: false }));
-      spr.position.set(Math.cos(ang) * def.r, yy, def.z - c * 2.2);
-      spr.scale.setScalar(0.30 + c * 0.08);   // small: a field of marks, not a wall of faces
+      spr.position.set(x, yy, -9.5 - j3 * 2.4);
+      spr.scale.setScalar(0.52 + j3 * 0.10);   // the reference's size: readable marks
       spr.userData = { acc, base: spr.position.clone(), seed, hover: 0, size: spr.scale.x };
       scene.add(spr); tiles.push(spr);
     });
@@ -184,25 +191,25 @@ if (MOUNT) {
 
     /* the flight: the lens starts off the shell and ends deep inside it */
     const dive = smooth(0.04, 0.72, p);
-    camera.position.set(drift.x * 0.4, 0.55 + drift.y * 0.25, 13.6 - dive * 15.2);
-    camera.lookAt(0, 0.1, camera.position.z - 10);   // a point AHEAD of the lens: a fixed one ends up behind it once the flight lands
+    camera.position.set(drift.x * 0.35, drift.y * 0.22, 16.4 - dive * 18.0);
+    camera.lookAt(0, 0, camera.position.z - 10);   // a point AHEAD of the lens: a fixed one ends up behind it once the flight lands
     shell.rotation.y = t * 0.035 + p * 0.6;
     shell.rotation.x = drift.y * 0.12;
 
     /* the shell hands over to the starfield */
-    shell.userData.mat.uniforms.uFade.value = 1 - smooth(0.56, 0.8, p);
+    shell.userData.mat.uniforms.uFade.value = 1 - smooth(0.5, 0.68, p);
     stars.material.opacity = smooth(0.5, 0.74, p) * 0.7;
     stars.rotation.y = t * 0.006;
 
     /* the mark holds the middle, then goes as the lens passes through it */
-    const markGone = smooth(0.2, 0.38, p);
+    const markGone = smooth(0.26, 0.42, p);
     mark.material.opacity = 1 - markGone;
     mark.visible = markGone < 0.999;
-    mark.position.set(0, 0, 0);
-    mark.scale.setScalar(0.62);
+    mark.position.set(0, SHELL_Y, 0);
+    mark.scale.setScalar(0.78);
 
     /* the projects arrive once you are inside */
-    const arrive = smooth(0.62, 0.9, p);
+    const arrive = smooth(0.6, 0.84, p);
     if (fine && arrive > 0.4) { ray.setFromCamera(ndc, camera); const hit = ray.intersectObjects(tiles, false)[0]; hovered = hit ? hit.object : null; }
     else hovered = null;
     tiles.forEach((s, i) => {
