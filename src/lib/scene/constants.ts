@@ -133,7 +133,7 @@ export const BRAIN_CONFIG = {
   glow: 1.4,
   depthDarkness: 1,
   /** Bounding radius the sampled cloud is scaled to — sized to the hero camera. */
-  radius: 1.15,
+  radius: 0.85,
   /** Points sampled across the surface (desktop; scaled per tier in adaptive). */
   count: 140000,
   /** Radians the brain swivels toward the cursor. */
