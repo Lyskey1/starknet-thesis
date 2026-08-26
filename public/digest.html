@@ -113,7 +113,7 @@
       inset 0 -1px 0 rgba(0,0,0,.6),
       inset 0 -3px 5px rgba(0,0,0,.22),
       0 0 12px rgba(var(--accent-rgb), .10); }
-  .dg-cta--muted:hover { border-color: rgba(var(--accent-rgb), .55); background: rgba(245,242,236,.10);
+  .dg-cta--muted:hover { border-color: rgba(var(--accent-rgb), .55); background: rgba(250, 250, 250,.10);
     box-shadow:
       inset 0 1px 0 rgba(255,255,255,.5),
       inset -1px -1px 0 rgba(255,255,255,.30),
@@ -173,7 +173,7 @@
   .th-pm-head{display:flex;align-items:center;gap:18px;}
   .th-pm-marker{width:0;height:0;border-left:13px solid var(--accent);border-top:8px solid transparent;border-bottom:8px solid transparent;transform:translateY(2px);filter:drop-shadow(0 0 8px rgba(var(--accent-rgb),.6));}
   .th-pm-num{font-family:var(--display);font-weight:900;font-size:64px;line-height:1;color:var(--accent);letter-spacing:-.02em;}
-  .th-pm-title{font-family:var(--display);font-weight:800;font-size:52px;line-height:1.02;letter-spacing:-.015em;color:var(--white);max-width:none;}
+  .th-pm-title{font-family:var(--display);font-weight:300;font-size:52px;line-height:1.02;letter-spacing:-.015em;color:var(--white);max-width:none;}
   .th-pm-title b, .th-pm-title em{color:var(--accent);font-weight:800;font-style:normal;}
   /* eyebrow: the landing's spec (13px, .04em, sentence case, opacity .9) */
   .th-pm-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:.04em;color:var(--accent);opacity:.9;margin-top:16px;}
@@ -188,17 +188,17 @@
   @media (max-width: 768px) { section.dg-feed { padding: 80px 24px; } }
   /* D4 + D9: two muted tiers + 14.5px excerpt (overrides .recap-excerpt,
      .recap-date, .recap-count) */
-  .recap-excerpt { color: #8b909c; font-size: 14.5px; }
-  .recap-date, .recap-count { color: #8b909c; }
+  .recap-excerpt { color: #9a9a9a; font-size: 14.5px; }
+  .recap-date, .recap-count { color: #9a9a9a; }
   /* D7 + D11: entry cards onto the site's NON-glass card tier, the one
      ecosystem's .eco-card established for many-surfaces grids (opaque
-     #0B0D13 fill, card-glass border alpha, 14px radius, shared hover
+     #141414 fill, card-glass border alpha, 14px radius, shared hover
      signature: card-glass-lift + accent border + accent glow). Cards stay
      non-glass by design (a hydrated archive grid is the same
      many-backdrop-filter case as the directory). Also fixes the UA
      link-blue computing on the anchor itself. Overrides .recap-card. */
   .recap-card { border-radius: 14px; color: inherit;
-    border-color: var(--card-glass-border); background: #0B0D13;
+    border-color: var(--card-glass-border); background: #141414;
     transition: transform var(--hover-dur) var(--hover-ease), border-color var(--hover-dur), background var(--hover-dur), box-shadow var(--hover-dur); }
   .recap-card:hover { transform: translateY(var(--card-glass-lift)); border-color: var(--accent);
     background: rgba(255,255,255,0.03); box-shadow: 0 10px 30px rgba(var(--accent-rgb), .22); }
@@ -207,9 +207,9 @@
      page's accent (overrides .chart-toggle and .toggle-btn; behavior,
      classes and the marquee band's tab wiring untouched) */
   #recapTabs.chart-toggle { border: none; padding: 0; gap: 8px; border-radius: 0; background: none; }
-  #recapTabs .toggle-btn { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: #8b909c; padding: 7px 14px; border: 1px solid var(--border); border-radius: 40px; background: transparent;
+  #recapTabs .toggle-btn { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: #9a9a9a; padding: 7px 14px; border: 1px solid var(--border); border-radius: 40px; background: transparent;
     transition: color var(--hover-dur) var(--hover-ease), border-color var(--hover-dur), background var(--hover-dur), box-shadow var(--hover-dur); }
-  #recapTabs .toggle-btn:hover { color: var(--white); border-color: rgba(245,242,236,0.25); }
+  #recapTabs .toggle-btn:hover { color: var(--white); border-color: rgba(250, 250, 250,0.25); }
   #recapTabs .toggle-btn.active { color: var(--accent); border-color: var(--accent); background: rgba(var(--accent-rgb), .12);
     box-shadow: 0 0 16px rgba(var(--accent-rgb), .22); }
   @media (prefers-reduced-motion: reduce) { #recapTabs .toggle-btn { transition: none; } }
@@ -262,13 +262,13 @@
     background: radial-gradient(ellipse at center bottom, rgba(var(--accent-rgb),0.15) 0%, transparent 70%);
   }
   @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-    .dg-close .cta-block { background: #0B0D13; }
+    .dg-close .cta-block { background: #141414; }
   }
   /* mobile, site rule: no backdrop-filter below 981px, solid surface with a
      barely perceptible accent tint (ecosystem's closing panel, same step) */
   @media (max-width: 980px) {
     .dg-close .cta-block { -webkit-backdrop-filter: none; backdrop-filter: none;
-      background: color-mix(in srgb, var(--accent) 2.5%, #0B0D13); }
+      background: color-mix(in srgb, var(--accent) 2.5%, #141414); }
   }
   @media (max-width: 768px) { .dg-close { padding: 88px 24px 80px; } }
 </style>

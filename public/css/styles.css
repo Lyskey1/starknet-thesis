@@ -2,8 +2,8 @@
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --black: #0A0A0A;
-    --white: #F5F2EC;
+    --black: #0d0d0d;
+    --white: #fafafa;
 
     /* ===== Per-page accent (default = BTCFi orange; overridden by body.page-*) =====
        --accent      : the single accent color used everywhere an accent appears.
@@ -11,19 +11,19 @@
        --accent-dim  : a darker shade for pressed/secondary accent moments.
        --bg-glow     : color of the page-wide ambient background glow (usually an
                        accent tint; some pages override it to a deep navy/indigo). */
-    --accent: #F7931A;
-    --accent-rgb: 247, 147, 26;
-    --accent-dim: #C46E0E;
-    --bg-glow: rgba(var(--accent-rgb), 0.11);
+    --accent: #c53400;
+    --accent-rgb: 197, 52, 0;
+    --accent-dim: #a02a00;
+    --bg-glow: rgba(var(--accent-rgb), 0.10);
 
-    --stark-purple: #8B5CF6;
-    --stark-dim: rgba(139, 92, 246, 0.2);
+    --stark-purple: #c53400;
+    --stark-dim: rgba(197, 52, 0, 0.2);
     --red: #E53E3E;
     --red-dim: rgba(229, 62, 62, 0.1);
     --green: #38A169;
-    --gray: #6B6B6B;
-    --gray-light: #1A1A1A;
-    --border: rgba(245, 242, 236, 0.09);
+    --gray: #616161;
+    --gray-light: #1a1a1a;
+    --border: #262626;
 
     /* ===== Type system (industrial / STRK20 language) =====
        --display : Archivo at width 125 (the wdth axis, applied by the
@@ -33,19 +33,19 @@
                    returned no webfont at all.
        --mono    : IBM Plex Mono   — labels / nav / buttons, letter-spaced caps
        --sans    : Inter           — body copy */
-    --display: 'Archivo', sans-serif;
+    --display: 'General Sans', 'Helvetica Neue', Arial, sans-serif;
     --mono: 'IBM Plex Mono', monospace;
-    --sans: 'Inter', sans-serif;
+    --sans: 'General Sans', 'Helvetica Neue', Arial, sans-serif;
   }
 
   /* ===== Per-page accent palettes ===== */
-  body.page-btcfi    { --accent: #F7931A; --accent-rgb: 247, 147, 26;  --accent-dim: #C46E0E; --bg-glow: rgba(var(--accent-rgb), 0.11); }
-  body.page-landing  { --accent: #A78BFA; --accent-rgb: 167, 139, 250; --accent-dim: #7E5BD6; --bg-glow: rgba(var(--accent-rgb), 0.11); }
-  body.page-quantum  { --accent: #3DA9FC; --accent-rgb: 61, 169, 252;  --accent-dim: #1E7FD0; --bg-glow: rgba(var(--accent-rgb), 0.12); }
-  body.page-privacy  { --accent: #1FCB94; --accent-rgb: 31, 203, 148;  --accent-dim: #17A278; --bg-glow: rgba(var(--accent-rgb), 0.11); }
-  body.page-ecosystem{ --accent: #EC7B6B; --accent-rgb: 236, 123, 107; --accent-dim: #CF5D4D; --bg-glow: rgba(46, 52, 110, 0.55); }
-  body.page-recap    { --accent: #F2978A; --accent-rgb: 242, 151, 138; --accent-dim: #D97365; --bg-glow: rgba(40, 46, 102, 0.50); }
-  body.page-strk     { --accent: #EC7B6B; --accent-rgb: 236, 123, 107; --accent-dim: #CF5D4D; --bg-glow: rgba(26, 32, 84, 0.60); }
+  body.page-btcfi { --accent: #c53400; --accent-rgb: 197, 52, 0; --accent-dim: #a02a00; --bg-glow: rgba(197, 52, 0, 0.10); }
+  body.page-landing { --accent: #c53400; --accent-rgb: 197, 52, 0; --accent-dim: #a02a00; --bg-glow: rgba(197, 52, 0, 0.10); }
+  body.page-quantum { --accent: #c53400; --accent-rgb: 197, 52, 0; --accent-dim: #a02a00; --bg-glow: rgba(197, 52, 0, 0.10); }
+  body.page-privacy { --accent: #c53400; --accent-rgb: 197, 52, 0; --accent-dim: #a02a00; --bg-glow: rgba(197, 52, 0, 0.10); }
+  body.page-ecosystem { --accent: #c53400; --accent-rgb: 197, 52, 0; --accent-dim: #a02a00; --bg-glow: rgba(197, 52, 0, 0.10); }
+  body.page-recap { --accent: #c53400; --accent-rgb: 197, 52, 0; --accent-dim: #a02a00; --bg-glow: rgba(197, 52, 0, 0.10); }
+  body.page-strk { --accent: #c53400; --accent-rgb: 197, 52, 0; --accent-dim: #a02a00; --bg-glow: rgba(197, 52, 0, 0.10); }
 
   html { scroll-behavior: smooth; background: var(--black); }
 
@@ -1725,3 +1725,15 @@ html.nav-locked, html.nav-locked body { overflow: hidden; }
 /* horizontal-overflow guard (mobile remediation, phase 3): clip, not hidden,
    so no scroll container is created and position:sticky keeps working */
 html { overflow-x: clip; }
+
+
+/* ===== strk20 / Vesper branding pass (2026-08-26) =====
+   Display type moves from Archivo 800 uppercase (wdth 125) to General Sans 300,
+   sentence case, tight tracking, matching the landing. Mono labels stay. */
+body { font-stretch: normal; }
+h1, h2, .lh-h1, .hero h1, .th-pm-title, .lc-h2, .conv-mark, .foot-mark {
+  font-family: var(--display) !important; font-weight: 300 !important; font-stretch: normal !important;
+  text-transform: none !important; letter-spacing: -0.022em !important;
+}
+h3 { font-family: var(--display); font-weight: 400; font-stretch: normal; text-transform: none; letter-spacing: -0.01em; }
+h1 b, h2 b, h1 strong, h2 strong { font-weight: 400; }
