@@ -10,7 +10,7 @@ if (MOUNT) {
   const ACC = new THREE.Color('#c53400'), WARM = new THREE.Color('#e07a4a'), INK = new THREE.Color('#fafafa');
   const COUNT = matchMedia('(max-width: 860px)').matches ? 14000 : 34000;
   const R = 2.95;  // sphere radius; the camera distance sets how big it reads
-const SHELL_Y = -1.45;   // sits the sphere below the copy, as the reference does
+const SHELL_Y = -0.55;   // near-centred, just clear of the copy
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   MOUNT.innerHTML =
@@ -33,9 +33,9 @@ const SHELL_Y = -1.45;   // sits the sphere below the copy, as the reference doe
   const chip = MOUNT.querySelector('.eg-chip');
   const chipName = MOUNT.querySelector('.eg-chip-name'), chipRole = MOUNT.querySelector('.eg-chip-role');
 
-  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
   renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
-  renderer.setClearColor(0x0d0d0d, 1);
+  renderer.setClearColor(0x000000, 0);   // transparent: the page's ambient backdrop shows through
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   stick.insertBefore(renderer.domElement, stick.firstChild);
 

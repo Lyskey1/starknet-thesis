@@ -67,13 +67,13 @@
 
 
 /* ---------- the hero flight (Morpho-shaped): a tall track, a sticky canvas ---------- */
-#ecoGlobe { width: 100vw; max-width: none; margin: 0 0 0 calc(50% - 50vw); padding: 0; background: var(--es-bg); }
+#ecoGlobe { width: 100vw; max-width: none; margin: 0 0 0 calc(50% - 50vw); padding: 0; background: transparent; }
 .eg-track { position: relative; height: 240vh; }
-.eg-stick { position: sticky; top: 0; height: 100vh; overflow: hidden; background: var(--es-bg); }
+.eg-stick { position: sticky; top: 0; height: 100vh; overflow: hidden; background: transparent; }
 .eg-stick canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 
 .eg-copy { position: absolute; left: 50%; transform: translate(-50%,0); width: min(1180px, calc(100% - 56px)); text-align: center; pointer-events: none; will-change: opacity, transform; }
-.eg-copy-a { top: 17vh; }
+.eg-copy-a { top: 13vh; }
 .eg-copy-b { top: 50%; transform: translate(-50%,-50%); width: min(760px, calc(100% - 48px)); }
 .eg-copy h2 { font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-weight: 300; font-size: clamp(26px, 3.3vw, 47px); line-height: 1.12; letter-spacing: -.02em; color: var(--es-ink); margin: 0 0 16px; }
 .eg-copy p { font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-size: clamp(14px, 1.3vw, 18px); line-height: 1.5; color: var(--es-dim); margin: 0; }
@@ -100,18 +100,18 @@
 .eco-bd { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
 .eco-bd canvas { display: block; width: 100%; height: 100%; }
 /* the page's own sections have to sit above it and carry no opaque ground */
-body.page-ecosystem { background: transparent; }
-body.page-ecosystem > *:not(.eco-bd) { position: relative; z-index: 1; }
+body { background: transparent; }
+body > *:not(.eco-bd) { position: relative; z-index: 1; }
 #ecoGlobe, .es-screen { background: transparent !important; }
 .es-screen { background: radial-gradient(120% 80% at 50% 0%, rgba(197,52,0,.07) 0%, transparent 62%) !important; }
 
 /* Sections that painted their own solid ground now cut black bands through
    the backdrop; hand them transparency so the wash runs the whole page. */
-body.page-ecosystem section,
-body.page-ecosystem .eco-close,
-body.page-ecosystem .eco-cta-band,
-body.page-ecosystem footer.vc-footer,
-body.page-ecosystem .tf-wrap { background-color: transparent !important; }
-body.page-ecosystem footer.vc-footer { background-image: none !important; }
-/* keep body::before/::after page glow from doubling the wash */
-body.page-ecosystem::before { opacity: .35; }
+body section,
+body .eco-close,
+body .eco-cta-band,
+body footer.vc-footer,
+body .tf-wrap { background-color: transparent !important; }
+body footer.vc-footer { background-image: none !important; }
+/* keep the page's own glow from doubling the wash */
+body::before { opacity: .35; }
