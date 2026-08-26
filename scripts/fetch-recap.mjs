@@ -27,7 +27,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const ROOT = path.resolve(__dirname, '..');
+const ROOT = path.resolve(__dirname, '..', 'public');
 const OUT_DIR = path.join(ROOT, 'data');
 const OUT = path.join(OUT_DIR, 'recap.json');
 

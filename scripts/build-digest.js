@@ -23,7 +23,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const ROOT = path.join(__dirname, '..');
+const ROOT = path.join(__dirname, '..', 'public');
 const DATA = path.join(ROOT, 'data', 'recap.json');
 const PAGE = path.join(ROOT, 'digest.html');
 const START = '<!-- STATIC-DIGEST:START -->';

@@ -13,7 +13,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const FILE = path.join(__dirname, '..', 'privacy.html');
+const FILE = path.join(__dirname, '..', 'public', 'privacy.html');
 let src = fs.readFileSync(FILE, 'utf8');
 
 const grid = src.match(/<table class="pgrid">[\s\S]*?<\/table>/);

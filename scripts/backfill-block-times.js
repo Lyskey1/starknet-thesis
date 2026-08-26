@@ -23,7 +23,7 @@ const fs = require('fs');
 const path = require('path');
 
 const RPC = 'https://api.cartridge.gg/x/starknet/mainnet';
-const OUT = path.join(__dirname, '..', 'assets', 'data', 'block-time-history.json');
+const OUT = path.join(__dirname, '..', 'public', 'assets', 'data', 'block-time-history.json');
 const DAY = 86400;
 
 const CACHE_FILE = path.join(__dirname, '.backfill-cache.json');

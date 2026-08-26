@@ -74,7 +74,7 @@ import { readFileSync, writeFileSync } from 'fs';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 
-const OUT = join(dirname(fileURLToPath(import.meta.url)), '..', 'assets', 'data', 'voyager-accounts-seed.json');
+const OUT = join(dirname(fileURLToPath(import.meta.url)), '..', 'public', 'assets', 'data', 'voyager-accounts-seed.json');
 const URL = 'https://voyager.online/api/daily-stats?metrics=account_contracts&timerange=max';
 const HEADERS = {
   'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',

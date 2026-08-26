@@ -1,41 +1,34 @@
 # Starknet Thesis — Website
 
-A multi-page static site presenting the Starknet × Bitcoin thesis (quantum resistance, privacy, BTCFi, STRK, recaps, ecosystem). Pure HTML/CSS/JS — no build step, no framework.
+A multi-page site presenting the Starknet × Bitcoin thesis (quantum resistance, privacy, BTCFi, STRK, recaps, ecosystem).
 
-## Pages
-- `index.html` — overview / landing
-- `quantum.html` — Page 01, Quantum resistance ✅
-- `privacy.html` — Page 02, Privacy (placeholder)
-- `btcfi.html` — Page 03, BTCFi ✅
-- `strk.html` — Page 04, STRK utilities (placeholder)
-- `digest.html` — Page 05, Digest. Its data (`data/recap.json`) and static
-  pre-render refresh automatically every day at 06:00 UTC via GitHub Actions
-  (`.github/workflows/refresh-digest.yml`); a manual run is available from
-  the repo's Actions tab ("Refresh digest" → Run workflow).
-- `ecosystem.html` — Page 06, Ecosystem (placeholder)
+Two layers, one repo:
 
-All pages share `css/styles.css` (design system: colors, fonts, components).
+- **Landing (`/`)**: a Next.js 16 app (React Three Fiber scene, react-spring motion, `spring-text-engine`, Lenis smooth scroll, Tailwind v4). Source in `src/`. Adapted from the Vesper template; colors follow strk20.starknet.io (ground `#0d0d0d`, orange `#c53400`).
+- **Thesis pages** (`/privacy`, `/quantum`, `/btcfi`, `/strk`, `/ecosystem`, `/digest`): pure HTML/CSS/JS in `public/`, served as static files. Clean URLs are rewrites in `next.config.ts`. They share `public/css/styles.css` and the Vesper-style header/footer in `public/css/vesper-chrome.css`.
 
 ## Run it locally
 
-### Option A — VS Code "Live Server" (easiest)
-1. Open this folder in VS Code.
-2. Install the **Live Server** extension (by Ritwick Dey).
-3. Right-click `index.html` → **Open with Live Server**.
-4. It opens at `http://127.0.0.1:5500` and auto-reloads on save.
-
-### Option B — Python (already installed on most machines)
 ```bash
-python3 -m http.server 8000
-```
-Then open `http://localhost:8000`.
-
-### Option C — Node
-```bash
-npx serve
+npm install
+npm run dev        # http://localhost:3000
+npm run build      # runs the data scripts (scripts/*.js write into public/) then `next build`
+npm run lint
 ```
 
-> Note: you must use a local server (not open the file directly with `file://`), otherwise `css/styles.css` won't load.
+## Pages
+- `src/views/home/` — landing (Next.js). Copy lives in `src/data/home.ts`.
+- `public/quantum.html` — Page 01, Quantum resistance ✅
+- `public/privacy.html` — Page 02, Privacy (placeholder)
+- `public/btcfi.html` — Page 03, BTCFi ✅
+- `public/strk.html` — Page 04, STRK utilities (placeholder)
+- `public/digest.html` — Page 05, Digest. Its data (`public/data/recap.json`) and static
+  pre-render refresh automatically every day at 06:00 UTC via GitHub Actions
+  (`.github/workflows/refresh-digest.yml`); a manual run is available from
+  the repo's Actions tab ("Refresh digest" → Run workflow).
+- `public/ecosystem.html` — Page 06, Ecosystem (placeholder)
+
+All thesis pages share `public/css/styles.css`; the landing uses Tailwind tokens in `src/app/globals.css`.
 
 ## Deploy online (later, via Claude Code)
 This is a static site, so it deploys anywhere in seconds:

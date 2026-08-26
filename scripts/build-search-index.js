@@ -29,12 +29,11 @@ const fs = require('fs');
 const path = require('path');
 const zlib = require('zlib');
 
-const ROOT = path.join(__dirname, '..');
+const ROOT = path.join(__dirname, '..', 'public');
 const OUT = path.join(ROOT, 'data', 'search-index.json');
 const WRITE_IDS = process.argv.includes('--write-ids');
 
 const PAGES = [
-  { file: 'index.html', page: 'index', label: 'Home' },
   { file: 'privacy.html', page: 'privacy', label: 'Privacy' },
   { file: 'quantum.html', page: 'quantum', label: 'Quantum' },
   { file: 'btcfi.html', page: 'btcfi', label: 'BTCFi' },

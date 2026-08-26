@@ -2,10 +2,38 @@
   "name": "starknet-thesis",
   "version": "0.1.0",
   "private": true,
-  "description": "Starknet x Bitcoin thesis website",
   "scripts": {
-    "start": "npx serve",
-    "dev": "python3 -m http.server 8000",
-    "build": "node scripts/build-privacy-matrix.js && node scripts/check-ecosystem-orbits.js && node scripts/check-quoted-definition.js && node scripts/build-digest.js && node scripts/build-search-index.js"
-  }
+    "dev": "next dev",
+    "build": "node scripts/build-privacy-matrix.js && node scripts/check-ecosystem-orbits.js && node scripts/check-quoted-definition.js && node scripts/build-digest.js && node scripts/build-search-index.js && next build",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "@react-spring/web": "^10.0.3",
+    "@react-three/drei": "^10.7.7",
+    "@react-three/fiber": "^9.6.1",
+    "@react-three/postprocessing": "^3.0.4",
+    "lenis": "^1.3.19",
+    "next": "16.2.0",
+    "postprocessing": "^6.39.2",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "resize-observer-polyfill": "^1.5.1",
+    "spring-text-engine": "^0.1.5",
+    "three": "^0.185.0",
+    "zod": "^4.4.3",
+    "zustand": "^5.0.12"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@types/three": "^0.185.0",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.0",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  },
+  "description": "Starknet Thesis: privacy, quantum resistance, BTCFi"
 }

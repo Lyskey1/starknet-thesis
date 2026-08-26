@@ -1,6 +1,6 @@
 # Daily refresh of the PER-APP ACTIVE USERS seed (strk.html, Apps group).
 #
-# LIVE. Runs daily and commits assets/data/prism-dau-seed.json when the
+# LIVE. Runs daily and commits public/assets/data/prism-dau-seed.json when the
 # ranking changes.
 #
 # THE ENDPOINT IS UNDOCUMENTED AND MAY CHANGE OR DISAPPEAR WITHOUT NOTICE.
@@ -53,13 +53,13 @@ jobs:
         run: node scripts/refresh-prism-dau.mjs
       - name: commit when changed
         run: |
-          if git diff --quiet assets/data/prism-dau-seed.json 2>/dev/null \
-             && git ls-files --error-unmatch assets/data/prism-dau-seed.json >/dev/null 2>&1; then
+          if git diff --quiet public/assets/data/prism-dau-seed.json 2>/dev/null \
+             && git ls-files --error-unmatch public/assets/data/prism-dau-seed.json >/dev/null 2>&1; then
             echo "seed unchanged, nothing to commit"; exit 0
           fi
-          leader=$(node -e "const s=require('./assets/data/prism-dau-seed.json');console.log(s.apps[0].name+' '+s.apps[0].users)")
+          leader=$(node -e "const s=require('./public/assets/data/prism-dau-seed.json');console.log(s.apps[0].name+' '+s.apps[0].users)")
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add assets/data/prism-dau-seed.json
+          git add public/assets/data/prism-dau-seed.json
           git commit -m "data: per-app active users seed refresh, leader $leader, source Prism by Aegis"
           git push

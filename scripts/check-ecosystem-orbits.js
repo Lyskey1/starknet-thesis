@@ -24,7 +24,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const ROOT = path.join(__dirname, '..');
+const ROOT = path.join(__dirname, '..', 'public');
 const PAGE = path.join(ROOT, 'ecosystem.html');
 const PUBLISHED_FILE = path.join(ROOT, 'data', 'ecosystem.json');
 const MIN_PER_GROUP = 8;

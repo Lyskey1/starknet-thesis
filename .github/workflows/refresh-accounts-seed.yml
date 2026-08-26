@@ -31,13 +31,13 @@ jobs:
         run: node scripts/refresh-accounts-seed.mjs
       - name: commit when changed
         run: |
-          if git diff --quiet assets/data/voyager-accounts-seed.json 2>/dev/null \
-             && git ls-files --error-unmatch assets/data/voyager-accounts-seed.json >/dev/null 2>&1; then
+          if git diff --quiet public/assets/data/voyager-accounts-seed.json 2>/dev/null \
+             && git ls-files --error-unmatch public/assets/data/voyager-accounts-seed.json >/dev/null 2>&1; then
             echo "seed unchanged, nothing to commit"; exit 0
           fi
-          head=$(node -e "console.log(require('./assets/data/voyager-accounts-seed.json').head)")
+          head=$(node -e "console.log(require('./public/assets/data/voyager-accounts-seed.json').head)")
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add assets/data/voyager-accounts-seed.json
+          git add public/assets/data/voyager-accounts-seed.json
           git commit -m "data: account contracts seed refresh, head $head, source Voyager"
           git push

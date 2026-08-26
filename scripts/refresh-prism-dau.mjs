@@ -50,7 +50,7 @@ import { writeFileSync, readFileSync, existsSync } from 'node:fs';
 
 const BASE = 'https://api-internal-prism.aegisanalytics.xyz/api/stats/leaderboard';
 const WINDOW = '24h';
-const OUT = 'assets/data/prism-dau-seed.json';
+const OUT = 'public/assets/data/prism-dau-seed.json';
 const MIN_APPS = 8;
 const KEEP = 12; // the card shows ten; one spare either side for ties/churn
 

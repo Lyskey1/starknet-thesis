@@ -1,0 +1,60 @@
+/* ===== Static chrome for the thesis pages: Vesper header + footer, strk20 colors =====
+   Mirrors the Next.js landing (src/components/common/site-header.tsx and
+   src/views/home/sections/site-footer.tsx) so the inner pages read as the same
+   site. General Sans (self-hosted) + Mulish. */
+@font-face { font-family: "General Sans"; font-weight: 300; font-display: swap; src: url("/fonts/GeneralSans-Light.woff2") format("woff2"); }
+@font-face { font-family: "General Sans"; font-weight: 400; font-display: swap; src: url("/fonts/GeneralSans-Regular.woff2") format("woff2"); }
+@font-face { font-family: "General Sans"; font-weight: 500; font-display: swap; src: url("/fonts/GeneralSans-Medium.woff2") format("woff2"); }
+:root { --vc-bg: #0d0d0d; --vc-panel: #141414; --vc-line: #262626; --vc-text: #fafafa; --vc-dim: rgba(250,250,250,.65); --vc-faint: #616161; --vc-orange: #c53400; --vc-orange-d: #a02a00;
+  --vc-sans: "General Sans", "Helvetica Neue", Arial, sans-serif; --vc-tag: "Mulish", "Helvetica Neue", Arial, sans-serif; }
+
+/* header pill */
+header.vc-header { position: fixed; top: 10px; left: 50%; transform: translateX(-50%); z-index: 100; width: min(880px, 95vw); height: 51px;
+  border: 1px solid rgba(255,255,255,.1); background: rgba(13,13,13,.82); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); font-family: var(--vc-sans); color: var(--vc-text); }
+header.vc-header .vc-in { display: flex; align-items: center; justify-content: space-between; height: 100%; padding: 8px 8px 8px 12px; gap: 16px; }
+header.vc-header .vc-logo { display: block; height: 26px; width: 150px; flex: none; }
+header.vc-header .vc-logo img { display: block; height: 100%; width: 100%; }
+header.vc-header nav.vc-nav { display: flex; align-items: center; gap: 28px; font-size: 16px; line-height: 1.2; white-space: nowrap; }
+header.vc-header nav.vc-nav a { color: var(--vc-text); text-decoration: none; transition: color .25s; }
+header.vc-header nav.vc-nav a:hover, header.vc-header nav.vc-nav a.active { color: var(--vc-orange); }
+header.vc-header .vc-cta { display: inline-flex; align-items: center; gap: 10px; align-self: stretch; padding: 0 16px; border: 1px solid rgba(255,255,255,.5); color: var(--vc-text); text-decoration: none; font-size: 16px; line-height: 1.2; white-space: nowrap; transition: border-color .25s, background-color .25s; }
+header.vc-header .vc-cta:hover { border-color: #fff; background: rgba(255,255,255,.12); }
+header.vc-header .vc-cta i { display: block; width: 2px; height: 2px; background: currentColor; }
+header.vc-header .vc-burger { display: none; width: 40px; height: 40px; background: none; border: 0; position: relative; cursor: pointer; }
+header.vc-header .vc-burger span { position: absolute; left: 10px; width: 20px; height: 1px; background: #fff; transition: transform .25s; }
+header.vc-header .vc-burger span:first-child { top: calc(50% - 5px); } header.vc-header .vc-burger span:last-child { top: calc(50% + 5px); }
+header.vc-header.open .vc-burger span:first-child { transform: translateY(5px) rotate(45deg); } header.vc-header.open .vc-burger span:last-child { transform: translateY(-5px) rotate(-45deg); }
+header.vc-header .vc-mobile { display: none; position: absolute; top: calc(100% + 8px); left: 0; right: 0; flex-direction: column; border: 1px solid rgba(255,255,255,.1); background: rgba(13,13,13,.94); padding: 20px; backdrop-filter: blur(8px); }
+header.vc-header.open .vc-mobile { display: flex; }
+header.vc-header .vc-mobile a { color: var(--vc-text); text-decoration: none; padding: 12px 0; font-size: 16px; }
+header.vc-header .vc-mobile a.vc-cta { margin-top: 12px; justify-content: center; padding: 12px 18px; }
+@media (max-width: 1023px) { header.vc-header { top: 16px; width: calc(100% - 48px); height: 56px; } header.vc-header nav.vc-nav, header.vc-header > .vc-in > .vc-cta { display: none; } header.vc-header .vc-burger { display: block; } }
+@media (max-width: 640px) { header.vc-header { top: 12px; width: calc(100% - 40px); } }
+/* the old chrome assumed a bar in flow; the pill floats, so pages keep their own top padding */
+
+/* footer */
+footer.vc-footer { position: relative; width: 100vw; max-width: none; margin: 0 0 0 calc(50% - 50vw); padding: 64px 0 0; background: var(--vc-bg); color: var(--vc-text); font-family: var(--vc-sans); border-top: 0; }
+footer.vc-footer .vc-title { margin: 0 auto; text-align: center; font-weight: 300; font-size: clamp(38px, 5.556vw, 80px); line-height: .9; letter-spacing: -.022em; padding: 0 24px; }
+footer.vc-footer form.vc-sub { display: flex; align-items: center; margin: 42px auto 0; width: min(551px, calc(100% - 48px)); height: 51px; border: 1px solid rgba(255,255,255,.2); background: rgba(0,0,0,.8); padding: 8px 8px 8px 24px; backdrop-filter: blur(8px); }
+footer.vc-footer form.vc-sub input { flex: 1; min-width: 0; background: transparent; border: 0; outline: none; color: var(--vc-text); font: 16px/1.2 var(--vc-sans); }
+footer.vc-footer form.vc-sub input::placeholder { color: var(--vc-text); }
+footer.vc-footer form.vc-sub input:focus-visible { outline: 2px solid var(--vc-orange); outline-offset: 4px; }
+footer.vc-footer form.vc-sub button { margin-left: auto; align-self: stretch; display: inline-flex; align-items: center; gap: 10px; padding: 0 16px; border: 1px solid rgba(255,255,255,.5); background: transparent; color: var(--vc-orange); font: 16px/1.2 var(--vc-sans); cursor: pointer; white-space: nowrap; transition: border-color .25s, background-color .25s; }
+footer.vc-footer form.vc-sub button:hover { border-color: var(--vc-orange); background: rgba(197,52,0,.16); }
+footer.vc-footer form.vc-sub button i { display: block; width: 2px; height: 2px; background: currentColor; }
+footer.vc-footer .vc-rule { margin-top: 64px; border-top: 1px solid rgba(255,255,255,.15); }
+footer.vc-footer .vc-cols { margin: 29px auto 0; width: calc(100% - 48px); max-width: 1392px; display: flex; align-items: flex-start; justify-content: space-between; padding-bottom: 64px; gap: 40px; }
+footer.vc-footer .vc-brand { display: flex; flex-direction: column; gap: 24px; width: 396px; max-width: 40%; }
+footer.vc-footer .vc-brand img { display: block; height: 26px; width: 160px; }
+footer.vc-footer .vc-brand p, footer.vc-footer .vc-col h4 { margin: 0; font-family: var(--vc-tag); font-weight: 400; font-size: 16px; line-height: 1.2; text-transform: uppercase; color: var(--vc-text); }
+footer.vc-footer nav.vc-links { display: flex; gap: 90px; }
+footer.vc-footer .vc-col { display: flex; flex-direction: column; gap: 24px; width: 180px; }
+footer.vc-footer .vc-col ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 16px; }
+footer.vc-footer .vc-col a { color: rgba(255,255,255,.7); text-decoration: none; font-size: 16px; line-height: 1.2; transition: color .25s; }
+footer.vc-footer .vc-col a:hover { color: #fff; }
+footer.vc-footer .vc-legal { margin: 0 auto; width: calc(100% - 48px); max-width: 1392px; padding-bottom: 32px; font-family: var(--vc-tag); font-size: 12px; line-height: 1.5; text-transform: uppercase; color: rgba(255,255,255,.45); }
+@media (max-width: 1023px) { footer.vc-footer .vc-cols { flex-direction: column; gap: 40px; } footer.vc-footer .vc-brand { max-width: none; width: auto; } footer.vc-footer nav.vc-links { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; width: 100%; } footer.vc-footer .vc-col { width: auto; } }
+
+/* styles.css styles the bare <nav> element as the old fixed bar; neutralise it for the chrome's navs */
+header.vc-header nav, footer.vc-footer nav { position: static; top: auto; left: auto; right: auto; z-index: auto; padding: 0; background: none; border: 0; backdrop-filter: none; -webkit-backdrop-filter: none; justify-content: flex-start; }
+header.vc-header nav.vc-mobile { position: absolute; }
