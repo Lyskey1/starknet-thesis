@@ -14,6 +14,10 @@ const DATA = path.join(ROOT, 'data', 'ecosystem.json');
 const SIZE = 400;
 const GAP_MS = 5200;   /* unavatar 429s hard below ~5s between handles */
 const MIN_BYTES = 2048;
+/* A 429 is the limiter, not a missing avatar — the same handle returns a real
+   image once it lets through. Treating it as "unavailable" left 78 accounts on
+   their 96px originals. */
+const BACKOFFS_MS = [20000, 45000, 90000];
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 const data = JSON.parse(fs.readFileSync(DATA, 'utf8'));
@@ -52,21 +56,31 @@ for (const h of handles) {
   const have = existing.length ? Math.max(...existing.map(widthOf)) : 0;
   if (have >= SIZE) { kept++; continue; }
   let got = null;
-  for (const url of [
+  const sources = [
     `https://unavatar.io/x/${encodeURIComponent(h)}?size=${SIZE}&fallback=false`,
     `https://unavatar.io/twitter/${encodeURIComponent(h)}?size=${SIZE}&fallback=false`
-  ]) {
-    try {
-      const res = await fetch(url, { redirect: 'follow', headers: { 'User-Agent': 'Mozilla/5.0' } });
-      if (!res.ok) continue;
+  ];
+  outer: for (const url of sources) {
+    for (let attempt = 0; ; attempt++) {
+      let res;
+      try {
+        res = await fetch(url, { redirect: 'follow', headers: { 'User-Agent': 'Mozilla/5.0' } });
+      } catch { break; }
+      if (res.status === 429) {
+        if (attempt >= BACKOFFS_MS.length) break;
+        console.log('  429   ' + h + ' — waiting ' + (BACKOFFS_MS[attempt] / 1000) + 's');
+        await sleep(BACKOFFS_MS[attempt]);
+        continue;
+      }
+      if (!res.ok) break;
       const ct = res.headers.get('content-type') || '';
-      if (!ct.startsWith('image/')) continue;
+      if (!ct.startsWith('image/')) break;
       const buf = Buffer.from(await res.arrayBuffer());
-      if (buf.length < MIN_BYTES) continue;
+      if (buf.length < MIN_BYTES) break;
       got = { buf, ext: extFor(ct) };
-      break;
-    } catch { /* next source */ }
-    await sleep(300);
+      break outer;
+    }
+    await sleep(600);
   }
   if (!got) { missed++; console.log('miss  ', h, '(kept ' + have + 'px)'); await sleep(GAP_MS); continue; }
   const dest = path.join(OUT, h + got.ext);
