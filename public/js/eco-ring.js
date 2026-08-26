@@ -19,16 +19,19 @@
   var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   mount.innerHTML =
-    '<div class="es-head"><p class="es-kicker">The voices</p><p class="es-sub">Drag the ring</p></div>' +
-    '<div class="es-ring-tabs" role="tablist"></div>' +
-    '<div class="es-stage"><div class="es-frame"></div><div class="es-ring"></div>' +
-      '<div class="es-hint">Drag to explore</div></div>' +
-    '<div class="es-dock"><div class="es-count">[ 01 / 01 ]</div><div class="es-name"></div>' +
-      '<div class="es-role"></div><div class="es-nav">' +
-      '<button type="button" data-step="-1" aria-label="Previous">&#8592;</button>' +
-      '<button type="button" data-step="1" aria-label="Next">&#8594;</button></div></div>';
+    '<div class="es-screen">' +
+      '<div class="es-top"><p class="es-kicker">The voices</p>' +
+        '<h2>Meet the gang</h2>' +
+        '<p class="es-lede">The people building, shaping and shitposting Starknet. Drag the ring.</p>' +
+        '<div class="es-ring-tabs" role="tablist"></div></div>' +
+      '<div class="es-stage"><div class="es-frame"></div><div class="es-ring"></div>' +
+        '<div class="es-hint">Drag to explore</div></div>' +
+      '<div class="es-dock"><div class="es-count">[ <b>01</b> / 01 ]</div><div class="es-name"></div>' +
+        '<div class="es-role"></div><div class="es-dots"></div></div>' +
+    '</div>';
 
   var tabsEl = mount.querySelector('.es-ring-tabs');
+  var dotsEl = mount.querySelector('.es-dots');
   var stage = mount.querySelector('.es-stage');
   var ringEl = mount.querySelector('.es-ring');
   var frameEl = mount.querySelector('.es-frame');
@@ -56,14 +59,14 @@
   function measure() {
     var w = window.innerWidth;
     var share = w < 640 ? 0.52 : w < 1024 ? 0.3 : 0.17;
-    cardW = Math.max(140, Math.min(w * share, stage.clientHeight * 0.62));
+    cardW = Math.max(150, Math.min(w * share, stage.clientHeight * 0.52));
     cardH = cardW * RATIO;
     radius = cardW * RADIUS_MULT;
     stage.style.perspective = Math.max(900, w * 1.15) + 'px';
     var push = radius * (1 - ARC_DEPTH);
     ringEl.style.transform = 'translateZ(' + push + 'px) rotateY(' + rot + 'deg)';
-    frameEl.style.width = (cardW + 28) + 'px';
-    frameEl.style.height = (cardH + 28) + 'px';
+    frameEl.style.width = (cardW + 34) + 'px';
+    frameEl.style.height = (cardH + 34) + 'px';
     cards.forEach(function (c, i) {
       c.el.style.width = cardW + 'px';
       c.el.style.height = cardH + 'px';
@@ -83,12 +86,16 @@
       el.setAttribute('data-i', String(i));
       var cands = candidates(acc);
       var mono = '<div class="es-mono">' + initials(acc) + '</div>';
-      el.innerHTML = mono + (cands.length ? '<img alt="" data-try="0" src="' + cands[0] + '">' : '') + '<div class="es-scrim"></div>';
-      var img = el.querySelector('img');
-      if (img) img.addEventListener('error', function () {
-        var next = parseInt(img.getAttribute('data-try') || '0', 10) + 1;
-        if (next < cands.length) { img.setAttribute('data-try', String(next)); img.src = cands[next]; }
-        else img.remove();
+      var pic = cands.length ? '<img alt="" data-try="0" src="' + cands[0] + '">' : '';
+      el.innerHTML = mono + pic + '<div class="es-scrim"></div>' +
+        '<div class="es-mirror">' + pic + '</div>' +
+        '<span class="es-card-label">' + (acc.name || '') + '</span>';
+      [].forEach.call(el.querySelectorAll('img'), function (img) {
+        img.addEventListener('error', function () {
+          var next = parseInt(img.getAttribute('data-try') || '0', 10) + 1;
+          if (next < cands.length) { img.setAttribute('data-try', String(next)); img.src = cands[next]; }
+          else img.remove();
+        });
       });
       ringEl.appendChild(el);
       cards.push({ el: el, base: i * step, acc: acc });
@@ -109,6 +116,7 @@
       var fade = 1 - Math.min(1, Math.max(0, (away - FADE_FROM) / (FADE_TO - FADE_FROM)));
       c.el.style.transform = 'rotateY(' + c.base + 'deg) translateZ(' + (-radius) + 'px)';
       c.el.style.opacity = fade.toFixed(3);
+      c.el.classList.toggle('is-front', away < step * 0.5);
       c.el.style.visibility = fade <= 0.001 ? 'hidden' : 'visible';
     });
     if (best !== front) { front = best; dock(); }
@@ -116,7 +124,11 @@
 
   function dock() {
     var acc = (cards[front] || {}).acc; if (!acc) return;
-    countEl.textContent = '[ ' + pad(front + 1) + ' / ' + pad(cards.length) + ' ]';
+    countEl.innerHTML = '[ <b>' + pad(front + 1) + '</b> / ' + pad(cards.length) + ' ]';
+    if (dotsEl.children.length !== cards.length) {
+      dotsEl.innerHTML = ''; cards.forEach(function () { dotsEl.appendChild(document.createElement('i')); });
+    }
+    [].forEach.call(dotsEl.children, function (d, i) { d.classList.toggle('on', i === front); });
     nameEl.innerHTML = '<a href="' + (acc.url || '#') + '" target="_blank" rel="noopener">' + (acc.name || '') + '</a>';
     roleEl.textContent = acc.description || '';
   }
@@ -164,9 +176,7 @@
     if (e.key === 'ArrowLeft') { rot += step; e.preventDefault(); }
     if (e.key === 'ArrowRight') { rot -= step; e.preventDefault(); }
   });
-  mount.querySelectorAll('.es-nav button').forEach(function (b) {
-    b.addEventListener('click', function () { rot -= parseInt(b.getAttribute('data-step'), 10) * step; vel = 0; });
-  });
+
   window.addEventListener('resize', measure);
 
   /* data */

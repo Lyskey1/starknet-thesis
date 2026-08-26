@@ -1,219 +1,248 @@
-/* Ecosystem globe: the Starknet mark at the core, every project orbiting it as
-   a sprite on a sphere, coloured by category. Drag to spin, hover for the
-   chip, click to open the account. three.js from unpkg via the page's import
-   map. strk20 palette only. */
+/* Ecosystem hero: a scroll-driven flight through a particle sphere.
+   Act 1 — a dense shell of ~26k motes with the Starknet mark at its core.
+   Act 2 — the lens flies into the shell; the motes stream past and thin out.
+   Act 3 — inside, a starfield with every project and voice scattered through
+   it under "Powered by Starknet". strk20 palette only. */
 import * as THREE from 'three';
 
 const MOUNT = document.getElementById('ecoGlobe');
 if (MOUNT) {
-  const ACC = '#c53400', ACC_D = '#a02a00', WARM = '#e07a4a', INK = '#fafafa';
-  const CATS = [
-    { id: 'official', label: 'Official', color: '#fafafa' },
-    { id: 'defi', label: 'DeFi', color: ACC },
-    { id: 'consumer', label: 'Consumer & gaming', color: WARM },
-    { id: 'nft', label: 'NFT & memecoins', color: '#f0b8a0' },
-    { id: 'appchains', label: 'L2 & L3 appchains', color: ACC_D },
-    { id: 'tooling', label: 'Tooling', color: '#9a9a9a' }
-  ];
-  const R = 2.5, AUTOSPIN = 0.0016, DAMP = 0.94, DRAG = 0.0055;
+  const ACC = new THREE.Color('#c53400'), WARM = new THREE.Color('#e07a4a'), INK = new THREE.Color('#fafafa');
+  const COUNT = matchMedia('(max-width: 860px)').matches ? 14000 : 34000;
+  const R = 3.2;
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   MOUNT.innerHTML =
-    '<div class="es-head"><p class="es-kicker">The projects</p><p class="es-sub">Drag to spin &middot; click a project to open it</p></div>' +
-    '<div class="es-globe"><span class="es-globe-count"></span><span class="es-globe-note">One chain, every surface</span>' +
-    '<div class="es-fade"></div><div class="es-chip"><span class="es-chip-name"></span><span class="es-chip-role"></span></div></div>' +
-    '<div class="es-legend"></div>';
+    '<div class="eg-track"><div class="eg-stick">' +
+      '<div class="eg-copy eg-copy-a">' +
+        '<h2>The people building &amp; shaping Starknet</h2>' +
+        '<p>Every project, every voice, on one chain.</p>' +
+      '</div>' +
+      '<div class="eg-copy eg-copy-b"><h2>Powered by Starknet</h2>' +
+        '<p>The teams and the voices shipping the network, all in one place.</p></div>' +
+      '<div class="eg-stats"><div><span>Projects</span><b class="eg-n-p">0</b></div>' +
+        '<div><span>Voices</span><b class="eg-n-v">0</b></div></div>' +
+      '<div class="eg-hint">Scroll to explore</div>' +
+      '<div class="eg-chip"><span class="eg-chip-name"></span><span class="eg-chip-role"></span></div>' +
+    '</div></div>';
 
-  const box = MOUNT.querySelector('.es-globe');
-  const legendEl = MOUNT.querySelector('.es-legend');
-  const chip = MOUNT.querySelector('.es-chip');
-  const chipName = MOUNT.querySelector('.es-chip-name');
-  const chipRole = MOUNT.querySelector('.es-chip-role');
-  const countEl = MOUNT.querySelector('.es-globe-count');
-  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
+  const stick = MOUNT.querySelector('.eg-stick');
+  const copyA = MOUNT.querySelector('.eg-copy-a'), copyB = MOUNT.querySelector('.eg-copy-b');
+  const statsEl = MOUNT.querySelector('.eg-stats'), hintEl = MOUNT.querySelector('.eg-hint');
+  const chip = MOUNT.querySelector('.eg-chip');
+  const chipName = MOUNT.querySelector('.eg-chip-name'), chipRole = MOUNT.querySelector('.eg-chip-role');
 
-  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
   renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
+  renderer.setClearColor(0x0d0d0d, 1);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
-  box.appendChild(renderer.domElement);
+  stick.insertBefore(renderer.domElement, stick.firstChild);
 
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 60);
-  camera.position.set(0, 0, 8.9);   // far enough that the sphere plus its sprites clear the frame
-  const world = new THREE.Group(); scene.add(world);
+  const camera = new THREE.PerspectiveCamera(46, 1, 0.05, 90);
+  const shell = new THREE.Group(); scene.add(shell);
 
-  /* the wire cage: latitude rings plus a dust of points, all in the accent */
-  const cage = new THREE.Group(); world.add(cage);
-  for (let i = 1; i <= 6; i++) {
-    const lat = (i / 7) * Math.PI - Math.PI / 2;
-    const r = Math.cos(lat) * R, y = Math.sin(lat) * R;
-    const pts = [];
-    for (let a = 0; a <= 64; a++) { const t = (a / 64) * Math.PI * 2; pts.push(new THREE.Vector3(Math.cos(t) * r, y, Math.sin(t) * r)); }
-    cage.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),
-      new THREE.LineBasicMaterial({ color: ACC, transparent: true, opacity: 0.13 })));
-  }
-  for (let i = 0; i < 8; i++) {
-    const pts = [], phi = (i / 8) * Math.PI;
-    for (let a = 0; a <= 48; a++) {
-      const t = (a / 48) * Math.PI - Math.PI / 2;
-      pts.push(new THREE.Vector3(Math.cos(t) * Math.cos(phi) * R, Math.sin(t) * R, Math.cos(t) * Math.sin(phi) * R));
+  /* ---- the shell: motes on a sphere, a touch of radial jitter so it reads
+     as a cloud with a surface rather than as a hard ball ---- */
+  {
+    const pos = new Float32Array(COUNT * 3), col = new Float32Array(COUNT * 3), siz = new Float32Array(COUNT);
+    const c = new THREE.Color();
+    for (let i = 0; i < COUNT; i++) {
+      const y = 1 - (i / (COUNT - 1)) * 2, rr = Math.sqrt(Math.max(0, 1 - y * y));
+      const th = Math.PI * (3 - Math.sqrt(5)) * i;
+      const jitter = 0.94 + (Math.sin(i * 78.233) * 0.5 + 0.5) * 0.1;
+      const rad = R * jitter;
+      pos[i * 3] = Math.cos(th) * rr * rad;
+      pos[i * 3 + 1] = y * rad;
+      pos[i * 3 + 2] = Math.sin(th) * rr * rad;
+      const t = Math.abs(Math.sin(i * 12.9898) * 43758.5453 % 1);
+      c.copy(t > 0.78 ? INK : t > 0.45 ? WARM : ACC).multiplyScalar(0.5 + t * 0.75);
+      col[i * 3] = c.r; col[i * 3 + 1] = c.g; col[i * 3 + 2] = c.b;
+      siz[i] = 0.55 + t * 0.95;
     }
-    cage.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),
-      new THREE.LineBasicMaterial({ color: ACC, transparent: true, opacity: 0.07 })));
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    g.setAttribute('color', new THREE.BufferAttribute(col, 3));
+    g.setAttribute('aSize', new THREE.BufferAttribute(siz, 1));
+    const m = new THREE.ShaderMaterial({
+      transparent: true, depthWrite: false, blending: THREE.NormalBlending,
+      uniforms: { uPix: { value: 1 }, uFade: { value: 1 }, uH: { value: 900 } },
+      vertexShader: `attribute float aSize; varying vec3 vC; varying float vF;
+        uniform float uPix; uniform float uH;
+        void main(){ vC = color; vec4 mv = modelViewMatrix * vec4(position,1.0);
+          float d = -mv.z; vF = smoothstep(0.5, 3.0, d) * (1.0 - smoothstep(16.0, 26.0, d));
+          gl_Position = projectionMatrix * mv;
+          gl_PointSize = max(1.0, aSize * uPix * (uH/900.0) * (9.5 / max(d, 0.5))); }`,
+      fragmentShader: `varying vec3 vC; varying float vF; uniform float uFade;
+        void main(){ float d = length(gl_PointCoord - 0.5); if (d > 0.5) discard;
+          float a = (1.0 - smoothstep(0.30, 0.5, d)) * uFade * vF * 0.85;
+          if (a < 0.01) discard; gl_FragColor = vec4(vC, a); }`,
+      vertexColors: true
+    });
+    shell.add(new THREE.Points(g, m));
+    shell.userData.mat = m;
   }
-  { /* a dust shell so the sphere reads solid from any angle */
-    const N = 900, pos = new Float32Array(N * 3);
+
+  /* ---- the deep starfield you end up inside ---- */
+  const stars = (() => {
+    const N = 2200, pos = new Float32Array(N * 3);
     for (let i = 0; i < N; i++) {
-      const y = 1 - (i / (N - 1)) * 2, rr = Math.sqrt(Math.max(0, 1 - y * y)), th = Math.PI * (3 - Math.sqrt(5)) * i;
-      pos[i * 3] = Math.cos(th) * rr * R * 1.005; pos[i * 3 + 1] = y * R * 1.005; pos[i * 3 + 2] = Math.sin(th) * rr * R * 1.005;
+      const a = Math.sin(i * 12.9898) * 43758.5453, b = Math.sin(i * 78.233) * 12345.678, cc = Math.sin(i * 39.425) * 6789.1;
+      pos[i * 3] = ((a % 1) - 0.5) * 46; pos[i * 3 + 1] = ((b % 1) - 0.5) * 30; pos[i * 3 + 2] = ((cc % 1) - 0.5) * 60 - 14;
     }
     const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-    cage.add(new THREE.Points(g, new THREE.PointsMaterial({ color: ACC, size: 0.018, transparent: true, opacity: 0.5 })));
-  }
+    const m = new THREE.PointsMaterial({ color: 0xfafafa, size: 0.045, transparent: true, opacity: 0, depthWrite: false });
+    const p = new THREE.Points(g, m); scene.add(p); return p;
+  })();
 
-  /* the core: the Starknet mark, always facing the lens */
-  const coreTex = new THREE.TextureLoader().load('/assets/img/starknet-mark.svg');
-  coreTex.colorSpace = THREE.SRGBColorSpace;
-  const core = new THREE.Sprite(new THREE.SpriteMaterial({ map: coreTex, transparent: true, depthWrite: false }));
-  core.scale.setScalar(1.35); scene.add(core);
-  const halo = new THREE.Mesh(new THREE.SphereGeometry(0.85, 32, 24),
-    new THREE.MeshBasicMaterial({ color: ACC, transparent: true, opacity: 0.10 }));
-  scene.add(halo);
+  /* ---- the Starknet mark at the core ---- */
+  const markTex = new THREE.TextureLoader().load('/assets/img/starknet-mark.svg');
+  markTex.colorSpace = THREE.SRGBColorSpace;
+  const mark = new THREE.Sprite(new THREE.SpriteMaterial({ map: markTex, transparent: true, depthWrite: false, depthTest: false }));
+  mark.renderOrder = 5; scene.add(mark);
 
-  /* one canvas texture per project: round avatar in a ring of its category */
-  const texCache = new Map();
-  function tileTexture(acc, color) {
-    const key = (acc.handle || acc.name) + '|' + color;
+  /* ---- the projects, scattered through the far field ---- */
+  const tiles = [], texCache = new Map();
+  function tile(acc) {
+    const key = acc.handle || acc.name;
     if (texCache.has(key)) return texCache.get(key);
-    const S = 128, c = document.createElement('canvas'); c.width = c.height = S;
-    const x = c.getContext('2d');
-    x.fillStyle = '#141414'; x.beginPath(); x.arc(S / 2, S / 2, S / 2 - 4, 0, 6.2832); x.fill();
-    x.fillStyle = color; x.font = '500 44px "IBM Plex Mono", monospace';
-    x.textAlign = 'center'; x.textBaseline = 'middle';
-    x.fillText((acc.handle || '?').replace(/^[@_]+/, '').slice(0, 2).toUpperCase(), S / 2, S / 2 + 2);
-    x.strokeStyle = color; x.lineWidth = 5; x.beginPath(); x.arc(S / 2, S / 2, S / 2 - 4, 0, 6.2832); x.stroke();
-    const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace;
-    texCache.set(key, tex);
-    const cands = [];
-    if (acc.avatar) cands.push(acc.avatar);
+    const S = 128, cv = document.createElement('canvas'); cv.width = cv.height = S;
+    const x = cv.getContext('2d');
+    const draw = () => { x.clearRect(0, 0, S, S); x.fillStyle = '#141414'; x.beginPath(); x.arc(64, 64, 60, 0, 6.2832); x.fill();
+      x.fillStyle = '#c53400'; x.font = '500 42px "IBM Plex Mono", monospace'; x.textAlign = 'center'; x.textBaseline = 'middle';
+      x.fillText((acc.handle || '?').replace(/^[@_]+/, '').slice(0, 2).toUpperCase(), 64, 66); };
+    draw();
+    const tex = new THREE.CanvasTexture(cv); tex.colorSpace = THREE.SRGBColorSpace; texCache.set(key, tex);
+    const cands = []; if (acc.avatar) cands.push(acc.avatar);
     if (acc.handle) cands.push('assets/avatars/' + acc.handle + '.webp', 'assets/avatars/' + acc.handle + '.jpg');
-    (function tryNext(i) {
-      if (i >= cands.length) return;
+    (function next(i) { if (i >= cands.length) return;
       const img = new Image(); img.crossOrigin = 'anonymous';
-      img.onload = function () {
-        x.save(); x.beginPath(); x.arc(S / 2, S / 2, S / 2 - 6, 0, 6.2832); x.clip();
-        x.drawImage(img, 0, 0, S, S); x.restore();
-        x.strokeStyle = color; x.lineWidth = 5; x.beginPath(); x.arc(S / 2, S / 2, S / 2 - 4, 0, 6.2832); x.stroke();
-        tex.needsUpdate = true;
-      };
-      img.onerror = function () { tryNext(i + 1); };
-      img.src = cands[i];
-    })(0);
+      img.onload = () => { x.save(); x.beginPath(); x.arc(64, 64, 60, 0, 6.2832); x.clip(); x.drawImage(img, 0, 0, S, S); x.restore(); tex.needsUpdate = true; };
+      img.onerror = () => next(i + 1); img.src = cands[i]; })(0);
     return tex;
   }
 
-  /* nodes */
-  const nodes = [];
-  function layout(data) {
-    const flat = [];
-    CATS.forEach(cat => (data[cat.id] || []).forEach(acc => flat.push({ acc, cat })));
-    const N = flat.length;
-    countEl.innerHTML = '<b>' + N + '</b> projects &middot; ' + CATS.length + ' surfaces';
-    flat.forEach((item, i) => {
-      const y = 1 - (i / (N - 1 || 1)) * 1.86 - 0.07;
-      const rr = Math.sqrt(Math.max(0.001, 1 - y * y));
-      const th = Math.PI * (3 - Math.sqrt(5)) * i;
-      const p = new THREE.Vector3(Math.cos(th) * rr, y, Math.sin(th) * rr).multiplyScalar(R);
-      const spr = new THREE.Sprite(new THREE.SpriteMaterial({
-        map: tileTexture(item.acc, item.cat.color), transparent: true, depthWrite: false
-      }));
-      spr.position.copy(p); spr.scale.setScalar(0.42);
-      spr.userData = { acc: item.acc, cat: item.cat, base: p.clone(), lift: 0 };
-      world.add(spr); nodes.push(spr);
-    });
-    CATS.forEach(cat => {
-      const b = document.createElement('button');
-      b.type = 'button'; b.style.color = cat.color;
-      b.innerHTML = '<i></i>' + cat.label + ' <span>' + (data[cat.id] || []).length + '</span>';
-      b.addEventListener('click', () => {
-        const on = b.classList.toggle('on');
-        legendEl.querySelectorAll('button').forEach(o => { if (o !== b) o.classList.remove('on'); });
-        filter = on ? cat.id : null;
-      });
-      legendEl.appendChild(b);
+  function scatter(list) {
+    list.forEach((acc, i) => {
+      const a = Math.abs(Math.sin((i + 1) * 12.9898) * 43758.5453 % 1);
+      const b = Math.abs(Math.sin((i + 1) * 78.233) * 12345.678 % 1);
+      const c = Math.abs(Math.sin((i + 1) * 39.425) * 6789.1 % 1);
+      const ring = 4.6 + c * 5.2;                       // out of the middle, where the copy sits
+      const ang = a * Math.PI * 2;
+      const spr = new THREE.Sprite(new THREE.SpriteMaterial({ map: tile(acc), transparent: true, opacity: 0, depthWrite: false }));
+      var yy = (b - 0.5) * 7.2;
+      if (Math.abs(yy) < 1.5 && ring < 6.4) yy += yy < 0 ? -1.8 : 1.8;   // keep the headline's band clear
+      spr.position.set(Math.cos(ang) * ring, yy, -7.5 - c * 15.5);
+      spr.scale.setScalar(0.72 + c * 0.5);
+      spr.userData = { acc, base: spr.position.clone(), seed: a, hover: 0, size: spr.scale.x };
+      scene.add(spr); tiles.push(spr);
     });
   }
 
-  /* interaction */
-  let filter = null, spin = 0, tilt = 0.12, vel = 0, dragging = false, lastX = 0, lastY = 0, moved = 0, hovered = null;
-  const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
-  const cv = renderer.domElement;
-  const at = { x: 0, y: 0 };
+  /* ---- scroll ---- */
+  let p = 0, target = 0;
+  function readScroll() {
+    const r = MOUNT.querySelector('.eg-track').getBoundingClientRect();
+    const span = r.height - window.innerHeight;
+    target = span > 0 ? Math.min(1, Math.max(0, -r.top / span)) : 0;
+  }
+  const smooth = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
 
-  cv.addEventListener('pointerdown', e => { dragging = true; lastX = e.clientX; lastY = e.clientY; moved = 0; vel = 0; cv.classList.add('dragging'); cv.setPointerCapture(e.pointerId); });
+  /* ---- pointer ---- */
+  const ray = new THREE.Raycaster(), ndc = new THREE.Vector2(); const at = { x: 0, y: 0 };
+  let hovered = null, drift = { x: 0, y: 0 };
+  const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
+  const cv = renderer.domElement;
   cv.addEventListener('pointermove', e => {
     const r = cv.getBoundingClientRect();
     ndc.x = ((e.clientX - r.left) / r.width) * 2 - 1;
     ndc.y = -((e.clientY - r.top) / r.height) * 2 + 1;
     at.x = e.clientX - r.left; at.y = e.clientY - r.top;
-    if (dragging) {
-      const dx = e.clientX - lastX, dy = e.clientY - lastY;
-      lastX = e.clientX; lastY = e.clientY; moved += Math.abs(dx) + Math.abs(dy);
-      spin += dx * DRAG; vel = dx * DRAG;
-      tilt = Math.max(-0.6, Math.min(0.6, tilt + dy * DRAG * 0.6));
-    }
   });
-  function release(e) {
-    if (!dragging) return; dragging = false; cv.classList.remove('dragging');
-    if (moved <= 6 && hovered && hovered.userData.acc.url) window.open(hovered.userData.acc.url, '_blank', 'noopener');
-  }
-  cv.addEventListener('pointerup', release);
-  cv.addEventListener('pointercancel', release);
+  cv.addEventListener('click', () => { if (hovered && hovered.userData.acc.url) window.open(hovered.userData.acc.url, '_blank', 'noopener'); });
   cv.addEventListener('pointerleave', () => { hovered = null; chip.classList.remove('on'); });
 
   function resize() {
-    const w = box.clientWidth, h = box.clientHeight;
+    const w = stick.clientWidth, h = stick.clientHeight;
     renderer.setSize(w, h, false);
     camera.aspect = w / h; camera.updateProjectionMatrix();
+    shell.userData.mat.uniforms.uPix.value = renderer.getPixelRatio();
+    shell.userData.mat.uniforms.uH.value = h;
   }
   window.addEventListener('resize', resize);
+  window.addEventListener('scroll', readScroll, { passive: true });
 
-  function tick() {
-    if (!dragging) { spin += AUTOSPIN + vel; vel *= DAMP; if (Math.abs(vel) < 1e-5) vel = 0; }
-    world.rotation.y = spin; world.rotation.x = tilt;
-    halo.scale.setScalar(1 + Math.sin(performance.now() * 0.0012) * 0.04);
+  function frame(now) {
+    p += (target - p) * 0.12;
+    const t = now * 0.001;
 
-    if (fine && !dragging) {
-      ray.setFromCamera(ndc, camera);
-      const hit = ray.intersectObjects(nodes, false)[0];
-      hovered = hit ? hit.object : null;
-    }
-    nodes.forEach(n => {
-      const d = n.userData;
-      const dim = filter && d.cat.id !== filter;
-      const want = n === hovered ? 1 : 0;
-      d.lift += (want - d.lift) * 0.18;
-      n.scale.setScalar((0.42 + d.lift * 0.2) * (dim ? 0.72 : 1));
-      n.material.opacity = dim ? 0.22 : 0.55 + 0.45 * d.lift;
-      n.position.copy(d.base).multiplyScalar(1 + d.lift * 0.12);
+    /* the flight: the lens starts off the shell and ends deep inside it */
+    const dive = smooth(0.04, 0.72, p);
+    camera.position.set(drift.x * 0.4, 0.55 + drift.y * 0.25, 13.6 - dive * 15.2);
+    camera.lookAt(0, 0.1, camera.position.z - 10);   // a point AHEAD of the lens: a fixed one ends up behind it once the flight lands
+    shell.rotation.y = t * 0.035 + p * 0.6;
+    shell.rotation.x = drift.y * 0.12;
+
+    /* the shell hands over to the starfield */
+    shell.userData.mat.uniforms.uFade.value = 1 - smooth(0.56, 0.8, p);
+    stars.material.opacity = smooth(0.5, 0.74, p) * 0.7;
+    stars.rotation.y = t * 0.006;
+
+    /* the mark holds the middle, then goes as the lens passes through it */
+    const markGone = smooth(0.2, 0.38, p);
+    mark.material.opacity = 1 - markGone;
+    mark.visible = markGone < 0.999;
+    mark.position.set(0, 0, 0);
+    mark.scale.setScalar(0.62);
+
+    /* the projects arrive once you are inside */
+    const arrive = smooth(0.62, 0.9, p);
+    if (fine && arrive > 0.4) { ray.setFromCamera(ndc, camera); const hit = ray.intersectObjects(tiles, false)[0]; hovered = hit ? hit.object : null; }
+    else hovered = null;
+    tiles.forEach((s, i) => {
+      const d = s.userData;
+      d.hover += ((s === hovered ? 1 : 0) - d.hover) * 0.16;
+      s.material.opacity = arrive * (0.72 + 0.28 * d.hover);
+      s.visible = arrive > 0.002;
+      s.scale.setScalar(d.size * (1 + d.hover * 0.28));
+      s.position.set(d.base.x + Math.sin(t * 0.35 + d.seed * 6.28) * 0.16,
+                     d.base.y + Math.cos(t * 0.29 + d.seed * 6.28) * 0.14,
+                     d.base.z);
     });
 
-    if (hovered) {
-      const d = hovered.userData;
-      chipName.textContent = d.acc.name || '';
-      chipRole.textContent = d.acc.description || d.cat.label;
-      chip.style.transform = 'translate3d(' + (at.x + 16) + 'px,' + (at.y - 14) + 'px,0) scale(1)';
-      chip.classList.add('on'); cv.style.cursor = 'pointer';
-    } else { chip.classList.remove('on'); cv.style.cursor = dragging ? 'grabbing' : 'grab'; }
+    /* copy */
+    const outA = smooth(0.12, 0.34, p);
+    copyA.style.opacity = String(1 - outA);
+    copyA.style.transform = 'translate(-50%,0) translateY(' + (-outA * 40) + 'px)';
+    copyA.style.visibility = outA > 0.99 ? 'hidden' : 'visible';
+    copyB.style.opacity = String(smooth(0.66, 0.86, p));
+    copyB.style.visibility = p > 0.5 ? 'visible' : 'hidden';
+    statsEl.style.opacity = String(1 - outA);
+    hintEl.style.opacity = String(1 - smooth(0.02, 0.16, p));
 
-    core.material.opacity = 1;
+    if (hovered) {
+      chipName.textContent = hovered.userData.acc.name || '';
+      chipRole.textContent = hovered.userData.acc.description || '';
+      chip.style.transform = 'translate3d(' + (at.x + 16) + 'px,' + (at.y - 14) + 'px,0)';
+      chip.classList.add('on'); cv.style.cursor = 'pointer';
+    } else { chip.classList.remove('on'); cv.style.cursor = 'default'; }
+
+    /* a little lens drift after the cursor, gone once the copy has landed */
+    drift.x += ((ndc.x || 0) * 0.6 - drift.x) * 0.05;
+    drift.y += ((ndc.y || 0) * 0.4 - drift.y) * 0.05;
+
     renderer.render(scene, camera);
-    requestAnimationFrame(tick);
+    requestAnimationFrame(frame);
   }
 
   fetch('/data/ecosystem.json').then(r => r.json()).then(data => {
-    layout(data); resize();
-    if (reduced) { world.rotation.y = 0.4; renderer.render(scene, camera); }
-    else requestAnimationFrame(tick);
+    const projects = ['official', 'defi', 'consumer', 'nft', 'appchains', 'tooling'].flatMap(k => data[k] || []);
+    const voices = ['starkware', 'snf', 'builders', 'shitposter'].flatMap(k => data[k] || []);
+    MOUNT.querySelector('.eg-n-p').textContent = projects.length;
+    MOUNT.querySelector('.eg-n-v').textContent = voices.length;
+    scatter(projects.concat(voices));
+    resize(); readScroll();
+    if (reduced) { p = target; renderer.render(scene, camera); }
+    else requestAnimationFrame(frame);
   }).catch(err => { console.error('[eco-globe]', err); MOUNT.style.display = 'none'; });
 }

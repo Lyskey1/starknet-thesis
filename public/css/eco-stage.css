@@ -10,68 +10,86 @@
 .es-kicker { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: var(--es-acc); margin: 0; }
 .es-sub { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--es-faint); margin: 0; }
 
-/* ---------- globe ---------- */
-.es-globe { position: relative; height: clamp(420px, 62vh, 660px); border: 1px solid var(--es-line); border-radius: 16px; overflow: hidden; background: radial-gradient(120% 90% at 50% 30%, #161616 0%, var(--es-bg) 70%); }
-.es-globe canvas { display: block; width: 100%; height: 100%; touch-action: none; cursor: grab; }
-.es-globe canvas.dragging { cursor: grabbing; }
-.es-globe .es-fade { position: absolute; inset: auto 0 0 0; height: 120px; pointer-events: none; background: linear-gradient(transparent, rgba(13,13,13,.9)); }
-.es-globe-note { position: absolute; left: 18px; bottom: 16px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--es-faint); pointer-events: none; }
-.es-globe-count { position: absolute; right: 18px; top: 16px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--es-dim); pointer-events: none; }
-.es-globe-count b { color: var(--es-acc); font-weight: 500; }
+/* ---------- gang ring: a full-screen act ---------- */
+#ecoRing { width: 100vw; max-width: none; margin: 0 0 0 calc(50% - 50vw); padding: 0; background: var(--es-bg); }
+.es-screen { position: relative; min-height: 100vh; display: flex; flex-direction: column; overflow: hidden;
+  background: radial-gradient(120% 80% at 50% 0%, #17110f 0%, var(--es-bg) 62%); }
+.es-screen::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(60% 40% at 50% 0%, rgba(197,52,0,.10), transparent 70%); }
 
-.es-legend { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0 0; }
-.es-legend button { display: inline-flex; align-items: center; gap: 8px; padding: 7px 13px; border: 1px solid var(--es-line); border-radius: 999px; background: var(--es-panel); color: var(--es-dim); font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; cursor: pointer; transition: color .2s, border-color .2s, background-color .2s; }
-.es-legend button i { width: 7px; height: 7px; border-radius: 50%; background: currentColor; flex: none; }
-.es-legend button:hover { color: var(--es-ink); border-color: #3a3a3a; }
-.es-legend button.on { color: var(--es-acc); border-color: var(--es-acc); background: rgba(197,52,0,.12); }
-.es-legend button span { color: var(--es-faint); }
+.es-top { position: relative; z-index: 2; padding: 92px 24px 0; text-align: center; }
+.es-top .es-kicker { margin: 0 0 12px; }
+.es-top h2 { font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-weight: 300;
+  font-size: clamp(30px, 4.2vw, 62px); line-height: 1; letter-spacing: -.03em; color: var(--es-ink); margin: 0 0 10px; }
+.es-top .es-lede { font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-size: 15px; color: var(--es-dim); margin: 0; }
 
-/* hover chip over the globe */
-.es-chip { position: absolute; top: 0; left: 0; z-index: 5; display: flex; align-items: center; gap: 11px; padding: 9px 14px; border-radius: 999px; background: #fafafa; color: #0d0d0d; font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: .04em; pointer-events: none; opacity: 0; transform: translate3d(0,0,0) scale(.9); transition: opacity .16s; white-space: nowrap; will-change: transform; }
-.es-chip.on { opacity: 1; }
-.es-chip .es-chip-role { color: #616161; padding-left: 11px; border-left: 1px solid rgba(13,13,13,.18); }
-
-/* ---------- gang ring ---------- */
-.es-ring-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 22px; }
-.es-ring-tabs button { padding: 8px 15px; border: 1px solid var(--es-line); border-radius: 999px; background: var(--es-panel); color: var(--es-dim); font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; cursor: pointer; transition: color .2s, border-color .2s, background-color .2s; }
+.es-ring-tabs { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 22px 0 0; position: relative; z-index: 3; }
+.es-ring-tabs button { padding: 8px 15px; border: 1px solid var(--es-line); border-radius: 999px; background: rgba(20,20,20,.7); color: var(--es-dim); font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; cursor: pointer; transition: color .2s, border-color .2s, background-color .2s; }
 .es-ring-tabs button:hover { color: var(--es-ink); border-color: #3a3a3a; }
 .es-ring-tabs button.on { color: var(--es-acc); border-color: var(--es-acc); background: rgba(197,52,0,.12); }
 
-.es-stage { position: relative; height: clamp(360px, 46vh, 520px); border: 1px solid var(--es-line); border-radius: 16px; background: radial-gradient(120% 90% at 50% 20%, #161616 0%, var(--es-bg) 70%); overflow: hidden; touch-action: pan-y; cursor: grab; user-select: none; -webkit-user-select: none; }
+/* the stage runs edge to edge and carries the cards plus their reflections */
+.es-stage { position: relative; flex: 1; min-height: 0; width: 100%; border: 0; border-radius: 0; background: none; overflow: hidden; touch-action: pan-y; cursor: grab; user-select: none; -webkit-user-select: none; }
 .es-stage.dragging { cursor: grabbing; }
-.es-ring { position: absolute; left: 50%; top: 50%; transform-style: preserve-3d; will-change: transform; }
-.es-card { position: absolute; left: 0; top: 0; border-radius: 14px; overflow: hidden; background: #0a0a0a; border: 1px solid var(--es-line); backface-visibility: hidden; transform-style: preserve-3d; will-change: transform, opacity; }
-.es-card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
-/* the monogram is the FALLBACK: it sits under the photo, not over it — an
-   absolutely-placed sibling paints above an in-flow one whatever the order */
-.es-card .es-mono { z-index: 0; }
-.es-card img { z-index: 1; }
-.es-card .es-scrim { z-index: 2; }
-.es-card .es-mono { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', monospace; font-size: 30px; letter-spacing: .06em; color: var(--es-acc); background: #141414; }
-.es-card .es-scrim { position: absolute; inset: 0; background: linear-gradient(to top, rgba(10,10,10,.88) 0%, rgba(10,10,10,.25) 30%, transparent 55%); }
-.es-frame { position: absolute; left: 50%; top: 50%; border: 1px solid var(--es-acc); border-radius: 20px; pointer-events: none; transform: translate(-50%,-50%); box-shadow: 0 0 30px rgba(197,52,0,.18); }
+.es-ring { position: absolute; left: 50%; top: 46%; transform-style: preserve-3d; will-change: transform; }
+.es-card { position: absolute; left: 0; top: 0; border-radius: 12px; overflow: hidden; background: #0a0a0a; border: 1px solid var(--es-line); backface-visibility: hidden; transform-style: preserve-3d; will-change: transform, opacity; }
+.es-card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; z-index: 1; image-rendering: auto; }
+.es-card .es-mono { position: absolute; inset: 0; z-index: 0; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', monospace; font-size: 30px; letter-spacing: .06em; color: var(--es-acc); background: #141414; }
+.es-card .es-scrim { position: absolute; inset: 0; z-index: 2; background: linear-gradient(to top, rgba(10,10,10,.72) 0%, rgba(10,10,10,.14) 34%, transparent 60%); }
+/* the mirror: the same card, flipped under itself and faded out */
+.es-card .es-mirror { position: absolute; left: 0; top: 100%; width: 100%; height: 100%; z-index: 0; overflow: hidden;
+  transform: scaleY(-1); opacity: .22; -webkit-mask-image: linear-gradient(to top, transparent 4%, #000 78%);
+  mask-image: linear-gradient(to top, transparent 4%, #000 78%); pointer-events: none; }
+.es-card .es-mirror img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.es-card-label { position: absolute; left: 50%; bottom: calc(100% + 14px); transform: translateX(-50%); font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--es-dim); white-space: nowrap; pointer-events: none; }
+
+.es-frame { position: absolute; left: 50%; top: 46%; border: 1px solid var(--es-acc); border-radius: 18px; pointer-events: none; transform: translate(-50%,-50%); box-shadow: 0 0 34px rgba(197,52,0,.20); }
 .es-hint { position: absolute; z-index: 4; padding: 9px 16px; border-radius: 999px; background: var(--es-acc); color: #fafafa; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; pointer-events: none; opacity: 0; transition: opacity .18s; white-space: nowrap; will-change: transform; }
 .es-hint.on { opacity: 1; }
 
-.es-dock { display: flex; flex-direction: column; align-items: center; gap: 8px; margin: 22px 0 0; text-align: center; }
-.es-dock .es-count { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .18em; color: var(--es-faint); }
-.es-dock .es-name { font-family: 'General Sans', 'Helvetica Neue', Arial, sans-serif; font-weight: 300; font-size: clamp(22px, 2.6vw, 34px); line-height: 1.05; letter-spacing: -.022em; color: var(--es-ink); }
+.es-dock { position: relative; z-index: 3; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 0 24px 54px; text-align: center; }
+.es-dock .es-count { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .2em; color: var(--es-faint); }
+.es-dock .es-count b { color: var(--es-acc); font-weight: 500; }
+.es-dock .es-name { font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-weight: 300; font-size: clamp(24px, 3vw, 40px); line-height: 1.05; letter-spacing: -.028em; color: var(--es-ink); }
 .es-dock .es-name a { color: inherit; text-decoration: none; }
 .es-dock .es-name a:hover { color: var(--es-acc); }
 .es-dock .es-role { font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--es-dim); max-width: 46ch; }
-.es-nav { display: flex; gap: 8px; margin-top: 6px; }
-.es-nav button { width: 40px; height: 40px; border: 1px solid var(--es-line); border-radius: 999px; background: var(--es-panel); color: var(--es-ink); cursor: pointer; font-size: 15px; line-height: 1; transition: border-color .2s, color .2s, background-color .2s; }
-.es-nav button:hover { border-color: var(--es-acc); color: var(--es-acc); background: rgba(197,52,0,.1); }
+.es-dots { display: flex; gap: 7px; margin-top: 14px; }
+.es-dots i { width: 6px; height: 6px; border-radius: 999px; background: #3a3a3a; transition: width .25s, background-color .25s; }
+.es-dots i.on { width: 22px; background: var(--es-acc); }
 
 @media (max-width: 860px) {
-  .es-globe { height: 400px; }
-  .es-stage { height: 340px; }
-  .es-globe-note { display: none; }
+  .es-top { padding: 76px 20px 0; }
+  .es-dock { padding-bottom: 34px; }
 }
-@media (prefers-reduced-motion: reduce) { .es-card, .es-ring { transition: none !important; } }
 
-/* the page's generic `section` rule caps width and adds 120px padding; these
-   two blocks bring their own rhythm and want the section's own measure */
-section.es-block, div.es-block { max-width: 1100px; margin: 0 auto 64px; padding: 0 48px; }
-.es-block { scroll-margin-top: 120px; }
-@media (max-width: 860px) { section.es-block, div.es-block { padding: 0 24px; } }
+
+/* ---------- the hero flight (Morpho-shaped): a tall track, a sticky canvas ---------- */
+#ecoGlobe { width: 100vw; max-width: none; margin: 0 0 0 calc(50% - 50vw); padding: 0; background: var(--es-bg); }
+.eg-track { position: relative; height: 320vh; }
+.eg-stick { position: sticky; top: 0; height: 100vh; overflow: hidden; background: var(--es-bg); }
+.eg-stick canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+
+.eg-copy { position: absolute; left: 50%; transform: translate(-50%,0); width: min(760px, calc(100% - 48px)); text-align: center; pointer-events: none; will-change: opacity, transform; }
+.eg-copy-a { top: 9vh; }
+.eg-copy-b { top: 50%; transform: translate(-50%,-50%); }
+.eg-copy h2 { font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-weight: 300; font-size: clamp(30px, 4vw, 58px); line-height: 1.05; letter-spacing: -.03em; color: var(--es-ink); margin: 0 0 14px; }
+.eg-copy p { font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-size: clamp(14px, 1.3vw, 18px); line-height: 1.5; color: var(--es-dim); margin: 0; }
+
+.eg-stats { position: absolute; left: 40px; bottom: 40px; display: flex; gap: 44px; pointer-events: none; }
+.eg-stats span { display: block; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--es-faint); margin-bottom: 6px; }
+.eg-stats b { font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-weight: 300; font-size: clamp(24px, 2.4vw, 34px); letter-spacing: -.02em; color: var(--es-ink); }
+.eg-hint { position: absolute; right: 40px; bottom: 44px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--es-faint); pointer-events: none; }
+
+.eg-chip { position: absolute; top: 0; left: 0; z-index: 5; display: flex; align-items: center; gap: 11px; padding: 9px 15px; border-radius: 999px; background: #fafafa; color: #0d0d0d; font-family: 'IBM Plex Mono', monospace; font-size: 12px; pointer-events: none; opacity: 0; transition: opacity .16s; white-space: nowrap; will-change: transform; }
+.eg-chip.on { opacity: 1; }
+.eg-chip span + span { color: #616161; padding-left: 11px; border-left: 1px solid rgba(13,13,13,.18); }
+@media (max-width: 860px) {
+  .eg-track { height: 280vh; }
+  .eg-stats { left: 20px; bottom: 28px; gap: 28px; }
+  .eg-hint { display: none; }
+}
+
+/* only the card at the front wears its name */
+.es-card .es-card-label { opacity: 0; transition: opacity .25s; }
+.es-card.is-front .es-card-label { opacity: 1; }
