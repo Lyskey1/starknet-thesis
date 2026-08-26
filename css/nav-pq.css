@@ -3,15 +3,15 @@
    cells, active cell tinted cool-field, flex spacer, secondary cell on the
    right, infinite-blue CTA cell with the square-dot arrow, coral on hover. */
 :root {
-  --pq-infinite: #0c0c4f;
-  --pq-cosmic: #1c1c84;
-  --pq-galaxy: #3f8cff;
-  --pq-coral: #ec796b;
-  --pq-ink: #111128;
-  --pq-muted: #56566e;
-  --pq-field: #f1f2f7;
-  --pq-flare: #fbfbfb;
-  --pq-rule: rgba(17, 17, 40, .14);
+  --pq-infinite: #c53400;   /* strk20 orange: CTA cell */
+  --pq-cosmic: #a02a00;
+  --pq-galaxy: #c53400;
+  --pq-coral: #a02a00;      /* pressed orange */
+  --pq-ink: #fafafa;         /* text on the dark bar */
+  --pq-muted: #616161;
+  --pq-field: #1a1a1a;       /* hover / active cell */
+  --pq-flare: #0d0d0d;       /* bar ground */
+  --pq-rule: #262626;
   --pq-sans: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
   --pq-nav-h: 48px;
 }
@@ -43,9 +43,9 @@ nav.pq-nav .pq-cell.active, nav.pq-nav .nav-links a.active { background: var(--p
 nav.pq-nav .nav-logo {
   padding: 0 20px; gap: 9px;
   font-family: var(--pq-sans); font-size: 16px; font-weight: 400;
-  letter-spacing: .01em; text-transform: uppercase; color: var(--pq-infinite);
+  letter-spacing: .01em; text-transform: uppercase; color: #fafafa;
 }
-nav.pq-nav .nav-logo b { font-weight: 700; color: var(--pq-infinite); }
+nav.pq-nav .nav-logo b { font-weight: 700; color: #fafafa; }
 nav.pq-nav .nav-logo svg { width: 20px; height: 20px; flex: none; }
 
 nav.pq-nav .nav-links { display: contents; }
@@ -60,7 +60,7 @@ nav.pq-nav .nav-search svg { width: 15px; height: 15px; color: var(--pq-muted); 
 nav.pq-nav .nav-search .ns-label { color: var(--pq-ink); font-family: var(--pq-sans); font-size: 16px; letter-spacing: 0; text-transform: none; }
 nav.pq-nav .nav-search .ns-kbd {
   font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 10px;
-  color: var(--pq-muted); border: 1px solid var(--pq-rule); border-radius: 3px; padding: 2px 5px;
+  color: #9a9a9a; border: 1px solid var(--pq-rule); border-radius: 3px; padding: 2px 5px;
 }
 
 /* CTA cell: infinite blue, coral on hover, square-dot arrow */
@@ -68,19 +68,20 @@ nav.pq-nav .btn.nav-cta, nav.pq-nav .btn.nav-cta:hover {
   border: 0; border-radius: 0; box-shadow: none; transform: none; overflow: visible;
   padding: 0 24px; gap: 10px; font-weight: 500;
 }
-nav.pq-nav .btn.nav-cta { background: var(--pq-infinite); color: var(--pq-flare); transition: background-color .3s; }
-nav.pq-nav .btn.nav-cta:hover { background: var(--pq-coral); color: var(--pq-flare); }
+nav.pq-nav .btn.nav-cta { background: var(--pq-infinite); color: #fafafa; transition: background-color .3s; }
+nav.pq-nav .btn.nav-cta:hover { background: var(--pq-coral); color: #fafafa; }
 nav.pq-nav .btn.nav-cta::before, nav.pq-nav .btn.nav-cta::after { display: none; }
 nav.pq-nav .pq-arrow { width: 12px; height: 12px; fill: currentColor; flex: none; transition: transform .3s; }
 nav.pq-nav .btn.nav-cta:hover .pq-arrow { transform: translateX(2px); }
 
 /* mobile burger from nav.js, restyled as a "Menu" cell on the light bar */
 nav.pq-nav .nav-burger { margin-left: auto; width: auto; padding: 0 20px; border-left: 1px solid var(--pq-rule); border-radius: 0; }
-nav.pq-nav .nav-burger span { background: var(--pq-ink); }
+nav.pq-nav .nav-burger span { background: #fafafa; }
 
 /* the old chrome assumed a fixed 70px bar; the sticky bar now sits in flow */
 body .landing { padding-top: 96px; }
 body .hero { padding-top: 96px; }
+body.page-landing { background: #0d0d0d; }
 
 @media (max-width: 1100px) {
   nav.pq-nav .pq-cell { padding: 0 16px; font-size: 15px; }

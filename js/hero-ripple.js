@@ -17,7 +17,7 @@
     'STRK IS THE TICKER ON THE WHOLE THESIS', 'PRIVACY', 'QUANTUM', 'BTCFI', 'STRK',
     'HASH-BASED PROOFS', 'PROGRAMMABLE ACCOUNTS', 'ONE CHAIN IS BRINGING AN ANSWER TO ALL OF IT'
   ];
-  var FLARE = '#fbfbfb', LILAC = '#cdcde8';
+  var FLARE = '#fafafa', LILAC = '#9a9a9a';
   var FONT_PX = 11.5, ADV = 8.2, RING_GAP = 34, DOT_GAP = 7;
 
   var W = 0, H = 0, dpr = 1, cx = 0, cy = 0, rings = [];
@@ -89,7 +89,7 @@
       /* dotted guide ring between text rings */
       if (i > 0) {
         var rd = r - RING_GAP / 2;
-        ctx.fillStyle = 'rgba(205,205,232,' + (0.16 + 0.22 * dens) + ')';
+        ctx.fillStyle = 'rgba(250,250,250,' + (0.10 + 0.16 * dens) + ')';
         var n = Math.floor((2 * Math.PI * rd) / DOT_GAP);
         for (var d = 0; d < n; d++) {
           var ad = (d / n) * Math.PI * 2 - rot * 0.5;

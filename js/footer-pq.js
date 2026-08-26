@@ -36,7 +36,7 @@
       for (var c = 0; c < row.length; c++) {
         var x = c * CW; if (x > W) break;
         var hot = s[c];
-        ctx.fillStyle = hot ? 'rgba(251,251,251,.9)' : 'rgba(205,205,232,.42)';
+        ctx.fillStyle = hot ? 'rgba(250,250,250,.9)' : 'rgba(250,250,250,.28)';
         ctx.fillText(hot ? hot.g : row[c], x, y);
       }
     }

@@ -1,20 +1,20 @@
 /* ===== Footer (ui-upgrade) =====
    Terminal panel with the ASCII headline, then an infinite-blue footer whose
    ground is a scrambling field of the site's phrases. Branding: PQ Hub. */
-.tf-wrap { width: 100vw; max-width: none; margin: 0 0 0 calc(50% - 50vw); background: #fbfbfb; padding: 88px 48px 96px; border-top: 1px solid rgba(17,17,40,.14); }
+.tf-wrap { width: 100vw; max-width: none; margin: 0 0 0 calc(50% - 50vw); background: #0d0d0d; padding: 88px 48px 96px; border-top: 1px solid #262626; }
 .tf-panel {
-  max-width: 1440px; margin: 0 auto; background: var(--pq-infinite, #0c0c4f); color: var(--pq-flare, #fbfbfb);
+  max-width: 1440px; margin: 0 auto; background: #141414; color: #fafafa;
   border-radius: 10px; padding: 22px 34px 34px; position: relative; overflow: hidden;
-  box-shadow: 0 0 0 4px #f1f2f7, 0 0 0 5px rgba(17,17,40,.14);
+  box-shadow: 0 0 0 1px #262626;
 }
 .tf-panel::after { content: ""; position: absolute; inset: 0; pointer-events: none;
   background: repeating-linear-gradient(0deg, rgba(255,255,255,.025) 0 1px, transparent 1px 3px); }
 .tf-title, .tf-art { font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace; }
-.tf-title { font-size: 13px; letter-spacing: .1em; text-transform: uppercase; color: var(--pq-lavender, #a1a1d6); margin: 0 0 22px; }
-.tf-art { margin: 0; font-size: clamp(5.2px, .78vw, 11.5px); line-height: 1.15; white-space: pre; overflow: hidden; color: var(--pq-flare, #fbfbfb); }
+.tf-title { font-size: 13px; letter-spacing: .1em; text-transform: uppercase; color: #c53400; margin: 0 0 22px; }
+.tf-art { margin: 0; font-size: clamp(5.2px, .78vw, 11.5px); line-height: 1.15; white-space: pre; overflow: hidden; color: #fafafa; }
 
 footer.pq-footer {
-  position: relative; background: var(--pq-infinite, #0c0c4f); color: var(--pq-flare, #fbfbfb);
+  position: relative; background: #0d0d0d; color: #fafafa; border-top: 1px solid #262626 !important;
   font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace; overflow: hidden;
   border-top: 0; margin: 0; padding: 0;
 }
@@ -23,28 +23,28 @@ footer.pq-footer .pf-in { position: relative; max-width: 1440px; margin: 0 auto;
   display: grid; grid-template-columns: 1fr auto; grid-template-rows: auto 1fr auto; gap: 24px 40px; }
 footer.pq-footer .pf-form { display: flex; align-items: stretch; gap: 6px; grid-column: 1; }
 footer.pq-footer .pf-form input {
-  width: 300px; max-width: 100%; height: 56px; padding: 0 20px; border: 1px solid rgba(205,205,232,.35); border-radius: 0;
-  background: rgba(12,12,79,.85); color: var(--pq-flare, #fbfbfb); font: 15px/1 "IBM Plex Mono", monospace; letter-spacing: .02em; outline: none;
+  width: 300px; max-width: 100%; height: 56px; padding: 0 20px; border: 1px solid #3a3a3a; border-radius: 0;
+  background: rgba(13,13,13,.9); color: #fafafa; font: 15px/1 "IBM Plex Mono", monospace; letter-spacing: .02em; outline: none;
 }
-footer.pq-footer .pf-form input::placeholder { color: var(--pq-lavender, #a1a1d6); }
-footer.pq-footer .pf-form input:focus { border-color: var(--pq-galaxy, #3f8cff); }
+footer.pq-footer .pf-form input::placeholder { color: #616161; }
+footer.pq-footer .pf-form input:focus { border-color: #c53400; }
 footer.pq-footer .pf-form button {
   height: 56px; padding: 0 22px; border: 0; border-radius: 0; cursor: pointer;
-  background: var(--pq-flare, #fbfbfb); color: var(--pq-ink, #111128); font: 500 15px/1 "IBM Plex Mono", monospace; letter-spacing: .08em; text-transform: uppercase;
+  background: #c53400; color: #fafafa; font: 500 15px/1 "IBM Plex Mono", monospace; letter-spacing: .08em; text-transform: uppercase;
   transition: background-color .3s, color .3s;
 }
-footer.pq-footer .pf-form button + button { margin-left: -6px; border-left: 1px solid var(--pq-rule, rgba(17,17,40,.14)); }
-footer.pq-footer .pf-form:hover button { background: var(--pq-coral, #ec796b); color: var(--pq-flare, #fbfbfb); }
+footer.pq-footer .pf-form button + button { margin-left: -6px; border-left: 1px solid rgba(250,250,250,.25); }
+footer.pq-footer .pf-form:hover button { background: #a02a00; color: #fafafa; }
 footer.pq-footer .pf-links { grid-column: 2; grid-row: 1 / span 2; display: flex; flex-direction: column; align-items: flex-end; gap: 14px; }
-footer.pq-footer .pf-links a { color: var(--pq-flare, #fbfbfb); text-decoration: none; font-size: 15px; letter-spacing: .08em; text-transform: uppercase; }
-footer.pq-footer .pf-links a:hover { color: var(--pq-coral, #ec796b); }
+footer.pq-footer .pf-links a { color: #fafafa; text-decoration: none; font-size: 15px; letter-spacing: .08em; text-transform: uppercase; }
+footer.pq-footer .pf-links a:hover { color: #c53400; }
 footer.pq-footer .pf-meta { grid-column: 1; grid-row: 3; align-self: end; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; }
-footer.pq-footer .pf-meta div + div { color: var(--pq-lavender, #a1a1d6); margin-top: 8px; }
+footer.pq-footer .pf-meta div + div { color: #616161; margin-top: 8px; }
 footer.pq-footer .pf-meta a { color: inherit; text-decoration: none; }
-footer.pq-footer .pf-meta a:hover { color: var(--pq-coral, #ec796b); }
-footer.pq-footer .pf-disc { grid-column: 2; grid-row: 3; align-self: end; max-width: 380px; text-align: right; font-size: 11px; line-height: 1.55; color: var(--pq-lavender, #a1a1d6); }
+footer.pq-footer .pf-meta a:hover { color: #c53400; }
+footer.pq-footer .pf-disc { grid-column: 2; grid-row: 3; align-self: end; max-width: 380px; text-align: right; font-size: 11px; line-height: 1.55; color: #616161; }
 footer.pq-footer .pf-status { display: inline-flex; align-items: center; gap: 8px; }
-footer.pq-footer .pf-status i { width: 7px; height: 7px; background: var(--pq-moon, #90eac4); display: inline-block; }
+footer.pq-footer .pf-status i { width: 7px; height: 7px; background: #c53400; display: inline-block; }
 
 @media (max-width: 860px) {
   .tf-wrap { padding: 56px 16px 64px; }

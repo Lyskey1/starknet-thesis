@@ -61,13 +61,13 @@
         if (t === ' ' || t === undefined) continue;
         if (res > 0 && (res >= 0.999 || Math.random() < res)) {
           var a = (0.26 + 0.24 * Math.min(1, since / 180)) * (0.4 + 0.6 * res);
-          ctx.fillStyle = 'rgba(251,251,251,' + a + ')';
+          ctx.fillStyle = 'rgba(250,250,250,' + a + ')';
           ctx.fillText(t, x, y);
         } else {
           if (!blank[r][c]) {
             /* occasionally re-roll the noise so it drifts */
             if (((frame + r * 7 + c * 3) % 9) === 0 && Math.random() < 0.3) noise[r][c] = GLY[Math.floor(Math.random() * GLY.length)];
-            ctx.fillStyle = 'rgba(205,205,232,.16)';
+            ctx.fillStyle = 'rgba(250,250,250,.11)';
             ctx.fillText(noise[r][c], x, y);
           } else if (Math.random() < 0.004) {
             blank[r][c] = 0; noise[r][c] = GLY[Math.floor(Math.random() * GLY.length)];
