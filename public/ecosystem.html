@@ -744,7 +744,8 @@
 
 <!-- SECTIONS (rendered from data) -->
 <div class="es-block" id="ecoRing"></div>
-<div id="ecoSections"></div>
+<div class="es-block" id="ecoIndex"></div>
+<div id="ecoSections" hidden></div>
 
 <!-- CLOSING CTA -->
 <!-- closing sequence spacing: 176px above the panel matches the page's
@@ -2062,7 +2063,8 @@
   }
 
   function renderSections(){
-    var html = GROUPS.map(function(g, gi){
+    var html = GROUPS.filter(function(g){ return g.id !== 'people'; })   // the ring is the voices now
+      .map(function(g, gi){
       var cats = data.filter(function(c){ return (c.group || 'projects') === g.id; });
       if (!cats.length) return '';
       var head = '<div class="eco-group-duo' + (gi % 2 ? ' orbit-right' : '') + '" id="group-' + g.id + '">' +
@@ -2600,5 +2602,6 @@
 <script type="module" src="js/eco-backdrop.js"></script>
 <script type="module" src="js/eco-globe.js"></script>
 <script type="module" src="js/eco-ring.js"></script>
+<script defer src="js/eco-index.js"></script>
 </body>
 </html>

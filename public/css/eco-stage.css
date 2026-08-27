@@ -114,3 +114,65 @@ body .tf-wrap { background-color: transparent !important; }
 body footer.vc-footer { background-image: none !important; }
 /* keep the page's own glow from doubling the wash */
 body::before { opacity: .35; }
+
+/* ---------- the index: every project as a row, after Dragonfly's ---------- */
+#ecoIndex { max-width: 1400px; margin: 0 auto 96px; padding: 0 40px; }
+.ix-head { margin: 0 0 26px; }
+.ix-head h2 { font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-weight: 300; font-size: clamp(28px, 3.4vw, 52px); line-height: 1; letter-spacing: -.03em; color: var(--es-ink); margin: 8px 0 22px; }
+.ix-tabs { display: flex; flex-wrap: wrap; gap: 6px; }
+.ix-tabs button { padding: 7px 14px; border: 0; background: #141414; color: var(--es-dim);
+  font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; cursor: pointer; transition: background-color .18s, color .18s; }
+.ix-tabs button:hover { background: #1f1f1f; color: var(--es-ink); }
+.ix-tabs button.on { background: var(--es-acc); color: #fafafa; }
+
+.ix-grid { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 0 1px; background: transparent; }
+.ix-col { display: flex; flex-direction: column; }
+.ix-letter { font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-size: 15px; color: var(--es-faint);
+  text-align: center; padding: 18px 0 6px; }
+.ix-row { display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  width: 100%; padding: 11px 14px; border: 0; border-bottom: 1px solid var(--es-line);
+  background: transparent; color: var(--es-ink); cursor: pointer;
+  font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-size: 15px; letter-spacing: .01em;
+  text-align: left; text-transform: uppercase; transition: background-color .14s, color .14s; }
+.ix-row:hover, .ix-row:focus-visible { background: var(--es-acc); color: #fafafa; outline: none; }
+.ix-row .ix-move { opacity: 0; }
+.ix-row:hover .ix-move, .ix-row:focus-visible .ix-move { opacity: 1; }
+/* the four-dot move glyph the reference puts on the active row */
+.ix-move { width: 13px; height: 13px; flex: none; background:
+  radial-gradient(circle 1.5px at 50% 2px, currentColor 99%, transparent) ,
+  radial-gradient(circle 1.5px at 50% 11px, currentColor 99%, transparent),
+  radial-gradient(circle 1.5px at 2px 50%, currentColor 99%, transparent),
+  radial-gradient(circle 1.5px at 11px 50%, currentColor 99%, transparent),
+  radial-gradient(circle 1.5px at 50% 50%, currentColor 99%, transparent); }
+
+/* the detail sheet */
+.ix-modal { position: fixed; inset: 0; z-index: 120; display: flex; align-items: center; justify-content: center;
+  background: rgba(6,6,6,.72); backdrop-filter: blur(3px); }
+.ix-modal[hidden] { display: none; }
+.ix-sheet { width: min(430px, calc(100% - 32px)); max-height: 90vh; overflow: auto; background: #0d0d0d; border: 1px solid var(--es-line); }
+.ix-sheet-bar { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-bottom: 1px solid var(--es-line);
+  font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--es-dim); }
+.ix-sheet-bar .ix-move { color: var(--es-acc); opacity: 1; }
+.ix-sheet-bar button { border: 0; background: none; color: var(--es-dim); font: inherit; letter-spacing: .16em; text-transform: uppercase; cursor: pointer; }
+.ix-sheet-bar button:hover { color: var(--es-acc); }
+.ix-sheet-art { position: relative; display: flex; align-items: center; justify-content: center; height: 210px; border-bottom: 1px solid var(--es-line); }
+.ix-sheet-art img { width: 92px; height: 92px; border-radius: 999px; object-fit: cover; }
+.ix-mono { position: absolute; font-family: 'IBM Plex Mono', monospace; font-size: 34px; color: var(--es-faint); }
+.ix-sheet-art img { position: relative; z-index: 1; background: #0d0d0d; }
+.ix-plus { position: absolute; color: var(--es-faint); font-size: 13px; line-height: 1; }
+.ix-plus.tl { left: 14px; top: 14px; } .ix-plus.tr { right: 14px; top: 14px; }
+.ix-plus.bl { left: 14px; bottom: 14px; } .ix-plus.br { right: 14px; bottom: 14px; }
+.ix-sheet-rows { padding: 4px 16px 16px; }
+.ix-row-kv { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--es-line);
+  font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--es-faint); }
+.ix-row-kv b { font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-weight: 400; font-size: 17px; letter-spacing: -.01em; text-transform: none; color: var(--es-ink); }
+.ix-desc { font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-size: 15px; line-height: 1.45; color: var(--es-dim); margin: 14px 0; }
+.ix-visit { display: block; padding: 15px; text-align: center; border-top: 1px solid var(--es-line);
+  font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: var(--es-ink); text-decoration: none; transition: background-color .18s, color .18s; }
+.ix-visit:hover { background: var(--es-acc); color: #fafafa; }
+.ix-noise { height: 110px; background:
+  repeating-linear-gradient(0deg, rgba(250,250,250,.05) 0 1px, transparent 1px 4px),
+  repeating-linear-gradient(90deg, rgba(197,52,0,.06) 0 1px, transparent 1px 7px); }
+
+@media (max-width: 1100px) { .ix-grid { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+@media (max-width: 640px) { .ix-grid { grid-template-columns: 1fr; } #ecoIndex { padding: 0 20px; } }
