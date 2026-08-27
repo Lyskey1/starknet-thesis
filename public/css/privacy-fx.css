@@ -1,0 +1,66 @@
+/* ===== Privacy page: the metal-human hero and the comparison table =====
+   The head is the GetLayers metalHuman loop, desaturated and tinted to the
+   strk20 orange with a blend layer (a hue-rotate would send the clip's own
+   red highlights green). The table follows Framer's pricing layout: criteria
+   as rows with a description under each, protocols as columns. */
+:root { --pf-ink: #fafafa; --pf-dim: rgba(250,250,250,.62); --pf-faint: #616161;
+        --pf-line: #262626; --pf-acc: #c53400; --pf-bg: #0d0d0d; }
+
+/* ---------- hero ---------- */
+/* the hero runs ~1800px tall and opens on its own aperture scene; the figure
+   belongs in the lower band, behind the headline, as the reference has it */
+.pv-human { position: absolute; inset: auto 0 0 0; height: min(100%, 106vh); z-index: 0; overflow: hidden; pointer-events: none; }
+.pv-figure { position: absolute; inset: 0; isolation: isolate; }
+/* cover, not contain: a fixed box left its own edges showing */
+.pv-human video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 68% 42%;
+  filter: grayscale(1) brightness(1.02) contrast(1.3); }
+/* luminance stays, hue comes from here: the clip's blues AND reds both land on
+   the accent instead of splitting apart under a hue rotation */
+/* the tint is scoped to the figure (isolate above), so it colours the clip
+   rather than washing the whole hero */
+.pv-figure::after { content: ""; position: absolute; inset: 0; background: var(--pf-acc); mix-blend-mode: color; }
+.pv-human .pv-scrim { position: absolute; inset: 0; z-index: 2;
+  background: linear-gradient(90deg, rgba(13,13,13,.94) 0%, rgba(13,13,13,.7) 34%, rgba(13,13,13,.1) 66%, rgba(13,13,13,.45) 100%),
+              linear-gradient(to bottom, rgba(13,13,13,.7) 0%, rgba(13,13,13,0) 22%, rgba(13,13,13,.55) 78%, rgba(13,13,13,1) 100%); }
+.pv-human .pv-ticks { position: absolute; inset: 0; z-index: 3; opacity: .5;
+  background-image: linear-gradient(rgba(250,250,250,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(250,250,250,.05) 1px, transparent 1px);
+  background-size: 240px 240px; }
+body.page-privacy .hero { position: relative; }
+body.page-privacy .hero > *:not(.pv-human) { position: relative; z-index: 4; }
+@media (max-width: 860px) { .pv-human video { object-position: 62% 40%; } }
+@media (prefers-reduced-motion: reduce) { .pv-human video { display: none; } }
+
+/* ---------- the comparison table ---------- */
+.fx-wrap { max-width: 1160px; margin: 44px auto 0; }
+.fx-scroll { overflow-x: auto; border: 1px solid var(--pf-line); border-radius: 14px; background: rgba(20,20,20,.5); }
+.fx-table { width: 100%; min-width: 880px; border-collapse: collapse; font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; }
+.fx-table th, .fx-table td { border-bottom: 1px solid var(--pf-line); }
+.fx-table tbody tr:last-child th, .fx-table tbody tr:last-child td { border-bottom: 0; }
+
+/* header: the protocol and its score, the way Framer heads a plan with a price */
+.fx-table thead th { padding: 22px 20px; text-align: left; vertical-align: baseline; border-bottom: 1px solid var(--pf-line); }
+.fx-corner { width: 30%; min-width: 240px; }
+.fx-pname { display: block; font-size: 19px; font-weight: 400; letter-spacing: -.01em; color: var(--pf-ink); }
+.fx-score { display: block; margin-top: 4px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: .1em; color: var(--pf-faint); }
+.fx-table thead th.fx-champ .fx-pname { color: var(--pf-acc); }
+.fx-table thead th.fx-champ .fx-score { color: var(--pf-acc); }
+
+/* criterion rows: name over a quiet description */
+.fx-crit { padding: 20px; text-align: left; vertical-align: top; }
+.fx-crit-name { display: block; font-size: 16px; font-weight: 400; color: var(--pf-ink); }
+.fx-crit-sub { display: block; margin-top: 3px; font-size: 14px; line-height: 1.4; color: var(--pf-dim); max-width: 34ch; }
+
+.fx-cell { padding: 20px; text-align: center; vertical-align: middle; }
+.fx-cell.fx-champ { background: rgba(197,52,0,.07); }
+.fx-cell[tabindex]:focus-visible { outline: 2px solid var(--pf-acc); outline-offset: -2px; }
+/* a tick for yes, a half disc for partial, a dash for no */
+.fx-y, .fx-p { display: inline-block; width: 15px; height: 15px; vertical-align: middle; }
+.fx-y { background: var(--pf-acc); -webkit-mask: no-repeat center/15px url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M2.5 8.5l3.5 3.5 7.5-8' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  mask: no-repeat center/15px url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M2.5 8.5l3.5 3.5 7.5-8' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); }
+.fx-p { border-radius: 999px; border: 1.5px solid var(--pf-acc); background: linear-gradient(90deg, var(--pf-acc) 50%, transparent 50%); }
+.fx-n { color: #3a3a3a; font-size: 17px; }
+.fx-legend { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 16px 0 0;
+  font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--pf-faint); }
+.fx-legend .fx-y, .fx-legend .fx-p { margin-left: 14px; }
+.fx-legend .fx-y:first-child { margin-left: 0; }
+@media (max-width: 860px) { .fx-crit-sub { display: none; } .fx-crit, .fx-cell { padding: 15px 12px; } }
