@@ -72,6 +72,10 @@
 #ecoGlobe { width: 100vw; max-width: none; margin: 0 0 0 calc(50% - 50vw); padding: 0; background: transparent; }
 .eg-track { position: relative; height: 240vh; }
 .eg-stick { position: sticky; top: 0; height: 100vh; overflow: hidden; background: transparent; }
+/* the flight's last frame dissolves into the page instead of being cut off
+   mid-logo where the sticky canvas ends */
+.eg-stick::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 26vh; pointer-events: none; z-index: 4;
+  background: linear-gradient(to bottom, rgba(13,13,13,0) 0%, rgba(13,13,13,.7) 55%, rgba(13,13,13,1) 100%); }
 .eg-stick canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 
 .eg-copy { position: absolute; left: 50%; transform: translate(-50%,0); width: min(1180px, calc(100% - 56px)); text-align: center; pointer-events: none; will-change: opacity, transform; }
@@ -116,7 +120,7 @@ body footer.vc-footer { background-image: none !important; }
 body::before { opacity: .35; }
 
 /* ---------- the index: every project as a row, after Dragonfly's ---------- */
-#ecoIndex { max-width: 1400px; margin: 0 auto 96px; padding: 0 40px; }
+#ecoIndex { max-width: 1400px; margin: 0 auto 96px; padding: 15vh 40px 0; }
 .ix-head { margin: 0 0 26px; }
 .ix-head h2 { font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-weight: 300; font-size: clamp(28px, 3.4vw, 52px); line-height: 1; letter-spacing: -.03em; color: var(--es-ink); margin: 8px 0 22px; }
 .ix-tabs { display: flex; flex-wrap: wrap; gap: 6px; }
@@ -175,4 +179,4 @@ body::before { opacity: .35; }
   repeating-linear-gradient(90deg, rgba(197,52,0,.06) 0 1px, transparent 1px 7px); }
 
 @media (max-width: 1100px) { .ix-grid { grid-template-columns: repeat(2, minmax(0,1fr)); } }
-@media (max-width: 640px) { .ix-grid { grid-template-columns: 1fr; } #ecoIndex { padding: 0 20px; } }
+@media (max-width: 640px) { .ix-grid { grid-template-columns: 1fr; } #ecoIndex { padding: 10vh 20px 0; } }

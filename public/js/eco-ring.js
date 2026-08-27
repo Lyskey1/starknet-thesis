@@ -346,16 +346,20 @@ if (MOUNT) {
     });
     if (best !== front) { front = best; dock(); }
 
-    /* DOM labels ride their cards */
+    /* DOM labels ride their cards, but never climb into the tab row above */
     const rect = cv.getBoundingClientRect();
+    const tabs = tabsEl.getBoundingClientRect();
+    const guard = tabs.bottom - rect.top + 14;
     labels.forEach((l, i) => {
       l.card.getWorldPosition(_v); _v.y += CARD_H * 0.55;
       const p = _v.clone().project(camera);
       const facing = _v.clone().sub(camera.position).normalize();
       const near = p.z < 1 && Math.abs(p.x) < 0.62;
       const falloff = Math.max(0, 1 - Math.abs(p.x) / 0.62);
-      l.el.style.opacity = near ? String(falloff * (i === front ? 1 : 0.55)) : '0';
-      l.el.style.transform = 'translate(-50%,-100%) translate(' + ((p.x * 0.5 + 0.5) * rect.width) + 'px,' + ((-p.y * 0.5 + 0.5) * rect.height) + 'px)';
+      const y = (-p.y * 0.5 + 0.5) * rect.height;
+      const clear = y > guard;
+      l.el.style.opacity = (near && clear) ? String(falloff * (i === front ? 1 : 0.55)) : '0';
+      l.el.style.transform = 'translate(-50%,-100%) translate(' + ((p.x * 0.5 + 0.5) * rect.width) + 'px,' + y + 'px)';
       l.el.classList.toggle('is-front', i === front);
     });
 
