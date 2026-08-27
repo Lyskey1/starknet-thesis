@@ -32,7 +32,7 @@ const wash = new THREE.Mesh(
       uBg: { value: linear('#0d0d0d') },
       uFlameA: { value: linear('#c53400') },
       uFlameB: { value: linear('#e07a4a') },
-      uFlameAmt: { value: 0.72 }
+      uFlameAmt: { value: 0.4 }
     },
     vertexShader: `varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position, 1.0); }`,
     fragmentShader: `
@@ -79,7 +79,7 @@ const motes = (() => {
     uniforms: {
       uTime: { value: 0 }, uRes: { value: new THREE.Vector2(1, 1) },
       uSpread: { value: 3.4 }, uFadeNear: { value: 2.4 }, uFadeFar: { value: 4.6 },
-      uColor: { value: linear('#ffb08a') }, uAlpha: { value: 0.62 }
+      uColor: { value: linear('#ffb08a') }, uAlpha: { value: 0.5 }
     },
     vertexShader: `
       attribute float size; uniform float uTime; uniform vec2 uRes;

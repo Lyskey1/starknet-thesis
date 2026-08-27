@@ -97,7 +97,8 @@ const SHELL_Y = -0.55;   // near-centred, just clear of the copy
   })();
 
   /* ---- the Starknet mark at the core ---- */
-  const markTex = new THREE.TextureLoader().load('/assets/img/starknet-mark.svg');
+  /* the bare glyph, not the full mark: its navy disc read as a blob at this size */
+  const markTex = new THREE.TextureLoader().load('/assets/img/starknet-glyph.svg');
   markTex.colorSpace = THREE.SRGBColorSpace;
   const mark = new THREE.Sprite(new THREE.SpriteMaterial({ map: markTex, transparent: true, depthWrite: false, depthTest: false }));
   mark.renderOrder = 5; scene.add(mark);
@@ -206,7 +207,7 @@ const SHELL_Y = -0.55;   // near-centred, just clear of the copy
     mark.material.opacity = 1 - markGone;
     mark.visible = markGone < 0.999;
     mark.position.set(0, SHELL_Y, 0);
-    mark.scale.setScalar(0.78);
+    mark.scale.setScalar(0.62);
 
     /* the projects arrive once you are inside */
     const arrive = smooth(0.6, 0.84, p);

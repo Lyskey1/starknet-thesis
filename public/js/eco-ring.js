@@ -1,215 +1,372 @@
-/* Gang ring: a draggable 3D card ring for the ecosystem page's "voices".
-   Cards sit on a real cylinder (rotateY + translateZ), so the arc reads as
-   concave while every card genuinely faces the axis. Drag to throw, friction
-   decays the spin, the nearest card snaps to the front. DOM transforms only,
-   no WebGL. strk20 palette lives in css/eco-stage.css. */
-(function () {
-  'use strict';
-  var mount = document.getElementById('ecoRing');
-  if (!mount) return;
+/* Meet the gang — a WebGL card ring standing on real water.
+   A true planar reflection (mirrored camera into a render target) sampled
+   with ripple distortion, after the Mirror Hall section. Drag to spin with
+   inertia, hover swells a card, the pointer stirs the surface. Labels are DOM
+   projected onto each card so the type stays crisp and selectable.
+   strk20 palette; the pool fades into the dock below so the two read as one. */
+import * as THREE from 'three';
 
-  var GANGS = [
+const MOUNT = document.getElementById('ecoRing');
+if (MOUNT) {
+  const GANGS = [
     { id: 'starkware', label: 'StarkWare gang' },
     { id: 'snf', label: 'Starknet Foundation' },
     { id: 'builders', label: 'Builders' },
     { id: 'shitposter', label: 'Shitposters' }
   ];
-  var RATIO = 1.36, ARC_DEPTH = 0.7;
-  /* Gap between neighbouring card CENTRES, as a share of a card's width. The
-     radius is then solved from the member count so this gap is identical for
-     every gang — a fixed radius with a 360/count step packed 23 cards tight
-     and spread 11 of them apart. */
-  var GAP_RATIO = 1.34, RADIUS_MIN = 2.2, RADIUS_MAX = 6.5;
-  var DRAG = 0.16, DAMP = 0.94, REST = 0.05, SNAP = 0.14;
-  /* How many cards stay lit either side of the front one. A FIXED angular
-     fade (58deg to 92deg) showed ten cards for an 18-strong gang and six for
-     an 11-strong one, because the step between cards is 360/count: the same
-     angle spans fewer cards when there are fewer of them. Counting cards
-     instead fills the frame identically for every gang. */
-  var FADE_FROM_CARDS = 3.5, FADE_TO_CARDS = 4.7;
-  var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  /* the ring: card size in world units, and the gap between neighbours. The
+     radius is solved from the member count so that gap never changes. */
+  const CARD_W = 1.66, CARD_H = 2.42, CARD_GAP = 0.40, CARD_LIFT = 0.05, CARD_CURVE = 1;
+  /* the lens stands INSIDE the ring, as the reference's does: the cards face
+     the axis, so from within the arc reads concave and fills the frame. */
+  const FOV = 58, CAM_H = 1.24, CAM_INSET = 0.66;
+  const AUTO_SPIN = 0.035, DRAG_SPEED = 0.0085, DAMP = 0.9, SNAP = 0.10;
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  mount.innerHTML =
+  MOUNT.innerHTML =
     '<div class="es-screen">' +
       '<div class="es-top"><p class="es-kicker">The voices</p>' +
         '<h2>Meet the gang</h2>' +
         '<p class="es-lede">The people building, shaping and shitposting Starknet. Drag the ring.</p>' +
         '<div class="es-ring-tabs" role="tablist"></div></div>' +
-      '<div class="es-stage"><div class="es-frame"></div><div class="es-ring"></div>' +
+      '<div class="es-stage"><div class="es-labels"></div>' +
         '<div class="es-hint">Drag to explore</div></div>' +
       '<div class="es-dock"><div class="es-count">[ <b>01</b> / 01 ]</div><div class="es-name"></div>' +
         '<div class="es-role"></div><div class="es-dots"></div></div>' +
     '</div>';
 
-  var tabsEl = mount.querySelector('.es-ring-tabs');
-  var dotsEl = mount.querySelector('.es-dots');
-  var stage = mount.querySelector('.es-stage');
-  var ringEl = mount.querySelector('.es-ring');
-  var frameEl = mount.querySelector('.es-frame');
-  var hintEl = mount.querySelector('.es-hint');
-  var countEl = mount.querySelector('.es-count');
-  var nameEl = mount.querySelector('.es-name');
-  var roleEl = mount.querySelector('.es-role');
+  const tabsEl = MOUNT.querySelector('.es-ring-tabs');
+  const stage = MOUNT.querySelector('.es-stage');
+  const labelsEl = MOUNT.querySelector('.es-labels');
+  const hintEl = MOUNT.querySelector('.es-hint');
+  const countEl = MOUNT.querySelector('.es-count');
+  const nameEl = MOUNT.querySelector('.es-name');
+  const roleEl = MOUNT.querySelector('.es-role');
+  const dotsEl = MOUNT.querySelector('.es-dots');
 
-  var members = [], cards = [], step = 0, radius = 0, cardW = 0, cardH = 0;
-  var rot = 0, vel = 0, dragging = false, lastX = 0, downX = 0, moved = 0, front = 0, gang = GANGS[0].id;
-  var raf = null;
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
+  renderer.setClearColor(0x000000, 0);
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  stage.insertBefore(renderer.domElement, stage.firstChild);
+  const maxAniso = renderer.capabilities.getMaxAnisotropy();
 
-  function pad(n) { return (n < 10 ? '0' : '') + n; }
-  function candidates(acc) {
-    var out = [];
-    if (acc.avatar) out.push(acc.avatar);
-    if (acc.handle) { out.push('assets/avatars/' + acc.handle + '.webp'); out.push('assets/avatars/' + acc.handle + '.jpg'); }
-    return out;
-  }
-  function initials(acc) {
-    var h = (acc.handle || acc.name || '?').replace(/^[@_]+/, '');
-    return h.slice(0, 2).toUpperCase();
-  }
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(FOV, 1, 0.1, 200);
+  const carousel = new THREE.Group(); scene.add(carousel);
 
-  function measure() {
-    var w = window.innerWidth;
-    var share = w < 640 ? 0.52 : w < 1024 ? 0.3 : 0.17;
-    cardW = Math.max(150, Math.min(w * share, stage.clientHeight * 0.46));
-    cardH = cardW * RATIO;
-    var n = Math.max(cards.length, 3);
-    /* chord = 2·r·sin(π/n): solve r for the gap we want between centres */
-    var mult = (GAP_RATIO / 2) / Math.sin(Math.PI / n);
-    radius = cardW * Math.max(RADIUS_MIN, Math.min(RADIUS_MAX, mult));
-    stage.style.perspective = Math.max(900, w * 1.15) + 'px';
-    var push = radius * (1 - ARC_DEPTH);
-    ringEl.style.transform = 'translateZ(' + push + 'px) rotateY(' + rot + 'deg)';
-    frameEl.style.width = (cardW + 34) + 'px';
-    frameEl.style.height = (cardH + 34) + 'px';
-    cards.forEach(function (c, i) {
-      c.el.style.width = cardW + 'px';
-      c.el.style.height = cardH + 'px';
-      c.el.style.marginLeft = (-cardW / 2) + 'px';
-      c.el.style.marginTop = (-cardH / 2) + 'px';
-      c.base = i * step;
-    });
-    place();
+  /* ---------- cards ---------- */
+  const loader = new THREE.TextureLoader();
+  const texCache = new Map();
+  function texFor(acc, mat) {
+    const cands = [];
+    if (acc.avatar && !acc.avatar.startsWith('data:')) cands.push('/' + acc.avatar.replace(/^\//, ''));
+    if (acc.avatar && acc.avatar.startsWith('data:')) cands.push(acc.avatar);
+    if (acc.handle) cands.push('/assets/avatars/' + acc.handle + '.jpg', '/assets/avatars/' + acc.handle + '.webp', '/assets/avatars/' + acc.handle + '.png');
+    const key = cands[0] || acc.handle;
+    if (texCache.has(key)) { const t = texCache.get(key); return t; }
+    const tex = new THREE.Texture();
+    (function tryNext(i) {
+      if (i >= cands.length) return;
+      loader.load(cands[i], (t) => {
+        tex.image = t.image; tex.needsUpdate = true;
+        tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = maxAniso;
+        if (mat && t.image) mat.uniforms.uImgAspect.value = t.image.width / t.image.height;
+      }, undefined, () => tryNext(i + 1));
+    })(0);
+    tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = maxAniso;
+    texCache.set(key, tex);
+    return tex;
   }
 
-  function build(list) {
-    members = list; cards = []; ringEl.innerHTML = '';
-    step = 360 / Math.max(list.length, 1);
-    list.forEach(function (acc, i) {
-      var el = document.createElement('div');
-      el.className = 'es-card';
-      el.setAttribute('data-i', String(i));
-      var cands = candidates(acc);
-      var mono = '<div class="es-mono">' + initials(acc) + '</div>';
-      var pic = cands.length ? '<img alt="" data-try="0" src="' + cands[0] + '">' : '';
-      /* The face clips (rounded corners, the scrim); the card itself must NOT,
-         or it cuts away the reflection hanging below it and the label above. */
-      el.innerHTML =
-        '<div class="es-face">' + mono + pic + '<div class="es-scrim"></div></div>' +
-        '<div class="es-mirror"><div class="es-mirror-in">' + pic + '</div></div>' +
-        '<span class="es-card-label">' + (acc.name || '') + '</span>';
-      [].forEach.call(el.querySelectorAll('img'), function (img) {
-        img.addEventListener('error', function () {
-          var next = parseInt(img.getAttribute('data-try') || '0', 10) + 1;
-          if (next < cands.length) { img.setAttribute('data-try', String(next)); img.src = cands[next]; }
-          else img.remove();
-        });
-      });
-      ringEl.appendChild(el);
-      cards.push({ el: el, base: i * step, acc: acc });
-    });
-    rot = 0; vel = 0; front = 0;
-    measure(); dock();
-  }
-
-  function wrap(a) { a = a % 360; if (a > 180) a -= 360; if (a < -180) a += 360; return a; }
-
-  function place() {
-    var push = radius * (1 - ARC_DEPTH);
-    ringEl.style.transform = 'translateZ(' + push + 'px) rotateY(' + rot + 'deg)';
-    var best = 0, bestAway = 999;
-    cards.forEach(function (c, i) {
-      var away = Math.abs(wrap(c.base + rot));
-      if (away < bestAway) { bestAway = away; best = i; }
-      var from = step * FADE_FROM_CARDS, to = step * FADE_TO_CARDS;
-      var fade = 1 - Math.min(1, Math.max(0, (away - from) / Math.max(to - from, 0.001)));
-      c.el.style.transform = 'rotateY(' + c.base + 'deg) translateZ(' + (-radius) + 'px)';
-      c.el.style.opacity = fade.toFixed(3);
-      c.el.classList.toggle('is-front', away < step * 0.5);
-      c.el.style.visibility = fade <= 0.001 ? 'hidden' : 'visible';
-    });
-    if (best !== front) { front = best; dock(); }
-  }
-
-  function dock() {
-    var acc = (cards[front] || {}).acc; if (!acc) return;
-    countEl.innerHTML = '[ <b>' + pad(front + 1) + '</b> / ' + pad(cards.length) + ' ]';
-    if (dotsEl.children.length !== cards.length) {
-      dotsEl.innerHTML = ''; cards.forEach(function () { dotsEl.appendChild(document.createElement('i')); });
+  function curvedCardGeo(w, h, R) {
+    const g = new THREE.PlaneGeometry(w, h, 24, 1);
+    const pos = g.attributes.position;
+    for (let i = 0; i < pos.count; i++) {
+      const x = pos.getX(i), d = x / R;
+      pos.setX(i, x + (R * Math.sin(d) - x) * CARD_CURVE);
+      pos.setZ(i, R * (1 - Math.cos(d)) * CARD_CURVE);
     }
-    [].forEach.call(dotsEl.children, function (d, i) { d.classList.toggle('on', i === front); });
-    nameEl.innerHTML = '<a href="' + (acc.url || '#') + '" target="_blank" rel="noopener">' + (acc.name || '') + '</a>';
-    roleEl.textContent = acc.description || '';
+    pos.needsUpdate = true; return g;
   }
 
-  function frame() {
-    if (!dragging) {
-      if (Math.abs(vel) > REST) { rot += vel; vel *= DAMP; }
-      else {
-        vel = 0;
-        var away = wrap((cards[front] ? cards[front].base : 0) + rot);
-        if (Math.abs(away) < 0.01) rot -= away; else rot -= away * SNAP;
-      }
-    }
-    place();
-    raf = requestAnimationFrame(frame);
+  function cardMaterial(map) {
+    return new THREE.ShaderMaterial({
+      transparent: true,
+      uniforms: {
+        map: { value: map }, uAspect: { value: CARD_W / CARD_H }, uImgAspect: { value: 1 },
+        uRadius: { value: 0.075 }, uGlow: { value: 0 }
+      },
+      vertexShader: `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }`,
+      fragmentShader: `
+        precision highp float;
+        uniform sampler2D map; uniform float uAspect, uImgAspect, uRadius, uGlow; varying vec2 vUv;
+        float sdRR(vec2 p, vec2 b, float r){ vec2 q = abs(p) - b + r; return min(max(q.x,q.y),0.0) + length(max(q,0.0)) - r; }
+        void main(){
+          vec2 p = (vUv - 0.5); p.x *= uAspect;
+          float d = sdRR(p, vec2(0.5*uAspect, 0.5), uRadius);
+          float aa = max(fwidth(d), 1e-4);
+          float inside = 1.0 - smoothstep(0.0, aa, d);
+          if (inside < 0.003) discard;
+          vec2 s = uAspect > uImgAspect ? vec2(1.0, uImgAspect/uAspect) : vec2(uAspect/uImgAspect, 1.0);
+          vec2 iuv = (vUv - 0.5) * s + 0.5;
+          vec3 tex = texture2D(map, iuv).rgb;
+          /* the front card is lit a touch warmer, which is what the reflection
+             then carries down into the water */
+          tex += vec3(0.42, 0.16, 0.05) * uGlow * 0.5;
+          gl_FragColor = vec4(tex, inside);
+        }`
+    });
   }
 
-  /* input */
-  stage.addEventListener('pointerdown', function (e) {
-    dragging = true; lastX = downX = e.clientX; moved = 0; vel = 0;
-    stage.classList.add('dragging'); stage.setPointerCapture(e.pointerId);
-    hintEl.classList.remove('on');
+  let members = [], cards = [], labels = [], ringRadius = 6, front = 0, gang = GANGS[0].id;
+  let spin = 0, spinVel = 0, dragging = false, lastX = 0, moved = 0, pointerId = null;
+
+  function buildRing(list) {
+    carousel.children.slice().forEach(c => { carousel.remove(c); c.traverse(o => { if (o.geometry) o.geometry.dispose(); if (o.material) o.material.dispose(); }); });
+    labels.forEach(l => l.el.remove()); labels = []; cards = []; members = list;
+    const n = Math.max(list.length, 3);
+    /* chord = 2 R sin(pi/n): solve R so the gap between cards is constant */
+    ringRadius = (CARD_W + CARD_GAP) / (2 * Math.sin(Math.PI / n));
+    const cardY = CARD_LIFT + CARD_H / 2;
+    list.forEach((acc, i) => {
+      const a = (i / n) * Math.PI * 2;
+      const g = new THREE.Group();
+      g.position.set(Math.sin(a) * ringRadius, cardY, Math.cos(a) * ringRadius);
+      g.rotation.y = a + Math.PI;
+      const mat = cardMaterial(null);
+      mat.uniforms.map.value = texFor(acc, mat);
+      const mesh = new THREE.Mesh(curvedCardGeo(CARD_W, CARD_H, ringRadius), mat);
+      mesh.userData = { i, acc, swell: 0 };
+      g.add(mesh); carousel.add(g); cards.push({ group: g, mesh, mat, acc, angle: a });
+
+      const el = document.createElement('span');
+      el.className = 'es-label'; el.textContent = acc.name || '';
+      labelsEl.appendChild(el); labels.push({ el, card: g });
+    });
+    spin = 0; spinVel = 0; front = 0; dock();
+  }
+
+  /* ---------- water ---------- */
+  const TRAIL_N = 12;
+  const trail = Array.from({ length: TRAIL_N }, () => new THREE.Vector3(0, 0, -1000));
+  const reflectRT = new THREE.WebGLRenderTarget(1, 1, { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter });
+  const reflectCam = new THREE.PerspectiveCamera();
+  const textureMatrix = new THREE.Matrix4();
+  const wu = {
+    tReflect: { value: reflectRT.texture }, uTexMatrix: { value: textureMatrix }, uTime: { value: 0 },
+    uCamPos: { value: new THREE.Vector3() },
+    uDeep: { value: new THREE.Vector3(0.035, 0.030, 0.030) },
+    uTint: { value: new THREE.Vector3(0.10, 0.035, 0.012) },   // strk20 orange, deep
+    uReflBright: { value: 0.62 }, uRipScale: { value: 0.7 }, uRipDistort: { value: 0.09 },
+    uGlint: { value: 0.05 }, uFresnel: { value: 2.1 }, uTrail: { value: trail }
+  };
+  const water = new THREE.Mesh(new THREE.PlaneGeometry(220, 220), new THREE.ShaderMaterial({
+    uniforms: wu,
+    vertexShader: `precision highp float; uniform mat4 uTexMatrix; varying vec4 vRefl; varying vec3 vWpos;
+      void main(){ vec4 wp = modelMatrix * vec4(position,1.0); vWpos = wp.xyz; vRefl = uTexMatrix * vec4(position,1.0);
+        gl_Position = projectionMatrix * viewMatrix * wp; }`,
+    fragmentShader: `
+      precision highp float;
+      #define TRAIL_N ${TRAIL_N}
+      uniform sampler2D tReflect; uniform float uTime, uReflBright, uRipScale, uRipDistort, uGlint, uFresnel;
+      uniform vec3 uCamPos, uDeep, uTint; uniform vec3 uTrail[TRAIL_N];
+      varying vec4 vRefl; varying vec3 vWpos;
+      void wave(vec2 p, vec2 d, float k, float w, float a, inout vec2 grad){ grad += a * k * cos(dot(d,p)*k + uTime*w) * d; }
+      void main(){
+        vec2 p = vWpos.xz; vec2 grad = vec2(0.0); float A = uRipScale;
+        wave(p, normalize(vec2( 1.0, 0.35)), 1.7, 1.30, 0.045*A, grad);
+        wave(p, normalize(vec2(-0.6, 1.0 )), 2.4, 1.05, 0.034*A, grad);
+        wave(p, normalize(vec2( 0.4,-1.0 )), 3.6, 1.70, 0.022*A, grad);
+        wave(p, normalize(vec2(-1.0,-0.2 )), 5.1, 2.20, 0.013*A, grad);
+        float crest = 0.0;
+        for(int i=0;i<TRAIL_N;i++){
+          vec3 e = uTrail[i]; float age = uTime - e.z;
+          if(age > 0.0 && age < 2.4){
+            float d = distance(p, e.xy); float rad = age * 2.1;
+            float band = exp(-pow((d - rad) * 3.2, 2.0)); float decay = (1.0 - age / 2.4);
+            vec2 dir = d > 1e-4 ? (p - e.xy) / d : vec2(0.0);
+            grad += dir * (-sin((d - rad) * 9.0) * 9.0 * band * decay * 0.010 * A);
+            crest += cos((d - rad) * 9.0) * band * decay;
+          }
+        }
+        vec3 N = normalize(vec3(-grad.x, 1.0, -grad.y));
+        vec3 V = normalize(uCamPos - vWpos);
+        vec2 ruv = vRefl.xy / vRefl.w; ruv += N.xz * uRipDistort;
+        vec3 refl = texture2D(tReflect, clamp(ruv, 0.001, 0.999)).rgb * uReflBright;
+        float fres = 0.02 + 0.95 * pow(1.0 - clamp(dot(V, N), 0.0, 1.0), uFresnel);
+        vec3 deep = mix(uDeep, uTint, 0.25 + 0.25 * N.y);
+        vec3 col = mix(deep, refl, fres);
+        vec3 gdir = normalize(vec3(0.2, 1.0, -0.3)); vec3 H = normalize(gdir + V);
+        col += vec3(0.7, 0.42, 0.28) * pow(clamp(dot(N,H),0.0,1.0), 200.0) * uGlint;
+        col += refl * max(crest, 0.0) * 0.09;
+        float dist = length(vWpos.xz - uCamPos.xz);
+        col = mix(col, uDeep, smoothstep(12.0, 44.0, dist));
+        /* fade the far pool out so it meets the page, not a hard edge */
+        float a = 1.0 - smoothstep(16.0, 46.0, dist);
+        gl_FragColor = vec4(col, a);
+      }`,
+    transparent: true
+  }));
+  water.rotation.x = -Math.PI / 2; scene.add(water);
+
+  const _rN = new THREE.Vector3(), _rW = new THREE.Vector3(), _cW = new THREE.Vector3(), _rot = new THREE.Matrix4();
+  const _la = new THREE.Vector3(), _vw = new THREE.Vector3(), _tg = new THREE.Vector3(), _q = new THREE.Vector4(), _cl = new THREE.Vector4(), _pl = new THREE.Plane();
+  function updateReflection() {
+    _rW.setFromMatrixPosition(water.matrixWorld); _cW.setFromMatrixPosition(camera.matrixWorld);
+    _rot.extractRotation(water.matrixWorld); _rN.set(0, 0, 1).applyMatrix4(_rot);
+    _vw.subVectors(_rW, _cW); if (_vw.dot(_rN) > 0) return;
+    _vw.reflect(_rN).negate().add(_rW);
+    _rot.extractRotation(camera.matrixWorld);
+    _la.set(0, 0, -1).applyMatrix4(_rot).add(_cW);
+    _tg.subVectors(_rW, _la).reflect(_rN).negate().add(_rW);
+    reflectCam.position.copy(_vw); reflectCam.up.set(0, 1, 0).applyMatrix4(_rot).reflect(_rN); reflectCam.lookAt(_tg);
+    reflectCam.far = camera.far; reflectCam.updateMatrixWorld(); reflectCam.projectionMatrix.copy(camera.projectionMatrix);
+    textureMatrix.set(0.5,0,0,0.5, 0,0.5,0,0.5, 0,0,0.5,0.5, 0,0,0,1);
+    textureMatrix.multiply(reflectCam.projectionMatrix); textureMatrix.multiply(reflectCam.matrixWorldInverse); textureMatrix.multiply(water.matrixWorld);
+    _pl.setFromNormalAndCoplanarPoint(_rN, _rW).applyMatrix4(reflectCam.matrixWorldInverse);
+    _cl.set(_pl.normal.x, _pl.normal.y, _pl.normal.z, _pl.constant);
+    const M = reflectCam.projectionMatrix;
+    _q.x = (Math.sign(_cl.x) + M.elements[8]) / M.elements[0];
+    _q.y = (Math.sign(_cl.y) + M.elements[9]) / M.elements[5];
+    _q.z = -1.0; _q.w = (1.0 + M.elements[10]) / M.elements[14];
+    _cl.multiplyScalar(2.0 / _cl.dot(_q));
+    M.elements[2] = _cl.x; M.elements[6] = _cl.y; M.elements[10] = _cl.z + 1.0; M.elements[14] = _cl.w;
+    water.visible = false;
+    const prev = renderer.getRenderTarget();
+    renderer.setRenderTarget(reflectRT); renderer.clear(); renderer.render(scene, reflectCam); renderer.setRenderTarget(prev);
+    water.visible = true;
+  }
+
+  /* ---------- interaction ---------- */
+  const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
+  let hovered = null, waterHit = new THREE.Vector3(), trailAt = 0;
+  const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
+  const cv = renderer.domElement;
+
+  cv.addEventListener('pointerdown', e => {
+    dragging = true; lastX = e.clientX; moved = 0; spinVel = 0; pointerId = e.pointerId;
+    stage.classList.add('dragging'); cv.setPointerCapture(e.pointerId); hintEl.classList.remove('on');
   });
-  stage.addEventListener('pointermove', function (e) {
-    var r = stage.getBoundingClientRect();
+  cv.addEventListener('pointermove', e => {
+    const r = cv.getBoundingClientRect();
+    ndc.x = ((e.clientX - r.left) / r.width) * 2 - 1;
+    ndc.y = -((e.clientY - r.top) / r.height) * 2 + 1;
     hintEl.style.transform = 'translate3d(' + (e.clientX - r.left + 16) + 'px,' + (e.clientY - r.top - 12) + 'px,0)';
-    if (!dragging) { if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) hintEl.classList.add('on'); return; }
-    var dx = e.clientX - lastX; lastX = e.clientX; moved += Math.abs(dx);
-    rot += dx * DRAG; vel = dx * DRAG;
+    if (!dragging && fine) hintEl.classList.add('on');
+    if (dragging) { const dx = e.clientX - lastX; lastX = e.clientX; moved += Math.abs(dx); spin += dx * DRAG_SPEED; spinVel = dx * DRAG_SPEED; }
+    /* stir the surface where the pointer meets it */
+    ray.setFromCamera(ndc, camera);
+    const t = ray.ray.intersectPlane(new THREE.Plane(new THREE.Vector3(0, 1, 0), 0), waterHit);
+    if (t && performance.now() - trailAt > 90) {
+      trailAt = performance.now();
+      trail.push(trail.shift().set(waterHit.x, waterHit.z, wu.uTime.value));
+    }
   });
-  function up(e) {
+  function release(e) {
     if (!dragging) return;
     dragging = false; stage.classList.remove('dragging');
-    if (moved <= 6 && e && e.clientX !== undefined) {
-      var el = document.elementFromPoint(e.clientX, e.clientY);
-      var card = el && el.closest ? el.closest('.es-card') : null;
-      if (card) { var i = parseInt(card.getAttribute('data-i'), 10); rot = -cards[i].base; vel = 0; }
-    }
+    if (moved <= 6 && hovered) { const i = hovered.userData.i; spin = Math.PI - cards[i].angle; spinVel = 0; }
   }
-  stage.addEventListener('pointerup', up);
-  stage.addEventListener('pointercancel', up);
-  stage.addEventListener('pointerleave', function () { hintEl.classList.remove('on'); });
+  cv.addEventListener('pointerup', release);
+  cv.addEventListener('pointercancel', release);
+  cv.addEventListener('pointerleave', () => { hintEl.classList.remove('on'); hovered = null; });
   stage.setAttribute('tabindex', '0');
-  stage.addEventListener('keydown', function (e) {
-    if (e.key === 'ArrowLeft') { rot += step; e.preventDefault(); }
-    if (e.key === 'ArrowRight') { rot -= step; e.preventDefault(); }
+  stage.addEventListener('keydown', e => {
+    const step = (Math.PI * 2) / Math.max(cards.length, 1);
+    if (e.key === 'ArrowLeft') { spin += step; e.preventDefault(); }
+    if (e.key === 'ArrowRight') { spin -= step; e.preventDefault(); }
   });
 
-  window.addEventListener('resize', measure);
+  /* ---------- dock ---------- */
+  const pad = n => (n < 10 ? '0' : '') + n;
+  function dock() {
+    const acc = (cards[front] || {}).acc; if (!acc) return;
+    countEl.innerHTML = '[ <b>' + pad(front + 1) + '</b> / ' + pad(cards.length) + ' ]';
+    nameEl.innerHTML = '<a href="' + (acc.url || '#') + '" target="_blank" rel="noopener">' + (acc.name || '') + '</a>';
+    roleEl.textContent = acc.description || '';
+    if (dotsEl.children.length !== cards.length) {
+      dotsEl.innerHTML = ''; cards.forEach(() => dotsEl.appendChild(document.createElement('i')));
+    }
+    [...dotsEl.children].forEach((d, i) => d.classList.toggle('on', i === front));
+  }
 
-  /* data */
-  fetch('/data/ecosystem.json').then(function (r) { return r.json(); }).then(function (data) {
-    GANGS.forEach(function (g, i) {
-      var b = document.createElement('button');
+  function resize() {
+    const w = stage.clientWidth, h = stage.clientHeight;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h; camera.updateProjectionMatrix();
+    const dpr = renderer.getPixelRatio();
+    reflectRT.setSize(Math.max(2, Math.floor(w * dpr * 0.6)), Math.max(2, Math.floor(h * dpr * 0.6)));
+  }
+  addEventListener('resize', resize);
+
+  const _v = new THREE.Vector3();
+  function frame() {
+    const t = performance.now() * 0.001;
+    wu.uTime.value = t;
+
+    if (!dragging) {
+      spin += AUTO_SPIN * 0.016;
+      if (Math.abs(spinVel) > 0.0004) { spin += spinVel; spinVel *= DAMP; }
+      else {
+        spinVel = 0;
+        const n = Math.max(cards.length, 1), step = (Math.PI * 2) / n;
+        const off = ((spin - Math.PI) % step + step) % step;
+        spin -= (off > step / 2 ? off - step : off) * SNAP;
+      }
+    }
+    carousel.rotation.y = spin;
+
+    camera.position.set(0, CAM_H, ringRadius * CAM_INSET);
+    camera.lookAt(0, CARD_LIFT + CARD_H * 0.30, -ringRadius * 0.5);
+    wu.uCamPos.value.copy(camera.position);
+
+    /* which card faces the lens, and the hover swell */
+    if (fine && !dragging) { ray.setFromCamera(ndc, camera); const hit = ray.intersectObjects(cards.map(c => c.mesh), false)[0]; hovered = hit ? hit.object : null; }
+    let best = 0, bestZ = Infinity;
+    cards.forEach((c, i) => {
+      c.group.getWorldPosition(_v);
+      if (_v.z < bestZ) { bestZ = _v.z; best = i; }
+      const want = c.mesh === hovered ? 1 : 0;
+      c.mesh.userData.swell += (want - c.mesh.userData.swell) * 0.16;
+      const s = 1 + c.mesh.userData.swell * 0.045;
+      c.group.scale.setScalar(s);
+      c.mat.uniforms.uGlow.value = (i === best ? 0.55 : 0) + c.mesh.userData.swell * 0.4;
+    });
+    if (best !== front) { front = best; dock(); }
+
+    /* DOM labels ride their cards */
+    const rect = cv.getBoundingClientRect();
+    labels.forEach((l, i) => {
+      l.card.getWorldPosition(_v); _v.y += CARD_H * 0.55;
+      const p = _v.clone().project(camera);
+      const facing = _v.clone().sub(camera.position).normalize();
+      const near = p.z < 1 && Math.abs(p.x) < 0.62;
+      const falloff = Math.max(0, 1 - Math.abs(p.x) / 0.62);
+      l.el.style.opacity = near ? String(falloff * (i === front ? 1 : 0.55)) : '0';
+      l.el.style.transform = 'translate(-50%,-100%) translate(' + ((p.x * 0.5 + 0.5) * rect.width) + 'px,' + ((-p.y * 0.5 + 0.5) * rect.height) + 'px)';
+      l.el.classList.toggle('is-front', i === front);
+    });
+
+    updateReflection();
+    renderer.render(scene, camera);
+    requestAnimationFrame(frame);
+  }
+
+  fetch('/data/ecosystem.json').then(r => r.json()).then(data => {
+    GANGS.forEach((g, i) => {
+      const b = document.createElement('button');
       b.type = 'button'; b.textContent = g.label + ' (' + (data[g.id] || []).length + ')';
       if (i === 0) b.className = 'on';
-      b.addEventListener('click', function () {
-        tabsEl.querySelectorAll('button').forEach(function (x) { x.classList.remove('on'); });
-        b.classList.add('on'); gang = g.id; build(data[g.id] || []);
+      b.addEventListener('click', () => {
+        tabsEl.querySelectorAll('button').forEach(x => x.classList.remove('on'));
+        b.classList.add('on'); gang = g.id; buildRing(data[g.id] || []); resize();
       });
       tabsEl.appendChild(b);
     });
-    build(data[gang] || []);
-    if (!reduced) raf = requestAnimationFrame(frame); else place();
-  }).catch(function (err) { console.error('[eco-ring]', err); mount.style.display = 'none'; });
-})();
+    buildRing(data[gang] || []);
+    resize();
+    if (reduced) { carousel.rotation.y = 0; updateReflection(); renderer.render(scene, camera); }
+    else requestAnimationFrame(frame);
+  }).catch(err => { console.error('[eco-ring]', err); MOUNT.style.display = 'none'; });
+}
