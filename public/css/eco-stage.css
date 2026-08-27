@@ -31,17 +31,24 @@
 /* the stage runs edge to edge and carries the cards plus their reflections */
 .es-stage { position: relative; flex: 1 1 auto; min-height: 46vh; width: 100%; border: 0; border-radius: 0; background: none; overflow: hidden; touch-action: pan-y; cursor: grab; user-select: none; -webkit-user-select: none; }
 .es-stage.dragging { cursor: grabbing; }
+/* the pool the cards stand on: near-black, with the horizon where they meet */
+.es-stage::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 46%; pointer-events: none; z-index: 0;
+  background: linear-gradient(to bottom, rgba(10,10,10,0) 0%, rgba(8,8,8,.55) 22%, rgba(6,6,6,.9) 100%); }
 .es-ring { position: absolute; left: 50%; top: 44%; transform-style: preserve-3d; will-change: transform; }
-.es-card { position: absolute; left: 0; top: 0; border-radius: 12px; overflow: hidden; background: #0a0a0a; border: 1px solid var(--es-line); backface-visibility: hidden; transform-style: preserve-3d; will-change: transform, opacity; }
-.es-card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; z-index: 1; image-rendering: auto; }
-.es-card .es-mono { position: absolute; inset: 0; z-index: 0; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', monospace; font-size: 30px; letter-spacing: .06em; color: var(--es-acc); background: #141414; }
-.es-card .es-scrim { position: absolute; inset: 0; z-index: 2; background: linear-gradient(to top, rgba(10,10,10,.72) 0%, rgba(10,10,10,.14) 34%, transparent 60%); }
+.es-card { position: absolute; left: 0; top: 0; overflow: visible; background: none; border: 0; backface-visibility: hidden; transform-style: preserve-3d; will-change: transform, opacity; }
+.es-card .es-face { position: absolute; inset: 0; border-radius: 12px; overflow: hidden; background: #0a0a0a; border: 1px solid var(--es-line); }
+.es-card .es-face img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; z-index: 1; }
+.es-card .es-face .es-mono { position: absolute; inset: 0; z-index: 0; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', monospace; font-size: 30px; letter-spacing: .06em; color: var(--es-acc); background: #141414; }
+.es-card .es-face .es-scrim { position: absolute; inset: 0; z-index: 2; background: linear-gradient(to top, rgba(10,10,10,.72) 0%, rgba(10,10,10,.14) 34%, transparent 60%); }
 /* the mirror: the same card, flipped under itself and faded out */
-.es-card .es-mirror { position: absolute; left: 0; top: 100%; width: 100%; height: 100%; z-index: 0; overflow: hidden;
-  transform: scaleY(-1); opacity: .22; -webkit-mask-image: linear-gradient(to top, transparent 4%, #000 78%);
-  mask-image: linear-gradient(to top, transparent 4%, #000 78%); pointer-events: none; }
+/* the reflection: the same face flipped under the card, faded into the pool */
+.es-card .es-mirror { position: absolute; left: 0; top: calc(100% + 4px); width: 100%; height: 100%;
+  z-index: 0; overflow: hidden; border-radius: 12px; pointer-events: none;
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,.9) 0%, rgba(0,0,0,.35) 42%, transparent 88%);
+  mask-image: linear-gradient(to bottom, rgba(0,0,0,.9) 0%, rgba(0,0,0,.35) 42%, transparent 88%); }
+.es-card .es-mirror-in { position: absolute; inset: 0; transform: scaleY(-1); transform-origin: center; opacity: .6; filter: blur(0.7px) saturate(.9) brightness(.92); }
 .es-card .es-mirror img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.es-card-label { position: absolute; left: 50%; bottom: calc(100% + 14px); transform: translateX(-50%); font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--es-dim); white-space: nowrap; pointer-events: none; }
+.es-card-label { position: absolute; left: 50%; bottom: calc(100% + 30px); z-index: 3; transform: translateX(-50%); font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--es-dim); white-space: nowrap; pointer-events: none; }
 
 .es-frame { position: absolute; left: 50%; top: 44%; border: 1px solid var(--es-acc); border-radius: 18px; pointer-events: none; transform: translate(-50%,-50%); box-shadow: 0 0 34px rgba(197,52,0,.20); }
 .es-hint { position: absolute; z-index: 4; padding: 9px 16px; border-radius: 999px; background: var(--es-acc); color: #fafafa; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; pointer-events: none; opacity: 0; transition: opacity .18s; white-space: nowrap; will-change: transform; }
@@ -93,8 +100,8 @@
 }
 
 /* only the card at the front wears its name */
-.es-card .es-card-label { opacity: 0; transition: opacity .25s; }
-.es-card.is-front .es-card-label { opacity: 1; }
+.es-card .es-card-label { opacity: .45; transition: opacity .25s, color .25s; }
+.es-card.is-front .es-card-label { opacity: 1; color: var(--es-ink); }
 
 /* the ambient backdrop from the landing: fixed, behind everything, inert */
 .eco-bd { position: fixed; inset: 0; z-index: 0; pointer-events: none; }

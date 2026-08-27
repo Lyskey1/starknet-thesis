@@ -101,8 +101,11 @@
       var cands = candidates(acc);
       var mono = '<div class="es-mono">' + initials(acc) + '</div>';
       var pic = cands.length ? '<img alt="" data-try="0" src="' + cands[0] + '">' : '';
-      el.innerHTML = mono + pic + '<div class="es-scrim"></div>' +
-        '<div class="es-mirror">' + pic + '</div>' +
+      /* The face clips (rounded corners, the scrim); the card itself must NOT,
+         or it cuts away the reflection hanging below it and the label above. */
+      el.innerHTML =
+        '<div class="es-face">' + mono + pic + '<div class="es-scrim"></div></div>' +
+        '<div class="es-mirror"><div class="es-mirror-in">' + pic + '</div></div>' +
         '<span class="es-card-label">' + (acc.name || '') + '</span>';
       [].forEach.call(el.querySelectorAll('img'), function (img) {
         img.addEventListener('error', function () {
