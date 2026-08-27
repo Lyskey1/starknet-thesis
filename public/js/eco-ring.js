@@ -16,23 +16,28 @@ if (MOUNT) {
   ];
   /* the ring: card size in world units, and the gap between neighbours. The
      radius is solved from the member count so that gap never changes. */
-  const CARD_W = 1.66, CARD_H = 2.42, CARD_GAP = 0.40, CARD_LIFT = 0.05, CARD_CURVE = 1;
+  const CARD_W = 2.15, CARD_H = 3.05, CARD_GAP = 0.34, CARD_LIFT = 0.05, CARD_CURVE = 1;
+  /* how many cards either side of the front stay lit — the rest sink into the
+     dark rather than crowding the frame */
+  const LIT_FROM = 2.1, LIT_TO = 3.1;
   /* the lens stands INSIDE the ring, as the reference's does: the cards face
      the axis, so from within the arc reads concave and fills the frame. */
-  const FOV = 58, CAM_H = 1.24, CAM_INSET = 0.66;
+  const FOV = 56, CAM_H = 1.52, CAM_INSET = 0.70;
   const AUTO_SPIN = 0.035, DRAG_SPEED = 0.0085, DAMP = 0.9, SNAP = 0.10;
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   MOUNT.innerHTML =
     '<div class="es-screen">' +
-      '<div class="es-top"><p class="es-kicker">The voices</p>' +
-        '<h2>Meet the gang</h2>' +
-        '<p class="es-lede">The people building, shaping and shitposting Starknet. Drag the ring.</p>' +
-        '<div class="es-ring-tabs" role="tablist"></div></div>' +
       '<div class="es-stage"><div class="es-labels"></div>' +
         '<div class="es-hint">Drag to explore</div></div>' +
-      '<div class="es-dock"><div class="es-count">[ <b>01</b> / 01 ]</div><div class="es-name"></div>' +
-        '<div class="es-role"></div><div class="es-dots"></div></div>' +
+      '<div class="es-ui">' +
+        '<div class="es-top"><p class="es-kicker">The voices</p>' +
+          '<h2>Meet the gang</h2>' +
+          '<p class="es-lede">The people building, shaping and shitposting Starknet. Drag the ring.</p>' +
+          '<div class="es-ring-tabs" role="tablist"></div></div>' +
+        '<div class="es-dock"><div class="es-count">[ <b>01</b> / 01 ]</div><div class="es-name"></div>' +
+          '<div class="es-role"></div><div class="es-dots"></div></div>' +
+      '</div>' +
     '</div>';
 
   const tabsEl = MOUNT.querySelector('.es-ring-tabs');
@@ -95,12 +100,12 @@ if (MOUNT) {
       transparent: true,
       uniforms: {
         map: { value: map }, uAspect: { value: CARD_W / CARD_H }, uImgAspect: { value: 1 },
-        uRadius: { value: 0.075 }, uGlow: { value: 0 }
+        uRadius: { value: 0.075 }, uGlow: { value: 0 }, uFade: { value: 1 }
       },
       vertexShader: `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }`,
       fragmentShader: `
         precision highp float;
-        uniform sampler2D map; uniform float uAspect, uImgAspect, uRadius, uGlow; varying vec2 vUv;
+        uniform sampler2D map; uniform float uAspect, uImgAspect, uRadius, uGlow, uFade; varying vec2 vUv;
         float sdRR(vec2 p, vec2 b, float r){ vec2 q = abs(p) - b + r; return min(max(q.x,q.y),0.0) + length(max(q,0.0)) - r; }
         void main(){
           vec2 p = (vUv - 0.5); p.x *= uAspect;
@@ -114,7 +119,7 @@ if (MOUNT) {
           /* the front card is lit a touch warmer, which is what the reflection
              then carries down into the water */
           tex += vec3(0.42, 0.16, 0.05) * uGlow * 0.5;
-          gl_FragColor = vec4(tex, inside);
+          gl_FragColor = vec4(tex, inside * uFade);
         }`
     });
   }
@@ -318,7 +323,7 @@ if (MOUNT) {
     carousel.rotation.y = spin;
 
     camera.position.set(0, CAM_H, ringRadius * CAM_INSET);
-    camera.lookAt(0, CARD_LIFT + CARD_H * 0.30, -ringRadius * 0.5);
+    camera.lookAt(0, CARD_LIFT + CARD_H * 0.34, -ringRadius * 0.5);
     wu.uCamPos.value.copy(camera.position);
 
     /* which card faces the lens, and the hover swell */
@@ -332,6 +337,12 @@ if (MOUNT) {
       const s = 1 + c.mesh.userData.swell * 0.045;
       c.group.scale.setScalar(s);
       c.mat.uniforms.uGlow.value = (i === best ? 0.55 : 0) + c.mesh.userData.swell * 0.4;
+      /* slots away from the front, wrapped: only LIT_TO of them stay visible */
+      const n = cards.length || 1;
+      let d = Math.abs(i - best); d = Math.min(d, n - d);
+      const lit = 1 - Math.min(1, Math.max(0, (d - LIT_FROM) / (LIT_TO - LIT_FROM)));
+      c.mat.uniforms.uFade.value = lit;
+      c.group.visible = lit > 0.003;
     });
     if (best !== front) { front = best; dock(); }
 

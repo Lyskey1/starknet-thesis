@@ -12,7 +12,10 @@
 
 /* ---------- gang ring: a WebGL carousel standing on water ---------- */
 #ecoRing { width: 100vw; max-width: none; margin: 0 0 0 calc(50% - 50vw); padding: 0; background: transparent; }
-.es-screen { position: relative; min-height: 108vh; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; background: transparent; }
+.es-screen { position: relative; min-height: 116vh; overflow: hidden; background: transparent; }
+/* the copy rides ON the water rather than sitting below it */
+.es-ui { position: relative; z-index: 3; min-height: 116vh; display: flex; flex-direction: column; justify-content: space-between; pointer-events: none; }
+.es-ui > * { pointer-events: auto; }
 
 .es-top { position: relative; z-index: 3; padding: 108px 24px 0; text-align: center; }
 .es-top .es-kicker { margin: 0 0 12px; }
@@ -26,12 +29,16 @@
 .es-ring-tabs button.on { color: var(--es-acc); border-color: var(--es-acc); background: rgba(197,52,0,.12); }
 
 /* the stage runs edge to edge; the canvas carries the cards AND their water */
-.es-stage { position: relative; flex: 1 1 auto; min-height: 54vh; width: 100%; margin-top: -32px; border: 0; background: none; overflow: hidden; touch-action: pan-y; cursor: grab; user-select: none; -webkit-user-select: none; }
+/* the canvas fills the WHOLE section: the pool runs behind the name too */
+.es-stage { position: absolute; inset: 0; z-index: 0; width: 100%; border: 0; background: none; overflow: hidden; touch-action: pan-y; cursor: grab; user-select: none; -webkit-user-select: none; }
 .es-stage.dragging { cursor: grabbing; }
 .es-stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 /* the pool has no edge: it dissolves into the dock so the two read as one */
-.es-stage::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 22%; pointer-events: none; z-index: 2;
-  background: linear-gradient(to bottom, rgba(13,13,13,0), rgba(13,13,13,.75) 62%, rgba(13,13,13,1)); }
+/* no hard edge at either end: the pool dissolves into the page */
+.es-stage::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 26%; pointer-events: none; z-index: 2;
+  background: linear-gradient(to bottom, rgba(13,13,13,0), rgba(13,13,13,.55) 55%, rgba(13,13,13,.92)); }
+.es-stage::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 20%; pointer-events: none; z-index: 2;
+  background: linear-gradient(to top, rgba(13,13,13,0), rgba(13,13,13,.7)); }
 
 .es-labels { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
 .es-label { position: absolute; left: 0; top: 0; font-family: 'IBM Plex Mono', monospace; font-size: 11px;
@@ -43,7 +50,7 @@
 .es-hint.on { opacity: 1; }
 
 /* the dock continues the pool rather than sitting under it */
-.es-dock { position: relative; z-index: 3; display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 0 24px 72px; margin-top: -6vh; text-align: center; }
+.es-dock { position: relative; z-index: 3; display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 0 24px 76px; text-align: center; }
 .es-dock .es-count { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .2em; color: var(--es-faint); }
 .es-dock .es-count b { color: var(--es-acc); font-weight: 500; }
 .es-dock .es-name { font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-weight: 300; font-size: clamp(24px, 3vw, 40px); line-height: 1.05; letter-spacing: -.028em; color: var(--es-ink); }
@@ -56,9 +63,8 @@
 
 @media (max-width: 860px) {
   .es-top { padding: 84px 20px 0; }
-  .es-screen { min-height: 100vh; }
-  .es-stage { min-height: 48vh; }
-  .es-dock { padding-bottom: 44px; margin-top: -4vh; }
+  .es-screen, .es-ui { min-height: 100vh; }
+  .es-dock { padding-bottom: 44px; }
 }
 
 
