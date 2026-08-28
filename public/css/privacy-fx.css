@@ -11,12 +11,14 @@
    belongs in the lower band, behind the headline, as the reference has it */
 .pv-human { position: absolute; inset: auto 0 0 0; height: min(100%, 106vh); z-index: 0; overflow: hidden; pointer-events: none;
   /* The video paints every pixel opaque (object-fit:cover), so the fixed
-     ambient-wash canvas behind the page can never show through it directly.
-     This gradient stands in for it -- same warm-glow-on-near-black language
-     as js/eco-backdrop.js -- and the video screens onto it (below), so its
-     black backdrop goes transparent and the glow reads as genuinely behind
-     the figure, not painted over a flat colour. */
-  background: radial-gradient(115% 85% at 28% 78%, rgba(197,52,0,.4) 0%, rgba(197,52,0,.14) 38%, transparent 68%), #0d0d0d; }
+     page-wide ambient-wash canvas (js/eco-backdrop.js) can't show through
+     it directly -- it sits several stacking contexts back, and blending
+     the video against it read flat. js/pv-human-shader.js mounts a second,
+     local instance of the same flame wash right here instead, so the
+     video's mix-blend-mode:screen (below) has genuine motion in the same
+     layer to screen against, not a static gradient standing in for it. */
+  background: #0d0d0d; }
+.pv-human-shader { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
 .pv-figure { position: absolute; inset: 0; }
 /* cover, not contain: a fixed box left its own edges showing */
 .pv-human video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 68% 42%;
