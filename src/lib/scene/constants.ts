@@ -78,27 +78,30 @@ export const ORB_CONFIG = {
   distortGain: 3.4,
 } as const;
 
-/** Spiral galaxy form. */
+/**
+ * The second act's figure — Privacy, staged as a standing point-cloud
+ * humanoid instead of the spiral this file used to describe. `colorEdge`
+ * (crown) / `colorCore` (ground) is a vertical gradient now, not a radial
+ * one — see `galaxy-shaders.ts`. The distances below (`cameraZ`, `dive`,
+ * `parallax`, `pointerRadius`) are sized for a body about two world units
+ * tall, not a galaxy spanning ninety.
+ */
 export const GALAXY_CONFIG = {
-  // Blue core → mint arms — the orb's palette (`ORB_CONFIG.colorBottom`/`colorTop`),
-  // so the disc reads as the same blue→mint radial gradient, radiating from centre.
   colorEdge: "#fafafa",
   colorCore: "#c53400",
   opacity: 0.55,
-  pointSize: 6,
-  brightness: 1.02,
+  pointSize: 1.15,
+  brightness: 0.7,
   armSpin: 0.4,
   tilt: -0.5,
-  scale: 0.18,
-  /** Camera distance at dive 0, and how far the dive pulls it in. */
-  cameraZ: 48,
-  dive: 30,
-  /** Extra tilt applied across the dive — tips the disc toward edge-on. */
-  diveTilt: 0.5,
-  /** Cursor orbital sway, in world units. */
-  parallax: 4,
-  pointerRadius: 5,
-  pointerStrength: 2,
+  scale: 1,
+  cameraZ: 4.6,
+  dive: 0.9,
+  /** Radians of reveal-turn across the act (`galaxy.tsx`), not an edge-on tilt. */
+  diveTilt: 4.2,
+  parallax: 0.55,
+  pointerRadius: 1.1,
+  pointerStrength: 0.4,
 } as const;
 
 /**

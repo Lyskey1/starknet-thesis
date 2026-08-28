@@ -122,7 +122,7 @@ export const SectionBrain = () => {
         {...UNIT_REVEAL}
         className="pointer-events-auto absolute bottom-[1.667vw] left-[1.667vw] max-lg:static max-lg:mt-[0.75rem]"
       >
-        <SendRequest />
+        <SendRequest href="/btcfi" />
       </Inview>
     </animated.div>
   );

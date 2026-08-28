@@ -127,9 +127,11 @@ export const Galaxy = () => {
     uniforms.uFade.value = 1 - blow;
     uniforms.uAssemble.value = assemble;
 
-    // Tip toward edge-on as the dive deepens.
-    group.rotation.x = -(GALAXY_CONFIG.tilt + state.galaxyDive * GALAXY_CONFIG.diveTilt);
-    group.rotation.z = pointerReaction ? pointer.x * 0.12 : 0;
+    // A slow reveal-turn instead of the spiral's edge-on tip: the figure
+    // rotates through roughly half a turn across the act, so it is seen from
+    // the front, the side, and just past it, rather than staying face-on.
+    group.rotation.y = state.galaxyDive * GALAXY_CONFIG.diveTilt;
+    group.rotation.z = pointerReaction ? pointer.x * 0.05 : 0;
 
     // Cursor void: project the pointer onto the z = 0 plane in world space.
     cursorTarget.set(0, 0, 0);

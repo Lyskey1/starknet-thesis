@@ -9,28 +9,29 @@ import { hiddenWhenClear, smoothstep, useSceneClock } from "./overlay";
 import { LETTER_REVEAL, WORD_REVEAL } from "./reveal";
 
 /**
- * Second-section overlay — the Figma "Reads presence, in motion" screen over the
- * galaxy. A fixed layer: centred title, centred support copy, and a four-stat
- * band across the foot with faint column dividers.
+ * Second-act overlay — Privacy, over the standing point-cloud figure (still
+ * named `Galaxy`/`SectionGalaxy` internally — the file used to be a spiral; see
+ * `galaxy-shaders.ts`). A fixed layer: centred title, centred support copy,
+ * and a four-stat band across the foot with faint column dividers.
  *
- * It fades against the global clock's galaxy window. Desktop measurements are the
- * Figma pixels in `vw` (÷14.4).
+ * It fades against the global clock's second-act window. Desktop measurements
+ * are the Figma pixels in `vw` (÷14.4).
  *
  * Below 1024px (ADR-0029) the stat band cannot survive as authored — four 11vw
  * columns pinned at fixed `left` offsets — so it becomes a 2×2 grid on tablet and
  * a single column on phones, with the copy stacked above it.
  */
 
-const TITLE = "Quantum will break most chains";
+const TITLE = "Every wallet is a public ledger";
 const SUPPORT =
-  "Starknet has been waiting for it. Hash-based proofs are post-quantum by construction, with a committed roadmap to full end-to-end security.";
+  "Starknet makes that optional: real onchain privacy, for any asset, live today — not a future roadmap.";
 
 /** `value` / `label` / `left` (Figma x ÷14.4 — the desktop offset only). */
 const STATS = [
-  { value: "2029", label: "Industry deadline", left: "6.944vw" },
-  { value: "$2B+", label: "US quantum mandates", left: "31.944vw" },
-  { value: "0", label: "Curve assumptions in STARKs", left: "56.944vw" },
-  { value: "01", label: "Chain born post-quantum", left: "81.944vw" },
+  { value: "7/7", label: "Completeness score", left: "6.944vw" },
+  { value: "~$0.12", label: "Lowest privacy fee in DeFi", left: "31.944vw" },
+  { value: "1", label: "Shared pool, every asset", left: "56.944vw" },
+  { value: "Seconds", label: "Shield & unshield, both ways", left: "81.944vw" },
 ];
 
 /** Column dividers between the stats (Figma x ÷14.4 — desktop only). */

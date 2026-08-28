@@ -30,12 +30,11 @@ import { SendRequest } from "../send-request";
  * an **inline** style, so only `position: static !important` can beat it.
  */
 
-const TITLE = "Starknet is the answer to crypto's three hardest problems";
-const TAGLINE =
-  "Real onchain privacy. Post-quantum proofs by design. Bitcoin turned into productive capital.";
+const TITLE = "Quantum will break most chains";
+const TAGLINE = "Starknet has been waiting for it.";
 const SUPPORT =
-  "Three forces converging on a single chain, with STRK capturing the value at every turn. STRK is the ticker on the whole thesis.";
-const TAGS = ["[ PRIVACY ]", "[ QUANTUM ]", "[ BTCFI ]"];
+  "Hash-based proofs are post-quantum by construction, with a committed roadmap to full end-to-end security.";
+const TAGS = ["[ HASH-BASED PROOFS ]", "[ POST-QUANTUM BY DESIGN ]", "[ NO CURVE ASSUMPTIONS ]"];
 
 export interface HeroProps {
   /** Flips true once the loader curtain lifts — gates the reveal. */
@@ -121,7 +120,7 @@ export const Hero = ({ introStarted }: HeroProps) => {
           {...UNIT_REVEAL}
           className="pointer-events-auto absolute top-[10.972vw] right-0 max-lg:static"
         >
-          <SendRequest />
+          <SendRequest href="/quantum" />
         </Inview>
       </div>
     </animated.div>

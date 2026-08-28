@@ -25,16 +25,13 @@ const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 /**
  * Owns the shared camera.
  *
- * Both source scenes shipped their own camera: the orb sits close (`z ≈ 3.8`),
- * the galaxy far out (`z = 48`, diving to 18). Rather than rescale one form to
- * meet the other, the camera travels between them, driven by `galaxyPresence`.
- * That keeps each form at its authored scale, and — because presence returns to
- * 0 as the galaxy disperses — the camera pulls back to the orb exactly as the
- * orb returns for the final section.
- *
- * The galaxy's "dive" is what makes its arrival immersive: the camera falls
- * toward the core while the disc tips toward edge-on, so the second scene
- * envelops the viewer rather than merely fading up.
+ * The orb (Quantum) sits close (`z ≈ 3.8`); the second act's figure (Privacy,
+ * still named `GALAXY_CONFIG` internally — see `galaxy-shaders.ts`) sits a
+ * little further out (`z ≈ 4.6`) so a standing body fits the frame. Rather
+ * than rescale one form to meet the other, the camera travels between them,
+ * driven by `galaxyPresence`. That keeps each form at its authored scale, and
+ * — because presence returns to 0 as the figure disperses — the camera pulls
+ * back to the orb's distance exactly as the orb returns for the final section.
  */
 const CameraRig = () => {
   const camera = useThree((state) => state.camera);
