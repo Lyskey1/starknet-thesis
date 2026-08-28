@@ -1,6 +1,6 @@
 /* The lineage stack (#lg). Two jobs: run the pinned intro (the light-streak
-   curtain fades to black, --st, while the title comes up, --tt, over the
-   200vh head band), and open the card that sits in
+   curtain parts outward, --open, while the title comes up, --tt, over the
+   170vh head band), and open the card that sits in
    the middle band of the viewport (.is-open), leaving cards above it marked
    .is-past. The card's unfold and the art's stroke draw are CSS. */
 (() => {
@@ -18,9 +18,9 @@
     const r = head.getBoundingClientRect();
     const range = r.height - pin.offsetHeight;
     const p = range > 0 ? clamp(-r.top / range) : (r.top <= 0 ? 1 : 0);
-    // curtain holds, then fades; the title comes up through the fade
-    root.style.setProperty('--st', (1 - ease(0.3, 0.8, p)).toFixed(3));
-    root.style.setProperty('--tt', ease(0.5, 0.9, p).toFixed(3));
+    // the curtain holds, then parts outward; the title comes up as it opens
+    root.style.setProperty('--open', ease(0.18, 0.85, p).toFixed(3));
+    root.style.setProperty('--tt', ease(0.2, 0.6, p).toFixed(3));
   }
   function onScroll() { if (!ticking) { ticking = true; requestAnimationFrame(fade); } }
   window.addEventListener('scroll', onScroll, { passive: true });

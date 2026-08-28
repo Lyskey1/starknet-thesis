@@ -90,23 +90,27 @@ body.page-privacy .hero::before { display: none; }
    down the middle with a square playhead pinned at mid-viewport (sticky), and
    a card per stop alternating sides. A card's visual and description unfold
    when js/lineage.js marks it .is-open; the art's strokes draw in. */
-.lg { --st: 1; --tt: 0; position: relative; margin: 140px 0 0; }
-/* the intro: a 200vh band whose inner 100vh is pinned. Over the band's
-   scroll the streaks (--st, 1 to 0) fade to black and the title (--tt, 0 to
-   1) fades in; the rail and the first card start only after it releases */
-.lg-head { position: relative; width: 100vw; margin-left: calc(50% - 50vw); height: 200vh; }
-.lg-pin { position: sticky; top: 0; height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; overflow: hidden; background: rgba(0,0,0, var(--st)); }
-.lg-streaks { position: absolute; inset: -4% -2%; opacity: var(--st); filter: blur(3px) saturate(1.15); pointer-events: none;
+.lg { --open: 0; --tt: 0; position: relative; margin: 140px 0 0; }
+/* the intro, as sui.io does it: a 170vh band whose inner 100vh is pinned
+   over the start of the rail. Two curtain halves part outward from the
+   centre (--open, 0 to 1) while the title, top-aligned, comes up (--tt).
+   The track starts under the pin (negative margin), so the playhead and
+   the first card are already in the frame as the curtain opens. */
+.lg-head { position: relative; width: 100vw; margin-left: calc(50% - 50vw); height: 170vh; z-index: 2; pointer-events: none; }
+.lg-pin { position: sticky; top: 0; height: 100vh; display: flex; align-items: flex-start; justify-content: center; text-align: center; overflow: hidden; padding-top: 11vh; }
+.lg-streaks, .lg-streaks-r { position: absolute; top: -4%; bottom: -4%; width: 52%; filter: blur(2px) saturate(1.2); pointer-events: none;
   background: repeating-linear-gradient(90deg, #1a0600 0 6px, #c53400 6px 12px, #6a1a00 12px 22px, #ff8a4a 22px 25px, #2a0a00 25px 40px, #b03000 40px 45px, #120400 45px 62px, #e86a30 62px 64px, #3a0e00 64px 84px);
-  -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 26%, transparent 42%, transparent 58%, #000 74%, #000 100%);
-          mask-image: linear-gradient(90deg, #000 0%, #000 26%, transparent 42%, transparent 58%, #000 74%, #000 100%);
   animation: lgStreak 24s linear infinite alternate; }
+.lg-streaks { left: -2%; transform: translateX(calc(var(--open) * -110%));
+  -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 60%, transparent 100%); mask-image: linear-gradient(90deg, #000 0%, #000 60%, transparent 100%); }
+.lg-streaks-r { right: -2%; transform: translateX(calc(var(--open) * 110%));
+  -webkit-mask-image: linear-gradient(270deg, #000 0%, #000 60%, transparent 100%); mask-image: linear-gradient(270deg, #000 0%, #000 60%, transparent 100%); }
 @keyframes lgStreak { from { background-position: 0 0; } to { background-position: 168px 0; } }
 .lg-head-in { position: relative; opacity: var(--tt); transform: translateY(calc((1 - var(--tt)) * 24px)); }
 .lg-title { margin: 0; font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-weight: 300; font-size: clamp(40px, 6.4vw, 104px); line-height: .98; letter-spacing: -.03em; color: var(--pf-ink); }
 .lg-sub { display: inline-flex; align-items: center; gap: 10px; margin: 26px 0 0; font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-size: 18px; color: rgba(250,250,250,.85); }
 .lg-sq { width: 12px; height: 12px; background: var(--pf-acc); }
-.lg-track { position: relative; max-width: 1400px; margin: 0 auto; padding: 0 32px 20vh; }
+.lg-track { position: relative; z-index: 1; max-width: 1400px; margin: -62vh auto 0; padding: 0 32px 20vh; }
 .lg-line { position: absolute; top: 0; bottom: 0; left: 50%; width: 0; border-left: 2px dotted rgba(250,250,250,.45); transform: translateX(-1px); }
 .lg-play { position: sticky; top: 50vh; z-index: 2; width: 14px; height: 14px; margin: 0 auto -14px; background: #fafafa; }
 .lg-play::before { content: ""; position: absolute; left: 6px; bottom: 14px; width: 2px; height: 44px; background: var(--pf-acc); }
@@ -141,7 +145,7 @@ body.page-privacy .hero::before { display: none; }
 @keyframes lgPulse { 0%, 100% { opacity: 1; } 50% { opacity: .55; } }
 .lg-card.is-open .lg-num, .lg-card.is-open .lg-yr { border-color: var(--pf-acc); }
 @media (prefers-reduced-motion: reduce) {
-  .lg-streaks { animation: none; }
+  .lg-streaks, .lg-streaks-r { animation: none; }
   .lg-head-in { transform: none; }
   .lg-cv { transition: none; }
   .lg-art path, .lg-art circle, .lg-art rect, .lg-art ellipse { stroke-dasharray: none; stroke-dashoffset: 0; animation: none !important; }
@@ -149,8 +153,9 @@ body.page-privacy .hero::before { display: none; }
 }
 @media (max-width: 860px) {
   .lg { margin-top: 80px; }
-  .lg-head { height: 140vh; }
-  .lg-pin { height: 70vh; }
+  .lg-head { height: 150vh; }
+  .lg-pin { padding-top: 14vh; }
+  .lg-track { margin-top: -50vh; }
   .lg-sub { font-size: 15px; }
   .lg-track { padding: 0 20px 12vh; }
   .lg-line { left: 20px; transform: none; }
