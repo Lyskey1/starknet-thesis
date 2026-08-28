@@ -110,13 +110,13 @@
      against 728px. Fatten the padding or a gap and the margin erodes
      until the hero outgrows min-height on short laptop windows, pushing
      the band below the fold. */
-  .hero { min-height: calc(100vh - 72px); display: flex; flex-direction: column; justify-content: center; align-items: stretch; overflow: visible; padding: 112px 0 26px; max-width: none; margin: 0 auto; text-align: left; position: relative; }
+  .hero { min-height: 0; height: calc(100vh - 72px); display: flex; flex-direction: column; justify-content: center; align-items: stretch; overflow: visible; padding: 72px 0 28px; max-width: none; margin: 0 auto; text-align: left; position: relative; }
   .pv-hero-inner { width: 100%; max-width: 1160px; margin: 0 auto; padding: 0 32px; position: relative; z-index: 1; }
   /* the CSS glow only paints when WebGL2 is missing (.hero-curtain-on
      hides it); left-anchored now so the fallback lights the copy rather
      than the empty right half */
   .hero::before { top: -40px; left: 18%; width: 760px; height: 420px; max-width: 100%; background: radial-gradient(ellipse at center top, rgba(var(--accent-rgb),0.16), transparent 70%); }
-  .hero-eyebrow { color: var(--accent); opacity: 1; margin-bottom: 22px; position: relative; }
+  .hero-eyebrow { color: var(--accent); opacity: 1; margin-bottom: 14px; position: relative; }
   /* Premise and payoff both sit on the site display spec inherited from
      css/styles.css .hero-title (clamp(34px,5.4vw,76px), weight 800,
      line-height .98, letter-spacing -.01em), matching every sibling hero;
@@ -125,7 +125,7 @@
      "your-savings-your-strategy-your-next" from the removed bracket
      setup line: build-search-index.js never rewrites existing ids, and
      shipped deep links resolve against it. */
-  .hero-title { margin-bottom: 24px; max-width: none; position: relative; }
+  .hero-title { margin-bottom: 0; max-width: none; position: relative; font-size: clamp(30px, min(5.4vw, 7.6vh), 76px); }
   /* PREMISE: display scale, softened to 78% white so the accent payoff
      below still dominates. */
   .hero-mid { display: block; color: rgba(250, 250, 250,.78); }
@@ -133,7 +133,7 @@
      was the tail of the removed bracket line's reveal sequence. Size,
      weight and tracking are the inherited display spec — no local type
      overrides. */
-  .hero .turn { display: block; margin-top: .3em; color: var(--em); }
+  .hero .turn { display: block; margin-top: 0; color: var(--em); }
   .hero-subtitle { font-size: 18px; color: rgba(250, 250, 250,0.62); max-width: 620px; margin: 22px 0 0; line-height: 1.7; position: relative; }
   .hero-subtitle b { color: var(--white); font-weight: 600; }
 
@@ -146,7 +146,7 @@
      carries the scroll and reduced motion turns it off for free. */
   /* 24px above the CTAs is strk's subtitle-to-CTA gap; the eco/dg 42px
      does not fit this hero's height budget (see the .hero comment). */
-  .pv-ctas { display: flex; gap: 18px; margin-top: 24px; flex-wrap: wrap; position: relative; }
+  .pv-ctas { display: flex; gap: 14px; margin-top: 18px; flex-wrap: wrap; position: relative; }
   /* Same face, casing, and colours as the landing's "Read the thesis" CTA
      (General Sans, sentence case, medium weight, a chalk pill at rest that
      turns accent on hover) instead of the page's own uppercase mono chip --
@@ -309,7 +309,7 @@
     .apt-breath { animation: none; transform: scale(1.02); }
     .apt-scan { display: none; }
   }
-  .pv-hero-fade { position: absolute; left: 0; right: 0; bottom: 0; height: 22%; z-index: 1; pointer-events: none;
+  .pv-hero-fade { position: absolute; left: 0; right: 0; bottom: 0; height: 14%; z-index: 1; pointer-events: none;
     background: linear-gradient(180deg, transparent, var(--black)); }
   .hero .hero-bloom { overflow: visible; }
   .pv-hero-afterglow { position: absolute; left: 50%; transform: translateX(-50%); bottom: -260px; width: min(1100px, 92vw); height: 520px; z-index: -1; pointer-events: none;
@@ -2256,76 +2256,90 @@
 <p class="fx-legend"><span class="fx-y" aria-hidden="true"></span> Yes<span class="fx-p" aria-hidden="true"></span> Partial, not counted<span class="fx-n" aria-hidden="true">&ndash;</span> No</p>
 </div>
 
-  <!-- Satoshi narrative: a tall pinned band (sq-band) holds the quote sticky
-       for a scroll range while quote-scroll.js lights it word by word (a
-       CSS --amt custom property per word, driven straight off scroll
-       position -- see js/quote-scroll.js), after strk20.starknet.io's own
-       testimonial section. Attribution and the CTAs are NOT pinned: they
-       are the band's trailing sibling, so they scroll up into view
-       normally once the highlight finishes and the pin releases. The
-       band paints no background of its own -- js/eco-backdrop.js's wash
-       (already fixed behind the whole page) is the backdrop here too. -->
-  <section class="sq-band th-pm-reveal" aria-labelledby="sq-heading" id="sq-band">
-    <div class="sq-sticky">
-      <div class="sq-in">
-        <p class="sq-kicker">Satoshi on Bitcointalk, thread 770, August 11, 2010</p>
-        <span class="sq-mark" aria-hidden="true">&ldquo;</span>
-        <blockquote class="sq-quote" id="sq-heading">
-          <p><span class="sq-w"><span class="sq-w-in">If</span></span> <span class="sq-w"><span class="sq-w-in">a</span></span> <span class="sq-w"><span class="sq-w-in">solution</span></span> <span class="sq-w"><span class="sq-w-in">was</span></span> <span class="sq-w"><span class="sq-w-in">found,</span></span> <span class="sq-w sq-em"><span class="sq-w-in">a</span></span> <span class="sq-w sq-em"><span class="sq-w-in">much</span></span> <span class="sq-w sq-em"><span class="sq-w-in">better,</span></span> <span class="sq-w sq-em"><span class="sq-w-in">easier,</span></span> <span class="sq-w sq-em"><span class="sq-w-in">more</span></span> <span class="sq-w sq-em"><span class="sq-w-in">convenient</span></span> <span class="sq-w sq-em"><span class="sq-w-in">implementation</span></span> <span class="sq-w sq-em"><span class="sq-w-in">of</span></span> <span class="sq-w sq-em"><span class="sq-w-in">Bitcoin</span></span> <span class="sq-w"><span class="sq-w-in">would</span></span> <span class="sq-w"><span class="sq-w-in">be</span></span> <span class="sq-w"><span class="sq-w-in">possible.</span></span></p>
-        </blockquote>
-      </div>
+  <!-- Satoshi's statement, set the way sui.io sets its thesis line: a mono
+       chip for the source, one huge tight statement, the three qualities
+       he asked for carried as inverted highlight blocks with an icon tile
+       each. Static, nothing pinned, nothing else in the section. -->
+  <section class="sq th-pm-reveal" aria-labelledby="sq-heading" id="sq-band">
+    <p class="sq-kicker">Satoshi on Bitcointalk, thread 770, August 11, 2010</p>
+    <blockquote class="sq-quote" id="sq-heading">
+      <p>If a solution was found, <mark class="sq-hl"><i class="sq-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 13.5h7L10 22l9-11.5h-7z"/></svg></i>a much better,</mark> <mark class="sq-hl"><i class="sq-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l18 18"/><path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M6.6 6.7C4 8.3 2.5 12 2.5 12s3.5 6.5 9.5 6.5c1.7 0 3.2-.5 4.5-1.2"/><path d="M9.9 5.7C10.6 5.6 11.3 5.5 12 5.5c6 0 9.5 6.5 9.5 6.5s-.9 1.7-2.5 3.3"/></svg></i>easier,</mark> <mark class="sq-hl"><i class="sq-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="7" rx="8" ry="3.2"/><path d="M4 7v10c0 1.8 3.6 3.2 8 3.2s8-1.4 8-3.2V7"/><path d="M4 12c0 1.8 3.6 3.2 8 3.2s8-1.4 8-3.2"/></svg></i>more convenient</mark> implementation of Bitcoin would be possible.</p>
+    </blockquote>
+    <div class="sq-foot">
+      <a class="sq-src" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/174/" target="_blank" rel="noopener">[ &rarr; ] Read the thread</a>
+      <span class="sq-tag">It&rsquo;s hard to think of how to apply zero-knowledge-proofs in this case.</span>
     </div>
   </section>
-  <div class="sq-after">
-    <p class="sq-tail">It&rsquo;s hard to think of how to apply zero-knowledge-proofs in this case.</p>
-    <div class="sq-by">
-      <span class="sq-av" aria-hidden="true">&#9679;</span>
-      <div><b>satoshi</b><span>Founder &middot; activity 364 &middot; the question that opened the thread</span></div>
-    </div>
-    <div class="sq-actions">
-      <a class="sq-src" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/174/" target="_blank" rel="noopener">Read the thread &rarr;</a>
-      <a class="pv-cta sq-cta chip-glass" href="/"><span>Read the thesis</span><i aria-hidden="true"><svg viewBox="0 0 51 51" fill="none"><path d="M26.293 23.583L34.4834 15.3926L35.6064 16.5156L27.416 24.7061H39V26.2939H27.418L35.6084 34.4844L34.4854 35.6074L26.293 27.415V39H24.7051V27.417L16.5146 35.6074L15.3916 34.4844L23.582 26.2939H12V24.7061H23.584L15.3936 16.5156L16.5166 15.3926L24.7051 23.5811V12H26.293V23.583Z"/></svg></i></a>
-    </div>
-  </div>
-  <script src="js/quote-scroll.js" defer></script>
 
   <div class="chapter th-pm-reveal" style="margin-top:72px">
     <h3 id="so-how-does-one-chain-check">So how does one chain <span class="em">check every box at once?</span></h3>
     <p>The answer starts fifteen years back, with Satoshi himself naming the tool.</p>
   </div>
 
-  <!-- The lineage as a horizontal scrubber: year ticks along a rail with a
-       playhead, one panel of copy per stop, an auto-advancing progress bar
-       with pause and next controls (js/timeline-scrub.js). The visual is the
-       page's own chrome bust over the hero backdrop shader, not photography:
-       each stop reframes it (a --focus custom property) instead of swapping
-       images. Autoplay never starts under prefers-reduced-motion. -->
+  <!-- The lineage, set the way sui.io sets its stack: a title over light
+       streaks that fade as you scroll, then one dotted rail down the middle
+       with a square playhead pinned at mid-viewport, and a card per stop
+       alternating left and right. A card opens (its line-art visual and
+       description unfold) when it reaches the middle (js/lineage.js). The
+       art is inline SVG line drawings, drawn on open, no photography. -->
   <section class="lg th-pm-reveal" id="lg" aria-label="How the tool reached Starknet">
     <div class="lg-head">
-      <p class="lg-kicker">The lineage</p>
-      <h2 id="from-the-questionto-the-answer" class="lg-title">From the question<br>to the answer</h2>
-    </div>
-    <div class="lg-rail" role="tablist" aria-label="Years">
-      <span class="lg-line" aria-hidden="true"></span>
-      <span class="lg-head-dot" aria-hidden="true"></span>
-      <button type="button" class="lg-tick is-on" role="tab" aria-selected="true" aria-controls="lg-panel-0" id="lg-tab-0" data-i="0"><span class="lg-dot" aria-hidden="true"></span><span class="lg-yr">2010</span></button><button type="button" class="lg-tick" role="tab" aria-selected="false" aria-controls="lg-panel-1" id="lg-tab-1" data-i="1"><span class="lg-dot" aria-hidden="true"></span><span class="lg-yr">2013</span></button><button type="button" class="lg-tick" role="tab" aria-selected="false" aria-controls="lg-panel-2" id="lg-tab-2" data-i="2"><span class="lg-dot" aria-hidden="true"></span><span class="lg-yr">2014</span></button><button type="button" class="lg-tick" role="tab" aria-selected="false" aria-controls="lg-panel-3" id="lg-tab-3" data-i="3"><span class="lg-dot" aria-hidden="true"></span><span class="lg-yr">2016</span></button><button type="button" class="lg-tick" role="tab" aria-selected="false" aria-controls="lg-panel-4" id="lg-tab-4" data-i="4"><span class="lg-dot" aria-hidden="true"></span><span class="lg-yr">2018</span></button><button type="button" class="lg-tick" role="tab" aria-selected="false" aria-controls="lg-panel-5" id="lg-tab-5" data-i="5"><span class="lg-dot" aria-hidden="true"></span><span class="lg-yr">2026</span></button>
-    </div>
-    <div class="lg-body">
-      <div class="lg-visual" aria-hidden="true">
-        <div class="lg-figure"><video autoplay muted loop playsinline preload="metadata" poster="assets/video/metal-human.jpg"><source src="assets/video/metal-human.mp4" type="video/mp4"></video></div>
-        <div class="lg-vscrim"></div>
-        <p class="lg-cap"><span class="lg-cap-yr">2010</span><span class="lg-cap-t">Satoshi's open question</span></p>
+      <div class="lg-streaks" aria-hidden="true"></div>
+      <div class="lg-head-in">
+        <h2 id="from-the-questionto-the-answer" class="lg-title">From the question<br>to the answer</h2>
+        <p class="lg-sub"><span class="lg-sq" aria-hidden="true"></span>Sixteen years from Satoshi's open question to STRK20</p>
       </div>
-      <div class="lg-panels"><article class="lg-panel is-on" role="tabpanel" id="lg-panel-0" aria-labelledby="lg-tab-0"><p class="lg-num">2010</p><h3 class="lg-h">Satoshi's open question</h3><p class="lg-p">On Bitcointalk, Satoshi says a much better Bitcoin would be possible if privacy could be solved, and that he cannot see how to apply zero-knowledge proofs to it.</p><ul class="lg-ul"><li>Bitcointalk thread 770, August 11, 2010</li><li>The problem is named, not solved</li></ul><a class="lg-more" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/174/" target="_blank" rel="noopener">Read the thread <span aria-hidden="true">&rarr;</span></a></article><article class="lg-panel" role="tabpanel" id="lg-panel-1" aria-labelledby="lg-tab-1" hidden><p class="lg-num">2013</p><h3 class="lg-h">The San Jose talk</h3><p class="lg-p">At Bitcoin 2013 in San Jose, Eli Ben-Sasson puts succinct zero-knowledge proofs in front of a Bitcoin audience for the first time: the tool Satoshi could not see how to use.</p><ul class="lg-ul"><li>SNARKs presented to a Bitcoin crowd</li><li>Proofs meet the chain</li></ul><a class="lg-more" href="https://www.youtube.com/watch?v=kLueWNsYRno" target="_blank" rel="noopener">Watch the talk <span aria-hidden="true">&rarr;</span></a></article><article class="lg-panel" role="tabpanel" id="lg-panel-2" aria-labelledby="lg-tab-2" hidden><p class="lg-num">2014</p><h3 class="lg-h">The Zerocash paper</h3><p class="lg-p">Zerocash shows how to make payments fully private on a public ledger with zero-knowledge proofs, with Eli Ben-Sasson among the authors.</p><ul class="lg-ul"><li>Private payments, formally</li><li>The design behind Zcash</li></ul><a class="lg-more" href="http://zerocash-project.org/paper" target="_blank" rel="noopener">Read the paper <span aria-hidden="true">&rarr;</span></a></article><article class="lg-panel" role="tabpanel" id="lg-panel-3" aria-labelledby="lg-tab-3" hidden><p class="lg-num">2016</p><h3 class="lg-h">Zcash launches</h3><p class="lg-p">Zcash ships the Zerocash design as a live chain. Eli Ben-Sasson is a founding scientist. Privacy is real, but only on one purpose-built network.</p><ul class="lg-ul"><li>Founding scientist</li><li>One asset, one chain</li></ul><a class="lg-more" href="https://en.wikipedia.org/wiki/Eli_Ben-Sasson" target="_blank" rel="noopener">About Eli Ben-Sasson <span aria-hidden="true">&rarr;</span></a></article><article class="lg-panel" role="tabpanel" id="lg-panel-4" aria-labelledby="lg-tab-4" hidden><p class="lg-num">2018</p><h3 class="lg-h">StarkWare is founded</h3><p class="lg-p">StarkWare forms to bring STARK proofs to production: transparent, hash-based, and built to scale. The proof system that would carry Starknet.</p><ul class="lg-ul"><li>STARKs to production</li><li>No trusted setup</li></ul><a class="lg-more" href="https://starkware.co" target="_blank" rel="noopener">Visit StarkWare <span aria-hidden="true">&rarr;</span></a></article><article class="lg-panel" role="tabpanel" id="lg-panel-5" aria-labelledby="lg-tab-5" hidden><p class="lg-num">2026</p><h3 class="lg-h">STRK20 is live</h3><p class="lg-p">Private transfers, swaps and balances for any asset on Starknet, with wallet-level UX. The question from 2010 has an answer on a general-purpose chain.</p><ul class="lg-ul"><li>Any asset, one shared pool</li><li>Live on mainnet</li></ul><a class="lg-more" href="https://x.com/Starknet/status/2064375302957289598" target="_blank" rel="noopener">See the announcement <span aria-hidden="true">&rarr;</span></a></article></div>
     </div>
-    <div class="lg-controls">
-      <button type="button" class="lg-btn lg-play" aria-label="Pause" aria-pressed="false"><svg class="lg-i-pause" viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="2" width="3.5" height="12"/><rect x="9.5" y="2" width="3.5" height="12"/></svg><svg class="lg-i-play" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2l10 6-10 6z"/></svg></button>
-      <div class="lg-prog" aria-hidden="true"><span class="lg-prog-fill"></span></div>
-      <p class="lg-count"><span class="lg-count-cur">01</span> / 06</p>
-      <button type="button" class="lg-btn lg-next" aria-label="Next"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></button>
+    <div class="lg-track">
+      <span class="lg-line" aria-hidden="true"></span>
+      <div class="lg-play" aria-hidden="true"></div>
+      <ol class="lg-list">
+      <li class="lg-stop lg-r">
+        <article class="lg-card">
+          <header class="lg-ch"><span class="lg-num">01</span><h3 class="lg-ct">Satoshi's open question</h3></header>
+          <div class="lg-cv"><div class="lg-cv-in"><svg class="lg-art" viewBox="0 0 320 220" aria-hidden="true"><g stroke="#4a4a4a" stroke-width="1.2" fill="none" stroke-linejoin="round" stroke-linecap="round"><path d="M60 60h120a8 8 0 0 1 8 8v40a8 8 0 0 1-8 8H92l-20 16v-16H60a8 8 0 0 1-8-8V68a8 8 0 0 1 8-8z"/><path d="M76 82h72M76 96h48"/><path d="M130 130h120a8 8 0 0 1 8 8v36a8 8 0 0 1-8 8h-12v14l-18-14h-90a8 8 0 0 1-8-8v-36a8 8 0 0 1 8-8z"/><path d="M146 150h70M146 164h44"/></g><g stroke="#c53400" stroke-width="1.4" fill="none" stroke-linejoin="round" stroke-linecap="round" class="lg-acc"><path d="M200 34h52a6 6 0 0 1 6 6v20a6 6 0 0 1-6 6h-30l-10 8v-8h-12a6 6 0 0 1-6-6V40a6 6 0 0 1 6-6z"/><path d="M222 44c0-4 4-6 8-6s8 2 8 6-8 5-8 9M230 58v1"/></g></svg><p class="lg-cd">Satoshi says a much better Bitcoin would be possible if privacy could be solved, and that he cannot see how to apply zero-knowledge proofs to it.</p></div></div>
+          <footer class="lg-cf"><span class="lg-yr">2010</span><a class="lg-src" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/174/" target="_blank" rel="noopener">Bitcointalk, thread 770</a></footer>
+        </article>
+      </li>
+      <li class="lg-stop lg-l">
+        <article class="lg-card">
+          <header class="lg-ch"><span class="lg-num">02</span><h3 class="lg-ct">The San Jose talk</h3></header>
+          <div class="lg-cv"><div class="lg-cv-in"><svg class="lg-art" viewBox="0 0 320 220" aria-hidden="true"><g stroke="#4a4a4a" stroke-width="1.2" fill="none" stroke-linejoin="round" stroke-linecap="round"><path d="M70 50l150-30v110L70 160z"/><path d="M70 160v14l150-30v-14M60 46l10 4M230 16l-10 4"/><path d="M96 74l98-19M96 92l98-19M96 110l60-12"/><path d="M130 190h60M160 172v18"/></g><g stroke="#c53400" stroke-width="1.4" fill="none" stroke-linejoin="round" stroke-linecap="round" class="lg-acc"><path d="M100 138c20-8 30-42 46-44s22 20 54-20"/><circle cx="146" cy="94" r="3"/><circle cx="200" cy="74" r="3"/></g></svg><p class="lg-cd">At Bitcoin 2013, Eli Ben-Sasson puts succinct zero-knowledge proofs in front of a Bitcoin audience: the tool Satoshi could not see how to use.</p></div></div>
+          <footer class="lg-cf"><span class="lg-yr">2013</span><a class="lg-src" href="https://www.youtube.com/watch?v=kLueWNsYRno" target="_blank" rel="noopener">Bitcoin 2013, San Jose</a></footer>
+        </article>
+      </li>
+      <li class="lg-stop lg-r">
+        <article class="lg-card">
+          <header class="lg-ch"><span class="lg-num">03</span><h3 class="lg-ct">The Zerocash paper</h3></header>
+          <div class="lg-cv"><div class="lg-cv-in"><svg class="lg-art" viewBox="0 0 320 220" aria-hidden="true"><g stroke="#4a4a4a" stroke-width="1.2" fill="none" stroke-linejoin="round" stroke-linecap="round"><path d="M100 30h90l40 40v120H100z"/><path d="M190 30v40h40"/><path d="M120 90h70M120 106h90M120 154h60M120 170h90"/></g><g stroke="#c53400" stroke-width="1.4" fill="none" stroke-linejoin="round" stroke-linecap="round" class="lg-acc"><path d="M120 122h48M176 122h34M120 138h30"/><rect x="118" y="118" width="52" height="8" rx="1" fill="#c53400" stroke="none" opacity=".9"/><rect x="118" y="134" width="34" height="8" rx="1" fill="#c53400" stroke="none" opacity=".9"/></g></svg><p class="lg-cd">Fully private payments on a public ledger, from zero-knowledge proofs, with Eli Ben-Sasson among the authors.</p></div></div>
+          <footer class="lg-cf"><span class="lg-yr">2014</span><a class="lg-src" href="http://zerocash-project.org/paper" target="_blank" rel="noopener">Zerocash, IEEE S&amp;P 2014</a></footer>
+        </article>
+      </li>
+      <li class="lg-stop lg-l">
+        <article class="lg-card">
+          <header class="lg-ch"><span class="lg-num">04</span><h3 class="lg-ct">Zcash launches</h3></header>
+          <div class="lg-cv"><div class="lg-cv-in"><svg class="lg-art" viewBox="0 0 320 220" aria-hidden="true"><g stroke="#4a4a4a" stroke-width="1.2" fill="none" stroke-linejoin="round" stroke-linecap="round"><path d="M160 24l84 30v56c0 46-34 78-84 94-50-16-84-48-84-94V54z"/><path d="M160 24v180M76 108h168"/></g><g stroke="#c53400" stroke-width="1.4" fill="none" stroke-linejoin="round" stroke-linecap="round" class="lg-acc"><circle cx="160" cy="108" r="30"/><path d="M150 96h20l-20 24h20"/></g></svg><p class="lg-cd">The Zerocash design ships as a live chain, with Eli Ben-Sasson as founding scientist. Private, but one asset on one purpose-built network.</p></div></div>
+          <footer class="lg-cf"><span class="lg-yr">2016</span><a class="lg-src" href="https://en.wikipedia.org/wiki/Eli_Ben-Sasson" target="_blank" rel="noopener">Zcash, founding scientist</a></footer>
+        </article>
+      </li>
+      <li class="lg-stop lg-r">
+        <article class="lg-card">
+          <header class="lg-ch"><span class="lg-num">05</span><h3 class="lg-ct">StarkWare is founded</h3></header>
+          <div class="lg-cv"><div class="lg-cv-in"><svg class="lg-art" viewBox="0 0 320 220" aria-hidden="true"><g stroke="#4a4a4a" stroke-width="1.2" fill="none" stroke-linejoin="round" stroke-linecap="round"><path d="M160 150l90-40-90-40-90 40z"/><path d="M160 178l90-40-90-40-90 40z" opacity=".7"/><path d="M160 122l90-40-90-40-90 40z"/><path d="M70 42v96M250 42v96M160 82v96"/></g><g stroke="#c53400" stroke-width="1.4" fill="none" stroke-linejoin="round" stroke-linecap="round" class="lg-acc"><circle cx="160" cy="42" r="4"/><circle cx="115" cy="62" r="4"/><circle cx="205" cy="62" r="4"/><path d="M160 46l-45 16M160 46l45 16M115 66l45 16 45-16"/></g></svg><p class="lg-cd">STARK proofs go to production: transparent, hash-based, built to scale. The proof system that would carry Starknet.</p></div></div>
+          <footer class="lg-cf"><span class="lg-yr">2018</span><a class="lg-src" href="https://starkware.co" target="_blank" rel="noopener">StarkWare</a></footer>
+        </article>
+      </li>
+      <li class="lg-stop lg-l">
+        <article class="lg-card">
+          <header class="lg-ch"><span class="lg-num">06</span><h3 class="lg-ct">STRK20 is live</h3></header>
+          <div class="lg-cv"><div class="lg-cv-in"><svg class="lg-art" viewBox="0 0 320 220" aria-hidden="true"><g stroke="#4a4a4a" stroke-width="1.2" fill="none" stroke-linejoin="round" stroke-linecap="round"><path d="M40 110l120-60 120 60-120 60z"/><path d="M70 95l120 60M100 80l120 60M130 65l120 60M190 65l-120 60M220 80l-120 60M250 95l-120 60"/></g><g stroke="#c53400" stroke-width="1.4" fill="none" stroke-linejoin="round" stroke-linecap="round" class="lg-acc"><path d="M160 80l30 15-30 15-30-15z" fill="#c53400" fill-opacity=".25"/><path d="M160 110v-12M160 80v-8M152 60h16v12h-16zM160 52v8" /><path d="M155 60v-4a5 5 0 0 1 10 0v4"/></g></svg><p class="lg-cd">Private transfers, swaps and balances for any asset on Starknet, with wallet-level UX. The 2010 question has an answer on a general-purpose chain.</p></div></div>
+          <footer class="lg-cf"><span class="lg-yr">2026</span><a class="lg-src" href="https://x.com/Starknet/status/2064375302957289598" target="_blank" rel="noopener">Starknet, mainnet</a></footer>
+        </article>
+      </li>
+      </ol>
     </div>
   </section>
-  <script src="js/timeline-scrub.js" defer></script>
+  <script src="js/lineage.js" defer></script>
   <div class="pv-duo th-pm-reveal" style="margin-top:56px">
     <div>
       <div class="sat-answer">
@@ -5434,6 +5448,5 @@ var pvVideoChrome = thVideoChrome({
 <script type="module" src="js/eco-backdrop.js"></script>
 <script type="module" src="js/pv-human-shader.js"></script>
 <script type="module" src="js/pv-human-key.js"></script>
-<script type="module" src="js/sq-band-shader.js"></script>
 </body>
 </html>

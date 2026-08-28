@@ -22,7 +22,7 @@ const FRAG = `
     float l = dot(c, vec3(0.299, 0.587, 0.114));
     l = clamp((l - 0.5) * 1.3 + 0.5, 0.0, 1.0) * 1.02;
     vec3 col = uAcc * l * 1.35 + vec3(1.0, 0.66, 0.45) * pow(l, 2.2) * 1.15;
-    float a = smoothstep(0.03, 0.30, l);
+    float a = smoothstep(0.06, 0.34, l);
     gl_FragColor = vec4(col * a, a);
   }`;
 
