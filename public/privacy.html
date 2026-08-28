@@ -1793,7 +1793,8 @@
   @media (max-width: 768px) { .ne-grid { grid-template-columns: 1fr; } }
 
   /* ============ video slots (same qv mechanism as quantum.html) ============ */
-  .video-grid-wrap { max-width: 900px; margin: 56px auto 0; }
+  /* full bleed to the viewport edges, on the statement's 16px sliver */
+  .video-grid-wrap { width: 100vw; max-width: none; margin: 56px calc(50% - 50vw) 0; padding: 0 16px; box-sizing: border-box; }
   .vg-head { position: relative; text-align: center; margin-bottom: 32px; }
   .vg-title { font-family: var(--display); font-weight:300; font-size: clamp(20px,2.2vw,24px); line-height: 1.3; }
   .vg-title .em { color: var(--em); }

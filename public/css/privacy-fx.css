@@ -66,7 +66,7 @@ body.page-privacy .hero::before { display: none; }
    Mono chip for the source, a huge tight statement, and the three qualities
    as inverted highlight blocks (chalk on this dark page, black on Sui's
    light one) each led by an accent icon tile. Nothing pinned. */
-.sq { position: relative; width: 100vw; max-width: none; margin: 120px 0 0 calc(50% - 50vw); padding: 28px 16px 24px; }
+.sq { position: relative; width: 100vw; max-width: none; margin: 120px 0 0 calc(50% - 50vw); padding: 64px 16px 24px; }
 /* the dotted rule across the top with a square at each end, as sui.io draws it */
 .sq::before { content: ""; position: absolute; left: 0; right: 0; top: 0; border-top: 2px dotted rgba(250,250,250,.35); }
 .sq::after { content: ""; position: absolute; left: 0; top: -3px; width: 8px; height: 8px; background: var(--pf-acc); box-shadow: calc(100vw - 8px) 0 0 var(--pf-acc); }
@@ -80,7 +80,7 @@ body.page-privacy .hero::before { display: none; }
 .sq-ic { display: inline-grid; place-items: center; width: .8em; height: .8em; margin-right: .1em; vertical-align: -.08em; background: #fafafa; color: var(--pf-acc); }
 .sq-ic svg { width: 62%; height: 62%; }
 @media (max-width: 860px) {
-  .sq { margin-top: 72px; padding: 22px 12px 0; }
+  .sq { margin-top: 72px; padding: 44px 12px 0; }
   .sq-quote p { font-size: clamp(30px, 9vw, 48px); }
 }
 
@@ -225,6 +225,7 @@ body.page-privacy .hero::before { display: none; }
    (thumbnail, chips, rule, title, arrow). Clicking a row card makes it the
    featured one (js/video-cards.js drives the existing chip tablist, which
    stays in the DOM for keyboard users but is visually hidden). */
+/* the full-bleed geometry lives in privacy.html's inline <style>: it loads after this file, so a margin shorthand there beats longhand here */
 .video-grid-wrap .pvv-chips { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); margin: 0; }
 .video-grid-wrap .vg-head { text-align: left; margin-bottom: 28px; }
 .video-grid-wrap .vg-title { font-size: clamp(28px, 3.2vw, 44px); letter-spacing: -.02em; }
@@ -240,7 +241,7 @@ body.page-privacy .hero::before { display: none; }
 .video-grid-wrap #pvVideos .video-slot .meta { position: static; width: auto; height: auto; margin: 0; padding: 22px; overflow: visible; clip: auto; clip-path: none; white-space: normal; display: flex; flex-direction: column; align-items: flex-start; gap: 16px; }
 .video-grid-wrap #pvVideos .video-slot:not(.is-on) .meta { padding: 22px 22px 22px 0; }
 .video-grid-wrap .vg-chips { display: inline-flex; white-space: nowrap; font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: .04em; }
-.video-grid-wrap .vg-tag { padding: 6px 9px; background: #fafafa; color: #0d0d0d; text-transform: uppercase; }
+.video-grid-wrap .vg-tag { padding: 6px 9px; background: var(--pf-acc); color: #fff; text-transform: uppercase; }
 .video-grid-wrap .vg-date { padding: 6px 9px; background: rgba(250,250,250,.08); color: rgba(250,250,250,.85); }
 .video-grid-wrap .vg-rule { display: block; width: 100%; height: 0; border-top: 2px dotted rgba(250,250,250,.3); }
 .video-grid-wrap #pvVideos .qv-title { margin: 0; font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-weight: 400; font-size: 20px; line-height: 1.25; letter-spacing: -.01em; color: var(--pf-ink); }
@@ -249,6 +250,7 @@ body.page-privacy .hero::before { display: none; }
 .video-grid-wrap .vg-go i { display: grid; place-items: center; width: 36px; height: 36px; background: var(--pf-acc); color: #fff; font-style: normal; font-size: 16px; }
 .video-grid-wrap .vg-written { text-align: left; margin-top: 22px; }
 @media (max-width: 980px) {
+  .video-grid-wrap { padding: 0 12px; }
   .video-grid-wrap #pvVideos { grid-template-columns: 1fr; }
   .video-grid-wrap #pvVideos .video-slot.is-on { grid-column: 1; grid-row: auto; }
   .video-grid-wrap #pvVideos .video-slot:not(.is-on) { grid-column: 1; grid-template-columns: 120px minmax(0, 1fr); gap: 0 16px; }
