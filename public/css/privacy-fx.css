@@ -81,13 +81,17 @@ body.page-privacy .hero { position: relative; }
 /* ---------- Satoshi's question, scroll-pinned word by word ----------
    After strk20.starknet.io's testimonial screen: the scroll stops, the
    quote holds centre stage, and each word lights up in turn until the
-   whole line is filled, before the page lets go and moves on. The band
-   paints no background of its own: js/eco-backdrop.js's wash (already
-   fixed behind the whole page, red/orange, never orange-filled) is the
-   backdrop here too. js/quote-scroll.js drives the reveal via a --amt
-   custom property set on each .sq-w span. */
+   whole line is filled, before the page lets go and moves on. Unlike the
+   rest of the page, this band wants the shader's red to be the dominant
+   fill (not a subtle backdrop), so js/sq-band-shader.js mounts a second,
+   turned-up instance of the same wash scoped to this element -- never a
+   flat orange fill, and no wordmark behind the type. js/quote-scroll.js
+   drives the reveal via a --amt custom property set on each .sq-w span. */
 .sq-band { position: relative; width: 100vw; max-width: none; margin: 96px 0 0 calc(50% - 50vw);
   padding: 0; height: 124vh; }
+.sq-band-shader { position: absolute; inset: 0; z-index: 0; display: block; width: 100%; height: 100%;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%); }
 /* Shorter than the viewport on purpose: the quote's own content tops out
    around 70vh (padding-top + kicker/mark/quote), so a full 100vh sticky
    box left a dead band below it that .sq-after had to cross before its
@@ -132,28 +136,44 @@ body.page-privacy .hero { position: relative; }
   .sq-actions { gap: 18px; }
 }
 
-/* ---------- the lineage, as a vertical timeline ---------- */
-.vt { max-width: 1000px; margin: 96px auto 0; }
+/* ---------- the lineage, as a scroll-pinned vertical timeline ----------
+   The scroll pins the whole kicker+title+list while js/timeline-scroll.js
+   drives a --amt custom property per .vt-item, so each year badge and its
+   stem light up in turn as you scroll, the same --amt/color-mix mechanic
+   as the Satoshi quote's word reveal. Disabled below 720px: the list
+   already collapses to a single compact column there, and a pin adds
+   nothing on a screen where the whole thing barely fits at once. */
+.vt-band { position: relative; height: 220vh; margin: 96px 0 0; }
+.vt-sticky { position: sticky; top: 0; height: 100vh; display: flex; align-items: center; overflow: hidden; }
+.vt { max-width: 1000px; width: 100%; margin: 0 auto; padding: 0 5vw; }
 .vt-kicker { margin: 0; text-align: center; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .24em; text-transform: uppercase; color: var(--pf-acc); }
-.vt-title { margin: 14px 0 0; text-align: center; font-family: 'General Sans','Helvetica Neue',Arial,sans-serif;
-  font-weight: 300; font-size: clamp(28px, 3.6vw, 50px); line-height: 1.04; letter-spacing: -.03em; color: var(--pf-ink); text-transform: uppercase; }
-.vt-list { list-style: none; margin: 54px 0 0; padding: 0; }
-.vt-item { position: relative; display: grid; grid-template-columns: 1fr 128px 1fr; align-items: start; }
-.vt-year { grid-column: 2; justify-self: center; z-index: 1; min-width: 96px; padding: 7px 0; border-radius: 999px;
-  background: #3a3a3a; color: var(--pf-ink); text-align: center;
-  font-family: 'IBM Plex Mono', monospace; font-size: 13px; letter-spacing: .16em; }
-.vt-item.is-last .vt-year { background: var(--pf-acc); box-shadow: 0 0 26px rgba(197,52,0,.45); }
+.vt-title { margin: clamp(4px, 1.4vh, 10px) 0 0; text-align: center; font-family: 'General Sans','Helvetica Neue',Arial,sans-serif;
+  font-weight: 300; font-size: clamp(24px, min(3.6vw, 5.2vh), 50px); line-height: 1.04; letter-spacing: -.03em; color: var(--pf-ink); text-transform: uppercase; }
+.vt-list { list-style: none; margin: clamp(4px, 2vh, 18px) 0 0; padding: 0; }
+.vt-item { --amt: 0; position: relative; display: grid; grid-template-columns: 1fr 128px 1fr; align-items: start; }
+.vt-year { grid-column: 2; justify-self: center; z-index: 1; min-width: 96px; padding: clamp(3px, 0.8vh, 7px) 0; border-radius: 999px;
+  background: color-mix(in srgb, #3a3a3a calc((1 - var(--amt)) * 100%), var(--pf-acc) calc(var(--amt) * 100%));
+  color: var(--pf-ink); text-align: center;
+  box-shadow: 0 0 calc(var(--amt) * 26px) rgba(197,52,0, calc(var(--amt) * 0.45));
+  font-family: 'IBM Plex Mono', monospace; font-size: 13px; letter-spacing: .16em;
+  transition: background .05s linear, box-shadow .05s linear; }
 /* the stem hangs from each marker down to the next one */
-.vt-stem { grid-column: 2; justify-self: center; width: 1px; height: 112px; background: #3a3a3a; }
-.vt-item.is-last .vt-stem { background: linear-gradient(var(--pf-acc), transparent); }
-.vt-body { grid-row: 2; align-self: center; margin-top: -104px; }
+.vt-stem { grid-column: 2; justify-self: center; width: 1px; height: clamp(18px, 4.4vh, 46px);
+  background: color-mix(in srgb, #3a3a3a calc((1 - var(--amt)) * 100%), var(--pf-acc) calc(var(--amt) * 100%));
+  transition: background .05s linear; }
+.vt-body { grid-row: 2; align-self: center; margin-top: clamp(-36px, -3.6vh, -18px); }
 .vt-r .vt-body { grid-column: 3; padding-left: 30px; text-align: left; }
 .vt-l .vt-body { grid-column: 1; padding-right: 30px; text-align: right; }
 .vt-body a { font-family: 'IBM Plex Mono', monospace; font-size: 13px; letter-spacing: .14em; text-transform: uppercase;
-  color: var(--pf-dim); text-decoration: none; transition: color .2s; }
+  color: color-mix(in srgb, var(--pf-dim) calc((1 - var(--amt)) * 100%), var(--pf-ink) calc(var(--amt) * 100%));
+  text-decoration: none; transition: color .05s linear; }
 .vt-body a:hover { color: var(--pf-acc); }
-.vt-item.is-last .vt-body a { color: var(--pf-ink); }
+@media (prefers-reduced-motion: reduce) {
+  .vt-year, .vt-stem, .vt-body a { transition: none; }
+}
 @media (max-width: 720px) {
+  .vt-band { height: auto; margin: 56px 0 0; }
+  .vt-sticky { position: relative; height: auto; overflow: visible; padding: 0; }
   .vt-item { grid-template-columns: 96px 1fr; }
   .vt-year, .vt-stem { grid-column: 1; }
   .vt-r .vt-body, .vt-l .vt-body { grid-column: 2; grid-row: 1 / span 2; padding: 8px 0 0 20px; text-align: left; margin-top: 0; }

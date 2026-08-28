@@ -1,16 +1,18 @@
-/* A local instance of the site's ambient flame wash (js/eco-backdrop.js),
-   scoped to .pv-human instead of the whole page. The fixed page-wide canvas
-   sits several stacking contexts back from the metal-human video's
-   mix-blend-mode:screen, so blending against it directly reads flat; this
-   canvas paints in the same local layer as the video, so the blend has
-   something to actually screen against. Wash only, no motes -- this is a
-   background behind a figure, not the page's own backdrop. */
+/* A bolder local instance of the site's ambient flame wash (js/eco-backdrop.js),
+   scoped to #sq-band. The page-wide canvas is tuned subtle (a backdrop behind
+   everything); the Satoshi quote wants the shader's red to be the dominant
+   fill behind the type, closer to strk20.starknet.io's testimonial screen,
+   so this turns the same wash up instead of layering a second, different
+   effect on top of it. */
 import * as THREE from 'three';
 
-const host = document.querySelector('.pv-human');
+// Mounted on .sq-sticky, not #sq-band: .sq-sticky is what's actually pinned
+// on screen for the scroll-pin's duration, so anchoring the canvas there
+// keeps the background locked to the text instead of scrolling underneath it.
+const host = document.querySelector('#sq-band .sq-sticky');
 if (host) {
   const canvas = document.createElement('canvas');
-  canvas.className = 'pv-human-shader';
+  canvas.className = 'sq-band-shader';
   host.insertBefore(canvas, host.firstChild);
 
   const linear = (hex) => { const c = new THREE.Color(hex); return new THREE.Vector3(c.r, c.g, c.b); };
@@ -33,7 +35,7 @@ if (host) {
         uBg: { value: linear('#0d0d0d') },
         uFlameA: { value: linear('#c53400') },
         uFlameB: { value: linear('#e07a4a') },
-        uFlameAmt: { value: 0.85 }
+        uFlameAmt: { value: 1.15 }
       },
       vertexShader: `varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position, 1.0); }`,
       fragmentShader: `
@@ -53,9 +55,9 @@ if (host) {
           vec3 flame = 1.5 * uFlameA * w.x;
           flame *= w.y;
           flame += uFlameB * w.z;
-          flame *= mix(0.45, 1.0, smoothstep(0.0, 1.0, abs(uv.y)));
+          flame *= mix(0.6, 1.0, smoothstep(0.0, 1.0, abs(uv.y)));
           float md = smoothstep(-1.0, 1.0, -uv.y * uv.x);
-          flame *= mix(0.4, 1.0, md);
+          flame *= mix(0.55, 1.0, md);
           vec3 bg = uBg * (1.0 - 0.4 * length(uv));
           gl_FragColor = vec4(bg + flame * uFlameAmt, 1.0);
         }`

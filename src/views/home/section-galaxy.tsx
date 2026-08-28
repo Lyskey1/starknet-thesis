@@ -4,15 +4,18 @@ import { animated } from "@react-spring/web";
 import { useEffect, useMemo, useState } from "react";
 import TextEngine from "spring-text-engine";
 
+import { Inview } from "@/components/animation/springs/in-view";
 import { sceneTimeline } from "@/lib/scene/timeline";
 import { hiddenWhenClear, smoothstep, useSceneClock } from "./overlay";
-import { LETTER_REVEAL, WORD_REVEAL } from "./reveal";
+import { LETTER_REVEAL, UNIT_REVEAL, WORD_REVEAL } from "./reveal";
+import { SendRequest } from "./send-request";
 
 /**
- * Second-act overlay: Privacy, over the standing point-cloud figure (still
- * named `Galaxy`/`SectionGalaxy` internally, since the file used to be a spiral; see
- * `galaxy-shaders.ts`). A fixed layer: centred title, centred support copy,
- * and a four-stat band across the foot with faint column dividers.
+ * Second-act overlay: Privacy, over the point-cloud bust (still named
+ * `Galaxy`/`SectionGalaxy` internally, since the file used to be a spiral; see
+ * `galaxy-shaders.ts`). A fixed layer: left-aligned title and support copy at
+ * {@link Hero}'s exact offsets, a Send Request CTA, and a four-stat band
+ * across the foot with faint column dividers.
  *
  * It fades against the global clock's second-act window. Desktop measurements
  * are the Figma pixels in `vw` (÷14.4).
@@ -77,12 +80,12 @@ export const SectionGalaxy = () => {
         immediateOut={false}
         {...LETTER_REVEAL}
         style={{ position: "absolute" }}
-        className="absolute top-[7.014vw] left-1/2 w-[46.319vw] -translate-x-1/2 justify-center text-center font-general text-[5.556vw] leading-[0.9] font-light max-lg:static! max-lg:w-full max-lg:translate-x-0 max-lg:text-[3.25rem] max-sm:text-[2.375rem]"
+        className="absolute top-[9.028vw] left-[1.667vw] w-[52vw] font-general text-[4.6vw] leading-[0.9] font-light max-lg:static! max-lg:w-full max-lg:text-[3.25rem] max-sm:text-[2.375rem]"
       >
         {TITLE}
       </TextEngine>
 
-      {/* Bottom cluster — support copy, dividers, stat band. */}
+      {/* Bottom cluster: support copy, CTA, dividers, stat band. */}
       <div className="absolute inset-x-0 bottom-0 h-[16.181vw] max-lg:static! max-lg:flex max-lg:h-auto max-lg:flex-col max-lg:gap-[1.5rem]">
         <TextEngine
           tag="p"
@@ -92,10 +95,21 @@ export const SectionGalaxy = () => {
           delayIn={200}
           {...WORD_REVEAL}
           style={{ position: "absolute" }}
-          className="absolute top-0 left-1/2 w-[29.097vw] -translate-x-1/2 justify-center text-center font-general text-[1.111vw] leading-[1.2] max-lg:static! max-lg:w-full max-lg:translate-x-0 max-lg:justify-start max-lg:text-left max-lg:text-[0.9375rem] max-sm:text-[0.8125rem]"
+          className="absolute top-0 left-0 w-[27.5vw] font-general text-[1.111vw] leading-[1.2] max-lg:static! max-lg:w-full max-lg:text-[0.9375rem] max-sm:text-[0.8125rem]"
         >
           {SUPPORT}
         </TextEngine>
+
+        <Inview
+          mode="always"
+          enabled={active}
+          immediateOut={false}
+          delayIn={400}
+          {...UNIT_REVEAL}
+          className="pointer-events-auto absolute top-0 right-0 max-lg:static max-lg:mt-[0.75rem]"
+        >
+          <SendRequest href="/privacy" />
+        </Inview>
 
         {/* The rule across the top of the stat band, and the columns between the
             stats. Both are pure desktop chrome — the grid below carries its own
