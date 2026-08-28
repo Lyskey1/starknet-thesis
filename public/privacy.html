@@ -111,7 +111,8 @@
      until the hero outgrows min-height on short laptop windows, pushing
      the band below the fold. */
   .hero { min-height: 0; height: calc(100vh - 72px); display: flex; flex-direction: column; justify-content: center; align-items: stretch; overflow: visible; padding: 72px 0 28px; max-width: none; margin: 0 auto; text-align: left; position: relative; }
-  .pv-hero-inner { width: 100%; max-width: 1160px; margin: 0 auto; padding: 0 32px; position: relative; z-index: 1; }
+  /* same gutters as the landing hero (1.667vw, 24px at 1440): the copy runs to the edges, not a 1160px column */
+  .pv-hero-inner { width: 100%; max-width: none; margin: 0 auto; padding: 0 1.667vw; position: relative; z-index: 1; }
   /* the CSS glow only paints when WebGL2 is missing (.hero-curtain-on
      hides it); left-anchored now so the fallback lights the copy rather
      than the empty right half */
@@ -326,7 +327,7 @@
     .hero { padding: 100px 0 60px; }
   }
   @media (max-width: 700px) {
-    .pv-hero-inner { padding: 0 24px; }
+    .pv-hero-inner { padding: 0 1.5rem; }
     .pv-ctas { flex-direction: column; gap: 20px; align-items: flex-start; }
   }
 
@@ -2265,11 +2266,6 @@
       <p>If a solution was found, <mark class="sq-hl"><i class="sq-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 13.5h7L10 22l9-11.5h-7z"/></svg></i>a much better,</mark> <mark class="sq-hl"><i class="sq-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l18 18"/><path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M6.6 6.7C4 8.3 2.5 12 2.5 12s3.5 6.5 9.5 6.5c1.7 0 3.2-.5 4.5-1.2"/><path d="M9.9 5.7C10.6 5.6 11.3 5.5 12 5.5c6 0 9.5 6.5 9.5 6.5s-.9 1.7-2.5 3.3"/></svg></i>easier,</mark> <mark class="sq-hl"><i class="sq-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="7" rx="8" ry="3.2"/><path d="M4 7v10c0 1.8 3.6 3.2 8 3.2s8-1.4 8-3.2V7"/><path d="M4 12c0 1.8 3.6 3.2 8 3.2s8-1.4 8-3.2"/></svg></i>more convenient</mark> implementation of Bitcoin would be possible.</p>
     </blockquote>
   </section>
-
-  <div class="chapter th-pm-reveal" style="margin-top:72px">
-    <h3 id="so-how-does-one-chain-check">So how does one chain <span class="em">check every box at once?</span></h3>
-    <p>The answer starts fifteen years back, with Satoshi himself naming the tool.</p>
-  </div>
 
   <!-- The lineage, set the way sui.io sets its stack: a title over light
        streaks that fade as you scroll, then one dotted rail down the middle
