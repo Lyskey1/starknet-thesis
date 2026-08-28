@@ -85,23 +85,29 @@ body.page-privacy .hero { position: relative; }
    backdrop here too. js/quote-scroll.js drives the reveal via a --amt
    custom property set on each .sq-w span. */
 .sq-band { position: relative; width: 100vw; max-width: none; margin: 96px 0 0 calc(50% - 50vw);
-  padding: 0; height: 200vh; }
-.sq-sticky { position: sticky; top: 0; height: 100vh;
-  display: flex; align-items: center; overflow: hidden; }
-.sq-in { position: relative; z-index: 1; max-width: 1400px; width: 100%; margin: 0 auto; padding: 0 5vw; }
-.sq-kicker { display: flex; align-items: center; gap: 12px; margin: 0 0 3vh;
+  padding: 0; height: 124vh; }
+/* Shorter than the viewport on purpose: the quote's own content tops out
+   around 70vh (padding-top + kicker/mark/quote), so a full 100vh sticky
+   box left a dead band below it that .sq-after had to cross before its
+   content became visible, once the pin released. Sizing the sticky box
+   to content + a small buffer means .sq-after starts entering right where
+   the quote visually ends, not 30vh later. */
+.sq-sticky { position: sticky; top: 0; height: 78vh;
+  display: flex; align-items: flex-start; overflow: hidden; }
+.sq-in { position: relative; z-index: 1; max-width: min(1800px, 92vw); width: 100%; margin: 0 auto; padding: 16vh 5vw 0; }
+.sq-kicker { display: flex; align-items: center; gap: 12px; margin: 0 0 2vh;
   font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: .22em; text-transform: uppercase; color: rgba(255,255,255,.55); }
 .sq-tri { width: 0; height: 0; border-left: 8px solid transparent; border-right: 8px solid transparent; border-bottom: 9px solid rgba(255,255,255,.55); transform: rotate(-135deg); }
-.sq-mark { display: block; margin: 0 0 -2vh; font-family: 'General Sans','Helvetica Neue',Arial,sans-serif;
-  font-size: clamp(56px, 7vw, 104px); line-height: .6; color: var(--accent); }
+.sq-mark { display: block; margin: 0 0 -1.5vh; font-family: 'General Sans','Helvetica Neue',Arial,sans-serif;
+  font-size: clamp(56px, min(7.5vw, 13vh), 128px); line-height: .6; color: var(--accent); }
 .sq-quote { margin: 0; max-width: none; }
 .sq-quote p { margin: 0; font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-weight: 500;
-  font-size: clamp(30px, 4.6vw, 76px); line-height: 1.12; letter-spacing: -.02em; }
+  font-size: clamp(32px, min(6vw, 11vh), 104px); line-height: 1.1; letter-spacing: -.02em; }
 .sq-w { --amt: 0; display: inline-block; color: color-mix(in srgb, rgba(255,255,255,.22) calc((1 - var(--amt)) * 100%), #fff calc(var(--amt) * 100%));
   transform: translateY(calc((1 - var(--amt)) * 6px)); transition: color .05s linear, transform .05s linear; }
 .sq-w.sq-em { color: color-mix(in srgb, rgba(255,255,255,.22) calc((1 - var(--amt)) * 100%), var(--accent) calc(var(--amt) * 100%)); }
 .sq-w-in { display: inline-block; }
-.sq-after { position: relative; max-width: 1400px; width: 100%; margin: 0 auto; padding: 12vh 5vw 12vh; }
+.sq-after { position: relative; max-width: 1400px; width: 100%; margin: 0 auto; padding: 6vh 5vw 10vh; }
 .sq-tail { margin: 0; max-width: 46ch; font-family: 'IBM Plex Mono', monospace;
   font-size: 13px; line-height: 1.6; letter-spacing: .04em; color: rgba(255,255,255,.72); }
 .sq-by { display: flex; align-items: center; gap: 14px; margin-top: 8vh; }
@@ -118,7 +124,8 @@ body.page-privacy .hero { position: relative; }
 }
 @media (max-width: 860px) {
   .sq-band { height: auto; }
-  .sq-sticky { position: relative; height: auto; padding: 48px 0 40px; }
+  .sq-sticky { position: relative; height: auto; padding: 0; }
+  .sq-in { padding: 48px 24px 0; }
   .sq-after { padding: 0 24px 56px; }
   .sq-actions { gap: 18px; }
 }

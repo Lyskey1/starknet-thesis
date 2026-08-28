@@ -8,8 +8,9 @@
 (() => {
   const band = document.getElementById('sq-band');
   if (!band) return;
+  const sticky = band.querySelector('.sq-sticky');
   const words = Array.from(band.querySelectorAll('.sq-w'));
-  if (!words.length) return;
+  if (!words.length || !sticky) return;
 
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (reduceMotion) {
@@ -24,8 +25,11 @@
   function update() {
     ticking = false;
     const rect = band.getBoundingClientRect();
-    const vh = window.innerHeight;
-    const range = rect.height - vh;
+    // The pin releases when the band's remaining height can no longer hold
+    // the sticky element, i.e. at bandHeight - stickyHeight of scroll, not
+    // bandHeight - viewportHeight (the sticky box is shorter than the
+    // viewport on purpose; see the CSS comment on .sq-sticky).
+    const range = rect.height - sticky.offsetHeight;
     let progress = range > 0 ? -rect.top / range : rect.top <= 0 ? 1 : 0;
     progress = Math.min(1, Math.max(0, progress));
 
