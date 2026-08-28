@@ -182,3 +182,30 @@ body.page-privacy .hero::before { display: none; }
   .pv-tl, .pv-br, .pv-note, .pv-stat { grid-column: 1; grid-row: auto; justify-self: start; text-align: left; }
   .pv-br .pv-ctas { justify-content: flex-start; }
 }
+
+/* ---------- the pool metrics, in sui.io's panel language ----------
+   Flat hard-edged panels on #141414 with a 1px #262626 border, a
+   sentence-case title bar cut off by a rule, the mono legend directly under
+   it, and the plot below. Big numbers light, not bold. Scoped to the id so
+   these beat the page's inline rules regardless of load order. */
+#poolMetrics .pmx-stats { gap: 12px; margin-top: 30px; }
+#poolMetrics .pmx-stat { border-radius: 0; background: #141414; border: 1px solid #262626; padding: 18px 22px 24px; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
+#poolMetrics .pmx-stat::before, #poolMetrics .pmx-stat::after { display: none; }
+#poolMetrics .pmx-stat .l { font-size: 11px; letter-spacing: .1em; color: rgba(250,250,250,.72); }
+#poolMetrics .pmx-stat .v { font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-weight: 300; font-size: clamp(36px, 3.4vw, 54px); letter-spacing: -.03em; margin-top: 16px; }
+#poolMetrics .pmx-stat .s { margin-top: 12px; font-size: 10px; }
+#poolMetrics .pmx-updated { margin-top: 12px; }
+#poolMetrics .pmx-grid { gap: 12px; margin-top: 12px; }
+#poolMetrics .pmx-card { border-radius: 0; background: #141414; border: 1px solid #262626; padding: 0; box-shadow: none; }
+#poolMetrics .pmx-head { flex-direction: column; align-items: flex-start; flex-wrap: nowrap; gap: 6px; padding: 20px 22px 18px; border-bottom: 1px solid #262626; }
+#poolMetrics .pmx-t { font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-size: 22px; font-weight: 400; letter-spacing: -.01em; line-height: 1.1; color: var(--pf-ink); }
+#poolMetrics .pmx-sub { font-size: 10px; letter-spacing: .12em; color: rgba(250,250,250,.55); }
+#poolMetrics .pmx-body { margin: 0; padding: 18px 22px 0; }
+#poolMetrics .pmx-legend { order: -1; margin: 0 0 18px; gap: 8px 18px; }
+#poolMetrics .pmx-legend span { font-size: 10px; letter-spacing: .1em; color: rgba(250,250,250,.85); }
+#poolMetrics .pmx-legend i { width: 10px; height: 10px; border-radius: 0; }
+#poolMetrics .pmx-live, #poolMetrics .pmx-skel, #poolMetrics .pmx-tip, #poolMetrics .pmx-comp-bar, #poolMetrics .pmx-comp-bar i { border-radius: 0; }
+#poolMetrics .pmx-src { padding: 16px 22px 20px; }
+#pmvPanel04 .pmv-title { text-align: center; font-size: clamp(32px, 4.2vw, 60px); letter-spacing: -.03em; margin: 8px 0 6px; }
+#pmvPanel04 .pmv-title .em { color: var(--pf-ink); }
+#pmvPanel04 .pmv-title .em::before { content: ""; display: inline-block; width: .62em; height: .62em; margin: 0 .18em -.02em .1em; background: var(--pf-acc); vertical-align: baseline; }

@@ -1399,7 +1399,7 @@
     .pmx-card[data-pmx="defi"],
     .pmx-card[data-pmx="revenue"]  { grid-column: span 6; }
   }
-  /* POOL COMPOSITION: one horizontal bar per asset at the latest snapshot
+  /* Pool composition: one horizontal bar per asset at the latest snapshot
      date, in that asset's stacked-chart series color, sorted by value. Rows
      and TOTAL are built from the same split and the same display rounding as
      the stacked chart's tooltip, so the two always agree for that date. */
@@ -2760,37 +2760,37 @@
            981px: shielded + composition, then the three mid charts, then the
            bottom pair -->
       <div class="pmx-card" data-pmx="shielded">
-        <div class="pmx-head"><span class="pmx-t">SHIELDED VALUE OVER TIME</span><span class="pmx-sub">USD, STACKED BY ASSET, DAILY</span></div>
+        <div class="pmx-head"><span class="pmx-t">Shielded value over time</span><span class="pmx-sub">USD, STACKED BY ASSET, DAILY</span></div>
         <div class="pmx-body"><a class="pmx-live" href="https://starkscan.co/privacy-pool" target="_blank" rel="noopener">VIEW LIVE →</a></div>
         <a class="pmx-src" href="https://starkscan.co/privacy-pool" target="_blank" rel="noopener">SOURCE: STARKSCAN ↗</a>
       </div>
       <div class="pmx-card" data-pmx="comp">
-        <div class="pmx-head"><span class="pmx-t">POOL COMPOSITION</span><span class="pmx-sub">USD BY ASSET, LATEST</span></div>
+        <div class="pmx-head"><span class="pmx-t">Pool composition</span><span class="pmx-sub">USD BY ASSET, LATEST</span></div>
         <div class="pmx-body"><a class="pmx-live" href="https://starkscan.co/privacy-pool" target="_blank" rel="noopener">VIEW LIVE →</a></div>
         <a class="pmx-src" href="https://starkscan.co/privacy-pool" target="_blank" rel="noopener">SOURCE: STARKSCAN ↗</a>
       </div>
       <div class="pmx-card" data-pmx="txs">
-        <div class="pmx-head"><span class="pmx-t">TRANSACTIONS</span><span class="pmx-sub">COUNT, DAILY</span></div>
+        <div class="pmx-head"><span class="pmx-t">Transactions</span><span class="pmx-sub">COUNT, DAILY</span></div>
         <div class="pmx-body"><a class="pmx-live" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">VIEW LIVE →</a></div>
         <a class="pmx-src" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">SOURCE: STRK20 DASHBOARD ↗</a>
       </div>
       <div class="pmx-card" data-pmx="users">
-        <div class="pmx-head"><span class="pmx-t">NEW USERS</span><span class="pmx-sub">VIEWING-KEY REGISTRATIONS, DAILY + CUMULATIVE</span></div>
+        <div class="pmx-head"><span class="pmx-t">New users</span><span class="pmx-sub">VIEWING-KEY REGISTRATIONS, DAILY + CUMULATIVE</span></div>
         <div class="pmx-body"><a class="pmx-live" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">VIEW LIVE →</a></div>
         <a class="pmx-src" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">SOURCE: STRK20 DASHBOARD ↗</a>
       </div>
       <div class="pmx-card" data-pmx="swaps">
-        <div class="pmx-head"><span class="pmx-t">PRIVATE SWAP VOLUME</span><span class="pmx-sub">USD BY TOKEN, DAILY</span></div>
+        <div class="pmx-head"><span class="pmx-t">Private swap volume</span><span class="pmx-sub">USD BY TOKEN, DAILY</span></div>
         <div class="pmx-body"><a class="pmx-live" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">VIEW LIVE →</a></div>
         <a class="pmx-src" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">SOURCE: STRK20 DASHBOARD ↗</a>
       </div>
       <div class="pmx-card" data-pmx="defi">
-        <div class="pmx-head"><span class="pmx-t">DEFI VOLUME PRIVATELY ROUTED</span><span class="pmx-sub">USD BY PROTOCOL, DAILY</span></div>
+        <div class="pmx-head"><span class="pmx-t">DeFi volume privately routed</span><span class="pmx-sub">USD BY PROTOCOL, DAILY</span></div>
         <div class="pmx-body"><a class="pmx-live" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">VIEW LIVE →</a></div>
         <a class="pmx-src" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">SOURCE: STRK20 DASHBOARD ↗</a>
       </div>
       <div class="pmx-card" data-pmx="revenue">
-        <div class="pmx-head"><span class="pmx-t">REVENUE</span><span class="pmx-sub">PROTOCOL FEES, DAILY + CUMULATIVE</span></div>
+        <div class="pmx-head"><span class="pmx-t">Revenue</span><span class="pmx-sub">PROTOCOL FEES, DAILY + CUMULATIVE</span></div>
         <div class="pmx-body"><a class="pmx-live" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">VIEW LIVE →</a></div>
         <a class="pmx-src" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">SOURCE: STRK20 DASHBOARD ↗</a>
       </div>
@@ -4195,7 +4195,7 @@ var pvVideoChrome = thVideoChrome({
     };
   }
 
-  // POOL COMPOSITION: the latest day of the SAME series the stacked chart
+  // Pool composition: the latest day of the SAME series the stacked chart
   // plots, through the SAME split and the SAME stackRows() rounding, so the
   // bars and the TOTAL are by construction the numbers that chart's tooltip
   // shows for that date. Bar length is proportional to the largest asset;
@@ -4480,7 +4480,7 @@ var pvVideoChrome = thVideoChrome({
           return { chart: stackedArea(d.days, split, W, H), legend: legend(split.names),
                    meta: { days: d.days, W: W, P: PAD_STD, rows: stackRows(split, fmtUsd) } };
         });
-        // POOL COMPOSITION, same payload and same split: the two cells cannot
+        // Pool composition, same payload and same split: the two cells cannot
         // disagree because they are the same numbers rendered twice
         stage('comp', function(){
           return { chart: compBlock(d.days, split), legend: '', meta: null };
