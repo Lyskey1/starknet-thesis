@@ -1,5 +1,5 @@
 /* The landing hero's backdrop, mounted locally on the privacy hero (.pv-human
-   spans the whole .hero) and again inside the lineage scrubber's visual. Same fragment as src/views/home/scene/backdrop.tsx
+   spans the whole .hero). Same fragment as src/views/home/scene/backdrop.tsx
    in the orb-act palette, plus the landing's drift of motes, so the hero reads
    as the same room as the landing page. The page-wide js/eco-backdrop.js is
    several stacking contexts back from the metal-human video's
