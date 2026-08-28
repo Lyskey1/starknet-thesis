@@ -7,39 +7,22 @@
         --pf-line: #262626; --pf-acc: #c53400; --pf-bg: #0d0d0d; }
 
 /* ---------- hero ---------- */
-/* the hero runs ~1800px tall and opens on its own aperture scene; the figure
-   belongs in the lower band, behind the headline, as the reference has it */
-.pv-human { position: absolute; inset: auto 0 0 0; height: min(100%, 106vh); z-index: 0; overflow: hidden; pointer-events: none;
-  /* The video paints every pixel opaque (object-fit:cover), so the fixed
-     page-wide ambient-wash canvas (js/eco-backdrop.js) can't show through
-     it directly -- it sits several stacking contexts back, and blending
-     the video against it read flat. js/pv-human-shader.js mounts a second,
-     local instance of the same flame wash right here instead, so the
-     video's mix-blend-mode:screen (below) has genuine motion in the same
-     layer to screen against, not a static gradient standing in for it. */
-  background: #0d0d0d; }
+/* .pv-human spans the whole hero: js/pv-human-shader.js paints the landing
+   page's backdrop (flame wash plus motes) onto the canvas here, and the
+   metal-human clip screens onto it from the lower band. No curtain, bloom,
+   grid or heavy scrim: the landing hero has none, and this hero matches it. */
+.pv-human { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; background: #000; }
 .pv-human-shader { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
-.pv-figure { position: absolute; inset: 0; }
-/* cover, not contain: a fixed box left its own edges showing */
+.pv-figure { position: absolute; inset: auto 0 0 0; height: min(100%, 106vh); }
 .pv-human video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 68% 42%;
   filter: grayscale(1) brightness(1.02) contrast(1.3); mix-blend-mode: screen; }
-/* luminance stays, hue comes from here: the clip's blues AND reds both land on
-   the accent instead of splitting apart under a hue rotation */
-/* the tint is scoped to the figure (isolate above), so it colours the clip
-   rather than washing the whole hero */
 .pv-figure::after { content: ""; position: absolute; inset: 0; background: var(--pf-acc); mix-blend-mode: color; }
-.pv-human .pv-scrim { position: absolute; inset: 0; z-index: 2;
-  background: linear-gradient(90deg, rgba(13,13,13,.94) 0%, rgba(13,13,13,.7) 34%, rgba(13,13,13,.1) 66%, rgba(13,13,13,.45) 100%),
-              linear-gradient(to bottom, rgba(13,13,13,.7) 0%, rgba(13,13,13,0) 22%, rgba(13,13,13,.55) 78%, rgba(13,13,13,1) 100%); }
-.pv-human .pv-ticks { position: absolute; inset: 0; z-index: 3; opacity: .5;
-  background-image: linear-gradient(rgba(250,250,250,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(250,250,250,.05) 1px, transparent 1px);
-  background-size: 240px 240px; }
+/* only the clip's own edges are hidden, so the backdrop stays as bright as the landing's */
+.pv-human .pv-scrim { position: absolute; inset: auto 0 0 0; height: min(100%, 106vh); z-index: 2;
+  background: linear-gradient(90deg, rgba(0,0,0,.55) 0%, rgba(0,0,0,0) 30%, rgba(0,0,0,0) 72%, rgba(0,0,0,.35) 100%),
+              linear-gradient(to bottom, rgba(0,0,0,.6) 0%, rgba(0,0,0,0) 26%, rgba(0,0,0,0) 74%, rgba(0,0,0,.85) 100%); }
 body.page-privacy .hero { position: relative; }
-/* NOT a blanket ".hero > *": that also caught .hero-curtain and .hero-bloom,
-   two absolutely-positioned (z-index:-1) legacy decorations from styles.css,
-   forcing them into normal flow at their natural height (720px, 520px) --
-   dead space above the real hero content. .pv-hero-grid already carries its
-   own position/z-index below, so nothing here needs to elevate it. */
+body.page-privacy .hero::before { display: none; }
 @media (max-width: 860px) { .pv-human video { object-position: 62% 40%; } }
 @media (prefers-reduced-motion: reduce) { .pv-human video { display: none; } }
 
@@ -101,14 +84,14 @@ body.page-privacy .hero { position: relative; }
 .sq-sticky { position: sticky; top: 0; height: 78vh;
   display: flex; align-items: flex-start; overflow: hidden; }
 .sq-in { position: relative; z-index: 1; max-width: min(1800px, 92vw); width: 100%; margin: 0 auto; padding: 16vh 5vw 0; }
-.sq-kicker { display: flex; align-items: center; gap: 12px; margin: 0 0 2vh;
-  font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: .22em; text-transform: uppercase; color: rgba(255,255,255,.55); }
+.sq-kicker { display: inline-flex; align-items: center; gap: 10px; margin: 0 0 3vh; padding: 6px 10px; background: rgba(250,250,250,.08);
+  font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: .02em; text-transform: none; color: rgba(255,255,255,.85); }
 .sq-tri { width: 0; height: 0; border-left: 8px solid transparent; border-right: 8px solid transparent; border-bottom: 9px solid rgba(255,255,255,.55); transform: rotate(-135deg); }
-.sq-mark { display: block; margin: 0 0 -1.5vh; font-family: 'General Sans','Helvetica Neue',Arial,sans-serif;
+.sq-mark { display: none; margin: 0 0 -1.5vh; font-family: 'General Sans','Helvetica Neue',Arial,sans-serif;
   font-size: clamp(56px, min(7.5vw, 13vh), 128px); line-height: .6; color: var(--accent); }
 .sq-quote { margin: 0; max-width: none; }
-.sq-quote p { margin: 0; font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-weight: 500;
-  font-size: clamp(32px, min(6vw, 11vh), 104px); line-height: 1.1; letter-spacing: -.02em; }
+.sq-quote p { margin: 0; font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-weight: 600;
+  font-size: clamp(34px, min(6.6vw, 11.5vh), 116px); line-height: .98; letter-spacing: -.04em; }
 .sq-w { --amt: 0; display: inline-block; color: color-mix(in srgb, rgba(255,255,255,.22) calc((1 - var(--amt)) * 100%), #fff calc(var(--amt) * 100%));
   transform: translateY(calc((1 - var(--amt)) * 6px)); transition: color .05s linear, transform .05s linear; }
 .sq-w.sq-em { color: color-mix(in srgb, rgba(255,255,255,.22) calc((1 - var(--amt)) * 100%), var(--accent) calc(var(--amt) * 100%)); }
@@ -136,47 +119,75 @@ body.page-privacy .hero { position: relative; }
   .sq-actions { gap: 18px; }
 }
 
-/* ---------- the lineage, as a scroll-pinned vertical timeline ----------
-   The scroll pins the whole kicker+title+list while js/timeline-scroll.js
-   drives a --amt custom property per .vt-item, so each year badge and its
-   stem light up in turn as you scroll, the same --amt/color-mix mechanic
-   as the Satoshi quote's word reveal. Disabled below 720px: the list
-   already collapses to a single compact column there, and a pin adds
-   nothing on a screen where the whole thing barely fits at once. */
-.vt-band { position: relative; height: 220vh; margin: 96px 0 0; }
-.vt-sticky { position: sticky; top: 0; height: 100vh; display: flex; align-items: center; overflow: hidden; }
-.vt { max-width: 1000px; width: 100%; margin: 0 auto; padding: 0 5vw; }
-.vt-kicker { margin: 0; text-align: center; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .24em; text-transform: uppercase; color: var(--pf-acc); }
-.vt-title { margin: clamp(4px, 1.4vh, 10px) 0 0; text-align: center; font-family: 'General Sans','Helvetica Neue',Arial,sans-serif;
-  font-weight: 300; font-size: clamp(24px, min(3.6vw, 5.2vh), 50px); line-height: 1.04; letter-spacing: -.03em; color: var(--pf-ink); text-transform: uppercase; }
-.vt-list { list-style: none; margin: clamp(4px, 2vh, 18px) 0 0; padding: 0; }
-.vt-item { --amt: 0; position: relative; display: grid; grid-template-columns: 1fr 128px 1fr; align-items: start; }
-.vt-year { grid-column: 2; justify-self: center; z-index: 1; min-width: 96px; padding: clamp(3px, 0.8vh, 7px) 0; border-radius: 999px;
-  background: color-mix(in srgb, #3a3a3a calc((1 - var(--amt)) * 100%), var(--pf-acc) calc(var(--amt) * 100%));
-  color: var(--pf-ink); text-align: center;
-  box-shadow: 0 0 calc(var(--amt) * 26px) rgba(197,52,0, calc(var(--amt) * 0.45));
-  font-family: 'IBM Plex Mono', monospace; font-size: 13px; letter-spacing: .16em;
-  transition: background .05s linear, box-shadow .05s linear; }
-/* the stem hangs from each marker down to the next one */
-.vt-stem { grid-column: 2; justify-self: center; width: 1px; height: clamp(18px, 4.4vh, 46px);
-  background: color-mix(in srgb, #3a3a3a calc((1 - var(--amt)) * 100%), var(--pf-acc) calc(var(--amt) * 100%));
-  transition: background .05s linear; }
-.vt-body { grid-row: 2; align-self: center; margin-top: clamp(-36px, -3.6vh, -18px); }
-.vt-r .vt-body { grid-column: 3; padding-left: 30px; text-align: left; }
-.vt-l .vt-body { grid-column: 1; padding-right: 30px; text-align: right; }
-.vt-body a { font-family: 'IBM Plex Mono', monospace; font-size: 13px; letter-spacing: .14em; text-transform: uppercase;
-  color: color-mix(in srgb, var(--pf-dim) calc((1 - var(--amt)) * 100%), var(--pf-ink) calc(var(--amt) * 100%));
-  text-decoration: none; transition: color .05s linear; }
-.vt-body a:hover { color: var(--pf-acc); }
+/* ---------- the lineage, as a horizontal scrubber ----------
+   Year ticks along a rail with a playhead, a bust visual left, one panel of
+   copy right, and a media-player strip (pause, progress, next) below.
+   js/timeline-scrub.js owns the state; the CSS only reads --pos on the rail
+   (playhead position, 0-1) and --focus on the visual (which part of the clip
+   each stop frames). */
+.tl { --lg-w: 1160px; max-width: var(--lg-w); margin: 96px auto 0; padding: 0 32px; }
+.lg-head { max-width: 640px; }
+.lg-kicker { margin: 0; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .24em; text-transform: uppercase; color: var(--pf-acc); }
+.lg-title { margin: 10px 0 0; font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-weight: 300; font-size: clamp(30px, 3.4vw, 48px); line-height: .98; letter-spacing: -.02em; color: var(--pf-ink); }
+.lg-rail { --pos: 0; position: relative; display: grid; grid-template-columns: repeat(6, 1fr); margin-top: 44px; padding-top: 22px; }
+.lg-line { position: absolute; left: calc(100% / 12); right: calc(100% / 12); top: 22px; height: 1px; background: rgba(250,250,250,.22); }
+.lg-line::after { content: ""; position: absolute; left: 0; top: 0; height: 1px; width: calc(var(--pos) * 100%); background: var(--pf-acc); transition: width .45s cubic-bezier(.4,0,.2,1); }
+.lg-head-dot { position: absolute; top: 22px; left: calc(100% / 12 + var(--pos) * (100% - 100% / 6)); width: 12px; height: 12px; margin: -6px 0 0 -6px; border-radius: 50%;
+  background: var(--pf-acc); box-shadow: 0 0 0 4px rgba(197,52,0,.25), 0 0 18px rgba(197,52,0,.6); transition: left .45s cubic-bezier(.4,0,.2,1); z-index: 2; }
+.lg-tick { position: relative; display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 0; margin: -22px 0 0; background: none; border: 0; cursor: pointer; color: rgba(250,250,250,.5); }
+.lg-dot { width: 7px; height: 7px; border-radius: 50%; background: rgba(250,250,250,.35); margin-top: 18.5px; transition: background .3s; }
+.lg-yr { font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: .12em; transition: color .3s; }
+.lg-tick:hover { color: var(--pf-ink); }
+.lg-tick.is-on { color: var(--pf-ink); }
+.lg-tick.is-on .lg-dot, .lg-tick.is-past .lg-dot { background: var(--pf-acc); }
+.lg-tick:focus-visible { outline: 2px solid var(--pf-acc); outline-offset: 4px; border-radius: 4px; }
+.lg-body { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 48px; align-items: stretch; margin-top: 44px; }
+.lg-visual { --focus: 68% 42%; position: relative; min-height: 440px; overflow: hidden; background: #000; }
+.lg-visual .pv-human-shader { z-index: 0; }
+.lg-figure { position: absolute; inset: 0; z-index: 1; }
+.lg-figure video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: var(--focus);
+  filter: grayscale(1) brightness(1.02) contrast(1.3); mix-blend-mode: screen; transition: object-position .9s cubic-bezier(.4,0,.2,1); }
+.lg-figure::after { content: ""; position: absolute; inset: 0; background: var(--pf-acc); mix-blend-mode: color; }
+.lg-vscrim { position: absolute; inset: 0; z-index: 2; background: linear-gradient(to bottom, rgba(0,0,0,.25), rgba(0,0,0,0) 30%, rgba(0,0,0,0) 60%, rgba(0,0,0,.8)); }
+.lg-cap { position: absolute; left: 22px; bottom: 18px; z-index: 3; margin: 0; display: flex; gap: 14px; align-items: baseline;
+  font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: rgba(250,250,250,.7); }
+.lg-cap-yr { color: var(--pf-acc); }
+.lg-panels { position: relative; display: flex; flex-direction: column; justify-content: center; }
+.lg-panel[hidden] { display: none; }
+.lg-panel.is-on { animation: lgIn .55s cubic-bezier(.2,.7,.2,1) both; }
+@keyframes lgIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+.lg-num { margin: 0; font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-weight: 300; font-size: clamp(56px, 7.2vw, 104px); line-height: .9; letter-spacing: -.04em; color: var(--pf-ink); }
+.lg-h { margin: 18px 0 0; font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-weight: 500; font-size: 22px; line-height: 1.15; color: var(--pf-ink); }
+.lg-p { margin: 14px 0 0; max-width: 46ch; font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-size: 16px; line-height: 1.6; color: var(--pf-dim); }
+.lg-ul { margin: 18px 0 0; padding: 0; list-style: none; display: grid; gap: 8px; }
+.lg-ul li { position: relative; padding-left: 18px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: rgba(250,250,250,.78); }
+.lg-ul li::before { content: ""; position: absolute; left: 0; top: .55em; width: 7px; height: 7px; border-radius: 50%; background: var(--pf-acc); }
+.lg-more { display: inline-block; margin-top: 26px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: #fff; text-decoration: none; border-bottom: 1px solid rgba(255,255,255,.5); padding-bottom: 3px; }
+.lg-more:hover { border-color: #fff; color: var(--pf-acc); }
+.lg-controls { display: flex; align-items: center; gap: 18px; margin-top: 36px; padding-top: 18px; border-top: 1px solid var(--pf-line); }
+.lg-btn { display: grid; place-items: center; width: 36px; height: 36px; padding: 0; border-radius: 50%; border: 1px solid rgba(250,250,250,.3); background: none; color: var(--pf-ink); cursor: pointer; transition: border-color .2s, background .2s; }
+.lg-btn:hover { border-color: #fff; background: rgba(255,255,255,.08); }
+.lg-btn:focus-visible { outline: 2px solid var(--pf-acc); outline-offset: 3px; }
+.lg-btn svg { width: 14px; height: 14px; fill: currentColor; }
+.lg-play .lg-i-play { display: none; }
+.lg-play[aria-pressed="true"] .lg-i-pause { display: none; }
+.lg-play[aria-pressed="true"] .lg-i-play { display: block; }
+.lg-prog { flex: 1; height: 2px; background: rgba(250,250,250,.16); overflow: hidden; }
+.lg-prog-fill { display: block; height: 100%; width: 0; background: var(--pf-acc); transform-origin: left; }
+.lg-count { margin: 0; font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: .12em; color: var(--pf-dim); }
+.lg-count-cur { color: var(--pf-ink); }
 @media (prefers-reduced-motion: reduce) {
-  .vt-year, .vt-stem, .vt-body a { transition: none; }
+  .lg-line::after, .lg-head-dot, .lg-figure video, .lg-dot, .lg-yr { transition: none; }
+  .lg-panel.is-on { animation: none; }
 }
-@media (max-width: 720px) {
-  .vt-band { height: auto; margin: 56px 0 0; }
-  .vt-sticky { position: relative; height: auto; overflow: visible; padding: 0; }
-  .vt-item { grid-template-columns: 96px 1fr; }
-  .vt-year, .vt-stem { grid-column: 1; }
-  .vt-r .vt-body, .vt-l .vt-body { grid-column: 2; grid-row: 1 / span 2; padding: 8px 0 0 20px; text-align: left; margin-top: 0; }
+@media (max-width: 860px) {
+  .lg { margin-top: 56px; padding: 0 24px; }
+  .lg-rail { margin-top: 32px; }
+  .lg-yr { font-size: 10px; letter-spacing: .06em; }
+  .lg-body { grid-template-columns: 1fr; gap: 24px; margin-top: 28px; }
+  .lg-visual { min-height: 260px; aspect-ratio: 4 / 3; }
+  .lg-num { font-size: 56px; }
+  .lg-controls { gap: 12px; }
 }
 
 /* ---------- hero copy, placed the way the reference places it ----------

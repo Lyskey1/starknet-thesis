@@ -1,23 +1,23 @@
-/* A local instance of the site's ambient flame wash (js/eco-backdrop.js),
-   scoped to .pv-human instead of the whole page. The fixed page-wide canvas
-   sits several stacking contexts back from the metal-human video's
-   mix-blend-mode:screen, so blending against it directly reads flat; this
-   canvas paints in the same local layer as the video, so the blend has
-   something to actually screen against. Wash only, no motes -- this is a
-   background behind a figure, not the page's own backdrop. */
+/* The landing hero's backdrop, mounted locally on the privacy hero (.pv-human
+   spans the whole .hero) and again inside the lineage scrubber's visual. Same fragment as src/views/home/scene/backdrop.tsx
+   in the orb-act palette, plus the landing's drift of motes, so the hero reads
+   as the same room as the landing page. The page-wide js/eco-backdrop.js is
+   several stacking contexts back from the metal-human video's
+   mix-blend-mode:screen, so the video needs this canvas in its own layer to
+   screen against. */
 import * as THREE from 'three';
 
-const host = document.querySelector('.pv-human');
-if (host) {
+function mount(host) {
   const canvas = document.createElement('canvas');
   canvas.className = 'pv-human-shader';
   host.insertBefore(canvas, host.firstChild);
 
   const linear = (hex) => { const c = new THREE.Color(hex); return new THREE.Vector3(c.r, c.g, c.b); };
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: false, powerPreference: 'low-power' });
   renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 1.5));
-  renderer.setClearColor(0x0d0d0d, 1);
+  renderer.setClearColor(0x000000, 1);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
 
   const scene = new THREE.Scene();
@@ -30,10 +30,10 @@ if (host) {
       depthTest: false, depthWrite: false, toneMapped: false,
       uniforms: {
         iTime: { value: 0 },
-        uBg: { value: linear('#0d0d0d') },
+        uBg: { value: linear('#000000') },
         uFlameA: { value: linear('#c53400') },
-        uFlameB: { value: linear('#e07a4a') },
-        uFlameAmt: { value: 0.85 }
+        uFlameB: { value: linear('#ff8a4a') },
+        uFlameAmt: { value: 0.5 }
       },
       vertexShader: `varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position, 1.0); }`,
       fragmentShader: `
@@ -53,16 +53,64 @@ if (host) {
           vec3 flame = 1.5 * uFlameA * w.x;
           flame *= w.y;
           flame += uFlameB * w.z;
-          flame *= mix(0.45, 1.0, smoothstep(0.0, 1.0, abs(uv.y)));
-          float md = smoothstep(-1.0, 1.0, -uv.y * uv.x);
-          flame *= mix(0.4, 1.0, md);
+          flame *= smoothstep(0.25, 1.0, abs(uv.y));
+          float md = smoothstep(-0.7, 1.0, -uv.y * uv.x);
+          flame *= md * md;
           vec3 bg = uBg * (1.0 - 0.4 * length(uv));
           gl_FragColor = vec4(bg + flame * uFlameAmt, 1.0);
         }`
     })
   );
-  wash.frustumCulled = false;
-  scene.add(wash);
+  wash.renderOrder = -1; wash.frustumCulled = false; scene.add(wash);
+
+  const COUNT = matchMedia('(max-width: 860px)').matches ? 90 : 220;
+  const motes = (() => {
+    const pos = new Float32Array(COUNT * 3), size = new Float32Array(COUNT);
+    for (let i = 0; i < COUNT; i++) {
+      const a = Math.sin(i * 12.9898) * 43758.5453, b = Math.sin(i * 78.233) * 12345.678, c = Math.sin(i * 39.425) * 6789.1;
+      pos[i * 3] = ((a % 1) - 0.5) * 2; pos[i * 3 + 1] = ((b % 1) - 0.5) * 2; pos[i * 3 + 2] = ((c % 1) - 0.5) * 2;
+      size[i] = 16 * (0.4 + Math.abs(a % 1));
+    }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    g.setAttribute('size', new THREE.BufferAttribute(size, 1));
+    const m = new THREE.ShaderMaterial({
+      transparent: true, depthWrite: false, depthTest: false, blending: THREE.AdditiveBlending,
+      uniforms: {
+        uTime: { value: 0 }, uRes: { value: new THREE.Vector2(1, 1) },
+        uSpread: { value: 3.4 }, uFadeNear: { value: 2.4 }, uFadeFar: { value: 4.6 },
+        uColor: { value: linear('#ffb08a') }, uAlpha: { value: 0.5 }
+      },
+      vertexShader: `
+        attribute float size; uniform float uTime; uniform vec2 uRes;
+        uniform float uSpread, uFadeNear, uFadeFar; varying float vA;
+        vec3 warp(vec3 p, float t){
+          float c = 0.9, a = 1.9, b = 0.02, s = 0.05;
+          p *= 2.0;
+          p.x += c*sin(s*t + a*p.y) + t*b; p.y += c*cos(s*t + a*p.x);
+          p.y += c*sin(s*t + a*p.z) + t*b; p.z += c*cos(s*t + a*p.y);
+          p.z += c*sin(s*t + a*p.x) + t*b; p.x += c*cos(s*t + a*p.z);
+          return cos(p + vec3(1, 2, 4));
+        }
+        void main(){
+          vec3 v = position * uSpread + warp(position, uTime) * (uSpread * 0.28);
+          vec4 mv = modelViewMatrix * vec4(v, 1.0);
+          float r = length(v);
+          vA = (1.0 - smoothstep(uFadeNear, uFadeFar, r)) * smoothstep(0.0, 0.3, -mv.z);
+          gl_PointSize = max(1.0, size * uRes.y / 900.0 / -mv.z);
+          gl_Position = projectionMatrix * mv;
+        }`,
+      fragmentShader: `
+        uniform vec3 uColor; uniform float uAlpha; varying float vA;
+        void main(){
+          vec2 p = gl_PointCoord - 0.5; float l = length(p);
+          if (l > 0.5) discard;
+          float tex = smoothstep(0.5, 0.0, l);
+          gl_FragColor = vec4(uColor * tex, tex * vA * uAlpha);
+        }`
+    });
+    const pts = new THREE.Points(g, m); pts.frustumCulled = false; scene.add(pts); return pts;
+  })();
 
   function resize() {
     const w = host.clientWidth, h = host.clientHeight;
@@ -70,19 +118,23 @@ if (host) {
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
+    motes.material.uniforms.uRes.value.set(w * renderer.getPixelRatio(), h * renderer.getPixelRatio());
   }
   new ResizeObserver(resize).observe(host);
   resize();
 
-  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const start = performance.now();
   function frame() {
     if (!document.hidden) {
-      wash.material.uniforms.iTime.value = (performance.now() - start) * 0.001;
+      const t = (performance.now() - start) * 0.001;
+      wash.material.uniforms.iTime.value = t;
+      motes.material.uniforms.uTime.value = t * 8;
       renderer.render(scene, camera);
     }
-    if (!reduced) requestAnimationFrame(frame);
+    requestAnimationFrame(frame);
   }
   renderer.render(scene, camera);
   if (!reduced) requestAnimationFrame(frame);
 }
+
+document.querySelectorAll('.pv-human, .tl-visual').forEach(mount);

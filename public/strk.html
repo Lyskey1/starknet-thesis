@@ -371,29 +371,29 @@ a.nav-logo{text-decoration:none}
 }
 
 /* utilities explorer (section 02) — selectable rail + animated micro-viz panels */
-.util{display:grid;grid-template-columns:340px 1fr;gap:24px;align-items:stretch}
-.util-list{display:flex;flex-direction:column;gap:10px}
-.util-tab{position:relative;display:flex;align-items:center;gap:16px;text-align:left;cursor:pointer;
-  background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;color:var(--white);
-  transition:border-color .2s,background .2s,transform .2s}
-.util-tab:hover{border-color:rgba(197, 52, 0,.35);background:rgba(250, 250, 250,.04)}
-.util-tab.on{border-color:var(--acc);background:rgba(197, 52, 0,.10)}
-.util-tab .ico{flex:0 0 auto;width:42px;height:42px;border-radius:12px;display:grid;place-items:center;position:relative;overflow:hidden;
-  background:linear-gradient(160deg,rgba(250, 250, 250,.10),rgba(250, 250, 250,.02));border:1px solid rgba(250, 250, 250,.14);backdrop-filter:blur(8px)}
-.util-tab .ico::before{content:"";position:absolute;inset:0;border-radius:12px;background:linear-gradient(160deg,rgba(255,255,255,.18),transparent 45%);pointer-events:none}
-.util-tab.on .ico{border-color:rgba(197, 52, 0,.45)}
-.util-tab .ico svg{width:22px;height:22px;position:relative;z-index:1}
-.util-tab .tx{display:flex;flex-direction:column;gap:4px;min-width:0;line-height:1.2}
-.util-tab .tx .nm{font-family:var(--sans);font-weight:600;font-size:16px}
-.util-tab .tx .te{font-family:var(--mono),monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
-.util-tab.on .tx .te{color:var(--acc-2)}
-.util-tab .idx{margin-left:auto;align-self:flex-start;font-family:var(--mono),monospace;font-size:12px;color:var(--muted)}
-.util-stage{position:relative;border:1px solid var(--line);border-radius:18px;background:var(--card);overflow:hidden}
-.util-panel{display:none;padding:34px 36px}
-.util-panel.show{display:block}
+/* Utilities as a card grid (after V7's workflow grid): four cards on a
+   dotted rule, each with its visualization on top and the title and copy
+   below, then a three-cell stats row. No tabs: every panel is always shown. */
+.util{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:1px dotted rgba(250,250,250,.28);margin-top:34px}
+.util-panel{position:relative;display:flex;flex-direction:column;padding:58px 24px 30px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);background:linear-gradient(180deg,rgba(250,250,250,.025),rgba(250,250,250,0))}
+.util-panel:last-child{border-right:0}
+.util-panel .ucard-idx{position:absolute;top:22px;right:22px;font-family:var(--mono),monospace;font-size:12px;color:var(--muted)}
+.util-panel .ucard-ico{display:grid;place-items:center;width:38px;height:38px;border-radius:10px;border:1px solid rgba(250,250,250,.14);background:linear-gradient(160deg,rgba(250,250,250,.10),rgba(250,250,250,.02));margin-bottom:22px}
+.util-panel .ucard-ico svg{width:20px;height:20px}
 .util-panel .eyebrow{font-family:var(--mono),monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--acc-2)}
-.util-panel h3{font-family:var(--display);font-weight:700;font-size:30px;text-transform:uppercase;letter-spacing:-.01em;margin:12px 0 14px}
-.util-panel p{color:var(--muted-2);font-size:16px;line-height:1.6;max-width:60ch}
+.util-panel h3{font-family:var(--sans);font-weight:500;font-size:22px;letter-spacing:-.01em;margin:10px 0 10px;text-transform:none}
+.util-panel p{color:var(--muted-2);font-size:14px;line-height:1.6;max-width:none}
+.util-panel .viz{order:-1;margin:0 0 26px;padding:0 0 24px;border-top:0;border-bottom:1px solid var(--line);height:344px;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-start}
+.util-panel .seglbl{flex-direction:column;align-items:flex-start;gap:6px}
+.util-panel .vrow{flex-direction:column}
+.util-panel .vrow{gap:14px;margin-top:18px}
+.util-panel .bignum{font-size:22px}
+.util-panel #stakingUpdated{display:none}
+.util-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
+.util-stats .us{padding:44px 28px 40px;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.util-stats .us:last-child{border-right:0}
+.util-stats .us b{display:block;font-family:var(--display);font-weight:400;font-size:clamp(44px,4.6vw,66px);line-height:1;letter-spacing:-.02em;color:var(--white)}
+.util-stats .us span{display:block;margin-top:26px;font-family:var(--sans);font-size:16px;color:var(--muted-2)}
 .viz{margin-top:28px;padding-top:26px;border-top:1px solid var(--line)}
 .barrow{margin-bottom:18px}
 .barrow .bl{font-family:var(--mono),monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
@@ -489,11 +489,15 @@ a.chip:hover{background:var(--acc);border-color:var(--acc);color:#0d0d0d}
 .figlink .bignum,.figlink .subt{transition:color .2s}
 .figlink:hover .bignum,.figlink:hover .subt{color:var(--acc-2)}
 .figlink .subt .arr{margin-left:5px;font-size:11px;opacity:.7}
-@media(max-width:880px){
-  .util{grid-template-columns:1fr;gap:16px}
-  .util-list{flex-direction:row;flex-wrap:wrap}
-  .util-tab{flex:1 1 45%}
-  .util-tab .te,.util-tab .idx{display:none}
+@media(max-width:1100px){
+  .util{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .util-panel:nth-child(2){border-right:0}
+}
+@media(max-width:640px){
+  .util{grid-template-columns:1fr}
+  .util-panel{border-right:0}
+  .util-stats{grid-template-columns:1fr}
+  .util-stats .us{border-right:0;padding:32px 20px}
 }
 
 /* ===== convergence Venn (section 03) ===== */
@@ -1203,38 +1207,10 @@ window.ADMIN_GATE=on;})();
     <linearGradient id="gv" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#c53400"/><stop offset="1" stop-color="#f0b8a0"/></linearGradient>
   </defs></svg>
 
-  <div class="util">
-    <!-- LEFT RAIL -->
-    <div class="util-list" id="utilRail">
-      <button class="util-tab on" data-k="fees">
-        <span class="ico"><svg viewBox="0 0 24 24"><path fill="url(#gv)" d="M13 2 4 13h6l-1 9 9-12h-6l1-8z"/></svg></span>
-        <span class="tx"><span class="nm">Fees</span><span class="te">Gas + privacy</span></span>
-        <span class="idx">01</span>
-      </button>
-      <button class="util-tab" data-k="staking">
-        <span class="ico"><svg viewBox="0 0 24 24"><path fill="url(#gv)" d="M12 2 20 5v6c0 5-3.4 7.7-8 9-4.6-1.3-8-4-8-9V5z"/><path fill="none" stroke="#0d0d0d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M9 12l2.2 2.2L15 10.2"/></svg></span>
-        <span class="tx"><span class="nm">Staking</span><span class="te">Secures the network</span></span>
-        <span class="idx">02</span>
-      </button>
-      <button class="util-tab" data-k="gov">
-        <span class="ico"><svg viewBox="0 0 24 24"><path fill="url(#gv)" d="M12 3 21.5 8.2H2.5z"/><rect x="5.4" y="9.3" width="2.4" height="7.6" fill="url(#gv)"/><rect x="10.8" y="9.3" width="2.4" height="7.6" fill="url(#gv)"/><rect x="16.2" y="9.3" width="2.4" height="7.6" fill="url(#gv)"/><rect x="3.2" y="17.6" width="17.6" height="2.4" rx="1" fill="url(#gv)"/></svg></span>
-        <span class="tx"><span class="nm">Governance</span><span class="te">Protocol control</span></span>
-        <span class="idx">03</span>
-      </button>
-      <button class="util-tab" data-k="coll">
-        <span class="ico"><svg viewBox="0 0 24 24"><path fill="url(#gv)" d="M12 2.6 21.5 8 12 13.4 2.5 8z"/><path fill="none" stroke="url(#gv)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" opacity=".6" d="M3 12l9 5.4L21 12M3 16l9 5.4L21 16"/></svg></span>
-        <span class="tx"><span class="nm">DeFi collateral</span><span class="te">Base layer</span></span>
-        <span class="idx">04</span>
-      </button>
-    </div>
-
-    <!-- RIGHT PANEL -->
-    <div class="util-stage sg-holder">
-      <div class="sg-bloom" aria-hidden="true"><i></i></div>
-      <div class="sg-glass" aria-hidden="true"></div>
+  <div class="util util-grid">
       <!-- FEES -->
       <div id="fees" class="util-panel show" data-k="fees">
-        <div class="eyebrow">Execution</div>
+        <span class="ucard-idx">01</span><span class="ucard-ico"><svg viewBox="0 0 24 24"><path fill="url(#gv)" d="M13 2 4 13h6l-1 9 9-12h-6l1-8z"/></svg></span><div class="eyebrow">Execution</div>
         <h3>Fees</h3>
         <p>Every transaction on Starknet is paid in STRK. Beyond standard gas, each private transaction also carries a protocol privacy fee: a target of about $0.12 per action, settled in STRK, with the STRK amount adjusted by the protocol as the price moves.</p>
         <div class="viz">
@@ -1249,10 +1225,9 @@ window.ADMIN_GATE=on;})();
           </div>
         </div>
       </div>
-
       <!-- STAKING -->
-      <div id="staking-2" class="util-panel" data-k="staking">
-        <div class="eyebrow">Security</div>
+      <div id="staking-2" class="util-panel show" data-k="staking">
+        <span class="ucard-idx">02</span><span class="ucard-ico"><svg viewBox="0 0 24 24"><path fill="url(#gv)" d="M12 2 20 5v6c0 5-3.4 7.7-8 9-4.6-1.3-8-4-8-9V5z"/><path fill="none" stroke="#0d0d0d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M9 12l2.2 2.2L15 10.2"/></svg></span><div class="eyebrow">Security</div>
         <h3>Staking</h3>
         <p>Staking STRK is the core of Starknet's decentralization, carrying 75% of all staking power. Bitcoin staking was added on top to tie STRK and BTC value in a flywheel: BTC stakers take a fixed 25% share of staking rewards, so the more STRK is staked, the higher their rewards and APR, pulling even more Bitcoin into consensus. All of it runs on less than 1% annual STRK inflation.</p>
         <div class="viz">
@@ -1273,10 +1248,9 @@ window.ADMIN_GATE=on;})();
           <div id="stakingUpdated" style="font-family:var(--mono),monospace;font-size:10px;letter-spacing:.12em;color:var(--muted);text-align:right;margin-top:10px;min-height:13px"></div>
         </div>
       </div>
-
       <!-- GOVERNANCE -->
-      <div id="governance" class="util-panel" data-k="gov">
-        <div class="eyebrow">Control</div>
+      <div id="governance" class="util-panel show" data-k="gov">
+        <span class="ucard-idx">03</span><span class="ucard-ico"><svg viewBox="0 0 24 24"><path fill="url(#gv)" d="M12 3 21.5 8.2H2.5z"/><rect x="5.4" y="9.3" width="2.4" height="7.6" fill="url(#gv)"/><rect x="10.8" y="9.3" width="2.4" height="7.6" fill="url(#gv)"/><rect x="16.2" y="9.3" width="2.4" height="7.6" fill="url(#gv)"/><rect x="3.2" y="17.6" width="17.6" height="2.4" rx="1" fill="url(#gv)"/></svg></span><div class="eyebrow">Control</div>
         <h3>Governance</h3>
         <p>Governance is powered by STRK, and only staked or delegated STRK carries a vote. Stakers and delegators set the direction of the protocol, from upgrades to economic parameters and everything in between. It is already live, with 10 votes held as of 20 July 2026.</p>
         <div class="viz">
@@ -1299,10 +1273,9 @@ window.ADMIN_GATE=on;})();
           <div class="vrow"><div><div class="bignum">10</div><div class="subt">Votes to date</div></div></div>
         </div>
       </div>
-
       <!-- COLLATERAL -->
-      <div id="defi-collateral" class="util-panel" data-k="coll">
-        <div class="eyebrow">Capital</div>
+      <div id="defi-collateral" class="util-panel show" data-k="coll">
+        <span class="ucard-idx">04</span><span class="ucard-ico"><svg viewBox="0 0 24 24"><path fill="url(#gv)" d="M12 2.6 21.5 8 12 13.4 2.5 8z"/><path fill="none" stroke="url(#gv)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" opacity=".6" d="M3 12l9 5.4L21 12M3 16l9 5.4L21 16"/></svg></span><div class="eyebrow">Capital</div>
         <h3>DeFi collateral</h3>
         <p>Across Starknet DeFi, STRK is a core collateral asset. From lending and trading to leverage, liquid staking, and stablecoins, the native token plugs into every major venue, put to work instead of sitting idle.</p>
         <div class="viz">
@@ -1317,7 +1290,11 @@ window.ADMIN_GATE=on;})();
           <div class="basebar">STRK · base collateral</div>
         </div>
       </div>
-    </div>
+  </div>
+  <div class="util-stats">
+    <div class="us"><b>~$0.12</b><span>Privacy fee per private action, paid in STRK</span></div>
+    <div class="us"><b>75 / 25</b><span>STRK / BTC share of staking power</span></div>
+    <div class="us"><b>10</b><span>Onchain governance votes to date</span></div>
   </div>
 </div></section>
 
@@ -2018,9 +1995,8 @@ if(govVotes){
 
 /* ---------- section 02 utilities explorer ---------- */
 (function(){
-  const tabs=[...document.querySelectorAll(".util-tab")];
   const panels=[...document.querySelectorAll(".util-panel")];
-  if(!tabs.length) return;
+  if(!panels.length) return;
   function animateBars(p){
     if(!p) return;
     p.querySelectorAll(".barfill").forEach(b=>{
@@ -2028,16 +2004,11 @@ if(govVotes){
       requestAnimationFrame(()=>requestAnimationFrame(()=>{ b.style.width=b.dataset.w; }));
     });
   }
-  function select(k){
-    tabs.forEach(t=>t.classList.toggle("on",t.dataset.k===k));
-    panels.forEach(p=>{
-      const on=p.dataset.k===k;
-      p.classList.toggle("show",on);
-      if(on) animateBars(p);
-    });
-  }
-  tabs.forEach(t=>t.addEventListener("click",()=>select(t.dataset.k)));
-  animateBars(document.querySelector(".util-panel.show"));
+  const grid=document.querySelector(".util-grid");
+  if("IntersectionObserver" in window && grid){
+    const io=new IntersectionObserver(es=>{ if(es.some(e=>e.isIntersecting)){ panels.forEach(animateBars); io.disconnect(); } },{threshold:.2});
+    io.observe(grid);
+  } else panels.forEach(animateBars);
 })();
 
 /* =========================================================================
