@@ -9,8 +9,8 @@ import { hiddenWhenClear, smoothstep, useSceneClock } from "./overlay";
 import { LETTER_REVEAL, WORD_REVEAL } from "./reveal";
 
 /**
- * Second-act overlay — Privacy, over the standing point-cloud figure (still
- * named `Galaxy`/`SectionGalaxy` internally — the file used to be a spiral; see
+ * Second-act overlay: Privacy, over the standing point-cloud figure (still
+ * named `Galaxy`/`SectionGalaxy` internally, since the file used to be a spiral; see
  * `galaxy-shaders.ts`). A fixed layer: centred title, centred support copy,
  * and a four-stat band across the foot with faint column dividers.
  *
@@ -24,7 +24,7 @@ import { LETTER_REVEAL, WORD_REVEAL } from "./reveal";
 
 const TITLE = "Every wallet is a public ledger";
 const SUPPORT =
-  "Starknet makes that optional: real onchain privacy, for any asset, live today — not a future roadmap.";
+  "Starknet makes that optional: real onchain privacy, for any asset, live today, not a future roadmap.";
 
 /** `value` / `label` / `left` (Figma x ÷14.4 — the desktop offset only). */
 const STATS = [

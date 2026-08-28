@@ -9,11 +9,18 @@
 /* ---------- hero ---------- */
 /* the hero runs ~1800px tall and opens on its own aperture scene; the figure
    belongs in the lower band, behind the headline, as the reference has it */
-.pv-human { position: absolute; inset: auto 0 0 0; height: min(100%, 106vh); z-index: 0; overflow: hidden; pointer-events: none; }
-.pv-figure { position: absolute; inset: 0; isolation: isolate; }
+.pv-human { position: absolute; inset: auto 0 0 0; height: min(100%, 106vh); z-index: 0; overflow: hidden; pointer-events: none;
+  /* The video paints every pixel opaque (object-fit:cover), so the fixed
+     ambient-wash canvas behind the page can never show through it directly.
+     This gradient stands in for it -- same warm-glow-on-near-black language
+     as js/eco-backdrop.js -- and the video screens onto it (below), so its
+     black backdrop goes transparent and the glow reads as genuinely behind
+     the figure, not painted over a flat colour. */
+  background: radial-gradient(115% 85% at 28% 78%, rgba(197,52,0,.4) 0%, rgba(197,52,0,.14) 38%, transparent 68%), #0d0d0d; }
+.pv-figure { position: absolute; inset: 0; }
 /* cover, not contain: a fixed box left its own edges showing */
 .pv-human video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 68% 42%;
-  filter: grayscale(1) brightness(1.02) contrast(1.3); }
+  filter: grayscale(1) brightness(1.02) contrast(1.3); mix-blend-mode: screen; }
 /* luminance stays, hue comes from here: the clip's blues AND reds both land on
    the accent instead of splitting apart under a hue rotation */
 /* the tint is scoped to the figure (isolate above), so it colours the clip
@@ -26,7 +33,11 @@
   background-image: linear-gradient(rgba(250,250,250,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(250,250,250,.05) 1px, transparent 1px);
   background-size: 240px 240px; }
 body.page-privacy .hero { position: relative; }
-body.page-privacy .hero > *:not(.pv-human) { position: relative; z-index: 4; }
+/* NOT a blanket ".hero > *": that also caught .hero-curtain and .hero-bloom,
+   two absolutely-positioned (z-index:-1) legacy decorations from styles.css,
+   forcing them into normal flow at their natural height (720px, 520px) --
+   dead space above the real hero content. .pv-hero-grid already carries its
+   own position/z-index below, so nothing here needs to elevate it. */
 @media (max-width: 860px) { .pv-human video { object-position: 62% 40%; } }
 @media (prefers-reduced-motion: reduce) { .pv-human video { display: none; } }
 
@@ -65,46 +76,51 @@ body.page-privacy .hero > *:not(.pv-human) { position: relative; z-index: 4; }
 .fx-legend .fx-y:first-child { margin-left: 0; }
 @media (max-width: 860px) { .fx-crit-sub { display: none; } .fx-crit, .fx-cell { padding: 15px 12px; } }
 
-/* ---------- Satoshi's question, as a full-bleed band ----------
-   Shaped after the STRK20 site's testimonial screen: the accent fills the
-   frame, the quote sits huge and half-sunk into it, a ghosted wordmark rides
-   the lower right, and the attribution sits on the floor. */
+/* ---------- Satoshi's question, scroll-pinned word by word ----------
+   After strk20.starknet.io's testimonial screen: the scroll stops, the
+   quote holds centre stage, and each word lights up in turn until the
+   whole line is filled, before the page lets go and moves on. The band
+   paints no background of its own: js/eco-backdrop.js's wash (already
+   fixed behind the whole page, red/orange, never orange-filled) is the
+   backdrop here too. js/quote-scroll.js drives the reveal via a --amt
+   custom property set on each .sq-w span. */
 .sq-band { position: relative; width: 100vw; max-width: none; margin: 96px 0 0 calc(50% - 50vw);
-  padding: 0; background: var(--pf-acc) !important; overflow: hidden; isolation: isolate; }
-.sq-band::after { content: ""; position: absolute; inset: 0; pointer-events: none;
-  background: radial-gradient(120% 90% at 78% 108%, rgba(0,0,0,.34), transparent 62%); }
-.sq-in { position: relative; z-index: 1; max-width: 1400px; margin: 0 auto; padding: 40px 5vw 46px; min-height: 84vh;
-  display: flex; flex-direction: column; }
-.sq-kicker { display: flex; align-items: center; gap: 12px; margin: 0;
-  font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: .22em; text-transform: uppercase; color: rgba(255,255,255,.85); }
-.sq-tri { width: 0; height: 0; border-left: 8px solid transparent; border-right: 8px solid transparent; border-bottom: 9px solid rgba(255,255,255,.85); transform: rotate(-135deg); }
-.sq-mark { display: block; margin: 5vh 0 -1vh; font-family: 'General Sans','Helvetica Neue',Arial,sans-serif;
-  font-size: clamp(56px, 7vw, 104px); line-height: .6; color: #fff; }
-.sq-quote { margin: 0; max-width: 46ch; }
-.sq-quote p { margin: 0; font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-weight: 300;
-  font-size: clamp(24px, 3.1vw, 50px); line-height: 1.1; letter-spacing: -.025em;
-  /* the opening clause sits back into the ground, the promise comes forward */
-  color: rgba(255,255,255,.42); text-transform: uppercase; }
-.sq-quote em { font-style: normal; color: #fff; }
-.sq-tail { margin: 26px 0 0; max-width: 46ch; font-family: 'IBM Plex Mono', monospace;
+  padding: 0; height: 200vh; }
+.sq-sticky { position: sticky; top: 0; height: 100vh;
+  display: flex; align-items: center; overflow: hidden; }
+.sq-in { position: relative; z-index: 1; max-width: 1400px; width: 100%; margin: 0 auto; padding: 0 5vw; }
+.sq-kicker { display: flex; align-items: center; gap: 12px; margin: 0 0 3vh;
+  font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: .22em; text-transform: uppercase; color: rgba(255,255,255,.55); }
+.sq-tri { width: 0; height: 0; border-left: 8px solid transparent; border-right: 8px solid transparent; border-bottom: 9px solid rgba(255,255,255,.55); transform: rotate(-135deg); }
+.sq-mark { display: block; margin: 0 0 -2vh; font-family: 'General Sans','Helvetica Neue',Arial,sans-serif;
+  font-size: clamp(56px, 7vw, 104px); line-height: .6; color: var(--accent); }
+.sq-quote { margin: 0; max-width: none; }
+.sq-quote p { margin: 0; font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-weight: 500;
+  font-size: clamp(30px, 4.6vw, 76px); line-height: 1.12; letter-spacing: -.02em; }
+.sq-w { --amt: 0; display: inline-block; color: color-mix(in srgb, rgba(255,255,255,.22) calc((1 - var(--amt)) * 100%), #fff calc(var(--amt) * 100%));
+  transform: translateY(calc((1 - var(--amt)) * 6px)); transition: color .05s linear, transform .05s linear; }
+.sq-w.sq-em { color: color-mix(in srgb, rgba(255,255,255,.22) calc((1 - var(--amt)) * 100%), var(--accent) calc(var(--amt) * 100%)); }
+.sq-w-in { display: inline-block; }
+.sq-after { position: relative; max-width: 1400px; width: 100%; margin: 0 auto; padding: 12vh 5vw 12vh; }
+.sq-tail { margin: 0; max-width: 46ch; font-family: 'IBM Plex Mono', monospace;
   font-size: 13px; line-height: 1.6; letter-spacing: .04em; color: rgba(255,255,255,.72); }
-.sq-ghost { position: absolute; right: 4vw; bottom: 26vh; z-index: -1; pointer-events: none;
-  font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-weight: 500;
-  font-size: clamp(70px, 11vw, 190px); line-height: 1; letter-spacing: .04em; color: rgba(255,255,255,.10); }
-.sq-ghost i { font-style: normal; color: rgba(255,255,255,.16); }
-.sq-by { display: flex; align-items: center; gap: 14px; margin-top: auto; padding-top: 8vh; }
+.sq-by { display: flex; align-items: center; gap: 14px; margin-top: 8vh; }
 .sq-av { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 999px;
   border: 1px solid rgba(255,255,255,.5); color: rgba(255,255,255,.85); font-size: 13px; }
 .sq-by b { display: block; font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-weight: 500; font-size: 18px; color: #fff; }
 .sq-by span { display: block; margin-top: 3px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.72); }
-.sq-src { position: absolute; right: 5vw; bottom: 46px; font-family: 'IBM Plex Mono', monospace;
+.sq-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 28px; margin-top: 6vh; }
+.sq-src { font-family: 'IBM Plex Mono', monospace;
   font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: #fff; text-decoration: none; border-bottom: 1px solid rgba(255,255,255,.5); padding-bottom: 3px; }
 .sq-src:hover { border-color: #fff; }
+@media (prefers-reduced-motion: reduce) {
+  .sq-w { transition: none; }
+}
 @media (max-width: 860px) {
-  .sq-in { min-height: 0; padding: 32px 24px 40px; }
-  .sq-quote { max-width: none; }
-  .sq-ghost { bottom: 34vh; opacity: .7; }
-  .sq-src { position: static; display: inline-block; margin-top: 26px; }
+  .sq-band { height: auto; }
+  .sq-sticky { position: relative; height: auto; padding: 48px 0 40px; }
+  .sq-after { padding: 0 24px 56px; }
+  .sq-actions { gap: 18px; }
 }
 
 /* ---------- the lineage, as a vertical timeline ---------- */

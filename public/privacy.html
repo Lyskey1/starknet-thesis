@@ -148,12 +148,20 @@
   /* 24px above the CTAs is strk's subtitle-to-CTA gap; the eco/dg 42px
      does not fit this hero's height budget (see the .hero comment). */
   .pv-ctas { display: flex; gap: 18px; margin-top: 24px; flex-wrap: wrap; position: relative; }
-  .pv-cta { font-family: var(--mono); font-size: 13px; letter-spacing: .14em; text-transform: uppercase; text-decoration: none; color: var(--white); padding: 12px 22px; border-radius: 99px; border: 1px solid rgba(var(--accent-rgb), .55); display: inline-flex; align-items: center; gap: 10px; }
+  /* Same face and casing as the landing's "Read the thesis" CTA (General
+     Sans, sentence case, medium weight) instead of the page's own uppercase
+     mono chip -- and the same solid-fill-plus-arrow-tile shape for the
+     primary action, so this button reads as the same control as the one
+     that opens the thesis on every other page. */
+  .pv-cta { font-family: var(--display); font-weight: 500; font-size: 15px; letter-spacing: 0; text-transform: none; text-decoration: none;
+    color: var(--white); padding: 13px 6px 13px 22px; border-radius: 4px; border: 1px solid transparent; background: var(--accent);
+    display: inline-flex; align-items: center; gap: 14px; }
   .pv-cta.chip-glass { transition: background var(--hover-dur) var(--hover-ease), box-shadow var(--hover-dur) var(--hover-ease), border-color var(--hover-dur); }
-  .pv-cta i { font-style: normal; transition: transform var(--hover-dur) var(--hover-ease); }
+  .pv-cta:hover { background: var(--accent-dim); }
+  .pv-cta i { font-style: normal; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 3px; background: rgba(0,0,0,.18); transition: transform var(--hover-dur) var(--hover-ease); }
   .pv-cta:hover i { transform: translateX(4px); }
   .pv-cta:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
-  .pv-cta--muted { border-color: var(--border);
+  .pv-cta--muted { background: transparent; color: var(--white); border-color: var(--border);
     box-shadow:
       inset 0 1px 0 rgba(255,255,255,.5),
       inset -1px -1px 0 rgba(255,255,255,.30),
@@ -162,6 +170,7 @@
       inset 0 -1px 0 rgba(0,0,0,.6),
       inset 0 -3px 5px rgba(0,0,0,.22),
       0 0 12px rgba(var(--accent-rgb), .10); }
+  .pv-cta--muted i { background: rgba(250,250,250,.08); }
   .pv-cta--muted:hover { border-color: rgba(var(--accent-rgb), .55); background: rgba(250, 250, 250,.10);
     box-shadow:
       inset 0 1px 0 rgba(255,255,255,.5),
@@ -2031,8 +2040,8 @@
     <div class="pv-br">
       <p class="hero-title pv-turn"><span class="turn">Starknet made<br>that optional.</span></p>
       <div class="pv-ctas">
-        <a class="pv-cta chip-glass" href="#why-starknet-structurally">How it works &rarr;</a>
-        <a class="pv-cta pv-cta--muted chip-glass" href="#the-most-complete-privacy-ecosystem">See what is live &rarr;</a>
+        <a class="pv-cta chip-glass" href="#why-starknet-structurally">How it works<i>&rarr;</i></a>
+        <a class="pv-cta pv-cta--muted chip-glass" href="#the-most-complete-privacy-ecosystem">See what is live<i>&rarr;</i></a>
       </div>
     </div>
   </div>
@@ -2260,25 +2269,38 @@
 <p class="fx-legend"><span class="fx-y" aria-hidden="true"></span> Yes<span class="fx-p" aria-hidden="true"></span> Partial, not counted<span class="fx-n" aria-hidden="true">&ndash;</span> No</p>
 </div>
 
-  <!-- Satoshi narrative: three rows. Row 1 asks (question + the post),
-       row 2 bridges (the lineage as a full-width band), row 3 answers
-       (two plain prose columns). The post is the only boxed element. -->
-  <section class="sq-band th-pm-reveal" aria-labelledby="sq-heading">
-    <div class="sq-in">
-      <p class="sq-kicker"><span class="sq-tri" aria-hidden="true"></span>Satoshi on Bitcointalk &middot; thread n&deg; 770 &middot; August 11, 2010</p>
-      <span class="sq-mark" aria-hidden="true">&ldquo;</span>
-      <blockquote class="sq-quote" id="sq-heading">
-        <p>If a solution was found, <em>a much better, easier, more convenient implementation of Bitcoin</em> would be possible.</p>
-      </blockquote>
-      <p class="sq-tail">It&rsquo;s hard to think of how to apply zero-knowledge-proofs in this case.</p>
-      <span class="sq-ghost" aria-hidden="true">STRK<i>[</i>20<i>]</i></span>
-      <div class="sq-by">
-        <span class="sq-av" aria-hidden="true">&#9679;</span>
-        <div><b>satoshi</b><span>Founder &middot; activity 364 &middot; the question that opened the thread</span></div>
+  <!-- Satoshi narrative: a tall pinned band (sq-band) holds the quote sticky
+       for a scroll range while quote-scroll.js lights it word by word (a
+       CSS --amt custom property per word, driven straight off scroll
+       position -- see js/quote-scroll.js), after strk20.starknet.io's own
+       testimonial section. Attribution and the CTAs are NOT pinned: they
+       are the band's trailing sibling, so they scroll up into view
+       normally once the highlight finishes and the pin releases. The
+       band paints no background of its own -- js/eco-backdrop.js's wash
+       (already fixed behind the whole page) is the backdrop here too. -->
+  <section class="sq-band th-pm-reveal" aria-labelledby="sq-heading" id="sq-band">
+    <div class="sq-sticky">
+      <div class="sq-in">
+        <p class="sq-kicker"><span class="sq-tri" aria-hidden="true"></span>Satoshi on Bitcointalk &middot; thread n&deg; 770 &middot; August 11, 2010</p>
+        <span class="sq-mark" aria-hidden="true">&ldquo;</span>
+        <blockquote class="sq-quote" id="sq-heading">
+          <p><span class="sq-w"><span class="sq-w-in">If</span></span> <span class="sq-w"><span class="sq-w-in">a</span></span> <span class="sq-w"><span class="sq-w-in">solution</span></span> <span class="sq-w"><span class="sq-w-in">was</span></span> <span class="sq-w"><span class="sq-w-in">found,</span></span> <span class="sq-w sq-em"><span class="sq-w-in">a</span></span> <span class="sq-w sq-em"><span class="sq-w-in">much</span></span> <span class="sq-w sq-em"><span class="sq-w-in">better,</span></span> <span class="sq-w sq-em"><span class="sq-w-in">easier,</span></span> <span class="sq-w sq-em"><span class="sq-w-in">more</span></span> <span class="sq-w sq-em"><span class="sq-w-in">convenient</span></span> <span class="sq-w sq-em"><span class="sq-w-in">implementation</span></span> <span class="sq-w sq-em"><span class="sq-w-in">of</span></span> <span class="sq-w sq-em"><span class="sq-w-in">Bitcoin</span></span> <span class="sq-w"><span class="sq-w-in">would</span></span> <span class="sq-w"><span class="sq-w-in">be</span></span> <span class="sq-w"><span class="sq-w-in">possible.</span></span></p>
+        </blockquote>
       </div>
-      <a class="sq-src" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/174/" target="_blank" rel="noopener">Read the thread &rarr;</a>
     </div>
   </section>
+  <div class="sq-after">
+    <p class="sq-tail">It&rsquo;s hard to think of how to apply zero-knowledge-proofs in this case.</p>
+    <div class="sq-by">
+      <span class="sq-av" aria-hidden="true">&#9679;</span>
+      <div><b>satoshi</b><span>Founder &middot; activity 364 &middot; the question that opened the thread</span></div>
+    </div>
+    <div class="sq-actions">
+      <a class="sq-src" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/174/" target="_blank" rel="noopener">Read the thread &rarr;</a>
+      <a class="pv-cta sq-cta chip-glass" href="/">Read the thesis<i>&rarr;</i></a>
+    </div>
+  </div>
+  <script src="js/quote-scroll.js" defer></script>
 
   <div class="chapter th-pm-reveal" style="margin-top:72px">
     <h3 id="so-how-does-one-chain-check">So how does one chain <span class="em">check every box at once?</span></h3>

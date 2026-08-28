@@ -1,21 +1,21 @@
 /**
- * Second-act shaders — a standing point-cloud humanoid (Privacy).
+ * Second-act shaders: a standing point-cloud humanoid (Privacy).
  *
  * This file used to compute a spiral-galaxy target position (two arms plus a
  * 3D core bulge). The scene's second act is now Privacy, staged as a figure
- * assembling out of dust: same file, same component, same clock signals — only
+ * assembling out of dust: same file, same component, same clock signals, only
  * the per-point target-position formula changed, from a spiral to a body.
  *
  * The geometry is still only a seed lattice (see `galaxy.tsx`): every point's
- * position is thrown away and replaced by a hash of it. Twelve body parts —
- * head, neck, torso, pelvis, two arms, two hands, two legs, two feet — each
+ * position is thrown away and replaced by a hash of it. Twelve body parts,
+ * head, neck, torso, pelvis, two arms, two hands, two legs, two feet, each
  * claim a share of the points proportional to their surface, chosen by
  * comparing one hash against a cumulative threshold table. Ellipsoid parts
- * (head, torso, …) sample a point near their surface from two more hashes;
- * capsule parts (arms, legs) sample along their axis and around it.
+ * (head, torso, and so on) sample a point near their surface from two more
+ * hashes; capsule parts (arms, legs) sample along their axis and around it.
  *
- * Everything downstream of the target position — the inbound spawn-and-delay,
- * the outbound dispersal, the world scale, the cursor repel, the point size —
+ * Everything downstream of the target position (the inbound spawn-and-delay,
+ * the outbound dispersal, the world scale, the cursor repel, the point size)
  * is the same code as the spiral used, with the raw distances re-tuned for a
  * ~2-unit-tall figure instead of a ~90-unit galaxy.
  */
@@ -60,7 +60,7 @@ export const galaxyVertexShader = /* glsl */ `
   }
 
   // Which of the twelve parts this point belongs to, and its position on it.
-  // Weighted by each part's approximate surface — the torso and legs are the
+  // Weighted by each part's approximate surface: the torso and legs are the
   // biggest masses, so they claim the most points; hands and feet the fewest.
   vec3 humanPoint(float pick, float ra, float rb, float rc) {
     if (pick < 0.06) {
@@ -96,14 +96,14 @@ export const galaxyVertexShader = /* glsl */ `
     float gRnd3 = fract(sin(dot(position.xyz, vec3(43.332, 11.235, 89.234))) * 56475.234);
     float gRnd4 = fract(sin(dot(position.xyz, vec3(75.321, 32.123, 23.456))) * 35432.123);
 
-    // A slow breathing pulse — the only thing time moves once the figure is
+    // A slow breathing pulse: the only thing time moves once the figure is
     // formed; everything else about its pose is fixed per point.
     float breathe = sin(uTime * 0.55 + gRnd4 * 6.2831853) * 0.006;
     vec3 galaxyPos = humanPoint(gRnd1, gRnd2, gRnd3, gRnd4) * (1.0 + breathe);
 
     vec3 blowDir = normalize(vec3(gRnd1, gRnd2, gRnd3) - 0.5 + 0.0001);
 
-    // Assembly — each point streams in from a surrounding cloud, on its own
+    // Assembly: each point streams in from a surrounding cloud, on its own
     // delay, so the figure gathers out of drifting dust instead of fading on.
     // Re-tuned for a ~2-unit body: the spiral spawned 70 units out because its
     // own points spanned up to 90; this figure's do not.
@@ -113,7 +113,7 @@ export const galaxyVertexShader = /* glsl */ `
     vec3 spawn = galaxyPos + blowDir * 3.2 + vec3(0.0, (gRnd3 - 0.5) * 1.4, 0.0);
     galaxyPos = mix(spawn, galaxyPos, aEase);
 
-    // Dispersal — every point flies out along its own direction as the act ends.
+    // Dispersal: every point flies out along its own direction as the act ends.
     galaxyPos += blowDir * uBlow * 4.6;
 
     vec3 finalPos = galaxyPos * uScale;
@@ -126,7 +126,7 @@ export const galaxyVertexShader = /* glsl */ `
     vec4 mvPosition = viewMatrix * modelPosition;
 
     // Vertical gradient, matching the orb and the coin: light at the crown,
-    // warm toward the ground — one colour language across all three acts.
+    // warm toward the ground: one colour language across all three acts.
     float heightMix = smoothstep(-1.05, 0.85, galaxyPos.y);
     vColor = mix(uColCore, uColEdge, heightMix);
 

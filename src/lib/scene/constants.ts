@@ -79,10 +79,10 @@ export const ORB_CONFIG = {
 } as const;
 
 /**
- * The second act's figure — Privacy, staged as a standing point-cloud
+ * The second act's figure: Privacy, staged as a standing point-cloud
  * humanoid instead of the spiral this file used to describe. `colorEdge`
  * (crown) / `colorCore` (ground) is a vertical gradient now, not a radial
- * one — see `galaxy-shaders.ts`. The distances below (`cameraZ`, `dive`,
+ * one, see `galaxy-shaders.ts`. The distances below (`cameraZ`, `dive`,
  * `parallax`, `pointerRadius`) are sized for a body about two world units
  * tall, not a galaxy spanning ninety.
  */

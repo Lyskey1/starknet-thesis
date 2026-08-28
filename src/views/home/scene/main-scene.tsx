@@ -26,11 +26,11 @@ const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
  * Owns the shared camera.
  *
  * The orb (Quantum) sits close (`z ≈ 3.8`); the second act's figure (Privacy,
- * still named `GALAXY_CONFIG` internally — see `galaxy-shaders.ts`) sits a
+ * still named `GALAXY_CONFIG` internally, see `galaxy-shaders.ts`) sits a
  * little further out (`z ≈ 4.6`) so a standing body fits the frame. Rather
  * than rescale one form to meet the other, the camera travels between them,
- * driven by `galaxyPresence`. That keeps each form at its authored scale, and
- * — because presence returns to 0 as the figure disperses — the camera pulls
+ * driven by `galaxyPresence`. That keeps each form at its authored scale, and,
+ * because presence returns to 0 as the figure disperses, the camera pulls
  * back to the orb's distance exactly as the orb returns for the final section.
  */
 const CameraRig = () => {
