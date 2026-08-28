@@ -20,8 +20,8 @@ import { SendRequest } from "./send-request";
  * It fades against the global clock's second-act window. Desktop measurements
  * are the Figma pixels in `vw` (÷14.4).
  *
- * Below 1024px (ADR-0029) the stat band cannot survive as authored — four 11vw
- * columns pinned at fixed `left` offsets — so it becomes a 2×2 grid on tablet and
+ * Below 1024px (ADR-0029) the stat band cannot survive as authored (four 11vw
+ * columns pinned at fixed `left` offsets), so it becomes a 2x2 grid on tablet and
  * a single column on phones, with the copy stacked above it.
  */
 
@@ -29,7 +29,7 @@ const TITLE = "Every wallet is a public ledger";
 const SUPPORT =
   "Starknet makes that optional: real onchain privacy, for any asset, live today, not a future roadmap.";
 
-/** `value` / `label` / `left` (Figma x ÷14.4 — the desktop offset only). */
+/** `value` / `label` / `left` (Figma x / 14.4, the desktop offset only). */
 const STATS = [
   { value: "7/7", label: "Completeness score", left: "6.944vw" },
   { value: "~$0.12", label: "Lowest privacy fee in DeFi", left: "31.944vw" },
@@ -37,7 +37,7 @@ const STATS = [
   { value: "Seconds", label: "Shield & unshield, both ways", left: "81.944vw" },
 ];
 
-/** Column dividers between the stats (Figma x ÷14.4 — desktop only). */
+/** Column dividers between the stats (Figma x / 14.4, desktop only). */
 const DIVIDERS = ["25vw", "50vw", "75vw"];
 
 export const SectionGalaxy = () => {
@@ -46,7 +46,7 @@ export const SectionGalaxy = () => {
   const opacity = useMemo(
     () =>
       clock.to((value) => {
-        const shown = smoothstep(0.32, 0.52, value);
+        const shown = smoothstep(1.0, 1.2, value);
         const gone = smoothstep(1.9, 2.3, value);
         return shown * (1 - gone);
       }),
@@ -61,7 +61,7 @@ export const SectionGalaxy = () => {
     () =>
       sceneTimeline.subscribe((value) =>
         setActive((prev) => {
-          const next = value > 0.45 && value < 2.05;
+          const next = value > 1.05 && value < 2.05;
           return prev === next ? prev : next;
         }),
       ),
@@ -112,7 +112,7 @@ export const SectionGalaxy = () => {
         </Inview>
 
         {/* The rule across the top of the stat band, and the columns between the
-            stats. Both are pure desktop chrome — the grid below carries its own
+            stats. Both are pure desktop chrome: the grid below carries its own
             divider. */}
         <div className="absolute inset-x-0 top-[4.792vw] border-t border-white/20 max-lg:hidden" />
         {DIVIDERS.map((left) => (

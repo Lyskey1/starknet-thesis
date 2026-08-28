@@ -71,7 +71,8 @@
 /* ---------- the hero flight (Morpho-shaped): a tall track, a sticky canvas ---------- */
 #ecoGlobe { width: 100vw; max-width: none; margin: 0 0 0 calc(50% - 50vw); padding: 0; background: transparent; }
 .eg-track { position: relative; height: 240vh; }
-.eg-stick { position: sticky; top: 0; height: 100vh; overflow: hidden; background: transparent; }
+/* flat black under the shell, the way morpho.org grounds its globe: the page wash bleeding through muddied the motes */
+.eg-stick { position: sticky; top: 0; height: 100vh; overflow: hidden; background: #000; }
 /* the flight's last frame dissolves into the page instead of being cut off
    mid-logo where the sticky canvas ends */
 .eg-stick::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 26vh; pointer-events: none; z-index: 4;
@@ -84,17 +85,17 @@
 .eg-copy h2 { font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-weight: 300; font-size: clamp(26px, 3.3vw, 47px); line-height: 1.12; letter-spacing: -.02em; color: var(--es-ink); margin: 0 0 16px; }
 .eg-copy p { font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-size: clamp(14px, 1.3vw, 18px); line-height: 1.5; color: var(--es-dim); margin: 0; }
 
-.eg-stats { position: absolute; left: 48px; bottom: 46px; display: flex; gap: 44px; pointer-events: none; }
+.eg-stats { position: absolute; left: 48px; bottom: 7vh; display: flex; gap: 44px; pointer-events: none; }
 .eg-stats span { display: block; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--es-faint); margin-bottom: 6px; }
 .eg-stats b { font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-weight: 300; font-size: clamp(24px, 2.4vw, 34px); letter-spacing: -.02em; color: var(--es-ink); }
-.eg-hint { position: absolute; right: 48px; bottom: 50px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--es-faint); pointer-events: none; }
+.eg-hint { position: absolute; right: 48px; bottom: 7vh; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--es-faint); pointer-events: none; }
 
 .eg-chip { position: absolute; top: 0; left: 0; z-index: 5; display: flex; align-items: center; gap: 11px; padding: 9px 15px; border-radius: 999px; background: #fafafa; color: #0d0d0d; font-family: 'IBM Plex Mono', monospace; font-size: 12px; pointer-events: none; opacity: 0; transition: opacity .16s; white-space: nowrap; will-change: transform; }
 .eg-chip.on { opacity: 1; }
 .eg-chip span + span { color: #616161; padding-left: 11px; border-left: 1px solid rgba(13,13,13,.18); }
 @media (max-width: 860px) {
   .eg-track { height: 210vh; }
-  .eg-stats { left: 20px; bottom: 28px; gap: 28px; }
+  .eg-stats { left: 20px; bottom: 5vh; gap: 28px; }
   .eg-hint { display: none; }
 }
 

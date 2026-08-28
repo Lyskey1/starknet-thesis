@@ -58,11 +58,19 @@ const QUANTUM: HeroCopy = {
   cta: "/quantum",
 };
 
-/** Where the intro hands off to the Quantum beat, and where that beat clears. */
-const CROSSFADE_START = 0.1;
-const CROSSFADE_END = 0.16;
-const QUANTUM_GONE_START = 0.24;
-const QUANTUM_GONE_END = 0.3;
+/**
+ * Where the intro hands off to the Quantum beat, and where that beat clears.
+ *
+ * Quantum is the FIRST act, so it holds the frame for the length of the orb
+ * rather than flashing past: the old 0.16 to 0.24 window was 8% of one track
+ * and read as if the act had been skipped entirely. Privacy's copy
+ * ({@link SectionGalaxy}) now comes in after this clears, so the order reads
+ * Quantum, then Privacy, then BTCFi.
+ */
+const CROSSFADE_START = 0.18;
+const CROSSFADE_END = 0.32;
+const QUANTUM_GONE_START = 0.82;
+const QUANTUM_GONE_END = 0.96;
 
 interface HeroCopy {
   eyebrow: string;

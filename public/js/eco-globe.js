@@ -1,7 +1,7 @@
 /* Ecosystem hero: a scroll-driven flight through a particle sphere.
-   Act 1 — a dense shell of ~26k motes with the Starknet mark at its core.
-   Act 2 — the lens flies into the shell; the motes stream past and thin out.
-   Act 3 — inside, a starfield with every project and voice scattered through
+   Act 1: a dense shell of ~26k motes with the Starknet mark at its core.
+   Act 2: the lens flies into the shell; the motes stream past and thin out.
+   Act 3: inside, a starfield with every project and voice scattered through
    it under "Powered by Starknet". strk20 palette only. */
 import * as THREE from 'three';
 
@@ -49,9 +49,12 @@ const SHELL_Y = -0.55;   // near-centred, just clear of the copy
     const pos = new Float32Array(COUNT * 3), col = new Float32Array(COUNT * 3), siz = new Float32Array(COUNT);
     const c = new THREE.Color();
     for (let i = 0; i < COUNT; i++) {
-      const y = 1 - (i / (COUNT - 1)) * 2, rr = Math.sqrt(Math.max(0, 1 - y * y));
-      const th = Math.PI * (3 - Math.sqrt(5)) * i;
-      const jitter = 0.94 + (Math.sin(i * 78.233) * 0.5 + 0.5) * 0.1;
+      const h1 = Math.abs(Math.sin(i * 127.1) * 43758.5453 % 1);
+      const h2 = Math.abs(Math.sin(i * 311.7) * 24634.6345 % 1);
+      // jitter off the lattice slot: the bare Fibonacci spiral bands visibly here
+      const y = 1 - ((i + h1) / COUNT) * 2, rr = Math.sqrt(Math.max(0, 1 - y * y));
+      const th = Math.PI * (3 - Math.sqrt(5)) * i + h2 * 0.9;
+      const jitter = 0.97 + (Math.sin(i * 78.233) * 0.5 + 0.5) * 0.05;
       const rad = R * jitter;
       pos[i * 3] = Math.cos(th) * rr * rad;
       pos[i * 3 + 1] = y * rad;
@@ -98,8 +101,25 @@ const SHELL_Y = -0.55;   // near-centred, just clear of the copy
 
   /* ---- the Starknet mark at the core ---- */
   /* the bare glyph, not the full mark: its navy disc read as a blob at this size */
-  const markTex = new THREE.TextureLoader().load('/assets/img/starknet-glyph.svg');
+  /* the glyph ships with a viewBox and NO width/height, so an <img> of it
+     measures 0x0 in Chrome and TextureLoader hands back a blank map (this is
+     why the mark never painted). Fetch the source, stamp an explicit size on
+     the root element, and rasterise it into a canvas texture instead. */
+  const markCv = document.createElement('canvas');
+  markCv.width = markCv.height = 512;
+  const markTex = new THREE.CanvasTexture(markCv);
   markTex.colorSpace = THREE.SRGBColorSpace;
+  fetch('/assets/img/starknet-glyph.svg').then((r) => r.text()).then((src) => {
+    const sized = src.replace('<svg ', '<svg width="512" height="512" ');
+    const img = new Image();
+    img.onload = () => {
+      const cx = markCv.getContext('2d');
+      cx.clearRect(0, 0, 512, 512);
+      cx.drawImage(img, 0, 0, 512, 512);
+      markTex.needsUpdate = true;
+    };
+    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(sized);
+  }).catch(() => {});
   const mark = new THREE.Sprite(new THREE.SpriteMaterial({ map: markTex, transparent: true, depthWrite: false, depthTest: false }));
   mark.renderOrder = 5; scene.add(mark);
 
@@ -207,7 +227,7 @@ const SHELL_Y = -0.55;   // near-centred, just clear of the copy
     mark.material.opacity = 1 - markGone;
     mark.visible = markGone < 0.999;
     mark.position.set(0, SHELL_Y, 0);
-    mark.scale.setScalar(0.62);
+    mark.scale.setScalar(0.82);
 
     /* the projects arrive once you are inside */
     const arrive = smooth(0.6, 0.84, p);
