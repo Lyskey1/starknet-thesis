@@ -79,23 +79,27 @@ export const ORB_CONFIG = {
 } as const;
 
 /**
- * The second act's figure: Privacy, staged as a standing point-cloud
- * humanoid instead of the spiral this file used to describe. `colorEdge`
- * (crown) / `colorCore` (ground) is a vertical gradient now, not a radial
- * one, see `galaxy-shaders.ts`. The distances below (`cameraZ`, `dive`,
- * `parallax`, `pointerRadius`) are sized for a body about two world units
- * tall, not a galaxy spanning ninety.
+ * The second act's figure: Privacy, staged as a dense point-cloud bust
+ * instead of the spiral this file used to describe. `colorEdge` (crown) /
+ * `colorCore` (ground) is a vertical gradient now, not a radial one, see
+ * `galaxy-shaders.ts`. The distances below (`cameraZ`, `dive`, `parallax`,
+ * `pointerRadius`) are sized for a bust about one world unit tall, not a
+ * galaxy spanning ninety.
  */
 export const GALAXY_CONFIG = {
   colorEdge: "#fafafa",
   colorCore: "#c53400",
-  opacity: 0.55,
-  pointSize: 1.15,
-  brightness: 0.7,
+  opacity: 0.4,
+  pointSize: 0.6,
+  brightness: 0.35,
   armSpin: 0.4,
   tilt: -0.5,
   scale: 1,
-  cameraZ: 4.6,
+  /** World units the bust sits below the camera's (0,0,0) look-at point, so
+   *  its geometric centre (above 0, since it's shoulders-up) lands at
+   *  screen-centre instead of riding high enough to crowd the title above. */
+  offsetY: -0.25,
+  cameraZ: 3.2,
   dive: 0.9,
   /** Radians of reveal-turn across the act (`galaxy.tsx`), not an edge-on tilt. */
   diveTilt: 4.2,

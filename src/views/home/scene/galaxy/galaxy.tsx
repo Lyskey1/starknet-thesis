@@ -159,7 +159,7 @@ export const Galaxy = () => {
   });
 
   return (
-    <group ref={groupRef}>
+    <group ref={groupRef} position={[0, GALAXY_CONFIG.offsetY, 0]}>
       <points frustumCulled={false} geometry={geometry} material={material} />
     </group>
   );
