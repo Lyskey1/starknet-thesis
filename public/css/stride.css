@@ -111,7 +111,7 @@
 .sb-v{font-family:var(--sd-display);font-weight:300;font-size:clamp(30px,3.4vw,50px);line-height:1;
   letter-spacing:-.03em;color:var(--sd-ink)}
 .sb-d{margin:14px 0 0;font-size:15px;line-height:1.55;color:var(--sd-dim)}
-.sb-q{margin:auto 0 0;padding-top:26px;font-family:var(--sd-display);font-weight:300;font-size:22px;
+.sb-q{margin:0;padding-top:26px;font-family:var(--sd-display);font-weight:300;font-size:22px;
   line-height:1.3;letter-spacing:-.015em;color:rgba(250,250,250,.82)}
 
 /* ---------- works: a scroll-driven stack on a vertical cylinder ---------- */
@@ -157,6 +157,27 @@
 .ft-layer > footer.vc-footer{position:relative;z-index:1}
 .ft-layer > footer.vc-footer::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--sd-bg);
   border-radius:28px 28px 0 0;box-shadow:0 -30px 60px rgba(0,0,0,.6)}
+
+
+/* ---------- stride's own photography, carried over with its sections -------
+   The showcase columns, the works cards and the stats card all run on the
+   images the starter ships (public/assets/stride). They sit under the same
+   scrims the gradients did, so the copy over them reads unchanged. */
+.sc-art img{width:100%;height:100%;object-fit:cover;display:block}
+img.wk-art{width:100%;height:100%;object-fit:cover;display:block}
+.wk-back{background-size:cover;background-position:center}
+/* the tall stats card: the photo fills it, the readout panel sits over it */
+.sb-photo{overflow:hidden;padding:0}
+.sb-photo > .sb-inner{margin:auto 28px 32px}
+.sb-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+.sb-photo::after{content:"";position:absolute;inset:0;z-index:1;
+  background:linear-gradient(to bottom,rgba(13,13,13,.25),rgba(13,13,13,.78))}
+.sb-photo > *{position:relative;z-index:2}
+.sb-avs{display:flex;margin:auto 0 24px}
+.sb-av{width:44px;height:44px;border-radius:999px;overflow:hidden;margin-left:-12px;
+  border:2px solid var(--sd-card);flex:none}
+.sb-av:first-child{margin-left:0}
+.sb-av img{width:100%;height:100%;object-fit:cover;display:block}
 
 @media(prefers-reduced-motion:reduce){
   .sc-art{transition:none}
