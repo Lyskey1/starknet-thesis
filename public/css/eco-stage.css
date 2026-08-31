@@ -129,15 +129,17 @@ body::before { opacity: .35; }
 .ix-tabs button:hover { background: #1f1f1f; color: var(--es-ink); }
 .ix-tabs button.on { background: var(--es-acc); color: #fafafa; }
 
-.ix-grid { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 0 1px; background: transparent; }
+.ix-grid { --ix-h: 62px; display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 0 1px; background: transparent; }
 .ix-col { display: flex; flex-direction: column; }
-.ix-letter { font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-size: 15px; color: var(--es-faint);
-  text-align: center; padding: 18px 0 6px; }
+.ix-letter { display: grid; place-items: center; height: var(--ix-h); padding: 0;
+  border-bottom: 1px solid var(--es-line);
+  font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-size: 15px; color: var(--es-faint); }
 .ix-row { display: flex; align-items: center; justify-content: space-between; gap: 12px;
-  width: 100%; padding: 11px 14px; border: 0; border-bottom: 1px solid var(--es-line);
+  width: 100%; height: var(--ix-h); padding: 0 14px; border: 0; border-bottom: 1px solid var(--es-line);
   background: transparent; color: var(--es-ink); cursor: pointer;
   font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-size: 15px; letter-spacing: .01em;
   text-align: left; text-transform: uppercase; transition: background-color .14s, color .14s; }
+.ix-row > span { min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 .ix-row:hover, .ix-row:focus-visible { background: var(--es-acc); color: #fafafa; outline: none; }
 .ix-row .ix-move { opacity: 0; }
 .ix-row:hover .ix-move, .ix-row:focus-visible .ix-move { opacity: 1; }
