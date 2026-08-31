@@ -48,7 +48,7 @@
 </style>
 <style>
   /* ============================================================ */
-  /* QUANTUM PAGE — page-specific components (purple-themed).      */
+  /* QUANTUM PAGE: page-specific components (purple-themed).      */
   /* Inline so it never touches the shared stylesheet / other      */
   /* pages. Shared nav, hero base, footer, news + tweet cards come */
   /* from css/styles.css; the rules below override / extend them   */
@@ -62,7 +62,7 @@
      Quantum's accent is now electric blue: remap the page's old purple tokens
      onto the shared --accent so every component (em, chart bars, badges,
      roadmap, hovers, the news bar) renders in blue rather than purple.
-     NOTE: --border-p MUST live here on <body>, not in :root — declared in :root
+     NOTE: --border-p MUST live here on <body>, not in :root: declared in :root
      its var(--accent-rgb) would substitute the default orange (the page accent is
      only overridden on <body>), which left every --border-p border stuck orange. */
   body { --green: #c53400; --red: #c53400; --stark-purple: var(--accent); --stark-dim: rgba(var(--accent-rgb), 0.2); --border-p: rgba(var(--accent-rgb), 0.3); }
@@ -264,7 +264,7 @@
 
   /* countdown */
 
-  /* sections — full width with inner .wrap (override shared centered/maxwidth section) */
+  /* sections: full width with inner .wrap (override shared centered/maxwidth section) */
   section { padding: 80px 0; max-width: none; margin: 0; border-top: 1px solid var(--border); }
   .marker { font-family: var(--mono); font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(var(--accent-rgb),0.7); margin-bottom: 18px; }
   .marker.o { color: rgba(var(--accent-rgb),0.7); }
@@ -368,7 +368,7 @@
   .note p { font-size: 13px; color: rgba(250, 250, 250,0.5); line-height: 1.7; }
   .note b { color: var(--white); font-weight: 500; }
 
-  /* ===== News editor (admin UI) — ported from btcfi.html ===== */
+  /* ===== News editor (admin UI): ported from btcfi.html ===== */
   .news-admin-bar { display: flex; justify-content: flex-end; margin-bottom: 12px; }
   .news-edit-btn {
     display: inline-flex; align-items: center; gap: 7px;
@@ -439,7 +439,7 @@
   .ne-hint { font-size: 12px; color: rgba(250, 250, 250,0.4); margin-top: 6px; line-height: 1.5; }
   @media (max-width: 768px) { .ne-grid { grid-template-columns: 1fr; } }
 
-  /* ===== News embeds (real X/Twitter widgets + fallback) — ported from btcfi.html ===== */
+  /* ===== News embeds (real X/Twitter widgets + fallback): ported from btcfi.html ===== */
   .news-cell { min-width: 0; align-self: start; }
   .news-head { margin-bottom: 12px; }
   .news-head-title { font-family: var(--display); font-weight:300; font-size: 17px; line-height: 1.3; letter-spacing: -0.01em; color: var(--white); }
@@ -2752,7 +2752,7 @@ if (window.thStickyRail) {
 .th-detail-meta .th-lbl{color:var(--th-muted);text-transform:uppercase;letter-spacing:.14em;font-size:10.5px;}
 .th-detail-meta.th-fallback{--rowac:var(--th-done);}
 .th-pq-empty{padding:34px 20px;text-align:center;color:var(--th-muted);font-size:14px;display:none;}
-/* 681-860px: scrollable table — right-edge fade (cover scrolls with content,
+/* 681-860px: scrollable table: right-edge fade (cover scrolls with content,
    shadow pinned to container) + sticky Surface column */
 @media(min-width:681px) and (max-width:860px){
   .th-pq-card{overflow-x:auto;background:
@@ -2762,7 +2762,7 @@ if (window.thStickyRail) {
   .th-pq-table{min-width:680px;}
   .th-pq-table .th-mainrow .th-surface,.th-pq-table thead th:first-child{position:sticky;left:0;background:var(--th-panel);z-index:2;}
 }
-/* <=680px: restack the 5-column table as cards — Surface = title,
+/* <=680px: restack the 5-column table as cards: Surface = title,
    Current/Desired = labeled pair, Status = badge; phase color kept via --rowac */
 @media(max-width:680px){
   .th-pq-table{min-width:0;}
@@ -3295,8 +3295,8 @@ var qvFilmChrome = thVideoChrome({
 // and x.com / twitter.com status links (rendered as an embedded post).
 // ============================================================
 var VIDEOS = [
-  { title: 'Video 1 — Eli Ben-Sasson', subtitle: 'paste the YouTube / X link', url: '' },
-  { title: 'Video 2 — Eli Ben-Sasson', subtitle: 'paste the YouTube / X link', url: '' }
+  { title: 'Video 1: Eli Ben-Sasson', subtitle: 'paste the YouTube / X link', url: '' },
+  { title: 'Video 2: Eli Ben-Sasson', subtitle: 'paste the YouTube / X link', url: '' }
 ];
 (function(){
   var el = document.getElementById('videos');
@@ -3368,7 +3368,7 @@ var VIDEOS = [
 })();
 
 // ============================================================
-// QUANTUM × STARKNET NEWS — collapsible, editable, localStorage
+// QUANTUM × STARKNET NEWS: collapsible, editable, localStorage
 // (same engine as btcfi.html; STORAGE_KEY namespaced by DEFAULTS_VERSION
 //  so stale localStorage can never shadow new in-file defaults)
 // ============================================================
@@ -3391,7 +3391,7 @@ var VIDEOS = [
   // ====== EDIT HERE: add Quantum × Starknet posts/sources ======
   // Each entry: { url, title, date, fallbackText, [name, handle, initials, color, verified] }
   // X/Twitter status links render as real embeds. Non-tweet links (blogs, profiles)
-  // render as a styled fallback card — set name/handle/initials/color for a nicer look.
+  // render as a styled fallback card: set name/handle/initials/color for a nicer look.
   // These in-file defaults render WITHOUT any localStorage; localStorage is only an override.
   var tweets = [
     { "url": "https://x.com/StarkWareLtd/status/2079955780019864015",
@@ -3430,7 +3430,7 @@ var VIDEOS = [
   // =============================================================
 
   // Bump DEFAULTS_VERSION whenever the in-file `tweets` defaults change in a way
-  // that must override older saved data — it namespaces STORAGE_KEY so a stale
+  // that must override older saved data: it namespaces STORAGE_KEY so a stale
   // localStorage entry from a previous version can never shadow the new defaults.
   var DEFAULTS_VERSION = 2;
   var STORAGE_KEY = 'quantum_news_v' + DEFAULTS_VERSION;
@@ -3701,10 +3701,10 @@ var VIDEOS = [
         '<button type="button" class="ne-btn danger ne-del" data-act="del" data-i="' + i + '"><i class="ti ti-trash" aria-hidden="true"></i> Delete</button>' +
       '</div>' +
       '<div class="ne-grid">' +
-        '<div class="ne-field full">' + lbl('Post URL <span class="ne-req">required</span>') + '<input type="url" data-i="' + i + '" data-key="url" value="' + escA(c.url || '') + '" placeholder="https://x.com/user/status/123…"><div class="ne-hint">Paste an X/Twitter post link — the real embed renders automatically. Other links (blog, profile) show as a styled card.</div></div>' +
+        '<div class="ne-field full">' + lbl('Post URL <span class="ne-req">required</span>') + '<input type="url" data-i="' + i + '" data-key="url" value="' + escA(c.url || '') + '" placeholder="https://x.com/user/status/123…"><div class="ne-hint">Paste an X/Twitter post link: the real embed renders automatically. Other links (blog, profile) show as a styled card.</div></div>' +
         '<div class="ne-field full">' + lbl('Title (optional)') + '<input type="text" data-i="' + i + '" data-key="title" value="' + escA(c.title || '') + '" placeholder="e.g. StarkWare’s post-quantum roadmap"></div>' +
         '<div class="ne-field full">' + lbl('Date (optional)') + '<input type="text" data-i="' + i + '" data-key="date" value="' + escA(c.date || '') + '" placeholder="e.g. Mar 2026"><div class="ne-hint">Title and date show as a header above the embed. Leave both empty for no header.</div></div>' +
-        '<div class="ne-field full">' + lbl('Fallback text (optional — shown only if the post can’t load)') + '<textarea data-i="' + i + '" data-key="fallbackText" placeholder="Short summary shown if the post is deleted, offline, or not embeddable…">' + esc(c.fallbackText || c.text || '') + '</textarea></div>' +
+        '<div class="ne-field full">' + lbl('Fallback text (optional: shown only if the post can’t load)') + '<textarea data-i="' + i + '" data-key="fallbackText" placeholder="Short summary shown if the post is deleted, offline, or not embeddable…">' + esc(c.fallbackText || c.text || '') + '</textarea></div>' +
       '</div>' +
     '</div>';
   }
@@ -3720,11 +3720,11 @@ var VIDEOS = [
         '<span class="ne-count">' + cards.length + ' card' + (cards.length === 1 ? '' : 's') + '</span>' +
         '<button type="button" class="ne-btn danger" data-act="reset"><i class="ti ti-refresh" aria-hidden="true"></i> Reset to published</button>' +
       '</div>' +
-      '<div class="ne-hint" style="margin:-6px 0 16px">Edits live only in this browser as an unsaved local draft. To publish for everyone, <b>Copy JSON</b> and commit it into the <code>tweets</code> array in quantum.html — or <b>Reset to published</b> to discard the draft.</div>' +
+      '<div class="ne-hint" style="margin:-6px 0 16px">Edits live only in this browser as an unsaved local draft. To publish for everyone, <b>Copy JSON</b> and commit it into the <code>tweets</code> array in quantum.html: or <b>Reset to published</b> to discard the draft.</div>' +
       '<div class="ne-cards">' + cards.map(editorCardHTML).join('') + '</div>';
   }
 
-  // live edits — update only the affected preview cell, no full reload
+  // live edits: update only the affected preview cell, no full reload
   if (editor) editor.addEventListener('input', function(e){
     var t = e.target;
     var idx = t.getAttribute('data-i'), key = t.getAttribute('data-key');
@@ -3853,8 +3853,8 @@ var VIDEOS = [
     var json = JSON.stringify(publicCards(), null, 2);
     var orig = btn.innerHTML;
     function done(ok){
-      btn.innerHTML = ok ? '<i class="ti ti-check" aria-hidden="true"></i> Copied — commit it to quantum.html'
-                         : '<i class="ti ti-alert-triangle" aria-hidden="true"></i> Copy failed — JSON logged to console';
+      btn.innerHTML = ok ? '<i class="ti ti-check" aria-hidden="true"></i> Copied: commit it to quantum.html'
+                         : '<i class="ti ti-alert-triangle" aria-hidden="true"></i> Copy failed: JSON logged to console';
       if (!ok) { try { console.log(json); } catch(e){} }
       setTimeout(function(){ btn.innerHTML = orig; }, 2400);
     }

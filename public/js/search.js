@@ -1,4 +1,4 @@
-/* Site search for starknetthesis.io — vanilla JS, no dependency, no
+/* Site search for starknetthesis.io: vanilla JS, no dependency, no
    third-party service (the publish passphrase lives in localStorage, so no
    external script may ever run here).
 
@@ -217,9 +217,6 @@
     /* privacy: the proving-properties panel shows one property at a time */
     const pci = target.closest && target.closest('.pcore-item');
     if (pci && !pci.classList.contains('is-on')) did = clickIf(document.querySelectorAll('#pcore .pcore-node')[+pci.dataset.p]) || did;
-    /* privacy: wall pedestals panel shows one wall at a time */
-    const pw = target.closest && target.closest('.pw-wall');
-    if (pw && !pw.classList.contains('is-on')) did = clickIf(document.querySelectorAll('#wall-pedestals .pw-ped')[+pw.dataset.wall]) || did;
     /* quantum: section 02's gated beats render one at a time and rows
        beyond the furthest reached are disabled, so clicking the row
        cannot open them; the gate exposes an explicit-intent hook that
@@ -255,12 +252,12 @@
     /* privacy: bills panel shows one bill at a time */
     const bill = target.closest && target.closest('.bstk-bill');
     if (bill && !bill.classList.contains('is-on')) did = clickIf(document.querySelectorAll('#bills .bstk-tab')[+bill.dataset.bill]) || did;
-    /* btcfi: the bridge roadmap fan keeps one card front; the engine exposes
-       an explicit-intent hook (same contract as quantum's __qiOpen). Without
-       the engine (reduced motion / no JS) the grid shows all four, so there
-       is nothing to reveal and the hook is simply absent. */
-    const brs = target.closest && target.closest('.roadmap-step');
-    if (brs && window.__brsFront) { window.__brsFront(brs.id); did = true; }
+    /* btcfi: the bridge roadmap column accordion shows one phase at a time,
+       so a result whose anchor is a phase heading has to bring that phase's
+       head on screen first (same contract as quantum's __qiOpen). Without the
+       engine the heads are all in the DOM and the hook is simply absent. */
+    const bcol = target.closest && target.closest('.bhead');
+    if (bcol && !bcol.classList.contains('-in') && window.__bcolShow) { did = window.__bcolShow(bcol) || did; }
     /* generic reveal-on-scroll blocks become visible once scrolled to */
     return did;
   }
@@ -313,7 +310,7 @@
       settle();
       landedFlash(target);
       /* some toggles attach their handlers lazily (deferred engines): give
-         the page a beat after scrolling, then reveal again — idempotent,
+         the page a beat after scrolling, then reveal again: idempotent,
          reveal() only acts on still-closed state.
          AND RE-SCROLL IF THAT REVEAL MOVED THE TARGET. This is the whole
          reason the late passes exist: a container that opens after the

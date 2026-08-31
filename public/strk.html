@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>STRK Tokenomics and Staking Dashboard — Live Data</title>
-  <meta name="description" content="Live STRK dashboard: price, market cap, staking (STRK and BTC), TVL, users, revenue and STRK20 privacy metrics — with tokenomics, unlocks and history.">
+<title>STRK Tokenomics and Staking Dashboard: Live Data</title>
+  <meta name="description" content="Live STRK dashboard: price, market cap, staking (STRK and BTC), TVL, users, revenue and STRK20 privacy metrics: with tokenomics, unlocks and history.">
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
   <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
   <link rel="canonical" href="https://starknetthesis.io/strk">
-  <meta property="og:title" content="STRK Tokenomics and Staking Dashboard — Live Data">
-  <meta property="og:description" content="Live STRK dashboard: price, market cap, staking (STRK and BTC), TVL, users, revenue and STRK20 privacy metrics — with tokenomics, unlocks and history.">
+  <meta property="og:title" content="STRK Tokenomics and Staking Dashboard: Live Data">
+  <meta property="og:description" content="Live STRK dashboard: price, market cap, staking (STRK and BTC), TVL, users, revenue and STRK20 privacy metrics: with tokenomics, unlocks and history.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://starknetthesis.io/strk">
   <meta property="og:site_name" content="Starknet Thesis">
@@ -17,8 +17,8 @@
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="STRK Tokenomics and Staking Dashboard — Live Data">
-  <meta name="twitter:description" content="Live STRK dashboard: price, market cap, staking (STRK and BTC), TVL, users, revenue and STRK20 privacy metrics — with tokenomics, unlocks and history.">
+  <meta name="twitter:title" content="STRK Tokenomics and Staking Dashboard: Live Data">
+  <meta name="twitter:description" content="Live STRK dashboard: price, market cap, staking (STRK and BTC), TVL, users, revenue and STRK20 privacy metrics: with tokenomics, unlocks and history.">
   <meta name="twitter:image" content="https://starknetthesis.io/assets/og-default.png">
   <script type="application/ld+json">{"@context": "https://schema.org","@type": "WebApplication","name": "STRK Tokenomics and Staking Dashboard","url": "https://starknetthesis.io/strk","applicationCategory": "FinanceApplication","operatingSystem": "Web browser","description": "Live dashboard of STRK metrics: price, market cap, staking, TVL, users, revenue and STRK20 privacy figures, with monthly staking history reconstructed from onchain state.","isAccessibleForFree": true,"publisher": {"@type": "Organization","name": "Starknet Thesis"}}</script>
 
@@ -47,7 +47,7 @@
      (#c53400), carried by both css/styles.css and privacy.html's head. */
   --p-btcfi:#c53400; --p-privacy:#c53400; --p-quantum:#c53400;
   --green:#c53400; --red:#c53400;
-  /* shared design tokens mirrored from css/styles.css — STRK page accent is violet */
+  /* shared design tokens mirrored from css/styles.css: STRK page accent is violet */
   --accent: #c53400; --accent-rgb: 197, 52, 0;
   --border:rgba(250, 250, 250,0.09);
   --display:'General Sans',sans-serif; --mono:'IBM Plex Mono',monospace; --sans:'General Sans',sans-serif;
@@ -76,7 +76,7 @@ h1,h2,h3{font-family:var(--display),sans-serif;font-weight:800;line-height:1.04;
 
 /* nav */
 nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;gap:24px;padding:16px 40px;background:rgba(13, 13, 13,0.78);backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
-/* mobile nav system — mirrored from css/styles.css (this page is self-styled
+/* mobile nav system: mirrored from css/styles.css (this page is self-styled
    and does not load the shared stylesheet); keep in sync with styles.css */
 /* ---------- mobile navigation (burger + full-screen overlay; js/nav.js) ---------- */
 .nav-burger { display: none; width: 44px; height: 44px; flex: 0 0 auto; flex-direction: column; align-items: center; justify-content: center; gap: 5px; background: none; border: 0; padding: 0; cursor: pointer; }
@@ -96,7 +96,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
 .nav-ov-cta { margin-top: auto; display: flex; justify-content: center; width: 100%; padding-top: 28px; }
 .nav-ov-cta .btn { width: 100%; justify-content: center; text-align: center; display: inline-flex; align-items: center; gap: 8px; }
 html.nav-locked, html.nav-locked body { overflow: hidden; }
-/* shared wordmark — copied verbatim from css/styles.css so it matches every other page */
+/* shared wordmark: copied verbatim from css/styles.css so it matches every other page */
 .nav-logo{font-family:var(--display);font-weight:800;font-size:18px;letter-spacing:0.02em;text-transform:uppercase;color:var(--white);white-space:nowrap}
 .nav-logo b{color:var(--accent);font-weight:800}
 a.nav-logo{text-decoration:none}
@@ -105,7 +105,7 @@ a.nav-logo{text-decoration:none}
 .nav-links a:hover{color:var(--white)} .nav-links a.active{color:var(--acc-2)}
 /* CTA uses the shared .btn style (solid accent fill); see .btn rules below */
 .nav-cta{white-space:nowrap;padding:11px 20px}
-/* Specular glass coating on the nav CTA — verbatim mirror of the
+/* Specular glass coating on the nav CTA: verbatim mirror of the
    .btn.nav-cta rules in css/styles.css (this page never loads that file):
    keep the two in sync. Opaque accent fill, shading layered on top only. */
 .btn.nav-cta {
@@ -323,7 +323,7 @@ a.nav-logo{text-decoration:none}
 }
 
 /* sections */
-/* section header — mirrors btcfi's .sec-head: accent triangle + giant accent number + uppercase title */
+/* section header: mirrors btcfi's .sec-head: accent triangle + giant accent number + uppercase title */
 .section-marker{display:flex;align-items:center;gap:18px;margin-bottom:30px;flex-wrap:wrap}
 .section-marker::before{content:"";width:0;height:0;border-left:18px solid var(--accent);border-bottom:18px solid transparent;flex-shrink:0}
 .section-marker .num{font-family:var(--display);font-weight:800;font-size:clamp(30px,5vw,56px);color:var(--accent);line-height:1;letter-spacing:0}
@@ -339,7 +339,7 @@ a.nav-logo{text-decoration:none}
 @media(max-width:880px){.th-pm-title{font-size:38px}.th-pm-num{font-size:48px}}
 .block{padding:80px 0;border-top:1px solid var(--border)}
 
-/* section 01 — two-column: copy + STRK flywheel */
+/* section 01: two-column: copy + STRK flywheel */
 .s01{display:grid;grid-template-columns:1fr 460px;gap:56px;align-items:center}
 .s01 .copy p{color:var(--muted-2);font-size:20px;line-height:1.6;max-width:46ch}
 .s01 .copy strong{color:var(--white);font-weight:600}
@@ -371,7 +371,7 @@ a.nav-logo{text-decoration:none}
   .fly{max-width:420px;margin:0 auto}
 }
 
-/* utilities explorer (section 02) — selectable rail + animated micro-viz panels */
+/* utilities explorer (section 02): selectable rail + animated micro-viz panels */
 /* Utilities as a card grid (after V7's workflow grid): four cards on a
    dotted rule, each with its visualization on top and the title and copy
    below, then a three-cell stats row. No tabs: every panel is always shown. */
@@ -412,7 +412,7 @@ a.nav-logo{text-decoration:none}
 /* bar <-> legend hover linking, ONE structural implementation shared by the
    Staking and Fees panels: inside any utility .barrow, the Nth .barfill
    segment pairs with the Nth .seglbl entry (staking: STRK/BTC side by side;
-   fees: gas/privacy stacked — same DOM order, same rules). Pure CSS via
+   fees: gas/privacy stacked: same DOM order, same rules). Pure CSS via
    :has(), no JS, no DOM changes; segments stay non-focusable since the
    legend text carries every value. The whole block lives under
    (hover:hover) so touch stays inert and a tap can never stick a state.
@@ -630,7 +630,7 @@ a.chip:hover{background:var(--acc);border-color:var(--acc);color:#0d0d0d}
 #numbers .chartbox .cleg{right:auto;left:12px;text-align:left}
 @media(max-width:520px){#numbers .chartbox .cleg{top:26px}} /* long legends (dual-series, stacked) drop below the since-note instead of colliding */
 #numbers .ranges button.off{opacity:.25;pointer-events:none}
-/* --- section 04: chart date axis (HTML overlay — SVG text would distort
+/* --- section 04: chart date axis (HTML overlay: SVG text would distort
        under preserveAspectRatio="none") --- */
 #numbers .chartbox .cax{position:relative;height:15px;margin-top:7px}
 #numbers .chartbox .cax:empty{display:none}
@@ -689,7 +689,7 @@ a.chip:hover{background:var(--acc);border-color:var(--acc);color:#0d0d0d}
 
 /* pillar flow strip */
 
-/* ===== 04 numbers dashboard — namespaced under #numbers (ported from reference/strk-section04.html) ===== */
+/* ===== 04 numbers dashboard: namespaced under #numbers (ported from reference/strk-section04.html) ===== */
 #numbers{--up:#c53400;--down:#c53400;--acc-3:#f0b8a0}
 #numbers .nhead{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:8px}
 #numbers .pill{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono),monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
@@ -824,7 +824,7 @@ a.chip:hover{background:var(--acc);border-color:var(--acc);color:#0d0d0d}
 .bear h3{font-size:23px;margin:8px 0 16px}.bear p{color:var(--muted-2);max-width:62ch}.bear .but{color:var(--white)}
 
 /* buy */
-/* where to get — collapsible accordion categories */
+/* where to get: collapsible accordion categories */
 .buy-acc{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;align-items:start}
 /* polish pass: the rows read as raised objects on a darker panel. Depth is
    layered fills + inset hairlines only (the site never blurs): panel one
@@ -880,7 +880,7 @@ a.chip:hover{background:var(--acc);border-color:var(--acc);color:#0d0d0d}
 .pillar-links a:hover{border-color:var(--clr);color:var(--white)}
 /* pillar glyphs: two hand-drawn stroke SVGs + the ZK braces. The braces are
    IBM Plex Mono TEXT at 11px (the font IS the design; ink height 9.9px vs
-   the 13px SVGs' 9.5px ink), flex-centered — the em-box vs ink-box offset
+   the 13px SVGs' 9.5px ink), flex-centered: the em-box vs ink-box offset
    measures ~0.1px at this size, below a device pixel, so no nudge. The
    drawn glyphs' 1.9-unit stroke matches the braces' apparent stem weight.
    Everything inherits the pill accent via --clr, as the font glyphs did. */
@@ -890,7 +890,7 @@ a.chip:hover{background:var(--acc);border-color:var(--acc);color:#0d0d0d}
 .pillar-links .l-btcfi{--clr:var(--p-btcfi)}.pillar-links .l-privacy{--clr:var(--p-privacy)}.pillar-links .l-quantum{--clr:var(--p-quantum)}
 
 /* footer */
-/* shared footer + buttons — copied verbatim from css/styles.css so it matches every other page */
+/* shared footer + buttons: copied verbatim from css/styles.css so it matches every other page */
 footer.site-footer{border-top:1px solid var(--border);padding:70px 0 0;margin-top:40px;position:relative}
 footer.site-footer .wrap{max-width:1240px;margin:0 auto;padding:0 40px}
 footer.site-footer .foot-top{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:30px}
@@ -1018,7 +1018,7 @@ footer.site-footer .foot-bottom a:hover{color:var(--accent)}
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))){
   .sg-glass{background:#141414}
 }
-/* ===== Mobile, decided up front: below 981px no backdrop-filter — a solid
+/* ===== Mobile, decided up front: below 981px no backdrop-filter: a solid
    surface plus a barely perceptible violet tint, consistent with the other
    pages. Blooms are removed outright (measured on btcfi at 390px, dimmed
    blur layers cost more paint and composite time than the backdrop-filter
@@ -1595,11 +1595,11 @@ window.ADMIN_GATE=on;})();
         <!-- Each set links to the same CoinGecko page as its legend row. SVG <a>
              hit areas follow the painted shapes (the ring's fill:transparent and
              the gradient fill both cover the full disk), so overlap clicks go to
-             the topmost painted circle — and the core, painted last, wins over
+             the topmost painted circle: and the core, painted last, wins over
              all three. Native <a> focus gives tab + enter keyboard access. -->
         <!-- BTCFi (top) -->
         <g class="venn-set" data-set="btcfi">
-          <a href="https://www.coingecko.com/en/categories/bitcoin-layer-2" target="_blank" rel="noopener noreferrer" aria-label="BTCFi — Bitcoin Layer 2 category on CoinGecko">
+          <a href="https://www.coingecko.com/en/categories/bitcoin-layer-2" target="_blank" rel="noopener noreferrer" aria-label="BTCFi: Bitcoin Layer 2 category on CoinGecko">
             <circle class="fill" cx="300" cy="190" r="155" fill="url(#g-btcfi)"/>
             <circle class="halo" cx="300" cy="190" r="155" fill="none" stroke="#c53400" stroke-width="6" opacity="0.26" filter="url(#vennGlow)"/>
             <circle class="ring" cx="300" cy="190" r="155" stroke="#c53400"/>
@@ -1609,7 +1609,7 @@ window.ADMIN_GATE=on;})();
         </g>
         <!-- Quantum (bottom-left) -->
         <g class="venn-set" data-set="quantum">
-          <a href="https://www.coingecko.com/en/categories/quantum-resistant" target="_blank" rel="noopener noreferrer" aria-label="Quantum — Quantum-Resistant category on CoinGecko">
+          <a href="https://www.coingecko.com/en/categories/quantum-resistant" target="_blank" rel="noopener noreferrer" aria-label="Quantum: Quantum-Resistant category on CoinGecko">
             <circle class="fill" cx="231" cy="310" r="155" fill="url(#g-quantum)"/>
             <circle class="halo" cx="231" cy="310" r="155" fill="none" stroke="#c53400" stroke-width="6" opacity="0.26" filter="url(#vennGlow)"/>
             <circle class="ring" cx="231" cy="310" r="155" stroke="#c53400"/>
@@ -1619,7 +1619,7 @@ window.ADMIN_GATE=on;})();
         </g>
         <!-- Privacy (bottom-right) -->
         <g class="venn-set" data-set="privacy">
-          <a href="https://www.coingecko.com/en/categories/privacy-infrastructure" target="_blank" rel="noopener noreferrer" aria-label="Privacy — Privacy Infrastructure category on CoinGecko">
+          <a href="https://www.coingecko.com/en/categories/privacy-infrastructure" target="_blank" rel="noopener noreferrer" aria-label="Privacy: Privacy Infrastructure category on CoinGecko">
             <circle class="fill" cx="369" cy="310" r="155" fill="url(#g-privacy)"/>
             <circle class="halo" cx="369" cy="310" r="155" fill="none" stroke="#c53400" stroke-width="6" opacity="0.26" filter="url(#vennGlow)"/>
             <circle class="ring" cx="369" cy="310" r="155" stroke="#c53400"/>
@@ -1627,7 +1627,7 @@ window.ADMIN_GATE=on;})();
             <text x="450" y="373" text-anchor="middle" fill="#c53400" font-family="Archivo" font-weight="700" font-size="17" data-metric="venn.privacy">$10.43B</text>
           </a>
         </g>
-        <!-- Core: Starknet intersection — painted last, so its circular hit area has priority -->
+        <!-- Core: Starknet intersection: painted last, so its circular hit area has priority -->
         <a class="venn-core" data-set="strk" href="https://www.coingecko.com/en/coins/starknet" target="_blank" rel="noopener noreferrer" aria-label="Starknet (STRK) on CoinGecko">
           <circle cx="300" cy="288" r="78" fill="url(#g-core)"/>
           <text x="300" y="266" text-anchor="middle" fill="#fafafa" font-family="Archivo" font-weight="800" font-size="19">Starknet</text>
@@ -1742,13 +1742,13 @@ window.ADMIN_GATE=on;})();
     <div class="chips" id="chips"></div>
   </div>
 
-  <!-- C. ALL REMAINING STATS — accordion groups, collapsed by default,
+  <!-- C. ALL REMAINING STATS: accordion groups, collapsed by default,
        deep-linkable (#market #staking #usage #defi #strk20). Every value is
        live via the engine at the end of the page; seeds are today's real
        readings, never mock. -->
   <div class="nacc" id="statsAcc">
 
-    <!-- TOKENOMICS, first group of the stack — circulating supply is live
+    <!-- TOKENOMICS, first group of the stack: circulating supply is live
          (CoinGecko); the unlock schedule is the official contractual vesting
          (docs.starknet.io) with the next-unlock %-of-circulating computed
          from the live supply; the distribution donut is static official
@@ -1798,7 +1798,7 @@ window.ADMIN_GATE=on;})();
         </div>
         <div class="detail"><div class="dt" id="udetail">Investors and Early Contributors vest until <b>March 15, 2027</b>. The rest is released into circulation as the Starknet Foundation allocates it. Hover a category for its unlock detail.</div></div>
       </div>
-      <div class="note">Static protocol data — the official allocation from the <a href="https://docs.starknet.io/learn/protocol/strk" target="_blank" rel="noopener noreferrer">Starknet documentation ↗</a>.</div>
+      <div class="note">Static protocol data: the official allocation from the <a href="https://docs.starknet.io/learn/protocol/strk" target="_blank" rel="noopener noreferrer">Starknet documentation ↗</a>.</div>
     </div>
       </div></div></div>
     </div>
@@ -2159,7 +2159,7 @@ window.ADMIN_GATE=on;})();
 
 
 <script>
-/* Section 05 CEX directory — static link-list content, no metrics. The legacy
+/* Section 05 CEX directory: static link-list content, no metrics. The legacy
    MOCK metrics renderer that used to live here is retired: every number on
    the page renders from its live engine (section 02 staking figures come from
    the unified numbers engine at the end of the page, the same snapshot and
@@ -2195,7 +2195,7 @@ deferEngine('[data-list="cex"]',function(){
 const stage=document.getElementById("vennStage");
 const vennRows=[...document.querySelectorAll('.venn-legend a')];
 /* one state machine for both directions: a pillar set dims its siblings and
-   the unmatched panel rows; the core ('strk') is its own state — pillars
+   the unmatched panel rows; the core ('strk') is its own state: pillars
    recede, the core and the Starknet row lift. Listeners attach only on
    hover-capable pointers (touch taps just navigate, no state can stick; the
    old click-to-focus is gone for the same reason) plus focusin/focusout for
@@ -2214,8 +2214,7 @@ if(matchMedia('(hover:hover)').matches){
     el.addEventListener("focusout",()=>focusSet(null));
   });
 }
-/* entrance: rings draw, fills fade, the four venn figures count up from 0 —
-   IO-gated, once. Reduced motion skips the whole thing (settled render). */
+/* entrance: rings draw, fills fade, the four venn figures count up from 0: IO-gated, once. Reduced motion skips the whole thing (settled render). */
 (function(){
   if(!stage||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
   stage.classList.add('venn-prep');
@@ -2291,7 +2290,7 @@ if(fly){
   });
 }
 
-/* ---------- section 02 governance vote bars — hover tooltip ---------- */
+/* ---------- section 02 governance vote bars: hover tooltip ---------- */
 const govVotes=document.getElementById("govVotes");
 if(govVotes){
   const gtip=document.getElementById("govTip"), gtipT=document.getElementById("govTipT");
@@ -2330,7 +2329,7 @@ if(govVotes){
 })();
 
 /* =========================================================================
-   04 NUMBERS — interactive dashboard (ported from reference/strk-section04.html)
+   04 NUMBERS: interactive dashboard (ported from reference/strk-section04.html)
    Isolated in its own IIFE; all DOM queries scoped to #numbers (root).
    Each metric in M keeps {k,type,value,optional source} grouped by grp. The
    headline `value` fields are seed readings that the live numbers engine at
@@ -2342,9 +2341,9 @@ const root=document.getElementById('numbers'); if(!root) return;
 const RANGES={'24H':{days:1},'7D':{days:7},'30D':{days:30},'1Y':{days:365},'ALL':{days:Infinity}};
 const DAY=86400000;
 
-/* metric registry — powers the price chart + chips ONLY (accordion cards are
+/* metric registry: powers the price chart + chips ONLY (accordion cards are
    driven by the live engine at the end of the page). Every plotted curve is
-   REAL history fetched from the metric's source (HIST below) — the synthetic
+   REAL history fetched from the metric's source (HIST below): the synthetic
    series generator is gone. `value` is the live headline, used as the chart
    header only for metrics with no public history. */
 const M=[
@@ -2398,7 +2397,7 @@ const STACK_COLORS={strkBTC:'#c53400',STRK:'#c53400',USDC:'#c53400',WBTC:'#c5340
 
 /* ---------- REAL history: per-source fetchers + TTL cache ----------
    Cache entries live in localStorage (strkSeriesCache_v1:*) as compact
-   [[ms,value],…] arrays extracted from each response — TTLs scale with the
+   [[ms,value],…] arrays extracted from each response: TTLs scale with the
    window (10m for 24H data up to 6h for full history) to stay well inside
    free keyless rate limits. On a fetch failure, a stale cache entry is
    served rather than anything synthetic. */
@@ -2480,7 +2479,7 @@ const SRC={
      is newer than the seed's last day, same recipe as the pool-users head;
      if the head fetch fails the committed seed renders alone. */
   /* cumulative account contracts from the committed seed, refreshed daily
-     by GitHub Actions (scripts/refresh-accounts-seed.mjs — Voyager passes
+     by GitHub Actions (scripts/refresh-accounts-seed.mjs: Voyager passes
      Actions egress where container and Vercel egress hit the Cloudflare
      challenge). A head/series mismatch fails the fetch whole (same
      cross-check recipe as s20rev). The chart note carries the seed's OWN
@@ -2501,7 +2500,7 @@ const SRC={
       return rpcBlockHead().then(h=>h[0]>pts[pts.length-1][0]?pts.concat([[h[0],h[1]]]):pts).catch(()=>pts);
     }));},
   /* cumulative chain height at each UTC day end, derived from the block-time
-     backfill's own day boundaries (firstBlock + blocks) — no separate walk.
+     backfill's own day boundaries (firstBlock + blocks): no separate walk.
      Live head shares rpcBlockHead's memoized call pair with the block-time
      chart. The daily-new-blocks derivative is deliberately NOT a series
      here: the block time chart already tells that story (86400/blocks). */
@@ -2527,7 +2526,7 @@ const SRC={
   s20tx(){return cached('s20tx',TTL['7D'],()=>gj('https://strk20-dashboard-production.up.railway.app/agg/transactions')
     .then(d=>{
       let days=d.days||[];
-      // drop the in-progress day — a partial count would read as a real dip
+      // drop the in-progress day: a partial count would read as a real dip
       if(days.length&&days[days.length-1].date===new Date().toISOString().slice(0,10))days=days.slice(0,-1);
       return days.map(r=>[Date.parse(r.date),r.count]);
     }));},
@@ -2553,12 +2552,12 @@ const SRC={
      metric again. The live head is stitched on in HIST, after the cache */
   s20users(){return cached('s20users',TTL['30D'],()=>gj('assets/data/strk20-pool-users.json')
     .then(d=>d.days.map(r=>[Date.parse(r.date),r.users])));},
-  /* per-day routed DeFi volume totals — the same series privacy.html's
+  /* per-day routed DeFi volume totals: the same series privacy.html's
      "DeFi volume privately routed" chart plots (measured, byProtocol) */
   s20vol(){return cached('s20vol',TTL['7D'],()=>gj('https://strk20-dashboard-production.up.railway.app/agg/routed-volume')
     .then(d=>{
       let days=d.days||[];
-      // drop the in-progress day — a partial total would read as a real dip
+      // drop the in-progress day: a partial total would read as a real dip
       if(days.length&&days[days.length-1].date===new Date().toISOString().slice(0,10))days=days.slice(0,-1);
       return days.map(r=>[Date.parse(r.date),r.total||0]);
     }));},
@@ -2575,7 +2574,7 @@ const SRC={
     })));},
   /* monthly staking history backfilled from onchain state at historical
      blocks (Cartridge archive RPC) + Binance monthly prices + CoinGecko/
-     Wayback circulating — regenerate with scripts/backfill-staking.js */
+     Wayback circulating: regenerate with scripts/backfill-staking.js */
   stakingHist(){return cached('stakingHist',TTL['30D'],()=>gj('assets/data/strk-staking-history.json'));},
 };
 /* backfilled monthly points + today's live reading as the tail, so the
@@ -2590,7 +2589,7 @@ function stakingSeries(field,mkey){
 }
 function cumsum(a){let c=0;return a.map(p=>[p[0],c+=p[1]]);}
 function rolling30(a){const out=[];for(let i=29;i<a.length;i++){let s=0;for(let j=i-29;j<=i;j++)s+=a[j][1];out.push([a[i][0],s]);}return out;}
-function weeklySum(a){ // daily [[ms,v]] → calendar-week (Mon–Sun, UTC) sums
+function weeklySum(a){ // daily [[ms,v]] → calendar-week (Mon to Sun, UTC) sums
   const w={};
   a.forEach(p=>{const d=new Date(p[0]);
     const dow=(d.getUTCDay()+6)%7;
@@ -2637,7 +2636,7 @@ const BT_EVENTS=[
 /* per-metric history config: which ranges have data + how to get the series.
    Staking series are monthly (reconstructed from onchain state at historical
    blocks), so only 1Y/ALL are offered for them; any metric absent from HIST
-   would get an explicit "no history" state — never an invented curve. */
+   would get an explicit "no history" state: never an invented curve. */
 const HIST={
  price:{avail:['24H','7D','30D','1Y','ALL'],get:r=>r==='ALL'?SRC.priceAll():SRC.cg(RANGES[r].days).then(d=>d.p)},
  strkstaked:{avail:['1Y','ALL'],get:()=>stakingSeries('strk_staked','strkstaked')},
@@ -2745,7 +2744,7 @@ const cross=document.getElementById('cross'),cdot=document.getElementById('cdot'
 const tip=document.getElementById('nTip'),tipV=document.getElementById('nTipV'),tipD=document.getElementById('nTipD');
 const fNote=document.getElementById('chartNote');
 function mon(d){return d.toLocaleString('en',{month:'short'}).toUpperCase();}
-/* tooltip / marker label — year included for windows over 90 days */
+/* tooltip / marker label: year included for windows over 90 days */
 function tsLabel(ts,spanMs){const d=new Date(ts);
   if(spanMs<=2*DAY)return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
   const s=mon(d)+' '+d.getDate();
@@ -2827,7 +2826,7 @@ function draw(){
   document.getElementById('fSub').textContent='';
   document.getElementById('fSrc').innerHTML=m.source?`· Source: <a href="${m.source.url}" target="_blank" rel="noopener noreferrer">${m.source.name} ↗</a>`:'';
   paintRank();
-  if(!h){ /* explicit empty state — never an invented curve. emptyNote lets a
+  if(!h){ /* explicit empty state: never an invented curve. emptyNote lets a
     committed-snapshot metric say so instead of claiming a live value */
     clearChart();
     document.getElementById('fVal').textContent=fmt(m,m.value);
@@ -2942,7 +2941,7 @@ function draw(){
         if(bh>0.2)bs+=`<rect x="${(PTS[i].x-bw/2).toFixed(1)}" y="${(H-pB-bh).toFixed(1)}" width="${bw.toFixed(1)}" height="${bh.toFixed(1)}" fill="#a02a00" fill-opacity="0.55" rx="0.5"/>`;}
       dbars.innerHTML=bs;
       const dn=h.dailyNames||{};
-      legEl.innerHTML='<span style="color:#c53400">—</span> '+(dn.line||'TOTAL')+'&ensp;<span style="color:#a02a00">▮</span> '+(dn.bars||'PER DAY');
+      legEl.innerHTML='<span style="color:#c53400">─</span> '+(dn.line||'TOTAL')+'&ensp;<span style="color:#a02a00">▮</span> '+(dn.bars||'PER DAY');
       /* peak DAILY bar marker (revenue-style charts) */
       if(h.peakDaily&&mxd>0){
         let di=1;for(let i=2;i<dl.length;i++)if(dl[i]>dl[di])di=i;
@@ -3059,7 +3058,7 @@ root.querySelectorAll('.cell').forEach(c=>io.observe(c));
 /* ---- stats accordion: collapsed by default, multi-open, deep-linkable ---- */
 (function(){
   const items=[...root.querySelectorAll('.nacc-item')];
-  /* count badges derive from the group's actual content at render time — the
+  /* count badges derive from the group's actual content at render time: the
      hand-written numbers drifted (USAGE said 5 while holding 8 cards) and a
      derived count can never desynchronize again. Stats groups count their
      stat cells; tokenomics groups count PANELS (a panel = one thesis unit:
@@ -3090,8 +3089,7 @@ root.querySelectorAll('.cell').forEach(c=>io.observe(c));
     const id=ALIAS[raw]||raw;
     const el=document.getElementById(id);if(!el)return;
     /* an anchor INSIDE a collapsed group (e.g. #supply-over-time after a
-       collapse) expands its group first, then scrolls to the anchor itself —
-       same contract the in-page search already applies via its own opener */
+       collapse) expands its group first, then scrolls to the anchor itself: same contract the in-page search already applies via its own opener */
     const it=el.classList.contains('nacc-item')?el:(el.closest?el.closest('.nacc-item'):null);
     if(!it)return;
     setOpen(it,true);
@@ -3123,7 +3121,7 @@ root.querySelectorAll('.cell').forEach(c=>io.observe(c));
       the range buttons use; pill clicks inside the visualizer stay range-neutral) */
     if(feat&&feat.scrollIntoView){
       /* measured at click time so the offset tracks the CURRENT nav height
-         (mobile vs desktop) — scroll-margin-top then does the offsetting;
+         (mobile vs desktop): scroll-margin-top then does the offsetting;
          the static rule in the page styles is the no-JS fallback */
       const nav=document.querySelector('nav');
       if(nav&&nav.offsetHeight)feat.style.scrollMarginTop=(nav.offsetHeight+24)+'px';
@@ -3138,7 +3136,7 @@ root.querySelectorAll('.cell').forEach(c=>io.observe(c));
 })();
 
 /* ---- card sparklines + delta badges (one shared renderer) ----
-   Series come from the SAME cached HIST/SRC layer the visualizer uses — no
+   Series come from the SAME cached HIST/SRC layer the visualizer uses: no
    new endpoints, one fetch per source. Drawn lazily when a group opens (the
    spark area is fixed-height, so late drawing causes zero layout shift);
    a failed series simply leaves the card without sparkline or badge. */
@@ -3189,7 +3187,7 @@ root.querySelectorAll('.cell').forEach(c=>io.observe(c));
   function renderSpark(cell,key){
     const h=HIST[key];if(!h)return;
     h.get('30D').then(all=>{
-      /* weekly series: drop the in-progress week — a partial sum reads as a
+      /* weekly series: drop the in-progress week: a partial sum reads as a
          crash in both the sparkline and the badge (same rule as the chart's WoW) */
       if(h.weeklyBars&&all.length&&all[all.length-1][0]+7*DAY>Date.now())all=all.slice(0,-1);
       const cut=Date.now()-30*DAY;
@@ -3205,7 +3203,7 @@ root.querySelectorAll('.cell').forEach(c=>io.observe(c));
       const ln=pts.map((q,i)=>(i?'L':'M')+X(q).toFixed(1)+','+Y(q).toFixed(1)).join(' ');
       svg.innerHTML='<path d="'+ln+' L'+W+','+SH+' L0,'+SH+' Z" fill="url(#sparkFill)"/>'+
         '<path d="'+ln+'" fill="none" stroke="#c53400" stroke-width="1.6" stroke-opacity="0.85" stroke-linecap="round" stroke-linejoin="round"/>';
-      /* terminal dot as an HTML overlay — immune to preserveAspectRatio
+      /* terminal dot as an HTML overlay: immune to preserveAspectRatio
          stretching; the pulse ring is pure CSS (disabled under reduced motion) */
       let dot=wrap.querySelector('.cdot');
       if(!dot){dot=document.createElement('i');dot.className='cdot';wrap.appendChild(dot);}
@@ -3277,8 +3275,7 @@ root.querySelectorAll('.cell').forEach(c=>io.observe(c));
   };
 })();
 
-/* hook for the live engine (end of page): keep headline values current —
-   used as the chart header for no-history metrics (charts read their own
+/* hook for the live engine (end of page): keep headline values current: used as the chart header for no-history metrics (charts read their own
    real series for everything else) */
 window.__numbersLive={
   set(k,v){const m=map[k];if(!m||!isFinite(v))return;m.value=v;if(curK===k&&!HIST[k])draw();}
@@ -3287,7 +3284,7 @@ window.__numbersLive={
 ['pointermove','pointerdown'].forEach(ev=>chart.addEventListener(ev,e=>{
   if(!PTS.length)return;
   const r=chart.getBoundingClientRect(),vx=(e.clientX-r.left)/r.width*1000;
-  /* nearest point by x (series can be unevenly sampled) — binary search */
+  /* nearest point by x (series can be unevenly sampled): binary search */
   let lo=0,hi=PTS.length-1;
   while(hi-lo>1){const mid=(lo+hi)>>1;(PTS[mid].x<vx)?lo=mid:hi=mid;}
   const p=(vx-PTS[lo].x<=PTS[hi].x-vx)?PTS[lo]:PTS[hi];
@@ -3520,7 +3517,7 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
   const nuAmt=Math.max(0,vAt(nuI)-vAt(nuI-1))/100*SUPPLY;
   window.__nextUnlock={amount:nuAmt,date:nu.getFullYear()+'-'+String(nu.getMonth()+1).padStart(2,'0')+'-'+String(nu.getDate()).padStart(2,'0')};
   document.getElementById('mukpis').innerHTML=
-    `<div class="kpi"><div class="kl">Next unlock</div><div class="kv">${nuAmt>0?'~'+Math.round(nuAmt/1e6)+'M':'—'}</div><div class="ks">${nu.toLocaleString('en',{month:'short',day:'numeric',year:'numeric'})} · <span data-stat="nextunlockpct">≈1.9%</span> computed from live circulating supply</div></div>`+
+    `<div class="kpi"><div class="kl">Next unlock</div><div class="kv">${nuAmt>0?'~'+Math.round(nuAmt/1e6)+'M':'·'}</div><div class="ks">${nu.toLocaleString('en',{month:'short',day:'numeric',year:'numeric'})} · <span data-stat="nextunlockpct">≈1.9%</span> computed from live circulating supply</div></div>`+
     `<div class="kpi"><div class="kl">Vesting rate</div><div class="kv">up to 127M</div><div class="ks">per month · until Mar 15, 2027</div><div class="ks ksrc"><a href="https://docs.starknet.io/learn/protocol/strk" target="_blank" rel="noopener noreferrer">Official schedule ↗</a></div></div>`;
   const hl=document.getElementById('muhl');
   ['pointermove','pointerdown'].forEach(ev=>muchart.addEventListener(ev,e=>{const r=muchart.getBoundingClientRect();const vx=(e.clientX-r.left)/r.width*1000;
@@ -3531,8 +3528,8 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
     if(px<r.width*0.6){mtip.style.left=(px+14)+'px';mtip.style.transform='translateX(0)';}
     else{mtip.style.left=(px-14)+'px';mtip.style.transform='translateX(-100%)';}
     mtip.innerHTML=`<div class="td">${d.toLocaleString('en',{month:'short',year:'numeric'})}</div>
-      <div class="r"><span style="color:#c53400">Scheduled vesting</span><b>${row.vD>0.001?tok(row.vD):'—'}</b></div>
-      <div class="r"><span style="color:#c53400;opacity:.8">Estimated release</span><b>${row.estD>0.001?tok(row.estD):'—'}</b></div>
+      <div class="r"><span style="color:#c53400">Scheduled vesting</span><b>${row.vD>0.001?tok(row.vD):'·'}</b></div>
+      <div class="r"><span style="color:#c53400;opacity:.8">Estimated release</span><b>${row.estD>0.001?tok(row.estD):'·'}</b></div>
       <div class="r"><span style="color:var(--muted)">This month</span><b>${tok(row.totD)}</b></div>
       <div class="r"><span style="color:var(--acc-2)">Cumulative</span><b>${row.cum.toFixed(1)}%</b></div>`;}));
   ['mouseleave','pointerleave','pointercancel'].forEach(ev=>muchart.addEventListener(ev,()=>{mtip.style.display='none';hl.style.display='none';}));
@@ -3541,7 +3538,7 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
 })();
 </script>
 
-<!-- UNIFIED LIVE METRICS ENGINE — feeds the utilities > Staking panel, the
+<!-- UNIFIED LIVE METRICS ENGINE: feeds the utilities > Staking panel, the
      section 04 tokenomics block, the stats accordion, and the price chart
      header, from ONE set of keyless CORS-open fetches per hour (no duplicate
      calls per source). Same architecture as the btcfi/privacy/venn blocks:
@@ -3562,7 +3559,7 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
      (pool TVL, private TX; 30d revenue from the measured protocol-fees series).
 
      Coherence: every computed stat commits atomically with ALL of its
-     inputs from the same round — staked% and staked-USD only commit when
+     inputs from the same round: staked% and staked-USD only commit when
      Endur AND CoinGecko are both fresh; total value staked only when both
      stake legs and prices are; STRK20 revenue only when its TX sum and the
      STRK price are. A stat whose source fails keeps its last good value.
@@ -3600,7 +3597,7 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
     price:      function(v){ return '$' + v.toFixed(4); },
     mcap:       function(v){ return '$' + abbr(v); },
     fdv:        function(v){ return '$' + abbr(v); },
-    /* card units (STRK, BTC, %, TPS) live in static .cu suffix spans — these
+    /* card units (STRK, BTC, %, TPS) live in static .cu suffix spans: these
        stats format the NUMBER only */
     unlockedpct: function(v){ return v.toFixed(1); },
     mcapfdv:    function(v){ return v.toFixed(1) + '%'; },
@@ -3641,7 +3638,7 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
     p_tvl: 'p_tvl', p_rev: 'p_rev', p_tx: 'p_tx', p_users: 'p_users', p_vol: 'p_vol'
   };
   // chart-registry keys for window.__numbersLive (price chart chips)
-  // note: p_rev and p_vol are deliberately absent — their chart registry
+  // note: p_rev and p_vol are deliberately absent: their chart registry
   // values are CUMULATIVE figures, not this engine's rolling 30D stats
   var CHART_KEYS = { price: 'price', mcap: 'mcap', strkStaked: 'strkstaked', btcStaked: 'btcstaked', valueStaked: 'valuestaked', stakePct: 'circstaked', dau: 'dailyusers', wau: 'weeklyusers', totaltx: 'totaltx', tps: 'tps', downloads: 'downloads', tvl: 'tvl', tvs: 'tvs', stables: 'stables', netflow: 'netflow', apprev: 'apprev', chainrev: 'chainrev', blocktime: 'blocktime', totalblocks: 'totalblocks', accounts: 'accounts', p_tvl: 'p_tvl', p_tx: 'p_tx', p_users: 'p_users' };
 
@@ -3754,7 +3751,7 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
       var v = k === 'valuestaked' ? shownValueStaked : state[BIND[k]];
       (statEls[k] || []).forEach(function(el){ tween(el, v, FMT[k]); });
     });
-    // netflow is the site's only signed stat — its card value takes the sign color
+    // netflow is the site's only signed stat: its card value takes the sign color
     (statEls.netflow || []).forEach(function(el){ el.style.color = state.netflow >= 0 ? 'var(--up)' : 'var(--down)'; });
     // static cards: FDV progress = mcap/FDV; unlocked bar + locked remainder
     var mf = (isFinite(state.mcap) && state.fdv > 0) ? state.mcap / state.fdv * 100 : null;
@@ -3824,7 +3821,7 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
   }
   // current chain head: average seconds per block over the last 1,000 blocks
   // AND the head block number, one call pair feeding both stats (the chart
-  // script carries its own memoized twin for the series heads — both scopes
+  // script carries its own memoized twin for the series heads: both scopes
   // stay self-contained, same precedent as the RPC staking fallback above)
   function rpcBlockHead(){
     function call(method, params){
@@ -3975,7 +3972,7 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
     // pool users ride the same response as the pool TVL, one atomic cluster.
     // NOTE: userCount is pool users, a single number with no history;
     // /agg/registrations.totalUsers is a DIFFERENT metric (viewing-key
-    // registrations, 2,366 vs 2,345 on 2026-08-10) — never conflate or
+    // registrations, 2,366 vs 2,345 on 2026-08-10): never conflate or
     // subtract them (same warning as privacy.html's stats row).
     var pS20tvl = wrap(getJson('https://strk20-dashboard-production.up.railway.app/agg/pool-summary')
       .then(function(d){ if (!ok(d.tvlUsd) || !ok(d.userCount)) throw 0; return { tvl: d.tvlUsd, users: d.userCount }; }));
@@ -4012,7 +4009,7 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
         stamped = true;
       }
 
-      // CG cluster — internally coherent (one response)
+      // CG cluster: internally coherent (one response)
       if (cg) {
         state.price = cg.price; state.mcap = cg.mcap; state.circ = cg.circ;
         if (ok(cg.fdv)) state.fdv = cg.fdv;
@@ -4022,7 +4019,7 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
         if (ok(cg.btcUsd)) state.btcUsd = cg.btcUsd;
         stamp('cg');
       }
-      // staking legs — each commits only with SAME-ROUND CoinGecko inputs,
+      // staking legs: each commits only with SAME-ROUND CoinGecko inputs,
       // so staked%, USD legs and totals never mix fresh and stale
       var strkFresh = cg && endur && ok(endur.strk);
       var btcFresh = cg && endur && ok(endur.btc) && ok(cg.btcUsd);
@@ -4061,7 +4058,7 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
       if (bt) { state.blocktime = bt.s; state.totalblocks = bt.n; stamp('rpcbt'); }
       if (voy) {
         state.accounts = voy.head; stamp('voy');
-        // the sub renders the seed's OWN fetched date — the note can never
+        // the sub renders the seed's OWN fetched date: the note can never
         // claim a freshness the data does not have; the static markup keeps
         // the manual-snapshot wording for every fallback world
         var accSub = document.querySelector('.cell[data-chart-series="accounts"] .cs');
@@ -4111,7 +4108,7 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
 })();
 </script>
 
-<!-- LIVE CONVERGENCE METRICS (section 03 Venn) — same zero-cost
+<!-- LIVE CONVERGENCE METRICS (section 03 Venn): same zero-cost
      client-side engine as the staking/btcfi/privacy blocks: cache-busted
      fetches on load + silent hourly refresh, localStorage last-known
      cache, committed seed fallback (the SEED literal below is the
@@ -4123,7 +4120,7 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
      renamed it "Bitcoin Sidechains"), with a normalized-name fallback.
      The four values commit all-or-nothing: if either call fails or any
      category is missing, the whole previous set (and its timestamp)
-     stays on screen — fresh circles are never mixed with a stale center.
+     stays on screen: fresh circles are never mixed with a stale center.
      Both the SVG labels and the legend rows render from the same state.
      Circle radii scale gently with the live caps (sqrt-area, clamped
      ±8-10% so the layout can never break). No keys anywhere. -->
@@ -4185,7 +4182,7 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
   function saveCache(s){ try { localStorage.setItem(CACHE_KEY, JSON.stringify(s)); } catch(e){} }
 
   // provenance of what is on screen: 'seed' (committed fallback), 'cache'
-  // (a previous session's fetch) or 'live' (fetched in this session) — the
+  // (a previous session's fetch) or 'live' (fetched in this session): the
   // label wording follows it, so it never claims live data over a fallback
   var origin = 'seed';
   var state = loadCache();
@@ -4208,7 +4205,7 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
   var R_BASE = 155; // matches the r shipped in the SVG markup
   function renderAll(){
     KEYS.forEach(function(k){
-      // one state value feeds every element tagged venn.<k> — SVG label
+      // one state value feeds every element tagged venn.<k>: SVG label
       // and legend row can never diverge
       document.querySelectorAll('[data-metric="venn.' + k + '"]').forEach(function(el){ tween(el, state[k]); });
     });

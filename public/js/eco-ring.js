@@ -1,4 +1,4 @@
-/* Meet the gang — a WebGL card ring standing on real water.
+/* Meet the gang: a WebGL card ring standing on real water.
    A true planar reflection (mirrored camera into a render target) sampled
    with ripple distortion, after the Mirror Hall section. Drag to spin with
    inertia, hover swells a card, the pointer stirs the surface. Labels are DOM
@@ -17,7 +17,7 @@ if (MOUNT) {
   /* the ring: card size in world units, and the gap between neighbours. The
      radius is solved from the member count so that gap never changes. */
   const CARD_W = 2.15, CARD_H = 3.05, CARD_GAP = 0.34, CARD_LIFT = 0.05, CARD_CURVE = 1;
-  /* how many cards either side of the front stay lit — the rest sink into the
+  /* how many cards either side of the front stay lit: the rest sink into the
      dark rather than crowding the frame */
   const LIT_FROM = 2.1, LIT_TO = 3.1;
   /* the lens stands INSIDE the ring, as the reference's does: the cards face

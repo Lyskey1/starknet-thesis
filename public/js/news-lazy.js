@@ -1,7 +1,7 @@
 /* Shared progressive loader for the News sections (privacy / quantum / btcfi).
    Pattern: facade-first cards (instant, zero iframes), batched reveal
    (12 at a time + LOAD MORE), lazy embed hydration via IntersectionObserver
-   (rootMargin 600px), one widgets.js load on first expand — never on page
+   (rootMargin 600px), one widgets.js load on first expand: never on page
    load. A failed embed keeps the static card with its outbound link.
    Each page's news engine calls:
      var lazy = window.NewsLazy({ grid, batch: 12, parseTweetId });

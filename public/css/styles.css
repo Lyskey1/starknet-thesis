@@ -31,8 +31,8 @@
                    headings. NOT a family called "Archivo Expanded": no such
                    family exists on Google Fonts, and asking for one silently
                    returned no webfont at all.
-       --mono    : IBM Plex Mono   — labels / nav / buttons, letter-spaced caps
-       --sans    : Inter           — body copy */
+       --mono    : IBM Plex Mono: labels / nav / buttons, letter-spaced caps
+       --sans    : Inter: body copy */
     --display: 'General Sans', 'Helvetica Neue', Arial, sans-serif;
     --mono: 'IBM Plex Mono', monospace;
     --sans: 'General Sans', 'Helvetica Neue', Arial, sans-serif;
@@ -62,7 +62,7 @@
     color: var(--white);
     /* clip, NOT hidden: html{overflow-x:clip} below stops this rule from
        propagating to the viewport, and a non-visible overflow on body would
-       then make body a scroll container — silently breaking every
+       then make body a scroll container: silently breaking every
        position:sticky on the site (convergence stage, ecosystem subnav).
        clip gives the same horizontal clipping with no scroll container. */
     overflow-x: clip;
@@ -79,7 +79,7 @@
   }
 
   /* The UA <button> style sets font via the shorthand, which resets
-     font-stretch to normal — silently dropping the wdth axis from any
+     font-stretch to normal: silently dropping the wdth axis from any
      display-face text inside a button (.news-toggle-title, privacy's
      .bstk-num and .seal-card labels). Re-inherit the body's 125%. A no-op
      for buttons in Inter or IBM Plex Mono: neither has a width axis. */
@@ -88,8 +88,8 @@
   /* ===== Page-wide background texture (accent glow + film grain) =====
      Two fixed, click-through layers behind all content. The glow is a soft
      radial accent wash at top-center; the grain is pure-SVG fractal noise
-     (no external image). Both sit at z-index:-1 — above the <html> canvas,
-     below every in-flow element — so nothing becomes less readable or
+     (no external image). Both sit at z-index:-1: above the <html> canvas,
+     below every in-flow element: so nothing becomes less readable or
      unclickable, and neither layer scroll-jitters. */
   body::before {
     content: '';
@@ -110,7 +110,7 @@
     background-size: 180px 180px;
   }
 
-  /* NAV — industrial: Archivo wordmark (accent 2nd word) · centered mono links · accent CTA */
+  /* NAV: industrial: Archivo wordmark (accent 2nd word) · centered mono links · accent CTA */
   nav {
     position: fixed;
     top: 0; left: 0; right: 0;
@@ -137,7 +137,7 @@
   .nav-cta { padding: 11px 20px; }
   /* Specular glass coating on the nav CTA (the one primary action in the
      bar). The accent fill stays fully OPAQUE: no translucency and no
-     backdrop-filter here — this is a dark label on a solid accent, and a
+     backdrop-filter here: this is a dark label on a solid accent, and a
      translucent surface over varying content would give variable contrast.
      The glass is shading layered ON TOP of that fill: an inset specular
      stack, a top light on ::before, and a hover sheen on ::after. Built
@@ -246,7 +246,7 @@
     letter-spacing: 0.08em;
   }
 
-  /* HERO — compact, centered, industrial */
+  /* HERO: compact, centered, industrial */
   .hero {
     display: flex;
     flex-direction: column;
@@ -564,7 +564,7 @@
   }
   .threat-warning strong { color: #FC8181; font-weight: 500; }
 
-  /* SOLUTION SECTION — BIG */
+  /* SOLUTION SECTION: BIG */
   .solution {
     max-width: 100%;
     padding: 0;
@@ -758,44 +758,6 @@
 
   /* Track record timeline */
   .tl-section { margin-top: 64px; padding-top: 8px; }
-  .tl-hint { font-family: var(--mono); font-size: 11px; color: rgba(245,242,236,0.3); margin-bottom: 8px; }
-  .tl-scroll { overflow-x: auto; overflow-y: hidden; padding-bottom: 4px; margin: 36px 0 20px; }
-  .timeline { position: relative; height: 300px; min-width: 980px; }
-  .tl-rail { position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(139,92,246,0.45) 6%, rgba(139,92,246,0.45) 94%, transparent); }
-  .tl-track { display: flex; height: 100%; position: relative; }
-  .tl-col { flex: 1 0 0; position: relative; min-width: 78px; cursor: pointer; }
-  .tl-dot {
-    position: absolute; top: 50%; left: 50%;
-    width: 14px; height: 14px; border-radius: 50%;
-    transform: translate(-50%,-50%);
-    background: #14142a; border: 2px solid #8B5CF6;
-    box-shadow: 0 0 0 4px rgba(139,92,246,0.12);
-    transition: all 0.25s; z-index: 3;
-  }
-  .tl-col.btc .tl-dot { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(var(--accent-rgb),0.12); }
-  .tl-col:hover .tl-dot, .tl-col.active .tl-dot { background: #8B5CF6; box-shadow: 0 0 0 6px rgba(139,92,246,0.22), 0 0 18px rgba(139,92,246,0.65); }
-  .tl-col.btc:hover .tl-dot, .tl-col.btc.active .tl-dot { background: var(--accent); box-shadow: 0 0 0 6px rgba(var(--accent-rgb),0.22), 0 0 18px rgba(var(--accent-rgb),0.65); }
-  .tl-conn { position: absolute; left: 50%; width: 1px; background: rgba(245,242,236,0.15); transform: translateX(-50%); z-index: 1; }
-  .tl-col.top .tl-conn { bottom: 50%; height: 26px; }
-  .tl-col.bottom .tl-conn { top: 50%; height: 26px; }
-  .tl-label { position: absolute; left: 50%; transform: translateX(-50%); width: 124px; text-align: center; }
-  .tl-col.top .tl-label { bottom: calc(50% + 30px); }
-  .tl-col.bottom .tl-label { top: calc(50% + 30px); }
-  .tl-year { font-family: var(--display); font-weight: 700; font-size: 15px; color: #A78BFA; transition: color 0.2s; }
-  .tl-col.btc .tl-year { color: var(--accent); }
-  .tl-name { font-family: var(--mono); font-size: 10px; letter-spacing: 0.03em; text-transform: uppercase; color: rgba(245,242,236,0.45); line-height: 1.45; margin-top: 5px; transition: color 0.2s; }
-  .tl-col:hover .tl-name, .tl-col.active .tl-name { color: rgba(245,242,236,0.85); }
-  .tl-detail {
-    border: 1px solid rgba(139,92,246,0.3);
-    background: rgba(139,92,246,0.04);
-    border-radius: 8px; padding: 24px 28px; min-height: 96px;
-    transition: border-color 0.25s, background 0.25s;
-  }
-  .tl-detail.btc { border-color: rgba(var(--accent-rgb),0.3); background: rgba(var(--accent-rgb),0.04); }
-  .tl-detail-year { font-family: var(--mono); font-size: 11px; letter-spacing: 0.15em; color: #A78BFA; }
-  .tl-detail.btc .tl-detail-year { color: var(--orange); }
-  .tl-detail-title { font-family: var(--display); font-size: 19px; font-weight: 600; margin: 6px 0 8px; color: var(--white); }
-  .tl-detail-desc { font-size: 14px; color: rgba(245,242,236,0.6); line-height: 1.7; }
 
   /* Metrics */
   .metrics-row {
@@ -956,7 +918,7 @@
     line-height: 1.5;
   }
 
-  /* Ecosystem v2 — rows + cards */
+  /* Ecosystem v2: rows + cards */
   .eco-block-label {
     font-family: var(--mono);
     font-size: 10px;
@@ -1073,7 +1035,7 @@
   .eco-card-desc { font-size: 12.5px; color: rgba(245,242,236,0.45); line-height: 1.6; }
   .eco-section-wrap { margin-bottom: 72px; }
 
-  /* Ecosystem — "more to come" teaser card (non-interactive) */
+  /* Ecosystem: "more to come" teaser card (non-interactive) */
   .eco-card-soon {
     border-style: dashed;
     border-color: rgba(245,242,236,0.18);
@@ -1348,7 +1310,7 @@
   .tweet-card:hover .tweet-stat.repost { color: #00BA7C; }
   .tweet-card:hover .tweet-stat.like { color: #F91880; }
 
-  /* News bar — flashy variant (scoped, opt-in via .news-flashy) */
+  /* News bar: flashy variant (scoped, opt-in via .news-flashy) */
   .news-flashy .news-toggle {
     border: 1px solid transparent;
     background:
@@ -1649,7 +1611,7 @@ html.nav-locked, html.nav-locked body { overflow: hidden; }
   /* Hero CTA row */
   .hero-cta { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
 
-  /* Section header — accent triangle + giant number + wide title + mono sub */
+  /* Section header: accent triangle + giant number + wide title + mono sub */
   .sec-head { display: flex; align-items: center; gap: 20px; margin-bottom: 14px; flex-wrap: wrap; }
   .tri { width: 0; height: 0; border-left: 20px solid var(--accent); border-bottom: 20px solid transparent; flex-shrink: 0; }
   .sec-num { font-family: var(--display); font-weight: 800; font-size: clamp(34px,5vw,60px); color: var(--accent); line-height: 1; }
@@ -1696,7 +1658,7 @@ html.nav-locked, html.nav-locked body { overflow: hidden; }
   .disclaimer { font-family: var(--sans); font-size: 12px; color: rgba(245,242,236,0.35); line-height: 1.7; max-width: 880px; margin: 8px auto 0; text-align: center; }
   @media (max-width: 760px) { footer.site-footer .foot-top { grid-template-columns: 1fr 1fr; } }
   @media (max-width: 520px) {
-    /* footer: single column — brand first, then link groups as touch rows */
+    /* footer: single column: brand first, then link groups as touch rows */
     footer.site-footer .foot-top { grid-template-columns: 1fr; gap: 28px; }
     footer.site-footer .foot-brand p { max-width: none; }
     footer.site-footer .foot-col .h { margin-bottom: 8px; }

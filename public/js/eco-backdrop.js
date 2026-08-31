@@ -1,6 +1,6 @@
 /* The landing's ambient backdrop, ported to the static pages: the flame
    domain-warp wash plus a drift of motes, on one fixed canvas behind
-   everything. No centrepiece — this is only what moves BEHIND the content.
+   everything. No centrepiece: this is only what moves BEHIND the content.
    Same shader as src/views/home/scene/backdrop.tsx, in strk20 colours. */
 import * as THREE from 'three';
 

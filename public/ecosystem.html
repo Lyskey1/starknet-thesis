@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Starknet Ecosystem — Builders and Who to Follow</title>
+<title>Starknet Ecosystem: Builders and Who to Follow</title>
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
   <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
   <link rel="canonical" href="https://starknetthesis.io/ecosystem">
-  <meta property="og:title" content="Starknet Ecosystem — Builders and Who to Follow">
+  <meta property="og:title" content="Starknet Ecosystem: Builders and Who to Follow">
   <meta property="og:description" content="Who to follow across the Starknet ecosystem: official accounts, StarkWare and Foundation voices, builders and community figures, in one directory.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://starknetthesis.io/ecosystem">
@@ -16,7 +16,7 @@
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Starknet Ecosystem — Builders and Who to Follow">
+  <meta name="twitter:title" content="Starknet Ecosystem: Builders and Who to Follow">
   <meta name="twitter:description" content="Who to follow across the Starknet ecosystem: official accounts, StarkWare and Foundation voices, builders and community figures, in one directory.">
   <meta name="twitter:image" content="https://starknetthesis.io/assets/og-default.png">
 <meta name="description" content="Who to follow across the Starknet ecosystem: official accounts, StarkWare and Foundation voices, builders and community figures, in one directory.">
@@ -194,7 +194,7 @@
   }
 
   /* Category sub-nav: in normal flow until scrolled, then sticks FLUSH below
-     the fixed 86px main nav (top = actual nav height, not 0/58 — otherwise the
+     the fixed 86px main nav (top = actual nav height, not 0/58: otherwise the
      top "THE PROJECTS" row clips behind the nav). Solid --black bg + z-index
      under the nav so the grid scrolls under it, never through it. */
   .eco-subnav {
@@ -203,7 +203,7 @@
        colored avatar cards scroll beneath this bar) over a deliberately
        heavy scrim. The scrim is not optional: pill text is the muted
        grey (#9a9a9a), and holding 4.5:1 over a pure-white avatar passing beneath
-       needs the blended backdrop at or under roughly rgb(40) — measured,
+       needs the blended backdrop at or under roughly rgb(40): measured,
        not estimated (see the commit). Blur sits below the fixed nav's
        14px so the two bars read as a hierarchy. The bar itself is static:
        no lift, no sweep, no hover glow; pill hovers are unchanged. */
@@ -576,7 +576,7 @@
   .eco-mbtn.danger:hover { border-color: rgba(229,62,62,0.5); background: rgba(229,62,62,0.08); }
   .eco-modal-msg { font-family: var(--mono); font-size: 11px; margin-top: 10px; min-height: 14px; color: #c53400; }
 
-  /* the mobile nav bar (64px) starts at 860px — the subnav offset must
+  /* the mobile nav bar (64px) starts at 860px: the subnav offset must
      follow it there, not at 768px, or a 22px float gap opens in between */
   @media (max-width: 860px) {
     .eco-subnav { top: auto; }
@@ -798,13 +798,13 @@
 <div class="eco-modal-backdrop" id="ecoModal" hidden>
   <div class="eco-modal">
     <h3 id="emTitle">Edit account</h3>
-    <label>Handle <span style="text-transform:none;opacity:0.6;">(without @ — also the card title)</span></label>
+    <label>Handle <span style="text-transform:none;opacity:0.6;">(without @: also the card title)</span></label>
     <input type="text" class="eco-input" id="emHandle" placeholder="StarkWareLtd">
     <label>Description <span style="text-transform:none;opacity:0.6;">(short, shown under the @handle)</span></label>
     <input type="text" class="eco-input" id="emDesc" placeholder="e.g. ZK rollup scaling Ethereum">
     <label>Profile link</label>
     <input type="url" class="eco-input" id="emUrl" placeholder="https://x.com/StarkWareLtd">
-    <label>Custom avatar <span style="text-transform:none;opacity:0.6;">(optional — overrides the auto image)</span></label>
+    <label>Custom avatar <span style="text-transform:none;opacity:0.6;">(optional: overrides the auto image)</span></label>
     <div class="eco-av-edit">
       <div class="eco-av-prev" id="emAvPrev"><span class="pmono" id="emAvMono"></span><img id="emAvImg" alt="" hidden></div>
       <div class="eco-av-edit-fields">
@@ -842,11 +842,11 @@
   // for the author, otherwise the published file wins, otherwise DEFAULTS.
   var PUBLISHED = null; // { <categoryId>: [accounts] } once the file is adopted
 
-  // ===== AVATAR SOURCE — swap this helper to self-host avatars later =====
+  // ===== AVATAR SOURCE: swap this helper to self-host avatars later =====
   // Real X avatars via unavatar.io (lazy-loaded). If the image fails to load,
   // the card gracefully falls back to a monogram of the handle's initials.
   // ===== AVATAR SOURCE =====
-  // Network fallback chain — the single swap point for where AUTO avatars come from.
+  // Network fallback chain: the single swap point for where AUTO avatars come from.
   // `?fallback=false` makes unavatar return a real 404 instead of a grey placeholder,
   // so onerror fires correctly and we can walk to the next candidate.
   function avatarChain(handle){
@@ -864,7 +864,7 @@
     return 'assets/avatars/' + encodeURIComponent(handle) + '.jpg';
   }
   // Ordered candidates for an account, by priority:
-  //   1) account.avatar (manual override — pasted URL or uploaded base64 data URL)
+  //   1) account.avatar (manual override: pasted URL or uploaded base64 data URL)
   //   2) the locally-committed file in assets/avatars/ (permanent, offline-safe)
   //   3) the auto network chain above
   //   4) (handled by the error listener) category-colored initials monogram

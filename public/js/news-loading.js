@@ -1,6 +1,6 @@
 /* Shared loading module: the ring loader used by the News sections
    (privacy / quantum / btcfi) and the privacy pool-metrics chart panels.
-   One file owns the markup it creates and the CSS it injects once —
+   One file owns the markup it creates and the CSS it injects once :
    css/styles.css is off limits and duplicated style blocks would drift.
    strk.html stays untouched: its chart explorer has its own affordance.
 
