@@ -1300,7 +1300,8 @@
   .page-btcfi .bfed-grid{
     display:grid; grid-template-columns:repeat(3,1fr);
     border:1px solid #262626; border-radius:4px; background:#0d0d0d;
-    padding:clamp(20px,2.4vw,34px);
+    width:100vw; max-width:none; margin-left:calc(50% - 50vw); box-sizing:border-box;
+    padding:clamp(18px,1.6vw,26px) 16px;
     column-gap:clamp(20px,2.4vw,38px); row-gap:56px;
   }
   .page-btcfi .bfed-cell{
@@ -1366,7 +1367,7 @@
     .page-btcfi .bfed-title--long{ font-size:clamp(18px,2.5vw,22px); }
   }
   @media (max-width:640px){
-    .page-btcfi .bfed-grid{ grid-template-columns:1fr; row-gap:44px; padding:20px; }
+    .page-btcfi .bfed-grid{ grid-template-columns:1fr; row-gap:44px; padding:20px 12px; }
     .page-btcfi .bfed-title{ font-size:clamp(26px,7.4vw,34px); }
     /* the long title keeps its two lines at 390: at the base mobile size
        "security before Q-day" wrapped and split Q-day across lines */
@@ -1688,6 +1689,23 @@
   .lg-art { padding: 0 20px 0 20px; }
   .lg-cd { padding: 4px 20px 22px; }
 }
+
+  /* ---- ambient wash behind the lineage head and the ecosystem flight ----
+     The same flame gradient the landing and ecosystem pages carry, painted
+     locally: js/eco-backdrop.js's canvas is fixed and sits behind this page's
+     own stacking contexts, so neither of these sections could read it. */
+  .lg-head::before,
+  #btcGlobe .bg-stick::before{
+    content:""; position:absolute; inset:0; z-index:-1; pointer-events:none;
+    background:
+      radial-gradient(120% 95% at 16% 8%, rgba(122,36,0,.55) 0%, rgba(122,36,0,0) 55%),
+      radial-gradient(95% 85% at 88% 22%, rgba(197,52,0,.42) 0%, rgba(197,52,0,0) 58%),
+      radial-gradient(130% 120% at 72% 104%, rgba(224,122,74,.30) 0%, rgba(224,122,74,0) 60%),
+      linear-gradient(160deg, #150500 0%, #0d0d0d 58%, #0d0d0d 100%);
+  }
+  .lg-head{ isolation:isolate; }
+  #btcGlobe .bg-stick{ isolation:isolate; }
+
 </style>
 <script>
 /* BTCFi ecosystem field: reserve the flight's height before layout. Classic
@@ -2721,7 +2739,6 @@
     <!-- ECOSYSTEM: DeFi for Bitcoin -->
     <!-- ============================================================ -->
     <div class="scale-section">
-      <p class="scale-label">The BTCFi ecosystem</p>
       <!-- SHIPS VISIBLE, HIDDEN BY THE ENGINE. js/btcfi-globe.js adds .bg-sr
            to this heading once the flight is actually running, because the
            flight paints "A complete DeFi stack" / "Built for Bitcoin." over
@@ -2733,7 +2750,6 @@
            anchor id the search-index build links to and its place in the
            heading outline. -->
       <h3 id="a-complete-defi-stack-built-for" class="scale-title">A complete DeFi stack. <span>Built for Bitcoin.</span></h3>
-      <p class="scale-intro">Onboard from Bitcoin, Lightning or any EVM chain, then put BTC to work across a Bitcoin-focused DeFi stack: staking, lending, trading, liquidity, perps, yield.</p>
 
       <!-- BTCFI ECOSYSTEM FIELD (bg- prefix, mount #btcGlobe). Replaced the
            static orbital diagram (eho- prefix, removed 2026-08-31) with the

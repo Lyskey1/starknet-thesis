@@ -208,57 +208,67 @@ if (MOUNT) {
   const Z_NEAR_TILE = -9.5, Z_DEPTH = 2.4;   // the slab the sprites hang in
 
   function scatter(list) {
-    /* A jittered grid, not rings: rings band the field into arcs with holes
-       between them. Each cell gets one protocol nudged off its centre, which
-       gives an even spread that still reads as scattered.
+    /* A solar system, not a grid: the copy sits at the centre and every
+       protocol rides one of a few concentric orbits around it, so the field
+       reads as circling the text rather than sprinkled over it.
 
-       THE SPAN IS MEASURED, NOT FIXED, and this is the one place that had to
-       diverge from eco-globe.js. That field carries 100+ projects, so a fixed
-       13.5 x 8.2 slab is dense enough that clipping half of it at the edges
-       costs nothing. This one carries 19. A fixed slab put four logos on a
-       390px screen and threw the rest past the frustum, so the grid is sized
-       to what the lens can actually see at the end of the flight: the sprites
-       sit at z = -9.5 with the camera landed at z = -1.6, and the visible
-       half-height there is d * tan(fov/2). Portrait screens end up with a
-       narrow, tall grid; landscape ones with a wide, short one. */
-    const dist = CAM_Z_END - Z_NEAR_TILE;   // how far the landed lens sits off the nearest sprite
+       THE RADII ARE MEASURED, NOT FIXED. The sprites sit at z = -9.5 with the
+       lens landed at z = -1.6, so the visible half-height there is
+       d * tan(fov/2). The innermost orbit clears the copy's real footprint
+       (read off getBoundingClientRect, so it tracks the actual type at any
+       width) and the outermost stays inside the frustum, which is what keeps
+       all of them on screen on a 390px phone as well as a 1440px desktop. */
+    const dist = CAM_Z_END - Z_NEAR_TILE;
     const halfH = dist * Math.tan((camera.fov * Math.PI / 180) / 2);
     const halfW = halfH * (camera.aspect || 1);
-    const SPAN_X = Math.max(2.2, Math.min(13.5, (halfW - 0.7) * 2));
-    const SPAN_Y = Math.max(3.2, Math.min(8.2, (halfH - 0.6) * 2));
 
     const N = list.length;
-    const cols = Math.max(2, Math.ceil(Math.sqrt(N * (SPAN_X / SPAN_Y))));
-    const rows = Math.ceil(N / cols);
-    const cellW = SPAN_X / cols, cellH = SPAN_Y / rows;
-    const size = Math.min(0.55, Math.min(cellW, cellH) * 0.6);
+    const size = Math.min(0.5, Math.max(0.26, halfH * 0.13));
 
-    /* the copy's real footprint, in world units at the sprite plane, so the
-       clear zone tracks the actual type rather than a guessed rectangle */
+    // the copy's real footprint in world units, so orbit one always clears it
     const cr = copy.getBoundingClientRect(), sr = stick.getBoundingClientRect();
-    const clearX = (cr.width / (sr.width || 1)) * halfW * 0.5 + size * 0.9;
-    const clearY = (cr.height / (sr.height || 1)) * halfH * 0.5 + size * 0.9;
-    /* push sideways when there is room for it, downwards or upwards when the
-       screen is too narrow for a sideways push to stay in frame */
-    const pushX = (SPAN_X / 2) > (clearX + size);
+    const copyHalfW = (cr.width / (sr.width || 1)) * halfW;
+    const copyHalfH = (cr.height / (sr.height || 1)) * halfH;
 
-    list.forEach((it, i) => {
-      const cx = i % cols, cy = Math.floor(i / cols);
-      const j1 = Math.abs(Math.sin((i + 1) * 12.9898) * 43758.5453 % 1);
-      const j2 = Math.abs(Math.sin((i + 1) * 78.233) * 12345.678 % 1);
-      const j3 = Math.abs(Math.sin((i + 1) * 39.425) * 6789.1 % 1);
-      let x = ((cx + 0.5) / cols - 0.5) * SPAN_X + (j1 - 0.5) * cellW * 0.8;
-      let yy = ((cy + 0.5) / rows - 0.5) * SPAN_Y + (j2 - 0.5) * cellH * 0.8;
-      if (Math.abs(x) < clearX && Math.abs(yy) < clearY) {          // clear the copy
-        if (pushX) x = (x < 0 ? -1 : 1) * (clearX + size * 0.5 + j1 * size * 0.6);
-        else yy = (yy < 0 ? -1 : 1) * (clearY + size * 0.5 + j2 * size * 0.6);
+    const rInner = Math.max(copyHalfW, copyHalfH) * 0.62 + size * 1.5;
+    const rOuter = Math.max(rInner + size * 2.2, Math.min(halfW, halfH * 1.35) - size * 0.9);
+
+    // more orbits when there is room, so the rings never crowd each other
+    const rings = Math.max(2, Math.min(4, Math.round((rOuter - rInner) / (size * 1.9)) + 1));
+    // outer orbits are longer, so they carry proportionally more of the set
+    const weights = [];
+    for (let k = 0; k < rings; k++) weights.push(rInner + (rOuter - rInner) * (rings === 1 ? 0 : k / (rings - 1)));
+    const total = weights.reduce((t, r) => t + r, 0);
+    const counts = weights.map((r) => Math.max(1, Math.round(N * r / total)));
+    let drift0 = counts.reduce((t, c) => t + c, 0) - N;
+    for (let k = rings - 1; k >= 0 && drift0 !== 0; k--) {
+      const step = drift0 > 0 ? -1 : 1;
+      if (counts[k] + step >= 1) { counts[k] += step; drift0 += step > 0 ? -1 : 1; }
+    }
+
+    let idx = 0;
+    for (let k = 0; k < rings; k++) {
+      const r = weights[k], n = counts[k];
+      // ellipse, not a circle: a wide viewport should not leave the sides empty
+      const rx = r * (halfW > halfH ? Math.min(1.55, halfW / halfH) : 1);
+      const ry = r;
+      const phase = k * 0.618;                    // offset each orbit so spokes never line up
+      const dir = k % 2 === 0 ? 1 : -1;           // alternate orbits counter-rotate
+      for (let m = 0; m < n && idx < N; m++, idx++) {
+        const it = list[idx];
+        const j1 = Math.abs(Math.sin((idx + 1) * 12.9898) * 43758.5453 % 1);
+        const j3 = Math.abs(Math.sin((idx + 1) * 39.425) * 6789.1 % 1);
+        const ang = phase + (m / n) * Math.PI * 2 + (j1 - 0.5) * (Math.PI * 2 / n) * 0.25;
+        const spr = new THREE.Sprite(new THREE.SpriteMaterial({ map: tile(it), transparent: true, opacity: 0, depthWrite: false }));
+        spr.position.set(Math.cos(ang) * rx, Math.sin(ang) * ry, Z_NEAR_TILE - j3 * Z_DEPTH);
+        spr.scale.setScalar(size + j3 * size * 0.16);
+        spr.userData = {
+          it, base: spr.position.clone(), seed: j1, hover: 0, size: spr.scale.x,
+          orbit: { rx, ry, ang, speed: dir * (0.035 + k * 0.012) }
+        };
+        scene.add(spr); tiles.push(spr);
       }
-      const spr = new THREE.Sprite(new THREE.SpriteMaterial({ map: tile(it), transparent: true, opacity: 0, depthWrite: false }));
-      spr.position.set(x, yy, Z_NEAR_TILE - j3 * Z_DEPTH);
-      spr.scale.setScalar(size + j3 * size * 0.19);
-      spr.userData = { it, base: spr.position.clone(), seed: j1, hover: 0, size: spr.scale.x };
-      scene.add(spr); tiles.push(spr);
-    });
+    }
   }
 
   /* ---- scroll ---- */
@@ -298,9 +308,14 @@ if (MOUNT) {
   window.addEventListener('resize', resize);
   window.addEventListener('scroll', readScroll, { passive: true });
 
+  let lastNow = 0;
   function frame(now) {
     p += (target - p) * 0.12;
     const t = now * 0.001;
+    // clamped so a backgrounded tab does not jump the orbits on return
+    const dt = lastNow ? Math.min(0.05, (now - lastNow) * 0.001) : 0;
+    lastNow = now;
+    turnOrbits(dt);
 
     /* the flight: the lens starts off the shell and ends deep inside it */
     const dive = smooth(0.04, 0.72, p);
@@ -325,6 +340,20 @@ if (MOUNT) {
     const arrive = smooth(0.6, 0.84, p);
     if (fine && arrive > 0.4) { ray.setFromCamera(ndc, camera); const hit = ray.intersectObjects(tiles, false)[0]; hovered = hit ? hit.object : null; }
     else hovered = null;
+
+  /* the orbits turn: each sprite advances along its own ellipse and its base
+     is rewritten, so the pointer drift and hover lift below keep reading the
+     moving position rather than a stale one */
+  function turnOrbits(dt) {
+    for (let i = 0; i < tiles.length; i++) {
+      const o = tiles[i].userData.orbit;
+      if (!o) continue;
+      o.ang += o.speed * dt;
+      tiles[i].userData.base.x = Math.cos(o.ang) * o.rx;
+      tiles[i].userData.base.y = Math.sin(o.ang) * o.ry;
+    }
+  }
+
     tiles.forEach((s) => {
       const d = s.userData;
       d.hover += ((s === hovered ? 1 : 0) - d.hover) * 0.16;
