@@ -222,47 +222,8 @@ body.page-privacy .hero::before { display: none; }
 #pmvPanel04 .pmv-title .em { color: var(--pf-ink); }
 #pmvPanel04 .pmv-title .em::before { content: ""; display: inline-block; width: .62em; height: .62em; margin: 0 .18em -.02em .1em; background: var(--pf-acc); vertical-align: baseline; }
 
-/* ---------- the architecture videos, after sui.io's news grid ----------
-   One featured card (the selected slot: player on top, chips, dotted rule,
-   title, arrow tile) on the left, the other three as row cards on the right
-   (thumbnail, chips, rule, title, arrow). Clicking a row card makes it the
-   featured one (js/video-cards.js drives the existing chip tablist, which
-   stays in the DOM for keyboard users but is visually hidden). */
-/* the full-bleed geometry lives in privacy.html's inline <style>: it loads after this file, so a margin shorthand there beats longhand here */
-.video-grid-wrap .pvv-chips { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); margin: 0; }
-.video-grid-wrap .vg-head { text-align: left; margin-bottom: 28px; }
-.video-grid-wrap .vg-title { font-size: clamp(28px, 3.2vw, 44px); letter-spacing: -.02em; }
-.video-grid-wrap #pvVideos { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); grid-auto-rows: auto; gap: 16px; }
-.video-grid-wrap #pvVideos .video-slot { display: flex; flex-direction: column; grid-area: auto; border-radius: 0; background: #141414; border: 1px solid #262626; overflow: hidden; }
-.video-grid-wrap #pvVideos .video-slot.is-on { grid-column: 1; grid-row: 1 / span 3; order: -1; }
-.video-grid-wrap #pvVideos .video-slot:not(.is-on) { grid-column: 2; display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 0 24px; align-items: start; cursor: pointer; }
-.video-grid-wrap #pvVideos .video-slot:not(.is-on):hover { border-color: #3a3a3a; }
-.video-grid-wrap #pvVideos .video-slot.is-on .frame { margin: 22px 22px 0; border: 1px solid #262626; }
-.video-grid-wrap #pvVideos .video-slot:not(.is-on) .frame { margin: 22px 0 22px 22px; aspect-ratio: 1 / 1; background: #000; pointer-events: none; }
-.video-grid-wrap #pvVideos .video-slot:not(.is-on) .frame video { object-fit: cover; }
-.video-grid-wrap #pvVideos .video-slot:not(.is-on) .vctl, .video-grid-wrap #pvVideos .video-slot:not(.is-on) .qv-editor { display: none; }
-.video-grid-wrap #pvVideos .video-slot .meta { position: static; width: auto; height: auto; margin: 0; padding: 22px; overflow: visible; clip: auto; clip-path: none; white-space: normal; display: flex; flex-direction: column; align-items: flex-start; gap: 16px; }
-.video-grid-wrap #pvVideos .video-slot:not(.is-on) .meta { padding: 22px 22px 22px 0; }
-.video-grid-wrap .vg-chips { display: inline-flex; white-space: nowrap; font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: .04em; }
-.video-grid-wrap .vg-tag { padding: 6px 9px; background: var(--pf-acc); color: #fff; text-transform: uppercase; }
-.video-grid-wrap .vg-date { padding: 6px 9px; background: rgba(250,250,250,.08); color: rgba(250,250,250,.85); }
-.video-grid-wrap .vg-rule { display: block; width: 100%; height: 0; border-top: 2px dotted rgba(250,250,250,.3); }
-.video-grid-wrap #pvVideos .qv-title { margin: 0; font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-weight: 400; font-size: 20px; line-height: 1.25; letter-spacing: -.01em; color: var(--pf-ink); }
-.video-grid-wrap #pvVideos .video-slot.is-on .qv-title { font-size: clamp(22px, 2vw, 30px); max-width: 24ch; }
-.video-grid-wrap .vg-go { display: inline-flex; align-items: center; gap: 12px; margin-top: 4px; font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-size: 15px; color: var(--pf-ink); }
-.video-grid-wrap .vg-go i { display: grid; place-items: center; width: 36px; height: 36px; background: var(--pf-acc); color: #fff; font-style: normal; font-size: 16px; }
-.video-grid-wrap .vg-written { text-align: left; margin-top: 22px; }
-@media (max-width: 980px) {
-  .video-grid-wrap { padding: 0 12px; }
-  .video-grid-wrap #pvVideos { grid-template-columns: 1fr; }
-  .video-grid-wrap #pvVideos .video-slot.is-on { grid-column: 1; grid-row: auto; }
-  .video-grid-wrap #pvVideos .video-slot:not(.is-on) { grid-column: 1; grid-template-columns: 120px minmax(0, 1fr); gap: 0 16px; }
-  .video-grid-wrap #pvVideos .video-slot:not(.is-on) .frame { margin: 16px 0 16px 16px; }
-  .video-grid-wrap #pvVideos .video-slot:not(.is-on) .meta { padding: 16px 16px 16px 0; gap: 10px; }
-  .video-grid-wrap #pvVideos .video-slot:not(.is-on) .qv-title { font-size: 16px; }
-  .video-grid-wrap #pvVideos .video-slot.is-on .frame { margin: 14px 14px 0; }
-  .video-grid-wrap #pvVideos .video-slot .meta { padding: 16px 14px 18px; }
-}
+/* the news grid lives in css/stride.css now (.video-grid-wrap / .vgrid), shared
+   with the quantum page. The id-scoped copy that stood here is gone. */
 
 /* eco-stage.css flattens every body child to z-index 1; with the hero canvas
    reaching up behind the header, the header needs to sit above it again */

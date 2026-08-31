@@ -22,6 +22,7 @@
   <script type="application/ld+json">{"@context": "https://schema.org","@type": "Article","headline": "Is Starknet Quantum Resistant? The Quantum Thesis","description": "Starknet's STARK proving system is post-quantum by design, with full end-to-end quantum resistance on a committed roadmap. The evidence and the timeline.","datePublished": "2026-07-21","dateModified": "2026-07-21","author": {"@type": "Person","name": "Lyskey","url": "https://x.com/Lyskey"},"publisher": {"@type": "Organization","name": "Starknet Thesis","url": "https://starknetthesis.io/"},"mainEntityOfPage": "https://starknetthesis.io/quantum"}</script>
 <meta name="description" content="Starknet's STARK proving system is post-quantum by design, with full end-to-end quantum resistance on a committed roadmap. The evidence and the timeline.">
 <script defer src="https://cloud.umami.is/script.js" data-website-id="45f11859-9fc2-49ae-a59e-4826e0f1e174"></script>
+<link rel="stylesheet" href="css/stride.css">
 <script defer src="js/search.js"></script>
 <script defer src="js/curtain.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -864,6 +865,11 @@
 /* one chapter in flow at a time */
 .qw-ch{display:none;position:relative;}
 .qw-ch.is-on{display:block;}
+/* on the news grid all four chapters are on screen at once, so .is-on marks
+   which one is featured rather than which one is visible */
+.video-grid-wrap .qw-ch,
+.video-grid-wrap .qw-ch.is-on{display:flex;}
+.video-grid-wrap .qw-ch:not(.is-on){display:grid;}
 .qw-ch .th-q-chapter{margin-top:0;padding-top:0;}
 .qw-ch .th-pm-grid,.qw-ch .th-eo-panels,.qw-ch .th-yr-panels{margin-top:24px;}
 @media(max-width:980px){
@@ -3020,68 +3026,70 @@ body.page-quantum{overflow-x:clip;}
   <!-- Third qw instance: one film at a time. #qvVideos stays the engine
        root (cards bind positionally inside it); the grid class goes, the
        device classes come. A deselected chapter pauses its player. -->
-  <div class="qw th-pm-reveal" id="qvVideos">
-    <div class="qv-head">
-      <div class="qv-vtitle">The core of <span class="em">Starknet's quantum case.</span></div>
+  <!-- The films on the privacy page's news grid: the selected chapter is the
+       featured card, the other three are row cards beside it. The rail stays in
+       the DOM (visually hidden) because thVideoChrome binds its .qw-ped steps,
+       so a row-card click just clicks that step (js/quantum-vgrid.js) rather
+       than adding a second selection path to keep in step. -->
+  <div class="qw th-pm-reveal video-grid-wrap" id="qvVideos">
+    <div class="vg-head">
+      <div class="vg-title">The core of <span class="em">Starknet's quantum case.</span></div>
     </div>
     <div class="qw-rail" role="tablist" aria-label="Four films, one player">
-      <button class="qw-ped" type="button" role="tab" data-ch="0" aria-selected="true" aria-controls="qw-panel-v" tabindex="0">
-        <span class="qw-label">THE THREAT</span>
-      </button>
-      <button class="qw-ped" type="button" role="tab" data-ch="1" aria-selected="false" aria-controls="qw-panel-v" tabindex="-1">
-        <span class="qw-label">THE MIGRATION</span>
-      </button>
-      <button class="qw-ped" type="button" role="tab" data-ch="2" aria-selected="false" aria-controls="qw-panel-v" tabindex="-1">
-        <span class="qw-label">THE WHITE PAPER</span>
-      </button>
-      <button class="qw-ped" type="button" role="tab" data-ch="3" aria-selected="false" aria-controls="qw-panel-v" tabindex="-1">
-        <span class="qw-label">HOW LITTLE CHANGES</span>
-      </button>
+      <button class="qw-ped" type="button" role="tab" data-ch="0" aria-selected="true" aria-controls="qw-panel-v" tabindex="0"><span class="qw-label">THE THREAT</span></button>
+      <button class="qw-ped" type="button" role="tab" data-ch="1" aria-selected="false" aria-controls="qw-panel-v" tabindex="-1"><span class="qw-label">THE MIGRATION</span></button>
+      <button class="qw-ped" type="button" role="tab" data-ch="2" aria-selected="false" aria-controls="qw-panel-v" tabindex="-1"><span class="qw-label">THE WHITE PAPER</span></button>
+      <button class="qw-ped" type="button" role="tab" data-ch="3" aria-selected="false" aria-controls="qw-panel-v" tabindex="-1"><span class="qw-label">HOW LITTLE CHANGES</span></button>
     </div>
-    <div class="qw-shell">
-    <div class="qw-panel" id="qw-panel-v" role="tabpanel" aria-live="polite">
-
-    <article class="qw-ch is-on" data-ch="0">
-    <div class="th-pm-vcard th-pm-reveal" data-qv="0">
-      <div class="frame">
-        <div class="qv-ph"><i class="ti ti-movie" aria-hidden="true"></i><span>No video set</span></div>
-        <video class="qv-player" tabindex="0" preload="none" playsinline hidden poster="assets/posters/quantum-video-01.jpg"></video>
-      </div>
-      <div class="meta"><h4 class="qv-title">Starknet's strength against the quantum threat, and what are the missing pieces</h4></div>
-    </div>
-    </article>
-
-    <article class="qw-ch" data-ch="1">
-    <div class="th-pm-vcard th-pm-reveal" data-qv="1">
-      <div class="frame">
-        <div class="qv-ph"><i class="ti ti-movie" aria-hidden="true"></i><span>No video set</span></div>
-        <video class="qv-player" tabindex="0" preload="none" playsinline hidden poster="assets/posters/quantum-video-02.jpg"></video>
-      </div>
-      <div class="meta"><h4 class="qv-title">Starknet's seamless migration to post-quantum security</h4></div>
-    </div>
-    </article>
-
-    <article class="qw-ch" data-ch="2">
-    <div class="th-pm-vcard th-pm-reveal" data-qv="2">
-      <div class="frame">
-        <div class="qv-ph"><i class="ti ti-movie" aria-hidden="true"></i><span>No video set</span></div>
-        <video class="qv-player" tabindex="0" preload="none" playsinline hidden poster="assets/posters/quantum-video-03.jpg"></video>
-      </div>
-      <div class="meta"><h4 class="qv-title">Post-quantum by design: the ZK-STARK white paper called it eight years ago</h4></div>
-    </div>
-    </article>
-
-    <article class="qw-ch" data-ch="3">
-    <div class="th-pm-vcard th-pm-reveal" data-qv="3">
-      <div class="frame">
-        <div class="qv-ph"><i class="ti ti-movie" aria-hidden="true"></i><span>No video set</span></div>
-        <video class="qv-player" tabindex="0" preload="none" playsinline hidden poster="assets/posters/quantum-video-04.jpg"></video>
-      </div>
-      <div class="meta"><h4 class="qv-title">How little Starknet needs to change to go post-quantum</h4></div>
-    </div>
-    </article>
-
-    </div>
+    <div class="qw-panel video-grid vgrid" id="qw-panel-v" role="tabpanel" aria-live="polite">
+      <article class="qw-ch video-slot th-pm-vcard is-on" data-ch="0" data-qv="0">
+        <div class="frame">
+          <div class="qv-ph"><i class="ti ti-movie" aria-hidden="true"></i><span>No video set</span></div>
+          <video class="qv-player" tabindex="0" preload="none" playsinline hidden poster="assets/posters/quantum-video-01.jpg"></video>
+        </div>
+        <div class="meta">
+          <div class="vg-chips"><span class="vg-tag">THE THREAT</span><span class="vg-date">01 &middot; 1:13</span></div>
+          <span class="vg-rule" aria-hidden="true"></span>
+          <h4 class="qv-title">Starknet&#x27;s strength against the quantum threat, and what are the missing pieces</h4>
+          <span class="vg-go"><i aria-hidden="true">&rarr;</i>Watch</span>
+        </div>
+      </article>
+      <article class="qw-ch video-slot th-pm-vcard" data-ch="1" data-qv="1">
+        <div class="frame">
+          <div class="qv-ph"><i class="ti ti-movie" aria-hidden="true"></i><span>No video set</span></div>
+          <video class="qv-player" tabindex="0" preload="none" playsinline hidden poster="assets/posters/quantum-video-02.jpg"></video>
+        </div>
+        <div class="meta">
+          <div class="vg-chips"><span class="vg-tag">THE MIGRATION</span><span class="vg-date">02 &middot; 0:55</span></div>
+          <span class="vg-rule" aria-hidden="true"></span>
+          <h4 class="qv-title">Starknet&#x27;s seamless migration to post-quantum security</h4>
+          <span class="vg-go"><i aria-hidden="true">&rarr;</i>Watch</span>
+        </div>
+      </article>
+      <article class="qw-ch video-slot th-pm-vcard" data-ch="2" data-qv="2">
+        <div class="frame">
+          <div class="qv-ph"><i class="ti ti-movie" aria-hidden="true"></i><span>No video set</span></div>
+          <video class="qv-player" tabindex="0" preload="none" playsinline hidden poster="assets/posters/quantum-video-03.jpg"></video>
+        </div>
+        <div class="meta">
+          <div class="vg-chips"><span class="vg-tag">THE WHITE PAPER</span><span class="vg-date">03 &middot; 0:58</span></div>
+          <span class="vg-rule" aria-hidden="true"></span>
+          <h4 class="qv-title">Post-quantum by design: the ZK-STARK white paper called it eight years ago</h4>
+          <span class="vg-go"><i aria-hidden="true">&rarr;</i>Watch</span>
+        </div>
+      </article>
+      <article class="qw-ch video-slot th-pm-vcard" data-ch="3" data-qv="3">
+        <div class="frame">
+          <div class="qv-ph"><i class="ti ti-movie" aria-hidden="true"></i><span>No video set</span></div>
+          <video class="qv-player" tabindex="0" preload="none" playsinline hidden poster="assets/posters/quantum-video-04.jpg"></video>
+        </div>
+        <div class="meta">
+          <div class="vg-chips"><span class="vg-tag">HOW LITTLE CHANGES</span><span class="vg-date">04 &middot; 1:12</span></div>
+          <span class="vg-rule" aria-hidden="true"></span>
+          <h4 class="qv-title">How little Starknet needs to change to go post-quantum</h4>
+          <span class="vg-go"><i aria-hidden="true">&rarr;</i>Watch</span>
+        </div>
+      </article>
     </div>
     <!-- A STATUS CLAIM ABOUT A PERSON, so it is dated like one. It was moved
          here from the deleted intro rather than newly written, which is
@@ -4443,5 +4451,6 @@ var VIDEOS = [
 </script>
 <script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.185.0/build/three.module.js"}}</script>
 <script type="module" src="js/eco-backdrop.js"></script>
+<script src="js/quantum-vgrid.js" defer></script>
 </body>
 </html>
