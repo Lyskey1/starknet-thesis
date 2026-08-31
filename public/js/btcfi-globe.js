@@ -23,7 +23,6 @@ if (MOUNT) {
   const COUNT = matchMedia('(max-width: 860px)').matches ? 14000 : 34000;
   const R = 2.95;          // sphere radius; the camera distance sets how big it reads
   const SHELL_Y = -0.55;   // near-centred, just clear of the copy
-  const MARK_Y = -1.7;     // the mark sits inside the shell, BELOW the centred copy
   const CAM_Z_START = 16.4, CAM_Z_TRAVEL = 18.0;   // the flight: off the shell, then deep inside it
   const CAM_Z_END = CAM_Z_START - CAM_Z_TRAVEL;
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -73,7 +72,11 @@ if (MOUNT) {
   if (HEAD) HEAD.classList.add('bg-sr');   // the flight repaints these words
   MOUNT.innerHTML =
     '<div class="bg-track"><div class="bg-stick">' +
-      '<div class="bg-copy" aria-hidden="true">' +
+      '<div class="bg-copy bg-copy-a" aria-hidden="true">' +
+        '<h2>A complete DeFi stack</h2>' +
+        '<p>Built for Bitcoin.</p>' +
+      '</div>' +
+      '<div class="bg-copy bg-copy-b" aria-hidden="true">' +
         '<h2>A complete DeFi stack</h2>' +
         '<p>Built for Bitcoin.</p>' +
       '</div>' +
@@ -86,7 +89,8 @@ if (MOUNT) {
     '</div></div>';
 
   const stick = MOUNT.querySelector('.bg-stick');
-  const copy = MOUNT.querySelector('.bg-copy');
+  const copy = MOUNT.querySelector('.bg-copy-a');
+  const copyB = MOUNT.querySelector('.bg-copy-b');
   const statsEl = MOUNT.querySelector('.bg-stats'), hintEl = MOUNT.querySelector('.bg-hint');
   const chip = MOUNT.querySelector('.bg-chip');
   const chipName = MOUNT.querySelector('.bg-chip-name'), chipRole = MOUNT.querySelector('.bg-chip-role');
@@ -167,7 +171,16 @@ if (MOUNT) {
   const markTex = new THREE.CanvasTexture(markCv);
   markTex.colorSpace = THREE.SRGBColorSpace;
   fetch('/assets/img/bitcoin-logo.svg').then((r) => r.text()).then((src) => {
-    const sized = src.replace('<svg ', '<svg width="512" height="512" ');
+    /* The official glyph is an orange disc with the symbol knocked out of it.
+       The ecosystem mark reads as a bare white shape on the shell, so the disc
+       (the one path filled #f7931a) is dropped and the fill is set on the root
+       so the remaining symbol inherits chalk.
+       The fill goes on <svg>, NOT on <path>: injecting a fill attribute into
+       the path tag produced an SVG Chrome refused to decode, and the image
+       silently failed to load. Verified by rasterising both. */
+    const sized = src
+      .replace('<svg ', '<svg width="512" height="512" fill="#fafafa" ')
+      .replace(/<path[^>]*fill="#f7931a"[^>]*\/>/i, '');
     const img = new Image();
     img.onload = () => {
       const cx = markCv.getContext('2d');
@@ -226,7 +239,7 @@ if (MOUNT) {
     const size = Math.min(0.5, Math.max(0.26, halfH * 0.13));
 
     // the copy's real footprint in world units, so orbit one always clears it
-    const cr = copy.getBoundingClientRect(), sr = stick.getBoundingClientRect();
+    const cr = (copyB || copy).getBoundingClientRect(), sr = stick.getBoundingClientRect();
     const copyHalfW = (cr.width / (sr.width || 1)) * halfW;
     const copyHalfH = (cr.height / (sr.height || 1)) * halfH;
 
@@ -333,7 +346,7 @@ if (MOUNT) {
     const markGone = smooth(0.26, 0.42, p);
     mark.material.opacity = 1 - markGone;
     mark.visible = markGone < 0.999;
-    mark.position.set(0, MARK_Y, 0);
+    mark.position.set(0, SHELL_Y, 0);   // shell centre, as eco-globe.js places its mark
     mark.scale.setScalar(0.95);
 
     /* the protocols arrive once you are inside */
@@ -369,6 +382,13 @@ if (MOUNT) {
     statsEl.style.opacity = String(1 - smooth(0.12, 0.34, p));
     hintEl.style.opacity = String(1 - smooth(0.02, 0.16, p));
 
+    const outA = smooth(0.20, 0.46, p);
+    copy.style.opacity = String(1 - outA);
+    copy.style.transform = 'translate(-50%,0) translateY(' + (-outA * 40) + 'px)';
+    copy.style.visibility = outA > 0.99 ? 'hidden' : 'visible';
+    copyB.style.opacity = String(smooth(0.66, 0.86, p));
+    copyB.style.visibility = p > 0.5 ? 'visible' : 'hidden';
+
     if (hovered) {
       chipName.textContent = hovered.userData.it.name || '';
       chipRole.textContent = hovered.userData.it.cat || '';
@@ -390,6 +410,7 @@ if (MOUNT) {
   scatter(items);
   readScroll();
   copy.style.opacity = '1';
+  if (copyB) { copyB.style.opacity = '0'; copyB.style.visibility = 'hidden'; }
   requestAnimationFrame(frame);
 
   /* a hook for the verification pass, same shape as the old hub's */
