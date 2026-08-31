@@ -1075,6 +1075,39 @@ footer.site-footer .foot-bottom a:hover{color:var(--accent)}
   .lm-m{width:20px;height:20px}
 }
 
+
+/* --- stride's Stats bento: a tall card, a quote card and a stacked pair --- */
+.sb-block{padding-bottom:0}
+.sb-label{margin:0 0 26px;font-family:var(--mono),monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--acc-2)}
+.sb-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.sb-card{position:relative;display:flex;flex-direction:column;border-radius:24px;background:#141414;border:1px solid var(--line);padding:30px 28px 32px}
+.sb-tall{min-height:30rem;justify-content:flex-end}
+/* solid base under the gradient: the shorthand alone clears background-color,
+   which let the pinned venn read straight through the card */
+.sb-accent{background:#141414 linear-gradient(160deg,rgba(197,52,0,.28),rgba(197,52,0,.06));border-color:rgba(197,52,0,.35)}
+.sb-col{display:flex;flex-direction:column;gap:14px}
+.sb-col .sb-card{flex:1}
+.sb-brand{position:absolute;left:28px;top:26px;font-family:var(--display);font-weight:800;font-style:italic;font-size:22px;letter-spacing:-.02em;color:var(--white)}
+.sb-inner{border-radius:18px;background:rgba(13,13,13,.55);padding:24px 22px}
+.sb-eyebrow{margin:0 0 14px;font-size:15px;line-height:1.5;color:var(--muted)}
+.sb-v{font-family:var(--display);font-weight:300;font-size:clamp(30px,3.4vw,50px);line-height:1;letter-spacing:-.03em;color:var(--white)}
+.sb-d{margin:14px 0 0;font-size:15px;line-height:1.55;color:var(--muted-2)}
+.sb-q{margin:auto 0 0;padding-top:26px;font-family:var(--display);font-weight:300;font-size:22px;line-height:1.3;letter-spacing:-.015em;color:rgba(250,250,250,.82)}
+
+/* --- the convergence pins while the numbers scroll up over it --- */
+.cv-layer{position:relative}
+.cv-pin{position:sticky;top:0;z-index:0;height:100lvh;display:flex;flex-direction:column;justify-content:center;overflow:hidden;padding:0}
+.cv-layer > .sb-block,.cv-layer > section:not(.cv-pin){position:relative;z-index:1}
+.cv-layer > .sb-block::before,.cv-layer > section:not(.cv-pin)::before{content:"";position:absolute;inset:0;z-index:-1;
+  background:#0d0d0d;border-radius:28px 28px 0 0;box-shadow:0 -30px 60px rgba(0,0,0,.6)}
+.cv-layer > section:not(.cv-pin) + section:not(.cv-pin)::before{border-radius:0;box-shadow:none}
+@media(max-width:880px){
+  .sb-grid{grid-template-columns:1fr}
+  .sb-tall{min-height:0}
+  .cv-pin{position:relative;height:auto;padding:64px 0}
+  .cv-layer > .sb-block::before,.cv-layer > section:not(.cv-pin)::before{border-radius:0;box-shadow:none}
+}
+
 /* ===== stride layer =========================================================
    The STRK page on the stride starter's design language, in strk20 colours:
    section heads centre with the number as a small mono eyebrow over a large
@@ -1517,8 +1550,11 @@ window.ADMIN_GATE=on;})();
   </div>
 </div></section>
 
-<!-- 03 CONVERGENCE -->
-<section class="block"><div class="wrap">
+<!-- 03 CONVERGENCE. stride layers its Chain and Product: the Chain pins
+     while the Product scrolls up over it. Same two-layer reveal here, so the
+     numbers slide out from under the venn. -->
+<div class="cv-layer">
+<section class="block cv-pin"><div class="wrap">
   <div class="th-pm-head"><span class="th-pm-marker"></span><span class="th-pm-num">03</span><h2 id="the-convergence" class="th-pm-title">The convergence</h2></div>
   <div class="venn-wrap">
     <div class="venn-stage" id="vennStage">
@@ -1599,6 +1635,40 @@ window.ADMIN_GATE=on;})();
 </div></section>
 
 <!-- 04 NUMBERS -->
+<!-- stride's Stats: a three-column bento over the dashboard. The tall left
+     card carries the headline figure, the middle one a commitment figure over
+     a pull quote, and the right column stacks two smaller cards. Values are
+     live where the page already fetches them (data-metric). -->
+<section class="block sb-block" aria-label="STRK by the numbers"><div class="wrap">
+  <p class="sb-label">By the numbers</p>
+  <div class="sb-grid">
+    <div class="sb-card sb-tall sb-accent">
+      <span class="sb-brand">STRK</span>
+      <div class="sb-inner">
+        <div class="sb-v" data-metric="strk_staked_total">1.43B STRK</div>
+        <p class="sb-d">Staked to secure the network, carrying 75% of all staking power.</p>
+      </div>
+    </div>
+    <div class="sb-card sb-tall">
+      <p class="sb-eyebrow">Share of circulating supply staked</p>
+      <div class="sb-v" data-metric="strk_staked_pct">21.20%</div>
+      <blockquote class="sb-q">Every transaction on Starknet is paid in STRK, and every private one carries a protocol fee on top of it.</blockquote>
+    </div>
+    <div class="sb-col">
+      <div class="sb-card sb-accent">
+        <p class="sb-eyebrow">Onchain governance votes</p>
+        <div class="sb-v">10</div>
+        <p class="sb-d">Only staked or delegated STRK carries a vote.</p>
+      </div>
+      <div class="sb-card">
+        <p class="sb-eyebrow">Privacy fee, per private action</p>
+        <div class="sb-v">~$0.12</div>
+        <p class="sb-d">Settled in STRK, adjusted by the protocol as the price moves.</p>
+      </div>
+    </div>
+  </div>
+</div></section>
+
 <section class="block"><div class="wrap"><div id="numbers">
   <div class="nhead">
     <div class="th-pm-head" style="margin-bottom:0"><span class="th-pm-marker"></span><span class="th-pm-num">04</span><h2 class="th-pm-title">The numbers</h2></div>
@@ -1979,6 +2049,7 @@ window.ADMIN_GATE=on;})();
   }catch(e){}})();
   </script>
 </div></div></section>
+</div><!-- /.cv-layer -->
 
 <!-- BUY -->
 <section class="block"><div class="wrap">
