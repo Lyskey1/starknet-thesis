@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /* Build-time search index for starknetthesis.io.
    Run from the Vercel buildCommand (npm run build) alongside build-digest.js:
-   never hand-maintained, never stale — every publish is a commit, every
+   never hand-maintained, never stale: every publish is a commit, every
    commit rebuilds, so the index refreshes itself on publish.
 
    Writes data/search-index.json: one entry per addressable content surface
@@ -9,7 +9,7 @@
    ecosystem.json, btcfi-ecosystem.json, recap.json).
 
    Out of scope BY DESIGN: live metric VALUES, chart series, and anything
-   fetched after load — a number that changes on every fetch cannot live in
+   fetched after load: a number that changes on every fetch cannot live in
    a build-time index. Metric LABELS, definitions and sources are indexed
    instead, so a query like "app revenue" lands on the right panel even
    though the number is live.
@@ -17,9 +17,9 @@
    Excluded and ASSERTED (build fails if any of these leak into the output):
    nav, footer, every admin/editor affordance (they live in JS string
    literals and in the hidden #ecoModal markup), reference/ mockups, and
-   script contents generally (two whitelisted literal extractions aside:
-   the btcfi timeline milestones and the strk CEX directory, which are
-   static published copy that happens to live in JS arrays).
+   script contents generally (one whitelisted literal extraction aside:
+   the strk CEX directory, which is static published copy that happens
+   to live in a JS array).
 
    --write-ids: adds id attributes to headings and cards that lack an
    anchor, deriving stable slugs from their text. Existing ids are never
@@ -164,6 +164,11 @@ const CARD_SPECS = {
     { cls: 'countdown', kind: 'card' },
   ],
   btcfi: [
+    /* the track-record stack (2026-08: was a horizontal timeline whose
+       twelve milestones lived in a JS array and were whitelisted here as
+       a literal extraction; they are real markup now). Each card carries
+       its own id, so the anchors are stable. */
+    { cls: 'lg-card', kind: 'card' },
     { cls: 'problem-item', kind: 'card' },
     { cls: 'catalyst-item', kind: 'card' },
     /* the risk podium panels (was threat-card until the 2026-08 podium
@@ -172,8 +177,17 @@ const CARD_SPECS = {
        byte-identical across the redesign. */
     { cls: 'brk-panel', kind: 'card' },
     { cls: 'risk-quote', kind: 'card' },
-    { cls: 'mode-item', kind: 'card' },
-    { cls: 'roadmap-step', kind: 'card' },
+    /* the strkBTC modes row, rebuilt 2026-08 as an editorial grid.
+       .mode-item became .bfed-cell and the card ids carried over, so the
+       three anchors (public-strkbtc, shielded-strkbtc,
+       end-to-end-quantum-security-by) stay stable across the redesign.
+       The title now lives in an h4, which titleFor picks up as a heading
+       before it ever reaches TITLE_CLASSES. */
+    { cls: 'bfed-cell', kind: 'card' },
+    /* the bridge roadmap's four phases are no longer cards: the column
+       accordion (js/bridge-columns.js) keeps each phase's copy under an h4
+       that carries the old card's id, so the heading pass below indexes them
+       and the deep links are unchanged. */
     { cls: 'staking-band', kind: 'card' },
     { cls: 'metric-box', kind: 'metric' },
   ],
@@ -252,7 +266,7 @@ function extractPage(pg, src, idPlan) {
       const sibs = row.parent.children.filter(c => c.tag === 'tr');
       const i = sibs.indexOf(row);
       if (i >= 0 && sibs[i + 1] && hasClass(sibs[i + 1], 'th-detailrow')) detail = textOf(sibs[i + 1]);
-      const body = cap([cells.slice(1).join(' · '), detail].filter(Boolean).join(' — '));
+      const body = cap([cells.slice(1).join(' · '), detail].filter(Boolean).join(' · '));
       if (title) entries.push({ page: pg.page, anchor: ensureAnchor(row, title, true), title, body, kind: 'table row' });
       walk(row, n => seenNodes.add(n));
     });
@@ -313,18 +327,6 @@ function uniqueSlug(idPlan, slug) {
 }
 
 /* ---------------- whitelisted JS-literal extractions ---------------- */
-function btcfiMilestones(src) {
-  const m = src.match(/var milestones\s*=\s*\[([\s\S]*?)\];/);
-  if (!m) return [];
-  const out = [];
-  const re = /\{year:'([^']*)',\s*name:'((?:\\'|[^'])*)',\s*btc:\w+,\s*desc:'((?:\\'|[^'])*)'\}/g;
-  let x;
-  while ((x = re.exec(m[1]))) {
-    out.push({ page: 'btcfi', anchor: 'tlDetail', title: x[2].replace(/\\'/g, "'") + ' (' + x[1] + ')',
-      body: cap(x[3].replace(/\\'/g, "'").replace(/\\u2019/g, '’')), kind: 'card' });
-  }
-  return out;
-}
 function strkCex(src) {
   const m = src.match(/const CEX\s*=\s*\[([\s\S]*?)\];/);
   if (!m) return [];
@@ -408,7 +410,6 @@ function main() {
     if (firstAnchored) pageEntries.unshift({ page: pg.page, anchor: firstAnchored.anchor,
       title: pg.label, body: cap(decode(metaDesc)), kind: 'page' });
     entries = entries.concat(pageEntries);
-    if (pg.page === 'btcfi') entries = entries.concat(btcfiMilestones(src));
     if (pg.page === 'strk') entries = entries.concat(strkCex(src));
     if (pg.page === 'ecosystem') {
       ecosystemCategories(src).forEach(c => entries.push({ page: 'ecosystem', anchor: c.id, cat: c.id,

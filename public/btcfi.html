@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BTCFi on Starknet — The Bitcoin Thesis</title>
+<title>BTCFi on Starknet: The Bitcoin Thesis</title>
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
   <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
   <link rel="canonical" href="https://starknetthesis.io/btcfi">
-  <meta property="og:title" content="BTCFi on Starknet — The Bitcoin Thesis">
+  <meta property="og:title" content="BTCFi on Starknet: The Bitcoin Thesis">
   <meta property="og:description" content="How Starknet makes Bitcoin productive: BTC staking with a fixed 25% reward share, strkBTC, and live figures for bridged, staked and shielded BTC.">
   <meta property="og:type" content="article">
   <meta property="og:url" content="https://starknetthesis.io/btcfi">
@@ -16,7 +16,7 @@
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="BTCFi on Starknet — The Bitcoin Thesis">
+  <meta name="twitter:title" content="BTCFi on Starknet: The Bitcoin Thesis">
   <meta name="twitter:description" content="How Starknet makes Bitcoin productive: BTC staking with a fixed 25% reward share, strkBTC, and live figures for bridged, staked and shielded BTC.">
   <meta name="twitter:image" content="https://starknetthesis.io/assets/og-default.png">
   <script type="application/ld+json">{"@context": "https://schema.org","@type": "Article","headline": "BTCFi on Starknet \u2014 The Bitcoin Thesis","description": "How Starknet makes Bitcoin productive: BTC staking with a fixed 25% reward share, strkBTC, and live figures for bridged, staked and shielded BTC.","datePublished": "2026-07-21","dateModified": "2026-07-21","author": {"@type": "Person","name": "Lyskey","url": "https://x.com/Lyskey"},"publisher": {"@type": "Organization","name": "Starknet Thesis","url": "https://starknetthesis.io/"},"mainEntityOfPage": "https://starknetthesis.io/btcfi"}</script>
@@ -419,13 +419,6 @@
 
   /* (4) Track-record timeline: every dot + every year label uses the
      single page accent (no purple/orange mix). Descriptions stay grey. */
-  .tl-rail { background: linear-gradient(90deg, transparent, rgba(var(--accent-rgb),0.45) 6%, rgba(var(--accent-rgb),0.45) 94%, transparent); }
-  .tl-dot, .tl-col.btc .tl-dot { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(var(--accent-rgb),0.12); }
-  .tl-col:hover .tl-dot, .tl-col.active .tl-dot,
-  .tl-col.btc:hover .tl-dot, .tl-col.btc.active .tl-dot { background: var(--accent); box-shadow: 0 0 0 6px rgba(var(--accent-rgb),0.22), 0 0 18px rgba(var(--accent-rgb),0.65); }
-  .tl-year, .tl-col.btc .tl-year { color: var(--accent); }
-  .tl-detail, .tl-detail.btc { border-color: rgba(var(--accent-rgb),0.3); background: rgba(var(--accent-rgb),0.04); }
-  .tl-detail-year, .tl-detail.btc .tl-detail-year { color: var(--accent); }
 
   /* (6) THE RISK PODIUMS (.brk): privacy's pedestal selector (.pmv), this
      page's hand. WHAT IS REUSED FROM THE REFERENCE, deliberately verbatim:
@@ -1049,7 +1042,7 @@
   .inline-accent-link:hover { text-decoration: underline; }
 
   /* strkBTC header triad: the third clause sits in the secondary ink, not a
-     third accent — three accent colors in one headline would read as a flag.
+     third accent: three accent colors in one headline would read as a flag.
      Higher specificity than the shared .scale-title span (violet) rule.
      display:block forces the break before the clause: the .solution-inner cap
      (1100px) means the full triad never fits one line anyway, and without the
@@ -1062,7 +1055,7 @@
   /* per-token breakdown tooltip on the network aggregate card (same style as the privacy metrics tooltips) */
   .metric-box { position: relative; }
   .bm-tip { position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%); background: #141414; border: 1px solid rgba(var(--accent-rgb),.35); border-radius: 8px; padding: 8px 10px; font-family: var(--mono); font-size: 10px; letter-spacing: .04em; color: #D6DAD6; pointer-events: none; display: none; z-index: 5; white-space: nowrap; text-align: left; box-shadow: 0 8px 20px rgba(0,0,0,.5); }
-  /* mobile: keep the breakdown inside the viewport — clamp per grid column */
+  /* mobile: keep the breakdown inside the viewport: clamp per grid column */
   @media (max-width: 860px) {
     .bm-tip { white-space: normal; max-width: calc(100vw - 16px); min-width: 180px; }
     .metrics-row .metric-box:nth-child(odd) .bm-tip { left: 0; transform: none; }
@@ -1081,91 +1074,11 @@
   .th-pm-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:var(--accent);margin-top:16px;opacity:.85;}
   @media(max-width:880px){.th-pm-title{font-size:38px;}.th-pm-num{font-size:48px;}}
 
-  /* ===== Ecosystem hub (eho- prefix). Base state (no .eho-on) is the no-JS
-     rendering: the nodes read as a flat wrapped list of labeled in-page
-     links. The engine adds .eho-on and lifts them onto three rotating rings
-     (translated, never rotated, so logos stay upright by construction).
-     Category colors are decorative grouping — decoration contrast floor,
-     not text floor. */
-  .eho { margin: 56px 0 72px; }
-  .eho-node { --ec: 245, 242, 236; }
-  .eho-node.eho-r0 { --ec: 247, 147, 26; }   /* wallets: accent orange */
-  /* bridges: INK, not the mockup's coral (owner-delegated call, 2026-08-24).
-     Judged on the rendered page: coral rings on the largest category read as
-     the page's risk family (RISK labels, red cost lines) and sit too close
-     to the wallets' orange. Ink reads as neutral rails between orange (BTC
-     entry) and violet (Starknet economy). Coral was 244,110,110. */
-  .eho-node.eho-r1 { --ec: 196, 202, 208; }
-  .eho-node.eho-r2 { --ec: 139, 92, 246; }   /* defi: violet */
-  /* no-JS list mode */
-  .eho-stage { position: relative; width: min(560px, 100%); margin: 0 auto;
-    display: flex; flex-wrap: wrap; gap: 10px; align-content: flex-start; }
-  .eho:not(.eho-on) .eho-ring, .eho:not(.eho-on) .eho-core { display: none; }
-  .eho-node {
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 6px 12px 6px 7px; border-radius: 999px;
-    border: 1px solid rgba(var(--ec), 0.45);
-    background: rgba(20, 20, 20, 0.9);
-    color: rgba(250, 250, 250, 0.8); text-decoration: none;
-    font-size: 12px;
-  }
-  .eho-node img { width: 22px; height: 22px; border-radius: 50%; object-fit: cover; display: block; }
-  .eho-mono { width: 22px; height: 22px; border-radius: 50%; align-items: center;
-    justify-content: center; font-family: var(--mono); font-size: 10px;
-    background: rgba(250, 250, 250, 0.08); color: rgba(250, 250, 250, 0.7); }
-  /* ring mode */
-  .eho-on .eho-stage { display: block; aspect-ratio: 1; }
-  .eho-on .eho-node {
-    position: absolute; left: 50%; top: 50%;
-    width: 44px; height: 44px; margin: -22px 0 0 -22px; padding: 0;
-    justify-content: center; border-radius: 50%;
-    will-change: transform;
-    transition: box-shadow 0.25s ease, border-color 0.25s ease;
-  }
-  .eho-on .eho-node img { width: 25px; height: 25px; }
-  .eho-on .eho-nn { position: absolute; width: 1px; height: 1px; overflow: hidden;
-    clip: rect(0 0 0 0); white-space: nowrap; }
-  .eho-on .eho-node:hover, .eho-on .eho-node:focus-visible {
-    border-color: rgba(var(--ec), 0.95);
-    box-shadow: 0 0 0 1px rgba(var(--ec), 0.6), 0 0 20px rgba(var(--ec), 0.4);
-    z-index: 5; outline: none;
-  }
-  .eho-ring { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
-    border: 1px solid rgba(250, 250, 250, 0.07); border-radius: 50%; aspect-ratio: 1; }
-  .eho-ring0 { width: 34%; }
-  .eho-ring1 { width: 59%; }
-  .eho-ring2 { width: 84%; }
-  .eho-core { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
-    width: 96px; height: 96px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    background: radial-gradient(circle at 50% 30%, rgba(var(--accent-rgb), 0.14), transparent 70%), #0E0F13;
-    border: 1px solid rgba(var(--accent-rgb), 0.6);
-    box-shadow: 0 0 26px rgba(var(--accent-rgb), 0.18);
-    font-family: var(--mono); font-size: 12px; letter-spacing: 0.08em;
-    color: var(--orange); }
-  /* identification caption: fixed-height slot under the centered map, empty
-     at idle, filled on node hover/focus — height reserved so nothing shifts */
-  .eho-cap { min-height: 48px; margin-top: 18px; text-align: center; }
-  .eho-cap span { display: block; }
-  #ehoCapCat { font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em;
-    text-transform: uppercase; color: rgba(250, 250, 250,0.45); margin-bottom: 4px; }
-  #ehoCapName { font-family: var(--display); font-size: 15px; font-weight: 600;
-    color: rgba(250, 250, 250,0.9); }
-  @media (max-width: 860px) {
-    .eho-stage { width: min(480px, 100%); }
-  }
-  @media (max-width: 560px) {
-    .eho-on .eho-node { width: 36px; height: 36px; margin: -18px 0 0 -18px; }
-    .eho-on .eho-node img { width: 20px; height: 20px; }
-    .eho-core { width: 72px; height: 72px; font-size: 10px; }
-  }
-
-  /* ===== Staking column (bsk- prefix). One shared column split 25/75 —
-     replaces the two disconnected consensus bars. Base state (no classes)
+  /* ===== Staking column (bsk- prefix). One shared column split 25/75: replaces the two disconnected consensus bars. Base state (no classes)
      is the END state so no-JS renders finished; the engine adds .bsk-pre
      (initial state) then .bsk-on (reveal) once, via IntersectionObserver,
      and never adds .bsk-pre under prefers-reduced-motion. All animation is
-     transform/opacity transitions — compositor-only, nothing runs after
+     transform/opacity transitions: compositor-only, nothing runs after
      the reveal completes. */
   .bsk-visual { flex-shrink: 0; width: 348px; }
   .bsk-cap, .bsk-sig, .bsk-pct {
@@ -1237,7 +1150,7 @@
     .bsk-visual { width: 100%; max-width: 348px; }
   }
   /* 375: the vertical column wastes ~150px of height under stacked text, so
-     the composition goes HORIZONTAL — one split band, 25 left / 75 right,
+     the composition goes HORIZONTAL: one split band, 25 left / 75 right,
      same exact proportions, roles as legend rows beneath. The pre-reveal
      override swaps the growth axis to match. */
   @media (max-width: 560px) {
@@ -1261,120 +1174,6 @@
     .bsk-seg-strk .bsk-role::before { background: rgba(197, 52, 0, 0.7); }
     .bsk-sig { margin-top: 126px; }
     .bsk-pre:not(.bsk-on) .bsk-fill { transform: scaleX(0); }
-  }
-
-  /* ===== Bridge roadmap fan (brs- prefix). The static four-column grid in
-     the markup IS the reduced-motion and no-JS rendering: every rule below is
-     scoped under .brs-on, which only the engine adds, and the engine bails
-     on prefers-reduced-motion. Glass here is the CHEAP tier on purpose —
-     four overlapping transformed cards with backdrop-filter would multiply
-     compositor cost, and the Tier A budget above enumerates its members. */
-  .roadmap-steps.brs-on {
-    display: block; position: relative;
-    border: none; overflow: visible;
-    touch-action: pan-y;
-    cursor: grab;
-    user-select: none; -webkit-user-select: none;
-  }
-  .roadmap-steps.brs-on.brs-drag { cursor: grabbing; }
-  .roadmap-steps.brs-on .roadmap-step {
-    position: absolute; top: 0; left: 50%;
-    width: min(560px, 86%);
-    padding: 26px 28px 24px;
-    border: 1px solid rgba(250, 250, 250,0.12);
-    border-radius: 14px;
-    background:
-      radial-gradient(120% 70% at 50% 0%, rgba(var(--brs-pc), 0.10), transparent 60%),
-      linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.012) 38%, rgba(0,0,0,0) 60%),
-      rgba(20, 20, 20,0.94);
-  box-shadow: 0 18px 50px rgba(0,0,0,0.45);
-    overflow: hidden;
-    transform: translate(-50%, 0);
-    will-change: transform;
-  }
-  /* the grid's green "current phase" affordances read wrong on a fanned deck */
-  .roadmap-steps.brs-on .roadmap-step.active { background:
-      radial-gradient(120% 70% at 50% 0%, rgba(var(--brs-pc), 0.10), transparent 60%),
-      linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.012) 38%, rgba(0,0,0,0) 60%),
-      rgba(20, 20, 20,0.94); }
-  .roadmap-steps.brs-on .roadmap-step.active::after { content: none; }
-  /* per-phase chip color as r,g,b — the exact .step-status text colors */
-  .brs-on #federation  { --brs-pc: 104,211,145; } /* #c53400 emerald */
-  .brs-on #bitvm       { --brs-pc: 247,147,26;  } /* var(--accent) orange */
-  .brs-on #collidervm  { --brs-pc: 196,181,253; } /* #f0b8a0 violet */
-  .brs-on #op-cat      { --brs-pc: 245,242,236; } /* ink */
-  /* layers: watermark 1 · body 2 · veil 3 · phase/title/chip 4 (titles stay
-     legible on back cards, badge-style; the veil dims surface and body) */
-  .brs-on .step-phase { position: relative; z-index: 4; margin-bottom: 12px; padding-right: 110px;
-    opacity: var(--brs-body, 1); }
-  .brs-on .step-name  { position: relative; z-index: 4; font-size: 20px; margin-bottom: 10px;
-    opacity: var(--brs-body, 1); }
-  .brs-on .step-desc  { position: relative; z-index: 2; font-size: 13px; max-width: 46ch; min-height: 3.2em;
-    opacity: var(--brs-body, 1); }
-  .brs-on .step-status { position: absolute; top: 22px; right: 24px; z-index: 4; margin-top: 0; }
-  /* edge badges — ACCEPTED SPEC DEVIATION (owner, 2026-08-24). The spec
-     asked for the title itself to stay legible on every card; the real
-     title clips in the exposed strip (~46px at 375, ~100px at 1440), so on
-     receding cards the real phase label + title fade OUT with the body and
-     these aria-hidden duplicates (one per side) fade IN, sized to the strip
-     and vertical below 996px. Real headings never leave the DOM — the
-     search index and AT tree see the originals. A receding card shows its
-     LEFT strip when it is an earlier phase, its RIGHT strip when later,
-     so one badge is always in the visible strip. All of it runs off the
-     single --brs-body write per frame. */
-  .brs-on .brs-edge, .brs-on .brs-edgeL {
-    position: absolute; top: 20px; z-index: 4;
-    font-family: var(--display); font-size: 13px; font-weight: 600;
-    color: rgba(250, 250, 250,0.88);
-    opacity: calc(1 - var(--brs-body, 1));
-    pointer-events: none;
-    white-space: nowrap;
-  }
-  .brs-on .brs-edge  { right: 16px; top: 56px; text-align: right; } /* below the chip, same strip */
-  .brs-on .brs-edgeL { left: 16px; }
-  .brs-on .brs-wm {
-    position: absolute; right: -8px; bottom: -42px; z-index: 1;
-    font-family: var(--display); font-weight: 900; font-size: 180px; line-height: 1;
-    letter-spacing: -0.04em;
-    /* ACCEPTED SPEC DEVIATION (owner, 2026-08-24) — DO NOT "SIMPLIFY" TO A
-       FLAT ALPHA. The alpha rises with recession (0.07 front to ~0.16 fully
-       receded, riding the same --brs-body var the body fade uses, zero
-       extra frame writes) because the veil compresses back cards toward
-       black: at a flat 0.07 the far watermark MEASURED 1.02:1 from pixels —
-       mud. This ramp is the fix that holds every fan position in the
-       1.06–1.18:1 decoration band (measured at 1440 and 981, both fan
-       directions). A flat value cannot satisfy both ends. */
-    color: rgba(var(--brs-pc), calc(0.07 + 0.09 * (1 - var(--brs-body, 1))));
-    pointer-events: none;
-  }
-  .brs-on .brs-veil {
-    position: absolute; inset: 0; z-index: 3; border-radius: inherit;
-    background: #08090C; opacity: 0; pointer-events: none;
-  }
-  .brs-dots { display: flex; justify-content: center; gap: 14px; margin-top: 28px; }
-  .brs-dot {
-    width: 10px; height: 10px; border-radius: 50%; padding: 0;
-    border: 1px solid rgba(250, 250, 250,0.25); background: rgba(250, 250, 250,0.12);
-    cursor: pointer; transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
-  }
-  .brs-dot[aria-current="true"] {
-    background: rgb(var(--brs-pc)); border-color: rgb(var(--brs-pc));
-    box-shadow: 0 0 10px rgba(var(--brs-pc), 0.55); transform: scale(1.15);
-  }
-  .brs-dot:focus-visible { outline: 2px solid rgba(var(--brs-pc), 0.9); outline-offset: 3px; }
-  /* below desktop the strips are too narrow for horizontal names: the badges
-     turn vertical and ride the exposed edge. 996 = the engine's 900px STAGE
-     threshold plus the wrapper's 2x48px padding, so CSS and JS flip together */
-  @media (max-width: 996px) {
-    .brs-on .brs-edge, .brs-on .brs-edgeL { writing-mode: vertical-rl; font-size: 12px; }
-    .brs-on .brs-edge  { right: 12px; top: 46px; } /* below the chip */
-    .brs-on .brs-edgeL { left: 12px; top: 16px; }
-  }
-  @media (max-width: 560px) {
-    .roadmap-steps.brs-on .roadmap-step { padding: 20px 18px 18px; }
-    .brs-on .step-desc { font-size: 12px; }
-    .brs-on .step-status { top: 16px; right: 14px; }
-    .brs-on .brs-wm { font-size: 120px; bottom: -28px; }
   }
 
   /* ===== Tiered liquid glass (btcg- prefix). backdrop-filter lives on the
@@ -1467,15 +1266,14 @@
   .page-btcfi .btcg-bloom-threat i:nth-child(3){left:71.5%;top:12%;width:24%;height:72%;}
   /* coral inside the deeper-risk panel */
   .page-btcfi .btcg-bloom-quote i{--bc:#E0524A;left:8%;top:12%;width:45%;height:76%;}
-  /* strkBTC row: orange, violet, violet — the three cards read as equals,
+  /* strkBTC row: orange, violet, violet: the three cards read as equals,
      so all three blobs share the same intensity */
   .page-btcfi .btcg-bloom-modes i:nth-child(1){--bc:#c53400;left:6%;top:16%;width:20%;height:68%;}
   .page-btcfi .btcg-bloom-modes i:nth-child(2){--bc:#c53400;left:39.5%;top:16%;width:20%;height:68%;}
   .page-btcfi .btcg-bloom-modes i:nth-child(3){--bc:#c53400;left:73%;top:16%;width:20%;height:68%;}
   /* orange inside the STRK20 timeline detail card */
-  .page-btcfi .btcg-bloom-tl i{--bc:#c53400;left:6%;top:14%;width:40%;height:72%;}
   /* ===== Mobile, decided up front: below 981px no backdrop-filter on
-     this page — a solid surface plus a barely perceptible accent tint on
+     this page: a solid surface plus a barely perceptible accent tint on
      the card itself, consistent with the other pages. The blooms are
      removed outright (the privacy page's approach): measured at 390px,
      keeping them as dimmed blur layers cost MORE paint and composite
@@ -1489,7 +1287,426 @@
   @media (prefers-reduced-motion: reduce){
     .page-btcfi .btcg-card,.page-btcfi .btcg-card:hover{transform:none;transition:none;}
   }
+
+  /* ===== strkBTC modes: editorial grid ==============================
+     Three cells, three per row on desktop. Each cell reads top to
+     bottom: mono eyebrow, two-line display title, square image, mono
+     uppercase caption. Everything left aligned inside its own column,
+     with a thin line framing the whole block. Palette stays ours:
+     #0d0d0d ground, #141414 panels, #262626 lines, #fafafa text,
+     rgba(250,250,250,.62) dim, #c53400 accent. Captions are uppercased
+     in CSS, never in the markup, so the copy stays verbatim in the DOM
+     and in the search index. */
+  .page-btcfi .bfed-grid{
+    display:grid; grid-template-columns:repeat(3,1fr);
+    border:1px solid #262626; border-radius:4px; background:#0d0d0d;
+    padding:clamp(20px,2.4vw,34px);
+    column-gap:clamp(20px,2.4vw,38px); row-gap:56px;
+  }
+  .page-btcfi .bfed-cell{
+    display:flex; flex-direction:column; align-items:flex-start;
+    text-align:left; min-width:0;
+  }
+  /* subgrid so eyebrow, title, plate and caption sit on shared baselines
+     across the row: card 3's title is set smaller, and without this its
+     square would ride higher than its neighbours'. row-gap:0 stops the
+     56px outer row gap from being inherited between a cell's own rows;
+     the internal rhythm stays on the element margins. The flex rules
+     above remain the fallback where subgrid is unsupported. */
+  @supports (grid-template-rows: subgrid){
+    .page-btcfi .bfed-cell{
+      display:grid; grid-template-rows:subgrid; grid-row:span 4;
+      row-gap:0; align-items:start; justify-items:start;
+    }
+  }
+  .page-btcfi .bfed-eyebrow{
+    font-family:var(--mono); font-size:10.5px; letter-spacing:.18em;
+    text-transform:uppercase; color:#c53400; margin:0 0 18px;
+  }
+  /* the eyebrow is one unit, all accent: a dim word next to an accent
+     numeral read as two half-labels rather than one */
+  .page-btcfi .bfed-eyebrow span{ color:inherit; margin-left:.45em; }
+  .page-btcfi .bfed-title{
+    font-family:var(--display); font-weight:500;
+    font-size:clamp(24px,2.5vw,36px); line-height:1.08;
+    letter-spacing:-.02em; color:#fafafa; margin:0 0 26px;
+    overflow-wrap:anywhere;
+  }
+  /* explicit line boxes: the title is set in two lines, per cell */
+  .page-btcfi .bfed-title span{ display:block; color:inherit; }
+  .page-btcfi .bfed-title--long{ font-size:clamp(20px,1.85vw,27px); }
+  /* square plate. isolation:isolate keeps mix-blend-mode:color inside
+     the plate: without it the accent blends through to the page ground. */
+  .page-btcfi .bfed-shot{
+    position:relative; isolation:isolate; width:100%; aspect-ratio:1/1;
+    overflow:hidden; background:#141414; border:1px solid #262626;
+  }
+  .page-btcfi .bfed-shot img{
+    display:block; width:100%; height:100%; object-fit:cover;
+    filter:grayscale(1) contrast(1.15) brightness(.92);
+  }
+  .page-btcfi .bfed-tint{
+    position:absolute; inset:0; background:#c53400;
+    mix-blend-mode:color; opacity:.55; pointer-events:none;
+  }
+  .page-btcfi .bfed-caption{
+    font-family:var(--mono); font-size:11px; line-height:1.75;
+    letter-spacing:.055em; text-transform:uppercase;
+    color:rgba(250,250,250,.62); margin:22px 0 0; max-width:44ch;
+    overflow-wrap:anywhere;
+  }
+  .page-btcfi .bfed-caption a{
+    color:#c53400; text-decoration:none;
+    border-bottom:1px solid rgba(197,52,0,.5);
+  }
+  .page-btcfi .bfed-caption a:hover{ color:#fafafa; border-bottom-color:#fafafa; }
+  @media (max-width:1080px){
+    .page-btcfi .bfed-grid{ grid-template-columns:repeat(2,1fr); row-gap:48px; }
+    .page-btcfi .bfed-title{ font-size:clamp(22px,3.4vw,30px); }
+    .page-btcfi .bfed-title--long{ font-size:clamp(18px,2.5vw,22px); }
+  }
+  @media (max-width:640px){
+    .page-btcfi .bfed-grid{ grid-template-columns:1fr; row-gap:44px; padding:20px; }
+    .page-btcfi .bfed-title{ font-size:clamp(26px,7.4vw,34px); }
+    /* the long title keeps its two lines at 390: at the base mobile size
+       "security before Q-day" wrapped and split Q-day across lines */
+    .page-btcfi .bfed-title--long{ font-size:clamp(19px,5.4vw,24px); }
+    .page-btcfi .bfed-caption{ font-size:10.5px; letter-spacing:.04em; }
+  }
+
+  /* ===== BTCFi ecosystem field (bg- prefix, mount #btcGlobe) ==========
+     The ecosystem page's scroll-driven flight, re-skinned for this page.
+     APPENDED AT THE END OF THIS INLINE BLOCK ON PURPOSE: css/eco-stage.css
+     is linked on this page too and carries the eg- twins of these rules, so
+     anything defined earlier than here can lose to a linked sheet. The
+     prefix is bg-, never eg-, so the two engines can never read each other's
+     DOM or each other's styles.
+     Colors are the page's own: ground #0d0d0d, accent #c53400, warm #e07a4a,
+     ink #fafafa. Fonts are the page's own vars, because 'General Sans' is
+     only a fallback stack here.
+     The no-JS list (.bgf-list) is the base state and the engine's data
+     source; it is what the section renders when the module never runs. */
+
+  /* the heading the globe repaints: hidden from sight, kept for the anchor,
+     the outline and assistive tech */
+  .bg-sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; border: 0; }
+
+  /* ---- no-JS / pre-boot: a flat wrapped list of labelled links ---- */
+  .bgf-list { list-style: none; margin: 40px auto 8px; padding: 0;
+    width: min(560px, 100%); display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+  .bgf-item { display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 12px 6px 7px; border-radius: 999px;
+    border: 1px solid rgba(250, 250, 250, 0.18);
+    background: rgba(20, 20, 20, 0.9);
+    color: rgba(250, 250, 250, 0.8); text-decoration: none; font-size: 12px; }
+  .bgf-item img { width: 22px; height: 22px; border-radius: 50%; object-fit: cover; display: block; }
+  .bgf-mono { width: 22px; height: 22px; border-radius: 50%; align-items: center;
+    justify-content: center; font-family: var(--mono); font-size: 10px;
+    background: rgba(250, 250, 250, 0.08); color: rgba(250, 250, 250, 0.7); }
+
+  /* HEIGHT RESERVATION, and it is load bearing. Unlike the ecosystem page,
+     whose mount ships empty, this one ships ~175px of link list and the
+     engine replaces it with a 240vh track: measured at 1440, everything
+     below the section jumped 1918px once the module booted. The classic
+     inline script just under this stylesheet stamps html.bg-flight on the
+     one path where the flight will actually run, which reserves the exact
+     height the track will take and hides the list the engine is about to
+     wipe. No JS, reduced motion, or a module that never arrives: the class
+     is absent or removed again, and the list renders as the section. */
+  html.bg-flight #btcGlobe { min-height: 240vh; }
+  html.bg-flight #btcGlobe .bgf-list { display: none; }
+
+  /* ---- the flight: a tall track, a sticky full-bleed stage ---- */
+  #btcGlobe { width: 100vw; max-width: none; margin: 0 0 0 calc(50% - 50vw);
+    padding: 0; background: transparent; }
+  .bg-track { position: relative; height: 240vh; }
+  .bg-stick { position: sticky; top: 0; height: 100vh; overflow: hidden; background: transparent; }
+  /* the flight's last frame dissolves into the page instead of being cut off
+     mid-logo where the sticky stage ends */
+  .bg-stick::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 26vh;
+    pointer-events: none; z-index: 4;
+    background: linear-gradient(to bottom, rgba(13, 13, 13, 0) 0%, rgba(13, 13, 13, 0.7) 55%, rgba(13, 13, 13, 1) 100%); }
+  .bg-stick canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+
+  /* the copy holds the centre for the whole flight; the logo scatter and the
+     Bitcoin mark are both placed to keep out of this box */
+  .bg-copy { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+    width: min(760px, calc(100% - 48px)); text-align: center; pointer-events: none;
+    z-index: 3; opacity: 0; transition: opacity .4s ease; }
+  .bg-copy h2 { font-family: var(--display); font-weight: 300;
+    font-size: clamp(30px, 4.2vw, 62px); line-height: 1.08; letter-spacing: -0.03em;
+    color: #fafafa; margin: 0 0 14px; }
+  .bg-copy p { font-family: var(--display); font-weight: 300;
+    font-size: clamp(20px, 2.4vw, 34px); line-height: 1.2; letter-spacing: -0.02em;
+    color: #e07a4a; margin: 0; }
+
+  .bg-stats { position: absolute; left: 48px; bottom: 7vh; z-index: 5; display: flex; gap: 44px; pointer-events: none; }
+  .bg-stats span { display: block; font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: rgba(250, 250, 250, 0.75); margin-bottom: 8px; }
+  .bg-stats b { font-family: var(--display); font-weight: 300; font-size: clamp(30px, 3.2vw, 46px);
+    letter-spacing: -0.02em; color: #fafafa; }
+  .bg-hint { position: absolute; right: 48px; bottom: 7vh; z-index: 5; font-family: var(--mono);
+    font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: rgba(250, 250, 250, 0.72); pointer-events: none; }
+
+  .bg-chip { position: absolute; top: 0; left: 0; z-index: 6; display: flex; align-items: center; gap: 11px;
+    padding: 9px 15px; border-radius: 999px; background: #fafafa; color: #0d0d0d;
+    font-family: var(--mono); font-size: 12px; pointer-events: none; opacity: 0;
+    transition: opacity 0.16s; white-space: nowrap; will-change: transform; }
+  .bg-chip.on { opacity: 1; }
+  .bg-chip span + span { color: #616161; padding-left: 11px; border-left: 1px solid rgba(13, 13, 13, 0.18); }
+
+  @media (max-width: 860px) {
+    html.bg-flight #btcGlobe { min-height: 210vh; }   /* keep in step with .bg-track */
+    .bg-track { height: 210vh; }
+    .bg-stats { left: 20px; bottom: 5vh; gap: 28px; }
+    .bg-hint { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .bg-copy { transition: none; }
+  }
+
+  /* ===== The bridge roadmap, as a column accordion (bcore- / bcol- / bhead
+     / bscene). This is the privacy page's proving-properties instrument
+     (css/privacy-fx.css, .pcore) rebuilt on btcfi's own prefixes so the two
+     pages can never collide: privacy does not load this sheet and btcfi does
+     not load privacy-fx.css, so every token it needs is redeclared locally.
+     Four columns edge to edge. Hover, tap or focus one and its mesh-gradient
+     panel slides UP into the column while the previously shown one slides up
+     and out: one continuous upward conveyor, one in and one out. The reading
+     area above swaps in the same motion, carrying the section's standing
+     statement at rest and the hovered phase's detail on top of it. The art is
+     layered CSS mesh gradient, no images. Timing and easing are the whole
+     effect: keep --bc-slide and --bc-ease in step across the three layers. */
+  .bcore {
+    --bc-slide: 900ms; --bc-ease: cubic-bezier(.76, 0, .18, 1);
+    --bc-ink: #fafafa; --bc-dim: rgba(250, 250, 250,.68); --bc-line: #262626;
+    /* the accent role is #c53400 everywhere it is a FIELD (the gradients
+       below). As 11px and 12px mono TEXT on #0d0d0d it measures 3.6:1, under
+       AA, so the type takes the palette's lighter ember instead, at 8.3:1. */
+    --bc-acc: #ff8a4a;
+    position: relative; width: 100vw; max-width: none; margin: 56px 0 0 calc(50% - 50vw);
+    min-height: 100vh; display: flex; flex-direction: column;
+  }
+
+  /* the reading area: one .bhead per state, only the active one shown. Its
+     height is pinned by js/bridge-columns.js to the tallest state (OP_CAT),
+     because these bodies are longer than privacy's and a fixed vh band clips
+     them on short viewports. The clamp is the pre-measurement fallback. */
+  .bcore-heads { position: relative; flex: none; height: var(--bc-heads-h, clamp(200px, 30vh, 320px));
+    overflow: hidden; padding: 0 16px 26px; }
+  .bhead { position: absolute; inset: 0 16px auto; transform: translateY(112%); opacity: 0;
+    transition: transform var(--bc-slide) var(--bc-ease), opacity calc(var(--bc-slide) * .7) ease; }
+  .bhead.-in { transform: translateY(0); opacity: 1; }
+  .bhead.-out { transform: translateY(-112%); opacity: 0; }
+  .bhead__rn, .bhead__elim { font-family: var(--mono); font-size: 12px; letter-spacing: .14em;
+    text-transform: uppercase; color: var(--bc-acc); }
+  .bhead__elim { margin-top: 14px; }
+  .bhead h4 { margin: 10px 0 12px; font-family: var(--display);
+    font-weight: 500; font-size: clamp(26px, 3.2vw, 44px); line-height: 1.04; letter-spacing: -.02em; color: var(--bc-ink); }
+  .bhead p { margin: 0; max-width: 82ch; font-family: var(--display);
+    font-size: clamp(15px, 1.2vw, 17px); line-height: 1.6; color: var(--bc-dim); }
+  .bhead p a { color: var(--bc-ink); text-decoration: underline; text-underline-offset: 3px;
+    text-decoration-color: rgba(255, 138, 74,.6); transition: text-decoration-color .25s ease; }
+  .bhead p a:hover { text-decoration-color: var(--bc-acc); }
+  .bhead--lede p { max-width: 62ch; font-size: clamp(19px, 2vw, 28px); line-height: 1.3; letter-spacing: -.01em; }
+  .bhead--lede b { font-weight: 500; color: var(--bc-ink); }
+
+  /* the strip */
+  .bcore-strip { display: flex; flex: 1 1 auto; min-height: 0; background: #0d0d0d;
+    border-top: 1px solid var(--bc-line); border-bottom: 1px solid var(--bc-line); }
+  .bcol { position: relative; flex: 1 1 0%; min-width: 0; overflow: hidden; cursor: pointer; outline: none;
+    border-left: 1px solid var(--bc-line); transition: flex-grow var(--bc-slide) var(--bc-ease); }
+  .bcol:first-child { border-left: 0; }
+  .bcol.-active { flex-grow: 2.5; }
+  .bcol::after { content: ""; position: absolute; inset: 0; z-index: 3; pointer-events: none;
+    box-shadow: inset 0 0 0 1.5px transparent; transition: box-shadow .4s ease; }
+  .bcol:focus-visible::after { box-shadow: inset 0 0 0 2px var(--bc-acc); }
+
+  /* the sliding art layer: clipped by the column, starts below, exits up */
+  .bcol__media { position: absolute; inset: 0; z-index: 1; transform: translateY(101%);
+    transition: transform var(--bc-slide) var(--bc-ease); will-change: transform; }
+  .bcol__media.-in { transform: translateY(0); }
+  .bcol__media.-out { transform: translateY(-101%); }
+  /* scrims, so the caption and name read over any panel */
+  .bcol__media::before { content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(to bottom, rgba(13,13,13,.72) 0%, rgba(13,13,13,.15) 26%, rgba(13,13,13,.2) 62%, rgba(13,13,13,.86) 100%); }
+
+  /* column chrome, always above the art */
+  .bcol__cap { position: absolute; top: 20px; left: 20px; right: 16px; z-index: 2; display: flex; align-items: baseline; gap: 10px;
+    font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--bc-dim);
+    opacity: 0; transform: translateY(-6px); transition: opacity .5s ease .1s, transform .5s var(--bc-ease) .1s; }
+  .bcol.-active .bcol__cap { opacity: 1; transform: none; }
+  .bcol__cap b { color: var(--bc-acc); font-weight: 500; font-variant-numeric: tabular-nums; }
+  .bcol__name { position: absolute; left: 20px; right: 16px; bottom: 24px; z-index: 2; margin: 0;
+    font-family: var(--mono); font-weight: 400; font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--bc-dim); }
+  .bcol__name span { display: block; margin-top: 8px; font-family: var(--display);
+    font-size: clamp(16px, 1.5vw, 21px); font-weight: 500; letter-spacing: -.01em; text-transform: none;
+    color: rgba(250, 250, 250,.72); transition: color .4s ease; }
+  .bcol.-active .bcol__name span { color: var(--bc-ink); }
+
+  /* the panels: layered mesh gradient, the btcfi ember palette, no images.
+     One per phase, warming from the deep rust of the federation to the flare
+     of the endgame, so the four columns read as an ordered run. */
+  .bscene { position: absolute; inset: 0; overflow: hidden; background: var(--bs-bg); }
+  .bscene::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(120% 62% at 28% -12%, rgba(255,255,255,.14), rgba(255,255,255,0) 58%); mix-blend-mode: soft-light; }
+  .bscene--ember { --bs-bg:
+      radial-gradient(120% 95% at 16% 10%, #7a2400 0%, rgba(122,36,0,0) 54%),
+      radial-gradient(95% 85% at 90% 20%, #c53400 0%, rgba(197,52,0,0) 58%),
+      radial-gradient(130% 120% at 74% 104%, #ff8a4a 0%, rgba(255,138,74,0) 60%),
+      linear-gradient(148deg, #1a0600 0%, #3a0e00 54%, #0d0d0d 100%); }
+  .bscene--rust { --bs-bg:
+      radial-gradient(115% 95% at 84% 12%, #8a2400 0%, rgba(138,36,0,0) 54%),
+      radial-gradient(100% 90% at 10% 30%, #c53400 0%, rgba(197,52,0,0) 58%),
+      radial-gradient(130% 120% at 60% 108%, #e07a4a 0%, rgba(224,122,74,0) 60%),
+      linear-gradient(158deg, #240800 0%, #4a1200 54%, #0d0d0d 100%); }
+  .bscene--copper { --bs-bg:
+      radial-gradient(115% 92% at 22% 14%, #b03000 0%, rgba(176,48,0,0) 54%),
+      radial-gradient(100% 95% at 88% 28%, #e86a30 0%, rgba(232,106,48,0) 58%),
+      radial-gradient(130% 125% at 70% 104%, #7a2400 0%, rgba(122,36,0,0) 60%),
+      linear-gradient(153deg, #120400 0%, #3a0e00 54%, #0d0d0d 100%); }
+  .bscene--flare { --bs-bg:
+      radial-gradient(115% 92% at 80% 12%, #ff8a4a 0%, rgba(255,138,74,0) 52%),
+      radial-gradient(110% 100% at 14% 34%, #c53400 0%, rgba(197,52,0,0) 58%),
+      radial-gradient(135% 130% at 62% 106%, #8a2400 0%, rgba(138,36,0,0) 60%),
+      linear-gradient(153deg, #2a0a00 0%, #4a1200 54%, #0d0d0d 100%); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bcol__media, .bhead, .bcol { transition-duration: .01ms; }
+  }
+  /* below 860 the strip stacks: the columns become a vertical accordion and
+     the reading area sizes to its content instead of being clipped to a band,
+     which is also why the measured height is dropped here */
+  @media (max-width: 860px) {
+    .bcore { margin-top: 40px; min-height: 0; display: block; }
+    .bcore-heads { height: auto; min-height: 0; padding: 0 20px 22px; }
+    .bhead { position: relative; inset: auto; transform: translateY(16px); }
+    .bhead:not(.-in) { display: none; }
+    .bhead--lede p { font-size: 20px; }
+    .bcore-strip { flex-direction: column; height: auto; }
+    .bcol { border-left: 0; border-top: 1px solid var(--bc-line); min-height: 76px; }
+    .bcol:first-child { border-top: 0; }
+    .bcol.-active { flex-grow: 3.4; min-height: 260px; }
+    .bcol__cap { top: 16px; }
+    .bcol__name { bottom: 16px; }
+  }
+
+  /* ============ TRACK RECORD: the lineage stack (#lg) ============
+     A twin of privacy.html's lineage, so the CSS below is a copy of the
+     block in css/privacy-fx.css commented "the lineage, after sui.io's
+     stack", and the behaviour is the same js/lineage.js. It sits inline
+     rather than in a shared sheet because btcfi loads neither
+     privacy-fx.css nor stride.css, and because this inline <style> is the
+     last thing the page loads, so nothing can override it. Keep the two
+     copies in sync. */
+/* ---------- the lineage, after sui.io's stack ----------
+   Title over light streaks (fading out on scroll: --st), then a dotted rail
+   down the middle with a square playhead pinned at mid-viewport (sticky), and
+   a card per stop alternating sides. A card's visual and description unfold
+   when js/lineage.js marks it .is-open; the art's strokes draw in. */
+  /* the four tokens the copied block reads. btcfi does not load
+     css/privacy-fx.css, where they sit on :root, so they are declared here
+     on the section itself. The values are the site's, unchanged. */
+  .lg { --pf-ink: #fafafa; --pf-dim: rgba(250,250,250,.62); --pf-line: #262626; --pf-acc: #c53400; }
+  /* padding and max-width reset the bare `section` rule in css/styles.css,
+     which privacy's copy never had to fight */
+  .lg { --open: 0; --tt: 0; position: relative; margin: 140px 0 0; padding: 0; max-width: none; }
+/* the intro, as sui.io does it: a 170vh band whose inner 100vh is pinned
+   over the start of the rail. Two curtain halves part outward from the
+   centre (--open, 0 to 1) while the title, top-aligned, comes up (--tt).
+   The track starts under the pin (negative margin), so the playhead and
+   the first card are already in the frame as the curtain opens. */
+.lg-head { position: relative; width: 100vw; margin-left: calc(50% - 50vw); height: 170vh; z-index: 2; pointer-events: none; }
+.lg-pin { position: sticky; top: 0; height: 100vh; display: flex; align-items: flex-start; justify-content: center; text-align: center; overflow: hidden; padding-top: 11vh; }
+.lg-streaks, .lg-streaks-r { position: absolute; top: -4%; bottom: -4%; width: 52%; filter: blur(2px) saturate(1.2); pointer-events: none;
+  background: repeating-linear-gradient(90deg, #1a0600 0 6px, #c53400 6px 12px, #6a1a00 12px 22px, #ff8a4a 22px 25px, #2a0a00 25px 40px, #b03000 40px 45px, #120400 45px 62px, #e86a30 62px 64px, #3a0e00 64px 84px);
+  animation: lgStreak 24s linear infinite alternate; }
+.lg-streaks { left: -2%; transform: translateX(calc(var(--open) * -110%));
+  -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 60%, transparent 100%); mask-image: linear-gradient(90deg, #000 0%, #000 60%, transparent 100%); }
+.lg-streaks-r { right: -2%; transform: translateX(calc(var(--open) * 110%));
+  -webkit-mask-image: linear-gradient(270deg, #000 0%, #000 60%, transparent 100%); mask-image: linear-gradient(270deg, #000 0%, #000 60%, transparent 100%); }
+@keyframes lgStreak { from { background-position: 0 0; } to { background-position: 168px 0; } }
+.lg-head-in { position: relative; opacity: var(--tt); transform: translateY(calc((1 - var(--tt)) * 24px)); }
+.lg-title { margin: 0; font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-weight: 300; font-size: clamp(40px, 6.4vw, 104px); line-height: .98; letter-spacing: -.03em; color: var(--pf-ink); }
+.lg-sub { display: inline-flex; align-items: center; gap: 10px; margin: 26px 0 0; font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-size: 18px; color: rgba(250,250,250,.85); }
+.lg-sq { width: 12px; height: 12px; background: var(--pf-acc); }
+.lg-track { position: relative; z-index: 1; max-width: 1400px; margin: -62vh auto 0; padding: 0 32px 20vh; }
+.lg-line { position: absolute; top: 0; bottom: 0; left: 50%; width: 0; border-left: 2px dotted rgba(250,250,250,.45); transform: translateX(-1px); }
+.lg-play { position: sticky; top: 50vh; z-index: 2; width: 14px; height: 14px; margin: 0 auto -14px; background: #fafafa; }
+.lg-play::before { content: ""; position: absolute; left: 6px; bottom: 14px; width: 2px; height: 44px; background: var(--pf-acc); }
+.lg-list { list-style: none; margin: 0; padding: 0; }
+.lg-stop { position: relative; display: flex; align-items: center; min-height: 88vh; }
+.lg-stop.lg-r { justify-content: flex-end; }
+.lg-stop.lg-l { justify-content: flex-start; }
+.lg-card { position: relative; width: min(46%, 620px); border: 1px solid #3a3a3a; background: rgba(13,13,13,.85); }
+.lg-r .lg-card { margin-left: calc(50% + 72px); margin-right: 0; width: min(100%, 620px); }
+.lg-l .lg-card { margin-right: calc(50% + 72px); margin-left: 0; width: min(100%, 620px); }
+.lg-stop.lg-r, .lg-stop.lg-l { justify-content: flex-start; }
+.lg-l { flex-direction: row-reverse; }
+.lg-ch { position: relative; display: flex; align-items: center; gap: 18px; padding: 22px 24px; }
+.lg-num { display: grid; place-items: center; width: 50px; height: 50px; border: 1px solid #5a5a5a; font-family: 'IBM Plex Mono', monospace; font-size: 16px; color: var(--pf-ink); background: #0d0d0d; position: relative; z-index: 1; }
+.lg-ct { margin: 0; font-family: 'IBM Plex Mono', monospace; font-weight: 400; font-size: 15px; letter-spacing: .12em; text-transform: uppercase; color: var(--pf-ink); }
+/* the connector: from the number box down the card's left gutter to the year tile */
+.lg-card::before { content: ""; position: absolute; left: 48px; top: 72px; bottom: 47px; width: 1px; background: #5a5a5a; }
+.lg-card::after { content: ""; position: absolute; left: 48px; bottom: 47px; width: 20px; height: 1px; background: #5a5a5a; }
+.lg-cv { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .9s cubic-bezier(.2,.7,.2,1); border-top: 1px solid transparent; }
+.lg-cv-in { overflow: hidden; min-height: 0; }
+.lg-art { display: block; width: 100%; height: auto; max-height: 300px; margin: 8px auto 0; padding: 0 24px 0 72px; }
+.lg-art path, .lg-art circle, .lg-art rect, .lg-art ellipse { stroke-dasharray: 700; stroke-dashoffset: 700; }
+.lg-cd { margin: 0; padding: 4px 24px 26px 72px; font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-size: 15px; line-height: 1.55; color: var(--pf-dim); }
+.lg-cf { display: flex; align-items: center; gap: 18px; padding: 20px 24px 22px 68px; border-top: 1px solid #3a3a3a; }
+.lg-yr { display: grid; place-items: center; height: 50px; padding: 0 12px; border: 1px solid #5a5a5a; background: #0d0d0d; font-family: 'IBM Plex Mono', monospace; font-size: 15px; color: var(--pf-ink); position: relative; z-index: 1; }
+.lg-src { font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-size: 18px; color: rgba(250,250,250,.6); text-decoration: none; }
+.lg-src:hover { color: var(--pf-acc); }
+.lg-card.is-open .lg-cv { grid-template-rows: 1fr; border-top-color: #3a3a3a; }
+.lg-card.is-open .lg-art path, .lg-card.is-open .lg-art circle, .lg-card.is-open .lg-art rect, .lg-card.is-open .lg-art ellipse { animation: lgDraw 1.6s cubic-bezier(.3,.6,.2,1) .2s forwards; }
+.lg-card.is-open .lg-acc { animation: lgPulse 3s ease-in-out 1.6s infinite; }
+@keyframes lgDraw { to { stroke-dashoffset: 0; } }
+@keyframes lgPulse { 0%, 100% { opacity: 1; } 50% { opacity: .55; } }
+.lg-card.is-open .lg-num, .lg-card.is-open .lg-yr { border-color: var(--pf-acc); }
+@media (prefers-reduced-motion: reduce) {
+  .lg-streaks, .lg-streaks-r { animation: none; }
+  .lg-head-in { transform: none; }
+  .lg-cv { transition: none; }
+  .lg-art path, .lg-art circle, .lg-art rect, .lg-art ellipse { stroke-dasharray: none; stroke-dashoffset: 0; animation: none !important; }
+  .lg-card.is-open .lg-acc { animation: none; }
+}
+@media (max-width: 860px) {
+  .lg { margin-top: 80px; }
+  .lg-head { height: 150vh; }
+  .lg-pin { padding-top: 14vh; }
+  .lg-track { margin-top: -50vh; }
+  .lg-sub { font-size: 15px; }
+  .lg-track { padding: 0 20px 12vh; }
+  .lg-line { left: 20px; transform: none; }
+  .lg-play { margin: 0 0 -14px -6px; }
+  .lg-stop { min-height: 0; margin: 40px 0; }
+  .lg-l { flex-direction: row; }
+  .lg-r .lg-card, .lg-l .lg-card { margin: 0 0 0 28px; width: 100%; }
+  .lg-art { padding: 0 20px 0 20px; }
+  .lg-cd { padding: 4px 20px 22px; }
+}
 </style>
+<script>
+/* BTCFi ecosystem field: reserve the flight's height before layout. Classic
+   and inline on purpose, because a module is deferred and would run after the
+   section has already been laid out at the link list's height. The flag goes
+   on only where js/btcfi-globe.js will really take over, and the safety timer
+   takes it off again if the module never arrives (a blocked CDN, an import
+   failure), so the section falls back to the link list instead of holding
+   open an empty 240vh void. The module removes it too on its own bail-outs. */
+(function () {
+  var html = document.documentElement;
+  if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  html.classList.add('bg-flight');
+  setTimeout(function () {
+    var m = document.getElementById('btcGlobe');
+    if (!m || !m.querySelector('.bg-track')) html.classList.remove('bg-flight');
+  }, 6000);
+})();
+</script>
 <script src="js/admin-gate.js"></script>
 </head>
 <body class="page-btcfi">
@@ -1624,7 +1841,7 @@
 <div class="section-divider"></div>
 
 <!-- ============================================================ -->
-<!-- 01 — THE GAP, AND WHAT IT COSTS  (was PROBLEM, plus the surviving half of
+<!-- 01: THE GAP, AND WHAT IT COSTS  (was PROBLEM, plus the surviving half of
      the deleted THREAT section)
      Three sections of problem and one of answer was not a structure, it was
      what the page accreted into. PROBLEM and THREAT made one argument at two
@@ -2111,16 +2328,16 @@
       <div class="cat-keys" role="tablist" aria-label="Four catalysts">
         <button class="cat-key" type="button" id="catTab1" data-c="0" role="tab"
                 aria-selected="true" tabindex="0" aria-controls="bitcoin-holders-want-more-than-hodling"
-                aria-label="01 — Demand signal: Bitcoin holders want more than HODLing" style="left:81.5%;top:18.5%">DEMAND</button>
+                aria-label="01: Demand signal: Bitcoin holders want more than HODLing" style="left:81.5%;top:18.5%">DEMAND</button>
         <button class="cat-key" type="button" id="catTab2" data-c="1" role="tab"
                 aria-selected="false" tabindex="-1" aria-controls="institutional-capital-is-arriving-and-it"
-                aria-label="02 — Technical unlock: Institutional capital is arriving, and it wants to work" style="left:81.5%;top:81.5%">CAPITAL</button>
+                aria-label="02: Technical unlock: Institutional capital is arriving, and it wants to work" style="left:81.5%;top:81.5%">CAPITAL</button>
         <button class="cat-key" type="button" id="catTab3" data-c="2" role="tab"
                 aria-selected="false" tabindex="-1" aria-controls="quantum-risk-is-pricing-in-now"
-                aria-label="03 — Urgency: Quantum risk is pricing in now" style="left:18.5%;top:81.5%">URGENCY</button>
+                aria-label="03: Urgency: Quantum risk is pricing in now" style="left:18.5%;top:81.5%">URGENCY</button>
         <button class="cat-key" type="button" id="catTab4" data-c="3" role="tab"
                 aria-selected="false" tabindex="-1" aria-controls="the-technology-to-fix-bitcoin-is"
-                aria-label="04 — Strategic window: The technology to fix Bitcoin is finally ready" style="left:18.5%;top:18.5%">WINDOW</button>
+                aria-label="04: Strategic window: The technology to fix Bitcoin is finally ready" style="left:18.5%;top:18.5%">WINDOW</button>
       </div>
     </div>
     <div class="cat-panel" id="catPanel">
@@ -2171,7 +2388,7 @@
 <div class="section-divider" style="border-color: rgba(197, 52, 0,0.3);"></div>
 
 <!-- ============================================================ -->
-<!-- SOLUTION — BIG SECTION -->
+<!-- SOLUTION: BIG SECTION -->
 <!-- ============================================================ -->
 <div class="solution">
   <div class="solution-inner">
@@ -2180,7 +2397,7 @@
     <p class="th-pm-eyebrow">How Starknet fixes it</p>
 
     <!-- ============================================================ -->
-    <!-- SCALE — interactive chart -->
+    <!-- SCALE: interactive chart -->
     <!-- ============================================================ -->
     <div class="scale-section">
       <p class="scale-label">Scalability over time</p>
@@ -2243,38 +2460,39 @@
         <p class="scale-label">strkBTC · privacy</p>
         <h3 id="public-by-default-private-by-choice" class="scale-title">Public by default. <span>Private by choice.</span> <span class="st-quantum">Quantum-secure before Q-day.</span></h3>
         <p class="scale-intro">strkBTC is the first Bitcoin-backed asset with optional privacy, built on STRK20s, Starknet's protocol-level privacy primitive. Same asset, two modes: access the full Starknet DeFi stack (lend, borrow, trade, stake) without broadcasting your positions, strategies and net worth to the entire world. Both modes sit on a stack with a published roadmap to end-to-end quantum security.</p>
-        <div class="modes">
-          <div class="btcg-bloom btcg-bloom-modes" aria-hidden="true"><i></i><i></i><i></i></div>
-          <div id="public-strkbtc" class="mode-item btcg-card">
-            <div class="mode-dot public"></div>
-            <div>
-              <div class="mode-item-title">Public strkBTC</div>
-              <div class="mode-item-desc">Behaves like a standard ERC-20. Fully composable across all of Starknet DeFi: swaps, lending, LPing, staking, and everything built next.</div>
-            </div>
-          </div>
-          <div id="shielded-strkbtc" class="mode-item btcg-card btcg-violet">
-            <div class="mode-dot private"></div>
-            <div>
-              <div class="mode-item-title">Shielded strkBTC</div>
-              <div class="mode-item-desc">Balances and transfers are hidden from public view, with DeFi still accessible from inside the shielded state. Users prove validity without revealing sensitive financial information. Powered by STARK proofs.</div>
-            </div>
-          </div>
+        <!-- the three plates are decorative texture, not evidence: full
+             grayscale plus an accent colour blend leaves no subject a
+             reader could act on, and the caption below each one carries
+             the whole meaning. Hence alt="", deliberately, not as an
+             oversight. -->
+        <div class="bfed-grid">
+          <article id="public-strkbtc" class="bfed-cell">
+            <p class="bfed-eyebrow">#1 <span>Public</span></p>
+            <h4 class="bfed-title"><span>Public</span> <span>strkBTC</span></h4>
+            <div class="bfed-shot"><img src="/assets/stride/images/3rd/technology.jpg" alt="" loading="lazy" decoding="async"><span class="bfed-tint" aria-hidden="true"></span></div>
+            <p class="bfed-caption">Behaves like a standard ERC-20. Fully composable across all of Starknet DeFi: swaps, lending, LPing, staking, and everything built next.</p>
+          </article>
+          <article id="shielded-strkbtc" class="bfed-cell">
+            <p class="bfed-eyebrow">#2 <span>Shielded</span></p>
+            <h4 class="bfed-title"><span>Shielded</span> <span>strkBTC</span></h4>
+            <div class="bfed-shot"><img src="/assets/stride/images/3rd/security.jpg" alt="" loading="lazy" decoding="async"><span class="bfed-tint" aria-hidden="true"></span></div>
+            <p class="bfed-caption">Balances and transfers are hidden from public view, with DeFi still accessible from inside the shielded state. Users prove validity without revealing sensitive financial information. Powered by STARK proofs.</p>
+          </article>
           <!-- CONTAINMENT: this card (and the section title/intro above) said
-               "end-to-end quantum security by 2027". The cited roadmap
-               (StarkWare, 2026-06-30) never states a completion year: its own
-               words are "before Q-day", its phase estimates are relative
-               ("~two months", "~one month after Phase 1"), and Phase 3 is
-               "1 month post-Ethereum migration" — undated. The "2027" came
-               from quantum.html's own hedged target ("Target ~2027"), not
-               from the source. Do not reintroduce a year here without a
-               source that states a completion date. -->
-          <div id="end-to-end-quantum-security-by" class="mode-item btcg-card btcg-violet">
-            <div class="mode-dot" style="background:#f0b8a0;"></div>
-            <div>
-              <div class="mode-item-title">End-to-end quantum security before Q-day</div>
-              <div class="mode-item-desc">Starknet has <a href="https://x.com/StarkWareLtd/status/2071935303963861074" target="_blank" rel="noopener noreferrer" class="inline-accent-link">published a roadmap</a> to end-to-end quantum security. When migration is needed, native account abstraction upgrades any wallet to quantum-safe signatures in a single transaction, while the push on Bitcoin's own quantum security continues through <a href="https://x.com/avihu28/status/2042287457530478720" target="_blank" rel="noopener noreferrer" class="inline-accent-link">QSB</a> and strkBTC.</div>
-            </div>
-          </div>
+             "end-to-end quantum security by 2027". The cited roadmap
+             (StarkWare, 2026-06-30) never states a completion year: its own
+             words are "before Q-day", its phase estimates are relative
+             ("~two months", "~one month after Phase 1"), and Phase 3 is
+             "1 month post-Ethereum migration": undated. The "2027" came
+             from quantum.html's own hedged target ("Target ~2027"), not
+             from the source. Do not reintroduce a year here without a
+             source that states a completion date. -->
+          <article id="end-to-end-quantum-security-by" class="bfed-cell">
+            <p class="bfed-eyebrow">#3 <span>Quantum</span></p>
+            <h4 class="bfed-title bfed-title--long"><span>End-to-end quantum</span> <span>security before Q-day</span></h4>
+            <div class="bfed-shot"><img src="/assets/stride/images/3rd/team.jpg" alt="" loading="lazy" decoding="async"><span class="bfed-tint" aria-hidden="true"></span></div>
+            <p class="bfed-caption">Starknet has <a href="https://x.com/StarkWareLtd/status/2071935303963861074" target="_blank" rel="noopener noreferrer" class="inline-accent-link">published a roadmap</a> to end-to-end quantum security. When migration is needed, native account abstraction upgrades any wallet to quantum-safe signatures in a single transaction, while the push on Bitcoin's own quantum security continues through <a href="https://x.com/avihu28/status/2042287457530478720" target="_blank" rel="noopener noreferrer" class="inline-accent-link">QSB</a> and strkBTC.</p>
+          </article>
         </div>
       </div>
 
@@ -2284,193 +2502,335 @@
         <h3 id="built-by-an-og-team-a" class="scale-title">Built by an OG team. <span>A decade of scaling breakthroughs.</span></h3>
         <p class="scale-intro">This isn't a one-cycle experiment. Again and again, what StarkWare shipped became the standard the rest of the industry later adopted, from the first production of STARK technology to protocol-level privacy. Ten years of cryptographic firsts, now converging on Bitcoin.</p>
 
-        <div class="tl-scroll">
-          <div class="timeline">
-            <div class="tl-rail"></div>
-            <div class="tl-track" id="tlTrack"></div>
+        <!-- The track record, set the way sui.io sets its stack (a twin of
+             privacy.html's lineage, sharing js/lineage.js): a title over light
+             streaks that part as you scroll, then one dotted rail down the
+             middle with a square playhead pinned at mid-viewport, and a card
+             per milestone alternating left and right. A card opens (its
+             line-art visual and description unfold) when it reaches the middle.
+             The art is inline SVG line drawings, drawn on open, no imagery. -->
+        <section class="lg" id="lg" aria-label="StarkWare's track record, 2018 to 2026">
+          <div class="lg-head">
+            <div class="lg-pin">
+              <div class="lg-streaks" aria-hidden="true"></div>
+              <div class="lg-streaks-r" aria-hidden="true"></div>
+              <div class="lg-head-in">
+                <p class="lg-title">A decade<br>of firsts</p>
+                <p class="lg-sub"><span class="lg-sq" aria-hidden="true"></span>Twelve breakthroughs, from the first STARK to STRK20</p>
+              </div>
+            </div>
           </div>
-        </div>
 
-        <div class="tl-detail btcg-card" id="tlDetail">
-          <div class="btcg-bloom btcg-bloom-tl" aria-hidden="true"><i></i></div>
-          <div class="tl-detail-year" id="tlDYear"></div>
-          <div class="tl-detail-title" id="tlDTitle"></div>
-          <div class="tl-detail-desc" id="tlDDesc"></div>
-        </div>
+          <div class="lg-track">
+            <span class="lg-line" aria-hidden="true"></span>
+            <div class="lg-play" aria-hidden="true"></div>
+            <ol class="lg-list">
+      <li class="lg-stop lg-r">
+        <article class="lg-card" id="ms-2018-stark">
+          <header class="lg-ch"><span class="lg-num">01</span><h4 class="lg-ct">STARK</h4></header>
+          <div class="lg-cv"><div class="lg-cv-in"><svg class="lg-art" viewBox="0 0 320 220" aria-hidden="true"><g stroke="#4a4a4a" stroke-width="1.2" fill="none" stroke-linejoin="round" stroke-linecap="round"><path d="M160 26 254 60v56c0 40-38 64-94 78-56-14-94-38-94-78V60z"/><path d="M104 138h112M104 158h78"/></g><g stroke="#c53400" stroke-width="1.4" fill="none" stroke-linejoin="round" stroke-linecap="round" class="lg-acc"><path d="M160 52 169 78h27l-22 17 8 27-22-16-22 16 8-27-22-17h27z"/></g></svg><p class="lg-cd">StarkWare introduced STARK-based proving systems into production-grade blockchain infrastructure. STARKs are uniquely suited to combine privacy, scalability and post-quantum security in one system.</p></div></div>
+          <footer class="lg-cf"><span class="lg-yr">2018</span></footer>
+        </article>
+      </li>
+      <li class="lg-stop lg-l">
+        <article class="lg-card" id="ms-2019-production-grade-prover">
+          <header class="lg-ch"><span class="lg-num">02</span><h4 class="lg-ct">Production-grade prover</h4></header>
+          <div class="lg-cv"><div class="lg-cv-in"><svg class="lg-art" viewBox="0 0 320 220" aria-hidden="true"><g stroke="#4a4a4a" stroke-width="1.2" fill="none" stroke-linejoin="round" stroke-linecap="round"><rect x="30" y="52" width="152" height="112" rx="4"/><circle cx="86" cy="98" r="28"/><circle cx="86" cy="98" r="10"/><path d="M86 70v-10M86 126v10M56 98h-10M116 98h10M66 78l-7-7M106 118l7 7M106 78l7-7M66 118l-7 7"/><path d="M40 164v22h132v-22"/><path d="M182 112h44"/></g><g stroke="#c53400" stroke-width="1.4" fill="none" stroke-linejoin="round" stroke-linecap="round" class="lg-acc"><rect x="226" y="86" width="58" height="52" rx="3"/><path d="M240 112l11 11 19-24"/></g></svg><p class="lg-cd">Launched production-grade proving infrastructure, proving that validity proofs could move beyond research papers and become real infrastructure for applications.</p></div></div>
+          <footer class="lg-cf"><span class="lg-yr">2019</span></footer>
+        </article>
+      </li>
+      <li class="lg-stop lg-r">
+        <article class="lg-card" id="ms-2019-validium">
+          <header class="lg-ch"><span class="lg-num">03</span><h4 class="lg-ct">Validium</h4></header>
+          <div class="lg-cv"><div class="lg-cv-in"><svg class="lg-art" viewBox="0 0 320 220" aria-hidden="true"><g stroke="#4a4a4a" stroke-width="1.2" fill="none" stroke-linejoin="round" stroke-linecap="round"><rect x="36" y="34" width="248" height="30" rx="3"/><path d="M52 49h44M112 49h30M158 49h26"/><rect x="40" y="146" width="52" height="44" rx="3"/><rect x="102" y="146" width="52" height="44" rx="3"/><rect x="164" y="146" width="52" height="44" rx="3"/><rect x="226" y="146" width="52" height="44" rx="3"/><path d="M40 134h238"/></g><g stroke="#c53400" stroke-width="1.4" fill="none" stroke-linejoin="round" stroke-linecap="round" class="lg-acc"><path d="M160 130V96"/><path d="M160 66l16 16-16 16-16-16z"/></g></svg><p class="lg-cd">Brought Validium-based scaling to production: off-chain data availability secured by on-chain validity proofs, for higher throughput at lower cost.</p></div></div>
+          <footer class="lg-cf"><span class="lg-yr">2019</span></footer>
+        </article>
+      </li>
+      <li class="lg-stop lg-l">
+        <article class="lg-card" id="ms-2020-l2-rollup-starkex">
+          <header class="lg-ch"><span class="lg-num">04</span><h4 class="lg-ct">L2 rollup StarkEx</h4></header>
+          <div class="lg-cv"><div class="lg-cv-in"><svg class="lg-art" viewBox="0 0 320 220" aria-hidden="true"><g stroke="#4a4a4a" stroke-width="1.2" fill="none" stroke-linejoin="round" stroke-linecap="round"><rect x="34" y="26" width="30" height="24" rx="2"/><rect x="76" y="26" width="30" height="24" rx="2"/><rect x="118" y="26" width="30" height="24" rx="2"/><rect x="160" y="26" width="30" height="24" rx="2"/><rect x="202" y="26" width="30" height="24" rx="2"/><rect x="244" y="26" width="30" height="24" rx="2"/><path d="M49 58l78 56M275 58l-84 56M160 58v56"/><rect x="34" y="176" width="252" height="30" rx="3"/><path d="M52 191h46M116 191h40M174 191h58"/></g><g stroke="#c53400" stroke-width="1.4" fill="none" stroke-linejoin="round" stroke-linecap="round" class="lg-acc"><rect x="118" y="118" width="84" height="38" rx="3"/><path d="M160 156v20"/></g></svg><p class="lg-cd">StarkEx became the first L2 validity system used in production, powering high-throughput applications like dYdX, ImmutableX and Sorare.</p></div></div>
+          <footer class="lg-cf"><span class="lg-yr">2020</span></footer>
+        </article>
+      </li>
+      <li class="lg-stop lg-r">
+        <article class="lg-card" id="ms-2020-proof-aggregation-sharp">
+          <header class="lg-ch"><span class="lg-num">05</span><h4 class="lg-ct">Proof aggregation SHARP</h4></header>
+          <div class="lg-cv"><div class="lg-cv-in"><svg class="lg-art" viewBox="0 0 320 220" aria-hidden="true"><g stroke="#4a4a4a" stroke-width="1.2" fill="none" stroke-linejoin="round" stroke-linecap="round"><rect x="34" y="24" width="44" height="26" rx="2"/><rect x="110" y="24" width="44" height="26" rx="2"/><rect x="186" y="24" width="44" height="26" rx="2"/><rect x="262" y="24" width="44" height="26" rx="2"/><path d="M56 50v18h76V50M96 68v24M208 50v18h76V50M224 68v24"/><rect x="72" y="92" width="48" height="28" rx="2"/><rect x="200" y="92" width="48" height="28" rx="2"/><path d="M96 120v18h128v-18M160 138v22"/></g><g stroke="#c53400" stroke-width="1.4" fill="none" stroke-linejoin="round" stroke-linecap="round" class="lg-acc"><rect x="126" y="160" width="68" height="34" rx="3"/><path d="M142 177h16M168 177h12"/></g></svg><p class="lg-cd">SHARP, StarkWare’s proof aggregation system, let many applications and transactions share proving infrastructure efficiently.</p></div></div>
+          <footer class="lg-cf"><span class="lg-yr">2020</span></footer>
+        </article>
+      </li>
+      <li class="lg-stop lg-l">
+        <article class="lg-card" id="ms-2021-general-purpose-zk-rollup">
+          <header class="lg-ch"><span class="lg-num">06</span><h4 class="lg-ct">General-purpose ZK rollup Starknet</h4></header>
+          <div class="lg-cv"><div class="lg-cv-in"><svg class="lg-art" viewBox="0 0 320 220" aria-hidden="true"><g stroke="#4a4a4a" stroke-width="1.2" fill="none" stroke-linejoin="round" stroke-linecap="round"><rect x="26" y="40" width="140" height="120" rx="4"/><path d="M26 62h140"/><circle cx="42" cy="51" r="3"/><circle cx="56" cy="51" r="3"/><path d="M44 84h60M44 102h84M60 120h64M44 138h44"/><circle cx="232" cy="60" r="13"/><circle cx="286" cy="104" r="13"/><circle cx="232" cy="150" r="13"/><circle cx="196" cy="104" r="13"/><path d="M226 71l-20 22M243 69l34 26M243 141l34-26M226 139l-20-22"/></g><g stroke="#c53400" stroke-width="1.4" fill="none" stroke-linejoin="round" stroke-linecap="round" class="lg-acc"><circle cx="241" cy="104" r="19"/><path d="M235 104l5 6 10-13"/></g></svg><p class="lg-cd">Starknet launched as a permissionless, general-purpose ZK rollup, where developers can build any application using Cairo.</p></div></div>
+          <footer class="lg-cf"><span class="lg-yr">2021</span></footer>
+        </article>
+      </li>
+      <li class="lg-stop lg-r">
+        <article class="lg-card" id="ms-2022-recursive-proving-l3s">
+          <header class="lg-ch"><span class="lg-num">07</span><h4 class="lg-ct">Recursive proving &amp; L3s</h4></header>
+          <div class="lg-cv"><div class="lg-cv-in"><svg class="lg-art" viewBox="0 0 320 220" aria-hidden="true"><g stroke="#4a4a4a" stroke-width="1.2" fill="none" stroke-linejoin="round" stroke-linecap="round"><rect x="24" y="152" width="272" height="46" rx="3"/><rect x="52" y="94" width="216" height="46" rx="3"/><rect x="80" y="36" width="160" height="46" rx="3"/><path d="M40 175h30M68 117h26M96 59h22"/><path d="M160 82v12M160 140v12"/></g><g stroke="#c53400" stroke-width="1.4" fill="none" stroke-linejoin="round" stroke-linecap="round" class="lg-acc"><rect x="140" y="46" width="86" height="26" rx="2"/><rect x="152" y="52" width="62" height="14" rx="2"/><rect x="164" y="56" width="38" height="6" rx="1"/></g></svg><p class="lg-cd">Recursive proving and L3 architectures opened the door to proof aggregation, application-specific scaling and more modular execution models.</p></div></div>
+          <footer class="lg-cf"><span class="lg-yr">2022</span></footer>
+        </article>
+      </li>
+      <li class="lg-stop lg-l">
+        <article class="lg-card" id="ms-2024-circle-stark-stwo">
+          <header class="lg-ch"><span class="lg-num">08</span><h4 class="lg-ct">Circle STARK &amp; Stwo</h4></header>
+          <div class="lg-cv"><div class="lg-cv-in"><svg class="lg-art" viewBox="0 0 320 220" aria-hidden="true"><g stroke="#4a4a4a" stroke-width="1.2" fill="none" stroke-linejoin="round" stroke-linecap="round"><circle cx="160" cy="94" r="66"/><circle cx="160" cy="28" r="5"/><circle cx="217" cy="61" r="5"/><circle cx="217" cy="127" r="5"/><circle cx="160" cy="160" r="5"/><circle cx="103" cy="127" r="5"/><circle cx="103" cy="61" r="5"/><rect x="34" y="186" width="252" height="26" rx="3"/><path d="M50 199h22M84 199h34M130 199h18M160 199h30M202 199h26M240 199h30"/></g><g stroke="#c53400" stroke-width="1.4" fill="none" stroke-linejoin="round" stroke-linecap="round" class="lg-acc"><circle cx="160" cy="94" r="30"/><path d="M160 94l26-14"/></g></svg><p class="lg-cd">The next-generation prover Stwo uses a field much friendlier to Bitcoin Script constraints, making STARK verification on Bitcoin realistic. A key step toward settling on Bitcoin.</p></div></div>
+          <footer class="lg-cf"><span class="lg-yr">2024</span></footer>
+        </article>
+      </li>
+      <li class="lg-stop lg-r">
+        <article class="lg-card" id="ms-2024-l2-staking">
+          <header class="lg-ch"><span class="lg-num">09</span><h4 class="lg-ct">L2 staking</h4></header>
+          <div class="lg-cv"><div class="lg-cv-in"><svg class="lg-art" viewBox="0 0 320 220" aria-hidden="true"><g stroke="#4a4a4a" stroke-width="1.2" fill="none" stroke-linejoin="round" stroke-linecap="round"><ellipse cx="100" cy="176" rx="50" ry="16"/><ellipse cx="100" cy="146" rx="50" ry="16"/><ellipse cx="100" cy="116" rx="50" ry="16"/><path d="M50 116v60M150 116v60"/><rect x="196" y="118" width="94" height="66" rx="4"/><path d="M214 102a29 29 0 0 1 58 0v16"/><circle cx="243" cy="146" r="9"/><path d="M243 155v14"/></g><g stroke="#c53400" stroke-width="1.4" fill="none" stroke-linejoin="round" stroke-linecap="round" class="lg-acc"><ellipse cx="100" cy="82" rx="50" ry="16"/><path d="M100 40v26M88 52l12-12 12 12"/></g></svg><p class="lg-cd">Advanced L2 staking and decentralized infrastructure, moving Starknet toward deeper decentralization.</p></div></div>
+          <footer class="lg-cf"><span class="lg-yr">2024</span></footer>
+        </article>
+      </li>
+      <li class="lg-stop lg-l">
+        <article class="lg-card" id="ms-2025-dual-token-consensus-strk">
+          <header class="lg-ch"><span class="lg-num">10</span><h4 class="lg-ct">Dual-token consensus (STRK &amp; BTC)</h4></header>
+          <div class="lg-cv"><div class="lg-cv-in"><svg class="lg-art" viewBox="0 0 320 220" aria-hidden="true"><g stroke="#4a4a4a" stroke-width="1.2" fill="none" stroke-linejoin="round" stroke-linecap="round"><circle cx="106" cy="72" r="38"/><path d="M96 60h22M96 72h22M96 84h16"/><rect x="34" y="158" width="252" height="40" rx="3"/><path d="M118 158v-16M202 158v-16M160 178h44M56 178h72"/></g><g stroke="#c53400" stroke-width="1.4" fill="none" stroke-linejoin="round" stroke-linecap="round" class="lg-acc"><circle cx="214" cy="72" r="38"/><path d="M200 58h20a8 8 0 0 1 0 15h-20M200 73h24a8 8 0 0 1 0 15h-24M207 50v42M217 50v42"/><path d="M144 72h32"/></g></svg><p class="lg-cd">Introduced a dual-token consensus mechanism where STRK and BTC secure the network together, bringing Bitcoin into Starknet’s security model.</p></div></div>
+          <footer class="lg-cf"><span class="lg-yr">2025</span></footer>
+        </article>
+      </li>
+      <li class="lg-stop lg-r">
+        <article class="lg-card" id="ms-2025-decentralized-sequencer-architecture">
+          <header class="lg-ch"><span class="lg-num">11</span><h4 class="lg-ct">Decentralized sequencer architecture</h4></header>
+          <div class="lg-cv"><div class="lg-cv-in"><svg class="lg-art" viewBox="0 0 320 220" aria-hidden="true"><g stroke="#4a4a4a" stroke-width="1.2" fill="none" stroke-linejoin="round" stroke-linecap="round"><circle cx="160" cy="86" r="58"/><rect x="200" y="44" width="30" height="26" rx="2"/><rect x="200" y="104" width="30" height="26" rx="2"/><rect x="145" y="136" width="30" height="26" rx="2"/><rect x="90" y="104" width="30" height="26" rx="2"/><rect x="90" y="44" width="30" height="26" rx="2"/><rect x="34" y="184" width="40" height="26" rx="2"/><rect x="82" y="184" width="40" height="26" rx="2"/><rect x="130" y="184" width="40" height="26" rx="2"/><rect x="178" y="184" width="40" height="26" rx="2"/><path d="M74 197h8M122 197h8M170 197h8M218 197h28"/></g><g stroke="#c53400" stroke-width="1.4" fill="none" stroke-linejoin="round" stroke-linecap="round" class="lg-acc"><rect x="144" y="8" width="32" height="28" rx="2"/><path d="M180 24a48 48 0 0 1 30 26"/><path d="M210 50l-11-2M210 50l-2-11"/></g></svg><p class="lg-cd">Decentralized sequencer architecture and the transition toward full decentralization of the network.</p></div></div>
+          <footer class="lg-cf"><span class="lg-yr">2025</span></footer>
+        </article>
+      </li>
+      <li class="lg-stop lg-l">
+        <article class="lg-card" id="ms-2026-strk20">
+          <header class="lg-ch"><span class="lg-num">12</span><h4 class="lg-ct">STRK20</h4></header>
+          <div class="lg-cv"><div class="lg-cv-in"><svg class="lg-art" viewBox="0 0 320 220" aria-hidden="true"><g stroke="#4a4a4a" stroke-width="1.2" fill="none" stroke-linejoin="round" stroke-linecap="round"><rect x="34" y="70" width="164" height="112" rx="4"/><path d="M34 100h164"/><path d="M54 126h60M54 146h96M54 166h44"/><circle cx="54" cy="85" r="6"/><path d="M72 85h44"/></g><g stroke="#c53400" stroke-width="1.4" fill="none" stroke-linejoin="round" stroke-linecap="round" class="lg-acc"><path d="M232 40l54 20v40c0 28-24 44-54 54-30-10-54-26-54-54V60z"/><circle cx="232" cy="104" r="11"/><path d="M232 115v18"/></g></svg><p class="lg-cd">Protocol-level privacy for ERC-20 assets, with strkBTC as the first major expression of the privacy roadmap. Bitcoin, made private and programmable.</p></div></div>
+          <footer class="lg-cf"><span class="lg-yr">2026</span></footer>
+        </article>
+      </li>
+            </ol>
+          </div>
+        </section>
       </div>
     </div>
 
     <!-- Bridge Roadmap -->
+    <!-- The four bridge phases as a column accordion, the same instrument the
+         privacy page uses for its four proving properties (#pcore): four
+         columns edge to edge, each a mesh-gradient panel that slides UP into
+         its column while the previously shown panel slides up and out (one in,
+         one out). The reading area above swaps in the same upward motion: it
+         carries the section's standing statement at rest, and the hovered
+         phase's detail on top of it. Hover, tap, focus and arrow keys all
+         drive it (js/bridge-columns.js). The h4 per phase keeps the old
+         card's id, so every deep link into the roadmap still lands. -->
     <div class="roadmap">
       <p class="scale-label">The bridge roadmap</p>
       <h3 id="btcfi-ready-today-fully-trustless-tomorrow" class="scale-title">BTCFi-ready today. <span>Fully trustless tomorrow.</span></h3>
-      <p class="scale-intro">Bitcoiners can already use the full DeFi stack on Starknet through a transparent, community-vetted federation. From there, every phase strips away trust assumptions, all the way to a fully trustless bridge once Bitcoin can verify STARK proofs natively.</p>
-      <div class="roadmap-steps">
-        <div id="federation" class="roadmap-step active">
-          <p class="step-phase">Phase 1 — Now</p>
-          <p class="step-name">Federation</p>
-          <p class="step-desc">strkBTC backed by a transparent federation: Near Intents, Xverse, Luganodes, Twinstakes, UTXO. Trust assumptions are explicit and public.</p>
-          <span class="step-status status-live">Live</span>
+      <div class="bcore" id="bcore">
+        <div class="bcore-heads" id="bcore-heads" role="tabpanel" aria-live="polite">
+          <div class="bhead bhead--lede"><p>Bitcoiners can already use the full DeFi stack on Starknet through a transparent, community-vetted federation. From there, <b>every phase strips away trust assumptions</b>, all the way to a fully trustless bridge once Bitcoin can verify STARK proofs natively.</p></div>
+          <div class="bhead">
+            <div class="bhead__rn">Phase 1, now</div>
+            <h4 id="federation">Federation</h4>
+            <p>strkBTC backed by a transparent federation: Near Intents, Xverse, Luganodes, Twinstakes, UTXO. Trust assumptions are explicit and public.</p>
+            <div class="bhead__elim">Status: Live</div>
+          </div>
+          <div class="bhead">
+            <div class="bhead__rn">Phase 2, next</div>
+            <h4 id="bitvm">BitVM</h4>
+            <p>Trust-minimized verification without fraud proofs. Only one honest party needed. Working with Alpen Labs on a BitVM-based bridge for Starknet.</p>
+            <div class="bhead__elim">Status: In progress</div>
+          </div>
+          <div class="bhead">
+            <div class="bhead__rn">Phase 3, research</div>
+            <h4 id="collidervm">ColliderVM</h4>
+            <p>Bitcoin-native stateful computation without fraud proofs. Same trust model as BitVM2 but capital-efficient: operators reimbursed immediately.</p>
+            <div class="bhead__elim">Status: Research</div>
+          </div>
+          <!-- THE DEMO CANNOT BE CHECKED, THE CODE CAN, and the sentence is
+               written to that split. This read "a proof-of-concept ... is
+               already live and working": present tense, no date, no owner, no
+               link. Researched 2026-08-23.
+               THE PROJECT'S ENTIRE WEB PRESENCE IS GONE. btcwild.life has no A
+               record at all, not just the subdomain but the apex, so
+               catnet-mempool.btcwild.life (the explorer StarkWare's post sends
+               readers to) and docs.btcwild.life (still the repo's listed
+               homepage) both fail to resolve. Verified against github.com and
+               twitter.com resolving normally from the same machine, so it is
+               not a local DNS fault. CatNet, the custom OP_CAT signet the demo
+               ran on, last saw a commit on 2024-06-25.
+               DO NOT RESTORE THE PRESENT TENSE ON THE STRENGTH OF THE REPO
+               BEING ACTIVE. bitcoin-circle-stark is genuinely alive, 160 stars
+               and a push on 2026-08-11, which is why "still actively developed"
+               is claimable. That is the code. The demo is a different thing and
+               there is no longer any explorer, network or project site on which
+               a reader could confirm it ran. Those two facts are separate and
+               the sentence keeps them separate.
+               ON THE SPELLING: StarkWare's own post contradicts itself, "led by
+               Weikeng Chen and Pinghzou Yuan" in the body and "Weikeng Chen,
+               Pingzhou Yuan" in the acknowledgements. Pingzhou is the standard
+               pinyin and the acknowledgements form; that is why data-says
+               quotes one spelling and the prose uses the other, and why
+               Pingzhou sits in data-noun-ok.
+               The OP_CAT specification status was considered for this paragraph
+               and left out: see the commit message.
+               THE CLAIM ATTRIBUTES TRAVEL WITH THE SENTENCE. They moved here
+               verbatim when the roadmap became a column accordion on
+               2026-08-31; th-claim, data-perishable, data-src, data-checked,
+               data-says and data-noun-ok all still belong to this paragraph. -->
+          <div class="bhead">
+            <div class="bhead__rn">Endgame</div>
+            <h4 id="op-cat">OP_CAT</h4>
+            <p class="th-claim" data-perishable="third-party"
+               data-src="https://starkware.co/blog/general-computation-on-bitcoin/"
+               data-checked="2026-08-23"
+               data-says="In an open-source effort, led by Weikeng Chen and Pinghzou Yuan, we&#39;re working on building the Bitcoin Wildlife Sanctuary. | A Circle-STARK verifier with a working demo that verifies a STARK proof of a simple statement (related to Fibonacci numbers) on Bitcoin signet"
+               data-noun-ok="July Pingzhou">The endgame. If activated, Bitcoin could verify STARK proofs natively, enabling a fully trustless bridge. And this isn't theory: a Circle-STARK verifier was <a href="https://starkware.co/blog/general-computation-on-bitcoin/" target="_blank" rel="noopener noreferrer">demonstrated on an OP_CAT-enabled Bitcoin signet in July 2024</a> by Weikeng Chen and Pingzhou Yuan's Bitcoin Wildlife Sanctuary project, with StarkWare collaborating, and the <a href="https://github.com/Bitcoin-Wildlife-Sanctuary/bitcoin-circle-stark" target="_blank" rel="noopener noreferrer">implementation is still actively developed</a>.</p>
+            <div class="bhead__elim">Status: Endgame</div>
+          </div>
         </div>
-        <div id="bitvm" class="roadmap-step">
-          <p class="step-phase">Phase 2 — Next</p>
-          <p class="step-name">BitVM</p>
-          <p class="step-desc">Trust-minimized verification without fraud proofs. Only one honest party needed. Working with Alpen Labs on a BitVM-based bridge for Starknet.</p>
-          <span class="step-status status-next">In progress</span>
-        </div>
-        <div id="collidervm" class="roadmap-step">
-          <p class="step-phase">Phase 3 — Research</p>
-          <p class="step-name">ColliderVM</p>
-          <p class="step-desc">Bitcoin-native stateful computation without fraud proofs. Same trust model as BitVM2 but capital-efficient: operators reimbursed immediately.</p>
-          <span class="step-status status-research">Research</span>
-        </div>
-        <!-- THE DEMO CANNOT BE CHECKED, THE CODE CAN, and the sentence is
-             written to that split. This read "a proof-of-concept ... is
-             already live and working": present tense, no date, no owner, no
-             link. Researched 2026-08-23.
-             THE PROJECT'S ENTIRE WEB PRESENCE IS GONE. btcwild.life has no A
-             record at all, not just the subdomain but the apex, so
-             catnet-mempool.btcwild.life (the explorer StarkWare's post sends
-             readers to) and docs.btcwild.life (still the repo's listed
-             homepage) both fail to resolve. Verified against github.com and
-             twitter.com resolving normally from the same machine, so it is
-             not a local DNS fault. CatNet, the custom OP_CAT signet the demo
-             ran on, last saw a commit on 2024-06-25.
-             DO NOT RESTORE THE PRESENT TENSE ON THE STRENGTH OF THE REPO
-             BEING ACTIVE. bitcoin-circle-stark is genuinely alive, 160 stars
-             and a push on 2026-08-11, which is why "still actively developed"
-             is claimable. That is the code. The demo is a different thing and
-             there is no longer any explorer, network or project site on which
-             a reader could confirm it ran. Those two facts are separate and
-             the sentence keeps them separate.
-             ON THE SPELLING: StarkWare's own post contradicts itself, "led by
-             Weikeng Chen and Pinghzou Yuan" in the body and "Weikeng Chen,
-             Pingzhou Yuan" in the acknowledgements. Pingzhou is the standard
-             pinyin and the acknowledgements form; that is why data-says
-             quotes one spelling and the prose uses the other, and why
-             Pingzhou sits in data-noun-ok.
-             The OP_CAT specification status was considered for this paragraph
-             and left out: see the commit message. -->
-        <div id="op-cat" class="roadmap-step">
-          <p class="step-phase">Endgame</p>
-          <p class="step-name">OP_CAT</p>
-          <p class="step-desc th-claim" data-perishable="third-party"
-             data-src="https://starkware.co/blog/general-computation-on-bitcoin/"
-             data-checked="2026-08-23"
-             data-says="In an open-source effort, led by Weikeng Chen and Pinghzou Yuan, we&#39;re working on building the Bitcoin Wildlife Sanctuary. | A Circle-STARK verifier with a working demo that verifies a STARK proof of a simple statement (related to Fibonacci numbers) on Bitcoin signet"
-             data-noun-ok="July Pingzhou">The endgame. If activated, Bitcoin could verify STARK proofs natively, enabling a fully trustless bridge. And this isn't theory: a Circle-STARK verifier was <a href="https://starkware.co/blog/general-computation-on-bitcoin/" target="_blank" rel="noopener noreferrer">demonstrated on an OP_CAT-enabled Bitcoin signet in July 2024</a> by Weikeng Chen and Pingzhou Yuan's Bitcoin Wildlife Sanctuary project, with StarkWare collaborating, and the <a href="https://github.com/Bitcoin-Wildlife-Sanctuary/bitcoin-circle-stark" target="_blank" rel="noopener noreferrer">implementation is still actively developed</a>.</p>
-          <span class="step-status status-endgame">Endgame</span>
+        <div class="bcore-strip" role="tablist" aria-label="The four bridge phases">
+          <div class="bcol" tabindex="0" role="tab" aria-selected="false" aria-controls="bcore-heads" data-b="0" aria-label="Phase 1, Federation">
+            <div class="bcol__media"><div class="bscene bscene--ember"></div></div>
+            <div class="bcol__cap"><b>01</b><span>Status: Live</span></div>
+            <h3 class="bcol__name">Phase<span>Federation</span></h3>
+          </div>
+          <div class="bcol" tabindex="0" role="tab" aria-selected="false" aria-controls="bcore-heads" data-b="1" aria-label="Phase 2, BitVM">
+            <div class="bcol__media"><div class="bscene bscene--rust"></div></div>
+            <div class="bcol__cap"><b>02</b><span>Status: In progress</span></div>
+            <h3 class="bcol__name">Phase<span>BitVM</span></h3>
+          </div>
+          <div class="bcol" tabindex="0" role="tab" aria-selected="false" aria-controls="bcore-heads" data-b="2" aria-label="Phase 3, ColliderVM">
+            <div class="bcol__media"><div class="bscene bscene--copper"></div></div>
+            <div class="bcol__cap"><b>03</b><span>Status: Research</span></div>
+            <h3 class="bcol__name">Phase<span>ColliderVM</span></h3>
+          </div>
+          <div class="bcol" tabindex="0" role="tab" aria-selected="false" aria-controls="bcore-heads" data-b="3" aria-label="Endgame, OP_CAT">
+            <div class="bcol__media"><div class="bscene bscene--flare"></div></div>
+            <div class="bcol__cap"><b>04</b><span>Status: Endgame</span></div>
+            <h3 class="bcol__name">Phase<span>OP_CAT</span></h3>
+          </div>
         </div>
       </div>
     </div>
+    <script src="js/bridge-columns.js" defer></script>
 
     <!-- ============================================================ -->
-    <!-- ECOSYSTEM — DeFi for Bitcoin -->
+    <!-- ECOSYSTEM: DeFi for Bitcoin -->
     <!-- ============================================================ -->
     <div class="scale-section">
       <p class="scale-label">The BTCFi ecosystem</p>
+      <!-- SHIPS VISIBLE, HIDDEN BY THE ENGINE. js/btcfi-globe.js adds .bg-sr
+           to this heading once the flight is actually running, because the
+           flight paints "A complete DeFi stack" / "Built for Bitcoin." over
+           the particle field and printing the same words twice reads as a
+           mistake. Do NOT move .bg-sr into this markup: with JS off, or under
+           prefers-reduced-motion, or on a machine with no WebGL, the engine
+           bails out early and the section would be left with no visible title
+           at all. The element itself is never removed, because it carries the
+           anchor id the search-index build links to and its place in the
+           heading outline. -->
       <h3 id="a-complete-defi-stack-built-for" class="scale-title">A complete DeFi stack. <span>Built for Bitcoin.</span></h3>
       <p class="scale-intro">Onboard from Bitcoin, Lightning or any EVM chain, then put BTC to work across a Bitcoin-focused DeFi stack: staking, lending, trading, liquidity, perps, yield.</p>
 
-      <!-- ECOSYSTEM HUB (eho- prefix). An INDEX of this section, not a
-           decoration: strkBTC at the center, every project below as a logo
-           node on its category ring, each node a real in-page link to the
-           project's chip or card (static ids added on those elements). The
-           node list is generated from the section's own DOM inventory —
-           3 wallets, 9 bridges, 7 DeFi cards (the "Much more to come"
-           filler card is aria-hidden and is not a project, so it gets no
-           node). Without JS the nodes render as a flat list of links; the
-           engine (below, IO-gated rAF, one transform write per node) lifts
-           them onto the rings. -->
-      <div class="eho" id="ecoHub">
-        <div class="eho-stage" id="ehoStage">
-          <i class="eho-ring eho-ring0" aria-hidden="true"></i>
-          <i class="eho-ring eho-ring1" aria-hidden="true"></i>
-          <i class="eho-ring eho-ring2" aria-hidden="true"></i>
-          <span class="eho-core" aria-hidden="true">strkBTC</span>
-      <a class="eho-node eho-r0" href="#eco-ready" data-cat="Wallets" data-name="Ready"
-         aria-label="Ready, Wallets (jump to its entry below)">
-        <img alt="" loading="lazy" decoding="async" src="assets/logos/ready.png" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="eho-mono" style="display:none">R</span><span class="eho-nn">Ready</span>
-      </a>
-      <a class="eho-node eho-r0" href="#eco-xverse" data-cat="Wallets" data-name="Xverse"
-         aria-label="Xverse, Wallets (jump to its entry below)">
-        <img alt="" loading="lazy" decoding="async" src="assets/logos/xverse.png" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="eho-mono" style="display:none">X</span><span class="eho-nn">Xverse</span>
-      </a>
-      <a class="eho-node eho-r0" href="#eco-braavos" data-cat="Wallets" data-name="Braavos"
-         aria-label="Braavos, Wallets (jump to its entry below)">
-        <img alt="" loading="lazy" decoding="async" src="assets/logos/braavos.png" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="eho-mono" style="display:none">B</span><span class="eho-nn">Braavos</span>
-      </a>
-      <a class="eho-node eho-r1" href="#eco-starkgate" data-cat="Bridges" data-name="StarkGate"
-         aria-label="StarkGate, Bridges (jump to its entry below)">
-        <img alt="" loading="lazy" decoding="async" src="assets/logos/starkgate.png" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="eho-mono" style="display:none">S</span><span class="eho-nn">StarkGate</span>
-      </a>
-      <a class="eho-node eho-r1" href="#eco-atomiq-labs" data-cat="Bridges" data-name="Atomiq Labs"
-         aria-label="Atomiq Labs, Bridges (jump to its entry below)">
-        <img alt="" loading="lazy" decoding="async" src="assets/logos/atomiq-labs.png" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="eho-mono" style="display:none">A</span><span class="eho-nn">Atomiq Labs</span>
-      </a>
-      <a class="eho-node eho-r1" href="#eco-layerswap" data-cat="Bridges" data-name="Layerswap"
-         aria-label="Layerswap, Bridges (jump to its entry below)">
-        <img alt="" loading="lazy" decoding="async" src="assets/logos/layerswap.png" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="eho-mono" style="display:none">L</span><span class="eho-nn">Layerswap</span>
-      </a>
-      <a class="eho-node eho-r1" href="#eco-near-intents" data-cat="Bridges" data-name="Near Intents"
-         aria-label="Near Intents, Bridges (jump to its entry below)">
-        <img alt="" loading="lazy" decoding="async" src="assets/logos/near-intents.png" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="eho-mono" style="display:none">N</span><span class="eho-nn">Near Intents</span>
-      </a>
-      <a class="eho-node eho-r1" href="#eco-rhino-fi" data-cat="Bridges" data-name="Rhino.fi"
-         aria-label="Rhino.fi, Bridges (jump to its entry below)">
-        <img alt="" loading="lazy" decoding="async" src="assets/logos/rhino-fi.png" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="eho-mono" style="display:none">R</span><span class="eho-nn">Rhino.fi</span>
-      </a>
-      <a class="eho-node eho-r1" href="#eco-rocketx" data-cat="Bridges" data-name="RocketX"
-         aria-label="RocketX, Bridges (jump to its entry below)">
-        <img alt="" loading="lazy" decoding="async" src="assets/logos/rocketx.png" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="eho-mono" style="display:none">R</span><span class="eho-nn">RocketX</span>
-      </a>
-      <a class="eho-node eho-r1" href="#eco-stargate-finance" data-cat="Bridges" data-name="Stargate Finance"
-         aria-label="Stargate Finance, Bridges (jump to its entry below)">
-        <img alt="" loading="lazy" decoding="async" src="assets/logos/stargate-finance.png" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="eho-mono" style="display:none">S</span><span class="eho-nn">Stargate Finance</span>
-      </a>
-      <a class="eho-node eho-r1" href="#eco-layerzero" data-cat="Bridges" data-name="LayerZero"
-         aria-label="LayerZero, Bridges (jump to its entry below)">
-        <img alt="" loading="lazy" decoding="async" src="assets/logos/layerzero.png" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="eho-mono" style="display:none">L</span><span class="eho-nn">LayerZero</span>
-      </a>
-      <a class="eho-node eho-r1" href="#eco-hyperlane" data-cat="Bridges" data-name="Hyperlane"
-         aria-label="Hyperlane, Bridges (jump to its entry below)">
-        <img alt="" loading="lazy" decoding="async" src="assets/logos/hyperlane.png" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="eho-mono" style="display:none">H</span><span class="eho-nn">Hyperlane</span>
-      </a>
-      <a class="eho-node eho-r2" href="#eco-ekubo" data-cat="DeFi" data-name="Ekubo"
-         aria-label="Ekubo, DeFi (jump to its entry below)">
-        <img alt="" loading="lazy" decoding="async" src="assets/logos/ek.png" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="eho-mono" style="display:none">Ek</span><span class="eho-nn">Ekubo</span>
-      </a>
-      <a class="eho-node eho-r2" href="#eco-vesu" data-cat="DeFi" data-name="Vesu"
-         aria-label="Vesu, DeFi (jump to its entry below)">
-        <img alt="" loading="lazy" decoding="async" src="assets/logos/ve.png" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="eho-mono" style="display:none">Ve</span><span class="eho-nn">Vesu</span>
-      </a>
-      <a class="eho-node eho-r2" href="#eco-avnu" data-cat="DeFi" data-name="avnu"
-         aria-label="avnu, DeFi (jump to its entry below)">
-        <img alt="" loading="lazy" decoding="async" src="assets/logos/av.png" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="eho-mono" style="display:none">av</span><span class="eho-nn">avnu</span>
-      </a>
-      <a class="eho-node eho-r2" href="#eco-endur-finance" data-cat="DeFi" data-name="Endur Finance"
-         aria-label="Endur Finance, DeFi (jump to its entry below)">
-        <img alt="" loading="lazy" decoding="async" src="assets/logos/en.png" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="eho-mono" style="display:none">En</span><span class="eho-nn">Endur Finance</span>
-      </a>
-      <a class="eho-node eho-r2" href="#eco-extended" data-cat="DeFi" data-name="Extended"
-         aria-label="Extended, DeFi (jump to its entry below)">
-        <img alt="" loading="lazy" decoding="async" src="assets/logos/ex.png" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="eho-mono" style="display:none">Ex</span><span class="eho-nn">Extended</span>
-      </a>
-      <a class="eho-node eho-r2" href="#eco-troves" data-cat="DeFi" data-name="Troves"
-         aria-label="Troves, DeFi (jump to its entry below)">
-        <img alt="" loading="lazy" decoding="async" src="assets/logos/tr.png" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="eho-mono" style="display:none">Tr</span><span class="eho-nn">Troves</span>
-      </a>
-      <a class="eho-node eho-r2" href="#eco-forge-yields" data-cat="DeFi" data-name="Forge Yields"
-         aria-label="Forge Yields, DeFi (jump to its entry below)">
-        <img alt="" loading="lazy" decoding="async" src="assets/logos/fo.png" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="eho-mono" style="display:none">Fo</span><span class="eho-nn">Forge Yields</span>
-      </a>
-        </div>
-        <!-- identification caption: a fixed-height slot so hovering a node
-             never shifts layout; EMPTY at idle by design (legend panel
-             removed 2026-08-24, owner call — the nodes are self-describing
-             and their hrefs carry no-JS navigation) -->
-        <p class="eho-cap" aria-hidden="true"><span id="ehoCapCat"></span><span id="ehoCapName"></span></p>
-      </div>
+      <!-- BTCFI ECOSYSTEM FIELD (bg- prefix, mount #btcGlobe). Replaced the
+           static orbital diagram (eho- prefix, removed 2026-08-31) with the
+           ecosystem page's WebGL flight, re-skinned: a dense particle shell
+           with the BITCOIN mark at its core, which the scroll flies through
+           into a starfield where every wallet, bridge and DeFi protocol hangs
+           as a logo sprite. Engine: js/btcfi-globe.js, loaded as a module off
+           the importmap at the foot of the page. CSS: the bg- block at the end
+           of this page's inline <style>, which is where it has to live because
+           the linked sheets (eco-stage.css among them) load first and would
+           otherwise win.
+           THE LIST BELOW IS THE SOURCE OF TRUTH, not a duplicate of one. The
+           engine reads these anchors (name, category, in-page href, logo file)
+           out of the DOM and only then wipes the mount, so with JS off the
+           section renders exactly what the hub used to: a flat wrapped list of
+           labelled in-page links to each protocol's entry further down. Add or
+           remove a protocol here and the field follows it. -->
+      <section id="btcGlobe">
+        <ul class="bgf-list">
+          <li><a class="bgf-item" href="#eco-ready" data-cat="Wallets" data-name="Ready"
+             aria-label="Ready, Wallets (jump to its entry below)">
+            <img alt="" loading="lazy" decoding="async" src="assets/logos/ready.png" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="bgf-mono" style="display:none">R</span><span>Ready</span>
+          </a></li>
+          <li><a class="bgf-item" href="#eco-xverse" data-cat="Wallets" data-name="Xverse"
+             aria-label="Xverse, Wallets (jump to its entry below)">
+            <img alt="" loading="lazy" decoding="async" src="assets/logos/xverse.png" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="bgf-mono" style="display:none">X</span><span>Xverse</span>
+          </a></li>
+          <li><a class="bgf-item" href="#eco-braavos" data-cat="Wallets" data-name="Braavos"
+             aria-label="Braavos, Wallets (jump to its entry below)">
+            <img alt="" loading="lazy" decoding="async" src="assets/logos/braavos.png" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="bgf-mono" style="display:none">B</span><span>Braavos</span>
+          </a></li>
+          <li><a class="bgf-item" href="#eco-starkgate" data-cat="Bridges" data-name="StarkGate"
+             aria-label="StarkGate, Bridges (jump to its entry below)">
+            <img alt="" loading="lazy" decoding="async" src="assets/logos/starkgate.png" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="bgf-mono" style="display:none">S</span><span>StarkGate</span>
+          </a></li>
+          <li><a class="bgf-item" href="#eco-atomiq-labs" data-cat="Bridges" data-name="Atomiq Labs"
+             aria-label="Atomiq Labs, Bridges (jump to its entry below)">
+            <img alt="" loading="lazy" decoding="async" src="assets/logos/atomiq-labs.png" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="bgf-mono" style="display:none">A</span><span>Atomiq Labs</span>
+          </a></li>
+          <li><a class="bgf-item" href="#eco-layerswap" data-cat="Bridges" data-name="Layerswap"
+             aria-label="Layerswap, Bridges (jump to its entry below)">
+            <img alt="" loading="lazy" decoding="async" src="assets/logos/layerswap.png" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="bgf-mono" style="display:none">L</span><span>Layerswap</span>
+          </a></li>
+          <li><a class="bgf-item" href="#eco-near-intents" data-cat="Bridges" data-name="Near Intents"
+             aria-label="Near Intents, Bridges (jump to its entry below)">
+            <img alt="" loading="lazy" decoding="async" src="assets/logos/near-intents.png" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="bgf-mono" style="display:none">N</span><span>Near Intents</span>
+          </a></li>
+          <li><a class="bgf-item" href="#eco-rhino-fi" data-cat="Bridges" data-name="Rhino.fi"
+             aria-label="Rhino.fi, Bridges (jump to its entry below)">
+            <img alt="" loading="lazy" decoding="async" src="assets/logos/rhino-fi.png" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="bgf-mono" style="display:none">R</span><span>Rhino.fi</span>
+          </a></li>
+          <li><a class="bgf-item" href="#eco-rocketx" data-cat="Bridges" data-name="RocketX"
+             aria-label="RocketX, Bridges (jump to its entry below)">
+            <img alt="" loading="lazy" decoding="async" src="assets/logos/rocketx.png" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="bgf-mono" style="display:none">R</span><span>RocketX</span>
+          </a></li>
+          <li><a class="bgf-item" href="#eco-stargate-finance" data-cat="Bridges" data-name="Stargate Finance"
+             aria-label="Stargate Finance, Bridges (jump to its entry below)">
+            <img alt="" loading="lazy" decoding="async" src="assets/logos/stargate-finance.png" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="bgf-mono" style="display:none">S</span><span>Stargate Finance</span>
+          </a></li>
+          <li><a class="bgf-item" href="#eco-layerzero" data-cat="Bridges" data-name="LayerZero"
+             aria-label="LayerZero, Bridges (jump to its entry below)">
+            <img alt="" loading="lazy" decoding="async" src="assets/logos/layerzero.png" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="bgf-mono" style="display:none">L</span><span>LayerZero</span>
+          </a></li>
+          <li><a class="bgf-item" href="#eco-hyperlane" data-cat="Bridges" data-name="Hyperlane"
+             aria-label="Hyperlane, Bridges (jump to its entry below)">
+            <img alt="" loading="lazy" decoding="async" src="assets/logos/hyperlane.png" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="bgf-mono" style="display:none">H</span><span>Hyperlane</span>
+          </a></li>
+          <li><a class="bgf-item" href="#eco-ekubo" data-cat="DeFi" data-name="Ekubo"
+             aria-label="Ekubo, DeFi (jump to its entry below)">
+            <img alt="" loading="lazy" decoding="async" src="assets/logos/ek.png" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="bgf-mono" style="display:none">Ek</span><span>Ekubo</span>
+          </a></li>
+          <li><a class="bgf-item" href="#eco-vesu" data-cat="DeFi" data-name="Vesu"
+             aria-label="Vesu, DeFi (jump to its entry below)">
+            <img alt="" loading="lazy" decoding="async" src="assets/logos/ve.png" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="bgf-mono" style="display:none">Ve</span><span>Vesu</span>
+          </a></li>
+          <li><a class="bgf-item" href="#eco-avnu" data-cat="DeFi" data-name="avnu"
+             aria-label="avnu, DeFi (jump to its entry below)">
+            <img alt="" loading="lazy" decoding="async" src="assets/logos/av.png" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="bgf-mono" style="display:none">av</span><span>avnu</span>
+          </a></li>
+          <li><a class="bgf-item" href="#eco-endur-finance" data-cat="DeFi" data-name="Endur Finance"
+             aria-label="Endur Finance, DeFi (jump to its entry below)">
+            <img alt="" loading="lazy" decoding="async" src="assets/logos/en.png" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="bgf-mono" style="display:none">En</span><span>Endur Finance</span>
+          </a></li>
+          <li><a class="bgf-item" href="#eco-extended" data-cat="DeFi" data-name="Extended"
+             aria-label="Extended, DeFi (jump to its entry below)">
+            <img alt="" loading="lazy" decoding="async" src="assets/logos/ex.png" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="bgf-mono" style="display:none">Ex</span><span>Extended</span>
+          </a></li>
+          <li><a class="bgf-item" href="#eco-troves" data-cat="DeFi" data-name="Troves"
+             aria-label="Troves, DeFi (jump to its entry below)">
+            <img alt="" loading="lazy" decoding="async" src="assets/logos/tr.png" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="bgf-mono" style="display:none">Tr</span><span>Troves</span>
+          </a></li>
+          <li><a class="bgf-item" href="#eco-forge-yields" data-cat="DeFi" data-name="Forge Yields"
+             aria-label="Forge Yields, DeFi (jump to its entry below)">
+            <img alt="" loading="lazy" decoding="async" src="assets/logos/fo.png" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="bgf-mono" style="display:none">Fo</span><span>Forge Yields</span>
+          </a></li>
+        </ul>
+      </section>
 
       <!-- BTC Staking Band -->
       <div id="native-btc-staking-a-first-for" class="staking-band">
@@ -2505,8 +2865,8 @@
              data-says="the Starknet ecosystem launched BTC staking, making Starknet the first Rollup to tether its security directly to Bitcoin | Bitcoin holders can now stake their BTC to secure Starknet and earn STRK rewards, launching a dual-token consensus model where STRK represents 75% and BTC 25% of the network&#39;s total security weight"
              data-noun-ok="Starknet BTC STRK">Since late 2025, Bitcoin can be staked natively on Starknet to help secure the network and earn rewards. Not custodial lending. Not a yield farm. Starknet is the first rollup to tether its security directly to Bitcoin: BTC and STRK stake together, at 25% and 75% of total staking power.</p>
           <!-- COPY CONSOLIDATION (owner-approved, 2026-08-24). The middle
-               paragraph — "BTC carries 25% of consensus weight (monetary
-               security), STRK carries 75% (network economics)." — moved into
+               paragraph: "BTC carries 25% of consensus weight (monetary
+               security), STRK carries 75% (network economics).": moved into
                the column's role labels to the right: the same information
                reads as BTC "Consensus weight, monetary security" / STRK
                "Network economics, reward engine" beside the 25/75 segments.
@@ -2524,7 +2884,7 @@
           <p style="margin-top:12px;">Because rewards come from protocol economics, this yield is <strong>sustainable</strong> and tied directly to STRK's economy: as more STRK is staked, and as STRK appreciates, BTC staking rewards grow with it.</p>
         </div>
         <!-- One shared column, not two bars: 25 + 75 = 100% of ONE staking
-             power, and the copy says "stake together" — two separate bars
+             power, and the copy says "stake together": two separate bars
              read as rivals, one split column reads as a composition. The
              segment heights are the device's only job: exactly 25% / 75%. -->
         <div class="bsk-visual">
@@ -3036,167 +3396,10 @@
 })();
 </script>
 
-<script>
-/* ECOSYSTEM HUB ENGINE. Lifts the no-JS link list onto three slowly
-   counter-rotating rings. Nodes are TRANSLATED, never rotated, so logos
-   stay upright by construction. Per frame: one transform write per node,
-   nothing else; geometry (stage size, radii) is measured at init and on
-   debounced resize, never in the loop. The loop runs only while the stage
-   is on screen AND nothing is hovered or focused — pausing on hover is a
-   hard stop of the rAF, not a speed of zero, because a paused scene needs
-   no writes at all. prefers-reduced-motion: static map, hover/click and
-   keyboard intact, no rAF ever. */
-(function() {
-  var hub = document.getElementById('ecoHub');
-  var stage = document.getElementById('ehoStage');
-  if (!hub || !stage) return;
-  var nodes = [].slice.call(stage.querySelectorAll('.eho-node'));
-  if (!nodes.length) return;
-  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  hub.classList.add('eho-on');
-
-  /* ring membership + evenly spaced base angles (degrees, -90 = top) */
-  var RADII = [0.17, 0.295, 0.42];              /* fraction of stage size */
-  var SPEED = [360 / 90, -360 / 140, 360 / 190]; /* deg per second, middle counter-rotates */
-  var OFFSET = [0, 20, 10];
-  var rings = [[], [], []];
-  nodes.forEach(function(n) {
-    rings[n.classList.contains('eho-r0') ? 0 : n.classList.contains('eho-r1') ? 1 : 2].push(n);
-  });
-  var meta = [];
-  rings.forEach(function(list, r) {
-    list.forEach(function(n, k) {
-      meta.push({ el: n, r: r, base: -90 + OFFSET[r] + k * 360 / list.length });
-    });
-  });
-
-  var S = 0, radii = [0, 0, 0];
-  function measure() {
-    S = stage.clientWidth;
-    radii = RADII.map(function(f) { return f * S; });
-  }
-
-  var elapsed = 0, last = 0, raf = null, inView = true, paused = false, frames = 0;
-  function place() {
-    for (var i = 0; i < meta.length; i++) {
-      var m = meta[i];
-      var a = (m.base + SPEED[m.r] * elapsed) * Math.PI / 180;
-      m.el.style.transform = 'translate(' + (radii[m.r] * Math.cos(a)).toFixed(2) + 'px,' +
-        (radii[m.r] * Math.sin(a)).toFixed(2) + 'px)';
-    }
-  }
-  function loop(ts) {
-    raf = null;
-    if (!inView || paused) return;
-    frames++;
-    if (last) elapsed += Math.min(0.1, (ts - last) / 1000);
-    last = ts;
-    place();
-    raf = requestAnimationFrame(loop);
-  }
-  function kick() {
-    if (reduce || raf || !inView || paused) return;
-    last = 0;
-    raf = requestAnimationFrame(loop);
-  }
-
-  /* caption: fixed zone, follows hover and focus */
-  var capCat = document.getElementById('ehoCapCat');
-  var capName = document.getElementById('ehoCapName');
-  var defCat = capCat.textContent, defName = capName.textContent;
-  function caption(n) {
-    capCat.textContent = n ? n.getAttribute('data-cat') : defCat;
-    capName.textContent = n ? n.getAttribute('data-name') : defName;
-  }
-  function setPaused(p) {
-    if (paused === p) return;
-    paused = p;
-    if (p) { if (raf) { cancelAnimationFrame(raf); raf = null; } } else kick();
-  }
-  stage.addEventListener('mouseover', function(e) {
-    var n = e.target.closest && e.target.closest('.eho-node');
-    if (n) { caption(n); setPaused(true); }
-  });
-  stage.addEventListener('mouseout', function(e) {
-    var n = e.target.closest && e.target.closest('.eho-node');
-    if (n && !stage.querySelector('.eho-node:focus')) { caption(null); setPaused(false); }
-  });
-  stage.addEventListener('focusin', function(e) {
-    var n = e.target.closest && e.target.closest('.eho-node');
-    if (n) { caption(n); setPaused(true); }
-  });
-  stage.addEventListener('focusout', function() {
-    setTimeout(function() {
-      if (!stage.querySelector('.eho-node:focus') && !stage.querySelector('.eho-node:hover')) {
-        caption(null); setPaused(false);
-      }
-    }, 0);
-  });
-
-  /* click: smooth-scroll to the project's chip/card, search-palette arrival
-     flash, late-reveal guard (same offscreen re-check search.js uses) */
-  stage.addEventListener('click', function(e) {
-    var n = e.target.closest && e.target.closest('.eho-node');
-    if (!n) return;
-    var id = (n.getAttribute('href') || '').slice(1);
-    var target = document.getElementById(id);
-    if (!target) return; /* fall through to native anchor if the id is gone */
-    e.preventDefault();
-    history.replaceState(null, '', '#' + id);
-    var land = function() { target.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' }); };
-    land();
-    target.classList.add('search-landed');
-    setTimeout(function() { target.classList.remove('search-landed'); }, 2100);
-    setTimeout(function() {
-      var r = target.getBoundingClientRect();
-      if (r.bottom < 0 || r.top > window.innerHeight) land();
-      target.setAttribute('tabindex', '-1');
-      target.focus({ preventScroll: true });
-    }, reduce ? 80 : 650);
-  });
-
-  /* roving tabindex: one tab stop, arrows walk the rings in DOM order */
-  var cur = 0;
-  function mirror(i) {
-    nodes.forEach(function(n, k) { n.setAttribute('tabindex', k === i ? '0' : '-1'); });
-    cur = i;
-  }
-  mirror(0);
-  stage.addEventListener('keydown', function(e) {
-    if (nodes.indexOf(e.target) === -1) return;
-    var to = null;
-    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') to = (cur + 1) % nodes.length;
-    else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') to = (cur - 1 + nodes.length) % nodes.length;
-    else if (e.key === 'Home') to = 0;
-    else if (e.key === 'End') to = nodes.length - 1;
-    if (to === null) return;
-    e.preventDefault();
-    mirror(to);
-    nodes[to].focus();
-  });
-
-  if ('IntersectionObserver' in window) {
-    new IntersectionObserver(function(es) {
-      inView = es[0].isIntersecting;
-      if (inView) kick(); else if (raf) { cancelAnimationFrame(raf); raf = null; }
-    }, { threshold: 0 }).observe(stage);
-  }
-
-  window.__ehoInfo = function() { return { frames: frames, running: !!raf, paused: paused, inView: inView, nodes: nodes.length }; };
-
-  measure();
-  place(); /* paint the ring layout immediately, even under reduced motion */
-  kick();
-  var rt; window.addEventListener('resize', function() {
-    clearTimeout(rt); rt = setTimeout(function() { measure(); place(); }, 120);
-  });
-})();
-</script>
 
 <script>
 /* STAKING COLUMN REVEAL. One-shot: IO adds .bsk-on, the CSS transitions do
-   the rest, and nothing runs afterwards — no rAF, no listeners left behind.
+   the rest, and nothing runs afterwards: no rAF, no listeners left behind.
    Reduced motion (or no JS): .bsk-pre is never added, so the base end state
    renders immediately. */
 (function() {
@@ -3212,321 +3415,7 @@
 })();
 </script>
 
-<script>
-/* BRIDGE ROADMAP FAN. The markup is the static four-column grid and stays
-   the reduced-motion / no-JS rendering; this engine, when motion is allowed,
-   restyles it in place into a fanned deck (class brs-on) and injects only
-   decoration (watermarks, veils), dots and a live region. LINEAR ON PURPOSE:
-   the roadmap has an order, progress clamps 0..3 with ~0.4 rubber-banded
-   overdrag at both ends; phase 4 never wraps to phase 1, and the arrow keys
-   clamp instead of cycling (which is why this does not use thRove).
-   Per-frame writes are one transform and two opacities per card (veil,
-   body), plus a cached z-index that only writes when its rounded value
-   changes. No layout reads in the loop: geometry is measured at init and on
-   debounced resize. rAF runs only while dragging or settling AND while the
-   stage is on screen (IntersectionObserver, same gating as the chart). */
-(function() {
-  var stage = document.querySelector('.roadmap-steps');
-  if (!stage) return;
-  if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  var roadmap = stage.closest('.roadmap');
-  var cards = [].slice.call(stage.querySelectorAll('.roadmap-step'));
-  if (cards.length !== 4) return;
-
-  stage.classList.add('brs-on');
-
-  var META = cards.map(function(c, i) {
-    return { el: c, i: i,
-      name: (c.querySelector('.step-name') || {}).textContent || '',
-      status: (c.querySelector('.step-status') || {}).textContent || '' };
-  });
-
-  /* injected decoration: watermark + veil per card (aria-hidden, pointer-inert) */
-  var veils = cards.map(function(c, i) {
-    var wm = document.createElement('span');
-    wm.className = 'brs-wm'; wm.setAttribute('aria-hidden', 'true');
-    wm.textContent = String(i + 1);
-    c.appendChild(wm);
-    var edge = document.createElement('span');
-    edge.className = 'brs-edge'; edge.setAttribute('aria-hidden', 'true');
-    edge.textContent = META[i].name;
-    c.appendChild(edge);
-    var edgeL = document.createElement('span');
-    edgeL.className = 'brs-edgeL'; edgeL.setAttribute('aria-hidden', 'true');
-    edgeL.textContent = META[i].name;
-    c.appendChild(edgeL);
-    var v = document.createElement('div');
-    v.className = 'brs-veil'; v.setAttribute('aria-hidden', 'true');
-    c.appendChild(v);
-    return v;
-  });
-
-  /* dots + live region */
-  var dotsWrap = document.createElement('div');
-  dotsWrap.className = 'brs-dots';
-  dotsWrap.setAttribute('role', 'group');
-  dotsWrap.setAttribute('aria-label', 'Bridge roadmap phases');
-  var dots = META.map(function(m, i) {
-    var b = document.createElement('button');
-    b.type = 'button';
-    b.className = 'brs-dot';
-    b.style.setProperty('--brs-pc', getComputedStyle(m.el).getPropertyValue('--brs-pc'));
-    b.setAttribute('aria-label', 'Phase ' + (i + 1) + ' of 4: ' + m.name + ', ' + m.status);
-    dotsWrap.appendChild(b);
-    return b;
-  });
-  stage.parentNode.insertBefore(dotsWrap, stage.nextSibling);
-  var sr = document.createElement('span');
-  sr.className = 'bfc-sr';
-  sr.setAttribute('aria-live', 'polite');
-  roadmap.appendChild(sr);
-
-  /* geometry buckets; measured once per resize, never in the loop */
-  var G = null;
-  function bucket() {
-    var w = stage.clientWidth;
-    /* x1 = first step out, x2 = each further step (compressed so the deck
-       never leaves the viewport); mobile x2 is near-zero so phases 3-4 hide
-       behind the first neighbor: one card peeking per side at 375 */
-    if (w <= 560) return { x1: 46, x2: 10, y: 14, r1: 3, r2: 0.8, sc: 0.06 };
-    if (w <= 900) return { x1: 110, x2: 60, y: 18, r1: 4, r2: 1.2, sc: 0.07 };
-    return { x1: 150, x2: 100, y: 22, r1: 5, r2: 1.5, sc: 0.08 };
-  }
-  function measure() {
-    G = bucket();
-    var h = 0;
-    cards.forEach(function(c) { h = Math.max(h, c.offsetHeight); });
-    stage.style.height = Math.ceil(h + G.y * 3 + 6) + 'px';
-  }
-
-  var p = 0, target = 0, vel = 0, raf = null, inView = true;
-  var zCache = [null, null, null, null];
-  var frames = 0;
-
-  function render() {
-    for (var i = 0; i < 4; i++) {
-      var d = i - p, a = Math.abs(d), sg = d < 0 ? -1 : 1;
-      var x = sg * (G.x1 * Math.min(a, 1) + G.x2 * Math.max(a - 1, 0));
-      var y = G.y * Math.min(a, 3);
-      var r = sg * (G.r1 * Math.min(a, 1) + G.r2 * Math.max(a - 1, 0));
-      var s = Math.max(0.7, 1 - G.sc * Math.min(a, 3));
-      cards[i].style.transform =
-        'translate(calc(-50% + ' + x.toFixed(2) + 'px), ' + y.toFixed(2) + 'px) ' +
-        'rotate(' + r.toFixed(2) + 'deg) scale(' + s.toFixed(4) + ')';
-      veils[i].style.opacity = Math.min(0.78, a * 0.32).toFixed(3);
-      cards[i].style.setProperty('--brs-body', Math.max(0, Math.min(1, 1 - a * 1.8)).toFixed(3));
-      var z = 40 - Math.round(a * 10);
-      if (zCache[i] !== z) { zCache[i] = z; cards[i].style.zIndex = z; }
-    }
-  }
-
-  function loop() {
-    raf = null;
-    if (!inView) return; /* re-kicked by the observer when scrolled back */
-    frames++;
-    vel += (target - p) * 0.16;
-    vel *= 0.72;
-    p += vel;
-    if (Math.abs(target - p) < 0.0015 && Math.abs(vel) < 0.0015) {
-      p = target; vel = 0; render(); return;
-    }
-    render();
-    raf = requestAnimationFrame(loop);
-  }
-  function kick() { if (!raf && !dragging) raf = requestAnimationFrame(loop); }
-
-  var active = -1;
-  function settle(announce) {
-    var idx = Math.round(Math.max(0, Math.min(3, target)));
-    if (idx === active) { if (announce) say(idx); return; }
-    active = idx;
-    dots.forEach(function(b, k) { b.setAttribute('aria-current', k === idx ? 'true' : 'false'); b.setAttribute('tabindex', k === idx ? '0' : '-1'); });
-    cards.forEach(function(c, k) {
-      c.classList.toggle('brs-front', k === idx);
-      [].forEach.call(c.querySelectorAll('a'), function(a) {
-        if (k === idx) a.removeAttribute('tabindex'); else a.setAttribute('tabindex', '-1');
-      });
-    });
-    if (announce) say(idx);
-  }
-  function say(idx) {
-    sr.textContent = 'Phase ' + (idx + 1) + ' of 4: ' + META[idx].name + ', ' + META[idx].status + '.';
-  }
-  function goTo(idx, announce) {
-    target = Math.max(0, Math.min(3, idx));
-    settle(announce);
-    kick();
-  }
-
-  /* drag. Pointer capture on the stage, horizontal intent only (touch-action
-     pan-y keeps page scroll native on mobile). The 6px threshold is the
-     drag-vs-click separation: below it no drag ever starts, the browser
-     synthesizes its click and links in the ACTIVE card navigate untouched;
-     above it the pointerup sets clickEaten and the very next click on the
-     stage is swallowed before it can reach a link. */
-  var dragging = false, mayDrag = false, sx = 0, sy = 0, sp = 0, clickEaten = false, pid = null;
-  var SCALE = 240;
-  function rubber(raw) {
-    if (raw < 0) return Math.max(-0.4, raw * 0.35);
-    if (raw > 3) return 3 + Math.min(0.4, (raw - 3) * 0.35);
-    return raw;
-  }
-  stage.addEventListener('pointerdown', function(e) {
-    if (e.button !== undefined && e.button !== 0) return;
-    mayDrag = true; dragging = false;
-    sx = e.clientX; sy = e.clientY; sp = p; pid = e.pointerId;
-    if (raf) { cancelAnimationFrame(raf); raf = null; } /* grab mid-spring */
-    vel = 0;
-  });
-  stage.addEventListener('pointermove', function(e) {
-    if (!mayDrag || e.pointerId !== pid) return;
-    var dx = e.clientX - sx, dy = e.clientY - sy;
-    if (!dragging) {
-      if (Math.abs(dx) < 6) return;
-      if (Math.abs(dy) > Math.abs(dx)) { mayDrag = false; return; } /* vertical intent: page scroll */
-      dragging = true;
-      stage.classList.add('brs-drag');
-      try { stage.setPointerCapture(pid); } catch (err) {}
-    }
-    p = rubber(sp - dx / SCALE);
-    if (!raf) raf = requestAnimationFrame(function() { raf = null; frames++; render(); });
-  });
-  function endDrag(e) {
-    if (e.pointerId !== pid) return;
-    mayDrag = false;
-    if (!dragging) return;
-    dragging = false;
-    clickEaten = true;
-    stage.classList.remove('brs-drag');
-    try { stage.releasePointerCapture(pid); } catch (err) {}
-    var was = active;
-    target = Math.max(0, Math.min(3, Math.round(p)));
-    settle(false);
-    if (active !== was) say(active); /* announce the snap, once, not per frame */
-    kick();
-  }
-  stage.addEventListener('pointerup', endDrag);
-  stage.addEventListener('pointercancel', endDrag);
-  stage.addEventListener('click', function(e) {
-    if (clickEaten) { clickEaten = false; e.preventDefault(); e.stopPropagation(); return; }
-    var card = e.target.closest('.roadmap-step');
-    if (!card) return;
-    var idx = cards.indexOf(card);
-    if (idx !== active) { e.preventDefault(); goTo(idx, true); }
-    /* active card: fall through — links navigate */
-  });
-
-  /* dots: click + clamped roving arrows (linear, deliberately not thRove) */
-  dots.forEach(function(b, k) { b.addEventListener('click', function() { goTo(k, true); b.focus(); }); });
-  dotsWrap.addEventListener('keydown', function(e) {
-    var step = (e.key === 'ArrowRight' || e.key === 'ArrowDown') ? 1 :
-               (e.key === 'ArrowLeft' || e.key === 'ArrowUp') ? -1 : 0;
-    var to = step ? active + step : (e.key === 'Home' ? 0 : e.key === 'End' ? 3 : null);
-    if (to === null || !step && e.key !== 'Home' && e.key !== 'End') return;
-    e.preventDefault();
-    to = Math.max(0, Math.min(3, to));
-    if (to !== active) { goTo(to, true); dots[to].focus(); }
-  });
-
-  /* offscreen: stop the loop; back on screen: finish any unsettled spring */
-  if ('IntersectionObserver' in window) {
-    new IntersectionObserver(function(es) {
-      inView = es[0].isIntersecting;
-      if (inView && p !== target) kick();
-    }, { threshold: 0 }).observe(stage);
-  }
-
-  /* hash arrival, same contract as the gap device: an inbound #collidervm
-     must bring that card FRONT, and because init just changed the section's
-     height (grid -> stage) the browser's native anchor jump from a cold load
-     is now wrong by the difference — the late-reveal fix re-lands it, then
-     re-checks once more after the page's other engines settle (search.js
-     guard precedent: re-scroll only if the target left the viewport). */
-  function surface(scroll) {
-    var id = (location.hash || '').slice(1);
-    if (!id) return;
-    if (id.indexOf('s:') === 0) id = decodeURIComponent(id.split(':')[1] || '');
-    var el = document.getElementById(id);
-    if (!el) return;
-    var card = el.closest && el.closest('.roadmap-step');
-    if (!card) return;
-    goTo(cards.indexOf(card), true);
-    if (scroll) {
-      var land = function() { stage.scrollIntoView({ behavior: 'auto', block: 'center' }); };
-      land();
-      setTimeout(function() {
-        var r = stage.getBoundingClientRect();
-        if (r.bottom < 0 || r.top > window.innerHeight) land();
-      }, 700);
-    }
-  }
-  window.addEventListener('hashchange', function() { surface(false); });
-  window.__brsFront = function(id) { /* search.js reveal() adapter hook */
-    var el = document.getElementById(id);
-    var card = el && el.closest && el.closest('.roadmap-step');
-    if (card) goTo(cards.indexOf(card), true);
-  };
-  window.__brsInfo = function() { return { p: p, active: active, frames: frames, running: !!raf, inView: inView }; };
-
-  measure();
-  render();       /* paint frame 0 before the observer fires */
-  settle(false);  /* aria mirrors for phase 1, no announcement on load */
-  surface(true);
-  var rt2; window.addEventListener('resize', function() {
-    clearTimeout(rt2); rt2 = setTimeout(function() { measure(); render(); }, 120);
-  });
-})();
-</script>
-
-<script>
-(function() {
-  var track = document.getElementById('tlTrack');
-  if (!track) return;
-  var milestones = [
-    {year:'2018', name:'STARK', btc:false, desc:'StarkWare introduced STARK-based proving systems into production-grade blockchain infrastructure. STARKs are uniquely suited to combine privacy, scalability and post-quantum security in one system.'},
-    {year:'2019', name:'Production-grade prover', btc:false, desc:'Launched production-grade proving infrastructure, proving that validity proofs could move beyond research papers and become real infrastructure for applications.'},
-    {year:'2019', name:'Validium', btc:false, desc:'Brought Validium-based scaling to production: off-chain data availability secured by on-chain validity proofs, for higher throughput at lower cost.'},
-    {year:'2020', name:'L2 rollup StarkEx', btc:false, desc:'StarkEx became the first L2 validity system used in production, powering high-throughput applications like dYdX, ImmutableX and Sorare.'},
-    {year:'2020', name:'Proof aggregation SHARP', btc:false, desc:'SHARP, StarkWare\u2019s proof aggregation system, let many applications and transactions share proving infrastructure efficiently.'},
-    {year:'2021', name:'General-purpose ZK rollup Starknet', btc:false, desc:'Starknet launched as a permissionless, general-purpose ZK rollup, where developers can build any application using Cairo.'},
-    {year:'2022', name:'Recursive proving & L3s', btc:false, desc:'Recursive proving and L3 architectures opened the door to proof aggregation, application-specific scaling and more modular execution models.'},
-    {year:'2024', name:'Circle STARK & Stwo', btc:true, desc:'The next-generation prover Stwo uses a field much friendlier to Bitcoin Script constraints, making STARK verification on Bitcoin realistic. A key step toward settling on Bitcoin.'},
-    {year:'2024', name:'L2 staking', btc:false, desc:'Advanced L2 staking and decentralized infrastructure, moving Starknet toward deeper decentralization.'},
-    {year:'2025', name:'Dual-token consensus (STRK & BTC)', btc:true, desc:'Introduced a dual-token consensus mechanism where STRK and BTC secure the network together, bringing Bitcoin into Starknet\u2019s security model.'},
-    {year:'2025', name:'Decentralized sequencer architecture', btc:false, desc:'Decentralized sequencer architecture and the transition toward full decentralization of the network.'},
-    {year:'2026', name:'STRK20', btc:true, desc:'Protocol-level privacy for ERC-20 assets, with strkBTC as the first major expression of the privacy roadmap. Bitcoin, made private and programmable.'}
-  ];
-
-  milestones.forEach(function(m, i) {
-    var col = document.createElement('div');
-    col.className = 'tl-col ' + (i % 2 === 0 ? 'bottom' : 'top') + (m.btc ? ' btc' : '');
-    col.innerHTML =
-      '<div class="tl-label"><div class="tl-year">' + m.year + '</div><div class="tl-name">' + m.name + '</div></div>' +
-      '<div class="tl-conn"></div>' +
-      '<div class="tl-dot"></div>';
-    col.addEventListener('mouseenter', function() { select(i); });
-    col.addEventListener('click', function() { select(i); });
-    track.appendChild(col);
-  });
-
-  var cols = track.querySelectorAll('.tl-col');
-  var detail = document.getElementById('tlDetail');
-  var dYear = document.getElementById('tlDYear');
-  var dTitle = document.getElementById('tlDTitle');
-  var dDesc = document.getElementById('tlDDesc');
-
-  function select(i) {
-    cols.forEach(function(c, j) { c.classList.toggle('active', j === i); });
-    var m = milestones[i];
-    detail.classList.toggle('btc', m.btc);
-    dYear.textContent = m.year;
-    dTitle.textContent = m.name;
-    dDesc.textContent = m.desc;
-  }
-
-  select(milestones.length - 1);
-})();
-</script>
+<script src="js/lineage.js" defer></script>
 
 <script src="js/selector-rove.js"></script>
 <script src="js/news-lazy.js"></script>
@@ -3550,7 +3439,7 @@
 
   // ====== EDIT HERE: add Bitcoin-related tweets ======
   // Each entry: { url, title, date, fallbackText }
-  // These are the built-in defaults — the page renders them WITHOUT needing
+  // These are the built-in defaults: the page renders them WITHOUT needing
   // anything in localStorage. localStorage is only an optional override.
   var tweets = [
     { "url": "https://x.com/Starknet/status/2054170013783994832",
@@ -3627,7 +3516,7 @@
   // Defaults are the hardcoded `tweets` array above, each given a stable id (d0, d1, …).
   var DEFAULTS = tweets.map(function(t, i){ var c = {}; for (var k in t) c[k] = t[k]; c.id = 'd' + i; return c; });
   // Bump the version suffix whenever the in-file defaults above change in a way
-  // that must override older saved data — stale drafts live under the old key.
+  // that must override older saved data: stale drafts live under the old key.
   var STORAGE_KEY = 'btcfi_news_v2';
 
   function clone(o){ return JSON.parse(JSON.stringify(o)); }
@@ -3904,10 +3793,10 @@
         '<button type="button" class="ne-btn danger ne-del" data-act="del" data-i="' + i + '"><i class="ti ti-trash" aria-hidden="true"></i> Delete</button>' +
       '</div>' +
       '<div class="ne-grid">' +
-        '<div class="ne-field full">' + lbl('Tweet URL <span class="ne-req">required</span>') + '<input type="url" data-i="' + i + '" data-key="url" value="' + escA(c.url || '') + '" placeholder="https://x.com/user/status/123…"><div class="ne-hint">Paste the post link — the real embed (avatar, text, media, timestamp) renders automatically.</div></div>' +
+        '<div class="ne-field full">' + lbl('Tweet URL <span class="ne-req">required</span>') + '<input type="url" data-i="' + i + '" data-key="url" value="' + escA(c.url || '') + '" placeholder="https://x.com/user/status/123…"><div class="ne-hint">Paste the post link: the real embed (avatar, text, media, timestamp) renders automatically.</div></div>' +
         '<div class="ne-field full">' + lbl('Title (optional)') + '<input type="text" data-i="' + i + '" data-key="title" value="' + escA(c.title || '') + '" placeholder="e.g. Announcement of Starknet’s Bitcoin plans"></div>' +
         '<div class="ne-field full">' + lbl('Date (optional)') + '<input type="text" data-i="' + i + '" data-key="date" value="' + escA(c.date || '') + '" placeholder="e.g. Mar 2025"><div class="ne-hint">Title and date show as a header above the embed. Leave both empty for no header.</div></div>' +
-        '<div class="ne-field full">' + lbl('Fallback text (optional — shown only if the post can’t load)') + '<textarea data-i="' + i + '" data-key="fallbackText" placeholder="Short summary shown if the tweet is deleted, offline, or rate-limited…">' + esc(c.fallbackText || c.text || '') + '</textarea></div>' +
+        '<div class="ne-field full">' + lbl('Fallback text (optional: shown only if the post can’t load)') + '<textarea data-i="' + i + '" data-key="fallbackText" placeholder="Short summary shown if the tweet is deleted, offline, or rate-limited…">' + esc(c.fallbackText || c.text || '') + '</textarea></div>' +
       '</div>' +
     '</div>';
   }
@@ -3923,11 +3812,11 @@
         '<span class="ne-count">' + cards.length + ' card' + (cards.length === 1 ? '' : 's') + '</span>' +
         '<button type="button" class="ne-btn danger" data-act="reset"><i class="ti ti-refresh" aria-hidden="true"></i> Reset to published</button>' +
       '</div>' +
-      '<div class="ne-hint" style="margin:-6px 0 16px">Edits live only in this browser as an unsaved local draft. To publish for everyone, <b>Copy JSON</b> and commit it into the <code>tweets</code> array in btcfi.html — or <b>Reset to published</b> to discard the draft.</div>' +
+      '<div class="ne-hint" style="margin:-6px 0 16px">Edits live only in this browser as an unsaved local draft. To publish for everyone, <b>Copy JSON</b> and commit it into the <code>tweets</code> array in btcfi.html: or <b>Reset to published</b> to discard the draft.</div>' +
       '<div class="ne-cards">' + cards.map(editorCardHTML).join('') + '</div>';
   }
 
-  // live edits — update only the affected preview cell, no full reload
+  // live edits: update only the affected preview cell, no full reload
   if (editor) editor.addEventListener('input', function(e){
     var t = e.target;
     var idx = t.getAttribute('data-i'), key = t.getAttribute('data-key');
@@ -4054,8 +3943,8 @@
     var json = JSON.stringify(publicCards(), null, 2);
     var orig = btn.innerHTML;
     function done(ok){
-      btn.innerHTML = ok ? '<i class="ti ti-check" aria-hidden="true"></i> Copied — commit it to btcfi.html'
-                         : '<i class="ti ti-alert-triangle" aria-hidden="true"></i> Copy failed — JSON logged to console';
+      btn.innerHTML = ok ? '<i class="ti ti-check" aria-hidden="true"></i> Copied: commit it to btcfi.html'
+                         : '<i class="ti ti-alert-triangle" aria-hidden="true"></i> Copy failed: JSON logged to console';
       if (!ok) { try { console.log(json); } catch(e){} }
       setTimeout(function(){ btn.innerHTML = orig; }, 2400);
     }
@@ -4141,7 +4030,7 @@
 </script>
 
 
-<!-- LIVE BTC METRICS — same zero-cost client-side architecture as the
+<!-- LIVE BTC METRICS: same zero-cost client-side architecture as the
      privacy page metrics block: cache-busted fetches on load + silent
      hourly refresh, localStorage last-known cache, committed seed
      fallback (the SEED literal below is the authoritative committed reading).
@@ -4718,7 +4607,7 @@
     return '<span class="eco-mono" style="display:flex">' + m + '</span>';
   }
   // stable per-item anchor id, derived from the name the same way the static
-  // markup's ids are — the ecosystem hub above links to these, so a runtime
+  // markup's ids are: the ecosystem hub above links to these, so a runtime
   // re-render (draft or published file) must keep the ids the hub targets
   function itemId(it){
     return 'eco-' + String(it.name || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
@@ -5643,5 +5532,6 @@
 </script>
 <script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.185.0/build/three.module.js"}}</script>
 <script type="module" src="js/eco-backdrop.js"></script>
+<script type="module" src="js/btcfi-globe.js"></script>
 </body>
 </html>
