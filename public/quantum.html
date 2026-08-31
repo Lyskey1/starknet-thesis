@@ -129,16 +129,6 @@
     .qh-cta i { transition: none; }
   }
 
-  /* CHANDELIER: hairline drawing of a dilution refrigerator, the canonical
-     quantum-computer object. Lives in the hero's right zone only, aligned to
-     the same content grid the copy uses, so it never sits behind the
-     display, the CTAs or the countdown card. Static, no filter, no blur:
-     strokes and one radial gradient. Accent comes from --accent-rgb. */
-  .qh-scene { position: absolute; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
-  .qh-scene-in { height: 100%; position: relative; }
-  /* the drawing sits in the strip between the countdown card's right edge
-     and the content grid's right edge: about 340px at 1440, which the
-     300x620 viewBox fits at 56 percent of the hero height */
   /* COUNTDOWN, inline in the hero content column. No card: a hairline, a
      mono label and one row. Numbers sit at large-stat scale (34px against
      the display's 76px) so the hierarchy holds, and only the seconds digit
@@ -171,89 +161,6 @@
     .qh-cd-s { display: none; }
     .qh-cd-n { font-size: 30px; }
   }
-  /* RIGHT MARGIN ZONE, anchored to the VIEWPORT rather than the 1160
-     container, so the drawing sits in the page margin beside the copy.
-     Zone: 84% to 97% of viewport width, 28% to 74% of hero height. The
-     element is centred on the zone's midline (90.5%) with a translate, so
-     its own width never has to be known in CSS, and it fills the zone's
-     height with a margin top and bottom.
-     max-height caps growth on very wide viewports: the zone is a percentage
-     of the hero, and the hero grows with the viewport height, so without the
-     cap the drawing would keep scaling past its 1440 size. 409px is the 1440
-     rendered height plus 15%.
-     Below 1361px the zone shifts right of the 84% mark: the display's
-     rightmost ink reaches 88% of the viewport at 1280, so the specified left
-     edge would sit under the copy there.
-     In the 1361-1560 bracket the drawing sits BELOW the display, not beside
-     it (top 50%). Measured 2026-08-19 at 1440x900: the display's second line
-     ends at x1258 while the top plate's ink starts at x1203, a 54px overlap,
-     and clearing it rightward needs +94px against 37px of viewport margin.
-     No horizontal position fixes that bracket, and shrinking would demote
-     the page's only visual, so the drawing keeps its size and drops under
-     the third line instead. */
-  .qh-chandelier { position: absolute; left: 90.5%; transform: translateX(-50%);
-    top: 22.5%; height: 56%; max-height: 560px; width: auto; }
-  @media (max-width: 1760px) { .qh-chandelier { top: 26%; height: 50%; } }
-  @media (max-width: 1560px) { .qh-chandelier { top: 50%; height: 41.3%; } }
-  @media (max-width: 1360px) { .qh-chandelier { left: 94.2%; top: 32%; height: 27%; } }
-  @media (max-width: 1210px) {
-    /* no free right column below the 1208px wrap flip. Measured 2026-08-19,
-       scanning 1181-1361: at 1207px and below the display's second line
-       takes "Starknet" and runs to 95% of the viewport (-71px into the
-       drawing); at 1208px the wrap releases it and the worst gap jumps to
-       118px. At 1024 the third line ends at 96.7%, 34px of column. The old
-       981-1180 squeeze (height 24%) had already demoted the drawing to a
-       detail. So: same rule as the stacked layout below 981px, the drawing
-       goes rather than crowd the copy. 1210 = the flip plus a 3px guard,
-       since a wrap point can shift a pixel or two with font rasterization. */
-    .qh-scene { display: none; }
-  }
-  /* DEADLINE BAND: twin of .eco-marquee / .dg-marquee / .pv-marquee. Two
-     repeated sets up to 2750px viewports, three from there (an N-set track
-     covers viewports up to N-1 set widths; one set is 2756px at 1440, so
-     two sets cover every DPR-2 laptop and 2560px desktops, while 3440px
-     ultrawides and deep zoom-out get the third set back or the band would
-     run bare at the loop point). The loop period is one set width in both
-     regimes, so rate and seam are identical. Each glass chip is a
-     composited layer (backdrop-filter, never culled inside the animated
-     track while the band is on screen), so the third set costs 10 layers
-     wherever it exists: it now exists only where it covers something. */
-  .qh-marquee { border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); overflow: hidden; padding: 10px 0;
-    -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
-            mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent); }
-  .qh-mq-track { display: flex; width: max-content; }
-  .qh-mq-set { display: flex; gap: 14px; padding-right: 14px; }
-  .qh-mq-set > span { /* child combinator, band-family rule: nested spans must never pick up pill styles */ font-family: var(--mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; white-space: nowrap;
-    border: 1px solid rgba(var(--accent-rgb), .35); color: var(--stark-purple); padding: 9px 16px; border-radius: 99px; display: inline-flex; }
-  .qh-marquee.run .qh-mq-track { animation: qhmq 70s linear infinite; }
-  @keyframes qhmq { to { transform: translateX(-50%); } }
-  .qh-mq-set[data-dup] + .qh-mq-set[data-dup] { display: none; }
-  @media (min-width: 2750px) and (prefers-reduced-motion: no-preference) {
-    .qh-mq-set[data-dup] + .qh-mq-set[data-dup] { display: flex; }
-    .qh-marquee.run .qh-mq-track { animation-name: qhmq3; }
-  }
-  @keyframes qhmq3 { to { transform: translateX(-33.3333%); } }
-  .qh-marquee:hover .qh-mq-track { animation-play-state: paused; }
-  .qh-mq-set .chip-glass, .qh-cta.chip-glass { transition: background var(--hover-dur) var(--hover-ease), box-shadow var(--hover-dur) var(--hover-ease); }
-  @media (prefers-reduced-motion: reduce) {
-    .qh-mq-track { animation: none !important; flex-wrap: wrap; width: auto; gap: 12px 0; }
-    .qh-mq-set[data-dup] { display: none; }
-    .qh-mq-set { flex-wrap: wrap; gap: 12px; padding-right: 0; }
-    .qh-marquee { -webkit-mask-image: none; mask-image: none; }
-    .qh-mq-set .chip-glass { transition: none; }
-  }
-  @media (max-width: 980px) {
-    /* static wrapped rows, not hidden: these are the page's own claims */
-    .qh-mq-track { animation: none !important; flex-wrap: wrap; width: auto; }
-    .qh-mq-set[data-dup] { display: none; }
-    .qh-mq-set { flex-wrap: wrap; gap: 10px; padding: 0 24px; }
-    .qh-marquee { -webkit-mask-image: none; mask-image: none; padding: 16px 0; }
-  }
-  .qh-chandelier { --qh: rgb(var(--accent-rgb)); }
-  /* strokes stay hairlines at any scale: without this they would thicken
-     in proportion to the drawing and it would stop reading as a technical
-     drawing */
-  .qh-chandelier :is(ellipse, path, rect, circle) { vector-effect: non-scaling-stroke; }
   .qh-plates ellipse { fill: none; stroke: var(--qh); stroke-width: 1; opacity: .60; }
   .qh-rods path { fill: none; stroke: var(--qh); stroke-width: 1; opacity: .40; }
   .qh-cables path { fill: none; stroke: var(--qh); stroke-width: 1; opacity: .34; stroke-linecap: round; }
@@ -475,32 +382,13 @@
 <!-- HERO -->
 <div class="hero">
   <div class="hero-curtain" aria-hidden="true" data-gain="0.18"></div>
-  <!-- CHANDELIER: dilution refrigerator, hairline technical drawing. Seven
-       plates as thin ellipses narrowing downward, five rods converging
-       inward, cable bundles draping between plates (denser at the top), and
-       the mixing chamber with the chip at the bottom, the only element at
-       full brightness. Decorative: aria-hidden, pointer-events none. -->
-  <div class="qh-scene" aria-hidden="true">
-    <div class="qh-scene-in">
-      <svg class="qh-chandelier" viewBox="16 50 268 445" preserveAspectRatio="xMidYMid meet" focusable="false">
-        <defs>
-          <radialGradient id="qhGlow" cx="50%" cy="46%" r="52%">
-            <stop offset="0%" stop-color="rgb(var(--accent-rgb))" stop-opacity=".13"/>
-            <stop offset="100%" stop-color="rgb(var(--accent-rgb))" stop-opacity="0"/>
-          </radialGradient>
-        </defs>
-        <rect class="qh-glow" x="0" y="0" width="300" height="620" fill="url(#qhGlow)"/>
-        <g class="qh-rods"><path d="M28 58 L39 144 L49 216 L59 280 L68 336 L79 384 L89 424 L89 432"/><path d="M82 58 L89 144 L94 216 L100 280 L105 336 L110 384 L116 424 L116 432"/><path d="M150 58 L150 144 L150 216 L150 280 L150 336 L150 384 L150 424 L150 432"/><path d="M218 58 L211 144 L206 216 L200 280 L195 336 L190 384 L184 424 L184 432"/><path d="M272 58 L261 144 L251 216 L241 280 L232 336 L221 384 L211 424 L211 432"/></g>
-        <g class="qh-cables"><path d="M70 70 C62 96, 70 124, 78 138"/><path d="M102 70 C110 86, 115 134, 107 138"/><path d="M134 70 C126 96, 128 124, 136 138"/><path d="M166 70 C174 86, 172 134, 164 138"/><path d="M198 70 C190 96, 185 124, 193 138"/><path d="M230 70 C238 86, 230 134, 222 138"/><path d="M78 150 C70 176, 76 196, 84 210"/><path d="M107 150 C115 166, 119 206, 111 210"/><path d="M136 150 C128 176, 129 196, 137 210"/><path d="M164 150 C172 166, 171 206, 163 210"/><path d="M193 150 C185 176, 181 196, 189 210"/><path d="M222 150 C230 166, 224 206, 216 210"/><path d="M89 222 C81 248, 86 260, 94 274"/><path d="M119 222 C127 238, 130 270, 122 274"/><path d="M150 222 C142 248, 142 260, 150 274"/><path d="M181 222 C189 238, 186 270, 178 274"/><path d="M211 222 C203 248, 198 260, 206 274"/><path d="M94 286 C86 312, 92 316, 100 330"/><path d="M122 286 C130 302, 133 326, 125 330"/><path d="M150 286 C142 312, 142 316, 150 330"/><path d="M178 286 C186 302, 183 326, 175 330"/><path d="M206 286 C198 312, 192 316, 200 330"/><path d="M105 342 C97 368, 103 364, 111 378"/><path d="M135 342 C143 358, 145 374, 137 378"/><path d="M165 342 C157 368, 155 364, 163 378"/><path d="M195 342 C203 358, 197 374, 189 378"/><path d="M111 390 C103 416, 108 404, 116 418"/><path d="M137 390 C145 406, 147 414, 139 418"/><path d="M163 390 C155 416, 153 404, 161 418"/><path d="M189 390 C197 406, 192 414, 184 418"/></g>
-        <g class="qh-plates"><ellipse cx="150" cy="64" rx="130" ry="9.0"/><ellipse cx="150" cy="144" rx="118" ry="8.6"/><ellipse cx="150" cy="216" rx="107" ry="8.2"/><ellipse cx="150" cy="280" rx="97" ry="7.8"/><ellipse cx="150" cy="336" rx="87" ry="7.4"/><ellipse cx="150" cy="384" rx="76" ry="7.0"/><ellipse cx="150" cy="424" rx="65" ry="6.6"/></g>
-        <g class="qh-mix">
-          <path class="qh-stem" d="M150 430 L150 452"/>
-          <rect x="124" y="452" width="52" height="38" rx="2"/>
-          <circle cx="150" cy="471" r="2.6"/>
-        </g>
-      </svg>
-    </div>
-  </div>
+  <!-- SOLARIS: the hero visual is a WebGL particle sun (js/quantum-solaris.js),
+       mounted into this container and drawn BEHIND the copy. The container is
+       decorative and inert: aria-hidden, pointer-events none, z-index -1, which
+       is the same stacking the chandelier drawing used to hold. If WebGL is
+       missing or the reader prefers reduced motion, the module either skips or
+       paints one settled frame and the hero copy is unaffected either way. -->
+  <div class="qh-solaris" id="qhSolaris" aria-hidden="true"></div>
   <div class="qh-inner">
   <p class="hero-eyebrow">The quantum reckoning</p>
   <h1 id="quantum-will-break-most-chains-starknet" class="hero-title">Quantum will break most chains. Starknet has been <em>waiting for it.</em></h1>
@@ -1036,9 +924,9 @@
 @media(max-width:880px){.th-pm-card--wide{display:flex;flex-direction:column;}.th-pm-card--wide p{max-width:none;}}
 
 /* SECTION 02, THE THREAT: four beats, one open at a time.
-   The device is an accordion panel (.rxa-, further down this block): a
-   centred title bar, a left column of cards, and one preview stage on the
-   right that swaps to whichever card is open.
+   The device is a feature band (.rxa-, at the end of the last inline
+   style block on this page): a thin vertical rail of square selectors on
+   the left picks one beat, and that beat renders as a full width band.
    THE GATE IS GONE. It shipped 2026-08-19 and was removed 2026-08-22; see
    the engine comment beside the markup for what it was and why removing it
    cost no height. THE LEFT RAIL (.qi-row/.qi-index/.qi-glyph/.qi-lab) is
@@ -1511,125 +1399,6 @@ a.qg-card:focus-visible,.qg-linkcard:has(.th-eo-main:focus-visible){outline:2px 
 .th-pm-close p b{color:var(--th-q);font-weight:600;}
 @media(max-width:880px){.th-pm-compare,.th-pm-video{grid-template-columns:1fr;}.th-pm-stathero .big{font-size:60px;}.th-pm-close h2{font-size:34px;}}
 
-/* ============================================================
-   SECTION 02 THREAT, the accordion panel (rxa-)
-   One large rounded panel: a centred title bar across the top, then a
-   two column body. Left is a stack of accordion cards, exactly one open;
-   right is a single preview stage that swaps to the open card's beat.
-   The open card brightens its border, tints its ground, shows a sparkle
-   before the title and reveals a one line subtitle plus See more.
-   Ours, not Rox's palette: ground #0d0d0d, panel #141414, lines #262626,
-   ink #fafafa, dim rgba(250,250,250,.62), accent #c53400.
-   The stage keeps .qi-beat[data-beat] and the is-open class because
-   js/search.js and window.__qiOpen still depend on that contract.
-   ============================================================ */
-.rxa{--rxa-line:#262626;--rxa-dim:rgba(250, 250, 250,.62);margin-top:34px;}
-.rxa-panel{position:relative;border:1px solid var(--rxa-line);border-radius:26px;
-  background:linear-gradient(180deg,#141414,rgba(20,20,20,.55));
-  padding:0 0 28px;}
-/* the corner marks: a hairline plus, drawn with two gradients so no glyph
-   font is involved and nothing can be selected or read out */
-.rxa-mk{position:absolute;width:9px;height:9px;pointer-events:none;
-  background:linear-gradient(rgba(250, 250, 250,.3),rgba(250, 250, 250,.3)) center/1px 100% no-repeat,
-             linear-gradient(rgba(250, 250, 250,.3),rgba(250, 250, 250,.3)) center/100% 1px no-repeat;}
-.rxa-mk.tl{left:-5px;top:-5px;}
-.rxa-mk.tr{right:-5px;top:-5px;}
-.rxa-mk.bl{left:-5px;bottom:-5px;}
-.rxa-mk.br{right:-5px;bottom:-5px;}
-
-.rxa-bar{display:flex;align-items:center;justify-content:center;gap:14px;
-  padding:22px 28px 20px;border-bottom:1px solid var(--rxa-line);}
-.rxa-bar-t{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.3em;
-  text-transform:uppercase;color:var(--rxa-dim);}
-.rxa-dia{width:6px;height:6px;flex:none;transform:rotate(45deg);
-  border:1px solid color-mix(in srgb,var(--th-q) 60%,transparent);
-  background:color-mix(in srgb,var(--th-q) 22%,transparent);}
-
-.rxa-body{display:grid;grid-template-columns:minmax(0,336px) minmax(0,1fr);
-  gap:26px;align-items:start;padding:26px 26px 0;}
-
-.rxa-list{display:flex;flex-direction:column;gap:12px;min-width:0;}
-.rxa-card{border:1px solid var(--rxa-line);border-radius:16px;
-  background:rgba(255,255,255,.012);overflow:hidden;
-  transition:border-color .28s ease,background .28s ease;}
-.rxa-card.is-open{border-color:color-mix(in srgb,var(--th-q) 46%,transparent);
-  background:color-mix(in srgb,var(--th-q) 7%,transparent);}
-.rxa-hwrap{margin:0;font:inherit;font-weight:inherit;}
-.rxa-head{display:flex;align-items:center;gap:10px;width:100%;padding:16px 16px;
-  background:none;border:0;text-align:left;cursor:pointer;color:var(--rxa-dim);
-  transition:color .25s ease;}
-.rxa-head:hover{color:color-mix(in srgb,var(--th-q) 72%,#fafafa);}
-.rxa-card.is-open .rxa-head{color:#fafafa;}
-.rxa-head:focus-visible{outline:2px solid var(--th-q);outline-offset:-2px;border-radius:15px;}
-.rxa-spark{display:none;width:13px;height:13px;flex:none;color:var(--th-q);}
-.rxa-card.is-open .rxa-spark{display:block;}
-.rxa-t{flex:1 1 auto;min-width:0;font-family:'IBM Plex Mono',monospace;font-size:11.5px;
-  letter-spacing:.13em;line-height:1.5;text-transform:uppercase;}
-.rxa-t b{font-weight:600;margin-right:9px;opacity:.62;}
-.rxa-chev{width:15px;height:15px;flex:none;opacity:.55;
-  transition:transform .3s cubic-bezier(.22,.61,.36,1),opacity .25s ease;}
-.rxa-card.is-open .rxa-chev{transform:rotate(180deg);opacity:1;color:var(--th-q);}
-
-/* the reveal under an open card's title: 0fr to 1fr so the card grows
-   into its subtitle instead of the subtitle popping in at full height */
-.rxa-rev{display:grid;grid-template-rows:0fr;
-  transition:grid-template-rows .34s cubic-bezier(.22,.61,.36,1);}
-.rxa-card.is-open .rxa-rev{grid-template-rows:1fr;}
-.rxa-revin{overflow:hidden;padding:0 16px 0 39px;}
-.rxa-sub{font-size:13px;line-height:1.6;color:var(--rxa-dim);}
-.rxa-more{display:inline-block;margin:11px 0 16px;font-family:'IBM Plex Mono',monospace;
-  font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--th-q);
-  text-decoration:none;padding-bottom:2px;
-  border-bottom:1px solid color-mix(in srgb,var(--th-q) 45%,transparent);
-  transition:border-color .2s ease,color .2s ease;}
-.rxa-more:hover{color:#fafafa;border-bottom-color:#fafafa;}
-.rxa-more:focus-visible{outline:2px solid var(--th-q);outline-offset:3px;}
-
-/* one preview at a time. overflow-anchor stays off: thMorph pins an
-   explicit height while it swaps, and scroll anchoring fights it. */
-.rxa-stage{position:relative;min-width:0;overflow-anchor:none;
-  border:1px solid var(--rxa-line);border-radius:20px;background:rgba(13, 13, 13,.6);
-  padding:24px 24px 26px;}
-.rxa-stage .qi-beat{display:none;}
-.rxa-stage .qi-beat.is-open{display:block;animation:rxaSettle .42s cubic-bezier(.22,.61,.36,1) both;}
-.rxa-stage .qi-beat > :first-child{margin-top:0;}
-.rxa-stage .th-q-chapter{margin-top:0;}
-@keyframes rxaSettle{from{opacity:0;transform:translateY(9px);}to{opacity:1;transform:none;}}
-
-/* the stage is narrower than the old full-bleed beat column, so the two
-   maze cards tighten rather than overflow. Descendant selector on purpose:
-   the .th-maze- block lives in a later <style>, so a bare override loses
-   on order and only specificity can win. */
-.rxa-stage .th-maze-grid{gap:14px;}
-.rxa-stage .th-maze-panel{padding:14px 14px 16px;}
-.rxa-stage .th-maze-sub{min-height:0;}
-.rxa-stage .th-maze-ctrl{flex-wrap:wrap;}
-.rxa-stage .th-maze-stats{flex-wrap:wrap;}
-
-@media(max-width:1120px){
-  .rxa-body{grid-template-columns:minmax(0,290px) minmax(0,1fr);gap:20px;padding:22px 20px 0;}
-  .rxa-stage{padding:20px 18px 22px;}
-}
-@media(max-width:920px){
-  /* the two columns stack: the card list reads as a contents list, the
-     stage sits under it and See more is the jump between them */
-  .rxa-body{grid-template-columns:minmax(0,1fr);gap:20px;}
-}
-@media(max-width:700px){
-  .rxa-panel{border-radius:18px;padding-bottom:18px;}
-  .rxa-bar{padding:16px 14px 14px;gap:10px;}
-  .rxa-bar-t{font-size:10px;letter-spacing:.24em;}
-  .rxa-body{padding:18px 12px 0;gap:16px;}
-  .rxa-head{padding:14px 12px;gap:9px;}
-  .rxa-t{font-size:11px;letter-spacing:.1em;}
-  .rxa-revin{padding:0 12px 0 34px;}
-  .rxa-stage{padding:14px 12px 16px;border-radius:14px;}
-  .rxa-stage .th-maze-panel{padding:12px 12px 14px;}
-}
-@media (prefers-reduced-motion: reduce){
-  .rxa-card,.rxa-head,.rxa-chev,.rxa-rev,.rxa-more{transition:none;}
-  .rxa-stage .qi-beat.is-open{animation:none;}
-}
 
 </style>
 
@@ -1896,45 +1665,27 @@ if (window.thStickyRail) {
   <p class="th-pm-eyebrow th-pm-reveal">The threat</p>
 
   <div class="rxa" id="threat-index-grid" role="group" aria-label="The threat, four beats">
-    <div class="rxa-panel">
-      <span class="rxa-mk tl" aria-hidden="true"></span><span class="rxa-mk tr" aria-hidden="true"></span><span class="rxa-mk bl" aria-hidden="true"></span><span class="rxa-mk br" aria-hidden="true"></span>
+    <!-- the rail: four thin square selectors, exactly one beat rendered.
+         These buttons are still .rxa-head and still carry id/data-beat/
+         data-target/aria-expanded/aria-controls, so the engine below and
+         every deep link keep working untouched. The title text stays in
+         the button, clipped rather than removed, so the accessible name
+         is still the beat's name. -->
+    <div class="rxa-rail">
+      <div class="rxa-card is-open" data-beat="0"><h3 class="rxa-hwrap"><button type="button" class="rxa-head" id="rxa-h-0" data-beat="0" data-target="one-key-two-machines" aria-expanded="true" aria-controls="qi-beat-0"><span class="rxa-n" aria-hidden="true">01</span><span class="qi-sr">HOW THE KEY BREAKS</span></button></h3></div>
+      <div class="rxa-card" data-beat="1"><h3 class="rxa-hwrap"><button type="button" class="rxa-head" id="rxa-h-1" data-beat="1" data-target="safe-every-single-day-right-up" aria-expanded="false" aria-controls="qi-beat-1"><span class="rxa-n" aria-hidden="true">02</span><span class="qi-sr">WHY SAFE DAYS PROVE NOTHING</span></button></h3></div>
+      <div class="rxa-card" data-beat="2"><h3 class="rxa-hwrap"><button type="button" class="rxa-head" id="rxa-h-2" data-beat="2" data-target="the-cost-of-the-attack-is" aria-expanded="false" aria-controls="qi-beat-2"><span class="rxa-n" aria-hidden="true">03</span><span class="qi-sr">THE COST IS COLLAPSING</span></button></h3></div>
+      <div class="rxa-card" data-beat="3"><h3 class="rxa-hwrap"><button type="button" class="rxa-head" id="rxa-h-3" data-beat="3" data-target="what-breaks-what-holds" aria-expanded="false" aria-controls="qi-beat-3"><span class="rxa-n" aria-hidden="true">04</span><span class="qi-sr">WHAT BREAKS, WHAT HOLDS</span></button></h3></div>
+    </div>
 
-      <div class="rxa-bar"><span class="rxa-dia" aria-hidden="true"></span><span class="rxa-bar-t">Four beats</span><span class="rxa-dia" aria-hidden="true"></span></div>
-
-      <div class="rxa-body">
-        <div class="rxa-list">
-        <div class="rxa-card is-open" data-beat="0">
-          <h3 class="rxa-hwrap"><button type="button" class="rxa-head" id="rxa-h-0" data-beat="0" data-target="one-key-two-machines" aria-expanded="true" aria-controls="qi-beat-0"><svg class="rxa-spark" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0.6c.5 3.6 3.8 6.9 7.4 7.4-3.6.5-6.9 3.8-7.4 7.4C7.5 11.8 4.2 8.5.6 8 4.2 7.5 7.5 4.2 8 .6Z"/></svg><span class="rxa-t"><b>01</b>HOW THE KEY BREAKS</span><svg class="rxa-chev" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6.2 8 10.2l4-4"/></svg></button></h3>
-          <div class="rxa-rev"><div class="rxa-revin">
-            <p class="rxa-sub">Every wallet in crypto is protected by the same lock: elliptic-curve cryptography.</p>
-            <a class="rxa-more" href="#one-key-two-machines">See more</a>
-          </div></div>
-        </div>
-        <div class="rxa-card" data-beat="1">
-          <h3 class="rxa-hwrap"><button type="button" class="rxa-head" id="rxa-h-1" data-beat="1" data-target="safe-every-single-day-right-up" aria-expanded="false" aria-controls="qi-beat-1"><svg class="rxa-spark" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0.6c.5 3.6 3.8 6.9 7.4 7.4-3.6.5-6.9 3.8-7.4 7.4C7.5 11.8 4.2 8.5.6 8 4.2 7.5 7.5 4.2 8 .6Z"/></svg><span class="rxa-t"><b>02</b>WHY SAFE DAYS PROVE NOTHING</span><svg class="rxa-chev" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6.2 8 10.2l4-4"/></svg></button></h3>
-          <div class="rxa-rev"><div class="rxa-revin">
-            <p class="rxa-sub">A lengthening track record of safety that proves nothing about the day the machine arrives.</p>
-            <a class="rxa-more" href="#safe-every-single-day-right-up">See more</a>
-          </div></div>
-        </div>
-        <div class="rxa-card" data-beat="2">
-          <h3 class="rxa-hwrap"><button type="button" class="rxa-head" id="rxa-h-2" data-beat="2" data-target="the-cost-of-the-attack-is" aria-expanded="false" aria-controls="qi-beat-2"><svg class="rxa-spark" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0.6c.5 3.6 3.8 6.9 7.4 7.4-3.6.5-6.9 3.8-7.4 7.4C7.5 11.8 4.2 8.5.6 8 4.2 7.5 7.5 4.2 8 .6Z"/></svg><span class="rxa-t"><b>03</b>THE COST IS COLLAPSING</span><svg class="rxa-chev" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6.2 8 10.2l4-4"/></svg></button></h3>
-          <div class="rxa-rev"><div class="rxa-revin">
-            <p class="rxa-sub">The estimated cost of a quantum attack on crypto's cryptography has collapsed roughly 10,000x since 2012.</p>
-            <a class="rxa-more" href="#the-cost-of-the-attack-is">See more</a>
-          </div></div>
-        </div>
-        <div class="rxa-card" data-beat="3">
-          <h3 class="rxa-hwrap"><button type="button" class="rxa-head" id="rxa-h-3" data-beat="3" data-target="what-breaks-what-holds" aria-expanded="false" aria-controls="qi-beat-3"><svg class="rxa-spark" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0.6c.5 3.6 3.8 6.9 7.4 7.4-3.6.5-6.9 3.8-7.4 7.4C7.5 11.8 4.2 8.5.6 8 4.2 7.5 7.5 4.2 8 .6Z"/></svg><span class="rxa-t"><b>04</b>WHAT BREAKS, WHAT HOLDS</span><svg class="rxa-chev" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6.2 8 10.2l4-4"/></svg></button></h3>
-          <div class="rxa-rev"><div class="rxa-revin">
-            <p class="rxa-sub">The paper draws a sharp line between what a quantum computer breaks and what it cannot touch.</p>
-            <a class="rxa-more" href="#what-breaks-what-holds">See more</a>
-          </div></div>
-        </div>
-        </div>
-
-        <div class="rxa-stage">
+    <div class="rxa-stage">
 <div class="qi-beat is-open" data-beat="0" id="qi-beat-0" role="region" aria-labelledby="rxa-h-0">
+  <div class="rxa-top"><h3 class="rxa-band"><b>01</b><span>HOW THE KEY BREAKS</span></h3><a class="rxa-more" href="#one-key-two-machines">See more</a></div>
+  <div class="rxa-rule" aria-hidden="true"></div>
+  <p class="rxa-sub">Every wallet in crypto is protected by the same lock: elliptic-curve cryptography.</p>
+
+  <div class="rxa-feat">
+
   <!-- chapter 1: the race -->
   <div class="th-q-chapter th-pm-reveal">
     <h3 id="one-key-two-machines" class="scale-title">One key. <span>Two machines.</span></h3>
@@ -1963,12 +1714,20 @@ if (window.thStickyRail) {
   </div>
 
   <p class="th-q-flow th-pm-reveal">So what happens the day a quantum computer finally reaches the exit? It holds your private key, and <b class="acc">your funds are already gone</b>. That is the exact risk sitting under most blockchains today.</p>
-
-  <div class="qi-adv"><button type="button" class="qi-next" data-adv aria-label="Next: beat 02, Why safe days prove nothing">NEXT &middot; 02 WHY SAFE DAYS PROVE NOTHING</button></div>
-
   </div>
 
-  <div class="qi-beat" data-beat="1" id="qi-beat-1" role="region" aria-labelledby="rxa-h-1">
+  <ul class="rxa-keys"><li>Elliptic-curve cryptography</li><li>Shor's algorithm</li><li>Your private key</li><li>Two machines</li></ul>
+
+  <div class="qi-adv"><button type="button" class="qi-next" data-adv aria-label="Next: beat 02, Why safe days prove nothing">NEXT &middot; 02 WHY SAFE DAYS PROVE NOTHING</button></div>
+</div>
+
+<div class="qi-beat" data-beat="1" id="qi-beat-1" role="region" aria-labelledby="rxa-h-1">
+  <div class="rxa-top"><h3 class="rxa-band"><b>02</b><span>WHY SAFE DAYS PROVE NOTHING</span></h3><a class="rxa-more" href="#safe-every-single-day-right-up">See more</a></div>
+  <div class="rxa-rule" aria-hidden="true"></div>
+  <p class="rxa-sub">A lengthening track record of safety that proves nothing about the day the machine arrives.</p>
+
+  <div class="rxa-feat">
+
   <!-- chapter 2: the blind spot -->
   <div class="th-q-chapter th-pm-reveal">
     <h3 id="safe-every-single-day-right-up" class="scale-title">Safe every single day, <span>right up until one day in 2029.</span></h3>
@@ -1988,12 +1747,20 @@ if (window.thStickyRail) {
   </div>
 
   <p class="th-q-flow th-pm-reveal">Unlike the turkey, <b class="acc">we can see the knife</b>. And it is moving faster every year: the cost and the hardware needed to break these keys have been collapsing for over a decade, and every new paper brings the drop closer.</p>
-
-  <div class="qi-adv"><button type="button" class="qi-next" data-adv aria-label="Next: beat 03, The cost is collapsing">NEXT &middot; 03 THE COST IS COLLAPSING</button></div>
-
   </div>
 
-  <div class="qi-beat" data-beat="2" id="qi-beat-2" role="region" aria-labelledby="rxa-h-2">
+  <ul class="rxa-keys"><li>The turkey</li><li>Track record of safety</li><li>One day in 2029</li><li>We can see the knife</li></ul>
+
+  <div class="qi-adv"><button type="button" class="qi-next" data-adv aria-label="Next: beat 03, The cost is collapsing">NEXT &middot; 03 THE COST IS COLLAPSING</button></div>
+</div>
+
+<div class="qi-beat" data-beat="2" id="qi-beat-2" role="region" aria-labelledby="rxa-h-2">
+  <div class="rxa-top"><h3 class="rxa-band"><b>03</b><span>THE COST IS COLLAPSING</span></h3><a class="rxa-more" href="#the-cost-of-the-attack-is">See more</a></div>
+  <div class="rxa-rule" aria-hidden="true"></div>
+  <p class="rxa-sub">The estimated cost of a quantum attack on crypto's cryptography has collapsed roughly 10,000x since 2012.</p>
+
+  <div class="rxa-feat">
+
   <!-- chapter 3: the evidence -->
   <div class="th-q-chapter th-pm-reveal">
     <h3 id="the-cost-of-the-attack-is" class="scale-title">The cost of the attack <span>is collapsing.</span></h3>
@@ -2020,12 +1787,20 @@ if (window.thStickyRail) {
       <p class="chart-note">ECC keys are ~10x smaller than RSA keys, so a smaller machine breaks them first. Simply put: crypto is at the front line of the risk.</p>
     </div>
   </div>
-
-  <div class="qi-adv"><button type="button" class="qi-next" data-adv aria-label="Next: beat 04, What breaks, what holds">NEXT &middot; 04 WHAT BREAKS, WHAT HOLDS</button></div>
-
   </div>
 
-  <div class="qi-beat" data-beat="3" id="qi-beat-3" role="region" aria-labelledby="rxa-h-3">
+  <ul class="rxa-keys"><li>10,000x since 2012</li><li>Physical qubits</li><li>RSA-2048</li><li>ECDLP-256</li></ul>
+
+  <div class="qi-adv"><button type="button" class="qi-next" data-adv aria-label="Next: beat 04, What breaks, what holds">NEXT &middot; 04 WHAT BREAKS, WHAT HOLDS</button></div>
+</div>
+
+<div class="qi-beat" data-beat="3" id="qi-beat-3" role="region" aria-labelledby="rxa-h-3">
+  <div class="rxa-top"><h3 class="rxa-band"><b>04</b><span>WHAT BREAKS, WHAT HOLDS</span></h3><a class="rxa-more" href="#what-breaks-what-holds">See more</a></div>
+  <div class="rxa-rule" aria-hidden="true"></div>
+  <p class="rxa-sub">The paper draws a sharp line between what a quantum computer breaks and what it cannot touch.</p>
+
+  <div class="rxa-feat">
+
   <!-- chapter 4: what breaks, what holds -->
   <div class="th-q-chapter th-pm-reveal">
     <h3 id="what-breaks-what-holds" class="scale-title">What breaks. <span>What holds.</span></h3>
@@ -2062,8 +1837,10 @@ if (window.thStickyRail) {
       <p class="note th-claim" data-perishable="third-party" data-src="https://arxiv.org/abs/2603.28846" data-checked="2026-08-22" data-says="Only protocols utilizing zkSTARKs (green) employ hash-based proofs that are currently believed to be resistant to quantum attacks. | Indeed, some zk-rollups, such as Starknet, use hash-based protocols which are believed to be resistant to quantum cryptanalysis." data-noun-ok="Google March">In <a href="https://arxiv.org/abs/2603.28846" target="_blank" rel="noopener noreferrer">the paper's March 2026 risk chart</a>, zk-STARK is the only proving category not flagged as quantum-vulnerable by Google, and Starknet's proving system is named explicitly as resistant. The authors call the chart a point-in-time assessment.</p></div>
   </div>
   </div>
-        </div>
-      </div>
+
+  <ul class="rxa-keys"><li>1,200 logical qubits</li><li>6.9M BTC</li><li>20.5M ETH</li><li>$200B in stablecoins</li><li>zk-STARK proofs</li></ul>
+</div>
+
     </div>
     <p class="qi-sr" aria-live="polite" id="qiAnnounce"></p>
   </div>
@@ -2101,11 +1878,14 @@ if (window.thStickyRail) {
 // width (the columns stack below 920px rather than every beat
 // unfolding), so NEXT is no longer hidden on narrow.
 //
-// THE DEVICE IS AN ACCORDION PANEL (.rxa-), not the old left rail.
-// The rail's rows are gone; a card carries the title, a chevron,
-// and, once open, a sparkle, a one line subtitle and See more. The
-// preview stage on the right holds all four .qi-beat blocks and
-// shows one. .qi-beat[data-beat] and window.__qiOpen survive the
+// THE DEVICE IS A MAGAZINE FEATURE BAND (.rxa-). Rebuilt from the
+// accordion panel 2026-09-01. Four square selectors sit in a thin
+// rail down the left edge; each .rxa-card there is just the frame
+// around one .rxa-head button, and the engine's index pairing is
+// unchanged because both lists are still in beat order. Each
+// .qi-beat is now the whole band: the title row with its pill link,
+// the rule, the summary, the feature panel and the key point chips.
+// The stage holds all four and shows one. .qi-beat[data-beat] and window.__qiOpen survive the
 // rebuild untouched because js/search.js reaches for exactly those
 // to surface a hit that lives inside a closed beat.
 //
@@ -3049,6 +2829,153 @@ body.page-quantum{overflow-x:clip;}
 @media (max-width:480px){
   .th-pm-stathero .big{font-size:clamp(40px,13vw,60px);}
   .th-yr-stat{font-size:clamp(30px,9vw,44px);}
+}
+
+/* SOLARIS: the hero's particle sun, behind the hero copy.
+   Same stacking the chandelier drawing held (absolute, inset 0, z-index -1,
+   clipped), and inert to the pointer so the CTAs and the countdown stay
+   interactive. The module listens for pointermove on the window and converts
+   to container-relative NDC itself, so it needs no hit area of its own. */
+.qh-solaris { position: absolute; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
+.qh-solaris canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+
+/* COPY SCRIM. The sun is bloomed hard (threshold 0, strength 2.33), so its
+   rim sweeps a bright arc straight through the reading column. This paints a
+   left-weighted darkening behind the copy and nothing else: it is a child of
+   .qh-inner, which already owns a stacking context (position relative,
+   z-index 1), so at z-index -1 it lands ABOVE .qh-solaris and BELOW the
+   eyebrow, display, lede, CTAs and countdown.
+   It stays translucent and hero-scoped by design. js/eco-backdrop.js is a
+   fixed canvas underneath the whole page and must never be covered by an
+   opaque layer, so the darkest stop is 0.72 and the whole thing fades out
+   before the sun's right side, which keeps the drama where there is no text. */
+/* COPY SCRIM. It hangs off .hero rather than .qh-inner so its box is the
+   FULL hero, viewport wide: the earlier version was a gradient inside the
+   1160 content box and its own box edges showed as hard vertical and
+   horizontal seams. As a generated last child at z-index auto it paints
+   ABOVE .qh-solaris and .hero-curtain (both z-index -1) and BELOW .qh-inner
+   (z-index 1), so every piece of hero copy stays on top of it.
+   It stays translucent on purpose: js/eco-backdrop.js is a fixed canvas
+   under the whole page and nothing opaque may sit over it. */
+.hero::after {
+  content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background: radial-gradient(52% 64% at 30% 58%,
+    rgba(13,13,13,.82) 0%,
+    rgba(13,13,13,.66) 46%,
+    rgba(13,13,13,.22) 78%,
+    rgba(13,13,13,0) 100%);
+}
+@media (max-width: 900px) {
+  /* the column runs the full width here, so the ellipse is recentred rather
+     than widened, which would black the whole hero out */
+  .hero::after { background: radial-gradient(78% 52% at 46% 44%,
+    rgba(13,13,13,.82) 0%,
+    rgba(13,13,13,.66) 46%,
+    rgba(13,13,13,.20) 78%,
+    rgba(13,13,13,0) 100%); }
+}
+
+
+/* ============================================================
+   SECTION 02 THREAT, the feature band (rxa-)
+   Rebuilt 2026-09-01 from the accordion panel into a magazine
+   feature: a thin vertical rail of square selectors down the left
+   edge picks one beat, and that beat renders as a full width band.
+   The band is a title row (beat title at display size on the left,
+   a small pill link on the right), a hairline rule, a one line
+   summary, one large panel carrying the beat's visual, then a row
+   of mono chips holding the beat's key points.
+   Ours, not the reference palette: ground #0d0d0d, panel #141414,
+   lines #262626, ink #fafafa, dim rgba(250,250,250,.62),
+   accent #c53400, mono IBM Plex Mono, display General Sans.
+   THE CONTRACT IS UNCHANGED. .qi-beat[data-beat] plus is-open and
+   window.__qiOpen survive, because js/search.js reaches for exactly
+   those to surface a hit inside a closed beat. The rail buttons are
+   still .rxa-head and still carry aria-expanded plus data-target, so
+   the engine's index pairing, keyboard operation and hash stamping
+   are the same as before the rebuild.
+   This block is deliberately last in the last inline style block:
+   the .th-maze- rules live in a later block than the old one did,
+   so overrides of them have to sit here and be descendant selectors.
+   ============================================================ */
+.rxa{--rxa-line:#262626;--rxa-dim:rgba(250, 250, 250,.62);
+  margin-top:38px;display:grid;grid-template-columns:44px minmax(0,1fr);
+  gap:28px;align-items:start;}
+
+/* the rail: square selectors, sticky so the reader can switch beats
+   from anywhere inside a tall band */
+.rxa-rail{display:flex;flex-direction:column;gap:10px;position:sticky;top:104px;}
+.rxa-hwrap{margin:0;font:inherit;font-weight:inherit;}
+.rxa-head{display:flex;align-items:center;justify-content:center;
+  width:44px;height:44px;padding:0;border-radius:11px;cursor:pointer;
+  border:1px solid var(--rxa-line);background:rgba(255,255,255,.012);
+  color:var(--rxa-dim);
+  transition:color .25s ease,border-color .25s ease,background .25s ease;}
+.rxa-n{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.06em;}
+.rxa-head:hover{color:#fafafa;border-color:color-mix(in srgb,var(--th-q) 48%,transparent);}
+.rxa-card.is-open .rxa-head{color:#fafafa;border-color:var(--th-q);
+  background:color-mix(in srgb,var(--th-q) 15%,transparent);}
+.rxa-head:focus-visible{outline:2px solid var(--th-q);outline-offset:3px;}
+
+/* one band at a time. overflow-anchor stays off: thMorph pins an
+   explicit height while it swaps, and scroll anchoring fights it. */
+.rxa-stage{position:relative;min-width:0;overflow-anchor:none;}
+.rxa-stage .qi-beat{display:none;}
+.rxa-stage .qi-beat.is-open{display:block;animation:rxaSettle .42s cubic-bezier(.22,.61,.36,1) both;}
+@keyframes rxaSettle{from{opacity:0;transform:translateY(9px);}to{opacity:1;transform:none;}}
+
+.rxa-top{display:flex;align-items:flex-end;justify-content:space-between;gap:26px;}
+.rxa-band{display:flex;align-items:baseline;gap:16px;min-width:0;
+  font-family:'General Sans',sans-serif;font-weight:800;
+  font-size:clamp(27px,4.2vw,50px);line-height:1.02;letter-spacing:-.02em;
+  color:#fafafa;}
+.rxa-band b{flex:none;font-family:'IBM Plex Mono',monospace;font-weight:500;
+  font-size:12px;letter-spacing:.2em;color:var(--th-q);}
+.rxa-band span{min-width:0;text-wrap:balance;}
+.rxa-more{flex:none;font-family:'IBM Plex Mono',monospace;font-size:10.5px;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--th-q);text-decoration:none;
+  border:1px solid color-mix(in srgb,var(--th-q) 40%,transparent);border-radius:999px;
+  padding:9px 16px;background:color-mix(in srgb,var(--th-q) 8%,transparent);
+  white-space:nowrap;transition:color .2s ease,border-color .2s ease,background .2s ease;}
+.rxa-more:hover{color:#fafafa;border-color:#fafafa;background:transparent;}
+.rxa-more:focus-visible{outline:2px solid var(--th-q);outline-offset:3px;}
+.rxa-rule{height:1px;background:var(--rxa-line);margin-top:18px;}
+.rxa-sub{margin-top:16px;font-size:15px;line-height:1.6;color:var(--rxa-dim);max-width:76ch;}
+
+/* the feature panel: the widest thing in the section, so the maze,
+   the turkey chart and the qubit bars all get room to breathe */
+.rxa-feat{margin-top:24px;border:1px solid var(--rxa-line);border-radius:22px;
+  background:linear-gradient(180deg,#141414,rgba(20,20,20,.55));
+  padding:30px 30px 34px;}
+.rxa-feat > :first-child{margin-top:0;}
+.rxa-feat .th-q-chapter{margin-top:0;}
+.rxa-feat .th-maze-sub{min-height:0;}
+.rxa-feat .th-maze-ctrl{flex-wrap:wrap;}
+.rxa-feat .th-maze-stats{flex-wrap:wrap;}
+
+.rxa-keys{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px;padding:0;list-style:none;}
+.rxa-keys li{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--rxa-dim);background:rgba(255,255,255,.012);
+  border:1px solid var(--rxa-line);border-radius:6px;padding:8px 12px;}
+
+.rxa-stage .qi-adv{margin-top:30px;}
+
+@media(max-width:900px){
+  /* the rail lies down above the band rather than pinching it */
+  .rxa{grid-template-columns:minmax(0,1fr);gap:20px;}
+  .rxa-rail{position:static;flex-direction:row;flex-wrap:wrap;}
+  .rxa-feat{padding:22px 18px 26px;border-radius:18px;}
+}
+@media(max-width:620px){
+  .rxa-top{flex-direction:column;align-items:flex-start;gap:16px;}
+  .rxa-band{gap:12px;}
+  .rxa-sub{font-size:14px;}
+  .rxa-feat{padding:16px 13px 20px;border-radius:14px;}
+  .rxa-keys li{font-size:9.5px;letter-spacing:.1em;padding:7px 10px;}
+}
+@media (prefers-reduced-motion: reduce){
+  .rxa-head,.rxa-more{transition:none;}
+  .rxa-stage .qi-beat.is-open{animation:none;}
 }
 </style>
 
@@ -4563,6 +4490,7 @@ var VIDEOS = [
 </script>
 <script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.185.0/build/three.module.js"}}</script>
 <script type="module" src="js/eco-backdrop.js"></script>
+<script type="module" src="js/quantum-solaris.js"></script>
 <script src="js/quantum-vgrid.js" defer></script>
 </body>
 </html>

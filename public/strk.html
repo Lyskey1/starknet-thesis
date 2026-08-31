@@ -1259,6 +1259,89 @@ footer.site-footer .foot-bottom a:hover{color:var(--accent)}
   .ft-layer > footer.vc-footer::before{border-radius:0;box-shadow:none}
 }
 
+
+/* ============================================================
+   Appended last so it wins the cascade inside this <style>.
+   Two restyles: the About statement (sx-) and the "Where to get
+   STRK" band (buy-). Nothing here is opaque, so the fixed
+   eco-backdrop canvas at z-index 0 still reads through.
+   ============================================================ */
+
+/* --- 01 About STRK, on the treatment the privacy page gives Satoshi's line:
+   a small mono chip on a tinted ground, then one very large left-aligned
+   statement running the width of the wrap. The opening clause is full chalk
+   and the rest a dimmer grey, all inside a single flowing block rather than a
+   heading plus a subtitle. The two inline icons stay, as small square accent
+   tiles instead of round chips. Prefix sx- so the privacy page's sq- rules and
+   these can never collide. --- */
+.sx-kicker{display:inline-block;margin:0 0 26px;padding:6px 10px;background:rgba(250,250,250,.08);
+  font-family:var(--mono),monospace;font-size:12px;letter-spacing:.02em;line-height:1.2;
+  text-transform:none;color:rgba(250,250,250,.85)}
+.sx-quote{margin:0;max-width:none;text-align:left;
+  font-family:var(--display),'Helvetica Neue',Arial,sans-serif;font-weight:600;
+  font-size:clamp(34px,6.4vw,92px);line-height:1.03;letter-spacing:-.04em;color:var(--white)}
+.sx-dim{color:rgba(250,250,250,.62)}
+.sx-ic{display:inline-grid;place-items:center;width:.78em;height:.78em;
+  margin:0 .1em 0 .04em;vertical-align:-.04em;border-radius:3px;
+  background:var(--acc);color:#fff}
+.sx-ic svg{width:.42em;height:.42em}
+.ab-block .fly{margin-top:76px}
+@media(max-width:880px){
+  .sx-kicker{margin-bottom:18px}
+  .sx-quote{font-size:clamp(29px,8.4vw,46px);line-height:1.06;letter-spacing:-.03em}
+  .ab-block .fly{margin-top:40px}
+}
+
+/* --- 05 Where to get STRK: the four categories stop being floating cards and
+   become one four-column band split by hairlines, the same idiom the utilities
+   band uses above. Each column is headed by its icon, then its name and count,
+   with the venue rows beneath. Markup, hrefs, logos, labels and the
+   expand/collapse script are untouched: this is CSS only. --- */
+.buy-acc{display:grid;grid-template-columns:repeat(4,1fr);gap:0;grid-gap:0;align-items:stretch}
+.buy-cat{border:0;border-left:1px solid var(--line);border-radius:0;background:transparent;overflow:hidden}
+.buy-cat:first-child{border-left:0}
+
+.buy-head{position:relative;display:block;width:100%;padding:4px 40px 18px 22px;text-align:left}
+.buy-head:hover{background:transparent}
+.buy-head:hover .bh-title{color:var(--acc-2)}
+.buy-head .bh-l{display:grid;grid-template-columns:auto 1fr;align-items:baseline;column-gap:10px;row-gap:14px}
+.buy-head .bh-mark,.buy-head .bh-l>i{grid-column:1 / -1;justify-self:start}
+.buy-head .bh-count{justify-self:start}
+.buy-head .bh-mark{width:22px;height:22px;color:var(--acc-2)}
+.buy-head .bh-l>i{font-size:22px;line-height:1;color:var(--acc-2)}
+.buy-head .bh-title{font-size:clamp(16px,1.25vw,18px);line-height:1.14;transition:color .2s}
+.buy-head .bh-count{border:0;border-radius:0;padding:0;font-size:11px;letter-spacing:.14em;color:var(--muted)}
+.buy-head .bh-chev{position:absolute;right:16px;top:2px;font-size:17px}
+.buy-cat.open .buy-body{max-height:2200px}
+
+.buy-body .buy-list{padding:0 22px 26px}
+.buy-list{gap:0}
+.buy-item{flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:6px;
+  margin:0 -10px;padding:13px 10px;border:0;border-top:1px solid var(--line);border-radius:0;
+  background:transparent}
+.buy-item:hover{background:rgba(250,250,250,.035);border-color:var(--line);transform:none}
+.buy-item:hover .bi-name{color:var(--acc-2)}
+.buy-item .bi-name{gap:10px;transition:color .2s}
+.buy-item .bi-logo{width:26px;height:26px;border-radius:7px}
+.buy-item .bi-logo img{inset:5px;width:16px;height:16px}
+.buy-item .badge{flex:none;padding-left:36px;letter-spacing:.14em}
+
+@media(max-width:1100px){
+  .buy-acc{grid-template-columns:repeat(2,1fr)}
+  .buy-cat:nth-child(2n+1){border-left:0}
+  .buy-cat:nth-child(n+3){border-top:1px solid var(--line);padding-top:26px;margin-top:26px}
+}
+@media(max-width:700px){
+  .buy-acc{grid-template-columns:1fr}
+  .buy-cat{border-left:0;border-top:1px solid var(--line);padding-top:24px;margin-top:24px}
+  .buy-cat:first-child{border-top:0;padding-top:0;margin-top:0}
+  .buy-cat:nth-child(n+3){margin-top:24px;padding-top:24px}
+  .buy-head{padding:4px 40px 16px 0}
+  .buy-body .buy-list{padding:0 0 20px}
+  .buy-item{margin:0;padding:13px 0}
+  .buy-item:hover{background:transparent}
+  .buy-head .bh-chev{right:0}
+}
 </style>
 <script>
 /* Inline copy of js/admin-gate.js (this page stays self-contained; keep in
@@ -1395,8 +1478,8 @@ window.ADMIN_GATE=on;})();
      flywheel that stood here keeps its place under the statement, since it
      carries a real part of the STRK story. -->
 <section class="block ab-block"><div class="wrap">
-  <p class="ab-eyebrow">About STRK</p>
-  <h2 id="what-strk-is" class="ab-lead">STRK is the asset that pays for every <span class="ab-chip" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 4 14h6l-1 8 9-12h-6z"/></svg></span> transaction, <span class="ab-muted">secures the network through staking <span class="ab-chip" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 20 5v6c0 5-3.4 7.7-8 9-4.6-1.3-8-4-8-9V5z"/></svg></span> and captures the demand the thesis creates.</span></h2>
+  <p class="sx-kicker">About STRK</p>
+  <h2 id="what-strk-is" class="sx-quote">STRK is the asset that pays for every <span class="sx-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 4 14h6l-1 8 9-12h-6z"/></svg></span> transaction, <span class="sx-dim">secures the network through staking <span class="sx-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 20 5v6c0 5-3.4 7.7-8 9-4.6-1.3-8-4-8-9V5z"/></svg></span> and captures the demand the thesis creates.</span></h2>
 
   <div class="fly" id="fly">
       <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" aria-label="STRK flywheel">

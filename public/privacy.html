@@ -400,7 +400,6 @@
   .pv-wall .kicker { margin-top: 26px; }
   .pv-wall h3 { margin-bottom: 20px; }
   /* schema as a 2x2 inside its duo cell: arrows give way to counter labels */
-  .pv-duo .seal { margin-top: 0; }
   @media (max-width: 980px) {
     .pv-duo { grid-template-columns: minmax(0,1fr); gap: 30px; }
     .pv-duo--flip > *:nth-child(1) { grid-column: auto; grid-row: auto; }
@@ -1330,24 +1329,24 @@
      nodes (their own hover language). The band is pointer-inert so links
      and marquee interactions underneath stay live; it is static at rest
      (transform held, no idle animation). */
-  .wave.gx-card, .case.gx-card, .btile.gx-card, .seal-card.gx-card { overflow: hidden; }
-  .wave.gx-card::after, .case.gx-card::after, .btile.gx-card::after, .seal-card.gx-card::after {
+  .wave.gx-card, .case.gx-card, .btile.gx-card { overflow: hidden; }
+  .wave.gx-card::after, .case.gx-card::after, .btile.gx-card::after {
     content: ""; position: absolute; top: -30%; bottom: -30%; left: 0; width: 38%;
     background: var(--sweep-grad);
     opacity: 0; transform: translateX(-130%); pointer-events: none;
     transition: transform var(--sweep-dur) var(--sweep-ease), opacity .3s;
   }
-  .wave.gx-card:hover::after, .case.gx-card:hover::after, .btile.gx-card:hover::after, .seal-card.gx-card:hover::after {
+  .wave.gx-card:hover::after, .case.gx-card:hover::after, .btile.gx-card:hover::after {
     opacity: 1; transform: translateX(330%);
   }
   @media (prefers-reduced-motion: reduce) {
-    .wave.gx-card::after, .case.gx-card::after, .btile.gx-card::after, .seal-card.gx-card::after { display: none; }
+    .wave.gx-card::after, .case.gx-card::after, .btile.gx-card::after { display: none; }
   }
 
   /* Narrative blooms: one blob per card, behind that card only. Static,
      childless, pointer-inert; the blur is on the bloom layer itself, never
      on an ancestor. */
-  .cases,.pv-bento,.build-tiles,.pmx-stats,.seal{position:relative;}
+  .cases,.pv-bento,.build-tiles,.pmx-stats{position:relative;}
   .gx-bloom{position:absolute;inset:0;z-index:0;pointer-events:none;filter:blur(58px);}
   .gx-bloom i{position:absolute;border-radius:50%;background:radial-gradient(closest-side,var(--bc),transparent 70%);opacity:.05;}
 
@@ -1370,178 +1369,6 @@
   /* ============ 05: compliance ============ */
   .lead .red { color: var(--danger); }
 
-  /* ============ 05: the sealed stack ============================
-     The section argues that the viewing key sits sealed and unwinds only
-     under a scoped lawful request, so the block stays sealed until it is
-     acted on and then gives up one stage at a time. Nothing here invents a
-     value: the card surface is .gx-card, the border and fill are --line /
-     --bg-raise / --em-line, timing is --hover-dur with --hover-ease, the
-     eyebrow keeps the .st size and the "01 · " counter the 2x2 grid used,
-     and titles stay the display face at 700, at the grid's own title size.
-
-     Both heights are fixed: the stage is sized for the fanned arc including
-     the rotation of the outer two, and the detail region reserves the
-     tallest of the four descriptions. Opening a card therefore never
-     reflows the column and never moves the Apache 2.0 line. */
-  .seal { counter-reset: sealn; }
-  .seal-stage { position: relative; height: var(--seal-stage-h, 224px); }
-  /* the fan: four cards arced across the stage, present and fanned from
-     the moment the section enters (IntersectionObserver adds .is-open once,
-     so the spread still animates on entrance). Positions are percentages of
-     the stage so the arc holds at any column width. */
-  .seal-fan { position: absolute; inset: 0; }
-  .seal-card { position: absolute; top: 50%; width: 24%; min-width: 0;
-    height: var(--seal-card-h, 162px); padding: 13px 13px; cursor: pointer;
-    display: flex; flex-direction: column; align-items: flex-start; gap: 8px;
-    border-radius: 12px; text-align: left; overflow: hidden;
-    opacity: 0; transform: translate(-50%,-50%);
-    transition: opacity var(--hover-dur) var(--hover-ease),
-                transform var(--hover-dur) var(--hover-ease),
-                border-color var(--hover-dur) var(--hover-ease),
-                filter var(--hover-dur) var(--hover-ease);
-    pointer-events: none; }
-  .seal-card .st { font-family: var(--mono); font-size: 11px; letter-spacing: .16em;
-    color: var(--em); }
-  .seal-card .st::before { counter-increment: sealn; content: "0" counter(sealn) " · ";
-    color: var(--em); opacity: .8; }
-  .seal-card .sc-t { font-family: var(--display); font-weight: 700; font-size: 15px;
-    line-height: 1.3; color: var(--ink); }
-  .seal-card:focus-visible { outline: 2px solid var(--em); outline-offset: 3px; }
-  /* fanned: the four spread into the arc, outer two rotated */
-  .seal.is-open .seal-card { opacity: 1; pointer-events: auto; }
-  /* Quartered across the stage with a hair of air between neighbors rather
-     than an overlap. An overlapping deck looks better at rest but puts one
-     card's eyebrow under the next card's corner, and the requirement is that
-     all four read at once; the rotation and the vertical arc carry the fanned
-     reading on their own. Centers sit at the quarter points. */
-  .seal-card[data-i="0"] { left: 12.5%; }
-  .seal-card[data-i="1"] { left: 37.5%; }
-  .seal-card[data-i="2"] { left: 62.5%; }
-  .seal-card[data-i="3"] { left: 87.5%; }
-  .seal.is-open .seal-card[data-i="0"] { transform: translate(-50%,-45%) rotate(-6deg); }
-  .seal.is-open .seal-card[data-i="1"] { transform: translate(-50%,-55%) rotate(-2deg); }
-  .seal.is-open .seal-card[data-i="2"] { transform: translate(-50%,-55%) rotate(2deg); }
-  .seal.is-open .seal-card[data-i="3"] { transform: translate(-50%,-45%) rotate(6deg); }
-  /* opened: the picked card comes forward square, the rest fall back and dim */
-  .seal.is-open .seal-card.is-on { z-index: 6; border-color: var(--em);
-    background: rgba(var(--accent-rgb), .07); }
-  .seal.is-open.has-open .seal-card:not(.is-on) { filter: brightness(.55) saturate(.7); }
-  .seal.is-open.has-open .seal-card[data-i="0"]:not(.is-on) { transform: translate(-50%,-41%) rotate(-6deg) scale(.9); }
-  .seal.is-open.has-open .seal-card[data-i="1"]:not(.is-on) { transform: translate(-50%,-51%) rotate(-2deg) scale(.9); }
-  .seal.is-open.has-open .seal-card[data-i="2"]:not(.is-on) { transform: translate(-50%,-51%) rotate(2deg) scale(.9); }
-  .seal.is-open.has-open .seal-card[data-i="3"]:not(.is-on) { transform: translate(-50%,-41%) rotate(6deg) scale(.9); }
-  .seal.is-open .seal-card.is-on[data-i="0"] { transform: translate(-50%,-50%) rotate(0deg) scale(1.06); }
-  .seal.is-open .seal-card.is-on[data-i="1"] { transform: translate(-50%,-50%) rotate(0deg) scale(1.06); }
-  .seal.is-open .seal-card.is-on[data-i="2"] { transform: translate(-50%,-50%) rotate(0deg) scale(1.06); }
-  .seal.is-open .seal-card.is-on[data-i="3"] { transform: translate(-50%,-50%) rotate(0deg) scale(1.06); }
-  /* THE PANEL IS THE CARD, OPENED. It used to be a full-width hairline rule
-     with the text under it, which read as a caption beneath a row rather than
-     as the contents of the thing that was clicked: nothing tied the two
-     together, and with nothing picked it was a rule over 200px of nothing.
-     It now takes the ACTIVE CARD'S OWN treatment, the same border and the
-     same fill, so the relationship is carried by material rather than by
-     proximity. Both values are the card's, not new ones:
-       .seal-card.is-on { border-color: var(--em);
-                          background: rgba(var(--accent-rgb), .07) }
-     and the radius is .seal-card's 12px.
-     DO NOT RE-PROPOSE CONSTRAINING THE PANEL TO THE DECK. It looks like the
-     obvious third fix and it is already true: measured before anything was
-     changed, the panel and the stage are the SAME BOX, x=748 w=520 at 1440.
-     There is no misalignment to correct, and narrowing the panel would invent
-     one.
-     THE EMPTY STATE IS WHY THE TREATMENT IS SCOPED TO .has-open. The engine
-     starts at openIdx -1 with nothing picked, and in that state the old
-     construction was a full-width rule sitting over 200px of nothing, which
-     is a good part of why the region read as dropped in empty space. The
-     border and fill arrive only with a card, so the fanned state stays an
-     empty reserved region rather than an accent box with no content in it. */
-  .seal-detail { position: relative; margin-top: 12px;
-    height: var(--seal-detail-h, 200px); padding: 13px 15px;
-    border: 1px solid transparent; border-radius: 12px;
-    transition: border-color var(--hover-dur) var(--hover-ease),
-                background var(--hover-dur) var(--hover-ease); }
-  .seal.has-open .seal-detail { border-color: var(--em);
-    background: rgba(var(--accent-rgb), .07); }
-  /* and a hairline from the opened card down to it, so the eye has a path.
-     The drop is derived, not measured in: the stage is --seal-stage-h, the
-     opened card is --seal-card-h scaled 1.06 and centred on the stage, so the
-     space under it is half the difference, plus this panel's own margin.
-     A NOTCH IS THE OBVIOUS THING TO REACH FOR AND IT CANNOT WORK HERE. This
-     is a constraint, not a preference. The panel's fill is translucent, 7%
-     accent, so any notch overlapping the top border shows that border running
-     straight through the triangle. Every escape route requires an opaque fill
-     matching whatever sits behind the panel, which means inventing a colour
-     that then has to be maintained against the page background. A broken or
-     stepped rule fails for the same reason from the other direction. The
-     connector needs no fill, so it has none of this. */
-  .seal-detail::before { content: ""; position: absolute; left: var(--sd-notch, 12.5%);
-    bottom: 100%; width: 1px;
-    height: calc((var(--seal-stage-h, 224px) - var(--seal-card-h, 162px) * 1.06) / 2 + 12px);
-    background: linear-gradient(180deg, transparent, var(--em));
-    opacity: 0; transition: opacity var(--hover-dur) var(--hover-ease),
-                            left var(--hover-dur) var(--hover-ease); }
-  .seal.has-open .seal-detail::before { opacity: .85; }
-  /* the head repeats the opened card's own two lines verbatim, and the card is
-     right there, lit, with a line drawn to this panel. It stays in the DOM
-     and stays the live region, so what a screen reader hears on a card change
-     is unchanged; it is only taken off the screen. */
-  .sd-head { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
-    overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; border: 0; }
-  /* margin-top was 8px to clear the head above it. The head is off-screen now,
-     so the lede is the first visible thing in the panel and that margin is
-     dead space at the top of the card. Removing it also buys back the 2px
-     card 04 was overflowing its reserved height by at 981, where the panel's
-     new side padding rewrapped its longest bullet. */
-  .sd-item .sn-sum { font-family: var(--sans); font-size: 12.5px; color: var(--muted);
-    line-height: 1.6; margin-top: 0; }
-  /* HANGING INDENT, and the unit is doing real work here. The marker is a
-     literal "· " in the text rather than a list marker (list-style is none and
-     the ul has no padding), so without this a wrapped line ran back underneath
-     the middot and the middot stopped reading as a marker at all. It wrapped
-     on one bullet at 981 and two at 375.
-     2ch is exact rather than approximate BECAUSE THE LIST IS MONOSPACE: one ch
-     is one character advance in IBM Plex Mono, so two of them is precisely the
-     middot plus its space, and continuation lines land on the first letter of
-     the line above. In a proportional face this would have to be an em guess
-     that drifts with the glyph; if this list ever stops being mono, that is
-     the line to revisit. Letter-spacing rides on top of both and cancels out,
-     since it applies to the indent and the text equally. */
-  .sd-item ul { list-style: none; font-family: var(--mono); font-size: 11.5px;
-    color: var(--muted); line-height: 1.9; letter-spacing: .03em; margin-top: 8px; }
-  .sd-item li { padding-left: 2ch; text-indent: -2ch; }
-  @media (max-width: 980px) {
-    /* The arc flattens to a column below 980px: a rotated overlap is
-       unreadable at 375px. */
-    .seal-stage { height: auto; }
-    .seal-fan { position: static; display: flex; flex-direction: column; gap: 10px; }
-    .seal.is-open .seal-card, .seal-card { position: static; width: auto; height: auto;
-      opacity: 1; pointer-events: auto; transform: none; }
-    .seal.is-open .seal-card[data-i="0"], .seal.is-open .seal-card[data-i="1"],
-    .seal.is-open .seal-card[data-i="2"], .seal.is-open .seal-card[data-i="3"],
-    .seal.is-open .seal-card.is-on[data-i="0"], .seal.is-open .seal-card.is-on[data-i="1"],
-    .seal.is-open .seal-card.is-on[data-i="2"], .seal.is-open .seal-card.is-on[data-i="3"],
-    .seal.is-open.has-open .seal-card[data-i="0"]:not(.is-on),
-    .seal.is-open.has-open .seal-card[data-i="1"]:not(.is-on),
-    .seal.is-open.has-open .seal-card[data-i="2"]:not(.is-on),
-    .seal.is-open.has-open .seal-card[data-i="3"]:not(.is-on) { transform: none; }
-    .seal.is-open.has-open .seal-card:not(.is-on) { filter: none; opacity: .62; }
-    .seal-card { flex-direction: row; align-items: baseline; gap: 12px; min-height: 44px; }
-    /* the deck reflows to a stacked column here, so the opened card is no
-       longer above a known x and is often not adjacent to the panel at all.
-       The connector is dropped and the card treatment carries the whole
-       relationship, which is why that treatment had to work on its own. */
-    /* tighter padding in the narrow column: the side padding costs text width
-       where there is least of it, and card 02 is five bullets deep. Measured:
-       it overflowed the narrow reservation by 2px at 375 with the desktop
-       padding, and clears with 4px to spare at these values. */
-    .seal-detail { height: var(--seal-detail-h-narrow, 256px); padding: 11px 12px; }
-    .seal-detail::before { display: none; }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    /* same fanned arc as everyone else, arrived at instantly: the arc is
-       static composition, only the transitions were motion */
-    .seal-card, .sd-item { transition: none; }
-  }
   /* ============ closing: the landing's lc- grammar (hairline top, static
      accent bloom, 56px display scale, .62-white lede) with this page's
      copy. Bloom values mirror index.html's .lc-bloom; keep in sync. */
@@ -1793,7 +1620,7 @@
   /* touch affordances (phase 2): 44px targets + viewport-safe tooltips */
   @media (hover: none) {
     .wlt-opt { min-height: 44px; }
-    .wp-card, .sp-card, .seal-card { cursor: pointer; }
+    .wp-card, .sp-card { cursor: pointer; }
   }
   @media (max-width: 860px) {
     .tipbox { width: auto; max-width: calc(100vw - 32px); }
@@ -1804,6 +1631,220 @@
      browser default blue */
   .news-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 12px; }
   .news-toggle:focus:not(:focus-visible) { outline: none; }
+
+  /* ============================================================ */
+  /* CLOSING STATEMENT: full-bleed INVERTED band.                  */
+  /* Everything else on this page is dark, so the closing thesis   */
+  /* flips: light ground, dark type, one phrase carried in an      */
+  /* inverted tile led by an accent icon square. Same dotted rule  */
+  /* with a square at each end that the Satoshi band uses, so the  */
+  /* two statement sections read as a pair. Declared here (inline, */
+  /* after every linked sheet) so it wins over css/styles.css.     */
+  /* ============================================================ */
+  .closing.cinv {
+    position: relative; z-index: 1; overflow: visible;
+    max-width: none; margin: 120px 0 0;
+    padding: clamp(88px, 11vw, 156px) clamp(16px, 3.4vw, 52px) clamp(120px, 15vw, 210px);
+    background: #fafafa; color: #0d0d0d; border-top: 0; text-align: left;
+  }
+  /* the dotted rule across the top with an accent square at each end */
+  .closing.cinv::before { content: ""; position: absolute; left: 0; right: 0; top: 0; border-top: 2px dotted rgba(13,13,13,.30); }
+  .closing.cinv::after { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 8px;
+    background-image: linear-gradient(#c53400, #c53400), linear-gradient(#c53400, #c53400);
+    background-size: 8px 8px, 8px 8px; background-position: left top, right top; background-repeat: no-repeat; }
+  .closing.cinv .closing-bloom { display: none; }
+  /* the shared .closing rule centres and caps every child at 820px: this band
+     runs the full width, left-aligned */
+  .closing.cinv > :not(.closing-bloom) { max-width: none; margin-left: 0; margin-right: 0; }
+  .closing.cinv .cd {
+    font-family: var(--display); font-weight: 800; color: #0d0d0d;
+    font-size: clamp(38px, 8vw, 128px); line-height: 1.02; letter-spacing: -.04em;
+  }
+  .closing.cinv .cd .em { color: rgba(13,13,13,.62); }
+  /* inverted tile: dark block, light text, led by a small accent icon square.
+     inline-block + nowrap so it paints as one clean slab, never a stray
+     fragment at a line end */
+  .cinv-hl { display: inline-block; white-space: nowrap; vertical-align: baseline; line-height: 1;
+    padding: 0 .12em 0 0; background: #0d0d0d; color: #fafafa;
+    -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+  .cinv-ic { display: inline-grid; place-items: center; width: .8em; height: .8em; margin-right: .12em;
+    vertical-align: -.08em; background: #c53400; color: #fafafa; }
+  .cinv-ic svg { width: 62%; height: 62%; }
+  .closing.cinv .cd-recap {
+    margin: clamp(34px, 4.4vw, 60px) 0 0; max-width: 720px;
+    color: rgba(13,13,13,.62); font-family: var(--sans); font-weight: 300;
+    font-size: clamp(15px, 1.15vw, 18px); line-height: 1.7;
+  }
+  @media (max-width: 860px) {
+    .closing.cinv { margin-top: 72px; padding: 64px 14px 96px; }
+    .closing.cinv .cd { font-size: clamp(30px, 9vw, 48px); }
+    /* html { overflow-x: clip } would silently crop a nowrap tile that runs
+       past the viewport, so let it wrap normally down here */
+    .cinv-hl { white-space: normal; }
+  }
+
+  /* ============================================================ */
+  /* SATOSHI STATEMENT: owns a full viewport.                      */
+  /* Markup, highlight blocks and icon tiles are untouched; only   */
+  /* the section's height and vertical rhythm change. align-items  */
+  /* stays flex-start so the mono kicker chip is not blockified    */
+  /* into a full-width bar, and the quote stretches back out.      */
+  /* ============================================================ */
+  .sq {
+    display: flex; flex-direction: column; justify-content: center; align-items: flex-start;
+    min-height: 100vh; min-height: 100svh;
+    padding: clamp(96px, 12vh, 168px) 16px;
+  }
+  .sq .sq-quote { align-self: stretch; }
+  @media (max-width: 860px) {
+    .sq { padding: 72px 12px; }
+  }
+
+  /* ============ 04: the app-window chrome (awin-) ============
+     All four movements of section 04 render inside the same window: a large
+     rounded dark surface, a title bar carrying a breadcrumb on the left and
+     tabs on the right, a thin toolbar under it, and the movement's own
+     content inset in the body. The existing wallet card set the treatment;
+     this generalises it so the four read as one family instead of four
+     unrelated blocks.
+
+     The tabs and the breadcrumb are chrome, not controls: they are
+     aria-hidden and unfocusable, because the real tablist is the four
+     pedestals above. A second set of role="tab" nodes inside the panel a
+     tab already owns would announce four tabs inside one tab.
+
+     This block lives at the end of privacy.html's inline <style>, which
+     loads AFTER every linked stylesheet, so nothing in css/*.css can
+     outrank it without an id or !important. */
+  .awin { margin-top: 40px; border: 1px solid var(--line); border-radius: 18px;
+    background: linear-gradient(180deg, var(--bg-raise), #0d0d0d); overflow: hidden;
+    box-shadow: 0 24px 60px rgba(0,0,0,.45); }
+  .awin-bar { display: flex; align-items: center; gap: 14px; min-width: 0;
+    padding: 12px 18px; border-bottom: 1px solid var(--line); background: #141414; }
+  .awin-dots { display: flex; gap: 6px; flex: 0 0 auto; }
+  .awin-dots i { display: block; width: 9px; height: 9px; border-radius: 50%; background: #262626; }
+  .awin-dots i:first-child { background: var(--em); opacity: .8; }
+  /* the breadcrumb is the flexible item: it truncates, the tabs never do */
+  .awin-crumb { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis;
+    white-space: nowrap; font-family: var(--mono); font-size: 11px; letter-spacing: .1em;
+    color: var(--muted); }
+  .awin-crumb b { font-weight: 400; color: rgba(250,250,250,.26); margin: 0 8px; }
+  .awin-crumb em { font-style: normal; color: var(--ink); }
+  .awin-tabs { display: flex; gap: 6px; flex: 0 0 auto; }
+  .awin-tabs span { font-family: var(--mono); font-size: 10px; letter-spacing: .12em;
+    text-transform: uppercase; white-space: nowrap; color: var(--muted);
+    border: 1px solid var(--line); border-radius: 7px; padding: 5px 10px; }
+  .awin-tabs .is-on { color: var(--em); border-color: var(--em-line);
+    background: rgba(var(--accent-rgb), .09); }
+  .awin-tool { display: flex; align-items: center; gap: 12px; min-width: 0;
+    padding: 9px 18px; border-bottom: 1px solid var(--line); background: #0d0d0d; }
+  .awin-arrows { flex: 0 0 auto; display: flex; gap: 8px; font-family: var(--mono);
+    font-size: 12px; line-height: 1; color: rgba(250,250,250,.30); }
+  .awin-path { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis;
+    white-space: nowrap; font-family: var(--mono); font-size: 10.5px; letter-spacing: .08em;
+    color: rgba(250,250,250,.42); border: 1px solid var(--line); border-radius: 99px;
+    padding: 5px 12px; }
+  .awin-status { flex: 0 0 auto; white-space: nowrap; font-family: var(--mono);
+    font-size: 10px; letter-spacing: .14em; color: var(--em); }
+  .awin-body { padding: 22px; }
+  /* components that used to be the panel's outermost box give up their own
+     frame inside the window, so the treatment is one border, never two */
+  .awin-body > .wlt, .awin-body > .pmx, .awin-body > .pv-bento,
+  .awin-body > .builders, .awin-body > .fst { margin-top: 0; }
+  .awin-body > .wlt { border: 0; border-radius: 0; background: none; }
+  .awin-body > .wlt .wlt-bar { padding-left: 0; padding-right: 0; padding-top: 0; }
+  .awin-body > .wlt .wlt-band, .awin-body > .wlt .wlt-foot { padding-left: 0; padding-right: 0; }
+  .awin-body > .wlt .wlt-foot { padding-bottom: 0; border-bottom: 0; }
+  .awin-body > .builders { margin-top: 34px; }
+  .awin-body > .pmx { margin-top: 26px; }
+  @media (max-width: 640px) {
+    /* the breadcrumb plus the tabs cannot both hold their width at 390px,
+       and the breadcrumb is the one that says where you are */
+    .awin-tabs, .awin-status { display: none; }
+    .awin-bar, .awin-tool { padding-left: 13px; padding-right: 13px; }
+    .awin-body { padding: 14px; }
+  }
+
+  /* ---- 04 / movement 01: the base layer as a stack ----
+     The seven properties, verbatim, as seven layers of one stack read top
+     down, over a base plate carrying the two constants that hold at every
+     layer. Its own prefix (fst-) rather than the retired .sp-card, whose
+     paragraphs collapse to max-height 0 unless a script opens them. */
+  .fst-head { font-family: var(--mono); font-size: 11px; letter-spacing: .16em;
+    color: var(--muted); margin-bottom: 16px; }
+  .fst-stack { list-style: none; margin: 0; padding: 0 0 0 26px; position: relative; }
+  /* the spine: one hairline the layers hang off, so the seven read as a
+     stack rather than as seven separate cards */
+  .fst-stack::before { content: ""; position: absolute; left: 8px; top: 10px; bottom: 10px;
+    width: 1px; background: linear-gradient(180deg, var(--em-line), var(--line) 40%, transparent); }
+  .fst-layer { position: relative; display: grid; grid-template-columns: auto minmax(0,1fr);
+    gap: 0 16px; align-items: baseline; border: 1px solid var(--line); border-radius: 10px;
+    background: #0d0d0d; padding: 14px 18px; margin-bottom: 8px;
+    transition: border-color .25s, background .25s; }
+  .fst-layer:last-child { margin-bottom: 0; }
+  .fst-layer:hover { border-color: var(--em-line); background: rgba(var(--accent-rgb), .05); }
+  /* the node on the spine, centred on the layer's first line */
+  .fst-layer::before { content: ""; position: absolute; left: -22.5px; top: 21px;
+    width: 7px; height: 7px; border-radius: 50%; background: #0d0d0d;
+    border: 1px solid var(--em-line); transition: background .25s; }
+  .fst-layer:hover::before { background: var(--em); }
+  .fst-n { font-family: var(--mono); font-size: 10.5px; letter-spacing: .16em;
+    color: var(--em); grid-row: 1 / span 2; align-self: start; padding-top: 3px; }
+  .fst-layer h5 { font-family: var(--display); font-weight: 700; font-size: 15px; margin: 0; }
+  .fst-layer p { font-size: 13px; line-height: 1.6; color: var(--muted); margin: 6px 0 0; }
+  .fst-layer p b { color: var(--ink); }
+  .fst-base { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; padding: 14px 18px;
+    border: 1px solid var(--em-line); border-radius: 10px;
+    background: linear-gradient(180deg, rgba(var(--accent-rgb), .09), rgba(var(--accent-rgb), .03)); }
+  .fst-chip { font-family: var(--mono); font-size: 12px; line-height: 1; letter-spacing: .1em;
+    color: var(--em); border: 1px solid var(--em-line); border-radius: 99px;
+    padding: 9px 14px; background: #0d0d0d; white-space: nowrap; }
+  @media (max-width: 560px) {
+    .fst-stack { padding-left: 0; }
+    .fst-stack::before, .fst-layer::before { display: none; }
+    .fst-layer { padding: 13px 14px; }
+    .fst-chip { font-size: 11px; letter-spacing: .06em; white-space: normal; }
+  }
+
+  /* ---- 04 / movement 03: the ecosystem field inside the window ----
+     A fixed pixel height, not an aspect-ratio: the stage that owns section
+     04 measures the incoming panel to animate its own height, and it does
+     that while the panel is still hidden, where a ratio box resolves to
+     zero. peo- prefix and #pvEcoOrb are this instance's alone; #ecoGlobe
+     and .eg- belong to the ecosystem page's full-screen flight. */
+  .peo { position: relative; height: 340px; border: 1px solid var(--line);
+    border-radius: 12px; overflow: hidden; background: #0d0d0d; }
+  .peo::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(ellipse at center, transparent 52%, rgba(13,13,13,.85) 100%); }
+  .peo-stage { position: absolute; inset: 0; }
+  .peo-stage canvas { display: block; width: 100%; height: 100%; }
+  .peo-chip { position: absolute; left: 14px; bottom: 14px; z-index: 2; display: grid; gap: 3px;
+    max-width: calc(100% - 28px); opacity: 0; transition: opacity .4s ease; }
+  .peo-chip.on { opacity: 1; }
+  .peo-chip-name { font-family: var(--mono); font-size: 11.5px; letter-spacing: .08em;
+    color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .peo-chip-role { font-family: var(--mono); font-size: 10px; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--em); overflow: hidden; text-overflow: ellipsis;
+    white-space: nowrap; }
+  .peo-stats { position: absolute; right: 14px; top: 14px; z-index: 2; display: flex;
+    align-items: baseline; gap: 8px; font-family: var(--mono); font-size: 10px;
+    letter-spacing: .14em; color: var(--muted); }
+  .peo-stats b { font-size: 14px; font-weight: 500; color: var(--em); }
+  .peo-cap { font-family: var(--mono); font-size: 11px; letter-spacing: .1em;
+    color: var(--muted); margin: 12px 0 0; }
+  @media (max-width: 640px) { .peo { height: 260px; } }
+  @media (prefers-reduced-motion: reduce) { .peo-chip { transition: none; } }
+
+  /* ---- 04 / movement 04: the live dashboard, framed ---- */
+  .pmf { border: 1px solid var(--line); border-radius: 12px; overflow: hidden;
+    background: #0d0d0d; }
+  .pmf iframe { display: block; width: 100%; height: 760px; border: 0; background: #0d0d0d; }
+  .pmf-fall { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between;
+    gap: 10px; padding: 12px 16px; border-top: 1px solid var(--line);
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: .1em; color: var(--muted); }
+  .pmf-fall a { color: var(--em); text-decoration: underline; text-underline-offset: 3px;
+    white-space: nowrap; }
+  @media (max-width: 640px) { .pmf iframe { height: 560px; } }
 </style>
 <script src="js/admin-gate.js"></script>
 </head>
@@ -2357,35 +2398,36 @@
     <div class="pmv-stage" id="pmvStage">
       <div class="pmv-panel" id="pmvPanel01" role="tabpanel" aria-labelledby="pmvTab01">
         <div class="pmv-title">The foundation <span class="em">everything builds on.</span></div>
-  <div class="stamp-wrap th-pm-reveal" id="shieldStamp">
-    <div class="stamp-stage">
-      <div class="ss-scene">
-        <div class="ss-stamp" id="ssStamp" aria-hidden="true"><div class="ss-handle"></div><div class="ss-head">[ ]</div></div>
-        <div class="ss-coin in" id="ssCoin">
-          <div class="ss-ring" id="ssRing"></div>
-          <img class="ss-logo" id="ssLogo" src="assets/tokens/btc.png" alt="BTC logo">
-          <span class="ss-fallback" id="ssFb" hidden>₿</span>
-          <span class="ss-tick tl"></span><span class="ss-tick tr"></span><span class="ss-tick bl"></span><span class="ss-tick br"></span>
+  <div class="awin th-pm-reveal" id="awinFoundations">
+    <div class="awin-bar">
+      <span class="awin-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span class="awin-crumb" aria-hidden="true">starknet<b>/</b>privacy<b>/</b><em>base layer</em></span>
+      <span class="awin-tabs" aria-hidden="true"><span class="is-on">stack</span><span>properties</span></span>
+    </div>
+    <div class="awin-tool" aria-hidden="true">
+      <span class="awin-arrows"><span>&lsaquo;</span><span>&rsaquo;</span></span>
+      <span class="awin-path">strk20://base-layer/properties</span>
+      <span class="awin-status">7 LAYERS</span>
+    </div>
+    <div class="awin-body">
+      <div class="fst">
+        <div class="fst-head">SEVEN PROPERTIES OF THE BASE LAYER</div>
+        <ol class="fst-stack">
+          <li class="fst-layer"><span class="fst-n">01</span><h5>One pool for all assets</h5><p>A first in crypto: STRK, USDC, USDT, ETH, BTC, memecoins... <b>ALL crypto assets in the same pool</b>. Every new user and asset deepens the same crowd.</p></li>
+          <li class="fst-layer"><span class="fst-n">02</span><h5>Any amount, no denominations</h5><p>Where Tornado forced fixed sizes and fragmented its crowd, the Starknet pool takes arbitrary amounts through note splitting and merging.</p></li>
+          <li class="fst-layer"><span class="fst-n">03</span><h5>Fee: ~$0.12 per action</h5><p>Shielding a billion dollars costs the same as shielding a hundred: the fee is charged per action, not per amount. The protocol targets about $0.12 per action and settles it in STRK; the STRK amount floats, adjusted by the protocol as the price moves.</p></li>
+          <li class="fst-layer"><span class="fst-n">04</span><h5>Best-in-class UX</h5><p>A few clicks inside Ready or Xverse, settled in seconds. No separate app, no new seed phrase, no protocol to learn.</p></li>
+          <li class="fst-layer"><span class="fst-n">05</span><h5>Security-first stack</h5><p>Public whitepaper, OpenZeppelin audit, formal Lean model with machine-checked theorems, and fully open source under Apache 2.0.</p></li>
+          <li class="fst-layer"><span class="fst-n">06</span><h5>Deep DeFi integration</h5><p>The pool plugs straight into live Starknet DeFi: private swaps, lending, staking, yield, all atomic, your funds never sitting at a public address in between. And it already reaches other ecosystems: anonymous trading on Polymarket's liquidity works today, straight from an EVM wallet.</p></li>
+          <li class="fst-layer"><span class="fst-n">07</span><h5>A compliance path built in</h5><p>Private to the market, transparent to the law. <b>Section 05 below.</b></p></li>
+        </ol>
+        <div class="fst-base">
+          <span class="fst-chip">FEE: ~$0.12 · PAID IN STRK</span>
+          <span class="fst-chip">SHIELDED IN SECONDS</span>
         </div>
       </div>
-      <div class="ss-amount" id="ssAmount">14,532 BTC</div>
-      <div class="ss-chips">
-        <span class="ss-chip" id="ssChip1">FEE: ~$0.12 · PAID IN STRK</span>
-        <span class="ss-chip" id="ssChip2">SHIELDED IN SECONDS</span>
-      </div>
-    </div>
-    <div class="stamp-props" id="stampProps">
-      <div class="sp-head">SEVEN PROPERTIES OF THE BASE LAYER</div>
-      <div class="sp-card"><div class="n">01</div><h5>One pool for all assets</h5><p>A first in crypto: STRK, USDC, USDT, ETH, BTC, memecoins... <b>ALL crypto assets in the same pool</b>. Every new user and asset deepens the same crowd.</p></div>
-      <div class="sp-card"><div class="n">02</div><h5>Any amount, no denominations</h5><p>Where Tornado forced fixed sizes and fragmented its crowd, the Starknet pool takes arbitrary amounts through note splitting and merging.</p></div>
-      <div class="sp-card"><div class="n">03</div><h5>Fee: ~$0.12 per action</h5><p>Shielding a billion dollars costs the same as shielding a hundred: the fee is charged per action, not per amount. The protocol targets about $0.12 per action and settles it in STRK; the STRK amount floats, adjusted by the protocol as the price moves.</p></div>
-      <div class="sp-card"><div class="n">04</div><h5>Best-in-class UX</h5><p>A few clicks inside Ready or Xverse, settled in seconds. No separate app, no new seed phrase, no protocol to learn.</p></div>
-      <div class="sp-card"><div class="n">05</div><h5>Security-first stack</h5><p>Public whitepaper, OpenZeppelin audit, formal Lean model with machine-checked theorems, and fully open source under Apache 2.0.</p></div>
-      <div class="sp-card"><div class="n">06</div><h5>Deep DeFi integration</h5><p>The pool plugs straight into live Starknet DeFi: private swaps, lending, staking, yield, all atomic, your funds never sitting at a public address in between. And it already reaches other ecosystems: anonymous trading on Polymarket's liquidity works today, straight from an EVM wallet.</p></div>
-      <div class="sp-card"><div class="n">07</div><h5>A compliance path built in</h5><p>Private to the market, transparent to the law. <b>Section 05 below.</b></p></div>
     </div>
   </div>
-
   <!-- Redactable wallet card. Every value column is a real string plus a
        same-length block-glyph mask plus an sr-only "redacted"; the row class
        swaps which one is live, so masking can never change a width or a
@@ -2394,6 +2436,18 @@
       </div>
       <div class="pmv-panel" id="pmvPanel02" role="tabpanel" aria-labelledby="pmvTab02" hidden>
         <div class="pmv-title">What users get, <span class="em">in one wallet.</span></div>
+  <div class="awin th-pm-reveal" id="awinWallet">
+    <div class="awin-bar">
+      <span class="awin-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span class="awin-crumb" aria-hidden="true">starknet<b>/</b>privacy<b>/</b><em>one wallet</em></span>
+      <span class="awin-tabs" aria-hidden="true"><span class="is-on">wallet</span><span>activity</span><span>defi</span></span>
+    </div>
+    <div class="awin-tool" aria-hidden="true">
+      <span class="awin-arrows"><span>&lsaquo;</span><span>&rsaquo;</span></span>
+      <span class="awin-path">strk20://wallet/two-states</span>
+      <span class="awin-status">DEMO</span>
+    </div>
+    <div class="awin-body">
   <div class="wlt th-pm-reveal" id="wlt">
     <div class="wlt-bar">
       <span class="wlt-eyebrow wlt-swap" id="wltEyebrow">
@@ -2432,9 +2486,26 @@
     </div>
     <p class="pvc-vh" id="wltLive" role="status" aria-live="polite"></p>
   </div>
+    </div>
+  </div>
       </div>
       <div class="pmv-panel" id="pmvPanel03" role="tabpanel" aria-labelledby="pmvTab03" hidden>
         <div class="pmv-title">Three fronts are building <span class="em">on top of it.</span></div>
+  <div class="awin th-pm-reveal" id="awinEco">
+    <div class="awin-bar">
+      <span class="awin-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span class="awin-crumb" aria-hidden="true">starknet<b>/</b>privacy<b>/</b><em>ecosystem</em></span>
+      <span class="awin-tabs" aria-hidden="true"><span class="is-on">field</span><span>defi</span><span>pipeline</span></span>
+    </div>
+    <div class="awin-tool" aria-hidden="true">
+      <span class="awin-arrows"><span>&lsaquo;</span><span>&rsaquo;</span></span>
+      <span class="awin-path">strk20://ecosystem/three-fronts</span>
+      <span class="awin-status">3 FRONTS</span>
+    </div>
+    <div class="awin-body">
+      <div class="peo" id="pvEcoOrb" role="img"
+           aria-label="Particle field of Starknet ecosystem project logos, decorative"></div>
+      <p class="peo-cap">THE STARKNET ECOSYSTEM THE POOL PLUGS INTO. ILLUSTRATIVE FIELD.</p>
   <div class="pv-bento th-pm-reveal">
       <div class="gx-bloom" aria-hidden="true">
         <i style="--bc:var(--em);left:8%;top:4%;width:32%;height:34%"></i>
@@ -2595,6 +2666,7 @@
         <span class="ba">→</span>
       </a>
     </div>
+  </div>    </div>
   </div>
 
   <!-- Live pool metrics. Data comes from the STRK20 dashboard backend
@@ -2603,6 +2675,25 @@
       </div>
       <div class="pmv-panel" id="pmvPanel04" role="tabpanel" aria-labelledby="pmvTab04" hidden>
         <div class="pmv-title">The pool, <span class="em">measured live.</span></div>
+  <div class="awin th-pm-reveal" id="awinMetrics">
+    <div class="awin-bar">
+      <span class="awin-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span class="awin-crumb" aria-hidden="true">starknet<b>/</b>privacy<b>/</b><em>metrics</em></span>
+      <span class="awin-tabs" aria-hidden="true"><span class="is-on">dashboard</span><span>charts</span></span>
+    </div>
+    <div class="awin-tool" aria-hidden="true">
+      <span class="awin-arrows"><span>&lsaquo;</span><span>&rsaquo;</span></span>
+      <span class="awin-path">https://strk20.starknet.io/dashboard</span>
+      <span class="awin-status">LIVE</span>
+    </div>
+    <div class="awin-body">
+      <div class="pmf">
+        <iframe src="https://strk20.starknet.io/dashboard" loading="lazy"
+                title="STRK20 live pool dashboard"
+                referrerpolicy="no-referrer-when-downgrade"></iframe>
+        <p class="pmf-fall">LIVE STRK20 DASHBOARD, EMBEDDED.
+          <a href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">OPEN THE DASHBOARD &#8599;</a></p>
+      </div>
   <div class="pmx th-pm-reveal" id="poolMetrics">
     <div class="pmx-stats" id="pmxStats"></div>
     <div class="pmx-updated" id="pmxUpdated"></div>
@@ -2646,6 +2737,7 @@
         <a class="pmx-src" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">SOURCE: STRK20 DASHBOARD ↗</a>
       </div>
     </div>
+  </div>    </div>
   </div>
       </div>
     </div>
@@ -2655,74 +2747,135 @@
 <!-- ================= SECTION 05 ================= -->
 <div class="th-pm-div"></div>
 <section class="th-pm-sec">
-  <div class="th-pm-head th-pm-reveal"><span class="th-pm-marker"></span><span class="th-pm-num">05</span><h2 id="private-not-invisible" class="th-pm-title">Private, not invisible</h2></div>
+  <div class="th-pm-head th-pm-head--band th-pm-reveal"><span class="th-pm-marker"></span><span class="th-pm-num">05</span><h2 id="private-not-invisible" class="th-pm-title">Private, <mark class="sq-hl">not invisible</mark></h2></div>
   <p class="th-pm-eyebrow th-pm-reveal">The law</p>
-  <p class="th-pm-intro th-pm-reveal">Onchain privacy earned its reputation problem: for a decade, private meant nothing to show the regulator. STRK20 was built for the opposite reading: confidential to the market, answerable to the law under a verified lawful request and only within its scope, and the mechanism is published in full.</p>
 
-  <div class="pv-duo th-pm-reveal" style="margin-top:64px">
-    <div>
-  <p class="lead" style="margin-top:0">Entry requires escrowing a viewing key, enforced by the proof itself. By default that key does nothing: it sits sealed in hardware, untouched for the overwhelming majority of users. Under a verified lawful request it can unwind one user's trail while the rest of the pool stays sealed. And even then, the key only reads: it cannot <span class="red">freeze</span>, cannot <span class="red">seize</span>, cannot <span class="red">spend</span>.</p>
-    </div>
+    <!-- The law, as a four-column feature band. The fanned deck was replaced on
+       2026-09-01: four stages that all have to read at once do not want a
+       selection device, so each stage now owns a column and nothing is
+       hidden. Ids lawDesc0..3 and law-the-* are kept verbatim because
+       data/search-index.json indexes them and shipped deep links resolve
+       against them. The figures are thin-stroke isometric line art, no
+       fills, one accent highlight each. -->
+  <div class="pl-rule th-pm-reveal" aria-hidden="true"></div>
 
-  <!-- The sealed stack. Sealed at rest, fans on hover, click, or tab in, and
-       gives up one stage at a time. Card faces carry the eyebrow and title
-       only; each full description lives in the reserved region below, where
-       the inactive three stay in the DOM under hidden="until-found" so
-       find-in-page still reaches them and opens the card that owns them. -->
-  <div class="seal" id="lawSchema">
-      <div class="gx-bloom" aria-hidden="true">
-        <i style="--bc:var(--em);left:8%;top:6%;width:38%;height:52%"></i>
-        <i style="--bc:var(--em);left:54%;top:6%;width:38%;height:52%"></i>
-      </div>
-    <div class="seal-stage" id="lawStage">
-      <div class="seal-fan" id="lawFan">
-        <button class="seal-card gx-card" type="button" data-i="0" id="law-the-pool" aria-expanded="false" aria-controls="lawDesc0" tabindex="0">
-          <span class="st">THE POOL</span><span class="sc-t">Protocol-enforced escrow</span>
-        </button>
-        <button class="seal-card gx-card" type="button" data-i="1" id="law-the-key" aria-expanded="false" aria-controls="lawDesc1" tabindex="-1">
-          <span class="st">THE KEY</span><span class="sc-t">Financial Privacy Inc (FPI)</span>
-        </button>
-        <button class="seal-card gx-card" type="button" data-i="2" id="law-the-request" aria-expanded="false" aria-controls="lawDesc2" tabindex="-1">
-          <span class="st">THE REQUEST</span><span class="sc-t">Lawful request, defined</span>
-        </button>
-        <button class="seal-card gx-card" type="button" data-i="3" id="law-the-disclosure" aria-expanded="false" aria-controls="lawDesc3" tabindex="-1">
-          <span class="st">THE DISCLOSURE</span><span class="sc-t">Scoped, and nothing more</span>
-        </button>
-      </div>
-    </div>
-    <div class="seal-detail" id="lawDetail">
-      <p class="sd-head" id="lawDetailHead" aria-live="polite"></p>
-      <div class="sd-item" id="lawDesc0" hidden="until-found" data-title="THE POOL · Protocol-enforced escrow">
-        <p class="sn-sum">No escrowed viewing key, no entry: the proof itself enforces it.</p>
-        <ul><li>· Viewing key escrowed at entry, encrypted to the auditor</li><li>· The escrow is enforced by the proof itself</li><li>· Deposits screened at the edge</li></ul>
-      </div>
-      <div class="sd-item" id="lawDesc1" hidden="until-found" data-title="THE KEY · Financial Privacy Inc (FPI)">
-        <p class="sn-sum">Sealed in dual hardware enclaves, governed by StarkWare, FPI, and the Starknet Security Council.</p>
-        <ul><li>· Founded by the QEDIT team</li><li>· Master key sealed in a dual-enclave TEE</li><li>· 3-of-4 multisig: StarkWare + FPI</li><li>· Starknet Security Council backup &amp; upgrade control</li><li>· Never touched for the overwhelming majority of users</li></ul>
-      </div>
-      <div class="sd-item" id="lawDesc2" hidden="until-found" data-title="THE REQUEST · Lawful request, defined">
-        <p class="sn-sum">Only an authenticated order from a competent authority, on a verified legal basis.</p>
-        <ul><li>· An authenticated order from a competent authority</li><li>· Acting inside its jurisdiction</li><li>· On a verified legal basis</li><li>· Anything less is refused</li></ul>
-      </div>
-      <div class="sd-item" id="lawDesc3" hidden="until-found" data-title="THE DISCLOSURE · Scoped, and nothing more">
-        <p class="sn-sum">The minimum the request covers, re-encrypted to that authority, and nobody else.</p>
-        <ul><li>· Minimum necessary scope: potentially a single transfer in a defined window</li><li>· Re-encrypted inside the enclave</li><li>· Delivered to the requesting authority, and nobody else</li><li>· The rest of the pool stays sealed</li></ul>
-      </div>
-    </div>
+  <div class="pl-prose th-pm-reveal">
+  <p class="th-pm-intro">Onchain privacy earned its reputation problem: for a decade, private meant nothing to show the regulator. STRK20 was built for the opposite reading: confidential to the market, answerable to the law under a verified lawful request and only within its scope, and the mechanism is published in full.</p>
+  <p class="lead">Entry requires escrowing a viewing key, enforced by the proof itself. By default that key does nothing: it sits sealed in hardware, untouched for the overwhelming majority of users. Under a verified lawful request it can unwind one user's trail while the rest of the pool stays sealed. And even then, the key only reads: it cannot <span class="red">freeze</span>, cannot <span class="red">seize</span>, cannot <span class="red">spend</span>.</p>
   </div>
+
+  <div class="pl th-pm-reveal" id="lawSchema">
+
+    <div class="pl-col" id="law-the-pool">
+      <div class="pl-top">
+        <span class="pl-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5 12 4l9 4.5-9 4.5z"/><path d="M3 8.5v7L12 20l9-4.5v-7"/></svg></span>
+        <span class="pl-name">01 · THE POOL</span>
+        <span class="pl-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></span>
+      </div>
+      <div class="pl-body" id="lawDesc0">
+        <h3 class="pl-title">Protocol-enforced escrow</h3>
+        <p class="pl-sum">No escrowed viewing key, no entry: the proof itself enforces it.</p>
+      </div>
+      <div class="pl-fig" aria-hidden="true">
+        <svg viewBox="0 0 260 200" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round" stroke-linecap="round">
+          <path d="M130 30 220 75 130 120 40 75Z"/>
+          <path d="M40 75v50l90 45 90-45V75"/>
+          <path d="M130 120v50"/>
+          <path class="pl-acc" d="M130 51 189 75 130 99 71 75Z"/>
+          <path d="M85 88 130 111"/><path d="M175 88 130 111"/>
+          <path d="M40 95 130 140 220 95"/>
+          <path d="M40 110 130 155 220 110"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="pl-col" id="law-the-key">
+      <div class="pl-top">
+        <span class="pl-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.5" cy="12" r="3.5"/><path d="M12 12h9"/><path d="M17 12v3.5"/><path d="M20 12v2.5"/></svg></span>
+        <span class="pl-name">02 · THE KEY</span>
+        <span class="pl-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></span>
+      </div>
+      <div class="pl-body" id="lawDesc1">
+        <h3 class="pl-title">Financial Privacy Inc (FPI)</h3>
+        <p class="pl-sum">Sealed in dual hardware enclaves, governed by StarkWare, FPI, and the Starknet Security Council.</p>
+      </div>
+      <div class="pl-fig" aria-hidden="true">
+        <svg viewBox="0 0 260 200" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round" stroke-linecap="round">
+          <path d="M130 22 200 57 130 92 60 57Z"/>
+          <path d="M60 57v62l70 35 70-35V57"/>
+          <path d="M130 92v63"/>
+          <path d="M130 38 184 57 130 76 76 57Z" stroke-dasharray="4 5"/>
+          <path class="pl-acc" d="M95 104a8 8 0 1 0 .1 0Z"/>
+          <path class="pl-acc" d="M95 120v14"/>
+          <path class="pl-acc" d="M95 128h7"/>
+          <path d="M155 79.5 155 141.5"/><path d="M175 69.5 175 131.5"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="pl-col" id="law-the-request">
+      <div class="pl-top">
+        <span class="pl-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/><path d="M9 12h6"/><path d="M9 16h4"/></svg></span>
+        <span class="pl-name">03 · THE REQUEST</span>
+        <span class="pl-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></span>
+      </div>
+      <div class="pl-body" id="lawDesc2">
+        <h3 class="pl-title">Lawful request, defined</h3>
+        <p class="pl-sum">Only an authenticated order from a competent authority, on a verified legal basis.</p>
+      </div>
+      <div class="pl-fig" aria-hidden="true">
+        <svg viewBox="0 0 260 200" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round" stroke-linecap="round">
+          <path d="M130 96 215 128 130 160 45 128Z"/>
+          <path d="M130 78 215 110 130 142 45 110Z"/>
+          <path d="M130 60 215 92 130 124 45 92Z"/>
+          <path d="M96 82 130 95"/><path d="M110 74 152 90"/><path d="M124 66 174 85"/>
+          <path class="pl-acc" d="M181 55a17 8.5 0 1 0 .1 0Z"/>
+          <path class="pl-acc" d="M181 60a9 4.5 0 1 0 .1 0Z"/>
+          <path class="pl-acc" d="M181 63.5 181 79"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="pl-col" id="law-the-disclosure">
+      <div class="pl-top">
+        <span class="pl-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18v12H3z"/><path d="m3 7 9 6 9-6"/></svg></span>
+        <span class="pl-name">04 · THE DISCLOSURE</span>
+        <span class="pl-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></span>
+      </div>
+      <div class="pl-body" id="lawDesc3">
+        <h3 class="pl-title">Scoped, and nothing more</h3>
+        <p class="pl-sum">The minimum the request covers, re-encrypted to that authority, and nobody else.</p>
+      </div>
+      <div class="pl-fig" aria-hidden="true">
+        <svg viewBox="0 0 260 200" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round" stroke-linecap="round">
+          <path d="M104 108 130 121 104 134 78 121Z"/>
+          <path d="M156 108 182 121 156 134 130 121Z"/>
+          <path d="M78 134 104 147 78 160 52 147Z"/>
+          <path d="M130 134 156 147 130 160 104 147Z"/>
+          <path d="M182 134 208 147 182 160 156 147Z"/>
+          <path d="M130 82 156 95 130 108 104 95Z"/>
+          <path class="pl-acc" d="M130 108 156 121 130 134 104 121Z"/>
+          <path class="pl-acc" d="M130 108 130 74"/>
+          <path class="pl-acc" d="M124 82 130 74 136 82"/>
+          <path class="pl-acc" d="M96 40h68v26H96Z"/>
+          <path class="pl-acc" d="m96 42 34 20 34-20"/>
+        </svg>
+      </div>
+    </div>
+
   </div>
 
   <p class="lead th-pm-reveal">And the whole stack is open source under Apache 2.0.</p>
 </section>
 
 <!-- ================= CLOSING ================= -->
-<div class="closing">
+<div class="closing cinv">
   <div class="closing-bloom" aria-hidden="true">
     <i style="left:24%;top:26%;width:52%;height:56%;opacity:.11"></i>
     <i style="left:6%;top:58%;width:30%;height:44%;opacity:.08"></i>
     <i style="left:64%;top:56%;width:30%;height:46%;opacity:.08"></i>
   </div>
-  <div class="cd th-pm-reveal">Privacy is probably the last 100x PvE bet in crypto.<br><span class="em">Starknet is building the best ecosystem for it.</span></div>
+  <div class="cd th-pm-reveal">Privacy is probably the <mark class="cinv-hl"><i class="cinv-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 13.5h7L10 22l9-11.5h-7z"/></svg></i>last 100x PvE bet</mark> in crypto.<br><span class="em">Starknet is building the best ecosystem for it.</span></div>
   <p class="cd-recap th-pm-reveal">One pool for every asset, at the lowest fees of any privacy system with real DeFi access: shielded in seconds, straight from the wallet, composable across DeFi, and secured by audits and machine-checked formal proofs.</p>
 </div>
 
@@ -3328,151 +3481,6 @@ var pvVideoChrome = thVideoChrome({
     spacerClass: 'pmv-spacer', spacerProp: '--pmv-spacer',
     topProp: '--pmv-stick-top', stickOnClass: 'stick-on'
   });
-})();
-
-// ============================================================
-// SECTION 05 - the card stack. Two states: FANNED at rest and
-// OPENED on one card, whose full description renders in the
-// reserved region below the stage. The fan arrives on entrance:
-// an IntersectionObserver adds .is-open once (6s timeout and
-// focusin as fallbacks), so the spread animates the first time
-// the section is seen and no gesture is required to reach it.
-//
-// Selection runs on the shared thRove machine, which distinguishes
-// a click from an arrow key through its second argument. That maps
-// exactly onto what this block needs: arrows move the tab stop
-// without opening anything, and click (which is also what Enter
-// and Space fire on a button) selects the card. thRove's own
-// mirror() is not used, because aria-selected is the wrong
-// attribute for a group of expanding buttons; aria-expanded and
-// the roving tabindex are written here instead.
-//
-// On hover-capable devices (any-hover: hover, never a width query),
-// pointing at a card selects it after a 70ms intent delay, click is
-// an idempotent select rather than a toggle, and leaving the stack
-// keeps the last selection. Touch keeps the original tap contract,
-// toggle included, and none of the hover wiring runs there.
-// ============================================================
-(function(){
-  var root = document.getElementById('lawSchema');
-  if (!root) return;
-  var cards = [].slice.call(root.querySelectorAll('.seal-card'));
-  var items = cards.map(function(c){ return document.getElementById(c.getAttribute('aria-controls')); });
-  var head = document.getElementById('lawDetailHead');
-  var detail = document.getElementById('lawDetail');
-  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
-  var narrow = window.matchMedia('(max-width: 980px)');
-  // any-hover, not a width query: a touch laptop has desktop width but no
-  // reliable hover, and a tablet with a mouse attached gains one
-  var hoverable = window.matchMedia('(any-hover: hover)');
-  var cursor = 0, openIdx = -1;
-
-  function render(){
-    root.classList.toggle('has-open', openIdx >= 0);
-    cards.forEach(function(c, k){
-      c.classList.toggle('is-on', k === openIdx);
-      c.setAttribute('aria-expanded', k === openIdx ? 'true' : 'false');
-      c.setAttribute('tabindex', k === cursor ? '0' : '-1');
-    });
-    items.forEach(function(it, k){
-      // hidden="until-found" keeps the three closed descriptions in the DOM
-      // and findable by find-in-page; removing the attribute reveals one
-      if (k === openIdx) it.removeAttribute('hidden');
-      else it.setAttribute('hidden', 'until-found');
-    });
-    // the live region carries the opened card's name only, so a screen reader
-    // hears one title rather than the whole stage
-    head.textContent = openIdx >= 0 ? items[openIdx].getAttribute('data-title') : '';
-    // aim the connector at the opened card. The cards sit at 12.5% + 25%*i of
-    // the stage and the panel is the same box, so the card's centre and this
-    // percentage are the same point; verified by measurement, not assumed.
-    if (openIdx >= 0) detail.style.setProperty('--sd-notch', (12.5 + 25 * openIdx) + '%');
-  }
-  function fan(){
-    if (root.classList.contains('is-open')) return;
-    root.classList.add('is-open');
-    render();
-  }
-  function open(i){
-    openIdx = (openIdx === i) ? -1 : i;   // second pick returns to fanned
-    render();
-  }
-  // select: open exactly card i, idempotent. This is the hover contract and
-  // the click contract on hover-capable devices: with hover having already
-  // opened the card under the pointer, a habit click must not toggle it
-  // closed. Touch keeps the toggle, where a second tap collapsing the stack
-  // is still the intended gesture.
-  function select(i){
-    cursor = i;
-    if (openIdx === i) { render(); return; }
-    openIdx = i;
-    render();
-  }
-  function toFanned(){ if (openIdx >= 0) { openIdx = -1; render(); } }
-
-  // hover selects, behind an intent delay so a pointer sweeping across the
-  // fan does not fire four detail swaps: 70ms sits under the ~100ms humans
-  // read as instant but over the ~40-50ms a fast sweep spends crossing one
-  // card. Leaving the stack cancels only the PENDING intent; the settled
-  // selection stays, so crossing the stack never flickers or reverts.
-  // Last input wins between hover and keyboard: if focus is inside the
-  // group when a hover settles elsewhere, focus follows the hovered card,
-  // so no focus ring is left sitting on a card whose detail is gone
-  // (pointer-driven focus is not :focus-visible, so no ghost ring appears).
-  var hoverTimer = 0;
-  function hoverSettle(i){
-    hoverTimer = 0;
-    fan();
-    if (root.contains(document.activeElement) && document.activeElement !== cards[i]) cards[i].focus();
-    select(i);
-  }
-  cards.forEach(function(c, i){
-    c.addEventListener('pointerenter', function(ev){
-      if (!hoverable.matches || ev.pointerType === 'touch') return;
-      clearTimeout(hoverTimer);
-      hoverTimer = setTimeout(function(){ hoverSettle(i); }, 70);
-    });
-  });
-  root.addEventListener('pointerleave', function(){ clearTimeout(hoverTimer); hoverTimer = 0; });
-
-  // entrance: the fan opens once when the section comes into view. focusin
-  // stays as an immediate fallback (keyboard can arrive before the observer
-  // fires) and a timeout covers environments where the observer never does.
-  root.addEventListener('focusin', fan);
-  if ('IntersectionObserver' in window) {
-    var fanIO = new IntersectionObserver(function(es){
-      if (es[0].isIntersecting) { fan(); fanIO.disconnect(); }
-    }, { threshold: 0.35 });
-    fanIO.observe(root);
-  }
-  setTimeout(fan, 6000);
-  root.addEventListener('keydown', function(ev){
-    if (ev.key === 'Escape' && openIdx >= 0) { toFanned(); cards[cursor].focus(); }
-  });
-  thRove({ root: root, buttons: cards, shown: function(){ return cursor; },
-    pick: function(k, fromClick){
-      cursor = k;
-      // clicks select idempotently where hover exists (see select) and
-      // keep the toggle on touch; arrows only move, as before
-      if (fromClick) { fan(); if (hoverable.matches) select(k); else open(k); }
-      else render();
-    } });
-
-  // a find-in-page hit inside a closed description opens its card, so the
-  // reader lands on a card that is actually showing the text they matched
-  items.forEach(function(it, k){
-    it.addEventListener('beforematch', function(){ cursor = k; fan(); openIdx = k; render(); });
-  });
-
-  // below 980px and under reduced motion there is no entrance animation to
-  // stage, so the fan is open from the first paint
-  if (reduce.matches || narrow.matches) root.classList.add('is-open');
-  (narrow.addEventListener ? narrow.addEventListener.bind(narrow, 'change')
-                           : narrow.addListener.bind(narrow))(function(){
-    if (narrow.matches) root.classList.add('is-open');
-    render();
-  });
-  render();
 })();
 
 // ============================================================
@@ -5029,5 +5037,6 @@ var pvVideoChrome = thVideoChrome({
 <script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.185.0/build/three.module.js"}}</script>
 <script type="module" src="js/eco-backdrop.js"></script>
 <script type="module" src="js/pv-human-key.js"></script>
+<script type="module" src="js/pv-eco-orb.js"></script>
 </body>
 </html>

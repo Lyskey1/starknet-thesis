@@ -228,13 +228,6 @@
        device root, so scope the lookup there */
     const qw = target.closest && target.closest('.qw-ch');
     if (qw && !qw.classList.contains('is-on')) did = clickIf(qw.closest('.qw').querySelectorAll('.qw-ped')[+qw.dataset.ch]) || did;
-    /* privacy: section 05's sealed stack. A hit lands on the detail item, so
-       the card that owns it is the one whose aria-controls names it: click
-       that and the stack unseals onto the right stage. */
-    const sd = target.closest && target.closest('.sd-item');
-    if (sd && sd.hasAttribute('hidden')) {
-      did = clickIf(document.querySelector('.seal-card[aria-controls="' + sd.id + '"]')) || did;
-    }
     /* btcfi: the risk podiums show one risk panel at a time. Same contract
        as privacy's .pmv-panel: the panel names its tab via aria-labelledby. */
     const brk = target.closest && target.closest('.brk-panel');

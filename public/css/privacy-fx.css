@@ -356,3 +356,89 @@ body.page-privacy header.vc-header { z-index: 100; }
 .fx-crit-name { font-size: 15px; }
 .fx-crit-sub { font-size: 13px; color: rgba(250,250,250,.5); }
 .fx-legend { justify-content: center; margin-top: 22px; }
+
+/* ---------- 05: the law, as a four-column feature band ----------
+   Replaced the fanned deck on 2026-09-01. Four stages that all have to read
+   at once do not want a selection device, so each owns a column and nothing
+   is hidden. Lives here rather than in privacy.html's inline <style> only to
+   stay out of the way of concurrent edits to that block; every selector that
+   touches an existing class therefore carries two classes, so it beats the
+   inline single-class rules (.th-pm-title at 52px, and its 880px override)
+   regardless of source order. Verified with getComputedStyle, not by
+   reading the cascade. */
+.th-pm-head--band { justify-content: center; flex-wrap: wrap; gap: 16px; text-align: center; }
+.th-pm-head--band .th-pm-title { font-size: clamp(34px, 5.6vw, 76px); font-weight: 300;
+  line-height: 1.02; letter-spacing: -.03em; }
+.th-pm-head--band + .th-pm-eyebrow { text-align: center; }
+
+/* the dotted full-width rule under the headline, with an accent square at
+   each end: the same device .sq draws across the Satoshi statement, kept to
+   the 1160 band here rather than the viewport so it cannot overflow. */
+.pl-rule { position: relative; height: 0; margin: 32px 0 0;
+  border-top: 2px dotted rgba(250,250,250,.35); }
+.pl-rule::before, .pl-rule::after { content: ""; position: absolute; top: -5px;
+  width: 8px; height: 8px; background: var(--pf-acc); }
+.pl-rule::before { left: 0; }
+.pl-rule::after { right: 0; }
+
+/* the prose, folded above the columns as two measures */
+.pl-prose { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr);
+  gap: 24px 56px; align-items: start; margin: 34px 0 0; }
+.pl-prose > .th-pm-intro { margin: 0; max-width: none; }
+.pl-prose > .lead { margin: 0; max-width: none; }
+
+/* the band bleeds out by its own column padding, so all four columns get the
+   SAME inner padding and still line their outer edges up with the prose
+   above. Zeroing the first/last padding instead (the obvious version) makes
+   the outer two content boxes 32px wider than the inner two, which shows up
+   as two figure panels taller than the other two. Measured: 350 vs 318. */
+.pl { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); margin: 56px -24px 0; }
+.pl-col { display: flex; flex-direction: column; min-width: 0;
+  padding: 0 24px 4px; border-left: 1px solid var(--pf-line); }
+.pl-col:first-child { border-left: 0; }
+/* the name row has to hold on ONE line in every column, and the longest name
+   is "04 - THE DISCLOSURE" at 19 characters. Budget at 1440: the column's
+   237px of content less two 30px tiles and two 10px gaps leaves 157px, and
+   19 characters of IBM Plex Mono at 10.5px with .1em tracking measure 140.
+   Fatten the tiles, the gap or the tracking and column 04 wraps to two lines
+   while the other three do not, which drops its title out of line. */
+.pl-top { display: flex; align-items: center; gap: 10px; }
+.pl-ic { flex: none; display: grid; place-items: center; width: 30px; height: 30px;
+  border: 1px solid var(--pf-line); color: var(--pf-acc); }
+.pl-ic svg { width: 16px; height: 16px; }
+.pl-name { min-width: 0; font-family: 'IBM Plex Mono', monospace; font-size: 10.5px;
+  letter-spacing: .1em; white-space: nowrap; color: var(--pf-ink); }
+.pl-arrow { flex: none; margin-left: auto; display: grid; place-items: center;
+  width: 30px; height: 30px; border: 1px solid var(--pf-line); color: var(--pf-dim); }
+.pl-arrow svg { width: 16px; height: 16px; }
+.pl-body { flex: 1 1 auto; }
+.pl-title { margin: 22px 0 0; font-family: 'General Sans','Helvetica Neue',Arial,sans-serif;
+  font-weight: 600; font-size: 17px; line-height: 1.25; letter-spacing: -.01em; color: var(--pf-ink); }
+.pl-sum { margin: 10px 0 0; font-family: 'General Sans','Helvetica Neue',Arial,sans-serif;
+  font-size: 13.5px; line-height: 1.62; color: var(--pf-dim); }
+/* the figure sits at the base of every column, so the four bottom edges line
+   up whatever the description above them measures */
+.pl-fig { margin: 26px 0 0; border: 1px solid var(--pf-line); background: #141414;
+  color: rgba(250,250,250,.34); }
+.pl-fig svg { display: block; width: 100%; height: auto; }
+.pl-fig .pl-acc { stroke: var(--pf-acc); stroke-width: 1.5; }
+
+@media (max-width: 1080px) {
+  .pl { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .pl-col:nth-child(odd) { border-left: 0; }
+  .pl-col:nth-child(n+3) { margin-top: 34px; padding-top: 30px; border-top: 1px solid var(--pf-line); }
+}
+@media (max-width: 860px) {
+  /* body.page-privacy sets overflow-x: clip, so an over-wide nowrap tile is
+     silently cropped instead of raising a scrollbar. Keep the inline-block
+     (plain inline left stray slabs at line ends) and relax only the wrap, so
+     the tile shrinks to the container instead of running past it. */
+  .th-pm-head--band .sq-hl { white-space: normal; }
+  .th-pm-head--band { gap: 12px; }
+  .pl-prose { grid-template-columns: minmax(0,1fr); gap: 20px; }
+}
+@media (max-width: 640px) {
+  .pl { grid-template-columns: minmax(0,1fr); margin-left: 0; margin-right: 0; }
+  .pl-col, .pl-col:nth-child(odd) { padding: 0 0 4px; border-left: 0; }
+  .pl-col + .pl-col { margin-top: 32px; padding-top: 28px; border-top: 1px solid var(--pf-line); }
+}

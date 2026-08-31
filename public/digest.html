@@ -46,7 +46,7 @@
   }
 </style>
 <style>
-  /* ===== Hero: SHARED SHELL, PER-PAGE SCENE.
+  /* ===== Hero shell (the scene layer is now the dgx- field, below).
      KEEP IN SYNC with ecosystem.html's eco-hero block (eco- prefix), but
      only the SHELL: hero frame, content grid, glass CTAs, scrim, marquee
      band and breakpoints must stay byte-identical modulo the prefix.
@@ -66,33 +66,9 @@
   .dg-hero-inner { width: 100%; max-width: 1160px; margin: 0 auto; padding: 0 32px; position: relative; z-index: 1; }
   .dg-hero .hero-title { margin-left: 0; margin-right: 0; max-width: none; }
   .dg-hero .hero-subtitle { margin: 22px 0 0; max-width: 620px; }
-  /* PER-PAGE SCENE (digest): THE PUBLISHING CADENCE.
-     NOT shared: from 2026-08-06 the scene layer is deliberately per-page
-     (ecosystem carries a node network). Do not re-sync it with
-     ecosystem.html and do not read a diff here as drift. Everything
-     AROUND the scene stays a twin: sky ramp, low accent glow, scrim,
-     content grid, CTAs, marquee band, breakpoints.
-     The scene reads as the publishing rhythm: a baseline hairline, 26
-     bars rising off it, every 4th one tall for a monthly recap with the
-     tall amplitude growing gently left to right, and the same row again
-     behind, offset up and much fainter, for archive depth. The row is
-     declared once and instanced twice with <use>, so the second row costs
-     no extra markup. Static by design: the marquee band right below
-     already carries this page's motion, so there is nothing here for
-     reduced motion to switch off. The low radial accent glow already
-     lives in the scene background below. z-index -1 keeps it under
-     content and under the site grain. */
-  .dg-scene { position: absolute; inset: 0; z-index: -1; overflow: hidden;
-    background:
-      radial-gradient(56% 36% at 58% 84%, rgba(var(--accent-rgb), .17), transparent 70%),
-      linear-gradient(180deg, var(--black) 0%, #0E0C0D 42%, #1A100E 70%, #221310 88%, #241411 100%); }
-  .dg-bars { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: min(74%, 520px); display: block; pointer-events: none; }
-  .dg-bars .base { fill: none; stroke: rgba(var(--accent-rgb), .18); stroke-width: 1; }
-  .dg-bars .wk { fill: rgba(var(--accent-rgb), .3); }
-  .dg-bars .mo { fill: rgba(var(--accent-rgb), .58); }
-  .dg-bars .dg-back { opacity: .14; }
-  .dg-scrim { position: absolute; left: 0; right: 0; bottom: 0; height: 200px;
-    background: linear-gradient(180deg, transparent, var(--black)); }
+  /* The SVG cadence scene that used to live here was replaced on
+     2026-09 by the dgx- mono-token field (see the dgx- block at the end
+     of the head). Its rules were removed with it. */
   /* hero CTAs: the locked shared dark glass tier (css/glass-chips.css
      .chip-glass) at button scale (nav-CTA-like padding, chip pill
      radius). The recipe's accent terms read --chip-accent-rgb with an
@@ -165,10 +141,6 @@
   @media (max-width: 980px) {
     .dg-hero { height: auto; min-height: 0; padding: 0; }
     .dg-hero .dg-hero-inner { height: auto; padding-top: 110px; padding-bottom: 56px; }
-    /* scene simplifies exactly as the ridges did: shorter, and the faint
-       archive row drops out so only the front cadence reads */
-    .dg-bars { height: 52%; }
-    .dg-bars .dg-back { display: none; }
     .dg-marquee { display: none; }
   }
   @media (max-width: 700px) {
@@ -279,6 +251,149 @@
   }
   @media (max-width: 768px) { .dg-close { padding: 88px 24px 80px; } }
 </style>
+<style>
+  /* ===== dgx-: the 2026-09 digest hero field and the About statement.
+     Its own prefix so it can never collide with privacy-fx's sq- family,
+     whose .sq-hl / .sq-ic inverted-tile geometry this borrows (here the
+     tile is inverted the other way: light fill, dark text, with an accent
+     square glyph inside). This block sits LAST in the head, after every
+     linked sheet and after the page's own inline styles, so these rules
+     win the cascade over stride.css and styles.css at equal specificity;
+     where an existing selector is more specific it is named in full. ===== */
+
+  /* ---- hero shell: full viewport, everything centred ---- */
+  .dgx-hero { height: 100lvh; min-height: 0; padding: 0; text-align: center; }
+  .dgx-hero .dg-hero-inner { display: flex; flex-direction: column; align-items: center; justify-content: center;
+    height: 100%; padding-top: 120px; padding-bottom: 56px; text-align: center; }
+  .dgx-kicker { margin: 0 0 26px; }
+  .dgx-hero .dgx-foot { margin-top: 0; display: block; }
+
+  /* scene: ground colour at the top ramping into a warm accent floor */
+  .dgx-scene { position: absolute; inset: 0; z-index: -1; overflow: hidden;
+    background: linear-gradient(180deg, var(--black) 0%, #0d0d0d 34%, #150c09 64%, #21120d 86%, #291509 100%); }
+  .dgx-field { position: absolute; inset: 0; overflow: hidden; }
+  .dgx-layer { position: absolute; left: -30%; right: -30%; top: -14%; bottom: -14%;
+    display: flex; flex-direction: column; justify-content: center; gap: clamp(8px, 1.5vh, 18px);
+    transform: translateY(var(--dy, 0px)); will-change: transform; }
+  .dgx-layer--chalk { color: rgba(250, 250, 250, .085);
+    -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 34%, rgba(0,0,0,.15) 76%, transparent 100%);
+            mask-image: linear-gradient(180deg, #000 0%, #000 34%, rgba(0,0,0,.15) 76%, transparent 100%); }
+  .dgx-layer--warm { color: rgba(255, 122, 62, .42);
+    -webkit-mask-image: linear-gradient(180deg, transparent 30%, rgba(0,0,0,.25) 58%, #000 92%);
+            mask-image: linear-gradient(180deg, transparent 30%, rgba(0,0,0,.25) 58%, #000 92%); }
+  .dgx-row { white-space: nowrap; font-family: var(--mono); font-weight: 400;
+    font-size: clamp(11px, 1.02vw, 15px); line-height: 1.5; letter-spacing: .34em; text-transform: uppercase;
+    transform: translateX(calc(var(--x, 0px) + var(--dir, 1) * var(--d, 0px))); }
+  .dgx-glow { position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(74% 44% at 50% 104%, rgba(var(--accent-rgb), .38), rgba(var(--accent-rgb), 0) 72%); }
+  /* the field has to stay a texture, not a background the headline fights:
+     a soft centre scrim sits between the field and the content. */
+  .dgx-scrim { position: absolute; inset: 0; pointer-events: none;
+    background:
+      radial-gradient(62% 46% at 50% 42%, rgba(13,13,13,.9), rgba(13,13,13,.62) 52%, rgba(13,13,13,0) 80%),
+      linear-gradient(180deg, rgba(13,13,13,0) 52%, rgba(13,13,13,.5) 68%, rgba(13,13,13,.42) 86%, rgba(13,13,13,0) 100%); }
+
+  /* ---- headline with the inline tile ---- */
+  .dgx-display { margin: 0; max-width: 18ch; font-family: var(--display); font-weight: 300;
+    font-size: clamp(42px, 8.2vw, 132px); line-height: .96; letter-spacing: -.035em; color: var(--sd-ink, #fafafa); }
+  .dgx-display em { font-style: normal; color: var(--accent); }
+  /* inverted tile: inline-block + nowrap so it paints as one clean slab
+     instead of leaving stray fragments at line ends. line-height 1 keeps
+     the box on cap height at display size. box-decoration-break is kept
+     for the sub-860px fallback below, where the tile wraps normally. */
+  .dgx-hl { display: inline-block; white-space: nowrap; vertical-align: baseline; line-height: 1;
+    padding: .06em .16em .1em; background: #fafafa; color: #0d0d0d;
+    -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+  .dgx-ic { display: inline-grid; place-items: center; width: .62em; height: .62em; margin-right: .16em;
+    vertical-align: .04em; background: var(--accent); color: #fafafa; }
+  .dgx-ic svg { width: 58%; height: 58%; }
+
+  /* ---- the rest, below the headline ---- */
+  .dgx-stats { justify-content: center; flex-wrap: wrap; margin: 40px 0 0; }
+  .dgx-stats li { border-left: 1px solid var(--border); padding-left: 20px; text-align: left; }
+  .dgx-stats .sk-stat-v { font-size: clamp(30px, 3vw, 44px); }
+  .dgx-stats .sk-stat-l { font-size: 12px; color: var(--sd-dim, rgba(250,250,250,.62)); margin-top: 8px; }
+  .dgx-hero .dgx-insight { max-width: 44rem; margin: 26px auto 0; }
+  .dgx-hero .sk-insight-t { font-size: clamp(16px, 1.35vw, 20px); }
+  .dgx-hero .sk-insight-b { font-size: 15px; }
+  .dgx-hero .dgx-acts { margin-top: 26px; justify-content: center; }
+
+  @media (max-width: 980px) {
+    /* .sk-stage is absolutely positioned, so a height:auto hero would
+       collapse to nothing. Below the desktop breakpoint the stage goes
+       back into flow and the scene absolute-fills it instead. */
+    .dgx-hero { height: auto; min-height: 0; padding: 0; }
+    .dgx-hero .sk-stage { position: relative; inset: auto; width: 100%; }
+    .dgx-hero .dgx-scene { position: absolute; inset: 0; }
+    .dgx-hero .dg-hero-inner { height: auto; padding-top: 132px; padding-bottom: 80px; }
+    .dgx-layer { gap: 10px; }
+    .dgx-scrim { background: radial-gradient(78% 42% at 50% 42%, rgba(13,13,13,.9), rgba(13,13,13,.62) 56%, rgba(13,13,13,.1) 92%); }
+  }
+  @media (max-width: 860px) {
+    /* html { overflow-x: clip } in styles.css would silently crop an
+       overflowing nowrap tile rather than give a scrollbar, so below this
+       width the tile wraps like ordinary text. */
+    .dgx-hl { display: inline; white-space: normal; }
+    .dgx-display { max-width: none; letter-spacing: -.028em; }
+  }
+  @media (max-width: 700px) {
+    .dgx-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+    .dgx-stats li { padding-left: 10px; }
+    .dgx-stats .sk-stat-v { font-size: 24px; }
+    .dgx-stats .sk-stat-l { font-size: 10.5px; line-height: 1.35; margin-top: 6px; }
+    .dgx-hero .dgx-acts { flex-direction: row; }
+  }
+
+  /* ===== About the digest: one full-width statement + four track rows ===== */
+  /* styles.css caps every section at 1100px; the statement is meant to
+     run wide, so the section opens up and the wrap carries the gutter. */
+  section.dgx-st { max-width: 1440px; padding: 120px 0; }
+  .dgx-st .dgx-wrap { max-width: none; padding: 0 40px; }
+  .dgx-eyebrow { margin: 0 0 30px; }
+  /* stride's .ab-lead caps the measure at 22ch; this statement is meant to
+     run the full width, so the cap is lifted at matching specificity here. */
+  .ab-lead.dgx-lead { max-width: none; font-size: clamp(32px, 5.6vw, 86px); line-height: 1.02; letter-spacing: -.035em; }
+  .dgx-chalk { color: var(--sd-ink, #fafafa); }
+  .dgx-lead .dgx-dim { color: var(--sd-dim, rgba(250,250,250,.62)); }
+  /* square accent tiles, not round chips */
+  .dgx-sq { display: inline-grid; place-items: center; width: .74em; height: .74em; margin: 0 .12em;
+    vertical-align: -.02em; background: var(--accent); color: #fafafa; }
+  .dgx-sq svg { width: 56%; height: 56%; }
+
+  .dgx-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 64px; }
+  .dgx-card { display: flex; align-items: center; gap: 18px; width: 100%; text-align: left;
+    padding: 22px 22px 22px 24px; background: #141414; border: 1px solid var(--sd-line, #262626); border-radius: 12px;
+    color: inherit; font: inherit; cursor: pointer;
+    transition: border-color var(--hover-dur, .25s) var(--hover-ease, ease), background var(--hover-dur, .25s); }
+  .dgx-card:hover { border-color: var(--accent); background: rgba(255, 255, 255, .03); }
+  .dgx-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  .dgx-num { flex: none; display: inline-grid; place-items: center; min-width: 40px; padding: 5px 0;
+    font-family: var(--mono); font-size: 11px; letter-spacing: .14em; color: var(--accent);
+    border: 1px solid rgba(var(--accent-rgb), .4); border-radius: 999px; }
+  .dgx-label { flex: 1 1 auto; font-family: var(--display); font-weight: 400;
+    font-size: clamp(20px, 1.9vw, 28px); line-height: 1.05; letter-spacing: -.02em; color: var(--sd-ink, #fafafa); }
+  .dgx-pre { color: var(--sd-dim, rgba(250,250,250,.62)); }
+  .dgx-tile { flex: none; display: inline-grid; place-items: center; width: 38px; height: 38px;
+    background: var(--accent); color: #fafafa;
+    transition: transform var(--hover-dur, .25s) var(--hover-ease, ease); }
+  .dgx-tile svg { width: 20px; height: 20px; }
+  .dgx-card:hover .dgx-tile { transform: translateX(4px); }
+  @media (prefers-reduced-motion: reduce) {
+    .dgx-card, .dgx-tile { transition: none; }
+    .dgx-card:hover .dgx-tile { transform: none; }
+  }
+  @media (max-width: 880px) {
+    section.dgx-st { padding: 80px 0; }
+    .dgx-st .dgx-wrap { padding: 0 24px; }
+    .dgx-cards { grid-template-columns: 1fr; margin-top: 44px; }
+    .dgx-label { font-size: 22px; }
+  }
+  /* the four track rows carry the archive link the retired showcase held */
+  .dgx-archive { display: inline-block; margin-top: 30px; padding: 12px 24px; border-radius: 999px;
+    border: 1px solid rgba(250,250,250,.3); font-size: 14px; font-weight: 500; color: #fafafa;
+    text-decoration: none; transition: background .2s, border-color .2s, color .2s; }
+  .dgx-archive:hover { background: #fafafa; border-color: #fafafa; color: #0d0d0d; }
+</style>
 <script src="js/admin-gate.js"></script>
 </head>
 <body class="page-recap">
@@ -301,63 +416,37 @@
      publishing-cadence chart, not ecosystem's node network. Accent comes
      from var(--accent-rgb), so the salmon tint rides body.page-recap and
      is never hardcoded. -->
-<div class="hero dg-hero"><div class="sk-stage">
-  <div class="dg-scene" aria-hidden="true">
-    <svg class="dg-bars" viewBox="0 0 1440 520" preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false">
-      <defs>
-        <!-- one issue row: 26 bars off a y=412 baseline, every 4th tall
-             (monthly recap) with the tall amplitude climbing 52 -> 76 left
-             to right; the rest are weekly roundups at 18-30 -->
-        <g id="dgCadence">
-          <rect class="wk" x="30" y="390" width="3" height="22"/>
-          <rect class="wk" x="85" y="385" width="3" height="27"/>
-          <rect class="wk" x="140" y="393" width="3" height="19"/>
-          <rect class="mo" x="195" y="360" width="3" height="52"/>
-          <rect class="wk" x="250" y="388" width="3" height="24"/>
-          <rect class="wk" x="305" y="383" width="3" height="29"/>
-          <rect class="wk" x="360" y="391" width="3" height="21"/>
-          <rect class="mo" x="415" y="355" width="3" height="57"/>
-          <rect class="wk" x="470" y="386" width="3" height="26"/>
-          <rect class="wk" x="525" y="394" width="3" height="18"/>
-          <rect class="wk" x="580" y="389" width="3" height="23"/>
-          <rect class="mo" x="635" y="351" width="3" height="61"/>
-          <rect class="wk" x="690" y="384" width="3" height="28"/>
-          <rect class="wk" x="745" y="392" width="3" height="20"/>
-          <rect class="wk" x="800" y="387" width="3" height="25"/>
-          <rect class="mo" x="855" y="346" width="3" height="66"/>
-          <rect class="wk" x="910" y="382" width="3" height="30"/>
-          <rect class="wk" x="965" y="390" width="3" height="22"/>
-          <rect class="wk" x="1020" y="385" width="3" height="27"/>
-          <rect class="mo" x="1075" y="341" width="3" height="71"/>
-          <rect class="wk" x="1130" y="393" width="3" height="19"/>
-          <rect class="wk" x="1185" y="388" width="3" height="24"/>
-          <rect class="wk" x="1240" y="383" width="3" height="29"/>
-          <rect class="mo" x="1295" y="336" width="3" height="76"/>
-          <rect class="wk" x="1350" y="391" width="3" height="21"/>
-          <rect class="wk" x="1405" y="386" width="3" height="26"/>
-        </g>
-      </defs>
-      <!-- archive depth: the same row, offset up and much fainter -->
-      <use class="dg-back" href="#dgCadence" transform="translate(0,-38)"/>
-      <line class="base" x1="0" y1="412" x2="1440" y2="412"/>
-      <use href="#dgCadence"/>
-    </svg>
-    <div class="dg-scrim"></div>
+<div class="hero dg-hero dgx-hero"><div class="sk-stage">
+  <!-- SCENE (digest, 2026-09): a dense field of faint repeating mono tokens,
+       built by the inline dgx script at the foot of the page. Two identical
+       row stacks are drawn: the chalk layer is masked to fade out toward the
+       bottom, the warm layer to fade in, so the field reads as the ground
+       colour at the top ramping into the accent glow at the bottom. Rows
+       drift horizontally with scroll (alternating direction) and the stack
+       drifts a little vertically; the whole drift is skipped under
+       prefers-reduced-motion. No three.js on this page. -->
+  <div class="dgx-scene" aria-hidden="true">
+    <div class="dgx-field" id="dgxField">
+      <div class="dgx-layer dgx-layer--chalk"></div>
+      <div class="dgx-layer dgx-layer--warm"></div>
+    </div>
+    <div class="dgx-glow"></div>
+    <div class="dgx-scrim"></div>
   </div>
-  <div class="dg-hero-inner">
-    <p class="hero-eyebrow">Digest</p>
-    <h1 id="never-miss-whatsshipping-on-starknet" class="sk-display"><span>Never miss what's</span><span class="sk-acc">shipping on <em>Starknet</em>.</span></h1>
+  <div class="dg-hero-inner dgx-inner">
+    <p class="hero-eyebrow dgx-kicker">Digest</p>
+    <h1 id="never-miss-whatsshipping-on-starknet" class="dgx-display">Never miss what's <span class="dgx-hl"><span class="dgx-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12"/></svg></span>shipping on</span> <em>Starknet</em>.</h1>
 
-    <div class="sk-foot">
-      <ul class="sk-stats">
+    <div class="dgx-foot">
+      <ul class="sk-stats dgx-stats">
         <li><span class="sk-stat-v">231</span><span class="sk-stat-l">Weekly roundups published</span></li>
         <li><span class="sk-stat-v">35</span><span class="sk-stat-l">Monthly recaps</span></li>
         <li><span class="sk-stat-v">Weekly</span><span class="sk-stat-l">Every week, without a gap</span></li>
       </ul>
-      <div class="sk-insight">
+      <div class="sk-insight dgx-insight">
         <p class="sk-insight-t">A thesis only holds if the ecosystem actually ships behind it.</p>
         <p class="sk-insight-b">Starknet is among the very few ecosystems shipping this much, this consistently. The digest is the record of it: weekly roundups, monthly recaps, and original research.</p>
-        <div class="sk-acts">
+        <div class="sk-acts dgx-acts">
           <a class="sk-pill" href="https://starknetresearch.substack.com/subscribe" target="_blank" rel="noopener">Subscribe</a>
           <a class="sk-link" href="#latest-from-the-starknet-ecosystem">Read the latest</a>
         </div>
@@ -383,23 +472,20 @@
 
 
 <!-- stride's About: an eyebrow over one long statement set large, chips inline. -->
-<section class="block ab-block" aria-label="About the digest"><div class="wrap">
-  <p class="ab-eyebrow">About the digest</p>
-  <h2 class="ab-lead">Every week the ecosystem ships, <span class="ab-chip" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 5h18v14H3z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 6l9 7 9-7" fill="none" stroke="currentColor" stroke-width="2"/></svg></span> and every week it gets written down, <span class="ab-muted">so the record <span class="ab-chip" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="12" width="4" height="8" rx="1"/><rect x="10" y="7" width="4" height="13" rx="1"/><rect x="16" y="3" width="4" height="17" rx="1"/></svg></span> is there when the thesis needs proving.</span></h2>
-</div></section>
-
-<!-- stride's Showcase: the four reading tracks, edge to edge on hairlines.
-     Each column is also the feed's filter, so picking one scrolls to the feed
-     and switches it (js/digest-stride.js). -->
-<section class="block" aria-label="Reading tracks"><div class="wrap">
-  <div class="sc-head">
-    <p class="sc-eyebrow">Tracks</p>
-    <h2 class="sc-title">Four ways to read the ecosystem</h2>
-    <a class="sc-cta" href="#latest-from-the-starknet-ecosystem">Go to the archive</a>
+<section class="block ab-block dgx-st" aria-label="About the digest"><div class="wrap dgx-wrap">
+  <p class="ab-eyebrow dgx-eyebrow">About the digest</p>
+  <h2 class="ab-lead dgx-lead"><span class="dgx-chalk">Every week the ecosystem ships, <span class="dgx-sq" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 5h18v14H3z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 6l9 7 9-7" fill="none" stroke="currentColor" stroke-width="2"/></svg></span></span> <span class="dgx-dim">and every week it gets written down, so the record <span class="dgx-sq" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="12" width="4" height="8" rx="1"/><rect x="10" y="7" width="4" height="13" rx="1"/><rect x="16" y="3" width="4" height="17" rx="1"/></svg></span> is there when the thesis needs proving.</span></h2>
+  <!-- the same four reading tracks as the showcase below, as numbered rows.
+       They carry the same data-filter values and are wired by the same
+       js/digest-stride.js bridge (tab switch + scroll to the archive). -->
+  <div class="dgx-cards">
+    <button type="button" class="dgx-card" data-filter="monthly"><span class="dgx-num">01</span><span class="dgx-label"><span class="dgx-pre">The</span> Monthly</span><span class="dgx-tile" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2"/></svg></span></button>
+    <button type="button" class="dgx-card" data-filter="weekly"><span class="dgx-num">02</span><span class="dgx-label"><span class="dgx-pre">The</span> Weekly</span><span class="dgx-tile" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2"/></svg></span></button>
+    <button type="button" class="dgx-card" data-filter="research"><span class="dgx-num">03</span><span class="dgx-label"><span class="dgx-pre">The</span> Research</span><span class="dgx-tile" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2"/></svg></span></button>
+    <button type="button" class="dgx-card" data-filter="all"><span class="dgx-num">04</span><span class="dgx-label"><span class="dgx-pre">The</span> Everything</span><span class="dgx-tile" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2"/></svg></span></button>
   </div>
-</div>
-  <div class="sc-grid"><button type="button" class="sc-col" data-filter="monthly"><div class="sc-art" aria-hidden="true"><img src="/assets/stride/images/3rd/approach.png" alt="" loading="lazy"></div><span class="sc-n">01</span><span class="sc-name"><span class="sc-pre">The</span>Monthly</span></button><button type="button" class="sc-col" data-filter="weekly"><div class="sc-art" aria-hidden="true"><img src="/assets/stride/images/3rd/technology.jpg" alt="" loading="lazy"></div><span class="sc-n">02</span><span class="sc-name"><span class="sc-pre">The</span>Weekly</span></button><button type="button" class="sc-col" data-filter="research"><div class="sc-art" aria-hidden="true"><img src="/assets/stride/images/3rd/security.jpg" alt="" loading="lazy"></div><span class="sc-n">03</span><span class="sc-name"><span class="sc-pre">The</span>Research</span></button><button type="button" class="sc-col" data-filter="all"><div class="sc-art" aria-hidden="true"><img src="/assets/stride/images/3rd/team.jpg" alt="" loading="lazy"></div><span class="sc-n">04</span><span class="sc-name"><span class="sc-pre">The</span>Everything</span></button></div>
-</section>
+    <a class="dgx-archive" href="#latest-from-the-starknet-ecosystem">Go to the archive</a>
+</div></section>
 
 <!-- stride's Works: the latest issues as a scroll-driven 3D card stack, on
      their real cover art (js/strk-stride.js). -->
@@ -694,5 +780,47 @@
 <script src="js/strk-marquee.js" defer></script>
 <script src="js/strk-stride.js" defer></script>
 <script src="js/digest-stride.js" defer></script>
+<script>
+/* the hero's mono-token field. Rows are built once, then cloned into the
+   warm layer so both stacks stay identical; each row carries its own
+   stagger (--x) and direction (--dir), and scroll only moves a single
+   --d / --dy pair, so the drift costs one rAF-batched style write.
+   Skipped entirely under prefers-reduced-motion. */
+(() => {
+  const field = document.getElementById('dgxField');
+  if (!field) return;
+  const chalk = field.querySelector('.dgx-layer--chalk');
+  const warm = field.querySelector('.dgx-layer--warm');
+  if (!chalk || !warm) return;
+  const TOKENS = ['ROUNDUP', 'RECAP', 'RESEARCH', 'SHIPPED', 'WEEKLY', 'MONTHLY', 'DIGEST', 'STARKNET', 'ARCHIVE', 'NO GAPS'];
+  const ROWS = 30, PER = 26;
+  const frag = document.createDocumentFragment();
+  for (let r = 0; r < ROWS; r++) {
+    const row = document.createElement('div');
+    row.className = 'dgx-row';
+    const words = [];
+    for (let i = 0; i < PER; i++) words.push(TOKENS[(r * 3 + i * 5) % TOKENS.length]);
+    row.textContent = words.join('   ');
+    row.style.setProperty('--x', (((r * 137) % 260) - 130) + 'px');
+    row.style.setProperty('--dir', r % 2 ? -1 : 1);
+    frag.appendChild(row);
+  }
+  chalk.appendChild(frag);
+  warm.innerHTML = chalk.innerHTML;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  let ticking = false;
+  const apply = () => {
+    ticking = false;
+    const y = window.scrollY || 0;
+    field.style.setProperty('--d', (y * 0.16).toFixed(2) + 'px');
+    chalk.style.setProperty('--dy', (y * -0.05).toFixed(2) + 'px');
+    warm.style.setProperty('--dy', (y * -0.05).toFixed(2) + 'px');
+  };
+  window.addEventListener('scroll', () => {
+    if (!ticking) { ticking = true; requestAnimationFrame(apply); }
+  }, { passive: true });
+  apply();
+})();
+</script>
 </body>
 </html>
