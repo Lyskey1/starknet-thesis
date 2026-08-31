@@ -1031,6 +1031,51 @@ footer.site-footer .foot-bottom a:hover{color:var(--accent)}
 @media(prefers-reduced-motion:reduce){
   .sg-glass,.sg-bloom{transition:none;animation:none}
 }
+
+/* ===== stride layer =========================================================
+   The STRK page on the stride starter's design language, in strk20 colours:
+   section heads centre with the number as a small mono eyebrow over a large
+   light title, panels become big soft-cornered bento cards on #141414 with
+   generous padding, and the page's pill controls pick up its rounded CTA.
+   Layout, data wiring and behaviour are untouched: this is a skin over the
+   existing markup, appended so it wins the cascade inside this <style>. */
+.th-pm-head{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;margin-bottom:56px}
+.th-pm-marker{display:none}
+.th-pm-num{font-family:var(--mono),monospace;font-weight:400;font-size:12px;letter-spacing:.24em;color:var(--acc-2)}
+.th-pm-title{font-weight:300;font-size:clamp(32px,4.4vw,64px);line-height:.98;letter-spacing:-.025em;max-width:20ch}
+.th-pm-title b,.th-pm-title em{font-weight:400;color:var(--acc-2)}
+.block{padding:104px 0}
+
+/* bento cards: one soft-cornered surface for every panel on the page */
+.util-panel,.util-stats .us,#numbers .chartbox,.venn-side,.buy-cat,.s01 .fan-wrap{
+  border-radius:24px;background:#141414;border:1px solid var(--line)}
+.util{grid-gap:14px;gap:14px;border-top:0;margin-top:0}
+.util-panel{border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:34px 28px 34px}
+.util-panel .viz{padding-bottom:26px}
+.util-stats{gap:14px;margin-top:14px}
+.util-stats .us{border-right:1px solid var(--line);padding:38px 30px 34px}
+.util-panel h3{font-size:24px;font-weight:400;letter-spacing:-.015em}
+
+/* section 01 reads as one wide card with the copy set large */
+.s01{gap:40px}
+.s01 .copy{border-radius:24px;background:#141414;border:1px solid var(--line);padding:40px 38px}
+.s01 .copy p{font-size:21px;line-height:1.62;color:var(--muted-2);max-width:none}
+.s01 .copy strong{color:var(--white);font-weight:500}
+
+/* where to get STRK: each category is its own card */
+.buy-cat{overflow:hidden}
+.buy-acc{align-items:stretch}
+.buy-head{padding:24px 26px}
+.buy-item{border-radius:14px}
+
+/* the page's pill CTA, stride's rounded control in our accent */
+.sk-ctas .sk-cta,.chip{border-radius:999px}
+@media(max-width:880px){
+  .th-pm-head{margin-bottom:34px}
+  .block{padding:64px 0}
+  .s01 .copy{padding:28px 24px}
+  .s01 .copy p{font-size:18px}
+}
 </style>
 <script>
 /* Inline copy of js/admin-gate.js (this page stays self-contained; keep in
