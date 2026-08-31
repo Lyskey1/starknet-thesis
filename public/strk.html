@@ -1194,6 +1194,83 @@ footer.site-footer .foot-bottom a:hover{color:var(--accent)}
 }
 
 
+
+/* --- hero stage: clip-path shrinks it into a rounded inset as it scrolls, so
+   nothing resizes and no layout runs (js/strk-stride.js) --- */
+.sk-stage{position:absolute;inset:0;overflow:hidden;will-change:clip-path}
+.hero .sk-inner{transform-origin:50% 50%}
+
+/* --- Works: stride's 3D card stack on a vertical cylinder --- */
+.wk{position:relative;height:400vh;background:#0d0d0d}
+.wk-pin{position:sticky;top:0;height:100lvh;overflow:hidden}
+.wk-backs{position:absolute;inset:0}
+.wk-back{position:absolute;inset:0;filter:blur(46px);opacity:0;will-change:transform,opacity}
+.wk-backs-dim{position:absolute;inset:0;background:rgba(13,13,13,.62)}
+.wk-h{position:absolute;left:0;right:0;top:88px;z-index:3;margin:0;text-align:center;font-family:var(--display);font-weight:300;
+  font-size:clamp(30px,4.4vw,64px);line-height:.95;letter-spacing:-.03em;color:var(--white)}
+.wk-stage{position:absolute;inset:0;perspective:1900px;transform-style:preserve-3d}
+.wk-card{position:absolute;left:50%;top:50%;width:90vw;max-width:46rem;aspect-ratio:16/10;overflow:hidden;border-radius:24px;
+  background:#141414;box-shadow:0 30px 70px rgba(0,0,0,.6);backface-visibility:hidden;will-change:transform,opacity}
+.wk-art{position:absolute;inset:0}
+.wk-scrim{position:absolute;inset:0;background:#000;opacity:0}
+.wk-meta{position:absolute;left:26px;bottom:24px;z-index:2;display:flex;gap:14px;align-items:baseline;
+  font-family:var(--mono),monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:rgba(250,250,250,.82)}
+.wk-yr{color:var(--acc-2)}
+.wk-row{position:absolute;left:16px;right:16px;top:50%;z-index:3;transform:translateY(-50%);
+  display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:16px;
+  font-family:var(--mono),monospace;font-size:12px;letter-spacing:.12em;pointer-events:none}
+.wk-i{justify-self:start;color:rgba(250,250,250,.5);font-variant-numeric:tabular-nums}
+.wk-name{justify-self:center;font-family:var(--display);font-size:clamp(18px,2vw,26px);letter-spacing:-.015em;text-transform:none;color:var(--white)}
+.wk-view{justify-self:end;pointer-events:auto;white-space:nowrap;border-radius:999px;border:1px solid rgba(250,250,250,.25);
+  padding:10px 20px;font-size:12px;color:var(--white);text-decoration:none;transition:background .2s,border-color .2s}
+.wk-view:hover{background:rgba(250,250,250,.12);border-color:var(--white)}
+/* the card art: layered mesh gradients in the strk20 palette, no image files */
+.wk-art--a,.wk-back.wk-art--a{background:radial-gradient(120% 95% at 16% 10%,#7a2400 0,rgba(122,36,0,0) 54%),radial-gradient(95% 85% at 90% 20%,#c53400 0,rgba(197,52,0,0) 58%),linear-gradient(148deg,#1a0600,#3a0e00 54%,#0d0d0d)}
+.wk-art--b,.wk-back.wk-art--b{background:radial-gradient(115% 95% at 84% 12%,#8a2400 0,rgba(138,36,0,0) 54%),radial-gradient(100% 90% at 10% 30%,#e07a4a 0,rgba(224,122,74,0) 58%),linear-gradient(158deg,#240800,#4a1200 54%,#0d0d0d)}
+.wk-art--c,.wk-back.wk-art--c{background:radial-gradient(115% 92% at 22% 14%,#b03000 0,rgba(176,48,0,0) 54%),radial-gradient(100% 95% at 88% 28%,#ff8a4a 0,rgba(255,138,74,0) 58%),linear-gradient(153deg,#120400,#3a0e00 54%,#0d0d0d)}
+.wk-art--d,.wk-back.wk-art--d{background:radial-gradient(115% 92% at 80% 12%,#ff8a4a 0,rgba(255,138,74,0) 52%),radial-gradient(110% 100% at 14% 34%,#c53400 0,rgba(197,52,0,0) 58%),linear-gradient(153deg,#2a0a00,#4a1200 54%,#0d0d0d)}
+.wk-art--e,.wk-back.wk-art--e{background:radial-gradient(120% 95% at 60% 8%,#c53400 0,rgba(197,52,0,0) 56%),radial-gradient(100% 90% at 12% 80%,#e86a30 0,rgba(232,106,48,0) 58%),linear-gradient(140deg,#1a0600,#2a0a00 54%,#0d0d0d)}
+.wk-art--f,.wk-back.wk-art--f{background:radial-gradient(120% 95% at 30% 90%,#8a2400 0,rgba(138,36,0,0) 56%),radial-gradient(100% 90% at 84% 16%,#ff8a4a 0,rgba(255,138,74,0) 58%),linear-gradient(165deg,#240800,#3a0e00 54%,#0d0d0d)}
+@media(max-width:880px){
+  .wk{height:300vh}
+  .wk-h{top:70px}
+  .wk-card{width:88vw}
+  .wk-row{top:auto;bottom:26px;transform:none;grid-template-columns:auto 1fr;row-gap:10px}
+  .wk-view{grid-column:1 / -1;justify-self:start}
+}
+@media(prefers-reduced-motion:reduce){
+  .wk{height:auto}
+  .wk-pin{position:relative;height:auto;padding:56px 0;display:flex;flex-direction:column;gap:18px}
+  .wk-stage{position:relative;inset:auto;perspective:none;display:grid;gap:16px;padding:0 20px}
+  .wk-card{position:relative;left:auto;top:auto;width:auto;max-width:none;transform:none!important;opacity:1!important}
+  .wk-h,.wk-row{position:relative;inset:auto;transform:none}
+}
+
+
+/* --- showcase columns: the art wipes up from the base on hover, the way
+   stride reveals its column photos (js/strk-stride.js drives the clip-path) --- */
+.sc-col{position:relative}
+.sc-art{position:absolute;inset:0;z-index:0;opacity:.5;clip-path:inset(100% 0% 0% 0%);
+  transition:clip-path .55s cubic-bezier(.2,.7,.2,1)}
+.sc-col > *:not(.sc-art){position:relative;z-index:1}
+.sc-col::after{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+  background:linear-gradient(to top,rgba(13,13,13,.92),rgba(13,13,13,.35) 45%,rgba(13,13,13,.8));
+  opacity:0;transition:opacity .55s ease}
+.sc-col.is-on::after{opacity:1}
+@media(prefers-reduced-motion:reduce){.sc-art{transition:none}}
+
+/* --- contact pins while the footer scrolls up over it (stride's last layer) --- */
+.ft-layer{position:relative}
+.ct-pin{position:sticky;top:0;z-index:0;height:100lvh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:34px;padding:0 24px;text-align:center}
+.ct-pin .vc-title{margin:0}
+.ft-layer > footer.vc-footer{position:relative;z-index:1}
+.ft-layer > footer.vc-footer::before{content:"";position:absolute;inset:0;z-index:-1;background:#0d0d0d;
+  border-radius:28px 28px 0 0;box-shadow:0 -30px 60px rgba(0,0,0,.6)}
+@media(max-width:880px){
+  .ct-pin{position:relative;height:auto;padding:64px 24px}
+  .ft-layer > footer.vc-footer::before{border-radius:0;box-shadow:none}
+}
+
 </style>
 <script>
 /* Inline copy of js/admin-gate.js (this page stays self-contained; keep in
@@ -1222,7 +1299,7 @@ window.ADMIN_GATE=on;})();
 </header>
 
 <!-- HERO -->
-<header class="hero">
+<header class="hero"><div class="sk-stage">
   <div class="hero-glow"></div>
   <div class="hero-curtain" aria-hidden="true"></div>
   <div class="hero-bloom" aria-hidden="true">
@@ -1300,6 +1377,7 @@ window.ADMIN_GATE=on;})();
         </div>
       </div>
     </div>
+  </div>
   </div>
 </header>
 
@@ -1461,7 +1539,7 @@ window.ADMIN_GATE=on;})();
 
   <div class="util util-grid">
       <!-- FEES -->
-      <div id="fees" class="util-panel show" data-k="fees">
+      <div id="fees" class="util-panel sc-col show" data-k="fees"><div class="sc-art wk-art--a" aria-hidden="true"></div>
         <span class="ucard-idx">01</span><span class="ucard-ico"><svg viewBox="0 0 24 24"><path fill="url(#gv)" d="M13 2 4 13h6l-1 9 9-12h-6l1-8z"/></svg></span><div class="eyebrow">Execution</div>
         <h3>Fees</h3>
         <p>Every transaction on Starknet is paid in STRK. Beyond standard gas, each private transaction also carries a protocol privacy fee: a target of about $0.12 per action, settled in STRK, with the STRK amount adjusted by the protocol as the price moves.</p>
@@ -1478,7 +1556,7 @@ window.ADMIN_GATE=on;})();
         </div>
       </div>
       <!-- STAKING -->
-      <div id="staking-2" class="util-panel show" data-k="staking">
+      <div id="staking-2" class="util-panel sc-col show" data-k="staking"><div class="sc-art wk-art--b" aria-hidden="true"></div>
         <span class="ucard-idx">02</span><span class="ucard-ico"><svg viewBox="0 0 24 24"><path fill="url(#gv)" d="M12 2 20 5v6c0 5-3.4 7.7-8 9-4.6-1.3-8-4-8-9V5z"/><path fill="none" stroke="#0d0d0d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M9 12l2.2 2.2L15 10.2"/></svg></span><div class="eyebrow">Security</div>
         <h3>Staking</h3>
         <p>Staking STRK is the core of Starknet's decentralization, carrying 75% of all staking power. Bitcoin staking was added on top to tie STRK and BTC value in a flywheel: BTC stakers take a fixed 25% share of staking rewards, so the more STRK is staked, the higher their rewards and APR, pulling even more Bitcoin into consensus. All of it runs on less than 1% annual STRK inflation.</p>
@@ -1501,7 +1579,7 @@ window.ADMIN_GATE=on;})();
         </div>
       </div>
       <!-- GOVERNANCE -->
-      <div id="governance" class="util-panel show" data-k="gov">
+      <div id="governance" class="util-panel sc-col show" data-k="gov"><div class="sc-art wk-art--c" aria-hidden="true"></div>
         <span class="ucard-idx">03</span><span class="ucard-ico"><svg viewBox="0 0 24 24"><path fill="url(#gv)" d="M12 3 21.5 8.2H2.5z"/><rect x="5.4" y="9.3" width="2.4" height="7.6" fill="url(#gv)"/><rect x="10.8" y="9.3" width="2.4" height="7.6" fill="url(#gv)"/><rect x="16.2" y="9.3" width="2.4" height="7.6" fill="url(#gv)"/><rect x="3.2" y="17.6" width="17.6" height="2.4" rx="1" fill="url(#gv)"/></svg></span><div class="eyebrow">Control</div>
         <h3>Governance</h3>
         <p>Governance is powered by STRK, and only staked or delegated STRK carries a vote. Stakers and delegators set the direction of the protocol, from upgrades to economic parameters and everything in between. It is already live, with 10 votes held as of 20 July 2026.</p>
@@ -1526,7 +1604,7 @@ window.ADMIN_GATE=on;})();
         </div>
       </div>
       <!-- COLLATERAL -->
-      <div id="defi-collateral" class="util-panel show" data-k="coll">
+      <div id="defi-collateral" class="util-panel sc-col show" data-k="coll"><div class="sc-art wk-art--d" aria-hidden="true"></div>
         <span class="ucard-idx">04</span><span class="ucard-ico"><svg viewBox="0 0 24 24"><path fill="url(#gv)" d="M12 2.6 21.5 8 12 13.4 2.5 8z"/><path fill="none" stroke="url(#gv)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" opacity=".6" d="M3 12l9 5.4L21 12M3 16l9 5.4L21 16"/></svg></span><div class="eyebrow">Capital</div>
         <h3>DeFi collateral</h3>
         <p>Across Starknet DeFi, STRK is a core collateral asset. From lending and trading to leverage, liquid staking, and stablecoins, the native token plugs into every major venue, put to work instead of sitting idle.</p>
@@ -1549,6 +1627,25 @@ window.ADMIN_GATE=on;})();
     <div class="us"><b>10</b><span>Onchain governance votes to date</span></div>
   </div>
 </div></section>
+
+
+<!-- stride's Works: a scroll-driven 3D card stack. The section is pinned over a
+     tall scroll region and scroll advances a float index; each card is placed on
+     a vertical cylinder relative to it, so they travel bottom to top and tilt
+     through the focus. A blurred backdrop cross-fades to the focused card, and
+     the metadata row reads index, name and the venue link (js/strk-stride.js). -->
+<section class="wk" id="wk" aria-label="Where STRK is put to work">
+  <div class="wk-pin">
+    <div class="wk-backs" aria-hidden="true"><div class="wk-back wk-art--a"></div><div class="wk-back wk-art--b"></div><div class="wk-back wk-art--c"></div><div class="wk-back wk-art--d"></div><div class="wk-back wk-art--e"></div><div class="wk-back wk-art--f"></div><div class="wk-backs-dim"></div></div>
+    <h2 class="wk-h">Where STRK is put to work</h2>
+    <div class="wk-stage"><div class="wk-card" data-name="AVNU"><div class="wk-art wk-art--a"></div><div class="wk-scrim" aria-hidden="true"></div><div class="wk-meta"><span class="wk-cat">Aggregator</span><span class="wk-yr">2026</span></div></div><div class="wk-card" data-name="Ekubo"><div class="wk-art wk-art--b"></div><div class="wk-scrim" aria-hidden="true"></div><div class="wk-meta"><span class="wk-cat">AMM</span><span class="wk-yr">2026</span></div></div><div class="wk-card" data-name="Vesu"><div class="wk-art wk-art--c"></div><div class="wk-scrim" aria-hidden="true"></div><div class="wk-meta"><span class="wk-cat">Lending</span><span class="wk-yr">2025</span></div></div><div class="wk-card" data-name="Endur"><div class="wk-art wk-art--d"></div><div class="wk-scrim" aria-hidden="true"></div><div class="wk-meta"><span class="wk-cat">Liquid staking</span><span class="wk-yr">2025</span></div></div><div class="wk-card" data-name="Opus"><div class="wk-art wk-art--e"></div><div class="wk-scrim" aria-hidden="true"></div><div class="wk-meta"><span class="wk-cat">Stablecoin</span><span class="wk-yr">2024</span></div></div><div class="wk-card" data-name="Troves"><div class="wk-art wk-art--f"></div><div class="wk-scrim" aria-hidden="true"></div><div class="wk-meta"><span class="wk-cat">Leverage yield</span><span class="wk-yr">2024</span></div></div></div>
+    <div class="wk-row">
+      <span class="wk-i"><span class="wk-idx">01</span> / 06</span>
+      <span class="wk-name">AVNU</span>
+      <a class="wk-view" href="#where-to-get-strk">Where to get STRK</a>
+    </div>
+  </div>
+</section>
 
 <!-- 03 CONVERGENCE. stride layers its Chain and Product: the Chain pins
      while the Product scrolls up over it. Same two-layer reveal here, so the
@@ -2107,13 +2204,19 @@ window.ADMIN_GATE=on;})();
   </div>
 </div></section>
 
-<!-- FOOTER -->
-<footer class="vc-footer">
-  <h2 class="vc-title">Three forces, one chain, one ticker.</h2>
+<!-- CONTACT + FOOTER. stride layers these the same way it layers the chain and
+     the product: the form pins for a viewport while the footer scrolls up over
+     it. The heading and the subscribe form move into the pin; the footer keeps
+     its rule and link columns. -->
+<div class="ft-layer">
+<section class="ct-pin" aria-labelledby="ct-title">
+  <h2 class="vc-title" id="ct-title">Three forces, one chain, one ticker.</h2>
   <form class="vc-sub" action="https://starknetresearch.substack.com/subscribe" method="get" target="_blank" rel="noopener" data-umami-event="footer-subscribe">
     <input type="email" name="email" placeholder="Email" aria-label="Email" required>
     <button type="submit">Subscribe <i aria-hidden="true"></i></button>
   </form>
+</section>
+<footer class="vc-footer">
   <div class="vc-rule"></div>
   <div class="vc-cols">
     <div class="vc-brand">
@@ -2128,6 +2231,7 @@ window.ADMIN_GATE=on;})();
   </div>
   <p class="vc-legal">Website made for educational purposes only. This is not financial advice. Always DYOR. A personal project, not affiliated with or endorsed by StarkWare. All views expressed here are my own.</p>
 </footer>
+</div><!-- /.ft-layer -->
 
 
 <script>
@@ -4274,5 +4378,6 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
 <script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.185.0/build/three.module.js"}}</script>
 <script type="module" src="js/eco-backdrop.js"></script>
 <script src="js/strk-marquee.js" defer></script>
+<script src="js/strk-stride.js" defer></script>
 </body>
 </html>
