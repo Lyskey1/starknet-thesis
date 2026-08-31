@@ -12,7 +12,10 @@
    metal-human clip screens onto it from the lower band. No curtain, bloom,
    grid or heavy scrim: the landing hero has none, and this hero matches it. */
 /* no ground of its own: the keyed figure sits directly on the page's ambient wash (js/eco-backdrop.js) */
-.pv-human { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; background: transparent; }
+/* the hero box stops short of the fold (top offset + its own bottom padding),
+   so the canvas runs past it to the viewport edge, otherwise a strip of the
+   page wash showed under the figure */
+.pv-human { position: absolute; inset: 0 0 -96px 0; z-index: 0; overflow: hidden; pointer-events: none; background: transparent; }
 .pv-human-shader { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
 .pv-figure { position: absolute; inset: auto 0 0 0; height: min(100%, 106vh); }
 .pv-figure { --focus: 68% 42%; }
@@ -264,3 +267,129 @@ body.page-privacy .hero::before { display: none; }
 /* eco-stage.css flattens every body child to z-index 1; with the hero canvas
    reaching up behind the header, the header needs to sit above it again */
 body.page-privacy header.vc-header { z-index: 100; }
+
+/* ---------- the four proving properties, as a column accordion ----------
+   Four columns edge to edge. Hover, tap or focus one and its mesh-gradient
+   panel slides UP into the column while the previously shown one slides up
+   and out: one continuous upward conveyor, one in and one out. The reading
+   area above swaps in the same motion, carrying the section's standing
+   statement at rest and the hovered property's detail on top of it. The art
+   is layered CSS mesh gradient, no images. Timing and easing are the whole
+   effect: keep --pc-slide and --pc-ease in step across the three layers. */
+.pcore { --pc-slide: 900ms; --pc-ease: cubic-bezier(.76, 0, .18, 1);
+  position: relative; width: 100vw; max-width: none; margin: 56px 0 0 calc(50% - 50vw); }
+
+/* the reading area: one .phead per state, only the active one shown */
+.pcore-heads { position: relative; height: clamp(190px, 25vh, 260px); overflow: hidden;
+  padding: 0 16px 26px; }
+.phead { position: absolute; inset: 0 16px auto; transform: translateY(112%); opacity: 0;
+  transition: transform var(--pc-slide) var(--pc-ease), opacity calc(var(--pc-slide) * .7) ease; }
+.phead.-in { transform: translateY(0); opacity: 1; }
+.phead.-out { transform: translateY(-112%); opacity: 0; }
+.phead__rn, .phead__elim { font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--pf-acc); }
+.phead__elim { margin-top: 14px; }
+.phead h4 { margin: 10px 0 12px; font-family: 'General Sans','Helvetica Neue',Arial,sans-serif;
+  font-weight: 500; font-size: clamp(26px, 3.2vw, 44px); line-height: 1.04; letter-spacing: -.02em; color: var(--pf-ink); }
+.phead p { margin: 0; max-width: 78ch; font-family: 'General Sans','Helvetica Neue',Arial,sans-serif;
+  font-size: clamp(15px, 1.25vw, 18px); line-height: 1.6; color: var(--pf-dim); }
+.phead--lede p { max-width: 44ch; font-size: clamp(20px, 2.4vw, 34px); line-height: 1.28; letter-spacing: -.01em; color: var(--pf-dim); }
+.phead--lede b { font-weight: 500; color: var(--pf-ink); }
+
+/* the strip */
+.pcore-strip { display: flex; height: clamp(340px, 46vh, 520px); background: #0d0d0d; border-top: 1px solid var(--pf-line); border-bottom: 1px solid var(--pf-line); }
+.pcol { position: relative; flex: 1 1 0%; min-width: 0; overflow: hidden; cursor: pointer; outline: none;
+  border-left: 1px solid var(--pf-line); transition: flex-grow var(--pc-slide) var(--pc-ease); }
+.pcol:first-child { border-left: 0; }
+.pcol.-active { flex-grow: 2.5; }
+.pcol::after { content: ""; position: absolute; inset: 0; z-index: 3; pointer-events: none;
+  box-shadow: inset 0 0 0 1.5px transparent; transition: box-shadow .4s ease; }
+.pcol:focus-visible::after { box-shadow: inset 0 0 0 2px var(--pf-acc); }
+
+/* the sliding art layer: clipped by the column, starts below, exits up */
+.pcol__media { position: absolute; inset: 0; z-index: 1; transform: translateY(101%);
+  transition: transform var(--pc-slide) var(--pc-ease); will-change: transform; }
+.pcol__media.-in { transform: translateY(0); }
+.pcol__media.-out { transform: translateY(-101%); }
+/* scrims, so the caption and name read over any panel */
+.pcol__media::before { content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(to bottom, rgba(13,13,13,.72) 0%, rgba(13,13,13,.15) 26%, rgba(13,13,13,.2) 62%, rgba(13,13,13,.86) 100%); }
+
+/* column chrome, always above the art */
+.pcol__cap { position: absolute; top: 20px; left: 20px; right: 16px; z-index: 2; display: flex; align-items: baseline; gap: 10px;
+  font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--pf-dim);
+  opacity: 0; transform: translateY(-6px); transition: opacity .5s ease .1s, transform .5s var(--pc-ease) .1s; }
+.pcol.-active .pcol__cap { opacity: 1; transform: none; }
+.pcol__cap b { color: var(--pf-acc); font-weight: 500; font-variant-numeric: tabular-nums; }
+.pcol__name { position: absolute; left: 20px; right: 16px; bottom: 24px; z-index: 2; margin: 0;
+  font-family: 'IBM Plex Mono', monospace; font-weight: 400; font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--pf-dim); }
+.pcol__name span { display: block; margin-top: 8px; font-family: 'General Sans','Helvetica Neue',Arial,sans-serif;
+  font-size: clamp(16px, 1.5vw, 21px); font-weight: 500; letter-spacing: -.01em; text-transform: none; color: rgba(250,250,250,.72); transition: color .4s ease; }
+.pcol.-active .pcol__name span { color: var(--pf-ink); }
+
+/* the panels: layered mesh gradient, strk20 palette, no images */
+.pscene { position: absolute; inset: 0; overflow: hidden; background: var(--ps-bg); }
+.pscene::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(120% 62% at 28% -12%, rgba(255,255,255,.14), rgba(255,255,255,0) 58%); mix-blend-mode: soft-light; }
+.pscene--ember { --ps-bg:
+    radial-gradient(120% 95% at 16% 10%, #7a2400 0%, rgba(122,36,0,0) 54%),
+    radial-gradient(95% 85% at 90% 20%, #c53400 0%, rgba(197,52,0,0) 58%),
+    radial-gradient(130% 120% at 74% 104%, #ff8a4a 0%, rgba(255,138,74,0) 60%),
+    linear-gradient(148deg, #1a0600 0%, #3a0e00 54%, #0d0d0d 100%); }
+.pscene--rust { --ps-bg:
+    radial-gradient(115% 95% at 84% 12%, #8a2400 0%, rgba(138,36,0,0) 54%),
+    radial-gradient(100% 90% at 10% 30%, #c53400 0%, rgba(197,52,0,0) 58%),
+    radial-gradient(130% 120% at 60% 108%, #e07a4a 0%, rgba(224,122,74,0) 60%),
+    linear-gradient(158deg, #240800 0%, #4a1200 54%, #0d0d0d 100%); }
+.pscene--copper { --ps-bg:
+    radial-gradient(115% 92% at 22% 14%, #b03000 0%, rgba(176,48,0,0) 54%),
+    radial-gradient(100% 95% at 88% 28%, #e86a30 0%, rgba(232,106,48,0) 58%),
+    radial-gradient(130% 125% at 70% 104%, #7a2400 0%, rgba(122,36,0,0) 60%),
+    linear-gradient(153deg, #120400 0%, #3a0e00 54%, #0d0d0d 100%); }
+.pscene--flare { --ps-bg:
+    radial-gradient(115% 92% at 80% 12%, #ff8a4a 0%, rgba(255,138,74,0) 52%),
+    radial-gradient(110% 100% at 14% 34%, #c53400 0%, rgba(197,52,0,0) 58%),
+    radial-gradient(135% 130% at 62% 106%, #8a2400 0%, rgba(138,36,0,0) 60%),
+    linear-gradient(153deg, #2a0a00 0%, #4a1200 54%, #0d0d0d 100%); }
+
+@media (prefers-reduced-motion: reduce) {
+  .pcol__media, .phead, .pcol { transition-duration: .01ms; }
+}
+/* below 860 the strip stacks: the columns become a vertical accordion and the
+   reading area sizes to its content instead of being clipped to a fixed band */
+@media (max-width: 860px) {
+  .pcore { margin-top: 40px; }
+  .pcore-heads { height: auto; min-height: 0; padding: 0 20px 22px; }
+  .phead { position: relative; inset: auto; transform: translateY(16px); }
+  .phead:not(.-in) { display: none; }
+  .phead--lede p { font-size: 20px; }
+  .pcore-strip { flex-direction: column; height: auto; }
+  .pcol { border-left: 0; border-top: 1px solid var(--pf-line); min-height: 76px; }
+  .pcol:first-child { border-top: 0; }
+  .pcol.-active { flex-grow: 3.4; min-height: 260px; }
+  .pcol__cap { top: 16px; }
+  .pcol__name { bottom: 16px; }
+}
+
+/* ---------- the comparison table, after public.com's rebate table ----------
+   Flat and centred: no card radius or panel fill, hairline rules only, and the
+   winning column carries a tinted band with an accent border down its full
+   height so the eye lands on STRK20 before it reads a single row. */
+.fx-wrap { max-width: 1240px; }
+.fx-scroll { border: 0; border-radius: 0; background: transparent; overflow-x: auto; }
+.fx-table { min-width: 940px; border-collapse: separate; border-spacing: 0; }
+.fx-table thead th { padding: 18px 18px 20px; text-align: center; border-bottom: 1px solid var(--pf-line); }
+.fx-table thead th.fx-corner { text-align: left; border-bottom: 0; }
+.fx-pname { font-size: 16px; letter-spacing: .01em; color: rgba(250,250,250,.82); }
+.fx-score { margin-top: 6px; font-size: 11px; letter-spacing: .14em; color: rgba(250,250,250,.42); }
+/* the winner: one tinted band, accent hairline down both flanks, capped top and bottom */
+.fx-table thead th.fx-champ, .fx-table .fx-cell.fx-champ {
+  background: rgba(197,52,0,.10);
+  border-left: 1px solid rgba(197,52,0,.55); border-right: 1px solid rgba(197,52,0,.55); }
+.fx-table thead th.fx-champ { border-top: 1px solid rgba(197,52,0,.55); }
+.fx-table tbody tr:last-child .fx-cell.fx-champ { border-bottom: 1px solid rgba(197,52,0,.55); }
+.fx-table thead th.fx-champ .fx-pname { font-weight: 500; }
+.fx-crit { padding: 22px 20px; border-bottom: 1px solid var(--pf-line); }
+.fx-cell { text-align: center; border-bottom: 1px solid var(--pf-line); }
+.fx-crit-name { font-size: 15px; }
+.fx-crit-sub { font-size: 13px; color: rgba(250,250,250,.5); }
+.fx-legend { justify-content: center; margin-top: 22px; }

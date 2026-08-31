@@ -886,80 +886,9 @@
      node's paragraph, cloned once at init so copy stays single-source.
      The four panel items stack in one grid cell so the tallest reserves
      the height: switching never shifts layout. */
-  .pcore { margin: 64px 0 0; }
-  .pcore-node { position: relative; padding: 26px 28px; border: 1px solid var(--line); border-left: 3px solid var(--em); border-radius: 12px; background: var(--bg-raise); box-shadow: 0 0 24px rgba(var(--accent-rgb),.05); }
-  .pcore-node + .pcore-node { margin-top: 18px; }
-  .pcore-node .rn { font-family: var(--mono); font-size: 11px; letter-spacing: .16em; color: var(--em); }
-  .pcore-node .ct { font-family: var(--display); font-weight: 700; font-size: 23px; margin: 8px 0 10px; }
-  .pcore-node .elim { font-family: var(--mono); font-size: 11px; letter-spacing: .12em; color: var(--danger); margin-top: 12px; }
-  .pcore-beams, .pcore-hub { display: none; }
-  @media (min-width: 981px) {
-    .pcore-stage { position: relative; height: 460px; }
-    .pcore-beams { display: block; position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
-    .pc-rail { fill: none; stroke: rgba(250, 250, 250,.10); stroke-width: 1.5; }
-    /* the four pulses are deliberately IDENTICAL at all times (color,
-       width, opacity, dash); only the stagger delay differs. Selection
-       is signaled by the node highlight and the rail shade, never by
-       pulse disparity. */
-    .pc-pulse { fill: none; stroke: var(--em); stroke-width: 3; stroke-linecap: round; opacity: 1; }
-    /* pulse: pathLength is normalized to 1 in JS, so one dashoffset
-       period per iteration flows node -> hub and loops seamlessly */
-    .pcore.pc-anim .pc-pulse { stroke-dasharray: .14 .86; stroke-dashoffset: 1; animation: pcflow 3.8s linear infinite; }
-    @keyframes pcflow { to { stroke-dashoffset: 0; } }
-    .pcore.pc-off .pc-pulse { animation-play-state: paused; }
-    /* selection on the rail: the active beam's underlying rail steps one
-       subtle shade up */
-    .pcore-beams g.on .pc-rail { stroke: rgba(var(--accent-rgb),.30); }
-    .pcore-node { position: absolute; margin: 0; width: min(320px, 31%); padding: 20px 22px; cursor: pointer; transition: border-color var(--hover-dur) var(--hover-ease), background var(--hover-dur) var(--hover-ease); }
-    .pcore-node + .pcore-node { margin-top: 0; }
-    .pcore-node .ct { font-size: 19px; margin: 7px 0 0; }
-    .pcore-node .elim { margin-top: 10px; }
-    .pc-left { left: 0; border-left: 1px solid var(--line); border-right: 3px solid var(--em); }
-    .pc-right { right: 0; text-align: right; }
-    .pc-top { top: 20px; }
-    .pc-bot { bottom: 20px; }
-    /* selection on the node: brighter borders plus a subtle glow, the
-       one clear active signal of the diagram */
-    .pcore-node.on { background: rgba(var(--accent-rgb),.07); border-color: color-mix(in srgb, var(--em) 55%, transparent);
-      box-shadow: 0 0 24px rgba(var(--accent-rgb),.22), 0 0 60px rgba(var(--accent-rgb),.10); }
-    .pc-left.on { border-right-color: var(--em); }
-    .pc-right.on { border-left-color: var(--em); }
-    .pcore-node:focus-visible { outline: 2px solid var(--em); outline-offset: 3px; }
-    /* the hub's outer glow lives on stage::before, painted BEFORE the
-       svg in tree order, so the beams pass over the glow untinted and
-       under the opaque disc itself (hub z-index 1) */
-    .pcore-stage::before { content: ""; position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); width: 176px; height: 176px; border-radius: 50%; pointer-events: none;
-      box-shadow: 0 0 24px rgba(var(--accent-rgb),.18), 0 0 80px rgba(var(--accent-rgb),.12); }
-    .pcore-hub { display: flex; flex-direction: column; gap: 7px; position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); width: 176px; height: 176px; border-radius: 50%; border: 1px solid rgba(var(--accent-rgb),.55); background: radial-gradient(circle at 50% 36%, #101614, #0A0D0C); align-items: center; justify-content: center; text-align: center; z-index: 1;
-      box-shadow: inset 0 0 30px rgba(var(--accent-rgb),.08); }
-    /* the official mark in its own colors, not recolored to the hub
-       emerald: it is the one identity object in the scene, its coral
-       sparkle already rhymes with the ARRIVED line, and an <img> keeps
-       the vector verbatim. 28px + 7px gap + the two 12px/1.9 mono lines
-       stack to 81px, well inside the 176px circle, so the hub diameter
-       and the beam curves (computed from the hub rect) are untouched. */
-    .pcore-hub-mark { width: 28px; height: 28px; display: block; }
-    .pcore-hub span { font-family: var(--mono); font-size: 12px; letter-spacing: .18em; color: var(--em); max-width: 118px; line-height: 1.9; }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    /* static rails with one fixed accent segment mid-beam, no flow */
-    .pcore.pc-anim .pc-pulse { animation: none; stroke-dashoffset: -.43; }
-  }
-  /* the detail panel survives from the selector work: one property renders
-     at a time and the four stack in a single grid cell, so the panel
-     reserves the tallest and switching never reflows the page */
-  .pcore-panel { position: relative; display: grid; margin-top: 40px; padding-top: 26px;
-    border-top: 1px solid var(--th-hair); }
-  .pcore-item { grid-area: 1 / 1; visibility: hidden; opacity: 0;
-    transition: opacity .3s ease, visibility 0s .3s; }
-  .pcore-item.is-on { visibility: visible; opacity: 1; transition: opacity .3s ease .06s, visibility 0s; }
-  .pcore-item .rn { font-family: var(--mono); font-size: 11px; letter-spacing: .16em; color: var(--em); }
-  .pcore-item h4 { font-family: var(--display); font-weight: 700; font-size: clamp(21px, 2vw, 26px); margin: 9px 0 12px; }
-  .pcore-item p { color: rgba(250, 250, 250,.78); font-size: 15.5px; line-height: 1.65; max-width: 74ch; }
-  .pcore-item .elim { font-family: var(--mono); font-size: 11px; letter-spacing: .12em; color: var(--danger); margin-top: 14px; }
-  @media (prefers-reduced-motion: reduce) {
-    .pcore-item, .pcore-item.is-on { transition: none; }
-  }
+  /* The four proving properties moved to a column accordion: its styles live
+     in css/privacy-fx.css (.pcore-strip / .pcol / .phead) and its behaviour in
+     js/proof-columns.js. The radial hub that stood here is gone. */
 
   /* ============ 04: rollout timeline / foundation / visualizer / waves ============ */
   .lead { max-width: 68ch; color: rgba(250, 250, 250,.78); margin: 56px 0 0; font-size: 17px; font-weight: 400; line-height: 1.65; }
@@ -2397,67 +2326,67 @@
 
   <p class="grid-lead th-pm-reveal" style="margin-top:64px">Based on that, Starknet built everything around proving, from scratch, <b>optimizing every layer of the stack</b>:</p>
 
-  <!-- The radial hub, recovered verbatim from 8a5ce3c (its markup, its scoped
-       CSS and its beam geometry) after the pedestal device was rejected. What
-       stays from that work is the single detail panel: one property renders at
-       a time, and the four cards are the selectors that drive it through the
-       shared thRove machine. The cards therefore carry no prose, and their
-       title is a div rather than a heading so the panel keeps the only h4 per
-       property, which is what the search index anchors point at. -->
+  <!-- The four proving properties as a column accordion: four columns edge to
+       edge, each a mesh-gradient panel that slides UP into its column while the
+       previously shown panel slides up and out (one in, one out). The reading
+       area above swaps in the same upward motion: it carries the section's
+       standing statement at rest, and the hovered property's detail on top of
+       it. Hover, tap, focus and arrow keys all drive it (js/proof-columns.js).
+       The h4 per property stays the search index's anchor. -->
   <div class="pcore th-pm-reveal" id="pcore">
-    <div class="pcore-stage" role="tablist" aria-label="The four proving properties">
-      <svg class="pcore-beams" aria-hidden="true"></svg>
-      <div class="pcore-node pc-left pc-top" role="tab" data-p="0" aria-selected="true" aria-controls="pcore-panel" tabindex="0">
-        <div class="rn">PROPERTY 01</div>
-        <div class="ct">Speed</div>
-        <div class="elim">ELIMINATES: DEDICATED PRIVACY L1s</div>
-      </div>
-      <div class="pcore-node pc-left pc-bot" role="tab" data-p="1" aria-selected="false" aria-controls="pcore-panel" tabindex="-1">
-        <div class="rn">PROPERTY 02</div>
-        <div class="ct">Succinct verifiability</div>
-        <div class="elim">ELIMINATES: FAST-BUT-HEAVY CHAINS</div>
-      </div>
-      <div class="pcore-node pc-right pc-top" role="tab" data-p="2" aria-selected="false" aria-controls="pcore-panel" tabindex="-1">
-        <div class="rn">PROPERTY 03</div>
-        <div class="ct">ZK-native, end to end</div>
-        <div class="elim">ELIMINATES: EVM CHAINS</div>
-      </div>
-      <div class="pcore-node pc-right pc-bot" role="tab" data-p="3" aria-selected="false" aria-controls="pcore-panel" tabindex="-1">
-        <div class="rn">PROPERTY 04</div>
-        <div class="ct">In-protocol proof verification</div>
-        <div class="elim">ARRIVED: APRIL 2026 (SNIP-36)</div>
-      </div>
-      <div class="pcore-hub"><img class="pcore-hub-mark" src="assets/img/starknet-mark.svg" alt="" aria-hidden="true" width="28" height="28" decoding="async"><span>PROOF, NOT REPLAY</span></div>
-    </div>
-    <div class="pcore-panel" id="pcore-panel" role="tabpanel" aria-live="polite">
-      <article class="pcore-item is-on" data-p="0">
-        <div class="rn">PROPERTY 01</div>
+    <div class="pcore-heads" id="pcore-heads" role="tabpanel" aria-live="polite">
+      <div class="phead phead--lede"><p>With these four properties in place, Starknet is now shipping <b>the most complete privacy ecosystem the market has seen</b>, designed against the failure list of the past decade.</p></div>
+      <div class="phead">
+        <div class="phead__rn">PROPERTY 01</div>
         <h4 id="speed">Speed</h4>
         <p>A privacy system is a consumer product before it is a cryptographic one, and private UX dies at high latency. Starknet runs at around 1,000 TPS today, with 10,000+ targeted for 2027, and latency sits in the hundreds of milliseconds for regular transactions, a few seconds for private ones.</p>
-        <div class="elim">ELIMINATES: DEDICATED PRIVACY L1s</div>
-      </article>
-      <article class="pcore-item" data-p="1">
-        <div class="rn">PROPERTY 02</div>
+        <div class="phead__elim">ELIMINATES: DEDICATED PRIVACY L1s</div>
+      </div>
+      <div class="phead">
+        <div class="phead__rn">PROPERTY 02</div>
         <h4 id="succinct-verifiability">Succinct verifiability</h4>
         <p>Privacy at scale eventually needs clients, on browsers or phones, that verify the chain without borrowing trust from someone else's server. That requires compact proofs, not replaying everything.</p>
-        <div class="elim">ELIMINATES: FAST-BUT-HEAVY CHAINS</div>
-      </article>
-      <article class="pcore-item" data-p="2">
-        <div class="rn">PROPERTY 03</div>
+        <div class="phead__elim">ELIMINATES: FAST-BUT-HEAVY CHAINS</div>
+      </div>
+      <div class="phead">
+        <div class="phead__rn">PROPERTY 03</div>
         <h4 id="zk-native-end-to-end">ZK-native, end to end</h4>
         <p>Private computation means proving everything, constantly. Cairo was designed as a language whose execution is cheap to prove; EVM chains run a virtual machine that predates the idea, where every opcode never designed to be proven adds a cost that cannot be optimized away, and Ethereum itself is now converging on the bet StarkWare made in 2018.</p>
-        <div class="elim">ELIMINATES: EVM CHAINS</div>
-      </article>
-      <article class="pcore-item" data-p="3">
-        <div class="rn">PROPERTY 04</div>
+        <div class="phead__elim">ELIMINATES: EVM CHAINS</div>
+      </div>
+      <div class="phead">
+        <div class="phead__rn">PROPERTY 04</div>
         <h4 id="in-protocol-proof-verification">In-protocol proof verification</h4>
-        <p>The last missing piece of the proving stack. <a href="https://x.com/Starknet/status/2046232796625068334" target="_blank" rel="noopener" style="color:var(--em);text-decoration:underline;text-underline-offset:3px">The Shinobi upgrade</a> (<a href="https://community.starknet.io/t/snip-36-in-protocol-proof-verification/116123" target="_blank" rel="noopener" style="color:var(--em);text-decoration:underline;text-underline-offset:3px">SNIP-36</a>) moved proof verification into consensus itself: a transaction carries its proof, the network checks it as part of ordinary block work, and private transactions went from impractical to seconds and cents.</p>
-        <div class="elim">ARRIVED: APRIL 2026 (SNIP-36)</div>
-      </article>
+        <p>The last missing piece of the proving stack. The Shinobi upgrade (SNIP-36) moved proof verification into consensus itself: a transaction carries its proof, the network checks it as part of ordinary block work, and private transactions went from impractical to seconds and cents.</p>
+        <div class="phead__elim">ARRIVED: APRIL 2026 (SNIP-36)</div>
+      </div>
+    </div>
+    <div class="pcore-strip" role="tablist" aria-label="The four proving properties">
+      <div class="pcol" tabindex="0" role="tab" aria-selected="false" aria-controls="pcore-heads" data-p="0" aria-label="Property 01, Speed">
+        <div class="pcol__media"><div class="pscene pscene--ember"></div></div>
+        <div class="pcol__cap"><b>01</b><span>ELIMINATES: DEDICATED PRIVACY L1s</span></div>
+        <h3 class="pcol__name">Property<span>Speed</span></h3>
+      </div>
+      <div class="pcol" tabindex="0" role="tab" aria-selected="false" aria-controls="pcore-heads" data-p="1" aria-label="Property 02, Succinct verifiability">
+        <div class="pcol__media"><div class="pscene pscene--rust"></div></div>
+        <div class="pcol__cap"><b>02</b><span>ELIMINATES: FAST-BUT-HEAVY CHAINS</span></div>
+        <h3 class="pcol__name">Property<span>Succinct verifiability</span></h3>
+      </div>
+      <div class="pcol" tabindex="0" role="tab" aria-selected="false" aria-controls="pcore-heads" data-p="2" aria-label="Property 03, ZK-native, end to end">
+        <div class="pcol__media"><div class="pscene pscene--copper"></div></div>
+        <div class="pcol__cap"><b>03</b><span>ELIMINATES: EVM CHAINS</span></div>
+        <h3 class="pcol__name">Property<span>ZK-native, end to end</span></h3>
+      </div>
+      <div class="pcol" tabindex="0" role="tab" aria-selected="false" aria-controls="pcore-heads" data-p="3" aria-label="Property 04, In-protocol proof verification">
+        <div class="pcol__media"><div class="pscene pscene--flare"></div></div>
+        <div class="pcol__cap"><b>04</b><span>ARRIVED: APRIL 2026 (SNIP-36)</span></div>
+        <h3 class="pcol__name">Property<span>In-protocol proof verification</span></h3>
+      </div>
     </div>
   </div>
+  <script src="js/proof-columns.js" defer></script>
+  </div>
 
-  <p class="th-pm-pivot th-pm-reveal">With all four properties in place, Starknet is now shipping <span class="em">the most complete privacy ecosystem the market has seen</span>, designed against the failure list of the past decade.</p>
 </section>
 
 <!-- ================= SECTION 04 ================= -->
@@ -3295,101 +3224,8 @@ var pvVideoChrome = thVideoChrome({
 // summary, and moving a full prose panel under a reader is a
 // different thing. Reduced motion: no flow (CSS).
 // ============================================================
-(function(){
-  var root = document.getElementById('pcore');
-  if (!root) return;
-  var mq = window.matchMedia('(min-width: 981px)');
-  var stage = root.querySelector('.pcore-stage');
-  var svg = root.querySelector('.pcore-beams');
-  var hub = root.querySelector('.pcore-hub');
-  var nodes = [].slice.call(root.querySelectorAll('.pcore-node'));
-  var items = [].slice.call(root.querySelectorAll('.pcore-item'));
-  var NS = 'http://www.w3.org/2000/svg';
-  var built = false, groups = [];
-
-  function build(){
-    if (built) return; built = true;
-    nodes.forEach(function(n, i){
-      var g = document.createElementNS(NS, 'g');
-      g.setAttribute('class', 'pc-beam');
-      var rail = document.createElementNS(NS, 'path'); rail.setAttribute('class', 'pc-rail');
-      var pulse = document.createElementNS(NS, 'path'); pulse.setAttribute('class', 'pc-pulse');
-      pulse.setAttribute('pathLength', '1');
-      pulse.style.animationDelay = (i * 0.95) + 's';
-      g.appendChild(rail); g.appendChild(pulse); svg.appendChild(g);
-      groups.push({ g: g, rail: rail, pulse: pulse });
-    });
-    root.classList.add('pc-anim');
-    paintBeams(shown());
-  }
-  function shown(){
-    var el = root.querySelector('.pcore-item.is-on');
-    return el ? +el.dataset.p : 0;
-  }
-  function paintBeams(i){
-    groups.forEach(function(gr, j){ gr.g.classList.toggle('on', j === i); });
-  }
-  function select(i){
-    nodes.forEach(function(n, j){ n.classList.toggle('on', j === i); });
-    items.forEach(function(el){ el.classList.toggle('is-on', +el.dataset.p === i); });
-    paintBeams(i);
-    rove.mirror(i);
-  }
-  var rove = thRove({ root: root, buttons: nodes, shown: shown, pick: function(k){ select(k); } });
-  /* the cards are divs with role=tab, so Enter and Space need wiring that a
-     native button would have given for free */
-  nodes.forEach(function(n, i){
-    n.addEventListener('keydown', function(ev){
-      if (ev.key === 'Enter' || ev.key === ' ' || ev.key === 'Spacebar') { ev.preventDefault(); select(i); }
-    });
-  });
-  function surface(){
-    var id = (location.hash || '').slice(1);
-    if (!id) return;
-    var el = document.getElementById(id);
-    if (!el || !root.contains(el)) return;
-    var it = el.closest('.pcore-item');
-    if (it) select(+it.dataset.p);
-  }
-  window.addEventListener('hashchange', surface);
-
-  /* ---- recovered geometry, unchanged ---- */
-  function layout(){
-    if (!mq.matches || !built) return;
-    var sw = stage.clientWidth, sh = stage.clientHeight;
-    svg.setAttribute('viewBox', '0 0 ' + sw + ' ' + sh);
-    var sr = stage.getBoundingClientRect();
-    var hr = hub.getBoundingClientRect();
-    var hx = hr.left - sr.left + hr.width / 2, hy = hr.top - sr.top + hr.height / 2;
-    var R = hr.width / 2 + 4;
-    nodes.forEach(function(n, i){
-      var nr = n.getBoundingClientRect();
-      var leftSide = (nr.left - sr.left + nr.width / 2) < sw / 2;
-      var ax = leftSide ? nr.right - sr.left + 6 : nr.left - sr.left - 6;
-      var ay = nr.top - sr.top + nr.height / 2;
-      var dx = hx - ax, dy = hy - ay, dist = Math.sqrt(dx * dx + dy * dy) || 1;
-      var ex = hx - dx / dist * R, ey = hy - dy / dist * R;
-      var c = Math.abs(ex - ax) * 0.5;
-      var d = 'M' + ax + ' ' + ay +
-        ' C ' + (ax + (leftSide ? c : -c)) + ' ' + ay +
-        ', ' + (ex - (leftSide ? c : -c)) + ' ' + ey +
-        ', ' + ex + ' ' + ey;
-      groups[i].rail.setAttribute('d', d);
-      groups[i].pulse.setAttribute('d', d);
-    });
-  }
-  function onMq(){ if (mq.matches){ build(); layout(); } }
-  onMq();
-  (mq.addEventListener ? mq.addEventListener.bind(mq, 'change') : mq.addListener.bind(mq))(onMq);
-  window.addEventListener('resize', layout);
-  if (window.ResizeObserver) new ResizeObserver(layout).observe(stage);
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(layout);
-  /* the flow runs only while the diagram is on screen */
-  new IntersectionObserver(function(es){
-    root.classList.toggle('pc-off', !es[0].isIntersecting);
-  }, { threshold: 0.05 }).observe(root);
-  surface();
-})();
+// SECTION 03 - the proving properties are a column accordion now,
+// driven by js/proof-columns.js. The radial hub that stood here is gone.
 
 // ============================================================
 // SECTION 04 — three fronts bento marquees. The wp-cards are the
