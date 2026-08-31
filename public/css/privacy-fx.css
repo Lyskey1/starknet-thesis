@@ -277,10 +277,11 @@ body.page-privacy header.vc-header { z-index: 100; }
    is layered CSS mesh gradient, no images. Timing and easing are the whole
    effect: keep --pc-slide and --pc-ease in step across the three layers. */
 .pcore { --pc-slide: 900ms; --pc-ease: cubic-bezier(.76, 0, .18, 1);
-  position: relative; width: 100vw; max-width: none; margin: 56px 0 0 calc(50% - 50vw); }
+  position: relative; width: 100vw; max-width: none; margin: 56px 0 0 calc(50% - 50vw);
+  min-height: 100vh; display: flex; flex-direction: column; }
 
 /* the reading area: one .phead per state, only the active one shown */
-.pcore-heads { position: relative; height: clamp(190px, 25vh, 260px); overflow: hidden;
+.pcore-heads { position: relative; flex: none; height: clamp(190px, 26vh, 280px); overflow: hidden;
   padding: 0 16px 26px; }
 .phead { position: absolute; inset: 0 16px auto; transform: translateY(112%); opacity: 0;
   transition: transform var(--pc-slide) var(--pc-ease), opacity calc(var(--pc-slide) * .7) ease; }
@@ -296,7 +297,7 @@ body.page-privacy header.vc-header { z-index: 100; }
 .phead--lede b { font-weight: 500; color: var(--pf-ink); }
 
 /* the strip */
-.pcore-strip { display: flex; height: clamp(340px, 46vh, 520px); background: #0d0d0d; border-top: 1px solid var(--pf-line); border-bottom: 1px solid var(--pf-line); }
+.pcore-strip { display: flex; flex: 1 1 auto; min-height: 0; background: #0d0d0d; border-top: 1px solid var(--pf-line); border-bottom: 1px solid var(--pf-line); }
 .pcol { position: relative; flex: 1 1 0%; min-width: 0; overflow: hidden; cursor: pointer; outline: none;
   border-left: 1px solid var(--pf-line); transition: flex-grow var(--pc-slide) var(--pc-ease); }
 .pcol:first-child { border-left: 0; }
@@ -362,6 +363,7 @@ body.page-privacy header.vc-header { z-index: 100; }
   .phead { position: relative; inset: auto; transform: translateY(16px); }
   .phead:not(.-in) { display: none; }
   .phead--lede p { font-size: 20px; }
+  .pcore { min-height: 0; display: block; }
   .pcore-strip { flex-direction: column; height: auto; }
   .pcol { border-left: 0; border-top: 1px solid var(--pf-line); min-height: 76px; }
   .pcol:first-child { border-top: 0; }
