@@ -1032,6 +1032,49 @@ footer.site-footer .foot-bottom a:hover{color:var(--accent)}
   .sg-glass,.sg-bloom{transition:none;animation:none}
 }
 
+
+/* --- hero, on stride's layout: a full-viewport stage that shrinks into a
+   rounded inset as it scrolls, the display heading up top and a foot band
+   carrying the stat rail against the insight and its controls --- */
+.hero{height:100lvh;min-height:0;justify-content:flex-start;padding:0;overflow:visible}
+.hero .sk-inner{display:flex;flex-direction:column;height:100%;padding-top:132px;padding-bottom:48px;text-align:left;align-items:stretch;max-width:1240px}
+.hero .eyebrow{margin-bottom:18px}
+.sk-display{margin:0;font-family:var(--display);font-weight:300;font-size:clamp(44px,7.4vw,116px);line-height:.92;letter-spacing:-.035em;color:var(--white);text-transform:none}
+.sk-display span{display:block}
+.sk-display em{font-style:normal;color:var(--acc-2)}
+.sk-foot{margin-top:auto;display:flex;gap:48px;align-items:flex-end;justify-content:space-between;flex-wrap:wrap}
+.sk-stats{display:flex;gap:40px;list-style:none;margin:0;padding:0}
+.sk-stats li{border-left:1px solid rgba(250,250,250,.55);padding-left:20px}
+.sk-stat-v{display:block;font-family:var(--display);font-weight:300;font-size:clamp(34px,4.4vw,62px);line-height:1;letter-spacing:-.03em;color:var(--white)}
+.sk-stat-l{display:block;margin-top:12px;font-size:14px;color:var(--muted-2)}
+.sk-insight{max-width:34rem}
+.sk-insight-t{margin:0;font-size:clamp(18px,1.6vw,24px);font-weight:500;line-height:1.32;color:var(--white)}
+.sk-insight-b{margin:16px 0 0;font-size:15px;line-height:1.65;color:var(--muted)}
+.sk-ctas{margin-top:38px}
+/* the fan viz keeps its place but sits behind the foot band */
+.fan{right:2vw;bottom:auto;top:46%;transform:translateY(-50%);opacity:.9;z-index:1}
+.hero .sk-inner{position:relative;z-index:2}
+
+/* --- stride's logo marquee: two rows, opposite directions, scroll-driven --- */
+.lm{position:relative;padding:56px 0 64px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);overflow:hidden}
+.lm-label{margin:0 0 30px;text-align:center;font-family:var(--mono),monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--acc-2)}
+.lm-row{display:flex;overflow:hidden;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);
+          mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent)}
+.lm-row + .lm-row{margin-top:22px}
+.lm-track{display:flex;width:max-content;flex:none;align-items:center;will-change:transform}
+.lm-i{display:inline-flex;align-items:center;gap:12px;padding:0 34px;font-family:var(--display);font-size:26px;font-weight:400;letter-spacing:-.01em;color:rgba(250,250,250,.34);white-space:nowrap}
+.lm-m{width:26px;height:26px;flex:none;border-radius:50%;border:1px solid rgba(250,250,250,.24)}
+@media(max-width:880px){
+  .hero .sk-inner{padding-top:110px}
+  .sk-foot{gap:28px}
+  .sk-stats{gap:22px}
+  .sk-stats li{padding-left:14px}
+  .fan{display:none}
+  .lm-i{font-size:19px;padding:0 22px}
+  .lm-m{width:20px;height:20px}
+}
+
 /* ===== stride layer =========================================================
    The STRK page on the stride starter's design language, in strk20 colours:
    section heads centre with the number as a small mono eyebrow over a large
@@ -1076,6 +1119,48 @@ footer.site-footer .foot-bottom a:hover{color:var(--accent)}
   .s01 .copy{padding:28px 24px}
   .s01 .copy p{font-size:18px}
 }
+
+/* --- About, on stride's: an eyebrow over one long statement set large, the
+   opening clause in full white and the rest muted, round icon chips inline in
+   the type. No card, no columns: the section is the sentence. --- */
+.ab-block{padding-top:120px}
+.ab-eyebrow{margin:0 0 26px;font-family:var(--mono),monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--acc-2)}
+.ab-lead{margin:0;font-family:var(--display);font-weight:300;font-size:clamp(30px,4.6vw,68px);line-height:1.04;letter-spacing:-.03em;color:var(--white);max-width:22ch}
+.ab-muted{color:var(--muted)}
+.ab-chip{display:inline-flex;align-items:center;justify-content:center;width:.82em;height:.82em;margin:0 .1em;transform:translateY(.08em);border-radius:50%;background:var(--acc);color:#fff}
+.ab-chip svg{width:.46em;height:.46em}
+.ab-block .fly{margin-top:64px}
+
+/* --- utilities on stride's showcase: the heading sits over the right half and
+   the four columns run edge to edge, divided by hairlines rather than gaps --- */
+.sc-head{position:relative;z-index:2;max-width:34rem;margin:0 0 44px}
+.sc-eyebrow{margin:0 0 14px;font-family:var(--mono),monospace;font-size:11px;letter-spacing:.24em;color:var(--acc-2)}
+.sc-title{margin:0;font-family:var(--display);font-weight:300;font-size:clamp(28px,3.4vw,48px);line-height:.98;letter-spacing:-.025em;color:var(--white)}
+.sc-cta{display:inline-block;margin-top:30px;padding:12px 24px;border-radius:999px;border:1px solid rgba(250,250,250,.3);
+  font-size:14px;font-weight:500;color:var(--white);text-decoration:none;transition:background .2s,border-color .2s,color .2s}
+.sc-cta:hover{background:var(--white);border-color:var(--white);color:#0d0d0d}
+@media(min-width:1101px){
+  /* stride overlays this heading on the right half because its columns are
+     full-bleed images with nothing at the top. Ours carry live readouts up
+     there, so the heading keeps stride's right-half placement but stays in
+     flow instead of sitting on top of the data. */
+  .sc-head{margin-left:50%;padding-left:36px;max-width:none}
+  .sc-title{max-width:18ch}
+}
+/* the columns lose their card fill here: edge to edge, split by hairlines */
+.util{gap:0;grid-gap:0}
+.util-panel{border-radius:0;background:transparent;border:0;border-left:1px solid var(--line);padding:30px 24px 34px}
+.util-panel:first-child{border-left:0}
+.util-panel:hover{background:rgba(250,250,250,.03)}
+@media(max-width:880px){
+  .ab-block{padding-top:64px}
+  .ab-block .fly{margin-top:36px}
+  .sc-head{margin-bottom:26px}
+  .util-panel{border-left:0;border-top:1px solid var(--line);padding:24px 20px 28px}
+  .util-panel:first-child{border-top:0}
+}
+
+
 </style>
 <script>
 /* Inline copy of js/admin-gate.js (this page stays self-contained; keep in
@@ -1162,6 +1247,88 @@ window.ADMIN_GATE=on;})();
   </div>
   <div class="wrap sk-inner">
     <p class="eyebrow">One token. Three engines.</p>
+    <h1 id="the-thesis-in-a-single-asset" class="sk-display"><span>The thesis, in a</span><span><em>single asset</em>.</span></h1>
+
+    <!-- stride's hero foot: the stat rail on the left, the insight and its two
+         controls on the right. Values are live (data-metric), so they fill in
+         from the same fetch the numbers section uses. -->
+    <div class="sk-foot">
+      <ul class="sk-stats">
+        <li><span class="sk-stat-v" data-metric="strk_staked_pct">21%</span><span class="sk-stat-l">Of circulating supply staked</span></li>
+        <li><span class="sk-stat-v">75%</span><span class="sk-stat-l">Of all staking power</span></li>
+        <li><span class="sk-stat-v">10</span><span class="sk-stat-l">Onchain governance votes</span></li>
+      </ul>
+      <div class="sk-insight">
+        <p class="sk-insight-t">Privacy, quantum resistance and Bitcoin all run on Starknet. STRK is where that demand lands.</p>
+        <p class="sk-insight-b">It pays for execution and privacy fees, secures the network through staking, governs the protocol, and serves as base collateral across its DeFi.</p>
+        <div class="sk-ctas">
+          <a class="sk-cta chip-glass" href="#what-strk-is">What STRK is <i aria-hidden="true">&rarr;</i></a>
+          <a class="sk-cta sk-cta--muted chip-glass" href="#the-convergence">The convergence <i aria-hidden="true">&rarr;</i></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-curtain" aria-hidden="true"></div>
+  <div class="hero-bloom" aria-hidden="true">
+    <i style="left:12%;bottom:-20%;width:44%;height:50%;opacity:.10"></i>
+    <i style="left:52%;bottom:-24%;width:42%;height:54%;opacity:.09"></i>
+  </div>
+  <!-- CONVERGENCE FAN: the page's convergence motif re-laid out horizontally into
+       the hero's right zone. STRK node at the left, three branches fanning right
+       to privacy, quantum and btcfi. This scene is NOT decorative: the three
+       endpoint labels are real links, so it carries no aria-hidden and no
+       pointer-events:none, and the labels stay HTML anchors (not SVG text) so
+       they keep native focus rings and hit areas. Branch gradients run from the
+       page accent at the node to the destination page's accent at the endpoint,
+       all read from CSS custom properties, never hardcoded. All six branch
+       terminations stand off by the same 12 user units: each start sits 12 from
+       the node's outer ring, each end sits 12 from its dot. The strands are the
+       full node-to-dot curves trimmed to that gap by de Casteljau splitting, so
+       curvature is untouched and only the ends move. -->
+  <div class="fan" id="fan">
+    <svg class="fan-svg" viewBox="0 0 600 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+      <defs>
+        <linearGradient id="fgp" gradientUnits="userSpaceOnUse" x1="106" y1="150" x2="300" y2="44">
+          <stop offset="0%" stop-color="var(--accent)"/><stop offset="100%" stop-color="var(--p-privacy)"/></linearGradient>
+        <linearGradient id="fgq" gradientUnits="userSpaceOnUse" x1="106" y1="150" x2="300" y2="150">
+          <stop offset="0%" stop-color="var(--accent)"/><stop offset="100%" stop-color="var(--p-quantum)"/></linearGradient>
+        <linearGradient id="fgb" gradientUnits="userSpaceOnUse" x1="106" y1="150" x2="300" y2="256">
+          <stop offset="0%" stop-color="var(--accent)"/><stop offset="100%" stop-color="var(--p-btcfi)"/></linearGradient>
+        <radialGradient id="fcore" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="rgba(197, 52, 0,0.5)"/><stop offset="100%" stop-color="rgba(197, 52, 0,0)"/></radialGradient>
+        <clipPath id="fanLogoClip"><circle cx="54" cy="150" r="30"/></clipPath>
+      </defs>
+
+      <circle class="fan-glow" cx="54" cy="150" r="52" fill="url(#fcore)"/>
+      <circle class="fan-ring" cx="54" cy="150" r="40"/>
+      <image x="24" y="120" width="60" height="60" clip-path="url(#fanLogoClip)" preserveAspectRatio="xMidYMid slice" href="assets/starknet-logo.png"/>
+      <text class="fan-core-label" x="54" y="216" text-anchor="middle" font-size="11">STRK</text>
+
+      <g class="fan-branch" data-b="privacy">
+        <path class="fan-strand" stroke="url(#fgp)" d="M104.91 139.4 C163.9 114.43, 205.38 53.41, 282.03 44.97"/>
+        <circle class="fan-dot" cx="300" cy="44" r="6"/>
+      </g>
+      <g class="fan-branch" data-b="quantum">
+        <path class="fan-strand" stroke="url(#fgq)" d="M106 150 C164.67 150, 223.33 150, 282 150"/>
+        <circle class="fan-dot" cx="300" cy="150" r="6"/>
+      </g>
+      <g class="fan-branch" data-b="btcfi">
+        <path class="fan-strand" stroke="url(#fgb)" d="M104.91 160.6 C163.9 185.57, 205.38 246.59, 282.03 255.03"/>
+        <circle class="fan-dot" cx="300" cy="256" r="6"/>
+      </g>
+    </svg>
+
+    <a class="fan-lbl fl-privacy" href="/privacy" data-b="privacy">Privacy <span class="arr" aria-hidden="true">&#8599;</span></a>
+    <a class="fan-lbl fl-quantum" href="/quantum" data-b="quantum">Quantum Resistance <span class="arr" aria-hidden="true">&#8599;</span></a>
+    <a class="fan-lbl fl-btcfi" href="/btcfi" data-b="btcfi">BTCFi <span class="arr" aria-hidden="true">&#8599;</span></a>
+  </div>
+  <div class="wrap sk-inner">
+    <p class="eyebrow">One token. Three engines.</p>
     <h1 id="the-thesis-in-a-single-asset">The thesis, in a <em>single asset</em>.</h1>
     <p class="lead">Privacy, quantum resistance, and Bitcoin all run on Starknet. STRK is the asset that secures the network and captures the demand the thesis creates.</p>
     <div class="sk-ctas">
@@ -1179,22 +1346,26 @@ window.ADMIN_GATE=on;})();
      and taken out of the tab order. Labels only, never links. No live figure
      appears here: this page's staking, supply, revenue and netflow numbers are
      fetched hourly, so a static pill would drift out of step with them. -->
-<div class="sk-marquee" id="skMarquee"><div class="sk-mq-track">
-  <div class="sk-mq-set"><span class="chip-glass">EVERY TX PAID IN STRK</span><span class="chip-glass">PRIVACY FEES PAID IN STRK</span><span class="chip-glass">75% OF STAKING POWER</span><span class="chip-glass">BTC STAKERS TAKE 25%</span><span class="chip-glass">ONLY STAKED STRK VOTES</span><span class="chip-glass">CORE DEFI COLLATERAL</span><span class="chip-glass">GAS, STAKING, GOVERNANCE, COLLATERAL</span><span class="chip-glass">INVESTOR AND EARLY CONTRIBUTOR VESTING ENDS MARCH 2027</span><span class="chip-glass">ONLY CHAIN GATHERING ALL THREE NARRATIVES</span><span class="chip-glass">THE INTERSECTION HAS ONE ASSET</span></div>
-  <div class="sk-mq-set" data-dup aria-hidden="true"><span class="chip-glass">EVERY TX PAID IN STRK</span><span class="chip-glass">PRIVACY FEES PAID IN STRK</span><span class="chip-glass">75% OF STAKING POWER</span><span class="chip-glass">BTC STAKERS TAKE 25%</span><span class="chip-glass">ONLY STAKED STRK VOTES</span><span class="chip-glass">CORE DEFI COLLATERAL</span><span class="chip-glass">GAS, STAKING, GOVERNANCE, COLLATERAL</span><span class="chip-glass">INVESTOR AND EARLY CONTRIBUTOR VESTING ENDS MARCH 2027</span><span class="chip-glass">ONLY CHAIN GATHERING ALL THREE NARRATIVES</span><span class="chip-glass">THE INTERSECTION HAS ONE ASSET</span></div>
-  <div class="sk-mq-set" data-dup aria-hidden="true"><span class="chip-glass">EVERY TX PAID IN STRK</span><span class="chip-glass">PRIVACY FEES PAID IN STRK</span><span class="chip-glass">75% OF STAKING POWER</span><span class="chip-glass">BTC STAKERS TAKE 25%</span><span class="chip-glass">ONLY STAKED STRK VOTES</span><span class="chip-glass">CORE DEFI COLLATERAL</span><span class="chip-glass">GAS, STAKING, GOVERNANCE, COLLATERAL</span><span class="chip-glass">INVESTOR AND EARLY CONTRIBUTOR VESTING ENDS MARCH 2027</span><span class="chip-glass">ONLY CHAIN GATHERING ALL THREE NARRATIVES</span><span class="chip-glass">THE INTERSECTION HAS ONE ASSET</span></div>
-</div></div>
+<!-- stride's logo marquee: two rows whose horizontal offset is tied to scroll
+     position in opposite directions, not autoplay. The set is repeated six times
+     and each row's translate wraps into one set's width, so it is seamless and
+     edge to edge at any width (js/strk-marquee.js). -->
+<section class="lm" aria-label="Where STRK is used across the ecosystem">
+  <p class="lm-label">STRK across the ecosystem</p>
+  <div class="lm-row"><div class="lm-track" data-dir="left"><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>AVNU</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Ekubo</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Vesu</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Troves</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Endur</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Opus</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Braavos</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Ready</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Xverse</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Nostra</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Extended</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Meteora</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>AVNU</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Ekubo</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Vesu</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Troves</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Endur</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Opus</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Braavos</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Ready</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Xverse</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Nostra</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Extended</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Meteora</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>AVNU</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Ekubo</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Vesu</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Troves</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Endur</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Opus</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Braavos</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Ready</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Xverse</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Nostra</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Extended</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Meteora</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>AVNU</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Ekubo</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Vesu</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Troves</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Endur</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Opus</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Braavos</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Ready</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Xverse</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Nostra</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Extended</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Meteora</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>AVNU</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Ekubo</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Vesu</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Troves</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Endur</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Opus</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Braavos</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Ready</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Xverse</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Nostra</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Extended</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Meteora</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>AVNU</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Ekubo</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Vesu</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Troves</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Endur</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Opus</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Braavos</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Ready</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Xverse</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Nostra</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Extended</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Meteora</span></div></div>
+  <div class="lm-row"><div class="lm-track" data-dir="right"><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>AVNU</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Ekubo</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Vesu</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Troves</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Endur</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Opus</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Braavos</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Ready</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Xverse</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Nostra</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Extended</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Meteora</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>AVNU</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Ekubo</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Vesu</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Troves</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Endur</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Opus</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Braavos</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Ready</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Xverse</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Nostra</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Extended</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Meteora</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>AVNU</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Ekubo</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Vesu</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Troves</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Endur</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Opus</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Braavos</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Ready</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Xverse</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Nostra</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Extended</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Meteora</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>AVNU</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Ekubo</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Vesu</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Troves</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Endur</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Opus</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Braavos</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Ready</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Xverse</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Nostra</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Extended</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Meteora</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>AVNU</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Ekubo</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Vesu</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Troves</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Endur</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Opus</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Braavos</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Ready</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Xverse</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Nostra</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Extended</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Meteora</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>AVNU</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Ekubo</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Vesu</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Troves</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Endur</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Opus</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Braavos</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Ready</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Xverse</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Nostra</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Extended</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Meteora</span></div></div>
+</section>
 
-<!-- 01 ROLE -->
-<section class="block"><div class="wrap">
-  <div class="th-pm-head"><span class="th-pm-marker"></span><span class="th-pm-num">01</span><h2 id="what-strk-is" class="th-pm-title">What STRK is</h2></div>
+<!-- 01 ROLE. stride's About: an eyebrow over one long statement set large,
+     the first half in full white and the rest muted, with round icon chips
+     sitting inline in the type. Purely typographic, as stride has it. The
+     flywheel that stood here keeps its place under the statement, since it
+     carries a real part of the STRK story. -->
+<section class="block ab-block"><div class="wrap">
+  <p class="ab-eyebrow">About STRK</p>
+  <h2 id="what-strk-is" class="ab-lead">STRK is the asset that pays for every <span class="ab-chip" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 4 14h6l-1 8 9-12h-6z"/></svg></span> transaction, <span class="ab-muted">secures the network through staking <span class="ab-chip" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 20 5v6c0 5-3.4 7.7-8 9-4.6-1.3-8-4-8-9V5z"/></svg></span> and captures the demand the thesis creates.</span></h2>
 
-  <div class="s01">
-    <div class="copy">
-      <p><strong>STRK is the native asset powering Starknet.</strong> It pays for execution (both gas and privacy fees), secures the network through staking, governs the protocol, and serves as the base collateral across its DeFi. Every part of the thesis playing out, more private flows, a quantum-safe chain, more Bitcoin, routes that activity back to one token.</p>
-    </div>
-
-    <div class="fly" id="fly">
+  <div class="fly" id="fly">
       <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" aria-label="STRK flywheel">
         <defs><clipPath id="hubLogoClip"><circle cx="200" cy="200" r="24"/></clipPath></defs>
         <circle class="track" cx="200" cy="200" r="130"/>
@@ -1240,13 +1411,16 @@ window.ADMIN_GATE=on;})();
       </svg>
 
       <div class="tip" id="tip"><div class="tt" id="tipT"></div><div class="td" id="tipD"></div></div>
-    </div>
   </div>
 </div></section>
 
 <!-- 02 UTILITIES -->
 <section class="block"><div class="wrap">
-  <div class="th-pm-head"><span class="th-pm-marker"></span><span class="th-pm-num">02</span><h2 id="the-utilities" class="th-pm-title">The utilities</h2></div>
+  <div class="sc-head">
+    <p class="sc-eyebrow">02</p>
+    <h2 id="the-utilities" class="sc-title">Every part of the network, paid for in one token</h2>
+    <a class="sc-cta" href="#the-numbers">See the numbers</a>
+  </div>
 
   <svg width="0" height="0" style="position:absolute"><defs>
     <linearGradient id="gv" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#c53400"/><stop offset="1" stop-color="#f0b8a0"/></linearGradient>
@@ -4028,5 +4202,6 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
 </script>
 <script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.185.0/build/three.module.js"}}</script>
 <script type="module" src="js/eco-backdrop.js"></script>
+<script src="js/strk-marquee.js" defer></script>
 </body>
 </html>
