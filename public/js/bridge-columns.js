@@ -63,6 +63,19 @@
 
   const headFor = (i) => heads[i === null ? 0 : i + 1];
 
+  /* The band follows the SHOWING state, not the tallest one. Sizing it to the
+     tallest left a screen of dead air under the short phases, since OP_CAT's
+     body runs several lines longer than Federation's. The height is animated,
+     so the strip glides up to meet the copy rather than jumping. */
+  function measure() {
+    const on = heads.find((h) => h.classList.contains('-in')) || heads[0];
+    if (!on) return;
+    /* +4 covers scrollHeight's integer rounding, so the last line can never be
+       shaved by a sub-pixel */
+    const h = on.scrollHeight + 4;
+    if (h > 0) root.style.setProperty('--bc-heads-h', h + 'px');
+  }
+
   function setActive(i, focus) {
     if (i === active) return;
     const prev = active;
@@ -81,6 +94,8 @@
       if (focus) cols[i].focus();
     }
     syncInert();
+    // the band tracks whichever state is showing, so it has to re-measure here
+    measure();
   }
 
   cols.forEach((col, i) => {
@@ -97,14 +112,6 @@
     if (!strip.contains(document.activeElement)) setActive(null);
   });
 
-  /* the band is as tall as the tallest state, never taller (see note 2) */
-  function measure() {
-    let tallest = 0;
-    for (const h of heads) tallest = Math.max(tallest, h.scrollHeight);
-    /* +4 covers scrollHeight's integer rounding, so the last line of the
-       tallest state can never be shaved by a sub-pixel */
-    if (tallest > 0) root.style.setProperty('--bc-heads-h', (tallest + 4) + 'px');
-  }
   let rt;
   addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(measure, 160); });
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);

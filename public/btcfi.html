@@ -1432,7 +1432,7 @@
 
   /* the copy holds the centre for the whole flight; the logo scatter and the
      Bitcoin mark are both placed to keep out of this box */
-  .bg-copy { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  .bg-copy { position: absolute; left: 50%; top: 13vh; transform: translate(-50%, 0);
     width: min(760px, calc(100% - 48px)); text-align: center; pointer-events: none;
     z-index: 3; opacity: 0; transition: opacity .4s ease; }
   .bg-copy h2 { font-family: var(--display); font-weight: 300;
@@ -1496,6 +1496,7 @@
      because these bodies are longer than privacy's and a fixed vh band clips
      them on short viewports. The clamp is the pre-measurement fallback. */
   .bcore-heads { position: relative; flex: none; height: var(--bc-heads-h, clamp(200px, 30vh, 320px));
+    transition: height .55s cubic-bezier(.2,.7,.2,1);
     overflow: hidden; padding: 0 16px 26px; }
   .bhead { position: absolute; inset: 0 16px auto; transform: translateY(112%); opacity: 0;
     transition: transform var(--bc-slide) var(--bc-ease), opacity calc(var(--bc-slide) * .7) ease; }
@@ -1690,21 +1691,22 @@
   .lg-cd { padding: 4px 20px 22px; }
 }
 
-  /* ---- ambient wash behind the lineage head and the ecosystem flight ----
-     The same flame gradient the landing and ecosystem pages carry, painted
-     locally: js/eco-backdrop.js's canvas is fixed and sits behind this page's
-     own stacking contexts, so neither of these sections could read it. */
-  .lg-head::before,
-  #btcGlobe .bg-stick::before{
-    content:""; position:absolute; inset:0; z-index:-1; pointer-events:none;
-    background:
-      radial-gradient(120% 95% at 16% 8%, rgba(122,36,0,.55) 0%, rgba(122,36,0,0) 55%),
-      radial-gradient(95% 85% at 88% 22%, rgba(197,52,0,.42) 0%, rgba(197,52,0,0) 58%),
-      radial-gradient(130% 120% at 72% 104%, rgba(224,122,74,.30) 0%, rgba(224,122,74,0) 60%),
-      linear-gradient(160deg, #150500 0%, #0d0d0d 58%, #0d0d0d 100%);
-  }
-  .lg-head{ isolation:isolate; }
-  #btcGlobe .bg-stick{ isolation:isolate; }
+  /* No local wash here. js/eco-backdrop.js paints the flame shader page-wide
+     and these sections only need to stay out of its way, which is exactly what
+     the privacy page does: its .lg is transparent and carries no pseudo layer.
+     A CSS gradient here read as a hard-edged band clipped to the track, and the
+     isolation it needed was what hid the real shader. */
+  #btcGlobe .bg-stick{ background: transparent; }
+
+
+  /* The flame shader (js/eco-backdrop.js) is a FIXED canvas at z-index 0, so
+     every ancestor above it has to stay transparent for it to read through.
+     On the privacy page the whole chain already is, which is why its lineage
+     sits on the wash. This page wraps those sections in .solution, which
+     styles.css paints #0d0d0d, and that was covering the canvas. html already
+     carries the same ground colour, so dropping the fill changes nothing
+     except letting the shader through. */
+  body.page-btcfi .solution { background: transparent; }
 
 </style>
 <script>
