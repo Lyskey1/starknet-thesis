@@ -23,7 +23,6 @@
 <meta name="description" content="How Starknet makes Bitcoin productive: BTC staking with a fixed 25% reward share, strkBTC, and live figures for bridged, staked and shielded BTC.">
 <script defer src="https://cloud.umami.is/script.js" data-website-id="45f11859-9fc2-49ae-a59e-4826e0f1e174"></script>
 <script defer src="js/search.js"></script>
-<script defer src="js/curtain.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -45,37 +44,10 @@
     .nav-logo { font-size: 15px; }
   }
 
-  /* ============ HERO: shared grammar, per-page backdrop ============
-     Frame is a twin of the ecosystem, digest, privacy and quantum heroes:
-     full-bleed box, contained 1160/32 grid, left-aligned eyebrow, display and
-     lede, glass CTA pair, claim band below. Duplicated per page by
-     convention, not factored, so keep the five copies in sync. The BACKDROP
-     is per-page: btcfi keeps its aurora curtain and adds the layered scene.
-     Padding is 112/26 rather than 150/120 because this page is designed to a
-     1440x780 and 1280x720 first viewport: nav, hero and band with no
-     scrolling. */
-  .hero { min-height: calc(100vh - 72px); display: flex; flex-direction: column; justify-content: center;
-    align-items: stretch; overflow: visible; padding: 112px 0 26px; max-width: none; margin: 0 auto;
-    text-align: left; position: relative; }
-  .bf-inner { width: 100%; max-width: 1160px; margin: 0 auto; padding: 0 32px; position: relative; z-index: 1; }
-  .hero-eyebrow { font-size: 13px; letter-spacing: .04em; margin-bottom: 22px; position: relative; }
-  .hero-title { font-size: clamp(34px,5.4vw,76px); line-height: .98; margin-bottom: 26px; max-width: none; position: relative; }
   /* live idle-capital slots: tabular digits so $1.4T/$1.5T/$1.6T occupy the
      same width and a live commit can never shift a line; nowrap so the
      figure never breaks across lines */
   .idle-cap { font-variant-numeric: tabular-nums; white-space: nowrap; }
-  .hero-subtitle { font-size: 18px; max-width: 620px; margin: 22px 0 0; line-height: 1.7; position: relative; }
-
-  /* CTAs: twin of .eco-cta / .pv-cta / .qh-cta on the shared dark glass tier
-     (css/glass-chips.css), reading this page's accent through the recipe's
-     --accent-rgb fallback. Both shadow stacks are copies of the locked
-     recipe: keep in sync. */
-  .bf-ctas { display: flex; gap: 18px; margin-top: 24px; flex-wrap: wrap; position: relative; }
-  .bf-cta { font-family: var(--mono); font-size: 13px; letter-spacing: .14em; text-transform: uppercase; text-decoration: none; color: var(--white); padding: 12px 22px; border-radius: 99px; border: 1px solid rgba(var(--accent-rgb), .55); display: inline-flex; align-items: center; gap: 10px; }
-  .bf-cta.chip-glass { transition: background var(--hover-dur) var(--hover-ease), box-shadow var(--hover-dur) var(--hover-ease), border-color var(--hover-dur); }
-  .bf-cta i { font-style: normal; transition: transform var(--hover-dur) var(--hover-ease); }
-  .bf-cta:hover i { transform: translateX(4px); }
-  .bf-cta:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
   /* The chart toggle is the only bespoke interactive control on this page and
      it was the only one with no focus ring: .toggle-btn is styled in
      css/styles.css, which gives it a hover state and no :focus-visible, so a
@@ -185,52 +157,16 @@
     .bfc-run .bfc-late, .bfc-run .bfc-chip { opacity: 1; }
     .bfc-run .bfc-pt-proj, .bfc-run .bfc-projline { opacity: .65; }
   }
-  .bf-cta--muted { border-color: var(--border);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,.5), inset -1px -1px 0 rgba(255,255,255,.30),
-      inset 1px 1px 0 rgba(255,255,255,.12), inset 0 10px 18px -8px rgba(255,255,255,.18),
-      inset 0 -1px 0 rgba(0,0,0,.6), inset 0 -3px 5px rgba(0,0,0,.22), 0 0 12px rgba(var(--accent-rgb), .10); }
-  .bf-cta--muted:hover { border-color: rgba(var(--accent-rgb), .55); background: rgba(250, 250, 250,.10);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,.5), inset -1px -1px 0 rgba(255,255,255,.30),
-      inset 1px 1px 0 rgba(255,255,255,.12), inset 0 10px 18px -8px rgba(255,255,255,.18),
-      inset 0 -1px 0 rgba(0,0,0,.6), inset 0 -3px 5px rgba(0,0,0,.22), 0 0 40px rgba(var(--accent-rgb), .45); }
-
-
-  /* SCENE: the proof loop. Square box anchored bottom right in px so its
-     clearance from the claim band is fixed and it never crosses the copy. The
-     step down at 1360 keeps it clear of the display's first line, which is
-     the longest and reaches furthest right. */
-  .bfp-scene { position: absolute; right: 36px; bottom: 46px; width: 380px; height: 380px; z-index: -1; pointer-events: none; }
-  .bfp-svg { width: 100%; height: 100%; display: block; overflow: visible; }
-  .bfp-svg :is(path, circle, text) { vector-effect: non-scaling-stroke; fill: none; stroke: rgb(var(--accent-rgb)); stroke-width: 1; }
-  .bfp-node--btc { opacity: .70; }
-  .bfp-arc--up { opacity: .55; }
-  .bfp-arc--down { opacity: .38; }
-  .bfp-head--up { opacity: .55; stroke-linecap: round; stroke-linejoin: round; }
-  .bfp-head--down { opacity: .38; stroke-linecap: round; stroke-linejoin: round; }
-  /* the two real marks: official path data, rendered monochrome in the page
-     accent rather than brand colors, since a full-color roundel would break a
-     scene made entirely of hairlines. The .bfp-svg prefix is load-bearing: it
-     out-specifies the generic hairline rule above, which would otherwise force
-     fill:none on them. */
-  .bfp-svg .bfp-mark, .bfp-svg .bfp-mark path { fill: rgb(var(--accent-rgb)); stroke: none; }
-  .bfp-svg .bfp-mark--btc { opacity: .70; }
-  .bfp-svg .bfp-mark--strk { opacity: .85; }
-  .bfp-lbl { font-family: var(--mono); font-size: 11px; letter-spacing: .2em; fill: rgb(var(--accent-rgb)); stroke: none; opacity: .40; }
-
-  /* one bright segment travelling the loop: up arc for the first half of the
-     cycle, down arc for the second. dasharray on a duplicate of each path,
-     dashoffset keyframed, no transform. Declared only under .run so the
-     animation does not exist while the hero is off screen. */
-  .bfp-pulse { opacity: 0; stroke-width: 2; stroke-linecap: round; stroke-dasharray: 9 91; }
-  .bfp-scene.run .bfp-pulse { animation: bfpRun 7s linear infinite; }
-  .bfp-scene.run .bfp-pulse--down { animation-delay: 3.5s; }
-  @keyframes bfpRun {
-    0%   { stroke-dashoffset: 100; opacity: 0; }
-    3%   { opacity: .95; }
-    44%  { opacity: .95; }
-    50%  { stroke-dashoffset: 0; opacity: 0; }
-    100% { stroke-dashoffset: 0; opacity: 0; }
-  }
+  /* Glass pill CTA, twin of .eco-cta / .pv-cta / .qh-cta on the shared dark
+     glass tier (css/glass-chips.css), reading this page's accent through the
+     recipe's --accent-rgb fallback. It was the hero's, and the hero now
+     carries the landing's solid pill instead; the rules stay because section
+     01's "see what the gap costs" link still uses them. */
+  .bf-cta { font-family: var(--mono); font-size: 13px; letter-spacing: .14em; text-transform: uppercase; text-decoration: none; color: var(--white); padding: 12px 22px; border-radius: 99px; border: 1px solid rgba(var(--accent-rgb), .55); display: inline-flex; align-items: center; gap: 10px; }
+  .bf-cta.chip-glass { transition: background var(--hover-dur) var(--hover-ease), box-shadow var(--hover-dur) var(--hover-ease), border-color var(--hover-dur); }
+  .bf-cta i { font-style: normal; transition: transform var(--hover-dur) var(--hover-ease); }
+  .bf-cta:hover i { transform: translateX(4px); }
+  .bf-cta:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
   /* CLAIM BAND: twin of the sibling bands. */
   .bf-marquee { border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); overflow: hidden; padding: 10px 0;
@@ -262,20 +198,13 @@
     .bf-mq-set { flex-wrap: wrap; gap: 12px; padding-right: 0; }
     .bf-marquee { -webkit-mask-image: none; mask-image: none; }
     .bf-cta.chip-glass, .bf-cta i, .bf-mq-set .chip-glass { transition: none; }
-    .bfp-scene.run .bfp-pulse { animation: none; opacity: 0; }
   }
-  @media (max-width: 1360px) { .hero { padding-bottom: 14px; }
-    .bfp-scene { width: 320px; height: 320px; } }
   @media (max-width: 980px) {
-    /* the copy runs the full width when stacked, so there is no right zone
-       left to hold the loop and it goes rather than sit behind the text */
-    .bfp-scene { display: none; }
     .bf-mq-track { animation: none !important; flex-wrap: wrap; width: auto; }
     .bf-mq-set[data-dup] { display: none; }
     .bf-mq-set { flex-wrap: wrap; gap: 10px; padding: 0 24px; }
     .bf-marquee { -webkit-mask-image: none; mask-image: none; padding: 16px 0; }
   }
-  @media (max-width: 700px) { .bf-inner { padding: 0 24px; } .bf-ctas { flex-direction: column; align-items: flex-start; gap: 14px; } }
 </style>
 <style>
   /* ===== News editor (btcfi-only admin UI) ===== */
@@ -420,126 +349,6 @@
   /* (4) Track-record timeline: every dot + every year label uses the
      single page accent (no purple/orange mix). Descriptions stay grey. */
 
-  /* (6) THE RISK PODIUMS (.brk): privacy's pedestal selector (.pmv), this
-     page's hand. WHAT IS REUSED FROM THE REFERENCE, deliberately verbatim:
-     the plinth geometry (elliptical top face <i> over a cylinder wall <u>,
-     the same radii and the same inset-white highlight set, which is the
-     entire volume read), the floor halo ::before, the icon lift + drop-shadow
-     glow on selection, the 24-grid/1.1-stroke icon discipline, the mono
-     label, and the pmv height-animated stage. WHAT IS ADAPTED: glass comes
-     from THIS page's shipped recipe (the btcg-card values: .032 fill, .07
-     hairline, blur 16 sat 112) instead of privacy's --card-glass-* tokens,
-     which do not exist here; the accent is this page's --accent; and the
-     dropped .threat-card class means the shared styles.css span-2/h3 rules
-     no longer need overriding at all (the old (0,2,0) armor is gone WITH its
-     target -- do not resurrect the class name for styling).
-     VALUES, measured against #0d0d0d after render, not derived:
-       title   .62 -> 1.0 white     [~7:1 -> ~17:1], same ladder as .bgap-title,
-                                     so the 4.6:1 floor holds UNSELECTED
-       label   #E0524A 1.0 always; selected moves to #e07a4a -- the cost-line
-               grammar, because coral tops out at 5.16:1 and cannot afford an
-               opacity step (the compute-the-product lesson: text never dims
-               by a wrapper opacity here, each state sets its own colour)
-       icon/plinth  .5 -> 1.0 (graphics, no text floor)
-     SELECTION IS TABS, NOT LISTBOX: the panel really is revealed/hidden. */
-  .brk { margin-top: 46px; position: relative; }
-  .brk-row { position: relative; display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 18px; }
-  .brk-row > .btcg-bloom { z-index: 0; }
-  .brk-ped { position: relative; z-index: 1; display: grid; grid-template-rows: 1fr auto auto auto;
-    justify-items: center; background: none; border: 0; padding: 0 6px 6px; margin: 0;
-    font: inherit; color: inherit; cursor: pointer; border-radius: 14px; }
-  .brk-ped:focus-visible { outline: 2px solid var(--accent); outline-offset: 5px; }
-  /* floor halo, selected only. On the PLINTH's ::after, not the button's
-     ::before as in the reference: this button has a flexible icon row above
-     the plinth (the reference's rows are fixed), so only the plinth itself
-     is a stable anchor for a floor glow. */
-  .brk-plinth::after { content: ""; position: absolute; left: -10%; right: -10%; top: -4px; bottom: -16px;
-    border-radius: 50%; background: radial-gradient(closest-side, rgba(var(--accent-rgb), .22), transparent 72%);
-    opacity: 0; transition: opacity .4s ease; pointer-events: none; }
-  .brk-ped[aria-selected="true"] .brk-plinth::after { opacity: 1; }
-  .brk-obj { width: 62px; height: 62px; color: var(--accent); align-self: end; margin-bottom: 6px;
-    position: relative; z-index: 2; opacity: .5;
-    transition: transform .4s cubic-bezier(.22,1,.36,1), filter .4s ease, opacity var(--hover-dur) var(--hover-ease); }
-  .brk-obj svg { width: 100%; height: 100%; display: block; }
-  .brk-ped[aria-selected="true"] .brk-obj { opacity: 1; transform: translateY(-6px);
-    filter: drop-shadow(0 0 10px rgba(var(--accent-rgb), .45)); }
-  .brk-ped:hover .brk-obj { opacity: .8; }
-  /* the plinth: reference geometry, this page's glass */
-  .brk-plinth { position: relative; width: 100%; max-width: 200px; height: 46px; z-index: 1;
-    opacity: .55; transition: opacity var(--hover-dur) var(--hover-ease); }
-  .brk-ped[aria-selected="true"] .brk-plinth { opacity: 1; }
-  .brk-plinth i, .brk-plinth u { position: absolute; left: 0; right: 0; display: block; }
-  .brk-plinth u { top: 13px; bottom: 0; border-radius: 0 0 50% 50% / 0 0 26px 26px;
-    background: rgba(250, 250, 250,.032); border: 1px solid rgba(250, 250, 250,.1); border-top: 0;
-    -webkit-backdrop-filter: blur(16px) saturate(112%);
-    backdrop-filter: blur(16px) saturate(112%);
-    box-shadow: inset 0 -1px 0 rgba(255,255,255,.22), inset 0 0 24px rgba(255,255,255,.05);
-    transition: border-color var(--hover-dur) var(--hover-ease); }
-  .brk-plinth i { top: 0; height: 26px; border-radius: 50%;
-    background: rgba(250, 250, 250,.032); border: 1px solid rgba(250, 250, 250,.1);
-    -webkit-backdrop-filter: blur(16px) saturate(112%);
-    backdrop-filter: blur(16px) saturate(112%);
-    box-shadow: inset -1px -1px 0 rgba(255,255,255,.42), inset 1px 1px 0 rgba(255,255,255,.10),
-      inset 0 1px 0 rgba(255,255,255,.26), inset 0 0 24px rgba(255,255,255,.05);
-    transition: border-color var(--hover-dur) var(--hover-ease), background var(--hover-dur) var(--hover-ease); }
-  .brk-ped[aria-selected="true"] .brk-plinth i,
-  .brk-ped[aria-selected="true"] .brk-plinth u { border-color: rgba(var(--accent-rgb), .55); }
-  .brk-ped[aria-selected="true"] .brk-plinth i { background: rgba(var(--accent-rgb), .12); }
-  .brk-label { font-family: var(--mono); font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase;
-    color: #E0524A; margin-top: 14px; white-space: nowrap; transition: color .18s ease; }
-  .brk-label b { font-weight: 600; margin-right: 7px; }
-  .brk-ped[aria-selected="true"] .brk-label { color: #e07a4a; }
-  .brk-title { display: block; font-family: var(--sans); font-weight: 600; font-size: 15px;
-    line-height: 1.3; color: rgba(250, 250, 250,.62); margin-top: 8px; max-width: 24ch; text-align: center;
-    text-wrap: balance; transition: color .18s ease; }
-  .brk-ped[aria-selected="true"] .brk-title { color: var(--white); }
-  .brk-ped:hover .brk-title { color: rgba(250, 250, 250,.84); }
-  /* the panel: pmv's height-animated stage, one risk's body at a time, the
-     old cards' coral grammar (left bar + Risk NN eyebrow) kept intact */
-  .brk-stage { margin-top: 30px; border-top: 1px solid var(--border); padding-top: 26px;
-    overflow: hidden; transition: height .42s var(--hover-ease); }
-  .brk-panel[hidden] { display: none; }
-  .brk-panel { position: relative; padding: 2px 0 2px 30px; max-width: 860px; }
-  .brk-panel::before { content: ''; position: absolute; left: 0; top: 4px; bottom: 4px;
-    width: 2px; background: #E0524A; border-radius: 2px; opacity: .85; }
-  .brk-panel .idx { display: block; font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em;
-    text-transform: uppercase; color: #E0524A; margin-bottom: 10px; }
-  .brk-panel p { font-family: var(--sans); font-size: 15px; color: rgba(250, 250, 250,0.75); line-height: 1.7; }
-  /* index title source: a real h4 (heading order under the .gap-turn h3
-     holds), visually clipped because the podium column already shows it */
-  .brk-sr { position: absolute; width: 1px; height: 1px; overflow: hidden;
-    clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; margin: 0; }
-  @media (max-width: 700px) {
-    .brk-row { gap: 10px; }
-    .brk-obj { width: 48px; height: 48px; }
-    .brk-plinth { height: 38px; max-width: 150px; }
-    .brk-plinth i { height: 20px; }
-    .brk-plinth u { top: 10px; }
-    .brk-label { font-size: 9px; letter-spacing: .07em; }
-    .brk-title { font-size: 12.5px; }
-  }
-  /* AT <=560 THE PODIUMS GO, THE CLAIMS STAY: three columns cannot hold
-     three multi-line titles legibly at 375, so each pedestal becomes a flat
-     selector row (icon + label + title) and the panel keeps working below --
-     the same flat-at-small doctrine as the gap device's <=860 list. */
-  @media (max-width: 560px) {
-    .brk-row { display: flex; flex-direction: column; gap: 0; }
-    /* selection takes the accent left bar, the same mark the gap device's
-       <=860 list uses, so the two flat lists share one selection grammar */
-    .brk-ped { display: flex; align-items: center; justify-content: flex-start; gap: 14px;
-      text-align: left; padding: 13px 4px 13px 10px; border-radius: 0; border-top: 1px solid var(--border);
-      border-left: 2px solid transparent; }
-    .brk-ped:first-of-type { border-top: 0; }
-    .brk-ped[aria-selected="true"] { border-left-color: rgba(var(--accent-rgb), .9); }
-    .brk-row > .btcg-bloom { display: none; }
-    .brk-plinth { display: none; }
-    .brk-obj { width: 30px; height: 30px; flex: 0 0 auto; align-self: center; margin-bottom: 0; }
-    .brk-ped[aria-selected="true"] .brk-obj { transform: none; }
-    .brk-label { margin-top: 0; flex: 0 0 auto; min-width: 108px; }
-    .brk-title { margin-top: 0; text-align: left; text-wrap: wrap; max-width: none; }
-    .brk-stage { margin-top: 18px; }
-  }
-
   /* ---- section 02: THE CHRONOMETER (.cat). Anatomy and state grammar are
      documented on the markup; this block is geometry and the value ladder.
      VALUES, measured from rendered pixels (see the calibration discipline in
@@ -665,285 +474,20 @@
     .cat-states { min-height: 0 !important; }
   }
 
-  /* ---- section 01: BROKEN ORBITS. Geometry notes live on the markup. ----
-     WHY ORBITS RATHER THAN SPOKES. An incomplete ring IS a shortfall; it does
-     not stand for one. Each gap gets an arc that runs solid, stops at a break,
-     continues as a faint dashed remainder and never closes. THE FAINT FULL
-     REFERENCE RING AT THE SAME RADIUS IS LOAD-BEARING: it is where the arc
-     should have reached, and without it the arcs read as decoration rather
-     than as something falling short. Do not remove it to reduce clutter.
-     FOUR RADII, NOT ONE. The four arcs are concentric at 104/134/164/194 with
-     01 innermost, so the device reads as an orrery and each arc owns a ring
-     the eye can follow all the way round. One shared radius would have made
-     four segments of a single ring, which says "one thing divided" rather than
-     "four things each falling short".
-     EACH BREAK SITS IN ITS OWN CARD'S QUADRANT (225/315/45/135 degrees,
-     SVG y-down) so its leader is short and unambiguous. Arcs are 310 degrees
-     drawn against 50 open; the numbers are deliberately identical across all
-     four because this is a diagram, not a chart, and unequal openings would
-     claim a measurement we have not made.
-     THE HUB RING IS GONE. The old spoke version had one at r=76; with four
-     reference rings the innermost orbit is the collar, and a fifth concentric
-     circle was clutter. Removed rather than dimmed.
-
-     THE VALUE LADDER, contrast measured against the #0d0d0d ground.
-     Resting -> selected:
-       core mark        #c53400 disc, #fafafa B      [8.6 / 17.7]  static
-       card title       #fafafa .62 -> 1.0           [7.0 -> 17.7]
-       number + name    #c53400 .75 -> 1.0           [5.2 -> 8.6]
-       cost line        #E0524A 1.0 -> #e07a4a 1.0   [5.2 -> 8.1]
-       one-liner        #fafafa .48 -> .78           [4.6 -> 10.8]
-       note (card 02)   #fafafa .48 -> .70           [4.6 -> 8.7]
-       solid arc        #c53400 .22 -> .95, 1.7->2.4px
-       dashed remainder #fafafa .14 -> .26, 1.15px
-       leader           #fafafa .16 -> #c53400 .8
-       reference ring   #c53400 .07 -> .20            [1.1 -> 1.4]
-     The unselected arcs and the reference rings sit low ON PURPOSE. Twelve
-     curved strokes share this stage (four rings, four solid arcs, four dashed
-     remainders) and a first pass had the unselected arcs at .22 higher and the
-     rings at .10, which turned the centre into noise and buried the selected
-     arc in it. The selected arc has to own the drawing; everything else is the
-     field it is read against.
-     THE RULE, unchanged and still the rule: separation comes from RAISING the
-     selected state, never from dimming the rest below legibility. Every one of
-     the four text rows is permanently visible, so every one of them clears
-     4.6:1 at rest. The cost line is the tight one: #E0524A tops out at 5.16:1
-     even at full opacity, which is why it rests at 1.0 and takes its selected
-     step by moving to #e07a4a, the lighter coral already used by
-     .threat-card h3 in the shared stylesheet. No new colour was introduced. */
-  .bgap { margin-top: 44px; position: relative; }
-  /* THE TILT IS CSS 3D, NOT A SHADER, and that was a deliberate correction.
-     The landing "funnel" (js/convergence.js) looks volumetric but is a 2D polar
-     distance field: no camera, no vanishing point, no mesh, no travelling
-     nodes, just additive glow and radial falloff under a tone map. There is no
-     3D in it to reuse. The site's real 3D vocabulary is privacy.html's bills
-     stack, .bstk-stage perspective + .bstk-iso rotateX + preserve-3d, and this
-     is built on that. It buys a genuine vanishing point, costs no shader, no
-     WebGL fallback path and no rAF, and the motion is a compositor transform
-     rather than per-frame paint, which is the only version worth running
-     mid-page on a page that already drops its blooms at 980.
-
-     WHAT MOVES AND WHAT DOES NOT, and this is the rule to keep: THE THING
-     CARRYING THE ARGUMENT STAYS STILL, THE THING CARRYING LIFE MOVES. The four
-     breaks, their nodes, their leaders and the cards never rotate. Only the
-     meridian mesh and the glints turn. The instinct with a rotating device is
-     to rotate all of it; that would drag every break to a new place on every
-     frame, cost per-frame JS to keep the cards registered, and make the one
-     thing the device exists to show the one thing you cannot fix your eye on.
-     Do not put the arcs or the nodes in a spinning group. */
-  /* THE STAGE HEIGHT IS DRIVEN BY THE CARDS, not by a fixed aspect ratio, and
-     that is the whole reason it is a grid. A fixed 1000/540 left the tallest
-     card pair 5px apart at 981 and overlapping by 49px at 900, and no single
-     aspect fixes the band: 861 needs 1000/870 and 1100 needs 1000/537. Two
-     rows of auto height cannot collide at any width, at any font size, in any
-     browser, which hand-tuned breakpoints cannot promise.
-     The orbit plane overlays the whole grid and letterboxes its 1000x540
-     viewBox inside it, so the orbits stay sized to the width and simply gain
-     air when the cards are tall. The break anchors are placed off that
-     letterbox in JS, which is what makes the stage free to be any shape. */
-  .bgap-stage { position: relative; width: 100%;
-                display: grid; grid-template-columns: 27.5% 1fr 27.5%;
-                grid-template-rows: auto auto; row-gap: 54px; padding: 6px 0 10px;
-                perspective: 1500px; perspective-origin: 50% 50%; }
-  .bgap-plane { position: absolute; inset: 0; transform: rotateX(var(--tilt, 54deg));
-                transform-style: preserve-3d;
-                /* Depth falloff: the far half recedes. A static mask, composited
-                   once with the layer, not a per-frame cost. THE FLOOR IS 0.55,
-                   NOT 0.34. At 0.34 it cut the mesh to 1.02:1 at the top of the
-                   plane, which is 2% brighter than the ground: a depth gradient
-                   that makes half the object invisible is not a depth gradient.
-                   Whatever this is retuned to, compute the product with the
-                   layer alphas below, not the mask on its own. */
-                -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.80) 34%, #000 62%);
-                mask-image: linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.80) 34%, #000 62%); }
-  .bgap-plane > svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; overflow: visible; }
-  .bgap-orbits path, .bgap-orbits circle, .bgap-mesh line, .bgap-anim .bgap-tseg,
-  .bgap-leads path, .bgap-leads circle { vector-effect: non-scaling-stroke; fill: none; }
-
-  /* THE LIVE LAYERS: mesh wave, comets, dust. One rAF engine (the section-01
-     script at the foot of the page) drives all three; this stylesheet carries
-     only their fallbacks, their colours and the halo pulse. WHY JS REPLACED
-     THE WHOLE-LAYER CSS SPIN: the owner read the spinning version as static
-     TWICE, at two speeds, even after the layers were made visible. What was
-     missing was not more speed, it was travelling light: a head with a
-     decaying tail, size and z-order that change with depth, a brightness wave
-     on the mesh. Every one of those is a per-element value that follows the
-     object's CURRENT angle, which a whole-element compositor transform cannot
-     express. The engine is gated by the same IntersectionObserver (it starts
-     and STOPS the rAF itself, not just a class) and never runs under
-     prefers-reduced-motion (one static frame is drawn, no loop). */
-    /* EFFECTIVE CONTRAST IS THE NUMBER THAT MATTERS, NOT THE ALPHA. The
-     figures below are MEASURED from rendered pixels (headless capture,
-     isolated per layer) against the local ground -- page black plus bloom --
-     with the plane's depth mask applied. They are not the alpha and not
-     alpha x mask floor; measure, do not derive.
-       mesh wave      trough 1.17:1 (far)     crest 1.71:1 (near)
-       comet head     far 3.2:1 at ~4.7px     near 7.7:1 at ~8.3px dia
-       selected head  13.7:1 (white core dot over the accent head)
-       trail seg 1    7.2:1 near / 2.7:1 far, to 1.06:1 at seg 10: the tail
-                      dissolves into the ground inside its 26 degrees
-       dust           near 1.5-1.6:1, far 1.12:1 (fades out on purpose)
-       ticks          1.13:1 near, 1.11:1 far -- instrument frame, kept quiet
-     The mesh trough is the wave's minimum and sits on the 1.15:1 floor; the
-     selected arc at 1.0/3px still owns the drawing. THE LESSON FROM LAST
-     PASS STILL BINDS: three defensible dimming steps once multiplied to
-     1.02:1 and the device looked frozen while running perfectly. The engine
-     therefore writes ABSOLUTE alphas as inline style (stroke-opacity /
-     opacity) over strokes and fills declared at 1.0, so the only remaining
-     multiplier is the depth mask -- and the numbers above are measured
-     through it. When retuning, re-measure the pixels. */
-  /* no-JS fallback: stroke at 1.0, alpha carried by stroke-opacity so the
-     engine's inline stroke-opacity REPLACES it instead of multiplying it. */
-  .bgap-mesh line { stroke: rgba(var(--accent-rgb),1); stroke-opacity: 0.12; stroke-width: 1; }
-  .bgap-plane-near { z-index: 2; pointer-events: none; }
-  .bgap-tseg  { stroke: rgba(var(--accent-rgb),1); stroke-linecap: round; }
-  .bgap-ghead { fill: rgba(var(--accent-rgb),1); stroke: none; }
-  /* the white-hot inner dot is SELECTION's mark on the glint: opacity 0 on
-     the other three, so the selected comet is the only two-tone object in
-     the field and survives the motion at a glance. */
-  .bgap-gcore { fill: #fafafa; stroke: none; }
-  .bgap-ghalo { fill: url(#bgapGlowGrad); stroke: none; }
-  .bgap-dust circle { stroke: none; }
-  .bgap-ticks { stroke: rgba(250, 250, 250,0.10); stroke-width: 1; }
-  /* SPEED CALIBRATION, kept in the unit that matters: a clock's second hand
-     runs 6 deg/s and is plainly trackable in peripheral vision.
-     HISTORY: 0.38x a second hand (160s) read as COMPLETELY STATIC to the
-     owner; 0.62x (96s, 3.75 deg/s, 10.2 px/s at the outer orbit) ALSO still
-     read as static and flat -- bare dots at any of these speeds are not
-     motion the eye can hold. The comet heads now run, differentiated so the
-     four orbits visibly live at different rates, inner fastest as orbits are:
-       orbit 01  r124  32s  11.25 deg/s  1.88x a second hand  (~30 px/s @1240)
-       orbit 02  r148  40s   9.00 deg/s  1.50x
-       orbit 03  r172  50s   7.20 deg/s  1.20x
-       orbit 04  r196  60s   6.00 deg/s  1.00x  (~25 px/s @1240)
-     The mesh turns at 130s (0.28x, 2.2x slower than the slowest head): it is
-     the ground the comets move against, not a mover itself. These periods
-     live in the ORB table in the engine; this comment is the calibration
-     record, keep them in step. */
-  /* (5) the halo pulses: an opacity-only modulation of the SAME .btcg-bloom
-     layer, not a second glow, breathing around its resting .18 on a 5.2s
-     cycle. Declared only under .run so offscreen nothing animates; hidden
-     <=980 with every other bloom; killed under reduced motion below. No
-     scale, no filter change: those would repaint a 58px-blurred layer. */
-  .bgap.run .btcg-bloom-bgap i { animation: bgapHalo 5.2s ease-in-out infinite; }
+  /* bgapHalo outlived the orbit device that named it: the chronometer's
+     bloom (.cat.run .btcg-bloom-cat i, section 02) borrows this pulse, so
+     the keyframes stay and the name is history, not a live reference. */
   @keyframes bgapHalo { 0%, 100% { opacity: .13; } 50% { opacity: .23; } }
 
-  /* the flat overlay. Breaks and leaders live here, unrotated, so a node stays
-     a circle instead of becoming an ellipse and a leader can reach a card that
-     is not in the tilted plane. JS measures where each break LANDS after the
-     browser's own projection and draws to that, so there is no second copy of
-     the projection maths anywhere. */
-  .bgap-leads { position: absolute; inset: 0; width: 100%; height: 100%; display: block; overflow: visible; z-index: 2; pointer-events: none; }
-  .bgap-anchor { position: absolute; width: 0; height: 0; }
-
-  .bgap-ref   { stroke: rgba(var(--accent-rgb),0.07); stroke-width: 1; }
-  .bgap-solid { stroke: rgba(var(--accent-rgb),0.16); stroke-width: 1.7; stroke-linecap: round; transition: stroke .18s ease, stroke-width .18s ease; }
-  .bgap-dash  { stroke: rgba(250, 250, 250,0.14); stroke-width: 1.15; stroke-dasharray: 4 7; stroke-linecap: round; transition: stroke .18s ease; }
-  .bgap-leads .bgap-lead { stroke: rgba(250, 250, 250,0.16); stroke-width: 1.05; transition: stroke .18s ease, stroke-width .18s ease; }
-  .bgap-leads .bgap-node { stroke: rgba(250, 250, 250,0.3); stroke-width: 1.05; fill: var(--black); transition: stroke .18s ease, fill .18s ease; }
-  /* the SELECTED gap's target ring lifts with it. This is the ring that says
-     where the arc should have reached, so it has to be readable exactly when
-     someone is reading that gap; the other three stay at ghost level or the
-     centre turns back into noise. */
-  .bgap-sp.is-on .bgap-ref   { stroke: rgba(var(--accent-rgb),0.20); }
-  .bgap-sp.is-on .bgap-solid { stroke: rgba(var(--accent-rgb),1); stroke-width: 3; }
-  .bgap-sp.is-on .bgap-dash  { stroke: rgba(250, 250, 250,0.26); }
-  .bgap-sp.is-on .bgap-leads .bgap-lead { stroke: rgba(var(--accent-rgb),0.8); stroke-width: 1.2; }
-  .bgap-sp.is-on .bgap-leads .bgap-node { stroke: var(--accent); fill: var(--accent); }
-
-  /* the core. Accent disc, white B: the mark's real colourway, and the
-     brightest thing in the composition because it is the subject. It was
-     neutral once on quantum's precedent and that precedent does not transfer
-     (there gray MEANT unchanged); it is not coming back.
-     PRESENCE IS THE PAGE'S OWN .btcg-bloom, not a gradient of ours: the same
-     blurred radial layer the card grids use, parented to the stage so it
-     centres on the core, at .18 against the grids' .05 because a bloom tuned
-     to tint a whole grid is invisible behind one 125px object. Blooms are
-     already dropped at <=980 for the paint budget, which is where the orbits
-     stop existing anyway. */
-  /* the core does NOT tilt. An orrery faces its sun: foreshortening the mark
-     would cost the brightest, most legible object in the composition for a
-     depth cue the orbits already carry. */
-  .bgap-core { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%);
-               width: 12.4%; aspect-ratio: 1 / 1; display: block; pointer-events: none; z-index: 1; }
-  .bgap-btc { width: 100%; height: 100%; display: block; }
-  .bgap-btc-disc { fill: var(--accent); stroke: none; }
-  .bgap-btc-b    { fill: var(--white); }
-  .page-btcfi .btcg-bloom-bgap { z-index: 0; }
-  .page-btcfi .btcg-bloom-bgap i { --bc: var(--accent); opacity: .18; left: 30%; top: 14%; width: 40%; height: 72%; }
-
-  /* the four cards. Real HTML over the SVG, never foreignObject: this is the
-     keyboard and screen-reader surface and it has to be a real button.
-     Mirrored alignment, and the accent bar sits on the edge facing the core so
-     the bar, the leader and the break all line up on the same side. */
-  .bgap-card { position: relative; z-index: 3; background: none; border: 0; padding: 0;
-               font: inherit; color: inherit; cursor: pointer; display: block; align-self: start; }
-  .bgap-p0 { grid-column: 1; grid-row: 1; text-align: right; padding-right: 15px; border-right: 2px solid rgba(var(--accent-rgb),0.28); }
-  .bgap-p1 { grid-column: 3; grid-row: 1; text-align: left;  padding-left: 15px;  border-left:  2px solid rgba(var(--accent-rgb),0.28); }
-  .bgap-p2 { grid-column: 3; grid-row: 2; text-align: left;  padding-left: 15px;  border-left:  2px solid rgba(var(--accent-rgb),0.28); }
-  .bgap-p3 { grid-column: 1; grid-row: 2; text-align: right; padding-right: 15px; border-right: 2px solid rgba(var(--accent-rgb),0.28); }
-  .bgap-p2, .bgap-p3 { align-self: end; }
-  .bgap-card.is-on { border-color: var(--accent); }
-  .bgap-p0.is-on, .bgap-p3.is-on { border-right-width: 3px; }
-  .bgap-p1.is-on, .bgap-p2.is-on { border-left-width: 3px; }
-
-  .bgap-meta { display: block; font-family: var(--mono); font-size: 11px; letter-spacing: 0.2em;
-               text-transform: uppercase; color: rgba(var(--accent-rgb),0.75); margin-bottom: 9px;
-               transition: color .18s ease; }
-  .bgap-idx  { opacity: .75; margin-right: 9px; }
-  .bgap-title { display: block; font-family: var(--display); font-size: 19px; font-weight:300;
-                 letter-spacing: -0.01em; line-height: 1.15;
-                color: rgba(250, 250, 250,0.62); margin-bottom: 9px; transition: color .18s ease; }
-  .bgap-one  { display: block; font-family: var(--sans); font-size: 13.5px; line-height: 1.55;
-               color: rgba(250, 250, 250,0.48); transition: color .18s ease; }
-  .bgap-cost { display: block; font-family: var(--mono); font-size: 11.5px; line-height: 1.5;
-               letter-spacing: 0.02em; color: #E0524A; margin-top: 10px; transition: color .18s ease; }
-  /* ONE CARD CARRIES A NOTE ROW and the asymmetry is deliberate. Folding the
-     removed panel back into the cards left exactly one orphan: Satoshi's 2010
-     remark that ZK proofs could make Bitcoin "much better". It is not a
-     description of the privacy gap and it is not a cost, so it fits neither
-     existing row; it is evidence that Bitcoin's own author saw the gap. Giving
-     every card an empty row to keep them symmetrical would be worse. */
-  /* .48 and not lower, even though the ladder wants the note below the
-     one-liner: it is permanently visible text, so the 4.6:1 floor binds and
-     .42 measured 3.74:1. It separates from the one-liner by italic and by
-     12.5px against 13.5px instead of by value, which is the right trade. */
-  .bgap-note { display: block; font-family: var(--sans); font-style: italic; font-size: 12.5px;
-               line-height: 1.5; color: rgba(250, 250, 250,0.48); margin-top: 10px;
-               transition: color .18s ease; }
-  .bgap-card.is-on .bgap-note { color: rgba(250, 250, 250,0.7); }
-  .bgap-card:hover .bgap-title { color: rgba(250, 250, 250,0.84); }
-  .bgap-card:hover .bgap-one   { color: rgba(250, 250, 250,0.62); }
-  .bgap-card.is-on .bgap-meta  { color: var(--accent); }
-  .bgap-card.is-on .bgap-title { color: var(--white); }
-  .bgap-card.is-on .bgap-one   { color: rgba(250, 250, 250,0.78); }
-  .bgap-card.is-on .bgap-cost  { color: #e07a4a; }
-  .bgap-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 6px; border-radius: 3px; }
-
-  /* THE CARDS ARE THE .problem-item ELEMENTS NOW. The panel below the device
-     was removed once every card carried its one-liner and its cost line, so
-     the four anchor ids and the four index entries moved onto the cards
-     themselves. That drags in the card chrome .problem-item carries in the
-     shared styles.css, which has to be undone here rather than by editing that
-     file. :hover is the one that needs the extra class: .problem-item:hover is
-     (0,2,0) and would otherwise beat .bgap-card on transform and box-shadow. */
-  .page-btcfi .bgap-card { border-radius: 0; box-shadow: none; transform: none; }
-  .page-btcfi .bgap-card:hover { box-shadow: none; transform: none; }
-
-  /* Selection is the only thing that moves, so this kills all of it and the end
-     state renders immediately. Declared after the rules it overrides, in the
-     same file, so it wins on source order at equal specificity. (A media query
-     adds NO specificity: that is the trap that made the reduced-motion fix in
-     the shared styles.css inert until it carried !important.) */
+  /* Reduced motion for the risk podiums and the chronometer: selection is the
+     only thing that moves in either, so this kills all of it and the end state
+     renders immediately. Declared after the rules it overrides, in the same
+     file, so it wins on source order at equal specificity. (A media query adds
+     NO specificity: that is the trap that made the reduced-motion fix in the
+     shared styles.css inert until it carried !important.) Section 01's band
+     carries its own reduced-motion rule at the END of this stylesheet, next to
+     the animations it has to beat. */
   @media (prefers-reduced-motion: reduce) {
-    /* the halo pulse is the only CSS animation left on the device (the engine
-       checks the same media query itself and never starts its loop). */
-    .btcg-bloom-bgap i { animation: none !important; }
-    .bgap-solid, .bgap-dash, .bgap-lead, .bgap-node,
-    .bgap-meta, .bgap-title, .bgap-one, .bgap-cost, .bgap-note { transition: none; }
-    .brk-ped, .brk-plinth::after, .brk-obj, .brk-plinth, .brk-plinth i, .brk-plinth u,
-    .brk-label, .brk-title, .brk-stage { transition: none; }
-    .brk-ped[aria-selected="true"] .brk-obj { transform: none; }
     /* chronometer: no sweep (the script never starts its loop and parks the
        hand at the active sector's midpoint), and none of the ambient CSS
        animations either. The AUTO/PAUSED chip hides because there is no
@@ -953,34 +497,6 @@
     .cat-flow { stroke-opacity: 0 !important; }
     .cat-trail, .cat-head, .cat-prog { display: none; }
     .cat-arc, .cat-glow, .cat-chip, .cat-num, .cat-key, .cat-mode { transition: none; }
-  }
-
-  /* The flat bar belongs to the <=860 list only. DECLARED BEFORE that media
-     query on purpose: a media query adds NO specificity, so if this sat after
-     the block it would beat it on source order at equal specificity and the
-     bar would never render at any width. It did exactly that once. */
-  .bgap-bar { display: none; }
-
-  /* AT <=860 IT IS A LIST, NOT SHRUNKEN ORBITS. Four cards cannot orbit a core
-     at 375 and stay legible, so the arcs are dropped outright and each row
-     keeps a flat bar that runs solid then dashed and stops short. Same claim,
-     flat geometry, and the accent edge bar becomes the row's left border. */
-  @media (max-width: 860px) {
-    .bgap-stage { display: flex; flex-direction: column; perspective: none; row-gap: 0; padding: 0;
-                  grid-template-columns: none; grid-template-rows: none; }
-    .bgap-plane, .bgap-leads { display: none; }
-    .bgap-core { position: static; transform: none; width: 96px; height: 96px; margin: 0 auto 30px; }
-    .bgap-card { position: static; width: 100%; text-align: left; padding: 18px 0 20px 16px; align-self: auto;
-                 border: 0; border-left: 2px solid rgba(var(--accent-rgb),0.28);
-                 border-top: 1px solid var(--border); }
-    .bgap-p0 { border-top: 0; padding-top: 0; }
-    .bgap-p0.is-on, .bgap-p1.is-on, .bgap-p2.is-on, .bgap-p3.is-on { border-left-width: 3px; border-right-width: 0; }
-    .bgap-bar { display: flex; align-items: center; margin-top: 13px; width: 100%; }
-    .bgap-bar i { display: block; height: 0; }
-    .bgap-bar i:first-child { width: 34%; border-top: 1.7px solid rgba(var(--accent-rgb),0.34); }
-    .bgap-bar i:last-child  { width: 44%; border-top: 1.15px dashed rgba(250, 250, 250,0.12); margin-left: 5px; }
-    .bgap-card.is-on .bgap-bar i:first-child { border-top: 2.4px solid rgba(var(--accent-rgb),0.95); }
-    .bgap-card.is-on .bgap-bar i:last-child  { border-top-color: rgba(250, 250, 250,0.26); }
   }
 
   /* 01's internal turn.
@@ -1005,7 +521,7 @@
   .gap-turn { margin-top: 62px; padding-top: 34px; border-top: 1px solid var(--border); }
   .gap-turn .scale-label { color: #E0524A; }
   .gap-turn .scale-title { margin-bottom: 0; }
-  .gap-turn + .brk { margin-top: 28px; }
+  .gap-turn + .brkl { margin-top: 48px; }
   @media (max-width: 880px) { .gap-turn { margin-top: 46px; padding-top: 26px; } }
 
   /* THE DEEPER RISK is an EDITORIAL ASIDE, not a section paragraph: it once
@@ -1244,26 +760,16 @@
      bleeding under a violet card produced brown mud on the landing, and
      the strkBTC row mixes both hues. In-grid layers are absolutely
      positioned, so they occupy no grid cell. */
-  .page-btcfi .modes{position:relative;} /* .brk-row carries its own position:relative for the threat bloom */
+  .page-btcfi .modes{position:relative;} /* the risk band carries no bloom; this stays for the modes row itself */
   .page-btcfi .btcg-bloom{position:absolute;inset:0;z-index:0;pointer-events:none;filter:blur(58px);}
   .page-btcfi .btcg-bloom i{position:absolute;border-radius:50%;background:radial-gradient(closest-side,var(--bc),transparent 70%);opacity:.05;}
   /* the two single panels carry their bloom inside the card, so it can
      never reach a neighbour; their content lifts above it */
   .page-btcfi .btcg-card>:not(.btcg-bloom){position:relative;z-index:1;}
-  /* orange behind the 001-004 cards */
-  /* one blob, centred on the core, so the core reads as the light source the
-     arcs come out of. Was four blobs laid out for the 2x2 card grid this
-     device replaced; that grid is gone and those positions had nothing left to
-     sit behind. */
-  .page-btcfi .btcg-bloom-bgap i{--bc:#c53400;left:30%;top:8%;width:40%;height:62%;}
   /* coral behind the three risk cards. Was five blobs over two rows; the
      merge into 01 cut the grid to a single row of three, so rows two's blobs
      went with the cards they sat behind and the remaining three grew to fill
      the row's full height instead of its top third. */
-  .page-btcfi .btcg-bloom-threat i{--bc:#E0524A;}
-  .page-btcfi .btcg-bloom-threat i:nth-child(1){left:4.5%;top:12%;width:24%;height:72%;}
-  .page-btcfi .btcg-bloom-threat i:nth-child(2){left:38%;top:12%;width:24%;height:72%;}
-  .page-btcfi .btcg-bloom-threat i:nth-child(3){left:71.5%;top:12%;width:24%;height:72%;}
   /* coral inside the deeper-risk panel */
   .page-btcfi .btcg-bloom-quote i{--bc:#E0524A;left:8%;top:12%;width:45%;height:76%;}
   /* strkBTC row: orange, violet, violet: the three cards read as equals,
@@ -1715,6 +1221,383 @@
   .bg-copy-b { top: 50%; transform: translate(-50%, -50%);
     width: min(760px, calc(100% - 48px)); opacity: 0; visibility: hidden; }
 
+
+  /* ============ TRACK RECORD: the statement (#tr-band) ============
+     A copy of privacy.html's Satoshi statement treatment, the block in
+     css/privacy-fx.css commented "Satoshi's statement, after sui.io's thesis
+     line". It sits inline rather than in a shared sheet because btcfi loads
+     neither privacy-fx.css nor stride.css, and because this inline <style> is
+     the last thing the page loads, so nothing can override it. The prefix is
+     .tr- where privacy's is .sq-, so the two copies can never collide. Keep
+     them in sync. */
+  /* the three tokens the copied block reads, declared on the section itself
+     the way .lg above declares its own. The values are the site's, unchanged. */
+  .tr { --pf-ink: #fafafa; --pf-dim: rgba(250,250,250,.62); --pf-acc: #c53400; }
+  /* the full-bleed band. padding and max-width also reset the bare `section`
+     rule in css/styles.css, which privacy's copy never had to fight */
+  .tr { position: relative; width: 100vw; max-width: none; margin: 56px 0 0 calc(50% - 50vw); padding: 64px 16px 24px; }
+  /* the dotted rule across the top with a square at each end, as sui.io draws it */
+  .tr::before { content: ""; position: absolute; left: 0; right: 0; top: 0; border-top: 2px dotted rgba(250,250,250,.35); }
+  .tr::after { content: ""; position: absolute; left: 0; top: -3px; width: 8px; height: 8px; background: var(--pf-acc); box-shadow: calc(100vw - 8px) 0 0 var(--pf-acc); }
+  .tr-kicker { display: inline-block; margin: 0 0 22px; padding: 6px 10px; background: rgba(250,250,250,.08);
+    font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: .02em; text-transform: uppercase; color: rgba(255,255,255,.85); }
+  .tr-quote { margin: 0; max-width: none; font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-weight: 600; color: #fff;
+    font-size: clamp(24px, 3.3vw, 52px); line-height: 1.08; letter-spacing: -.035em; text-transform: none; }
+  /* inline-block + nowrap, not plain inline: as plain inline the blocks left
+     stray slabs at line ends */
+  .tr-hl { display: inline-block; vertical-align: baseline; line-height: 1; white-space: nowrap; padding: 0 .1em 0 0; background: var(--pf-acc); color: #fff; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+  .tr-ic { display: inline-grid; place-items: center; width: .8em; height: .8em; margin-right: .1em; vertical-align: -.08em; background: #fafafa; color: var(--pf-acc); }
+  .tr-ic svg { width: 62%; height: 62%; }
+  @media (max-width: 860px) {
+    .tr { margin-top: 32px; padding: 44px 12px 0; }
+    .tr-quote { font-size: clamp(25px, 6.6vw, 36px); line-height: 1.12; }
+    /* the longest highlight is wider than a phone, and html{overflow-x:clip}
+       would silently crop the tail, so let the blocks wrap here. The cloned
+       decoration paints each fragment; the zeroed padding and the absence of
+       any space inside the <mark> keep it off the line ends. */
+    .tr-hl { display: inline; white-space: normal; padding: 0; }
+  }
+
+
+  /* ================= THE RISK BAND (.brkl), section 01's close =========
+     The reference layout, followed literally: a paragraph-style lede whose
+     first sentence is full white and whose continuation is grey, then three
+     equal columns split by hairline rules, each running FIG label / figure /
+     title / description from top to bottom. The figures carry the column's
+     height, which is why they sit in a flex:1 box and the text block is
+     pushed to the bottom edge of every column: the three titles line up on a
+     baseline no matter how tall the drawings render.
+     NO OPAQUE FILL ANYWHERE IN HERE. The page-wide flame canvas (eco-backdrop)
+     is a fixed layer at z-index 0 and this band sits over it; a background on
+     the band or an isolation context would black it out for the whole
+     section. Rules and text only.
+     VALUES against #0d0d0d: lede white 1.0, its continuation .46 (~4.4:1 at
+     23px+ 600, which is large text), FIG label .5 (~5.2:1), title white 1.0,
+     description .62 (~7.4:1). */
+  .brkl { position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+    border-top: 1px solid var(--border); }
+  .brkl-col { position: relative; min-width: 0; display: flex; flex-direction: column;
+    padding: 40px 34px 8px; border-left: 1px solid var(--border); }
+  .brkl-col:first-child { border-left: 0; padding-left: 0; }
+  .brkl-col:last-child { padding-right: 0; }
+  .brkl-fig { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.16em;
+    text-transform: uppercase; color: rgba(250, 250, 250, 0.5); margin: 0; }
+  /* THE FIGURE BOX IS A FIXED HEIGHT ON PURPOSE, not flex:1. Letting it take
+     the column's slack bottom-aligns the text blocks, which leaves the three
+     TITLES on three different lines (the descriptions do not wrap to equal
+     depths) and silently rescales one figure against the other two, because
+     an svg sized by viewBox shrinks to whatever cross-axis room it is given.
+     A fixed box gives all three drawings the same rendered width and puts the
+     three titles on one line across the band. The columns still end level:
+     they are grid items, so the hairline rules stretch to the tallest. */
+  .brkl-art { flex: 0 0 auto; height: 250px; display: flex; align-items: center;
+    justify-content: center; margin: 26px 0 34px; }
+  /* 262, not 300: the outer columns lose their outside padding so the band
+     aligns with the section's text edge, which leaves the middle column ~34px
+     narrower. Capping at the middle column's inner width renders all three
+     drawings at the SAME size instead of two large and one shrunk. */
+  .brkl-svg { display: block; width: 100%; height: auto; max-width: 262px; }
+  .brkl-t { font-family: var(--sans); font-size: 17px; font-weight: 600; line-height: 1.3;
+    letter-spacing: -0.01em; color: var(--white); margin: 0 0 11px; }
+  .brkl-col .brk-panel p { font-family: var(--sans); font-size: 14.5px; line-height: 1.7;
+    color: rgba(250, 250, 250, 0.62); margin: 0; max-width: 44ch; }
+  /* the lede: two elements, one paragraph (see the markup note) */
+  .brkl-lede { max-width: 990px; }
+  .brkl-lede .brkl-lede-a,
+  .brkl-lede .brkl-lede-b { display: inline; font-family: var(--display); font-weight: 600;
+    font-size: clamp(23px, 2.5vw, 33px); line-height: 1.34; letter-spacing: -0.015em;
+    margin: 0; text-wrap: pretty; }
+  .brkl-lede .brkl-lede-a { color: var(--white); }
+  .brkl-lede .brkl-lede-b { color: rgba(250, 250, 250, 0.46); }
+  /* THE RULES TURN WITH THE LAYOUT. Stacked, a vertical rule would run down
+     the left edge of the page as a stray hairline, so the divider becomes the
+     border-top between columns and the first column drops it. */
+  @media (max-width: 900px) {
+    .brkl { grid-template-columns: 1fr; }
+    .gap-turn + .brkl { margin-top: 36px; }
+    .brkl-col { border-left: 0; border-top: 1px solid var(--border); padding: 32px 0 10px; }
+    .brkl-col:first-child { border-top: 0; padding-top: 30px; }
+    .brkl-art { height: 200px; margin: 22px 0 26px; }
+    .brkl-svg { max-width: 268px; }
+    .brkl-col .brk-panel p { max-width: 62ch; }
+  }
+  @media (max-width: 560px) {
+    .brkl-art { height: 180px; margin: 18px 0 22px; }
+    .brkl-svg { max-width: 220px; }
+    .brkl-t { font-size: 16px; }
+    .brkl-col .brk-panel p { font-size: 14px; }
+  }
+
+  /* ================= section 01: THE MISSION BAND (.bum) =================
+     THIS BLOCK SITS AT THE END OF THE STYLESHEET ON PURPOSE. The blocks keep
+     .problem-item (the search index extracts them by that class), which drags
+     in the card chrome from the shared styles.css: fill, 1px border, 8px
+     radius, 30px padding, a hover lift with a box-shadow, h3 at 21px/700/
+     uppercase and p at 14.5px. Every one of those has to be undone here, and
+     :hover in particular is (0,2,0) there, so these rules carry .page-btcfi
+     and land last in the cascade. Move them up the file and the band turns
+     back into four cards.
+     THE HEADER IS CENTRED FOR THIS SECTION ONLY. .th-pm-head, .th-pm-eyebrow
+     and .th-pm-title are shared with sections 02 and 03, which are still
+     left-aligned; the centring is scoped to .problem rather than edited into
+     the shared rules. The kicker moved ABOVE the heading in the markup, which
+     is why its margin flips from top to bottom.
+     VALUE LADDER, against the #0d0d0d ground. Nothing here has a selected
+     state any more, so every row is read at rest and every row clears the
+     page's 4.6:1 floor:
+       title      #fafafa 1.0                 [17.7:1]
+       body       #fafafa .60                 [6.6:1]
+       cost line  #e07a4a 1.0                 [8.1:1]  (was #E0524A resting,
+                  which only reached 5.16:1 and needed selection to lift it)
+       note       #fafafa .55                 [5.6:1]
+       icon glyph #e07a4a 1.0 in a .22 accent box
+     THE BAND IS WIDER THAN THE SECTION. Sections are max-width 1100 with 48px
+     padding; the band breaks out to min(1520px, 100vw - 96px), which keeps the
+     page's own 48px gutter on both sides while the centre visual gets to be
+     the dominant object. The gutter is not decoration: 100vw counts the
+     scrollbar, and the page must never scroll sideways. */
+  .bum { position: relative; margin-top: 46px;
+         width: min(1520px, calc(100vw - 96px)); margin-left: 50%;
+         transform: translateX(-50%); }
+  .problem .th-pm-head { justify-content: center; }
+  .problem .th-pm-eyebrow { text-align: center; margin-top: 0; margin-bottom: 14px; }
+  .problem .th-pm-title { text-align: center; }
+  .bum-sub { max-width: 740px; margin: 20px auto 0; text-align: center;
+             font-family: var(--sans); font-size: 16px; line-height: 1.62;
+             color: rgba(250, 250, 250,0.60); }
+  .bum-act { text-align: center; margin-top: 26px; }
+
+  /* THE FOUR BLOCKS ARE PLACED ON THE GRID, they are not two stacks beside a
+     picture: there are no column wrappers, each block is a grid child with an
+     explicit area at every breakpoint. Two independently centred columns misaligned the top
+     two blocks by 64px and the bottom two by 24px, because the right column
+     carries a note row the left one does not; placed on shared rows, both
+     rows line up whatever the copy does and no fixed height is involved. The
+     placement is the old device's quadrant map: 01 and 04 in column 1, 02 and
+     03 in column 3, the visual spanning both rows between them. */
+  .bum-grid { display: grid; grid-template-columns: 1fr 1.42fr 1fr;
+              column-gap: 54px; row-gap: 56px; align-items: start; }
+  .bum-i1 { grid-area: 1 / 1; }
+  .bum-i4 { grid-area: 2 / 1; }
+  .bum-i2 { grid-area: 1 / 3; }
+  .bum-i3 { grid-area: 2 / 3; }
+  .bum-vis { grid-area: 1 / 2 / 3 / 3; align-self: center; }
+
+  /* the four blocks. Icon, title, paragraph, cost line: no card, no border,
+     no hover state, because nothing here is a control any more. */
+  .page-btcfi .bum-item { background: none; border: 0; border-radius: 0;
+                          padding: 0; box-shadow: none; transform: none;
+                          transition: none; text-align: left; }
+  .page-btcfi .bum-item:hover { background: none; border: 0; box-shadow: none;
+                                transform: none; }
+  .bum-ico { display: flex; align-items: center; justify-content: center;
+             width: 40px; height: 40px; border-radius: 11px;
+             border: 1px solid rgba(var(--accent-rgb),0.34);
+             background: rgba(var(--accent-rgb),0.06);
+             color: #e07a4a; margin-bottom: 16px; }
+  .bum-ico svg { width: 21px; height: 21px; display: block; }
+  .page-btcfi .bum-item .bum-title { font-family: var(--display); font-size: 20px;
+              font-weight: 600; text-transform: none; letter-spacing: -0.01em;
+              line-height: 1.2; color: var(--white); margin: 0 0 10px; }
+  .page-btcfi .bum-item .bum-body { font-family: var(--sans); font-size: 14px;
+              line-height: 1.62; color: rgba(250, 250, 250,0.60); margin: 0; }
+  .page-btcfi .bum-item .bum-cost { font-family: var(--mono); font-size: 11.5px;
+              line-height: 1.5; letter-spacing: 0.02em; color: #e07a4a;
+              margin: 12px 0 0; }
+  /* ONE BLOCK CARRIES A NOTE ROW and the asymmetry is deliberate, exactly as
+     it was on the old cards: Satoshi's 2010 remark is neither a description
+     of the privacy gap nor a cost, and giving the other three an empty row to
+     keep them symmetrical would be worse. */
+  .page-btcfi .bum-item .bum-note { font-family: var(--sans); font-style: italic;
+              font-size: 12.5px; line-height: 1.5;
+              color: rgba(250, 250, 250,0.55); margin: 10px 0 0; }
+
+  /* THE ORBIT VISUAL. Four elliptical rings at four inclinations, each drawn
+     as a path whose d is ALSO the offset-path its travelling node rides, so
+     the node provably cannot drift off its own ring. Each ring group turns
+     slowly about the viewBox centre (transform-box: view-box with the origin
+     at 300,300, which is the centre by construction) at its own period and
+     direction, so the field precesses instead of spinning as one plate; the
+     nodes travel on top of that. Two compositor transforms per ring, no rAF,
+     no JS: the device this replaced needed a 350-line engine.
+     THE MARK DOES NOT MOVE. An orrery faces its sun, and the mark is the
+     subject: the accent disc with the white B is the brightest thing in the
+     composition and the one object the eye should be able to fix on. */
+  .bum-vis { width: 100%; max-width: 620px; margin: 0 auto; aspect-ratio: 1 / 1; }
+  .bum-svg { width: 100%; height: 100%; display: block; overflow: visible; }
+  .bum-orb, .bum-collar { fill: none; vector-effect: non-scaling-stroke; }
+  .bum-collar { stroke: #262626; stroke-width: 1; stroke-dasharray: 3 8; }
+  .bum-r1 .bum-orb { stroke: rgba(var(--accent-rgb),0.42); stroke-width: 1.3; }
+  .bum-r2 .bum-orb { stroke: rgba(224, 122, 74,0.30); stroke-width: 1.1; }
+  .bum-r3 .bum-orb { stroke: rgba(250, 250, 250,0.15); stroke-width: 1; }
+  .bum-r4 .bum-orb { stroke: rgba(var(--accent-rgb),0.24); stroke-width: 1.1; }
+  .bum-dot { stroke: none; }
+  .bum-halo { stroke: none; opacity: .16; }
+  .bum-n1 .bum-dot, .bum-n1 .bum-halo { fill: var(--accent); }
+  .bum-n2 .bum-dot, .bum-n2 .bum-halo { fill: #e07a4a; }
+  .bum-n3 .bum-dot, .bum-n3 .bum-halo { fill: #fafafa; }
+  .bum-n4 .bum-dot, .bum-n4 .bum-halo { fill: var(--accent); }
+  .bum-n3 .bum-dot { r: 2.8; }
+  .bum-mark-disc { fill: var(--accent); stroke: none; }
+  .bum-mark-b { fill: var(--white); }
+  .bum-ring { transform-box: view-box; transform-origin: 300px 300px;
+              animation: bumSpin 168s linear infinite; }
+  .bum-r2 { animation-duration: 214s; animation-direction: reverse; }
+  .bum-r3 { animation-duration: 132s; }
+  .bum-r4 { animation-duration: 252s; animation-direction: reverse; }
+  .bum-node { transform-box: fill-box; transform-origin: 50% 50%;
+              offset-rotate: 0deg; offset-distance: 0%;
+              animation: bumTravel 27s linear infinite; }
+  .bum-n2 { animation-duration: 36s; animation-delay: -8s; }
+  .bum-n3 { animation-duration: 21s; animation-delay: -13s; }
+  .bum-n4 { animation-duration: 44s; animation-delay: -21s; }
+  .bum-glow { animation: bumBreathe 5.2s ease-in-out infinite; transform-origin: center; }
+  @keyframes bumSpin { to { transform: rotate(360deg); } }
+  @keyframes bumTravel { to { offset-distance: 100%; } }
+  @keyframes bumBreathe { 0%, 100% { opacity: .82; } 50% { opacity: 1; } }
+
+  /* Under 1080 the three-column band cannot hold: the visual takes the full
+     width above a 2x2 of blocks, which reads 01-02 / 03-04 rather than the
+     desktop quadrants. A single column has no quadrants to preserve either,
+     so at 760 the stack is simply 01-02-03-04 under the visual. */
+  @media (max-width: 1080px) {
+    .bum-grid { grid-template-columns: 1fr 1fr; column-gap: 40px; row-gap: 40px; }
+    .bum-vis { grid-area: 1 / 1 / 2 / 3; max-width: 460px; justify-self: center; }
+    .bum-i1 { grid-area: 2 / 1; }
+    .bum-i2 { grid-area: 2 / 2; }
+    .bum-i3 { grid-area: 3 / 1; }
+    .bum-i4 { grid-area: 3 / 2; }
+  }
+  @media (max-width: 760px) {
+    /* the marker, the 01 and a three-line heading cannot share one flex line
+       at 390: the number ends up beside the wrapped title instead of over it,
+       so the title takes the whole second row and the pair centres as two
+       stacked, centred rows. */
+    .problem .th-pm-head { flex-wrap: wrap; gap: 8px 12px; }
+    .problem .th-pm-title { flex: 1 0 100%; }
+    .bum { width: 100%; margin-left: 0; transform: none; }
+    .bum-grid { grid-template-columns: 1fr; row-gap: 34px; }
+    .bum-vis { grid-area: 1 / 1; max-width: 330px; }
+    .bum-i1 { grid-area: 2 / 1; }
+    .bum-i2 { grid-area: 3 / 1; }
+    .bum-i3 { grid-area: 4 / 1; }
+    .bum-i4 { grid-area: 5 / 1; }
+    .bum-sub { font-size: 15px; }
+    .bum-sub br { display: none; }
+  }
+
+  /* Reduced motion: the rings, the nodes and the glow's breath are the only
+     motion on the band, and all of it is decorative, so it renders as one
+     static frame. LAST IN THE FILE, because a media query adds NO specificity
+     and this has to beat the animation declarations above it on source order:
+     that is the trap that made the reduced-motion fix in the shared styles.css
+     inert until it carried !important. */
+  @media (prefers-reduced-motion: reduce) {
+    .bum-ring, .bum-node, .bum-glow { animation: none !important; }
+  }
+
+  /* ============================================================
+     HERO (bfh-): the landing hero's layout, ported element for element.
+     Sits at the END of this inline <style> on purpose: every linked sheet
+     loads before it, and css/styles.css carries its own .hero rules that
+     would otherwise win on source order.
+     Geometry is the landing artboard's, in the same vw units
+     (Figma pixels / 14.4): left/right gutter 1.667vw, display 4.6vw at
+     weight 300 over 52vw, turn line 4.2vw bold uppercase over 38vw, mono
+     blocks in Mulish, CTA pill 4.167vw/1.111vw beside a 3.542vw icon tile.
+     The two top offsets carry a px floor so the copy can never slide under
+     the floating header pill on a narrow desktop window; at 1440 the floor
+     is inert and the offsets are the landing's exactly.
+     Everything stays transparent: js/eco-backdrop.js paints the flame
+     shader on a fixed canvas at z-index 0 underneath. */
+  /* FULL VIEWPORT, HEADER OVER IT, exactly as the landing frames its own
+     hero. The header pill is NOT fixed on these pages: css/eco-stage.css
+     declares `body > *:not(.eco-bd) { position: relative; z-index: 1 }`, which
+     out-specifies vesper-chrome's `position: fixed`, so the pill occupies
+     --bfh-chrome pixels of flow above the hero. The negative margin gives that
+     strip back to the hero so it is a true 100vh, and z-index 0 (body-scoped,
+     because the eco-stage rule would otherwise win) puts the hero back UNDER
+     the pill so the pill still reads over it. The flame canvas is z-index 0
+     too and earlier in the DOM, so it stays behind. */
+  body.page-btcfi { --bfh-chrome: 51px; }
+  .hero { position: relative; display: block; height: 100vh; min-height: 100vh;
+    max-width: none; margin: calc(-1 * var(--bfh-chrome)) 0 0; padding: 0;
+    overflow: hidden; text-align: left; background: transparent; }
+  body.page-btcfi .hero { z-index: 0; }
+  /* styles.css hangs a centred radial glow off .hero::before for the centred
+     heroes. This hero is not centred and carries its own light, so it goes. */
+  .hero::before { display: none; }
+
+  .bfh-stage { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+  .bfh-stage canvas { display: block; width: 100%; height: 100%; }
+
+  .bfh-kicker { position: absolute; top: max(7.2vw, 88px); left: 1.667vw; z-index: 2; margin: 0;
+    font-family: var(--vc-tag); font-weight: 400; font-size: max(0.9vw, 11px); line-height: 1.5;
+    letter-spacing: .2em; text-transform: uppercase; color: var(--accent); }
+  .bfh-title { position: absolute; top: max(9.028vw, 114px); left: 1.667vw; z-index: 2; margin: 0;
+    width: 52vw; max-width: none; font-family: var(--vc-sans); font-weight: 300; font-size: 4.6vw;
+    line-height: .9; letter-spacing: normal; text-transform: none; color: var(--white); }
+
+  .bfh-left { position: absolute; left: 1.667vw; bottom: 2.153vw; z-index: 2; width: 22vw;
+    display: flex; flex-direction: column; align-items: flex-start; gap: 1.25vw; }
+  .bfh-note { margin: 0; max-width: none; font-family: var(--vc-tag); font-weight: 400;
+    font-size: max(0.85vw, 11px); line-height: 1.7; letter-spacing: .06em;
+    text-transform: uppercase; color: rgba(250, 250, 250, .7); }
+
+  /* the pill and the tile are two separate links, one per existing
+     destination, which is why the tile carries its own aria-label */
+  .bfh-cta { display: flex; align-items: center; gap: .278vw; }
+  .bfh-pill { display: inline-flex; align-items: center; justify-content: center;
+    padding: 1.111vw 4.167vw; font-family: var(--vc-sans); font-weight: 500; font-size: 1.111vw;
+    line-height: 1.2; white-space: nowrap; text-decoration: none; border: 0; border-radius: 0;
+    background: #fafafa; color: #000;
+    transition: background-color var(--hover-dur, .25s) var(--hover-ease, ease), color var(--hover-dur, .25s) var(--hover-ease, ease); }
+  .bfh-pill:hover { background: var(--accent); color: #fafafa; }
+  .bfh-pill:active { background: var(--accent-dim); color: #fafafa; }
+  .bfh-tile { display: block; flex: none; width: 3.542vw; height: 3.542vw; line-height: 0; }
+  .bfh-tile img { display: block; width: 100%; height: 100%; }
+  .bfh-pill:focus-visible, .bfh-tile:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+  .bfh-right { position: absolute; right: 1.667vw; bottom: 2.153vw; z-index: 2;
+    display: flex; flex-direction: column; align-items: flex-end; gap: 1.25vw; }
+  .bfh-stat { margin: 0; width: 22vw; text-align: right; font-family: var(--vc-tag); font-weight: 400;
+    font-size: max(0.8vw, 11px); line-height: 1.5; letter-spacing: .12em;
+    text-transform: uppercase; color: rgba(250, 250, 250, .7); }
+  .bfh-turn { margin: 0; width: 38vw; text-align: right; font-family: var(--vc-sans); font-weight: 700;
+    font-size: 4.2vw; line-height: .95; letter-spacing: -.01em; text-transform: uppercase;
+    color: #fafafa; }
+
+  /* Below the artboard the vw offsets stop meaning anything (52vw of a 390px
+     phone is 203px), so the frame becomes a plain top-to-bottom stack sized
+     in rem, exactly as the landing's max-lg: rules do. The centrepiece stays
+     behind it, dimmed by the renderer, so the copy keeps its contrast. */
+  @media (max-width: 1023px) { body.page-btcfi { --bfh-chrome: 56px; } }
+  @media (max-width: 980px) {
+    /* align-items and text-align are reset off styles.css's centred .hero:
+       this stack is left aligned, the way the landing's max-lg: layout is.
+       The kicker and display stay together at the top and .bfh-left takes the
+       slack with margin-top:auto, so the two bottom blocks sit on the floor
+       rather than the four being spread evenly down the frame. */
+    .hero { height: auto; min-height: 100vh; display: flex; flex-direction: column;
+      justify-content: flex-start; align-items: stretch; text-align: left;
+      padding: 6.5rem 1.5rem 2rem; }
+    .bfh-kicker, .bfh-title, .bfh-left, .bfh-right { position: static; width: auto; }
+    .bfh-kicker { font-size: .75rem; }
+    .bfh-title { margin-top: .75rem; font-size: 2.75rem; }
+    .bfh-left { margin-top: auto; padding-top: 1.5rem; }
+    .bfh-right { margin-top: 1.5rem; }
+    .bfh-left, .bfh-right { align-items: flex-start; gap: 1rem; }
+    .bfh-note, .bfh-stat { width: auto; text-align: left; font-size: .75rem; }
+    .bfh-turn { width: auto; text-align: left; font-size: 2rem; }
+    .bfh-cta { width: 100%; gap: .25rem; }
+    .bfh-pill { flex: 1 1 auto; padding: .9375rem 1.5rem; font-size: 1rem; }
+    .bfh-tile { width: 3.125rem; height: 3.125rem; }
+  }
+  @media (max-width: 380px) {
+    .hero { padding: 5.5rem 1.25rem 2rem; }
+    .bfh-title { font-size: 2.375rem; }
+    .bfh-turn { font-size: 1.75rem; }
+  }
 </style>
 <script>
 /* BTCFi ecosystem field: reserve the flight's height before layout. Classic
@@ -1753,81 +1636,39 @@
 <!-- HERO -->
 <!-- ============================================================ -->
 <div class="hero">
-  <div class="hero-curtain" aria-hidden="true"></div>
-  <div class="hero-bloom" aria-hidden="true">
-    <i style="left:12%;bottom:-20%;width:44%;height:50%;opacity:.10"></i>
-    <i style="left:52%;bottom:-24%;width:42%;height:54%;opacity:.09"></i>
-  </div>
-  <!-- HERO SCENE: the proof loop. One object in the hero's right zone, in
-       the spirit of the quantum chandelier: a Bitcoin node lower left, the
-       Starknet mark upper right, and two arcs closing a loop between them.
-       Arc one carries execution up, arc two carries the proof back down and
-       is drawn lighter so the return reads as secondary. All four arc
-       terminations stand off their node by the same 30.03 user units, the gap
-       the EXECUTE arrowhead already kept from the Starknet mark; the arcs are
-       trimmed to it by de Casteljau splitting, so curvature is untouched and
-       only the ends move. EXECUTE sits on the convex side of its arc; PROVE
-       sits above its arc's origin at the Starknet mark (it marked the arc's
-       midpoint once, at x=92, and the headline ran over it at laptop window
-       heights -- see the placement contract on the labels below). The Bitcoin node keeps
-       its hairline circle rather than the filled roundel, so the two nodes
-       carry comparable weight in a drawing made of hairlines: the glyph inside is not the Bitcoin logo artwork. The box is square
-       and anchored bottom right in px, so its clearance from the claim band
-       is fixed and it stays clear of the display's longest line at every
-       width. Decorative: aria-hidden, pointer-events none. Every stroke is
-       non-scaling-stroke. Accent comes from --accent-rgb, never a literal. -->
-  <div class="bfp-scene" id="bfLoop" aria-hidden="true">
-    <svg class="bfp-svg" viewBox="30 59 313 307" preserveAspectRatio="xMidYMid meet" focusable="false">
-      <!-- arcs first so the nodes sit over their endpoints -->
-      <path class="bfp-arc bfp-arc--up"   id="bfArcUp"   pathLength="100" d="M185.37 278.05 C243.42 253.5, 289.09 206.71, 296 148"/>
-      <path class="bfp-arc bfp-arc--down" id="bfArcDown" pathLength="100" d="M237.3 116.32 C167.61 134.05, 89.57 159.5, 75.21 210.35"/>
-      <path class="bfp-pulse bfp-pulse--up"   pathLength="100" d="M185.37 278.05 C243.42 253.5, 289.09 206.71, 296 148"/>
-      <path class="bfp-pulse bfp-pulse--down" pathLength="100" d="M237.3 116.32 C167.61 134.05, 89.57 159.5, 75.21 210.35"/>
-      <path class="bfp-head bfp-head--up"   d="M288 160 L296 148 L304 160"/>
-      <path class="bfp-head bfp-head--down" d="M70.78 196.63 L75.21 210.35 L86.17 200.97"/>
+  <!-- HERO: an element-for-element port of the landing hero
+       (src/views/home/hero/hero.tsx). Same frame, same slots, same vw-scaled
+       type: the kicker and the display half of the statement top left, the
+       mono support paragraph and the CTA pair bottom left, the mono readout
+       and the accent turn line bottom right, and the particle centrepiece
+       filling the middle. One deviation from the landing, deliberate: the
+       landing hangs its CTA under the turn line bottom right, but this hero's
+       bottom right already carries two blocks, so the pill and its icon tile
+       sit bottom left under the note.
+       Nothing here paints a ground. The flame shader (js/eco-backdrop.js) is
+       a FIXED canvas at z-index 0 and every layer above it stays transparent:
+       no opaque fill, no isolation. -->
+  <div class="bfh-stage" id="bfhStage" aria-hidden="true"></div>
 
-      <!-- lower left: Bitcoin -->
-      <circle class="bfp-node bfp-node--btc" cx="96" cy="300" r="62"/><g class="bfp-mark bfp-mark--btc" transform="translate(31.17,236.50) scale(3.170)"><path transform="matrix(0.61129216,0,0,0.61129216,-118.80398,-25.96802)" d="M241.91 70.689c0.637-4.258-2.605-6.547-7.038-8.074l1.438-5.768-3.511-0.875-1.4 5.616c-0.923-0.23-1.871-0.447-2.813-0.662l1.41-5.653-3.509-0.875-1.439 5.766c-0.764-0.174-1.514-0.346-2.242-0.527l0.004-0.018-4.842-1.209-0.934 3.75c0 0 2.605 0.597 2.55 0.634 1.422 0.355 1.679 1.296 1.636 2.042l-1.638 6.571c0.098 0.025 0.225 0.061 0.365 0.117-0.117-0.029-0.242-0.061-0.371-0.092l-2.296 9.205c-0.174 0.432-0.615 1.08-1.609 0.834 0.035 0.051-2.552-0.637-2.552-0.637l-1.743 4.019 4.569 1.139c0.85 0.213 1.683 0.436 2.503 0.646l-1.453 5.834 3.507 0.875 1.439-5.772c0.958 0.26 1.888 0.5 2.798 0.726l-1.434 5.745 3.511 0.875 1.453-5.823c5.987 1.133 10.489 0.676 12.384-4.739 1.527-4.36-0.076-6.875-3.226-8.515 2.294-0.529 4.022-2.038 4.483-5.155zm-8.022 11.249c-1.085 4.36-8.426 2.003-10.806 1.412l1.928-7.729c2.38 0.594 10.012 1.77 8.878 6.317zm1.086-11.312c-0.99 3.966-7.1 1.951-9.082 1.457l1.748-7.01c1.982 0.494 8.365 1.416 7.334 5.553z"/></g>
+  <p class="bfh-kicker">Bitcoin's next chapter</p>
+  <!-- the id is the search index's anchor for this page's opening claim
+       (public/data/search-index.json); it stays on the display heading. -->
+  <h1 id="bitcoin-is-the-best-asset-to" class="bfh-title">Bitcoin is the best asset to hold</h1>
 
-      <!-- upper right: the Starknet four-point mark -->
-      <g class="bfp-mark bfp-mark--strk" transform="translate(256.61,51.86) scale(2.324)"><path fill-rule="evenodd" clip-rule="evenodd" d="M11.2193 16.1014L11.713 14.5761C11.8133 14.2659 12.0582 14.0245 12.3695 13.9293L13.9023 13.4579C14.1145 13.3931 14.1162 13.0938 13.9057 13.0256L12.3799 12.5319C12.0702 12.4315 11.8288 12.1867 11.7331 11.8753L11.2623 10.3425C11.1975 10.1309 10.8982 10.1286 10.8299 10.3397L10.3362 11.865C10.2359 12.1746 9.991 12.416 9.67963 12.5118L8.14688 12.9826C7.93472 13.0479 7.93243 13.3467 8.14344 13.4149L9.66931 13.9086C9.97896 14.009 10.2204 14.2544 10.3161 14.5658L10.7869 16.0979C10.8517 16.3101 11.151 16.3124 11.2193 16.1014Z"/><path fill-rule="evenodd" clip-rule="evenodd" d="M35.4462 15.2134C34.7673 13.5004 33.5054 12.0585 31.8115 10.9945C30.1279 9.94223 27.7895 9.4052 25.4724 9.86299C24.3277 10.0844 23.2187 10.5106 22.2454 11.0782C21.2766 11.6436 20.4084 12.3241 19.6569 13.0543C19.2817 13.4205 18.9411 13.8026 18.6028 14.1869L17.7258 15.3049L16.3714 17.1046C14.6447 19.4202 12.7853 22.1339 9.73396 22.938C6.73838 23.7274 5.43914 23.0283 3.61086 22.7395C3.94515 23.6026 4.35925 24.4407 4.92063 25.1781C5.47155 25.9304 6.12227 26.637 6.9313 27.2426C7.34015 27.5335 7.7718 27.8206 8.25121 28.0641C8.72843 28.2994 9.24309 28.5064 9.79242 28.6623C10.8851 28.9618 12.1152 29.0667 13.3063 28.9056C14.498 28.7466 15.637 28.369 16.6326 27.8674C17.6355 27.3706 18.5092 26.7656 19.2893 26.127C20.8401 24.8392 22.0464 23.4162 23.0653 21.9778C23.5778 21.2587 24.043 20.5259 24.4733 19.793L24.9797 18.9205C25.1345 18.6654 25.2911 18.4088 25.4502 18.1698C26.0918 17.2095 26.7194 16.4395 27.4817 15.8616C28.2335 15.2687 29.2802 14.8307 30.679 14.7289C32.072 14.626 33.6801 14.8162 35.4462 15.2134Z"/><path fill-rule="evenodd" clip-rule="evenodd" d="M27.91 29.4455C27.91 30.7036 28.9304 31.724 30.1885 31.724C31.4466 31.724 32.4658 30.7036 32.4658 29.4455C32.4658 28.1874 31.4466 27.167 30.1885 27.167C28.9304 27.167 27.91 28.1874 27.91 29.4455Z"/></g>
-
-      <!-- LABEL PLACEMENT IS A MEASURED CONTRACT, NOT A LUCKY GAP. The hero
-           is min-height 100vh with the copy centered and this scene anchored
-           to the hero's BOTTOM, so window HEIGHT slides the copy across the
-           scene: at 1440x820 the old PROVE (x=92) sat under "It's time to
-           make it". Measured over widths 981-1920 x heights 700-1400, the
-           copy's deepest reach into this viewBox is svgX 190.0 (headline
-           line 1 at 1400px-wide, short windows; the peak lives just above
-           the 1360 scene-size breakpoint). BOTH labels therefore keep their
-           left edge at svgX > 206, which no text reaches at ANY sampled
-           width x height: PROVE at x=212 (22 units past the worst reach,
-           ~27px at 1440 scale) above the down arc's ORIGIN -- the proof
-           departing the Starknet mark -- 19 units clear of the mark and 8
-           above the arc; EXECUTE at x=254.5 was already structurally safe
-           (its nearest text edge is 122px+ across the matrix). If a label
-           ever moves left of x~206, re-run the width x height matrix first;
-           a check at one window height proves nothing here. -->
-      <text class="bfp-lbl" x="254.5" y="252.5">EXECUTE</text>
-      <text class="bfp-lbl" x="212" y="108">PROVE</text>
-    </svg>
-  </div>
-  <div class="bf-inner">
-    <p class="hero-eyebrow">Bitcoin's next chapter</p>
-    <h1 id="bitcoin-is-the-best-asset-to" class="hero-title">Bitcoin is the <em>best asset</em> to hold.<br>It's time to make it<br>the best to <em>use</em>.</h1>
-    <!-- THE FIGURE IS THE SAME LIVE SLOT AS THE <1% BAND'S, same fallback,
-         same as-of: two perishable figures telling one story must be one
-         number. It was a hardcoded "$1.3T", true at a $1.3T market cap and
-         stale at $1.55T. If this line's length changes again, re-run the
-         PROVE label's width x height matrix (see the hero scene comments):
-         the subline's reach into the scene is part of that contract. -->
-    <p class="hero-subtitle">More than <span class="idle-cap" data-idle-cap data-perishable="live"
-       data-src="https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&amp;vs_currencies=usd&amp;include_market_cap=true"
-       data-checked="2026-08-23" data-as-of="2026-08-23">$1.5T</span> in capital sitting idle. Starknet is building the execution layer Bitcoin has always needed: private, scalable, and built to last.</p>
-    <div class="bf-ctas">
-      <a class="bf-cta chip-glass" href="#bitcoins-unfinished-mission">The unfinished mission <i aria-hidden="true">&rarr;</i></a>
-      <a class="bf-cta bf-cta--muted chip-glass" href="#defi-scale-privacy-resilience-all-four">See the stack <i aria-hidden="true">&rarr;</i></a>
+  <div class="bfh-left">
+    <!-- SENTENCE CASE IN THE SOURCE, CAPS ON SCREEN, exactly as the landing
+         carries its own mono blocks: text-transform does the shouting, so a
+         screen reader and the search index still get real words. -->
+    <p class="bfh-note">Idle BTC turned into productive, programmable capital on Starknet: lending, yield and settlement without leaving Bitcoin's security behind.</p>
+    <div class="bfh-cta">
+      <a class="bfh-pill" href="#bitcoins-unfinished-mission">Read the thesis</a>
+      <a class="bfh-tile" href="#defi-scale-privacy-resilience-all-four" aria-label="See the stack"><img src="assets/hero/send-icon.svg" alt="" width="51" height="51"></a>
     </div>
+  </div>
+
+  <div class="bfh-right">
+    <p class="bfh-stat">DeFi. Scale. Privacy. Resilience. All four, one stack.</p>
+    <p class="bfh-turn">Time to make it the best to use</p>
   </div>
 </div>
 
@@ -1910,203 +1751,97 @@
 <!-- PROBLEM -->
 <!-- ============================================================ -->
 <section class="problem">
-  <div class="th-pm-head"><span class="th-pm-marker"></span><span class="th-pm-num">01</span><h2 id="bitcoins-unfinished-mission" class="th-pm-title">Bitcoin's unfinished mission</h2></div>
   <p class="th-pm-eyebrow">Problem</p>
+  <div class="th-pm-head"><span class="th-pm-marker"></span><span class="th-pm-num">01</span><h2 id="bitcoins-unfinished-mission" class="th-pm-title">Bitcoin's unfinished mission</h2></div>
 
-  <!-- THE BROKEN-ORBIT GAP DEVICE (.bgap). Replaced the 2x2 capability grid,
-       then replaced a flat spoke version of itself. THE VALUES AND THE COLOUR
-       RULES LIVE IN THE CSS BLOCK, not here; this is the argument and the
-       history.
-       WHY ORBITS. An incomplete ring IS a shortfall rather than a figure for
-       one. Each gap runs solid from the core, breaks, continues as a faint
-       dashed remainder and never closes, and a faint FULL reference ring sits
-       at the same radius showing where it should have reached. The claim is
-       shortfall, not absence: Bitcoin does these four things, it just does not
-       do them far enough. Do not redraw this as empty slots or crosses.
-       WHAT THE HISTORY IS FOR. This was spokes before, and the core was
-       NEUTRAL INK on quantum's vault precedent. Both were wrong and both were
-       argued at length, so they should not be re-proposed as fresh ideas.
-       Spokes read too plain. Neutral read as switched off, because on quantum
-       gray MEANT unchanged and the colour argument depended on it, while here
-       it only drained the one colour the object owns. The core is the accent
-       and the brightest thing in the composition, and the solid run carries
-       the colour while the dashed remainder falls into dim: an earlier cut had
-       that inverted, which put the only colour in the drawing on its thinnest,
-       most broken strokes.
-       ALL FOUR CARDS ARE FULLY LEGIBLE WITHOUT INTERACTION. Every card carries
-       its number, name, title, one-liner and cost line permanently. There is
-       no panel: it was removed once the cards carried enough, and the four
-       anchor ids and index entries moved onto the cards, which is why each
-       button is also a .problem-item. Selection now changes emphasis only,
-       nothing is revealed or hidden, and that is why the group is a listbox of
-       options rather than tabs.
-       THE COST LINES ARE PARAPHRASES OF THE OLD PANEL BODIES, checked sentence
-       by sentence against them when the panel was removed. Nothing was
-       dropped: the intentionality of the script limit, the address-to-identity
-       mechanism, "base layer" and "at scale", the Google attribution on 2029
-       and Satoshi's 2010 remark all moved onto the cards. If a card is edited,
-       do not quietly lose the attribution on 2029 or the Satoshi note; they
-       are the only sourcing those two claims have on this page.
-       AT <=860px IT IS NOT A RADIAL DIAGRAM. Four cards cannot orbit a core at
-       375 and stay legible, so the arcs are dropped outright and each row
-       keeps a flat solid-then-dashed bar that stops short. Same claim,
-       different geometry, deliberately not a shrunken radial. -->
-  <div class="bgap" id="bgap">
-    <div class="bgap-stage" role="listbox" aria-label="Bitcoin's four capability gaps">
-      <div class="btcg-bloom btcg-bloom-bgap" aria-hidden="true"><i></i></div>
-      <div class="bgap-plane">
-        <svg class="bgap-orbits" viewBox="0 0 1000 540" aria-hidden="true" focusable="false" preserveAspectRatio="xMidYMid meet">
-          <!-- (6) chronometer ticks: a static ring of 60 fine ticks (majors
-               every 30 deg) just outside the outermost reference ring
-               (r196 -> ticks at 204-212.5). Instrument framing, zero motion
-               cost: one path, never touched by the engine, dimmed by the same
-               depth mask as everything else in the plane. Ink, not accent:
-               the frame is the instrument, the accent belongs to the light. -->
-          <path class="bgap-ticks" d="M704.0,270.0L712.5,270.0 M704.4,291.5L709.3,292.0 M701.0,312.7L705.9,313.8 M695.4,333.5L700.2,335.0 M687.7,353.6L692.3,355.6 M676.7,372.0L684.0,376.3 M666.3,390.8L670.3,393.7 M652.7,407.5L656.4,410.9 M637.5,422.7L640.9,426.4 M620.8,436.3L623.7,440.3 M602.0,446.7L606.3,454.0 M583.6,457.7L585.6,462.3 M563.5,465.4L565.0,470.2 M542.7,471.0L543.8,475.9 M521.5,474.4L522.0,479.3 M500.0,474.0L500.0,482.5 M478.5,474.4L478.0,479.3 M457.3,471.0L456.2,475.9 M436.5,465.4L435.0,470.2 M416.4,457.7L414.4,462.3 M398.0,446.7L393.8,454.0 M379.2,436.3L376.3,440.3 M362.5,422.7L359.1,426.4 M347.3,407.5L343.6,410.9 M333.7,390.8L329.7,393.7 M323.3,372.0L316.0,376.3 M312.3,353.6L307.7,355.6 M304.6,333.5L299.8,335.0 M299.0,312.7L294.1,313.8 M295.6,291.5L290.7,292.0 M296.0,270.0L287.5,270.0 M295.6,248.5L290.7,248.0 M299.0,227.3L294.1,226.2 M304.6,206.5L299.8,205.0 M312.3,186.4L307.7,184.4 M323.3,168.0L316.0,163.7 M333.7,149.2L329.7,146.3 M347.3,132.5L343.6,129.1 M362.5,117.3L359.1,113.6 M379.2,103.7L376.3,99.7 M398.0,93.3L393.7,86.0 M416.4,82.3L414.4,77.7 M436.5,74.6L435.0,69.8 M457.3,69.0L456.2,64.1 M478.5,65.6L478.0,60.7 M500.0,66.0L500.0,57.5 M521.5,65.6L522.0,60.7 M542.7,69.0L543.8,64.1 M563.5,74.6L565.0,69.8 M583.6,82.3L585.6,77.7 M602.0,93.3L606.3,86.0 M620.8,103.7L623.7,99.7 M637.5,117.3L640.9,113.6 M652.7,132.5L656.4,129.1 M666.3,149.2L670.3,146.3 M676.7,168.0L684.0,163.7 M687.7,186.4L692.3,184.4 M695.4,206.5L700.2,205.0 M701.0,227.3L705.9,226.2 M704.4,248.5L709.3,248.0"/>
-          <g class="bgap-sp" data-gap="0">
-            <circle class="bgap-ref" cx="500" cy="270" r="124"/>
-            <path class="bgap-solid" d="M601.6,341.1 A124,124 0 1,1 412.3,182.3"/>
-            <path class="bgap-dash" d="M412.3,182.3 A124,124 0 0,1 619.8,237.9"/>
-          </g>
-          <g class="bgap-sp" data-gap="1">
-            <circle class="bgap-ref" cx="500" cy="270" r="148"/>
-            <path class="bgap-solid" d="M415.1,391.2 A148,148 0 1,1 604.7,165.3"/>
-            <path class="bgap-dash" d="M604.7,165.3 A148,148 0 0,1 538.3,413.0"/>
-          </g>
-          <g class="bgap-sp" data-gap="2">
-            <circle class="bgap-ref" cx="500" cy="270" r="172"/>
-            <path class="bgap-solid" d="M359.1,171.3 A172,172 0 1,1 621.6,391.6"/>
-            <path class="bgap-dash" d="M621.6,391.6 A172,172 0 0,1 333.9,314.5"/>
-          </g>
-          <g class="bgap-sp" data-gap="3">
-            <circle class="bgap-ref" cx="500" cy="270" r="196"/>
-            <path class="bgap-solid" d="M612.4,109.4 A196,196 0 1,1 361.4,408.6"/>
-            <path class="bgap-dash" d="M361.4,408.6 A196,196 0 0,1 449.3,80.7"/>
-          </g>
-        </svg>
-        <!-- (3) the mesh breathes. The lines are wrapped in a group the engine
-             rotates (130s) while it drives each line's stroke-opacity from the
-             line's CURRENT world angle, so the near half glows and the far
-             half falls away and the rotation reads as a wave of light
-             travelling around the plane, not lines changing position. The
-             stylesheet keeps a static stroke-opacity as the no-JS fallback;
-             the engine overrides it with inline style, which is the ABSOLUTE
-             alpha (the stroke itself is at 1.0), so there is no CSS-alpha x
-             JS-opacity product to mis-multiply. -->
-        <svg class="bgap-mesh" viewBox="0 0 1000 540" aria-hidden="true" focusable="false" preserveAspectRatio="xMidYMid meet">
-          <g class="bgap-meshg">
-          <line x1="611.0" y1="270.0" x2="709.0" y2="270.0"/>
-          <line x1="607.2" y1="298.7" x2="701.9" y2="324.1"/>
-          <line x1="596.1" y1="325.5" x2="681.0" y2="374.5"/>
-          <line x1="578.5" y1="348.5" x2="647.8" y2="417.8"/>
-          <line x1="555.5" y1="366.1" x2="604.5" y2="451.0"/>
-          <line x1="528.7" y1="377.2" x2="554.1" y2="471.9"/>
-          <line x1="500.0" y1="381.0" x2="500.0" y2="479.0"/>
-          <line x1="471.3" y1="377.2" x2="445.9" y2="471.9"/>
-          <line x1="444.5" y1="366.1" x2="395.5" y2="451.0"/>
-          <line x1="421.5" y1="348.5" x2="352.2" y2="417.8"/>
-          <line x1="403.9" y1="325.5" x2="319.0" y2="374.5"/>
-          <line x1="392.8" y1="298.7" x2="298.1" y2="324.1"/>
-          <line x1="389.0" y1="270.0" x2="291.0" y2="270.0"/>
-          <line x1="392.8" y1="241.3" x2="298.1" y2="215.9"/>
-          <line x1="403.9" y1="214.5" x2="319.0" y2="165.5"/>
-          <line x1="421.5" y1="191.5" x2="352.2" y2="122.2"/>
-          <line x1="444.5" y1="173.9" x2="395.5" y2="89.0"/>
-          <line x1="471.3" y1="162.8" x2="445.9" y2="68.1"/>
-          <line x1="500.0" y1="159.0" x2="500.0" y2="61.0"/>
-          <line x1="528.7" y1="162.8" x2="554.1" y2="68.1"/>
-          <line x1="555.5" y1="173.9" x2="604.5" y2="89.0"/>
-          <line x1="578.5" y1="191.5" x2="647.8" y2="122.2"/>
-          <line x1="596.1" y1="214.5" x2="681.0" y2="165.5"/>
-          <line x1="607.2" y1="241.3" x2="701.9" y2="215.9"/>
-          </g>
-        </svg>
-        <!-- (1)(2)(4) the comet + dust layer, FAR half. The engine (section-01
-             script at the foot of the page) builds one comet per orbit (a head,
-             a soft glow and a 26-degree tail of fading arc segments) and the
-             dust field in here, and per frame rotates each as a rigid group
-             about (500,270), which is one transform write per object rather
-             than per-segment path rewrites. The old static glint arcs that
-             lived here were the "bare dots painted on" the owner rejected;
-             they are gone, not dimmed. -->
-        <svg class="bgap-anim bgap-anim-far" viewBox="0 0 1000 540" aria-hidden="true" focusable="false" preserveAspectRatio="xMidYMid meet">
+  <p class="bum-sub">Bitcoin does every one of these four things. It does none of them far enough. <br>That shortfall is what leaves the hardest money ever made sitting idle.</p>
+  <p class="bum-act"><a class="bf-cta chip-glass" href="#the-market-risk-if-bitcoin-stays">See what the gap costs <i aria-hidden="true">&rarr;</i></a></p>
+
+  <!-- THE MISSION BAND (.bum). Replaced the broken-orbit radial device
+       (.bgap, removed 2026-09-01: four arcs that ran solid, broke, and
+       continued as a dashed remainder around a tilted 3D plane). The layout
+       is the GitBook feature band: centred kicker, heading, two-line subtitle
+       and pill, then three columns with two gap blocks left, the orbit visual
+       centre, two gap blocks right.
+       THE COPY IS THE OLD DEVICE'S, VERBATIM. Titles, one-liners and the
+       accent mono cost lines were carried across character for character,
+       including the two pieces of sourcing that exist nowhere else on this
+       page: Google's 2029 attribution on 04 and Satoshi's 2010 remark on 02.
+       Do not drop either when editing a block.
+       THE BLOCK ORDER IS THE OLD QUADRANT ORDER. 01 and 04 held column 1
+       (rows 1 and 2), 02 and 03 held column 3, so left reads 01 then 04 and
+       right reads 02 then 03. The DOM keeps that pairing; the <=760 stack
+       re-orders to 01-02-03-04 with `order`, because a single column has no
+       quadrants to preserve.
+       THE FOUR IDS AND .problem-item ARE LOAD-BEARING. build-search-index.js
+       extracts this page's gap cards by class problem-item and takes the
+       title from the h3, and the hero CTA links the section heading. Keeping
+       the class drags in styles.css's card chrome (fill, border, radius, 30px
+       padding, the hover lift, and h3 at 21px/700/uppercase); all of it is
+       undone at the end of this page's inline stylesheet, where it can win on
+       source order. These are not cards and must not look like cards. -->
+  <div class="bum">
+    <div class="bum-grid">
+      <article class="bum-item problem-item bum-i1" id="not-expressive">
+        <span class="bum-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M9.6 4.3c-2 0-2.7 1-2.7 2.6v2.3c0 1.4-.6 2.2-1.9 2.5v.6c1.3.3 1.9 1.1 1.9 2.5v2.3c0 1.6.7 2.6 2.7 2.6"/><path d="M14.4 4.3c2 0 2.7 1 2.7 2.6v2.3c0 1.4.6 2.2 1.9 2.5v.6c-1.3.3-1.9 1.1-1.9 2.5v2.3c0 1.6-.7 2.6-2.7 2.6"/><path d="M10.4 12h.01M12 12h.01M13.6 12h.01" stroke-width="1.7" opacity=".55"/></svg></span>
+        <h3 class="bum-title">Not expressive</h3>
+        <p class="bum-body">Bitcoin's scripting layer was intentionally limited: no smart contracts, no lending markets, no automated strategies</p>
+        <p class="bum-cost">everything advanced is built elsewhere</p>
+      </article>
+      <article class="bum-item problem-item bum-i4" id="not-quantum-resistant">
+        <span class="bum-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M12 3.3 4.9 6v5.1c0 4.3 2.9 7.6 7.1 9.5 4.2-1.9 7.1-5.2 7.1-9.5V6Z"/><path d="M12.7 7.6 10.6 11.7h3L11.3 16.3" stroke-width="1.7" opacity=".55"/></svg></span>
+        <h3 class="bum-title">Not quantum-resistant</h3>
+        <p class="bum-body">Google researchers warn the cryptographic risk could be relevant as early as 2029</p>
+        <p class="bum-cost">urgent for an asset built to last centuries</p>
+      </article>
+      <div class="bum-vis">
+        <svg class="bum-svg" viewBox="0 0 600 600" aria-hidden="true" focusable="false" preserveAspectRatio="xMidYMid meet">
           <defs>
-            <radialGradient id="bgapGlowGrad">
-              <stop offset="0" style="stop-color:var(--accent,#c53400)" stop-opacity=".5"/>
-              <stop offset=".55" style="stop-color:var(--accent,#c53400)" stop-opacity=".14"/>
-              <stop offset="1" style="stop-color:var(--accent,#c53400)" stop-opacity="0"/>
+            <radialGradient id="bumGlow">
+              <stop offset="0" stop-color="#c53400" stop-opacity=".46"/>
+              <stop offset=".5" stop-color="#c53400" stop-opacity=".14"/>
+              <stop offset="1" stop-color="#c53400" stop-opacity="0"/>
             </radialGradient>
           </defs>
-          <g class="bgap-dust"></g>
-          <g class="bgap-comets"></g>
-        </svg>
-        <span class="bgap-anchor" data-gap="0"></span>
-        <span class="bgap-anchor" data-gap="1"></span>
-        <span class="bgap-anchor" data-gap="2"></span>
-        <span class="bgap-anchor" data-gap="3"></span>
-      </div>
-      <!-- (2) THE NEAR HALF PASSES IN FRONT OF THE CORE. A second copy of the
-           tilted plane at z-index 2 against the core's 1 (and under the
-           leaders' 2-by-source-order and the cards' 3). The engine reparents a
-           comet into it while its head is on the near half of the plane and
-           back when it returns to the far half, so a glint's glow slides OVER
-           the core's lower edge and halo on the near pass and BEHIND them on
-           the far pass. Same class, so it inherits the tilt, the mask and the
-           <=860 display:none for free. Dust stays in the far layer: its radii
-           start at 112 units, which after the 54deg foreshortening clears the
-           core disc (r~62 units projected) on the near pass, so it never
-           needs the z-flip and never pops behind the disc. -->
-      <div class="bgap-plane bgap-plane-near" aria-hidden="true">
-        <svg class="bgap-anim bgap-anim-near" viewBox="0 0 1000 540" focusable="false" preserveAspectRatio="xMidYMid meet">
-          <g class="bgap-comets"></g>
-        </svg>
-      </div>
-      <svg class="bgap-leads" aria-hidden="true" focusable="false"></svg>
-      <span class="bgap-core" aria-hidden="true">
-        <svg class="bgap-btc" viewBox="0.893 0.469 39.119 39.123" focusable="false">
-          <g transform="matrix(0.61129216,0,0,0.61129216,-118.80398,-25.96802)">
-            <path class="bgap-btc-disc" d="m258.845 82.989c-4.274 17.143-21.637 27.576-38.782 23.301-17.138-4.274-27.571-21.638-23.295-38.78 4.272-17.145 21.635-27.579 38.775-23.305 17.144 4.274 27.576 21.64 23.302 38.784z"/>
-            <path class="bgap-btc-b" d="m241.91 70.689c0.637-4.258-2.605-6.547-7.038-8.074l1.438-5.768-3.511-0.875-1.4 5.616c-0.923-0.23-1.871-0.447-2.813-0.662l1.41-5.653-3.509-0.875-1.439 5.766c-0.764-0.174-1.514-0.346-2.242-0.527l0.004-0.018-4.842-1.209-0.934 3.75c0 0 2.605 0.597 2.55 0.634 1.422 0.355 1.679 1.296 1.636 2.042l-1.638 6.571c0.098 0.025 0.225 0.061 0.365 0.117-0.117-0.029-0.242-0.061-0.371-0.092l-2.296 9.205c-0.174 0.432-0.615 1.08-1.609 0.834 0.035 0.051-2.552-0.637-2.552-0.637l-1.743 4.019 4.569 1.139c0.85 0.213 1.683 0.436 2.503 0.646l-1.453 5.834 3.507 0.875 1.439-5.772c0.958 0.26 1.888 0.5 2.798 0.726l-1.434 5.745 3.511 0.875 1.453-5.823c5.987 1.133 10.489 0.676 12.384-4.739 1.527-4.36-0.076-6.875-3.226-8.515 2.294-0.529 4.022-2.038 4.483-5.155zm-8.022 11.249c-1.085 4.36-8.426 2.003-10.806 1.412l1.928-7.729c2.38 0.594 10.012 1.77 8.878 6.317zm1.086-11.312c-0.99 3.966-7.1 1.951-9.082 1.457l1.748-7.01c1.982 0.494 8.365 1.416 7.334 5.553z"/>
+          <circle class="bum-glow" cx="300" cy="300" r="212" fill="url(#bumGlow)"/>
+          <circle class="bum-collar" cx="300" cy="300" r="166"/>
+          <g class="bum-ring bum-r1">
+            <path class="bum-orb" d="M46.93 367.81 A262 86 -15 1 1 553.07 232.19 A262 86 -15 1 1 46.93 367.81"/>
+            <g class="bum-node bum-n1" style="offset-path:path('M46.93 367.81 A262 86 -15 1 1 553.07 232.19 A262 86 -15 1 1 46.93 367.81')"><circle class="bum-halo" r="9.5"/><circle class="bum-dot" r="3.4"/></g>
           </g>
+          <g class="bum-ring bum-r2">
+            <path class="bum-orb" d="M89.68 197.42 A234 142 26 1 1 510.32 402.58 A234 142 26 1 1 89.68 197.42"/>
+            <g class="bum-node bum-n2" style="offset-path:path('M89.68 197.42 A234 142 26 1 1 510.32 402.58 A234 142 26 1 1 89.68 197.42')"><circle class="bum-halo" r="9.5"/><circle class="bum-dot" r="3.4"/></g>
+          </g>
+          <g class="bum-ring bum-r3">
+            <path class="bum-orb" d="M26.06 266.36 A276 52 7 1 1 573.94 333.64 A276 52 7 1 1 26.06 266.36"/>
+            <g class="bum-node bum-n3" style="offset-path:path('M26.06 266.36 A276 52 7 1 1 573.94 333.64 A276 52 7 1 1 26.06 266.36')"><circle class="bum-halo" r="9.5"/><circle class="bum-dot" r="3.4"/></g>
+          </g>
+          <g class="bum-ring bum-r4">
+            <path class="bum-orb" d="M207.10 70.06 A248 114 68 1 1 392.90 529.94 A248 114 68 1 1 207.10 70.06"/>
+            <g class="bum-node bum-n4" style="offset-path:path('M207.10 70.06 A248 114 68 1 1 392.90 529.94 A248 114 68 1 1 207.10 70.06')"><circle class="bum-halo" r="9.5"/><circle class="bum-dot" r="3.4"/></g>
+          </g>
+          <svg class="bum-mark" x="238" y="238" width="124" height="124" viewBox="0.893 0.469 39.119 39.123" focusable="false">
+            <g transform="matrix(0.61129216,0,0,0.61129216,-118.80398,-25.96802)">
+              <path class="bum-mark-disc" d="m258.845 82.989c-4.274 17.143-21.637 27.576-38.782 23.301-17.138-4.274-27.571-21.638-23.295-38.78 4.272-17.145 21.635-27.579 38.775-23.305 17.144 4.274 27.576 21.64 23.302 38.784z"/>
+              <path class="bum-mark-b" d="m241.91 70.689c0.637-4.258-2.605-6.547-7.038-8.074l1.438-5.768-3.511-0.875-1.4 5.616c-0.923-0.23-1.871-0.447-2.813-0.662l1.41-5.653-3.509-0.875-1.439 5.766c-0.764-0.174-1.514-0.346-2.242-0.527l0.004-0.018-4.842-1.209-0.934 3.75c0 0 2.605 0.597 2.55 0.634 1.422 0.355 1.679 1.296 1.636 2.042l-1.638 6.571c0.098 0.025 0.225 0.061 0.365 0.117-0.117-0.029-0.242-0.061-0.371-0.092l-2.296 9.205c-0.174 0.432-0.615 1.08-1.609 0.834 0.035 0.051-2.552-0.637-2.552-0.637l-1.743 4.019 4.569 1.139c0.85 0.213 1.683 0.436 2.503 0.646l-1.453 5.834 3.507 0.875 1.439-5.772c0.958 0.26 1.888 0.5 2.798 0.726l-1.434 5.745 3.511 0.875 1.453-5.823c5.987 1.133 10.489 0.676 12.384-4.739 1.527-4.36-0.076-6.875-3.226-8.515 2.294-0.529 4.022-2.038 4.483-5.155zm-8.022 11.249c-1.085 4.36-8.426 2.003-10.806 1.412l1.928-7.729c2.38 0.594 10.012 1.77 8.878 6.317zm1.086-11.312c-0.99 3.966-7.1 1.951-9.082 1.457l1.748-7.01c1.982 0.494 8.365 1.416 7.334 5.553z"/>
+            </g>
+          </svg>
         </svg>
-      </span>
-      <button type="button" class="bgap-card problem-item bgap-p0" id="not-expressive" data-gap="0" role="option"
-              aria-posinset="1" aria-setsize="4"
-              aria-selected="true" tabindex="0">
-        <span class="bgap-meta"><span class="bgap-idx" aria-hidden="true">01</span><span class="bgap-name" id="bgapName0">Expressiveness</span></span>
-        <span class="bgap-title">Not expressive</span>
-        <span class="bgap-one">Bitcoin's scripting layer was intentionally limited: no smart contracts, no lending markets, no automated strategies</span>
-        <span class="bgap-cost">everything advanced is built elsewhere</span>
-        <span class="bgap-bar" aria-hidden="true"><i></i><i></i></span>
-      </button>
-      <button type="button" class="bgap-card problem-item bgap-p1" id="not-private" data-gap="1" role="option"
-              aria-posinset="2" aria-setsize="4"
-              aria-selected="false" tabindex="-1">
-        <span class="bgap-meta"><span class="bgap-idx" aria-hidden="true">02</span><span class="bgap-name" id="bgapName1">Privacy</span></span>
-        <span class="bgap-title">Not private</span>
-        <span class="bgap-one">public by default: every balance, counterparty and transaction is permanently traceable, and one address linked to an identity exposes the whole history</span>
-        <span class="bgap-cost">spending, payroll and DeFi positions cannot stay private</span>
-        <span class="bgap-note">Satoshi noted in 2010 that ZK proofs could make Bitcoin "much better."</span>
-        <span class="bgap-bar" aria-hidden="true"><i></i><i></i></span>
-      </button>
-      <button type="button" class="bgap-card problem-item bgap-p2" id="not-scalable-enough" data-gap="2" role="option"
-              aria-posinset="3" aria-setsize="4"
-              aria-selected="false" tabindex="-1">
-        <span class="bgap-meta"><span class="bgap-idx" aria-hidden="true">03</span><span class="bgap-name" id="bgapName2">Scale</span></span>
-        <span class="bgap-title">Not scalable enough</span>
-        <span class="bgap-one">slow blocks, fee spikes, a handful of transactions per second</span>
-        <span class="bgap-cost">Bitcoin's base layer was never designed for global financial activity at scale</span>
-        <span class="bgap-bar" aria-hidden="true"><i></i><i></i></span>
-      </button>
-      <button type="button" class="bgap-card problem-item bgap-p3" id="not-quantum-resistant" data-gap="3" role="option"
-              aria-posinset="4" aria-setsize="4"
-              aria-selected="false" tabindex="-1">
-        <span class="bgap-meta"><span class="bgap-idx" aria-hidden="true">04</span><span class="bgap-name" id="bgapName3">Quantum</span></span>
-        <span class="bgap-title">Not quantum-resistant</span>
-        <span class="bgap-one">Google researchers warn the cryptographic risk could be relevant as early as 2029</span>
-        <span class="bgap-cost">urgent for an asset built to last centuries</span>
-        <span class="bgap-bar" aria-hidden="true"><i></i><i></i></span>
-      </button>
+      </div>
+      <article class="bum-item problem-item bum-i2" id="not-private">
+        <span class="bum-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M2.9 12S6.1 6.4 12 6.4 21.1 12 21.1 12 17.9 17.6 12 17.6 2.9 12 2.9 12Z"/><circle cx="12" cy="12" r="2.7"/><path d="M4.6 19.4 19.4 4.6" stroke-width="1.7" opacity=".55"/></svg></span>
+        <h3 class="bum-title">Not private</h3>
+        <p class="bum-body">public by default: every balance, counterparty and transaction is permanently traceable, and one address linked to an identity exposes the whole history</p>
+        <p class="bum-cost">spending, payroll and DeFi positions cannot stay private</p>
+        <p class="bum-note">Satoshi noted in 2010 that ZK proofs could make Bitcoin "much better."</p>
+      </article>
+      <article class="bum-item problem-item bum-i3" id="not-scalable-enough">
+        <span class="bum-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M3.8 19.6h16.4"/><path d="M7.4 19.6v-3.9M12 19.6v-6.4M16.6 19.6v-8.6"/><path d="M3.8 6.4h16.4" stroke-width="1.7" opacity=".55"/></svg></span>
+        <h3 class="bum-title">Not scalable enough</h3>
+        <p class="bum-body">slow blocks, fee spikes, a handful of transactions per second</p>
+        <p class="bum-cost">Bitcoin's base layer was never designed for global financial activity at scale</p>
+      </article>
     </div>
   </div>
 
@@ -2129,77 +1864,149 @@
 
   <div class="gap-turn">
     <p class="scale-label">What it costs</p>
-    <h3 id="the-market-risk-if-bitcoin-stays" class="scale-title">The market risk if Bitcoin stays idle</h3>
+    <!-- ONE BLOCK OF TYPE, TWO ELEMENTS. The h3 keeps the load-bearing id and
+         nothing but the heading sentence, so the search index still lists
+         those words and only those words as the section title; the grey
+         continuation is a sibling paragraph set display:inline, so the two
+         flow as a single wrapped paragraph on screen. Do not fold the grey
+         half into the h3 to "simplify" it: that silently rewrites the index
+         entry's title into the whole run-on. -->
+    <div class="brkl-lede">
+      <h3 id="the-market-risk-if-bitcoin-stays" class="scale-title brkl-lede-a">The market risk if Bitcoin stays idle.</h3>
+      <p class="brkl-lede-b">The cost is paid three times over: in who holds the coins, in what has to be trusted, and in where the liquidity ends up.</p>
+    </div>
   </div>
 
-  <!-- THE RISK PODIUMS (.brk). Replaced the three flat risk cards with
-       privacy's pedestal-selector grammar (.pmv, privacy.html section 04):
-       glass plinth (elliptical top face over a cylinder wall), floating line
-       icon above, mono label below, floor halo under the selected one. Same
-       hand, this page's accent. WHAT DIFFERS FROM THE REFERENCE, on purpose:
-       the card TITLES stay permanently visible under the labels, because
-       these are three arguments, not three chapters -- a reader who never
-       clicks must still see all three claims; and there is no sticky
-       machinery, because three one-paragraph panels never put the selector
-       out of reach.
-       THE IDS ARE LOAD-BEARING and live on the PANELS: the search index
-       extracts these three by class brk-panel (build-search-index.js), reads
-       the title from the visually-hidden h4 and keeps the Risk NN eyebrow in
-       the body, so the three entries stay byte-identical to the old cards'.
-       Body copy is VERBATIM from the old cards; do not rewrite it here
-       without knowing it is the only place these three claims are argued.
-       Selection is tabs, not listbox: unlike the gap device above, content
-       here really is revealed and hidden, so tab/tabpanel is the honest
-       grammar, and search.js carries a .brk-panel adapter (same contract as
-       privacy's .pmv-panel) so palette hits open the right risk. -->
-  <div class="brk" id="brk">
-    <div class="brk-row" role="tablist" aria-label="Market risks if Bitcoin stays idle">
-      <div class="btcg-bloom btcg-bloom-threat" aria-hidden="true"><i></i><i></i><i></i></div>
-      <button class="brk-ped" type="button" role="tab" id="brkTab01" data-r="0"
-              aria-selected="true" aria-controls="centralized-wrappers-dominate" tabindex="0">
-        <!-- WRAPPERS: a coin held inside a custody frame. NOTE: the icon spec
-             in the brief was cut off; these three are this pass's own designs
-             in the reference's stroke discipline (24 grid, 1.1 stroke, round
-             caps, one heavier .55-opacity detail) and are the first thing to
-             redraw if the owner's spec differs. -->
-        <span class="brk-obj" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.7"/><path d="M3.6 8V5.6a2 2 0 0 1 2-2H8M16 3.6h2.4a2 2 0 0 1 2 2V8M20.4 16v2.4a2 2 0 0 1-2 2H16M8 20.4H5.6a2 2 0 0 1-2-2V16"/><path d="M10.9 9.6v-1M13.1 9.6v-1M10.9 15.4v-1M13.1 15.4v-1" stroke-width="1.6" stroke-linecap="butt" opacity=".55"/></svg></span>
-        <span class="brk-plinth" aria-hidden="true"><u></u><i></i></span>
-        <span class="brk-label"><b>Risk 01</b>WRAPPERS</span>
-        <span class="brk-title">Centralized wrappers dominate</span>
-      </button>
-      <button class="brk-ped" type="button" role="tab" id="brkTab02" data-r="1"
-              aria-selected="false" aria-controls="trust-assumptions-everywhere" tabindex="-1">
-        <!-- TRUST: a bridge, the copy's own metaphor -- deck on an arch, the
-             thing every wrapped path stands on. -->
-        <span class="brk-obj" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"><path d="M2.8 15.2h18.4"/><path d="M5.9 15.2v-4.4M18.1 15.2v-4.4M12 15.2v-2.6"/><path d="M4.2 10.9c2.4-2.5 4.8-3.7 7.8-3.7s5.4 1.2 7.8 3.7"/><path d="M4 19h3M10.5 19h3M17 19h3" stroke-width="1.6" stroke-linecap="butt" opacity=".55"/></svg></span>
-        <span class="brk-plinth" aria-hidden="true"><u></u><i></i></span>
-        <span class="brk-label"><b>Risk 02</b>TRUST</span>
-        <span class="brk-title">Trust assumptions everywhere</span>
-      </button>
-      <button class="brk-ped" type="button" role="tab" id="brkTab03" data-r="2"
-              aria-selected="false" aria-controls="fragmented-liquidity" tabindex="-1">
-        <!-- LIQUIDITY: one pool broken into disconnected arcs, fragments
-             drifting off. -->
-        <span class="brk-obj" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 6A6.6 6.6 0 0 1 18.4 10.7"/><path d="M18.4 14.1A6.6 6.6 0 0 1 10.3 18.8"/><path d="M7.3 17.1A6.6 6.6 0 0 1 7.3 7.7"/><circle cx="20.9" cy="5.2" r="1"/><circle cx="3.3" cy="18" r="1"/><path d="M19.5 18.8h1.9M4.1 4.9h1.9" stroke-width="1.6" stroke-linecap="butt" opacity=".55"/></svg></span>
-        <span class="brk-plinth" aria-hidden="true"><u></u><i></i></span>
-        <span class="brk-label"><b>Risk 03</b>LIQUIDITY</span>
-        <span class="brk-title">Fragmented liquidity</span>
-      </button>
-    </div>
-    <div class="brk-stage" id="brkStage">
-      <div class="brk-panel" id="centralized-wrappers-dominate" role="tabpanel" aria-labelledby="brkTab01">
-        <span class="idx">Risk 01</span>
-        <h4 class="brk-sr">Centralized wrappers dominate</h4>
+  <!-- THE RISK BAND (.brkl). Rebuilt from the pedestal selector (.brk) into
+       the reference's three-column figure band: a paragraph-style lede above
+       (the heading in full white, its continuation in grey, both set inline
+       so they read as ONE block of type rather than a title plus a subtitle),
+       then three equal columns divided by thin vertical rules. Each column
+       runs the same way down: mono FIG label, isometric line figure, title,
+       description. NOTHING IS HIDDEN ANY MORE, which is the whole point of
+       the change: all three claims are on the page at once, so there is no
+       selection machinery, no tablist, no panel stage and no roving tab stop
+       left to maintain (that script and its CSS went with the podiums).
+       LOAD-BEARING, DO NOT DROP: the three ids and the .brk-panel class on
+       each column's text block. build-search-index.js extracts btcfi by that
+       class and takes the title from the h4 inside it, so the three search
+       entries and their anchors survive this redesign unchanged; the h4 is
+       simply visible now instead of clipped, because the column shows the
+       title where the podium used to. Body copy is VERBATIM from the old
+       panels: these three claims are argued nowhere else on the page.
+       THE FIGURES ARE DECORATION (aria-hidden, focusable=false): outline
+       only, no fills, 1.3 stroke on the base #4a4a4a with the page accent as
+       the single highlight per drawing (the coin entering custody, the link
+       that has to hold, the fragment that drifted). They scale by viewBox
+       with width:100%, never a pixel width, so the single column at 390 has
+       nothing to overflow. -->
+  <div class="brkl">
+    <div class="brkl-col">
+      <p class="brkl-fig" aria-hidden="true">FIG 0.2</p>
+      <div class="brkl-art">
+        <svg class="brkl-svg" viewBox="0 0 320 260" fill="none" stroke="#4a4a4a" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <!-- ONE OPTICAL BOX FOR ALL THREE. The raw ink boxes differ
+               (tall-and-narrow vault, long chain, wide-and-flat pool),
+               and at one rendered width that reads as three unrelated
+               drawings. This wrapper scales each about its own centre so
+               the three carry the same visual mass across the band.
+               Rescaling one figure means re-checking the other two. -->
+          <g transform="translate(160 122) scale(1.12) translate(-160 -122)">
+            <!-- the wrapped coin, entering custody -->
+            <g stroke="var(--accent)">
+              <path d="M160 22 L184 36 L160 50 L136 36 Z"/>
+              <path d="M136 36 L136 54 L160 68 L160 50"/>
+              <path d="M184 36 L184 54 L160 68"/>
+            </g>
+            <path d="M160 68 L160 88" stroke="var(--accent)" stroke-dasharray="3 5" opacity=".8"/>
+            <!-- the custody box -->
+            <path d="M160 88 L230 128 L160 168 L90 128 Z"/>
+            <path d="M90 128 L90 190 L160 222 L160 168"/>
+            <path d="M230 128 L230 190 L160 222"/>
+            <path d="M90 159 L160 195" opacity=".55"/>
+            <path d="M230 159 L160 195" opacity=".55"/>
+            <path d="M124 108 L160 128 L196 108" opacity=".35"/>
+            <!-- the lock plate on the front face -->
+            <g stroke="var(--accent)">
+              <path d="M136 161 L136 191 L108 183 L108 153 Z"/>
+              <circle cx="122" cy="169" r="4.2"/>
+              <path d="M122 173.5 L122 181"/>
+            </g>
+          </g>
+        </svg>
+      </div>
+      <div class="brk-panel" id="centralized-wrappers-dominate">
+        <h4 class="brkl-t">Centralized wrappers dominate</h4>
         <p>WBTC and its alternatives control most Bitcoin in DeFi. These rely on custodians, legal agreements, and institutional trust, the exact model Bitcoin was built to replace.</p>
       </div>
-      <div class="brk-panel" id="trust-assumptions-everywhere" role="tabpanel" aria-labelledby="brkTab02" hidden>
-        <span class="idx">Risk 02</span>
-        <h4 class="brk-sr">Trust assumptions everywhere</h4>
+    </div>
+    <div class="brkl-col">
+      <p class="brkl-fig" aria-hidden="true">FIG 0.3</p>
+      <div class="brkl-art">
+        <svg class="brkl-svg" viewBox="0 0 320 260" fill="none" stroke="#4a4a4a" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <!-- ONE OPTICAL BOX FOR ALL THREE. The raw ink boxes differ
+               (tall-and-narrow vault, long chain, wide-and-flat pool),
+               and at one rendered width that reads as three unrelated
+               drawings. This wrapper scales each about its own centre so
+               the three carry the same visual mass across the band.
+               Rescaling one figure means re-checking the other two. -->
+          <g transform="translate(166 134) scale(0.93) translate(-166 -134)">
+            <!-- the custodian plate the whole chain hangs from -->
+            <path d="M100 20 L134 32 L100 44 L66 32 Z"/>
+            <path d="M66 32 L66 40 L100 52 L100 44"/>
+            <path d="M134 32 L134 40 L100 52"/>
+            <!-- five links, alternating face-on and edge-on; the middle one
+                 is the assumption that has to hold -->
+            <ellipse cx="100" cy="66" rx="24" ry="12" transform="rotate(49 100 66)"/>
+            <ellipse cx="128" cy="94" rx="24" ry="5.5" transform="rotate(49 128 94)"/>
+            <ellipse cx="156" cy="124" rx="26" ry="13" transform="rotate(49 156 124)" stroke="var(--accent)" stroke-dasharray="45 18"/>
+            <ellipse cx="184" cy="154" rx="24" ry="5.5" transform="rotate(49 184 154)"/>
+            <ellipse cx="212" cy="182" rx="24" ry="12" transform="rotate(49 212 182)"/>
+            <!-- and the asset at the far end of it -->
+            <path d="M240 196 L266 211 L240 226 L214 211 Z"/>
+            <path d="M214 211 L214 233 L240 248 L240 226"/>
+            <path d="M266 211 L266 233 L240 248"/>
+          </g>
+        </svg>
+      </div>
+      <div class="brk-panel" id="trust-assumptions-everywhere">
+        <h4 class="brkl-t">Trust assumptions everywhere</h4>
         <p>Bridges introduce layers of custodial risk. Without a trustless settlement path, "Bitcoin DeFi" remains a marketing claim built on the same fragile infrastructure as traditional finance.</p>
       </div>
-      <div class="brk-panel" id="fragmented-liquidity" role="tabpanel" aria-labelledby="brkTab03" hidden>
-        <span class="idx">Risk 03</span>
-        <h4 class="brk-sr">Fragmented liquidity</h4>
+    </div>
+    <div class="brkl-col">
+      <p class="brkl-fig" aria-hidden="true">FIG 0.4</p>
+      <div class="brkl-art">
+        <svg class="brkl-svg" viewBox="0 0 320 260" fill="none" stroke="#4a4a4a" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <!-- ONE OPTICAL BOX FOR ALL THREE. The raw ink boxes differ
+               (tall-and-narrow vault, long chain, wide-and-flat pool),
+               and at one rendered width that reads as three unrelated
+               drawings. This wrapper scales each about its own centre so
+               the three carry the same visual mass across the band.
+               Rescaling one figure means re-checking the other two. -->
+          <g transform="translate(160 136) scale(0.83) translate(-160 -136)">
+            <!-- the one pool it should have been -->
+            <path d="M160 64 L286 136 L160 208 L34 136 Z" stroke-dasharray="4 7" opacity=".36"/>
+            <!-- four slabs of it, drifted apart -->
+            <path d="M126 72 L168 96 L126 120 L84 96 Z"/>
+            <path d="M84 96 L84 105 L126 129 L126 120"/>
+            <path d="M168 96 L168 105 L126 129"/>
+            <g stroke="var(--accent)">
+              <path d="M210 98 L248 120 L210 142 L172 120 Z"/>
+              <path d="M172 120 L172 129 L210 151 L210 142"/>
+              <path d="M248 120 L248 129 L210 151"/>
+            </g>
+            <path d="M122 149 L162 172 L122 195 L82 172 Z"/>
+            <path d="M82 172 L82 181 L122 204 L122 195"/>
+            <path d="M162 172 L162 181 L122 204"/>
+            <path d="M226 166 L260 186 L226 206 L192 186 Z"/>
+            <path d="M192 186 L192 195 L226 215 L226 206"/>
+            <path d="M260 186 L260 195 L226 215"/>
+          </g>
+        </svg>
+      </div>
+      <div class="brk-panel" id="fragmented-liquidity">
+        <h4 class="brkl-t">Fragmented liquidity</h4>
         <p>Bitcoin's capital is scattered across dozens of chains with no unified DeFi layer. This reduces efficiency, increases friction, and splits ecosystems that should compound on each other.</p>
       </div>
     </div>
@@ -2525,9 +2332,17 @@
 
       <!-- Track record timeline -->
       <div class="tl-section">
-        <p class="scale-label">Track record</p>
-        <h3 id="built-by-an-og-team-a" class="scale-title">Built by an OG team. <span>A decade of scaling breakthroughs.</span></h3>
-        <p class="scale-intro">This isn't a one-cycle experiment. Again and again, what StarkWare shipped became the standard the rest of the industry later adopted, from the first production of STARK technology to protocol-level privacy. Ten years of cryptographic firsts, now converging on Bitcoin.</p>
+        <!-- The statement, set the way privacy.html sets Satoshi's (its
+             `section.sq#sq-band`): a full-bleed band under a dotted rule with
+             an accent square at each end, a mono chip for the kicker, then one
+             huge tight statement with three inverted highlight blocks, each led
+             by a small square icon tile. Same copy as before, run together as
+             one sentence. The h3 keeps its id: scripts/build-search-index.js
+             anchors the page's search entry on it. -->
+        <section class="tr" id="tr-band" aria-labelledby="built-by-an-og-team-a">
+          <p class="tr-kicker">Track record</p>
+          <h3 id="built-by-an-og-team-a" class="tr-quote">Built by an OG team, this isn't a one-cycle experiment but <mark class="tr-hl"><i class="tr-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V3"/><path d="M5 4.5h11.5l-2.8 3.8 2.8 3.8H5"/></svg></i>a decade of scaling breakthroughs</mark>: again and again, what StarkWare shipped <mark class="tr-hl"><i class="tr-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.4 3.4h17.2v17.2H3.4z"/><path d="M7.6 12.2l3.1 3.3 5.9-6.9"/></svg></i>became the standard</mark> the rest of the industry later adopted, from the first production of STARK technology to protocol-level privacy, ten years of cryptographic firsts, <mark class="tr-hl"><i class="tr-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2.4l4 4.4M20 2.4l-4 4.4"/><path d="M8.4 9.2v12.2"/><path d="M8.4 9.2h5.4a3 3 0 0 1 0 6H8.4"/><path d="M8.4 15.2h5.8a3 3 0 0 1 0 6.2H8.4"/></svg></i>now converging on Bitcoin</mark>.</h3>
+        </section>
 
         <!-- The track record, set the way sui.io sets its stack (a twin of
              privacy.html's lineage, sharing js/lineage.js): a title over light
@@ -2557,84 +2372,84 @@
           <header class="lg-ch"><span class="lg-num">01</span><h4 class="lg-ct">STARK</h4></header>
           <div class="lg-cv"><div class="lg-cv-in"><svg class="lg-art" viewBox="0 0 320 220" aria-hidden="true"><g stroke="#4a4a4a" stroke-width="1.2" fill="none" stroke-linejoin="round" stroke-linecap="round"><path d="M160 26 254 60v56c0 40-38 64-94 78-56-14-94-38-94-78V60z"/><path d="M104 138h112M104 158h78"/></g><g stroke="#c53400" stroke-width="1.4" fill="none" stroke-linejoin="round" stroke-linecap="round" class="lg-acc"><path d="M160 52 169 78h27l-22 17 8 27-22-16-22 16 8-27-22-17h27z"/></g></svg><p class="lg-cd">StarkWare introduced STARK-based proving systems into production-grade blockchain infrastructure. STARKs are uniquely suited to combine privacy, scalability and post-quantum security in one system.</p></div></div>
           <footer class="lg-cf"><span class="lg-yr">2018</span></footer>
-        </article>
+      </article>
       </li>
       <li class="lg-stop lg-l">
         <article class="lg-card" id="ms-2019-production-grade-prover">
           <header class="lg-ch"><span class="lg-num">02</span><h4 class="lg-ct">Production-grade prover</h4></header>
           <div class="lg-cv"><div class="lg-cv-in"><svg class="lg-art" viewBox="0 0 320 220" aria-hidden="true"><g stroke="#4a4a4a" stroke-width="1.2" fill="none" stroke-linejoin="round" stroke-linecap="round"><rect x="30" y="52" width="152" height="112" rx="4"/><circle cx="86" cy="98" r="28"/><circle cx="86" cy="98" r="10"/><path d="M86 70v-10M86 126v10M56 98h-10M116 98h10M66 78l-7-7M106 118l7 7M106 78l7-7M66 118l-7 7"/><path d="M40 164v22h132v-22"/><path d="M182 112h44"/></g><g stroke="#c53400" stroke-width="1.4" fill="none" stroke-linejoin="round" stroke-linecap="round" class="lg-acc"><rect x="226" y="86" width="58" height="52" rx="3"/><path d="M240 112l11 11 19-24"/></g></svg><p class="lg-cd">Launched production-grade proving infrastructure, proving that validity proofs could move beyond research papers and become real infrastructure for applications.</p></div></div>
           <footer class="lg-cf"><span class="lg-yr">2019</span></footer>
-        </article>
+      </article>
       </li>
       <li class="lg-stop lg-r">
         <article class="lg-card" id="ms-2019-validium">
           <header class="lg-ch"><span class="lg-num">03</span><h4 class="lg-ct">Validium</h4></header>
           <div class="lg-cv"><div class="lg-cv-in"><svg class="lg-art" viewBox="0 0 320 220" aria-hidden="true"><g stroke="#4a4a4a" stroke-width="1.2" fill="none" stroke-linejoin="round" stroke-linecap="round"><rect x="36" y="34" width="248" height="30" rx="3"/><path d="M52 49h44M112 49h30M158 49h26"/><rect x="40" y="146" width="52" height="44" rx="3"/><rect x="102" y="146" width="52" height="44" rx="3"/><rect x="164" y="146" width="52" height="44" rx="3"/><rect x="226" y="146" width="52" height="44" rx="3"/><path d="M40 134h238"/></g><g stroke="#c53400" stroke-width="1.4" fill="none" stroke-linejoin="round" stroke-linecap="round" class="lg-acc"><path d="M160 130V96"/><path d="M160 66l16 16-16 16-16-16z"/></g></svg><p class="lg-cd">Brought Validium-based scaling to production: off-chain data availability secured by on-chain validity proofs, for higher throughput at lower cost.</p></div></div>
           <footer class="lg-cf"><span class="lg-yr">2019</span></footer>
-        </article>
+      </article>
       </li>
       <li class="lg-stop lg-l">
         <article class="lg-card" id="ms-2020-l2-rollup-starkex">
           <header class="lg-ch"><span class="lg-num">04</span><h4 class="lg-ct">L2 rollup StarkEx</h4></header>
           <div class="lg-cv"><div class="lg-cv-in"><svg class="lg-art" viewBox="0 0 320 220" aria-hidden="true"><g stroke="#4a4a4a" stroke-width="1.2" fill="none" stroke-linejoin="round" stroke-linecap="round"><rect x="34" y="26" width="30" height="24" rx="2"/><rect x="76" y="26" width="30" height="24" rx="2"/><rect x="118" y="26" width="30" height="24" rx="2"/><rect x="160" y="26" width="30" height="24" rx="2"/><rect x="202" y="26" width="30" height="24" rx="2"/><rect x="244" y="26" width="30" height="24" rx="2"/><path d="M49 58l78 56M275 58l-84 56M160 58v56"/><rect x="34" y="176" width="252" height="30" rx="3"/><path d="M52 191h46M116 191h40M174 191h58"/></g><g stroke="#c53400" stroke-width="1.4" fill="none" stroke-linejoin="round" stroke-linecap="round" class="lg-acc"><rect x="118" y="118" width="84" height="38" rx="3"/><path d="M160 156v20"/></g></svg><p class="lg-cd">StarkEx became the first L2 validity system used in production, powering high-throughput applications like dYdX, ImmutableX and Sorare.</p></div></div>
           <footer class="lg-cf"><span class="lg-yr">2020</span></footer>
-        </article>
+      </article>
       </li>
       <li class="lg-stop lg-r">
         <article class="lg-card" id="ms-2020-proof-aggregation-sharp">
           <header class="lg-ch"><span class="lg-num">05</span><h4 class="lg-ct">Proof aggregation SHARP</h4></header>
           <div class="lg-cv"><div class="lg-cv-in"><svg class="lg-art" viewBox="0 0 320 220" aria-hidden="true"><g stroke="#4a4a4a" stroke-width="1.2" fill="none" stroke-linejoin="round" stroke-linecap="round"><rect x="34" y="24" width="44" height="26" rx="2"/><rect x="110" y="24" width="44" height="26" rx="2"/><rect x="186" y="24" width="44" height="26" rx="2"/><rect x="262" y="24" width="44" height="26" rx="2"/><path d="M56 50v18h76V50M96 68v24M208 50v18h76V50M224 68v24"/><rect x="72" y="92" width="48" height="28" rx="2"/><rect x="200" y="92" width="48" height="28" rx="2"/><path d="M96 120v18h128v-18M160 138v22"/></g><g stroke="#c53400" stroke-width="1.4" fill="none" stroke-linejoin="round" stroke-linecap="round" class="lg-acc"><rect x="126" y="160" width="68" height="34" rx="3"/><path d="M142 177h16M168 177h12"/></g></svg><p class="lg-cd">SHARP, StarkWare’s proof aggregation system, let many applications and transactions share proving infrastructure efficiently.</p></div></div>
           <footer class="lg-cf"><span class="lg-yr">2020</span></footer>
-        </article>
+      </article>
       </li>
       <li class="lg-stop lg-l">
         <article class="lg-card" id="ms-2021-general-purpose-zk-rollup">
           <header class="lg-ch"><span class="lg-num">06</span><h4 class="lg-ct">General-purpose ZK rollup Starknet</h4></header>
           <div class="lg-cv"><div class="lg-cv-in"><svg class="lg-art" viewBox="0 0 320 220" aria-hidden="true"><g stroke="#4a4a4a" stroke-width="1.2" fill="none" stroke-linejoin="round" stroke-linecap="round"><rect x="26" y="40" width="140" height="120" rx="4"/><path d="M26 62h140"/><circle cx="42" cy="51" r="3"/><circle cx="56" cy="51" r="3"/><path d="M44 84h60M44 102h84M60 120h64M44 138h44"/><circle cx="232" cy="60" r="13"/><circle cx="286" cy="104" r="13"/><circle cx="232" cy="150" r="13"/><circle cx="196" cy="104" r="13"/><path d="M226 71l-20 22M243 69l34 26M243 141l34-26M226 139l-20-22"/></g><g stroke="#c53400" stroke-width="1.4" fill="none" stroke-linejoin="round" stroke-linecap="round" class="lg-acc"><circle cx="241" cy="104" r="19"/><path d="M235 104l5 6 10-13"/></g></svg><p class="lg-cd">Starknet launched as a permissionless, general-purpose ZK rollup, where developers can build any application using Cairo.</p></div></div>
           <footer class="lg-cf"><span class="lg-yr">2021</span></footer>
-        </article>
+      </article>
       </li>
       <li class="lg-stop lg-r">
         <article class="lg-card" id="ms-2022-recursive-proving-l3s">
           <header class="lg-ch"><span class="lg-num">07</span><h4 class="lg-ct">Recursive proving &amp; L3s</h4></header>
           <div class="lg-cv"><div class="lg-cv-in"><svg class="lg-art" viewBox="0 0 320 220" aria-hidden="true"><g stroke="#4a4a4a" stroke-width="1.2" fill="none" stroke-linejoin="round" stroke-linecap="round"><rect x="24" y="152" width="272" height="46" rx="3"/><rect x="52" y="94" width="216" height="46" rx="3"/><rect x="80" y="36" width="160" height="46" rx="3"/><path d="M40 175h30M68 117h26M96 59h22"/><path d="M160 82v12M160 140v12"/></g><g stroke="#c53400" stroke-width="1.4" fill="none" stroke-linejoin="round" stroke-linecap="round" class="lg-acc"><rect x="140" y="46" width="86" height="26" rx="2"/><rect x="152" y="52" width="62" height="14" rx="2"/><rect x="164" y="56" width="38" height="6" rx="1"/></g></svg><p class="lg-cd">Recursive proving and L3 architectures opened the door to proof aggregation, application-specific scaling and more modular execution models.</p></div></div>
           <footer class="lg-cf"><span class="lg-yr">2022</span></footer>
-        </article>
+      </article>
       </li>
       <li class="lg-stop lg-l">
         <article class="lg-card" id="ms-2024-circle-stark-stwo">
           <header class="lg-ch"><span class="lg-num">08</span><h4 class="lg-ct">Circle STARK &amp; Stwo</h4></header>
           <div class="lg-cv"><div class="lg-cv-in"><svg class="lg-art" viewBox="0 0 320 220" aria-hidden="true"><g stroke="#4a4a4a" stroke-width="1.2" fill="none" stroke-linejoin="round" stroke-linecap="round"><circle cx="160" cy="94" r="66"/><circle cx="160" cy="28" r="5"/><circle cx="217" cy="61" r="5"/><circle cx="217" cy="127" r="5"/><circle cx="160" cy="160" r="5"/><circle cx="103" cy="127" r="5"/><circle cx="103" cy="61" r="5"/><rect x="34" y="186" width="252" height="26" rx="3"/><path d="M50 199h22M84 199h34M130 199h18M160 199h30M202 199h26M240 199h30"/></g><g stroke="#c53400" stroke-width="1.4" fill="none" stroke-linejoin="round" stroke-linecap="round" class="lg-acc"><circle cx="160" cy="94" r="30"/><path d="M160 94l26-14"/></g></svg><p class="lg-cd">The next-generation prover Stwo uses a field much friendlier to Bitcoin Script constraints, making STARK verification on Bitcoin realistic. A key step toward settling on Bitcoin.</p></div></div>
           <footer class="lg-cf"><span class="lg-yr">2024</span></footer>
-        </article>
+      </article>
       </li>
       <li class="lg-stop lg-r">
         <article class="lg-card" id="ms-2024-l2-staking">
           <header class="lg-ch"><span class="lg-num">09</span><h4 class="lg-ct">L2 staking</h4></header>
           <div class="lg-cv"><div class="lg-cv-in"><svg class="lg-art" viewBox="0 0 320 220" aria-hidden="true"><g stroke="#4a4a4a" stroke-width="1.2" fill="none" stroke-linejoin="round" stroke-linecap="round"><ellipse cx="100" cy="176" rx="50" ry="16"/><ellipse cx="100" cy="146" rx="50" ry="16"/><ellipse cx="100" cy="116" rx="50" ry="16"/><path d="M50 116v60M150 116v60"/><rect x="196" y="118" width="94" height="66" rx="4"/><path d="M214 102a29 29 0 0 1 58 0v16"/><circle cx="243" cy="146" r="9"/><path d="M243 155v14"/></g><g stroke="#c53400" stroke-width="1.4" fill="none" stroke-linejoin="round" stroke-linecap="round" class="lg-acc"><ellipse cx="100" cy="82" rx="50" ry="16"/><path d="M100 40v26M88 52l12-12 12 12"/></g></svg><p class="lg-cd">Advanced L2 staking and decentralized infrastructure, moving Starknet toward deeper decentralization.</p></div></div>
           <footer class="lg-cf"><span class="lg-yr">2024</span></footer>
-        </article>
+      </article>
       </li>
       <li class="lg-stop lg-l">
         <article class="lg-card" id="ms-2025-dual-token-consensus-strk">
           <header class="lg-ch"><span class="lg-num">10</span><h4 class="lg-ct">Dual-token consensus (STRK &amp; BTC)</h4></header>
           <div class="lg-cv"><div class="lg-cv-in"><svg class="lg-art" viewBox="0 0 320 220" aria-hidden="true"><g stroke="#4a4a4a" stroke-width="1.2" fill="none" stroke-linejoin="round" stroke-linecap="round"><circle cx="106" cy="72" r="38"/><path d="M96 60h22M96 72h22M96 84h16"/><rect x="34" y="158" width="252" height="40" rx="3"/><path d="M118 158v-16M202 158v-16M160 178h44M56 178h72"/></g><g stroke="#c53400" stroke-width="1.4" fill="none" stroke-linejoin="round" stroke-linecap="round" class="lg-acc"><circle cx="214" cy="72" r="38"/><path d="M200 58h20a8 8 0 0 1 0 15h-20M200 73h24a8 8 0 0 1 0 15h-24M207 50v42M217 50v42"/><path d="M144 72h32"/></g></svg><p class="lg-cd">Introduced a dual-token consensus mechanism where STRK and BTC secure the network together, bringing Bitcoin into Starknet’s security model.</p></div></div>
           <footer class="lg-cf"><span class="lg-yr">2025</span></footer>
-        </article>
+      </article>
       </li>
       <li class="lg-stop lg-r">
         <article class="lg-card" id="ms-2025-decentralized-sequencer-architecture">
           <header class="lg-ch"><span class="lg-num">11</span><h4 class="lg-ct">Decentralized sequencer architecture</h4></header>
           <div class="lg-cv"><div class="lg-cv-in"><svg class="lg-art" viewBox="0 0 320 220" aria-hidden="true"><g stroke="#4a4a4a" stroke-width="1.2" fill="none" stroke-linejoin="round" stroke-linecap="round"><circle cx="160" cy="86" r="58"/><rect x="200" y="44" width="30" height="26" rx="2"/><rect x="200" y="104" width="30" height="26" rx="2"/><rect x="145" y="136" width="30" height="26" rx="2"/><rect x="90" y="104" width="30" height="26" rx="2"/><rect x="90" y="44" width="30" height="26" rx="2"/><rect x="34" y="184" width="40" height="26" rx="2"/><rect x="82" y="184" width="40" height="26" rx="2"/><rect x="130" y="184" width="40" height="26" rx="2"/><rect x="178" y="184" width="40" height="26" rx="2"/><path d="M74 197h8M122 197h8M170 197h8M218 197h28"/></g><g stroke="#c53400" stroke-width="1.4" fill="none" stroke-linejoin="round" stroke-linecap="round" class="lg-acc"><rect x="144" y="8" width="32" height="28" rx="2"/><path d="M180 24a48 48 0 0 1 30 26"/><path d="M210 50l-11-2M210 50l-2-11"/></g></svg><p class="lg-cd">Decentralized sequencer architecture and the transition toward full decentralization of the network.</p></div></div>
           <footer class="lg-cf"><span class="lg-yr">2025</span></footer>
-        </article>
+      </article>
       </li>
       <li class="lg-stop lg-l">
         <article class="lg-card" id="ms-2026-strk20">
           <header class="lg-ch"><span class="lg-num">12</span><h4 class="lg-ct">STRK20</h4></header>
           <div class="lg-cv"><div class="lg-cv-in"><svg class="lg-art" viewBox="0 0 320 220" aria-hidden="true"><g stroke="#4a4a4a" stroke-width="1.2" fill="none" stroke-linejoin="round" stroke-linecap="round"><rect x="34" y="70" width="164" height="112" rx="4"/><path d="M34 100h164"/><path d="M54 126h60M54 146h96M54 166h44"/><circle cx="54" cy="85" r="6"/><path d="M72 85h44"/></g><g stroke="#c53400" stroke-width="1.4" fill="none" stroke-linejoin="round" stroke-linecap="round" class="lg-acc"><path d="M232 40l54 20v40c0 28-24 44-54 54-30-10-54-26-54-54V60z"/><circle cx="232" cy="104" r="11"/><path d="M232 115v18"/></g></svg><p class="lg-cd">Protocol-level privacy for ERC-20 assets, with strkBTC as the first major expression of the privacy roadmap. Bitcoin, made private and programmable.</p></div></div>
           <footer class="lg-cf"><span class="lg-yr">2026</span></footer>
-        </article>
+      </article>
       </li>
             </ol>
           </div>
@@ -4063,7 +3878,8 @@
      Cartridge + 1RPC fallbacks), BTC staked via the Endur dashboard API,
      encrypted strkBTC via the STRK20 backend (proxies Starkscan),
      BTC/USD + market cap via CoinGecko simple-price (the market cap feeds
-     the idle-capital slots in the hero and the <1% band). No keys anywhere. -->
+     the idle-capital slot in the <1% band; the hero carried a second one
+     until its rebuild). No keys anywhere. -->
 <script>
 (function(){
   var row = document.getElementById('btcMetrics');
@@ -4949,447 +4765,6 @@
   if ('IntersectionObserver' in window) {
     new IntersectionObserver(function(es){ band.classList.toggle('run', es[0].isIntersecting); }, { threshold: 0 }).observe(band);
   } else { band.classList.add('run'); }
-  var loop = document.getElementById('bfLoop');
-  if (loop) {
-    if ('IntersectionObserver' in window) {
-      new IntersectionObserver(function(es){ loop.classList.toggle('run', es[0].isIntersecting); }, { threshold: 0 }).observe(loop);
-    } else { loop.classList.add('run'); }
-  }
-})();
-</script>
-<script>
-/* section 01's radial gap device: selection, leaders, and the motion engine.
-   TWO KINDS OF STATE, kept separate on purpose. Selection is user-driven and
-   carried by CSS classes and transitions, exactly as before; the breaks, the
-   nodes, the leaders and the cards still never move. The MOTION is the engine
-   at the bottom of this closure: one rAF loop driving a comet per orbit (head
-   + fading 26-degree tail), the near/far z-flip across the core, the mesh
-   brightness wave and the dust field -- the first rAF loop on this page, and
-   it earns it: every one of those is a per-element value that follows the
-   object's current angle, which the old whole-layer CSS spin could not
-   express and which the owner twice read as static. The loop is gated by the
-   IntersectionObserver (started and STOPPED, not just a class), never starts
-   under prefers-reduced-motion (one static frame is drawn instead, trails at
-   fixed positions), and stops outright at <=860 where the plane is
-   display:none. Speeds and measured contrasts are documented next to the ORB
-   table below and in the stylesheet's calibration comments.
-   The four panels are the SAME .problem-item elements the old grid used, ids
-   and prose intact, so the search index still finds four cards here (84
-   btcfi entries; the engine builds only aria-hidden geometry, no ids). */
-(function(){
-  var root = document.getElementById('bgap');
-  if (!root || !window.thRove) return;
-  var cards  = [].slice.call(root.querySelectorAll('.bgap-card'));
-  var svgs   = [].slice.call(root.querySelectorAll('.bgap-sp'));
-  if (!cards.length) return;
-  var cur = 0;
-
-  function select(i){
-    cur = i;
-    cards.forEach(function(b, k){ b.classList.toggle('is-on', k === i); });
-    markLeads(i);
-    svgs.forEach(function(g, k){ g.classList.toggle('is-on', k === i); });
-    rove.mirror(i);
-    /* the selected comet lifts with its orbit (white-hot core dot, brighter
-       head and tail). While the loop runs the next frame picks `cur` up on
-       its own; when it is not running (reduced motion, offscreen) this
-       redraws the one static frame so selection still lands. */
-    engineRefresh();
-  }
-
-  /* ---- leaders, drawn to the PROJECTED break points ----
-     The orbit plane is CSS-3D tilted, so a break no longer sits where its SVG
-     coordinate says. Rather than reimplement the browser's projection, a
-     zero-size .bgap-anchor rides each break inside the tilted plane and
-     getBoundingClientRect() reports where it actually landed. The browser is
-     the single source of truth for the projection; there is no second copy of
-     the maths to drift. Recomputed on resize and after fonts settle, never per
-     frame: the tilt is static, only the mesh turns. */
-  var leads = root.querySelector('.bgap-leads');
-  var anchors = [].slice.call(root.querySelectorAll('.bgap-anchor'));
-  var stage = root.querySelector('.bgap-stage');
-  var SVGNS = 'http://www.w3.org/2000/svg';
-
-  /* Where each break actually sits, in the SVG's own user units. The SVGs use
-     preserveAspectRatio xMidYMid meet, so the drawn area is letterboxed inside
-     the plane box; the anchors are placed from that letterbox rather than from
-     a percentage of the stage, which leaves the stage aspect free to change per
-     breakpoint without the breaks sliding off their arcs. The 3D projection is
-     still entirely the browser's: these are placed flat inside the tilted
-     plane and then measured with getBoundingClientRect. */
-  var VB_W = 1000, VB_H = 540;
-  var BREAK_XY = {"0": [412.3, 182.3], "1": [604.7, 165.3], "2": [621.6, 391.6], "3": [361.4, 408.6]};
-  function placeAnchors(){
-    var pl = root.querySelector('.bgap-plane');
-    if (!pl) return;
-    var w = pl.clientWidth, h = pl.clientHeight;
-    if (!w || !h) return;
-    var sc = Math.min(w / VB_W, h / VB_H);
-    var ox = (w - VB_W * sc) / 2, oy = (h - VB_H * sc) / 2;
-    anchors.forEach(function(a){
-      var xy = BREAK_XY[a.dataset.gap];
-      if (!xy) return;
-      a.style.left = (ox + xy[0] * sc).toFixed(1) + 'px';
-      a.style.top  = (oy + xy[1] * sc).toFixed(1) + 'px';
-    });
-  }
-
-  function drawLeads(){
-    placeAnchors();
-    if (!leads || !stage || getComputedStyle(leads).display === 'none') return;
-    var sb = stage.getBoundingClientRect();
-    if (!sb.width) return;
-    while (leads.firstChild) leads.removeChild(leads.firstChild);
-    anchors.forEach(function(a){
-      var k = +a.dataset.gap, card = cards[k];
-      if (!card) return;
-      var ab = a.getBoundingClientRect(), cb = card.getBoundingClientRect();
-      var bx = ab.left - sb.left, by = ab.top - sb.top;
-      var left = (cb.left + cb.right) / 2 < sb.width / 2 + sb.left;
-      /* the card's inner edge is the one facing the core, which is where its
-         accent bar sits, so the leader lands on the bar */
-      var cx = (left ? cb.right : cb.left) - sb.left;
-      var cy = (cb.top + cb.height / 2) - sb.top;
-      var dx = bx - sb.width / 2, dy = by - sb.height / 2;
-      var m = Math.hypot(dx, dy) || 1;
-      var g = document.createElementNS(SVGNS, 'g');
-      g.setAttribute('class', 'bgap-ld' + (k === cur ? ' is-on' : ''));
-      g.dataset.gap = k;
-      var p = document.createElementNS(SVGNS, 'path');
-      p.setAttribute('class', 'bgap-lead');
-      /* leaves the break along its own radius, arrives at the card horizontally */
-      p.setAttribute('d', 'M' + (bx + dx / m * 6).toFixed(1) + ',' + (by + dy / m * 6).toFixed(1) +
-        ' C' + (bx + dx / m * 46).toFixed(1) + ',' + (by + dy / m * 46).toFixed(1) +
-        ' ' + (cx + (left ? 52 : -52)).toFixed(1) + ',' + cy.toFixed(1) +
-        ' ' + cx.toFixed(1) + ',' + cy.toFixed(1));
-      var c = document.createElementNS(SVGNS, 'circle');
-      c.setAttribute('class', 'bgap-node');
-      c.setAttribute('cx', bx.toFixed(1)); c.setAttribute('cy', by.toFixed(1)); c.setAttribute('r', '4.4');
-      g.appendChild(p); g.appendChild(c); leads.appendChild(g);
-    });
-  }
-  function markLeads(i){
-    [].forEach.call(leads ? leads.children : [], function(g){
-      g.classList.toggle('is-on', +g.dataset.gap === i);
-    });
-  }
-
-  /* ==== THE MOTION ENGINE ==== comets, z-depth, mesh wave, dust.
-     GEOMETRY: everything is a rigid object rotating about the SVG centre
-     (500,270), so a frame writes ONE transform per object (4 comets, 34 dust,
-     1 mesh group) plus a handful of scalar opacities/radii -- no per-frame
-     path rewrites. The depth model is the plane's own: a point at angle a
-     (SVG y-down, 0 = +x, increasing clockwise) has depth d = (1+sin a)/2,
-     0 at the far top, 1 at the near bottom.
-     THE TRAIL is 26 degrees of arc in 10 segments, width 3.1px tapering to
-     1.0px, opacity decaying (1-k/10)^1.5 from the head back. It follows the
-     ellipse because it IS the ellipse: segments are arcs at the orbit's own
-     radius, rotated with the head. WHERE A TRAIL CROSSES THE 50-degree OPEN
-     GAP it fades to 0.25x across the gap (gapDip below) so it never bridges
-     the one fact each orbit exists to show. The head itself crosses at full
-     value, as the old glints always did: the head is an object passing the
-     gap, the trail is light that would otherwise redraw the missing arc.
-     THE Z-FLIP: while a comet's head is on the near half (sin > 0) it lives
-     in the .bgap-plane-near copy (z 2, in front of the core's 1); on the far
-     half it lives back here behind the core. +-0.06 hysteresis so it cannot
-     flap at the boundary. The flip happens at the plane's left/right
-     extremes, 350px+ from the core, where the 26-degree tail straddling the
-     boundary for a moment has nothing to mis-occlude.
-     DUST is 34 particles, deterministic (golden-ratio strides, NO
-     Math.random: a reload must not reshuffle the sky), radii 112-218 so the
-     nearest pass clears the projected core disc (~r62) and never pops behind
-     it, periods 70-140s so it drifts under the glints, one in three in the
-     accent, the rest ink. Updated every SECOND frame: at these speeds 30Hz is
-     indistinguishable and it halves the dust's scripting cost.
-     VALUES: depth scales the head radius 2.5->4.4 units (~4.7->8.3px
-     diameter at 1440, where the letterbox is height-bound at sc~0.95; x1.25
-     selected) and its opacity 0.62->0.95; the mesh wave runs stroke-opacity
-     MESH_LO->MESH_HI through the same depth term. All alphas are written as
-     inline style over strokes/fills declared at 1.0 -- ABSOLUTE values, so
-     the depth mask stays the only multiplier (measured results live in the
-     stylesheet's effective-contrast comment; re-measure before retuning). */
-  var DEGR = Math.PI / 180;
-  /* periods: see the SPEED CALIBRATION comment in the stylesheet. 0.62x a
-     second hand still read as static; these run 1.0x-1.88x, differentiated. */
-  var ORB = [
-    { r: 124, T: 32, a0: 150 },
-    { r: 148, T: 40, a0: 20  },
-    { r: 172, T: 50, a0: 265 },
-    { r: 196, T: 60, a0: 80  }
-  ];
-  /* centre of each orbit's 50-degree open gap: breakAngle + 145 (the solid
-     arc runs 190 degrees, the dashed remainder 120, the void is the rest). */
-  var GAPC = [10, 100, 190, 280];
-  var TRAIL_DEG = 26, SEGS = 10, SEGA = TRAIL_DEG / SEGS;
-  /* MESH_LO 0.18, not 0.16: at 0.16 the far trough measured 1.13:1 through
-     the depth mask, under the 1.15:1 floor. Measured 2026-08: 0.18 -> 1.16:1
-     trough, 0.34 -> 1.64:1 crest. */
-  var MESH_T = 130, MESH_LO = 0.18, MESH_HI = 0.34;
-  var DUST_N = 34;
-
-  var farSvg = root.querySelector('.bgap-anim-far');
-  var nearSvg = root.querySelector('.bgap-anim-near');
-  var meshG = root.querySelector('.bgap-meshg');
-  var meshLines = [].slice.call(root.querySelectorAll('.bgap-mesh line'));
-  var plane = root.querySelector('.bgap-plane');
-  var mqReduce = window.matchMedia ? matchMedia('(prefers-reduced-motion: reduce)') : null;
-  var mqNarrow = window.matchMedia ? matchMedia('(max-width: 980px)') : null;
-  var comets = null, dust = null, dustG = null;
-  var rafId = 0, running = false, visible = false, frameN = 0;
-
-  function upt(r, a){ return (500 + r * Math.cos(a * DEGR)).toFixed(2) + ',' + (270 + r * Math.sin(a * DEGR)).toFixed(2); }
-
-  function build(){
-    if (comets || !farSvg || !nearSvg) return;
-    var farC = farSvg.querySelector('.bgap-comets');
-    var nearC = nearSvg.querySelector('.bgap-comets');
-    dustG = farSvg.querySelector('.bgap-dust');
-    comets = ORB.map(function(o){
-      var g = document.createElementNS(SVGNS, 'g'), segs = [];
-      for (var k = SEGS - 1; k >= 0; k--){
-        var p = document.createElementNS(SVGNS, 'path');
-        p.setAttribute('class', 'bgap-tseg');
-        p.setAttribute('d', 'M' + upt(o.r, -(k + 1) * SEGA) + ' A' + o.r + ',' + o.r + ' 0 0,1 ' + upt(o.r, -k * SEGA));
-        p.style.strokeWidth = (3.1 - k * 0.23).toFixed(2) + 'px';
-        p.style.opacity = '0';
-        segs[k] = p;
-        g.appendChild(p);
-      }
-      function dot(cls, r){
-        var c = document.createElementNS(SVGNS, 'circle');
-        c.setAttribute('class', cls);
-        c.setAttribute('cx', 500 + o.r); c.setAttribute('cy', 270); c.setAttribute('r', r);
-        g.appendChild(c);
-        return c;
-      }
-      var halo = dot('bgap-ghalo', 14), head = dot('bgap-ghead', 3), core = dot('bgap-gcore', 1.4);
-      core.style.opacity = '0';
-      farC.appendChild(g);
-      return { g: g, o: o, segs: segs, halo: halo, head: head, core: core, near: false, farC: farC, nearC: nearC };
-    });
-    dust = [];
-    for (var i = 0; i < DUST_N; i++){
-      var f1 = (i * 0.6180339887) % 1, f2 = (i * 0.7548776662) % 1, f3 = (i * 0.3247179572) % 1;
-      var d = { r: 112 + 106 * f1, T: 70 + 70 * f2, a0: (i * 137.508) % 360, acc: i % 3 === 0 };
-      var c = document.createElementNS(SVGNS, 'circle');
-      c.setAttribute('cx', (500 + d.r).toFixed(1)); c.setAttribute('cy', 270);
-      c.setAttribute('r', (0.9 + 0.9 * f3).toFixed(2));
-      c.style.fill = d.acc ? 'var(--accent, #c53400)' : '#fafafa';
-      c.style.opacity = '0';
-      d.el = c;
-      dustG.appendChild(c);
-      dust.push(d);
-    }
-  }
-
-  function gapDip(a, gc){
-    var dd = Math.abs(((a - gc) % 360 + 540) % 360 - 180);
-    return dd >= 27 ? 1 : 0.25 + 0.75 * (dd / 27);
-  }
-
-  function renderFrame(t){
-    var narrow = mqNarrow && mqNarrow.matches;
-    if (!narrow && meshG){
-      var M = (t * 360 / MESH_T) % 360;
-      meshG.setAttribute('transform', 'rotate(' + M.toFixed(2) + ' 500 270)');
-      for (var j = 0; j < meshLines.length; j++){
-        var mo = MESH_LO + (MESH_HI - MESH_LO) * (1 + Math.sin((j * 15 + M) * DEGR)) / 2;
-        var ml = meshLines[j];
-        if (Math.abs((ml.__o || 0) - mo) > 0.012){ ml.__o = mo; ml.style.strokeOpacity = mo.toFixed(3); }
-      }
-    }
-    for (var i = 0; i < comets.length; i++){
-      var c = comets[i], th = (c.o.a0 + 360 * t / c.o.T) % 360;
-      c.g.setAttribute('transform', 'rotate(' + th.toFixed(2) + ' 500 270)');
-      var s = Math.sin(th * DEGR), dpt = (1 + s) / 2, sel = i === cur;
-      if (!c.near && s > 0.06){ c.nearC.appendChild(c.g); c.near = true; }
-      else if (c.near && s < -0.06){ c.farC.appendChild(c.g); c.near = false; }
-      var hr = (2.5 + 1.9 * dpt) * (sel ? 1.25 : 1);
-      c.head.setAttribute('r', hr.toFixed(2));
-      c.head.style.opacity = Math.min(1, (0.62 + 0.33 * dpt) * (sel ? 1.3 : 1)).toFixed(3);
-      c.halo.setAttribute('r', (hr * 4.2).toFixed(1));
-      c.halo.style.opacity = Math.min(1, (0.30 + 0.45 * dpt) * (sel ? 1.35 : 1)).toFixed(3);
-      c.core.setAttribute('r', (hr * 0.42).toFixed(2));
-      c.core.style.opacity = sel ? '0.95' : '0';
-      var tb = (sel ? 1.45 : 1) * (0.55 + 0.45 * dpt);
-      for (var k = 0; k < SEGS; k++){
-        var so = Math.min(1, Math.pow(1 - (k + 0.5) / SEGS, 1.5) * 0.9 * tb * gapDip(th - (k + 0.5) * SEGA, GAPC[i]));
-        var sp = c.segs[k];
-        if (Math.abs((sp.__o || 0) - so) > 0.02){ sp.__o = so; sp.style.opacity = so.toFixed(3); }
-      }
-    }
-    if (!narrow && ((frameN & 1) === 0 || !running)){
-      for (var q = 0; q < dust.length; q++){
-        var dp = dust[q], ta = (dp.a0 + 360 * t / dp.T) % 360;
-        dp.el.setAttribute('transform', 'rotate(' + ta.toFixed(2) + ' 500 270)');
-        var od = (dp.acc ? 0.30 : 0.20) * (0.35 + 0.65 * (1 + Math.sin(ta * DEGR)) / 2);
-        if (Math.abs((dp.__o || 0) - od) > 0.02){ dp.__o = od; dp.el.style.opacity = od.toFixed(3); }
-      }
-    }
-    frameN++;
-  }
-
-  function tick(now){
-    var pf = window.__bgapProf, a = pf ? performance.now() : 0;
-    renderFrame(now / 1000);
-    if (pf){ pf.ms += performance.now() - a; pf.n++; }
-    rafId = requestAnimationFrame(tick);
-  }
-  function start(){ if (running) return; running = true; rafId = requestAnimationFrame(tick); }
-  function stop(){ if (!running) return; running = false; cancelAnimationFrame(rafId); }
-
-  /* 861-980: measured, not guessed (numbers in the session report): glints
-     and their trails survive because they are the life the owner asked for
-     and their cost is a fraction of the budget; dust and the mesh rotation
-     are dropped because they are the widest per-frame loops for the least
-     salience at that size, and the blooms (halo included) are already gone
-     at <=980. The mesh keeps its depth-graded opacities as a STATIC frame so
-     the plane keeps its depth without the per-frame wave. */
-  function staticMesh(){
-    if (!meshG) return;
-    meshG.setAttribute('transform', 'rotate(0 500 270)');
-    for (var j = 0; j < meshLines.length; j++){
-      var mo = MESH_LO + (MESH_HI - MESH_LO) * (1 + Math.sin(j * 15 * DEGR)) / 2;
-      meshLines[j].__o = mo;
-      meshLines[j].style.strokeOpacity = mo.toFixed(3);
-    }
-  }
-
-  function engineUpdate(){
-    if (!farSvg || !nearSvg) return;
-    if (!plane || !plane.clientWidth){ stop(); return; } /* <=860: plane is display:none, the list owns the story */
-    build();
-    var narrow = mqNarrow && mqNarrow.matches;
-    if (dustG) dustG.style.display = narrow ? 'none' : '';
-    if (narrow) staticMesh();
-    if (mqReduce && mqReduce.matches){ stop(); renderFrame(0); return; } /* one still frame, trails at fixed positions */
-    if (visible) start(); else stop();
-    if (!running) renderFrame(performance.now() / 1000);
-  }
-
-  function engineRefresh(){
-    if (comets && !running) renderFrame(mqReduce && mqReduce.matches ? 0 : performance.now() / 1000);
-  }
-
-  if (mqNarrow && mqNarrow.addEventListener) mqNarrow.addEventListener('change', engineUpdate);
-  if (mqReduce && mqReduce.addEventListener) mqReduce.addEventListener('change', engineUpdate);
-
-  var rove = window.thRove({
-    root: root,
-    buttons: cards,
-    shown: function(){ return cur; },
-    pick: function(i){ select(i); }
-  });
-
-  /* Hash arrival, same contract as quantum's gated beats. An inbound link to
-     #not-private has to OPEN gap 02, not just scroll to a collapsed panel, and
-     the browser's native anchor jump does none of that. Runs on load and on
-     hashchange. The search palette's same-page landing does not fire
-     hashchange (it uses replaceState), which is why search.js also carries a
-     .bgap-card adapter that selects the matching card. */
-  function surface(){
-    var id = (location.hash || '').slice(1);
-    if (!id) return;
-    if (id.indexOf('s:') === 0) id = decodeURIComponent(id.split(':')[1] || '');
-    var el = document.getElementById(id);
-    if (!el) return;
-    var card = el.closest('.bgap-card');
-    if (card) select(+card.dataset.gap);
-  }
-  window.addEventListener('hashchange', surface);
-
-  select(0);
-  surface();
-  drawLeads(); markLeads(cur);
-  engineUpdate(); /* builds the comets and dust and paints the first frame
-                     before the observer fires, so scrolling into the section
-                     never shows an empty plane */
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ drawLeads(); markLeads(cur); });
-  var rt; window.addEventListener('resize', function(){ clearTimeout(rt); rt = setTimeout(function(){ drawLeads(); markLeads(cur); engineUpdate(); }, 120); });
-
-  /* motion gate, same pattern as this page's marquee and hero loop, but this
-     one carries a rAF: the observer starts and STOPS the loop itself via
-     engineUpdate (cancelAnimationFrame, not just a class), and .run gates the
-     halo's CSS pulse the same way the sibling bands gate theirs. Off screen,
-     nothing runs at all. */
-  if ('IntersectionObserver' in window) {
-    new IntersectionObserver(function(es){
-      visible = es[0].isIntersecting;
-      root.classList.toggle('run', visible);
-      engineUpdate();
-    }, { threshold: 0 }).observe(root);
-  } else { visible = true; root.classList.add('run'); engineUpdate(); }
-})();
-</script>
-<script>
-/* the risk podiums (.brk). Selection machinery is privacy's pmv, minus the
-   sticky rail (three one-paragraph panels never scroll the selector out of
-   reach): thRove for the roving tabs, and the stage measures the incoming
-   panel off-layout and animates its own height so the <1% band below never
-   jumps. Reduced motion: instant swap, no height animation.
-   HASH ARRIVAL: the three panel ids are the old risk cards' load-bearing
-   anchors (the search index never renames an id), so an inbound link to
-   #trust-assumptions-everywhere must SELECT risk 02, not just scroll to a
-   hidden panel. Same contract as the gap device above; the palette's
-   same-page landing goes through search.js's .brk-panel adapter instead. */
-(function(){
-  var root = document.getElementById('brk');
-  if (!root || !window.thRove) return;
-  var stage = document.getElementById('brkStage');
-  var peds = [].slice.call(root.querySelectorAll('.brk-ped'));
-  var panels = [].slice.call(root.querySelectorAll('.brk-panel'));
-  if (!peds.length || peds.length !== panels.length) return;
-  var reduce = window.matchMedia ? matchMedia('(prefers-reduced-motion: reduce)') : { matches: false };
-  var settling = null;
-
-  function shown(){
-    for (var i = 0; i < panels.length; i++) if (!panels[i].hidden) return i;
-    return 0;
-  }
-  function measure(el){
-    /* off-layout, so the outgoing panel's height is never involved */
-    var prevH = stage.style.height;
-    stage.style.height = 'auto';
-    var wasHidden = el.hidden;
-    el.hidden = false;
-    var h = el.getBoundingClientRect().height;
-    el.hidden = wasHidden;
-    stage.style.height = prevH;
-    return h;
-  }
-  function select(i){
-    if (i === shown()) { rove.mirror(i); return; }
-    var next = panels[i];
-    rove.mirror(i);
-    if (reduce.matches) {
-      panels.forEach(function(p, k){ p.hidden = k !== i; });
-      stage.style.height = '';
-      return;
-    }
-    var from = stage.getBoundingClientRect().height;
-    var to = measure(next);
-    panels.forEach(function(p, k){ p.hidden = k !== i; });
-    stage.style.height = from + 'px';
-    /* force the start frame before the target, or both writes collapse
-       into one and there is nothing to animate */
-    void stage.offsetHeight;
-    stage.style.height = to + 'px';
-    if (settling) clearTimeout(settling);
-    settling = setTimeout(function(){ stage.style.height = ''; settling = null; }, 460);
-  }
-  var rove = window.thRove({ root: root, buttons: peds, shown: shown, pick: select });
-
-  function surface(){
-    var id = (location.hash || '').slice(1);
-    if (!id) return;
-    if (id.indexOf('s:') === 0) id = decodeURIComponent(id.split(':')[1] || '');
-    var el = document.getElementById(id);
-    if (!el) return;
-    var panel = el.closest('.brk-panel');
-    if (panel) select(panels.indexOf(panel));
-  }
-  window.addEventListener('hashchange', surface);
-  surface();
 })();
 </script>
 <script>
@@ -5556,6 +4931,7 @@
 })();
 </script>
 <script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.185.0/build/three.module.js"}}</script>
+<script type="module" src="js/btcfi-hero-mark.js"></script>
 <script type="module" src="js/eco-backdrop.js"></script>
 <script type="module" src="js/btcfi-globe.js"></script>
 </body>

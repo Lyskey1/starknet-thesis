@@ -1035,49 +1035,23 @@
 .th-pm-card--wide p{grid-area:body;max-width:760px;margin-top:12px;}
 @media(max-width:880px){.th-pm-card--wide{display:flex;flex-direction:column;}.th-pm-card--wide p{max-width:none;}}
 
-/* ===== 02: four beats (qi-), one rendered at a time, every row
-   reachable in any order. The index is the map and all four rows are
-   always clickable.
-   THE GATE IS GONE. It shipped 2026-08-19 and was removed 2026-08-22;
-   see the engine comment further down for what it was and why removing
-   it cost no height. This block described it in the present tense for
-   several hours after it stopped existing, which is why the engine
-   comment now carries the history and this one carries only what the
-   CSS actually does.
+/* SECTION 02, THE THREAT: four beats, one open at a time.
+   The device is an accordion panel (.rxa-, further down this block): a
+   centred title bar, a left column of cards, and one preview stage on the
+   right that swaps to whichever card is open.
+   THE GATE IS GONE. It shipped 2026-08-19 and was removed 2026-08-22; see
+   the engine comment beside the markup for what it was and why removing it
+   cost no height. THE LEFT RAIL (.qi-row/.qi-index/.qi-glyph/.qi-lab) is
+   gone too, replaced by the accordion; only .qi-beat survives from it,
+   because js/search.js reaches into .qi-beat[data-beat] and window.__qiOpen
+   to surface a search hit that lives inside a closed beat.
    The four beats are still an argument in order: beat 01 introduces the
-   maze's exit and beat 02's turkey is what "unlike the turkey" leans
-   on, but that order is now the reader's to follow or skip.
-   Below 981px the index disappears and all four beats stack as a linear
-   read. NEXT goes with the index there (.qi-adv is display:none), so it
-   exists on desktop only; an earlier version of this note claimed it
-   degraded to a scroll-to-next convenience on narrow, which the CSS
-   two hundred lines below had never agreed with. */
-.qi{display:grid;grid-template-columns:212px minmax(0,1fr);gap:0 40px;align-items:start;margin-top:34px;}
-.qi-index{position:sticky;top:var(--qi-stick-top,100px);}
-.qi-index ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;}
-.qi-row{display:flex;align-items:center;gap:12px;padding:9px 10px;border-radius:10px;width:100%;
-  background:none;border:1px solid transparent;text-align:left;cursor:pointer;
-  /* inactive #9a9a9a measures 5.0:1; the glyphs take the same
-     currentColor, with the stroke bumped for optical parity (a 1.5px
-     hairline reads darker than 10px mono at the same color). It was
-     "unlocked-inactive" while a locked state existed to contrast with;
-     there is only one inactive state now. */
-  color:#9a9a9a;transition:color .25s ease,background .25s ease;}
-.qi-row:hover{color:color-mix(in srgb,var(--th-q) 70%,#9a9a9a);}
-.qi-row[aria-current="true"]{color:var(--th-q);background:color-mix(in srgb,var(--th-q) 7%,transparent);
-  border-color:color-mix(in srgb,var(--th-q) 22%,transparent);}
-.qi-row:focus-visible{outline:2px solid var(--th-q);outline-offset:2px;}
-.qi-glyph{width:26px;height:26px;flex:none;}
-.qi-glyph svg{width:100%;height:100%;display:block;stroke-width:1.9px;}
-.qi-lab{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.14em;line-height:1.5;text-transform:uppercase;}
-.qi-lab b{font-weight:600;margin-right:6px;}
-/* one beat in flow at a time; each beat takes its own height and
-   thMorph animates between them (history: the qw comment above) */
-.qi-beats{overflow-anchor:none;}
-.qi-beat{display:none;}
-.qi-beat.is-open{display:block;}
-.qi-beat > :first-child{margin-top:0;}
-/* the advance row at each beat's foot */
+   maze's exit and beat 02's turkey is what "unlike the turkey" leans on,
+   but that order is the reader's to follow or skip. */
+/* the advance row at each beat's foot, ported forward from the old rail.
+   NEXT is not rail machinery: it opens the following beat, scrolls to it
+   and stamps the hash, which is the read-in-order path. The accordion now
+   runs at every width, so NEXT is no longer hidden below 981px. */
 .qi-adv{margin-top:44px;padding-top:22px;border-top:1px solid var(--th-hair);}
 .qi-next{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;
   color:var(--th-q);background:color-mix(in srgb,var(--th-q) 8%,transparent);
@@ -1086,19 +1060,10 @@
 .qi-next:hover{background:color-mix(in srgb,var(--th-q) 16%,transparent);
   border-color:color-mix(in srgb,var(--th-q) 55%,transparent);}
 .qi-next:focus-visible{outline:2px solid var(--th-q);outline-offset:3px;}
-/* polite announcer, visually hidden */
+/* polite announcer, visually hidden. Shared with #vtSay in section 04. */
 .qi-sr{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
-@media(max-width:980px){
-  .qi{display:block;}
-  .qi-index{display:none;}
-  .qi-beat{display:block;}
-  .qi-beat + .qi-beat{margin-top:64px;}
-  /* NEXT goes with the index: with every beat visible, a control that
-     only scrolls is noise (flagged in phase 0, confirmed) */
-  .qi-adv{display:none;}
-}
 @media (prefers-reduced-motion: reduce){
-  .qi-row,.qi-next{transition:none;}
+  .qi-next{transition:none;}
 }
 
 
@@ -1545,6 +1510,127 @@ a.qg-card:focus-visible,.qg-linkcard:has(.th-eo-main:focus-visible){outline:2px 
 .th-pm-close p{font-size:17px;line-height:1.6;color:var(--th-muted);max-width:60ch;margin:24px auto 0;}
 .th-pm-close p b{color:var(--th-q);font-weight:600;}
 @media(max-width:880px){.th-pm-compare,.th-pm-video{grid-template-columns:1fr;}.th-pm-stathero .big{font-size:60px;}.th-pm-close h2{font-size:34px;}}
+
+/* ============================================================
+   SECTION 02 THREAT, the accordion panel (rxa-)
+   One large rounded panel: a centred title bar across the top, then a
+   two column body. Left is a stack of accordion cards, exactly one open;
+   right is a single preview stage that swaps to the open card's beat.
+   The open card brightens its border, tints its ground, shows a sparkle
+   before the title and reveals a one line subtitle plus See more.
+   Ours, not Rox's palette: ground #0d0d0d, panel #141414, lines #262626,
+   ink #fafafa, dim rgba(250,250,250,.62), accent #c53400.
+   The stage keeps .qi-beat[data-beat] and the is-open class because
+   js/search.js and window.__qiOpen still depend on that contract.
+   ============================================================ */
+.rxa{--rxa-line:#262626;--rxa-dim:rgba(250, 250, 250,.62);margin-top:34px;}
+.rxa-panel{position:relative;border:1px solid var(--rxa-line);border-radius:26px;
+  background:linear-gradient(180deg,#141414,rgba(20,20,20,.55));
+  padding:0 0 28px;}
+/* the corner marks: a hairline plus, drawn with two gradients so no glyph
+   font is involved and nothing can be selected or read out */
+.rxa-mk{position:absolute;width:9px;height:9px;pointer-events:none;
+  background:linear-gradient(rgba(250, 250, 250,.3),rgba(250, 250, 250,.3)) center/1px 100% no-repeat,
+             linear-gradient(rgba(250, 250, 250,.3),rgba(250, 250, 250,.3)) center/100% 1px no-repeat;}
+.rxa-mk.tl{left:-5px;top:-5px;}
+.rxa-mk.tr{right:-5px;top:-5px;}
+.rxa-mk.bl{left:-5px;bottom:-5px;}
+.rxa-mk.br{right:-5px;bottom:-5px;}
+
+.rxa-bar{display:flex;align-items:center;justify-content:center;gap:14px;
+  padding:22px 28px 20px;border-bottom:1px solid var(--rxa-line);}
+.rxa-bar-t{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.3em;
+  text-transform:uppercase;color:var(--rxa-dim);}
+.rxa-dia{width:6px;height:6px;flex:none;transform:rotate(45deg);
+  border:1px solid color-mix(in srgb,var(--th-q) 60%,transparent);
+  background:color-mix(in srgb,var(--th-q) 22%,transparent);}
+
+.rxa-body{display:grid;grid-template-columns:minmax(0,336px) minmax(0,1fr);
+  gap:26px;align-items:start;padding:26px 26px 0;}
+
+.rxa-list{display:flex;flex-direction:column;gap:12px;min-width:0;}
+.rxa-card{border:1px solid var(--rxa-line);border-radius:16px;
+  background:rgba(255,255,255,.012);overflow:hidden;
+  transition:border-color .28s ease,background .28s ease;}
+.rxa-card.is-open{border-color:color-mix(in srgb,var(--th-q) 46%,transparent);
+  background:color-mix(in srgb,var(--th-q) 7%,transparent);}
+.rxa-hwrap{margin:0;font:inherit;font-weight:inherit;}
+.rxa-head{display:flex;align-items:center;gap:10px;width:100%;padding:16px 16px;
+  background:none;border:0;text-align:left;cursor:pointer;color:var(--rxa-dim);
+  transition:color .25s ease;}
+.rxa-head:hover{color:color-mix(in srgb,var(--th-q) 72%,#fafafa);}
+.rxa-card.is-open .rxa-head{color:#fafafa;}
+.rxa-head:focus-visible{outline:2px solid var(--th-q);outline-offset:-2px;border-radius:15px;}
+.rxa-spark{display:none;width:13px;height:13px;flex:none;color:var(--th-q);}
+.rxa-card.is-open .rxa-spark{display:block;}
+.rxa-t{flex:1 1 auto;min-width:0;font-family:'IBM Plex Mono',monospace;font-size:11.5px;
+  letter-spacing:.13em;line-height:1.5;text-transform:uppercase;}
+.rxa-t b{font-weight:600;margin-right:9px;opacity:.62;}
+.rxa-chev{width:15px;height:15px;flex:none;opacity:.55;
+  transition:transform .3s cubic-bezier(.22,.61,.36,1),opacity .25s ease;}
+.rxa-card.is-open .rxa-chev{transform:rotate(180deg);opacity:1;color:var(--th-q);}
+
+/* the reveal under an open card's title: 0fr to 1fr so the card grows
+   into its subtitle instead of the subtitle popping in at full height */
+.rxa-rev{display:grid;grid-template-rows:0fr;
+  transition:grid-template-rows .34s cubic-bezier(.22,.61,.36,1);}
+.rxa-card.is-open .rxa-rev{grid-template-rows:1fr;}
+.rxa-revin{overflow:hidden;padding:0 16px 0 39px;}
+.rxa-sub{font-size:13px;line-height:1.6;color:var(--rxa-dim);}
+.rxa-more{display:inline-block;margin:11px 0 16px;font-family:'IBM Plex Mono',monospace;
+  font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--th-q);
+  text-decoration:none;padding-bottom:2px;
+  border-bottom:1px solid color-mix(in srgb,var(--th-q) 45%,transparent);
+  transition:border-color .2s ease,color .2s ease;}
+.rxa-more:hover{color:#fafafa;border-bottom-color:#fafafa;}
+.rxa-more:focus-visible{outline:2px solid var(--th-q);outline-offset:3px;}
+
+/* one preview at a time. overflow-anchor stays off: thMorph pins an
+   explicit height while it swaps, and scroll anchoring fights it. */
+.rxa-stage{position:relative;min-width:0;overflow-anchor:none;
+  border:1px solid var(--rxa-line);border-radius:20px;background:rgba(13, 13, 13,.6);
+  padding:24px 24px 26px;}
+.rxa-stage .qi-beat{display:none;}
+.rxa-stage .qi-beat.is-open{display:block;animation:rxaSettle .42s cubic-bezier(.22,.61,.36,1) both;}
+.rxa-stage .qi-beat > :first-child{margin-top:0;}
+.rxa-stage .th-q-chapter{margin-top:0;}
+@keyframes rxaSettle{from{opacity:0;transform:translateY(9px);}to{opacity:1;transform:none;}}
+
+/* the stage is narrower than the old full-bleed beat column, so the two
+   maze cards tighten rather than overflow. Descendant selector on purpose:
+   the .th-maze- block lives in a later <style>, so a bare override loses
+   on order and only specificity can win. */
+.rxa-stage .th-maze-grid{gap:14px;}
+.rxa-stage .th-maze-panel{padding:14px 14px 16px;}
+.rxa-stage .th-maze-sub{min-height:0;}
+.rxa-stage .th-maze-ctrl{flex-wrap:wrap;}
+.rxa-stage .th-maze-stats{flex-wrap:wrap;}
+
+@media(max-width:1120px){
+  .rxa-body{grid-template-columns:minmax(0,290px) minmax(0,1fr);gap:20px;padding:22px 20px 0;}
+  .rxa-stage{padding:20px 18px 22px;}
+}
+@media(max-width:920px){
+  /* the two columns stack: the card list reads as a contents list, the
+     stage sits under it and See more is the jump between them */
+  .rxa-body{grid-template-columns:minmax(0,1fr);gap:20px;}
+}
+@media(max-width:700px){
+  .rxa-panel{border-radius:18px;padding-bottom:18px;}
+  .rxa-bar{padding:16px 14px 14px;gap:10px;}
+  .rxa-bar-t{font-size:10px;letter-spacing:.24em;}
+  .rxa-body{padding:18px 12px 0;gap:16px;}
+  .rxa-head{padding:14px 12px;gap:9px;}
+  .rxa-t{font-size:11px;letter-spacing:.1em;}
+  .rxa-revin{padding:0 12px 0 34px;}
+  .rxa-stage{padding:14px 12px 16px;border-radius:14px;}
+  .rxa-stage .th-maze-panel{padding:12px 12px 14px;}
+}
+@media (prefers-reduced-motion: reduce){
+  .rxa-card,.rxa-head,.rxa-chev,.rxa-rev,.rxa-more{transition:none;}
+  .rxa-stage .qi-beat.is-open{animation:none;}
+}
+
 </style>
 
 <!-- 01 CATALYST -->
@@ -1809,24 +1895,46 @@ if (window.thStickyRail) {
   <div class="th-pm-head th-pm-reveal"><span class="th-pm-marker"></span><span class="th-pm-num">02</span><h2 id="q-day-and-the-fault-line" class="th-pm-title">Q-day, and the <b>fault line</b> it draws.</h2></div>
   <p class="th-pm-eyebrow th-pm-reveal">The threat</p>
 
-  <div class="qi" id="threat-index-grid">
-    <!-- div[role=navigation], not <nav>: the bare nav element is claimed by
-     the site chrome's element selector (position:fixed, 40px paddings,
-     translucent bar, blur), and a partial class override leaks whatever
-     the chrome rule gains next. The role carries identical landmark
-     semantics with zero element-selector exposure. -->
-    <div class="qi-index" role="navigation" aria-label="The threat, four beats">
-      <ul>
-        <li><button type="button" class="qi-row" aria-current="true" data-beat="0" data-target="one-key-two-machines"><span class="qi-glyph" aria-hidden="true"><svg viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h20v20H7V7h12v12h-8v-8h4"/><circle cx="13.5" cy="14.5" r="1.5" fill="currentColor" stroke="none"/></svg></span><span class="qi-lab"><b>01</b>HOW THE KEY<br>BREAKS</span></button></li>
-        <li><button type="button" class="qi-row" data-beat="1" data-target="safe-every-single-day-right-up"><span class="qi-glyph" aria-hidden="true"><svg viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 19 Q10 17 15.5 9.5"/><path d="M16 9.5 V21.5"/><circle cx="5.4" cy="18.5" r="1.1" fill="currentColor" stroke="none"/><circle cx="9.4" cy="17.1" r="1.1" fill="currentColor" stroke="none"/><circle cx="13" cy="13.8" r="1.1" fill="currentColor" stroke="none"/><path d="M19.4 4.6l3.2 3.2M22.6 4.6l-3.2 3.2"/></svg></span><span class="qi-lab"><b>02</b>WHY SAFE DAYS<br>PROVE NOTHING</span></button></li>
-        <li><button type="button" class="qi-row" data-beat="2" data-target="the-cost-of-the-attack-is"><span class="qi-glyph" aria-hidden="true"><svg viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22V5M9 22V10M14 22v-7M19 22v-4"/><path d="M15.5 5.5 22 12.5M22 12.5l-.4-4M22 12.5l-4-.4"/></svg></span><span class="qi-lab"><b>03</b>THE COST IS<br>COLLAPSING</span></button></li>
-        <li><button type="button" class="qi-row" data-beat="3" data-target="what-breaks-what-holds"><span class="qi-glyph" aria-hidden="true"><svg viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 3v20" stroke-dasharray="2 2.6" stroke-width="1"/><path d="M9.5 7H4v12h5.5"/><path d="M8 7l-1.6 4.4L8.6 14l-1.8 3.6L8.5 19"/><path d="M16.5 7H22v12h-5.5"/></svg></span><span class="qi-lab"><b>04</b>WHAT BREAKS,<br>WHAT HOLDS</span></button></li>
-      </ul>
-    </div>
-    <p class="qi-sr" aria-live="polite" id="qiAnnounce"></p>
-    <div class="qi-beats">
+  <div class="rxa" id="threat-index-grid" role="group" aria-label="The threat, four beats">
+    <div class="rxa-panel">
+      <span class="rxa-mk tl" aria-hidden="true"></span><span class="rxa-mk tr" aria-hidden="true"></span><span class="rxa-mk bl" aria-hidden="true"></span><span class="rxa-mk br" aria-hidden="true"></span>
 
-  <div class="qi-beat is-open" data-beat="0">
+      <div class="rxa-bar"><span class="rxa-dia" aria-hidden="true"></span><span class="rxa-bar-t">Four beats</span><span class="rxa-dia" aria-hidden="true"></span></div>
+
+      <div class="rxa-body">
+        <div class="rxa-list">
+        <div class="rxa-card is-open" data-beat="0">
+          <h3 class="rxa-hwrap"><button type="button" class="rxa-head" id="rxa-h-0" data-beat="0" data-target="one-key-two-machines" aria-expanded="true" aria-controls="qi-beat-0"><svg class="rxa-spark" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0.6c.5 3.6 3.8 6.9 7.4 7.4-3.6.5-6.9 3.8-7.4 7.4C7.5 11.8 4.2 8.5.6 8 4.2 7.5 7.5 4.2 8 .6Z"/></svg><span class="rxa-t"><b>01</b>HOW THE KEY BREAKS</span><svg class="rxa-chev" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6.2 8 10.2l4-4"/></svg></button></h3>
+          <div class="rxa-rev"><div class="rxa-revin">
+            <p class="rxa-sub">Every wallet in crypto is protected by the same lock: elliptic-curve cryptography.</p>
+            <a class="rxa-more" href="#one-key-two-machines">See more</a>
+          </div></div>
+        </div>
+        <div class="rxa-card" data-beat="1">
+          <h3 class="rxa-hwrap"><button type="button" class="rxa-head" id="rxa-h-1" data-beat="1" data-target="safe-every-single-day-right-up" aria-expanded="false" aria-controls="qi-beat-1"><svg class="rxa-spark" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0.6c.5 3.6 3.8 6.9 7.4 7.4-3.6.5-6.9 3.8-7.4 7.4C7.5 11.8 4.2 8.5.6 8 4.2 7.5 7.5 4.2 8 .6Z"/></svg><span class="rxa-t"><b>02</b>WHY SAFE DAYS PROVE NOTHING</span><svg class="rxa-chev" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6.2 8 10.2l4-4"/></svg></button></h3>
+          <div class="rxa-rev"><div class="rxa-revin">
+            <p class="rxa-sub">A lengthening track record of safety that proves nothing about the day the machine arrives.</p>
+            <a class="rxa-more" href="#safe-every-single-day-right-up">See more</a>
+          </div></div>
+        </div>
+        <div class="rxa-card" data-beat="2">
+          <h3 class="rxa-hwrap"><button type="button" class="rxa-head" id="rxa-h-2" data-beat="2" data-target="the-cost-of-the-attack-is" aria-expanded="false" aria-controls="qi-beat-2"><svg class="rxa-spark" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0.6c.5 3.6 3.8 6.9 7.4 7.4-3.6.5-6.9 3.8-7.4 7.4C7.5 11.8 4.2 8.5.6 8 4.2 7.5 7.5 4.2 8 .6Z"/></svg><span class="rxa-t"><b>03</b>THE COST IS COLLAPSING</span><svg class="rxa-chev" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6.2 8 10.2l4-4"/></svg></button></h3>
+          <div class="rxa-rev"><div class="rxa-revin">
+            <p class="rxa-sub">The estimated cost of a quantum attack on crypto's cryptography has collapsed roughly 10,000x since 2012.</p>
+            <a class="rxa-more" href="#the-cost-of-the-attack-is">See more</a>
+          </div></div>
+        </div>
+        <div class="rxa-card" data-beat="3">
+          <h3 class="rxa-hwrap"><button type="button" class="rxa-head" id="rxa-h-3" data-beat="3" data-target="what-breaks-what-holds" aria-expanded="false" aria-controls="qi-beat-3"><svg class="rxa-spark" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0.6c.5 3.6 3.8 6.9 7.4 7.4-3.6.5-6.9 3.8-7.4 7.4C7.5 11.8 4.2 8.5.6 8 4.2 7.5 7.5 4.2 8 .6Z"/></svg><span class="rxa-t"><b>04</b>WHAT BREAKS, WHAT HOLDS</span><svg class="rxa-chev" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6.2 8 10.2l4-4"/></svg></button></h3>
+          <div class="rxa-rev"><div class="rxa-revin">
+            <p class="rxa-sub">The paper draws a sharp line between what a quantum computer breaks and what it cannot touch.</p>
+            <a class="rxa-more" href="#what-breaks-what-holds">See more</a>
+          </div></div>
+        </div>
+        </div>
+
+        <div class="rxa-stage">
+<div class="qi-beat is-open" data-beat="0" id="qi-beat-0" role="region" aria-labelledby="rxa-h-0">
   <!-- chapter 1: the race -->
   <div class="th-q-chapter th-pm-reveal">
     <h3 id="one-key-two-machines" class="scale-title">One key. <span>Two machines.</span></h3>
@@ -1860,7 +1968,7 @@ if (window.thStickyRail) {
 
   </div>
 
-  <div class="qi-beat" data-beat="1">
+  <div class="qi-beat" data-beat="1" id="qi-beat-1" role="region" aria-labelledby="rxa-h-1">
   <!-- chapter 2: the blind spot -->
   <div class="th-q-chapter th-pm-reveal">
     <h3 id="safe-every-single-day-right-up" class="scale-title">Safe every single day, <span>right up until one day in 2029.</span></h3>
@@ -1885,7 +1993,7 @@ if (window.thStickyRail) {
 
   </div>
 
-  <div class="qi-beat" data-beat="2">
+  <div class="qi-beat" data-beat="2" id="qi-beat-2" role="region" aria-labelledby="rxa-h-2">
   <!-- chapter 3: the evidence -->
   <div class="th-q-chapter th-pm-reveal">
     <h3 id="the-cost-of-the-attack-is" class="scale-title">The cost of the attack <span>is collapsing.</span></h3>
@@ -1917,7 +2025,7 @@ if (window.thStickyRail) {
 
   </div>
 
-  <div class="qi-beat" data-beat="3">
+  <div class="qi-beat" data-beat="3" id="qi-beat-3" role="region" aria-labelledby="rxa-h-3">
   <!-- chapter 4: what breaks, what holds -->
   <div class="th-q-chapter th-pm-reveal">
     <h3 id="what-breaks-what-holds" class="scale-title">What breaks. <span>What holds.</span></h3>
@@ -1954,8 +2062,10 @@ if (window.thStickyRail) {
       <p class="note th-claim" data-perishable="third-party" data-src="https://arxiv.org/abs/2603.28846" data-checked="2026-08-22" data-says="Only protocols utilizing zkSTARKs (green) employ hash-based proofs that are currently believed to be resistant to quantum attacks. | Indeed, some zk-rollups, such as Starknet, use hash-based protocols which are believed to be resistant to quantum cryptanalysis." data-noun-ok="Google March">In <a href="https://arxiv.org/abs/2603.28846" target="_blank" rel="noopener noreferrer">the paper's March 2026 risk chart</a>, zk-STARK is the only proving category not flagged as quantum-vulnerable by Google, and Starknet's proving system is named explicitly as resistant. The authors call the chart a point-in-time assessment.</p></div>
   </div>
   </div>
-
+        </div>
+      </div>
     </div>
+    <p class="qi-sr" aria-live="polite" id="qiAnnounce"></p>
   </div>
 </section>
 
@@ -1987,9 +2097,17 @@ if (window.thStickyRail) {
 // NEXT STAYS. It is not gate machinery: it opens the following
 // beat, scrolls to it and stamps the hash, which is the
 // read-in-order path for someone who does not want to go back to
-// the index between beats. It exists only at >=981px, where
-// .qi-adv is visible; below that the index and NEXT are both
-// hidden and every beat stacks.
+// the card list between beats. The accordion now runs at every
+// width (the columns stack below 920px rather than every beat
+// unfolding), so NEXT is no longer hidden on narrow.
+//
+// THE DEVICE IS AN ACCORDION PANEL (.rxa-), not the old left rail.
+// The rail's rows are gone; a card carries the title, a chevron,
+// and, once open, a sparkle, a one line subtitle and See more. The
+// preview stage on the right holds all four .qi-beat blocks and
+// shows one. .qi-beat[data-beat] and window.__qiOpen survive the
+// rebuild untouched because js/search.js reaches for exactly those
+// to surface a hit that lives inside a closed beat.
 //
 // Beat changes are announced once via a polite live region.
 // Devices re-init on open through their own resize listeners (one
@@ -2001,12 +2119,14 @@ if (window.thStickyRail) {
 (function(){
   var grid = document.getElementById('threat-index-grid');
   if (!grid) return;
-  var rows = [].slice.call(grid.querySelectorAll('.qi-row'));
+  var cards = [].slice.call(grid.querySelectorAll('.rxa-card'));
+  var heads = [].slice.call(grid.querySelectorAll('.rxa-head'));
+  var mores = [].slice.call(grid.querySelectorAll('.rxa-more'));
   var beats = [].slice.call(grid.querySelectorAll('.qi-beat'));
-  var advs = [].slice.call(grid.querySelectorAll('.qi-next'));
+  var advs  = [].slice.call(grid.querySelectorAll('.qi-next'));
+  var stage = grid.querySelector('.rxa-stage');
   var announce = document.getElementById('qiAnnounce');
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
-  var gated = window.matchMedia('(min-width: 981px)').matches;
   var NAMES = [
     'Beat 1 of 4: How the key breaks',
     'Beat 2 of 4: Why safe days prove nothing',
@@ -2017,62 +2137,54 @@ if (window.thStickyRail) {
     var n = document.querySelector('nav');
     return n ? Math.round(n.getBoundingClientRect().height) : 0;
   }
-  function setStickTop(){
-    document.documentElement.style.setProperty('--qi-stick-top', (navHeight() + 14) + 'px');
-  }
-  setStickTop();
-  var rT = null;
-  window.addEventListener('resize', function(){ clearTimeout(rT); rT = setTimeout(setStickTop, 150); });
-
   var current = 0;
   function sync(){
-    rows.forEach(function(r, k){
-      if (k === current) r.setAttribute('aria-current', 'true');
-      else r.removeAttribute('aria-current');
-      r.setAttribute('tabindex', k === current ? '0' : '-1');
-    });
+    cards.forEach(function(c, k){ c.classList.toggle('is-open', k === current); });
+    heads.forEach(function(h, k){ h.setAttribute('aria-expanded', k === current ? 'true' : 'false'); });
+  }
+  function scrollToEl(el){
+    var want = navHeight() + 24;
+    var delta = el.getBoundingClientRect().top - want;
+    if (Math.abs(delta) > 2) window.scrollTo({ top: window.scrollY + delta, behavior: reduce.matches ? 'instant' : 'smooth' });
   }
   function open(k, opts){
     opts = opts || {};
-    k = Math.max(0, Math.min(3, k));
+    k = Math.max(0, Math.min(beats.length - 1, k));
     var changed = k !== current;
-    if (gated) {
-      var box = grid.querySelector('.qi-beats');
-      var apply = function(){
-        beats.forEach(function(b, i){ b.classList.toggle('is-open', i === k); });
-        /* devices size canvases from rects that read zero while hidden;
-           one synthetic resize lets each re-fit through its own listener */
-        window.dispatchEvent(new Event('resize'));
-      };
-      if (changed && !opts.instant) thMorph(box, box, apply);
-      else apply();
-    }
+    var apply = function(){
+      beats.forEach(function(b, i){ b.classList.toggle('is-open', i === k); });
+      /* devices size canvases from rects that read zero while hidden;
+         one synthetic resize lets each re-fit through its own listener */
+      window.dispatchEvent(new Event('resize'));
+    };
+    if (changed && !opts.instant) thMorph(stage, stage, apply);
+    else apply();
     current = k;
     sync();
     if (changed && announce) announce.textContent = NAMES[k];
-    if (opts.scroll) {
-      var want = navHeight() + 24;
-      var top = (gated ? grid : beats[k]).getBoundingClientRect().top;
-      var delta = top - want;
-      if (Math.abs(delta) > 2) window.scrollTo({ top: window.scrollY + delta, behavior: reduce.matches ? 'instant' : 'smooth' });
-    }
-    if (opts.hash) history.replaceState(null, '', '#' + rows[k].dataset.target);
+    if (opts.scroll) scrollToEl(opts.to === 'stage' ? stage : grid);
+    if (opts.hash && heads[k]) history.replaceState(null, '', '#' + heads[k].dataset.target);
   }
-  rows.forEach(function(r, k){
-    r.addEventListener('click', function(){ open(k, { scroll: true, hash: true }); });
-    r.addEventListener('keydown', function(ev){
-      var d = ev.key === 'ArrowDown' || ev.key === 'ArrowRight' ? 1 : ev.key === 'ArrowUp' || ev.key === 'ArrowLeft' ? -1 : 0;
-      if (!d) return;
+  heads.forEach(function(h, k){
+    h.addEventListener('click', function(){
+      if (k === current) { scrollToEl(stage); return; }
+      open(k, { scroll: true, hash: true });
+    });
+  });
+  mores.forEach(function(a, k){
+    a.addEventListener('click', function(ev){
       ev.preventDefault();
-      var n = (k + d + rows.length) % rows.length;
-      rows.forEach(function(x, j){ x.setAttribute('tabindex', j === n ? '0' : '-1'); });
-      rows[n].focus();
+      open(k, { scroll: true, hash: true, to: 'stage' });
     });
   });
   advs.forEach(function(btn){
     btn.addEventListener('click', function(){
       var k = +btn.closest('.qi-beat').dataset.beat;
-      open(k + 1, { scroll: true, hash: true });
+      /* to:'stage' rather than the panel top. NEXT now renders at every
+         width, and below 920px the columns are stacked, so scrolling to
+         the panel top would park the reader above the four cards with
+         the beat they asked for a screenful below the fold. */
+      open(k + 1, { scroll: true, hash: true, to: 'stage' });
     });
   });
   /* hash arrival: a target inside beat k opens it. Runs on load and on

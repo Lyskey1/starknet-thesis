@@ -235,12 +235,6 @@
     if (sd && sd.hasAttribute('hidden')) {
       did = clickIf(document.querySelector('.seal-card[aria-controls="' + sd.id + '"]')) || did;
     }
-    /* btcfi: section 01's radial gap device shows one gap panel at a time.
-       The panel keeps the old grid's card id, so a hit still lands on the
-       .problem-item; the spoke that opens it is the one carrying the same
-       data-gap index. */
-    const bgc = target.closest && target.closest('.bgap-card');
-    if (bgc && !bgc.classList.contains('is-on')) did = clickIf(bgc) || did;
     /* btcfi: the risk podiums show one risk panel at a time. Same contract
        as privacy's .pmv-panel: the panel names its tab via aria-labelledby. */
     const brk = target.closest && target.closest('.brk-panel');
