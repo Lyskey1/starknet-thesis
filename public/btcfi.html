@@ -2091,6 +2091,56 @@
 #bitcoins-unfinished-mission.th-pm-title b,
 #bitcoins-unfinished-mission.th-pm-title em{font-weight:600;}
 @media(max-width:880px){ #bitcoins-unfinished-mission.th-pm-title{font-size:clamp(32px,8.4vw,46px);} }
+
+/* ============================================================
+   ONE SECTION for the live figures and the news (2026-09-01).
+   The two used to be separate blocks with a gap; they are one
+   full-height section now, its content vertically centred, and the
+   news toggle is its closing CTA rather than a wide bar.
+   ============================================================ */
+.bmsec{display:flex;flex-direction:column;justify-content:center;
+  min-height:100svh;padding:clamp(40px,7vh,96px) 0;}
+.bmsec .bm-bleed{margin-bottom:0;}
+.bmsec .metrics-row{margin-bottom:0 !important;}
+
+/* the section's head, centred with the rest of it */
+.bmsec .news-section{margin:clamp(28px,4vh,56px) auto 0;max-width:none;
+  border:0;background:none;padding:0;display:flex;flex-direction:column;align-items:center;}
+
+/* THE TOGGLE, as the CTA shape in its dark variant. .bf-cta gives the
+   geometry (block plus square tile, straight corners); these rules only
+   invert the colours and undo the wide-bar layout the old skin had. */
+.news-toggle.bf-cta{width:auto;justify-content:center;cursor:pointer;
+  border:0;background:none;box-shadow:none;border-radius:0;padding:0;}
+.news-toggle.bf-cta > span,
+.news-toggle.bf-cta > i{border:1px solid rgba(250,250,250,.22);}
+.bf-cta--dark > span{background:#0d0d0d;color:#fafafa;}
+.bf-cta--dark > i{background:#0d0d0d;}
+.bf-cta--dark > i svg path{fill:#fafafa;}
+.news-toggle.bf-cta:hover > span{background:var(--accent);color:#fafafa;border-color:var(--accent);}
+.news-toggle.bf-cta:hover > i{background:var(--accent);border-color:var(--accent);}
+.news-toggle.bf-cta:hover > i svg path{fill:#fafafa;}
+/* NO `color: inherit` HERE. The label span IS the CTA's block element, so
+   inherit resolves against .bf-cta, which sets color:#000 for the light
+   variant, and the label came out black on the dark fill. Colour is left to
+   .bf-cta--dark > span. */
+.news-toggle.bf-cta .news-toggle-title{font-family:inherit;font-size:inherit;
+  letter-spacing:normal;text-transform:none;display:block;}
+/* the chevron slot is the tile: it turns when the panel opens */
+.news-toggle.bf-cta > i{transition:transform .3s ease,background var(--hover-dur) var(--hover-ease);}
+.news-toggle.bf-cta[aria-expanded="true"] > i{transform:rotate(90deg);}
+.bmsec .news-grid{width:100%;margin-top:26px;}
+
+/* ============================================================
+   SECTION 01's HEAD: one line, no numeral.
+   nowrap only above the mobile tier: "Bitcoin's unfinished mission"
+   is 28 characters, and holding it on one line at 390px would need
+   type too small to read, so it wraps there as before.
+   ============================================================ */
+.th-pm-head--bare{display:block;}
+@media(min-width:881px){
+  #bitcoins-unfinished-mission.th-pm-title{white-space:nowrap;font-size:min(84px,5.1vw);}
+}
 </style>
 <script>
 /* BTCFi ecosystem field: reserve the flight's height before layout. Classic
@@ -2212,7 +2262,8 @@
 <!-- ============================================================ -->
 <section class="problem">
   <p class="th-pm-eyebrow">Problem</p>
-  <div class="th-pm-head"><span class="th-pm-marker"></span><span class="th-pm-num">01</span><h2 id="bitcoins-unfinished-mission" class="th-pm-title">Bitcoin's unfinished mission</h2></div>
+  <!-- no numeral and no marker: the head is the heading alone (2026-09-01) -->
+  <div class="th-pm-head th-pm-head--bare"><h2 id="bitcoins-unfinished-mission" class="th-pm-title">Bitcoin's unfinished mission</h2></div>
 
   <p class="bum-sub">Bitcoin does every one of these four things. It does none of them far enough. <br>That shortfall is what leaves the hardest money ever made sitting idle.</p>
   <p class="bum-act"><a class="bf-cta" href="#the-market-risk-if-bitcoin-stays"><span>See what the gap costs</span><i aria-hidden="true"><svg viewBox="0 0 51 51" fill="none"><path d="M26.293 23.583L34.4834 15.3926L35.6064 16.5156L27.416 24.7061H39V26.2939H27.418L35.6084 34.4844L34.4854 35.6074L26.293 27.415V39H24.7051V27.417L16.5146 35.6074L15.3916 34.4844L23.582 26.2939H12V24.7061H23.584L15.3936 16.5156L16.5166 15.3926L24.7051 23.5811V12H26.293V23.583Z"/></svg></i></a></p>
@@ -3478,6 +3529,10 @@
       </div>
     </div>
 
+    <!-- ONE SECTION (2026-09-01): the figures and the news toggle were two
+         blocks with a gap between them; they are one full-height section now,
+         vertically centred, with the toggle as its closing CTA. -->
+    <section class="bmsec">
     <!-- Metrics. Full bleed (2026-09-01): the ecosystem field above runs
          to the viewport edge, and the figures reading 1004px wide beside
          it looked like a different page. Same .mst-bleed the field uses. -->
@@ -3515,12 +3570,17 @@
 
     <!-- Bitcoin news (collapsible) -->
     <div class="news-section news-flashy" id="newsSection">
-      <button class="news-toggle" id="newsToggle" aria-expanded="false">
-        <span class="news-toggle-title"><span class="news-eyebrow">Latest</span> Bitcoin × Starknet news</span>
-        <i class="ti ti-chevron-down news-chevron" aria-hidden="true"></i>
+      <!-- the toggle takes the .bf-cta shape (the landing's Read the thesis
+           button) in its dark variant, centred. Still a real <button> with
+           aria-expanded, and #newsToggle is unchanged, so the news JS and the
+           chevron rotation keep working. -->
+      <button class="news-toggle bf-cta bf-cta--dark" id="newsToggle" aria-expanded="false">
+        <span class="news-toggle-title">Bitcoin × Starknet news</span>
+        <i class="news-chevron" aria-hidden="true"><svg viewBox="0 0 51 51" fill="none"><path d="M26.293 23.583L34.4834 15.3926L35.6064 16.5156L27.416 24.7061H39V26.2939H27.418L35.6084 34.4844L34.4854 35.6074L26.293 27.415V39H24.7051V27.417L16.5146 35.6074L15.3916 34.4844L23.582 26.2939H12V24.7061H23.584L15.3936 16.5156L16.5166 15.3926L24.7051 23.5811V12H26.293V23.583Z"/></svg></i>
       </button>
       <div class="news-grid" id="newsGrid"></div>
     </div>
+    </section>
 
   </div>
 </div>
