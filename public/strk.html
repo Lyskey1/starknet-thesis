@@ -1361,8 +1361,9 @@ footer.site-footer .foot-bottom a:hover{color:var(--accent)}
 if(h==='#admin-on'||h==='#admin-off'){try{if(h==='#admin-on')localStorage.setItem(FLAG,'1');
 else{localStorage.removeItem(FLAG);localStorage.removeItem('news_publish_key');}}catch(e){}
 try{history.replaceState(null,'',location.pathname+location.search);}catch(e){}}
-var on=location.hostname==='localhost'||location.hostname==='127.0.0.1';
-if(!on){try{on=localStorage.getItem(FLAG)==='1';}catch(e){}}
+/* opt in on every host, including localhost; kept in sync with js/admin-gate.js */
+var on=false;
+try{on=localStorage.getItem(FLAG)==='1';}catch(e){}
 window.ADMIN_GATE=on;})();
 </script>
 </head>

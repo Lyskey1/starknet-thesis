@@ -433,7 +433,7 @@
        skips or paints one settled frame, and the hero copy is unaffected. -->
   <div class="qh-stage" id="qhStage" aria-hidden="true"></div>
   <p class="hero-eyebrow">The quantum reckoning</p>
-  <h1 id="quantum-will-break-most-chains-starknet" class="hero-title">Quantum will break most chains. Starknet has been <em>waiting for it.</em></h1>
+  <h1 id="quantum-will-break-most-chains-starknet" class="hero-title">Quantum will break most chains</h1>
   <div class="qh-left">
   <p class="hero-subtitle">Governments, Big Tech, and researchers are increasingly converging on the same timeline for when quantum breaks today's cryptography. When it arrives, nearly every onchain wallet is exposed. For most of crypto, this is a threat. For Starknet, it highlights the strength of its architecture.</p>
   <!-- CTA PAIR: the landing's SendRequest, copied. A chalk block carrying a
@@ -448,6 +448,14 @@
   </div>
   </div>
 
+  <!-- BOTTOM RIGHT, the /btcfi slot: a mono readout over the big turn line,
+       both right aligned. The turn is the second half of the page's own
+       statement, moved out of the h1 so this hero reads exactly as /btcfi's
+       does, the claim top left and the answer bottom right. -->
+  <div class="qh-right">
+    <p class="qh-stat">Hash-based proofs. Account abstraction. Live on mainnet.</p>
+    <p class="qh-turn">Starknet has been waiting for it</p>
+  </div>
 </div>
 
 
@@ -3331,30 +3339,23 @@ body.page-quantum{overflow-x:clip;}
    var(--mono) and var(--display); this page defines none of the
    three, so every value here is written out. Checked, not assumed.
    Prefixed qxq- so it can collide with neither sq- nor sxq-.
-   white-space is normal rather than privacy's nowrap: these
-   phrases are far longer than "easier," and would overflow at 390.
-   box-decoration-break:clone is what makes a wrapped highlight
-   render as a box per line instead of one ragged block.
+   NO HIGHLIGHT BLOCKS AND NO ICON TILES. privacy's band marks three
+   phrases in accent with a light square tile each; the same treatment
+   over this longer sentence read as three orange slabs rather than a
+   statement, so the words carry it alone. The type is unchanged, which
+   is the part that was wanted: same face, weight, size and tracking as
+   the Satoshi band.
    ============================================================ */
 .qxq{position:relative;width:100vw;max-width:none;margin:120px 0 0 calc(50% - 50vw);
   display:flex;flex-direction:column;justify-content:center;align-items:flex-start;
   min-height:100vh;min-height:100svh;padding:clamp(96px,12vh,168px) 16px;}
-/* the dotted rule across the top with a square at each end */
-.qxq::before{content:"";position:absolute;left:0;right:0;top:0;border-top:2px dotted rgba(250,250,250,.35);}
-.qxq::after{content:"";position:absolute;left:0;top:-3px;width:8px;height:8px;
-  background:#c53400;box-shadow:calc(100vw - 8px) 0 0 #c53400;}
+/* no rule across the top: the band opens on the statement itself */
 .qxq-kicker{display:inline-block;margin:0 0 22px;padding:6px 10px;background:rgba(250,250,250,.08);
   font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.02em;line-height:1.2;
   text-transform:none;color:rgba(255,255,255,.85);}
 .qxq-quote{align-self:stretch;margin:0;max-width:none;text-align:left;
   font-family:'General Sans','Helvetica Neue',Arial,sans-serif;font-weight:600;color:#fff;
   font-size:clamp(34px,6.4vw,92px);line-height:1.02;letter-spacing:-.04em;}
-.qxq-hl{display:inline-block;vertical-align:baseline;line-height:1;white-space:normal;
-  padding:0 .1em 0 0;background:#c53400;color:#fff;
-  -webkit-box-decoration-break:clone;box-decoration-break:clone;}
-.qxq-ic{display:inline-grid;place-items:center;width:.8em;height:.8em;margin-right:.1em;
-  vertical-align:-.08em;background:#fafafa;color:#c53400;}
-.qxq-ic svg{width:62%;height:62%;}
 .qxq-foot{margin:38px 0 0;max-width:70ch;font-size:17px;line-height:1.6;color:#9a9a9a;}
 .qxq-foot b{color:#c53400;font-weight:600;}
 @media(max-width:860px){
@@ -3604,12 +3605,24 @@ body.page-quantum{overflow-x:clip;}
 /* the deadline's own section: the page's section-head treatment over the
    countdown, which keeps its own .qh-cd styling. The row is scaled up now
    that it is not competing with a hero. */
-.qcd-sec{max-width:1160px;margin:0 auto;padding:clamp(64px,9vh,120px) 32px 0;}
-.qcd-sec .qprop-body{margin-bottom:clamp(28px,4vh,52px);}
+/* THE DEADLINE OWNS A WHOLE SECTION. It is the page's clock, so it gets a
+   full viewport and the digits get to be the biggest thing on it. The
+   content is centred vertically, and the row scales with the viewport
+   rather than sitting at a fixed size. */
+.qcd-sec{display:flex;flex-direction:column;justify-content:center;
+  min-height:100svh;max-width:1160px;margin:0 auto;
+  padding:clamp(48px,8vh,110px) 32px;}
+.qcd-sec .qprop-body{margin-bottom:clamp(36px,6vh,80px);}
 .qcd-sec .qh-cd{margin:0;width:auto;border:0;padding:0;}
-.qcd-sec .qh-cd-label{margin-bottom:14px;}
-.qcd-sec .qh-cd-n{font-size:clamp(44px,5.4vw,84px);}
-@media(max-width:880px){ .qcd-sec{padding-left:20px;padding-right:20px;} }
+.qcd-sec .qh-cd-label{margin-bottom:clamp(14px,2vh,26px);font-size:13px;letter-spacing:.16em;}
+.qcd-sec .qh-cd-row{gap:clamp(14px,2.2vw,38px);align-items:baseline;flex-wrap:wrap;}
+.qcd-sec .qh-cd-n{font-size:clamp(56px,9.4vw,168px);line-height:.92;letter-spacing:-.03em;}
+.qcd-sec .qh-cd-g i{font-size:clamp(11px,1vw,16px);letter-spacing:.18em;}
+.qcd-sec .qh-cd-s{font-size:clamp(24px,3.4vw,56px);opacity:.35;}
+@media(max-width:880px){
+  .qcd-sec{padding-left:20px;padding-right:20px;min-height:0;}
+  .qcd-sec .qh-cd-n{font-size:clamp(44px,13vw,84px);}
+}
 
 /* ============================================================
    THE FRAME DISTRIBUTES ITS OWN HEIGHT (RXAFIT, 2026-09-01)
@@ -3661,6 +3674,47 @@ body.page-quantum{overflow-x:clip;}
 .rxa .rxa-sub{height:auto;max-height:clamp(40px,4.2vw,58px);margin-top:14px;}
 .rxa .rxa-feat{margin-top:16px;padding:clamp(16px,1.8vw,30px);}
 .rxa .rxa-keys{margin-top:12px;min-height:0;}
+
+/* the hero's bottom right, ported from /btcfi's .bfh-stat and .bfh-turn */
+.qh-right{position:absolute;right:1.667vw;bottom:2.153vw;z-index:2;
+  display:flex;flex-direction:column;align-items:flex-end;gap:1.25vw;
+  margin:0;text-align:right;}
+.qh-stat{margin:0;width:22vw;text-align:right;font-family:var(--vc-tag);font-weight:400;
+  font-size:max(0.8vw,11px);line-height:1.5;letter-spacing:.12em;
+  text-transform:uppercase;color:rgba(250,250,250,.7);}
+.qh-turn{margin:0;width:38vw;text-align:right;font-family:var(--vc-sans);font-weight:700;
+  font-size:4.2vw;line-height:.95;letter-spacing:-.01em;text-transform:uppercase;
+  color:#fafafa;}
+@media (max-width:980px){
+  .qh-right{position:static;width:auto;align-items:flex-start;text-align:left;margin-top:2rem;}
+  .qh-stat,.qh-turn{width:auto;text-align:left;}
+  .qh-turn{font-size:2rem;}
+}
+
+/* ============================================================
+   THE BEAT SWAP, SOFTENED (2026-09-01)
+   The pin snapped from one beat to the next: display:none to
+   display:block with nothing in between, which is what reads as
+   rigid. Each beat now cross-fades and settles a few pixels as it
+   enters, driven by the is-open class the script already writes.
+   NOT scroll-behavior:smooth. That only affects programmatic and
+   anchor scrolls, never the wheel, so it would not have touched
+   what is actually being felt here.
+   TRANSFORM AND OPACITY ONLY, never scale or filter: the maze and
+   turkey canvases size from getBoundingClientRect, and a scaled
+   ancestor hands them the wrong width.
+   The outgoing beat still leaves immediately. Animating it out
+   would put two beats in the frame at once, and the frame holding
+   still is the whole point of the pin.
+   ============================================================ */
+.rxa-stage .qi-beat.is-open{animation:rxaIn .42s cubic-bezier(.22,.61,.36,1) both;}
+@keyframes rxaIn{from{opacity:0;transform:translate3d(0,14px,0);}to{opacity:1;transform:none;}}
+.rxa-prog li{transition:background .35s ease,transform .35s ease;}
+.rxa-prog li.is-on{transform:scaleY(2);}
+@media (prefers-reduced-motion: reduce){
+  .rxa-stage .qi-beat.is-open{animation:none;}
+  .rxa-prog li,.rxa-prog li.is-on{transition:none;transform:none;}
+}
 </style>
 
   <!-- chapter: the referee -->
@@ -3933,7 +3987,7 @@ var qvFilmChrome = thVideoChrome({
      original carries no paragraph, and this is the one deviation. -->
 <section class="qxq th-pm-reveal" id="qxq-band" aria-labelledby="on-the-day-the-line-is">
   <p class="qxq-kicker">Q-day</p>
-  <h2 id="on-the-day-the-line-is" class="qxq-quote">On the day <mark class="qxq-hl"><i class="qxq-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 11h18v2H3zM5 5h6v2H5zM13 17h6v2h-6z"/></svg></i>the line is drawn</mark> for everyone, <mark class="qxq-hl"><i class="qxq-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9.5 7h2.2v2H9.5a3 3 0 0 0 0 6h2.2v2H9.5a5 5 0 0 1 0-10zm5 0a5 5 0 0 1 0 10h-2.2v-2h2.2a3 3 0 0 0 0-6h-2.2V7z"/><path d="M8 11h8v2H8z"/></svg></i>most chains</mark> will discover which side they were born on. <mark class="qxq-hl"><i class="qxq-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 20 5v6c0 5-3.4 7.7-8 9-4.6-1.3-8-4-8-9V5z"/></svg></i>Starknet already knows.</mark></h2>
+  <h2 id="on-the-day-the-line-is" class="qxq-quote">On the day the line is drawn for everyone, most chains will discover which side they were born on. Starknet already knows.</h2>
   <p class="qxq-foot">The thesis needs only two recognitions: that the quantum-security premium is <b>not yet priced in</b>, and that Starknet holds the <b>structural moat</b> to capture it.</p>
 </section>
 
