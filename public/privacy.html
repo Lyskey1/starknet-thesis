@@ -1971,6 +1971,34 @@
 @media(max-width:720px){
   .bstk{padding-inline:20px;}
 }
+
+/* ============================================================
+   SECTION 05, THE LAW, at the reference section's proportions.
+   The reference runs its rule and its four columns almost to the
+   viewport edge: measured off it, the band sits 28px in on a 1920
+   frame, which is 1.46 percent, so the padding here is expressed
+   in vw and lands at about 21px at 1440. Ours was capped at the
+   site's 1096px column, which is why the same four columns read as
+   a narrow block rather than a full-width stack.
+   The centred headline keeps the column; only the band widens.
+   .pl carries margin:56px -24px 0, negative side margins that let
+   the column borders bleed, so the margin is restated here rather
+   than left to fight the full-bleed rule.
+   ============================================================ */
+.th-pm-sec--law .pl-rule,
+.th-pm-sec--law .pl-prose,
+.th-pm-sec--law .pl{
+  width:100vw;max-width:none;
+  margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw);
+  padding-inline:clamp(16px,1.5vw,28px);
+}
+.th-pm-sec--law .pl{margin-top:56px;margin-bottom:0;}
+.th-pm-sec--law .pl-prose{margin-top:44px;gap:clamp(24px,3vw,64px);}
+@media(max-width:820px){
+  .th-pm-sec--law .pl-rule,
+  .th-pm-sec--law .pl-prose,
+  .th-pm-sec--law .pl{padding-inline:16px;}
+}
 </style>
 <script src="js/admin-gate.js"></script>
 </head>
@@ -2875,8 +2903,8 @@
 
 <!-- ================= SECTION 05 ================= -->
 <div class="th-pm-div"></div>
-<section class="th-pm-sec">
-  <div class="th-pm-head th-pm-head--band th-pm-reveal"><span class="th-pm-marker"></span><span class="th-pm-num">05</span><h2 id="private-not-invisible" class="th-pm-title">Private, <mark class="sq-hl">not invisible</mark></h2></div>
+<section class="th-pm-sec th-pm-sec--law">
+  <div class="th-pm-head th-pm-head--band th-pm-reveal"><h2 id="private-not-invisible" class="th-pm-title">Private, <mark class="sq-hl">not invisible</mark></h2></div>
   <p class="th-pm-eyebrow th-pm-reveal">The law</p>
 
     <!-- The law, as a four-column feature band. The fanned deck was replaced on
