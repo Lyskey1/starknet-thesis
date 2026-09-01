@@ -1199,7 +1199,6 @@
      isolation it needed was what hid the real shader. */
   #btcGlobe .bg-stick{ background: transparent; }
 
-
   /* The flame shader (js/eco-backdrop.js) is a FIXED canvas at z-index 0, so
      every ancestor above it has to stay transparent for it to read through.
      On the privacy page the whole chain already is, which is why its lineage
@@ -1209,13 +1208,11 @@
      except letting the shader through. */
   body.page-btcfi .solution { background: transparent; }
 
-
   /* two copy states, exactly as css/eco-stage.css carries them: the first sits
      at the top over the shell, the second is centred for the landed field so
      the logos orbit around the words rather than across them */
   .bg-copy-b { top: 50%; transform: translate(-50%, -50%);
     width: min(760px, calc(100% - 48px)); opacity: 0; visibility: hidden; }
-
 
   /* ============ TRACK RECORD: the statement (#tr-band) ============
      A copy of privacy.html's Satoshi statement treatment, the block in
@@ -1252,7 +1249,6 @@
        any space inside the <mark> keep it off the line ends. */
     .tr-hl { display: inline; white-space: normal; padding: 0; }
   }
-
 
   /* ================= THE RISK BAND (.brkl), section 01's close =========
      The reference layout, followed literally: a paragraph-style lede whose
@@ -2242,7 +2238,6 @@
   </div>
 </div>
 
-
 <div class="section-divider"></div>
 
 <!-- ============================================================ -->
@@ -2398,7 +2393,6 @@
        id, so nothing will warn you. -->
   <!-- Heading levels: this is h3 under the section h2, and the risk cards
        below are h4 under it. -->
-
 
   <div class="gap-turn">
     <p class="scale-label">What it costs</p>
@@ -3211,79 +3205,6 @@
         </ul>
       </section>
 
-      <!-- BTC Staking Band -->
-      <div id="native-btc-staking-a-first-for" class="staking-band">
-        <div>
-          <h3>Native BTC staking: a first for Bitcoin</h3>
-          <!-- C2 + C4. Two problems in one paragraph, fixed together.
-               THE MONTH IS DISPUTED, so the page no longer names one. It read
-               "Since September 2025". Contemporaneous coverage put the mainnet
-               launch at 30 September 2025, but STARKNET'S OWN year in review
-               says BTC staking launched "at the end of October". A month apart,
-               and the tweet their retrospective links to is on X, which is
-               auth-walled and cannot be read to settle it. "Late 2025" is what
-               both sources support. Do not restore a specific month without a
-               primary source that states one.
-               "SINCE" SURVIVES BECAUSE IT IS CHECKABLE HERE, which is unusual
-               for that word. It failed on quantum's S2morrow line because
-               nothing showed the claim still held. Here the page itself proves
-               continuity: the metrics block below fetches Endur live and
-               renders BTC currently staked, so a reader watching a number move
-               is watching the claim hold.
-               THE SUPERLATIVE IS SOFTENED, not deleted. "The only network
-               secured by a dual-token Proof-of-Stake consensus" is not
-               supported anywhere: Starknet's own staking page claims only
-               "the first Major L2 with a staking mechanism". What IS sourced
-               verbatim is "the first Rollup to tether its security directly to
-               Bitcoin", so that is what the page says, and the 25/75 split is
-               added because it is quoted verbatim too and makes the weaker
-               sentence carry more than the stronger one did. -->
-          <p class="th-claim" data-perishable="third-party"
-             data-src="https://www.starknet.io/blog/starknet-2025-year-in-review/"
-             data-checked="2026-08-23"
-             data-says="the Starknet ecosystem launched BTC staking, making Starknet the first Rollup to tether its security directly to Bitcoin | Bitcoin holders can now stake their BTC to secure Starknet and earn STRK rewards, launching a dual-token consensus model where STRK represents 75% and BTC 25% of the network&#39;s total security weight"
-             data-noun-ok="Starknet BTC STRK">Since late 2025, Bitcoin can be staked natively on Starknet to help secure the network and earn rewards. Not custodial lending. Not a yield farm. Starknet is the first rollup to tether its security directly to Bitcoin: BTC and STRK stake together, at 25% and 75% of total staking power.</p>
-          <!-- COPY CONSOLIDATION (owner-approved, 2026-08-24). The middle
-               paragraph: "BTC carries 25% of consensus weight (monetary
-               security), STRK carries 75% (network economics).": moved into
-               the column's role labels to the right: the same information
-               reads as BTC "Consensus weight, monetary security" / STRK
-               "Network economics, reward engine" beside the 25/75 segments.
-               The information moved, it did not vanish; do not re-add the
-               paragraph here without removing it there. The first paragraph's
-               "BTC and STRK stake together, at 25% and 75% of total staking
-               power" is now the visual's source of truth.
-               THE SIGNATURE "ONE SECURITY BUDGET, STAKED TOGETHER" IS
-               OWNER-APPROVED EDITORIAL COPY (2026-08-24), NOT SOURCE-
-               CONTAINED: "security budget" is standard PoS vocabulary used
-               as a signature; the factual load is carried by the contained
-               first paragraph above. If this panel ever gains data-perishable
-               / data-says attributes, the signature must not be cited as a
-               sourced claim. -->
-          <p style="margin-top:12px;">Because rewards come from protocol economics, this yield is <strong>sustainable</strong> and tied directly to STRK's economy: as more STRK is staked, and as STRK appreciates, BTC staking rewards grow with it.</p>
-        </div>
-        <!-- One shared column, not two bars: 25 + 75 = 100% of ONE staking
-             power, and the copy says "stake together": two separate bars
-             read as rivals, one split column reads as a composition. The
-             segment heights are the device's only job: exactly 25% / 75%. -->
-        <div class="bsk-visual">
-          <p class="bsk-cap bsk-fade">Total staking power</p>
-          <div class="bsk-col">
-            <div class="bsk-seg bsk-seg-btc">
-              <i class="bsk-fill" aria-hidden="true"></i>
-              <span class="bsk-pct bsk-fade">25%</span>
-              <span class="bsk-role bsk-fade"><b>BTC</b> Consensus weight, monetary security</span>
-            </div>
-            <div class="bsk-seg bsk-seg-strk">
-              <i class="bsk-fill" aria-hidden="true"></i>
-              <span class="bsk-pct bsk-fade">75%</span>
-              <span class="bsk-role bsk-fade"><b>STRK</b> Network economics, reward engine</span>
-            </div>
-            <i class="bsk-line bsk-fade" aria-hidden="true"></i>
-          </div>
-          <p class="bsk-sig bsk-fade">One security budget, staked together</p>
-        </div>
-      </div>
 
       <!-- BTCFI ECOSYSTEM LISTING (mst- prefix). Rebuilt 2026-09-01 in the
            Mistral models-listing idiom: a left rail of category selectors,
@@ -3937,23 +3858,8 @@
 })();
 </script>
 
-
 <script>
-/* STAKING COLUMN REVEAL. One-shot: IO adds .bsk-on, the CSS transitions do
-   the rest, and nothing runs afterwards: no rAF, no listeners left behind.
-   Reduced motion (or no JS): .bsk-pre is never added, so the base end state
-   renders immediately. */
-(function() {
-  var band = document.getElementById('native-btc-staking-a-first-for');
-  if (!band || !('IntersectionObserver' in window)) return;
-  if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  band.classList.add('bsk-pre');
-  new IntersectionObserver(function(es, io) {
-    if (!es[0].isIntersecting) return;
-    band.classList.add('bsk-on');
-    io.disconnect();
-  }, { threshold: 0.35 }).observe(band);
-})();
+/* the staking band's reveal went with the band itself. */
 </script>
 
 <script src="js/lineage.js" defer></script>
@@ -4569,7 +4475,6 @@
   syncDraftUI();
 })();
 </script>
-
 
 <!-- LIVE BTC METRICS: same zero-cost client-side architecture as the
      privacy page metrics block: cache-busted fetches on load + silent
