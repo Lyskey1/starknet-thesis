@@ -242,7 +242,7 @@ body.page-privacy header.vc-header { z-index: 100; }
   min-height: 100vh; display: flex; flex-direction: column; }
 
 /* the reading area: one .phead per state, only the active one shown */
-.pcore-heads { position: relative; flex: none; height: clamp(190px, 26vh, 280px); overflow: hidden;
+.pcore-heads { position: relative; flex: none; height: clamp(226px, 31vh, 344px); overflow: hidden;
   padding: 0 16px 26px; }
 .phead { position: absolute; inset: 0 16px auto; transform: translateY(112%); opacity: 0;
   transition: transform var(--pc-slide) var(--pc-ease), opacity calc(var(--pc-slide) * .7) ease; }
@@ -250,8 +250,16 @@ body.page-privacy header.vc-header { z-index: 100; }
 .phead.-out { transform: translateY(-112%); opacity: 0; }
 .phead__rn, .phead__elim { font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--pf-acc); }
 .phead__elim { margin-top: 14px; }
+/* THE SATOSHI TYPOGRAPHY (2026-09-01): the same face and shape the
+   Satoshi band and the hero statement use, General Sans 600 at 1.02
+   leading and -.04em tracking, rather than 500 at -.02em, which read as
+   a different voice on the same page. The size ceiling is raised as far
+   as the conveyor's fixed height allows and .pcore-heads grows with it;
+   the band's own 92px cannot apply here because .pcore-heads is a fixed
+   height with overflow hidden, and a heading that outgrew it would be
+   clipped mid-swap. */
 .phead h4 { margin: 10px 0 12px; font-family: 'General Sans','Helvetica Neue',Arial,sans-serif;
-  font-weight: 500; font-size: clamp(26px, 3.2vw, 44px); line-height: 1.04; letter-spacing: -.02em; color: var(--pf-ink); }
+  font-weight: 600; font-size: clamp(30px, 4.3vw, 60px); line-height: 1.02; letter-spacing: -.04em; color: var(--pf-ink); }
 .phead p { margin: 0; max-width: 78ch; font-family: 'General Sans','Helvetica Neue',Arial,sans-serif;
   font-size: clamp(15px, 1.25vw, 18px); line-height: 1.6; color: var(--pf-dim); }
 .phead--lede p { max-width: 44ch; font-size: clamp(20px, 2.4vw, 34px); line-height: 1.28; letter-spacing: -.01em; color: var(--pf-dim); }

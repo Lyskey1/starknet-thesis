@@ -2042,6 +2042,55 @@
   .bfc-vol,.bfc-schip-t{font-size:24px;letter-spacing:.06em;}
   #scaleChart text{letter-spacing:.05em;}
 }
+
+/* the figures run to the edges, and the cards spread into the room that
+   buys them. .mst-bleed resolves its 50% against .solution-inner's content
+   box, so the block lands exactly 100vw; html{overflow-x:clip} in
+   styles.css absorbs the scrollbar difference, as it already does for the
+   ecosystem field. */
+.bm-bleed .metrics-row{gap:20px;}
+.bm-bleed .metrics-row .metric-box{min-height:340px;padding:36px 34px 34px;}
+.bm-bleed .metrics-row .metric-val{font-size:clamp(44px,4.6vw,76px);}
+.bm-bleed .metrics-row .metric-label{font-size:21px;padding-top:30px;}
+.bm-bleed .metrics-row .metric-sub{font-size:15.5px;}
+@media (max-width:1240px){
+  .bm-bleed .metrics-row .metric-box{min-height:250px;padding:26px 24px 24px;}
+  .bm-bleed .metrics-row .metric-label{font-size:17px;padding-top:20px;}
+}
+@media (max-width:700px){
+  .bm-bleed .metrics-row .metric-box{min-height:190px;padding:22px 20px 20px;}
+  .bm-bleed .metrics-row .metric-label{font-size:16px;padding-top:16px;}
+}
+
+/* ============================================================
+   THE SATOSHI TYPOGRAPHY, applied to section 01's title.
+   Same face and same shape as the privacy page's Satoshi band and
+   the display statement in its hero: General Sans 600, leading
+   1.02, tracking -.04em, set large and tight. It was 300 weight at
+   -.015em, which is a different voice entirely.
+   Size is bounded by the block it sits in, so this raises the
+   ceiling rather than copying the band's 92px outright.
+   ============================================================ */
+/* Addressed by id, not by .problem. css/privacy-fx.css carries
+   `.th-pm-head--band .th-pm-title { font-weight: 300 }`, which ties this
+   rule on specificity (0,2,0 each) and is linked after this block, so a
+   class-pair selector lost the weight and the tracking while winning the
+   size. An id ends the tie outright. */
+#bitcoins-unfinished-mission.th-pm-title{
+  font-family:var(--display),'Helvetica Neue',Arial,sans-serif;
+  /* !important, matching the rule being overridden. styles.css locks the
+     whole heading family with
+       h1, h2, .th-pm-title, ... { font-weight: 300 !important; ... }
+     so specificity alone cannot reach this, and an id selector loses to it.
+     The privacy band escapes that lock only because its statement is a <p>
+     inside a blockquote rather than an h1 or h2. Scoped to this one id, so
+     no other heading on the site changes weight. */
+  font-weight:600 !important;font-size:clamp(38px,5.6vw,84px);
+  line-height:1.02;letter-spacing:-.04em !important;
+}
+#bitcoins-unfinished-mission.th-pm-title b,
+#bitcoins-unfinished-mission.th-pm-title em{font-weight:600;}
+@media(max-width:880px){ #bitcoins-unfinished-mission.th-pm-title{font-size:clamp(32px,8.4vw,46px);} }
 </style>
 <script>
 /* BTCFi ecosystem field: reserve the flight's height before layout. Classic
@@ -3429,6 +3478,10 @@
       </div>
     </div>
 
+    <!-- Metrics. Full bleed (2026-09-01): the ecosystem field above runs
+         to the viewport edge, and the figures reading 1004px wide beside
+         it looked like a different page. Same .mst-bleed the field uses. -->
+    <div class="mst-bleed bm-bleed">
     <!-- Metrics -->
     <div class="tl-section" style="margin-bottom:0;">
       <p class="scale-label">Live on-chain</p>
@@ -3458,6 +3511,7 @@
       </div>
     </div>
     <div class="bm-updated" id="bmUpdated"></div>
+    </div>
 
     <!-- Bitcoin news (collapsible) -->
     <div class="news-section news-flashy" id="newsSection">
