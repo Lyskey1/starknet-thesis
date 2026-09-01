@@ -1,5 +1,5 @@
 /**
- * Copy for the Starknet Thesis landing. Passed in via props — never imported
+ * Copy for the Starknet Thesis landing. Passed in via props, never imported
  * directly by a component.
  */
 
@@ -29,11 +29,11 @@ export const homeLoader: LoaderCopy = {
   initializing: "INITIALIZING PRIVACY POOL",
   loading: "LOADING PROOFS",
   coordinates: "PRIVACY / QUANTUM / BTCFI",
-  version: "v4.0 — one ticker",
+  version: "v4.0, one ticker",
 };
 
 export const homeFaq: FaqCopy = {
-  eyebrow: "05 — QUESTIONS",
+  eyebrow: "05 · QUESTIONS",
   title: "Frequently asked",
   items: [
     {
@@ -83,17 +83,22 @@ export const homeFooter: FooterCopy = {
       ],
     },
     {
-      heading: "Follow",
+      heading: "Signals",
       links: [
         { label: "Ecosystem", href: "/ecosystem" },
         { label: "Digest", href: "/digest" },
+      ],
+    },
+    {
+      heading: "Follow",
+      links: [
         { label: "Newsletter", href: "https://starknetresearch.substack.com" },
+        { label: "X / Twitter", href: "https://x.com/Lyskey" },
       ],
     },
     {
       heading: "Connect",
       links: [
-        { label: "X / Twitter", href: "https://x.com/Lyskey" },
         { label: "Network status", href: "https://status.starknet.io/" },
         { label: "llms.txt", href: "/llms.txt" },
       ],

@@ -35,8 +35,9 @@ header.vc-header .vc-mobile a.vc-cta { margin-top: 12px; justify-content: center
 /* footer: two bands. Band one is a full-bleed accent block (statement + email
    capture + two buttons); band two is the near-black link/brand band.
    Band one is styled through BARE class selectors, never a
-   `footer.vc-footer ...` descendant selector, because strk.html and
-   digest.html lift it out of the footer into the pinned `.ct-pin` layer. */
+   `footer.vc-footer ...` descendant selector. Keep them ancestor-independent:
+   a past change scoped `form.vc-sub` under the footer and silently unstyled
+   the form on five pages. */
 footer.vc-footer { position: relative; width: 100vw; max-width: none; margin: 0 0 0 calc(50% - 50vw); padding: 0; background: var(--vc-bg); color: var(--vc-text); font-family: var(--vc-sans); border-top: 0; }
 
 /* ---- band one: the accent statement block ---- */
@@ -59,9 +60,6 @@ form.vc-sub input:focus-visible { outline: 2px solid #fff; outline-offset: 2px; 
 .vc-btn-light { background: var(--vc-text); color: var(--vc-bg); }
 .vc-btn-light:hover { background: #fff; }
 .vc-btn i { display: block; flex: none; width: 7px; height: 7px; background: none; border-top: 1.5px solid currentColor; border-right: 1.5px solid currentColor; transform: rotate(45deg); }
-
-/* the pinned pages keep their sticky reveal; the band just rides inside it */
-.ct-pin.vc-pin-band { display: flex; flex-direction: row; align-items: flex-start; justify-content: flex-start; gap: 0; padding: 10vh 0 0; text-align: left; }
 
 /* ---- band two: link columns, then brand + legal ---- */
 footer.vc-footer .vc-cols { display: block; width: calc(100% - 48px); max-width: 1392px; margin: 0 auto; padding: 0; }
@@ -86,9 +84,6 @@ footer.vc-footer .vc-legal { margin: 0; width: auto; max-width: none; padding: 0
   footer.vc-footer .vc-col { padding: 40px 0 40px 24px; }
   footer.vc-footer .vc-col:nth-child(odd) { padding-left: 0; border-left: 0; }
   footer.vc-footer .vc-base { grid-template-columns: 1fr; }
-}
-@media (max-width: 880px) {
-  .ct-pin.vc-pin-band { position: relative; height: auto; display: block; padding: 0; }
 }
 @media (max-width: 640px) {
   .vc-acts { flex-direction: column; }

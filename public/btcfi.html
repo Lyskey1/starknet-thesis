@@ -168,42 +168,12 @@
   .bf-cta:hover i { transform: translateX(4px); }
   .bf-cta:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
-  /* CLAIM BAND: twin of the sibling bands. */
-  .bf-marquee { border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); overflow: hidden; padding: 10px 0;
-    -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
-            mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent); }
-  .bf-mq-track { display: flex; width: max-content; }
-  .bf-mq-set { display: flex; gap: 14px; padding-right: 14px; }
-  .bf-mq-set > span { /* child combinator, band-family rule: nested spans must never pick up pill styles */ font-family: var(--mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; white-space: nowrap;
-    border: 1px solid rgba(var(--accent-rgb), .35); color: var(--accent); padding: 9px 16px; border-radius: 99px; display: inline-flex; }
-  /* band-family layer rule (d6b1c2c): two sets below 3350px viewports,
-     three from there. One set is 3363px at 1440; an N-set track covers
-     viewports to (N-1) set widths, and each glass chip is a composited
-     layer that is never culled inside the animated track, so the third
-     set (13 layers) exists only where it covers something. Loop period
-     is one set width in both regimes: same rate, same seam. */
-  .bf-marquee.run .bf-mq-track { animation: bfmq 70s linear infinite; }
-  @keyframes bfmq { to { transform: translateX(-50%); } }
-  .bf-mq-set[data-dup] + .bf-mq-set[data-dup] { display: none; }
-  @media (min-width: 3350px) and (prefers-reduced-motion: no-preference) {
-    .bf-mq-set[data-dup] + .bf-mq-set[data-dup] { display: flex; }
-    .bf-marquee.run .bf-mq-track { animation-name: bfmq3; }
-  }
-  @keyframes bfmq3 { to { transform: translateX(-33.3333%); } }
-  .bf-marquee:hover .bf-mq-track { animation-play-state: paused; }
-  .bf-mq-set .chip-glass, .bf-cta.chip-glass { transition: background var(--hover-dur) var(--hover-ease), box-shadow var(--hover-dur) var(--hover-ease); }
+  /* The glass CTA keeps the band family's hover transition: the claim band
+     that used to share this rule was removed on 2026-09-01, section 01's
+     link still uses it. */
+  .bf-cta.chip-glass { transition: background var(--hover-dur) var(--hover-ease), box-shadow var(--hover-dur) var(--hover-ease); }
   @media (prefers-reduced-motion: reduce) {
-    .bf-mq-track { animation: none !important; flex-wrap: wrap; width: auto; gap: 12px 0; }
-    .bf-mq-set[data-dup] { display: none; }
-    .bf-mq-set { flex-wrap: wrap; gap: 12px; padding-right: 0; }
-    .bf-marquee { -webkit-mask-image: none; mask-image: none; }
-    .bf-cta.chip-glass, .bf-cta i, .bf-mq-set .chip-glass { transition: none; }
-  }
-  @media (max-width: 980px) {
-    .bf-mq-track { animation: none !important; flex-wrap: wrap; width: auto; }
-    .bf-mq-set[data-dup] { display: none; }
-    .bf-mq-set { flex-wrap: wrap; gap: 10px; padding: 0 24px; }
-    .bf-marquee { -webkit-mask-image: none; mask-image: none; padding: 16px 0; }
+    .bf-cta.chip-glass, .bf-cta i { transition: none; }
   }
 </style>
 <style>
@@ -1639,9 +1609,11 @@
 
   /* ==========================================================================
      BTCFI ECOSYSTEM LISTING (mst- prefix), rebuilt 2026-09-01.
-     Mistral's models-listing idiom, re-skinned to this page: a left rail of
-     bordered category rows, one active at a time, and a two-column card grid
-     to its right whose cells are divided by hairlines rather than gapped.
+     Mistral's models-listing idiom, re-skinned to this page and widened on
+     2026-09-01: a full-bleed card grid whose cells are divided by hairlines
+     rather than gapped, up to three columns wide, with the bordered category
+     rows now reading as a horizontal filter bar UNDER the grid instead of a
+     sticky rail beside it.
      SITS AT THE VERY END OF THIS INLINE <style> ON PURPOSE: every linked
      sheet (css/styles.css among them) loads BEFORE this block, and the old
      .eco-card / .eco-chip rules still live there. Anything appended after
@@ -1652,44 +1624,224 @@
      STRAIGHT CORNERS THROUGHOUT: no border-radius on cards, chips, rail rows
      or the copy field.
      ========================================================================== */
-  .mst-eco {
-    display: grid;
-    grid-template-columns: 232px minmax(0, 1fr);
-    gap: 0 40px;
-    align-items: start;
-    margin-top: 44px;
+  /* FULL-BLEED WRAPPER (2026-09-01). The listing used to sit in the 1100px
+     .solution-inner column with ~218px of dead margin on each side. It now
+     breaks out to the viewport: `margin-inline: calc(50% - 50vw)` measures
+     against the .solution-inner CONTENT box, so the block lands exactly
+     100vw wide whatever that column's padding is, and its own padding-inline
+     is the only gutter left. html{overflow-x:clip} (css/styles.css) already
+     absorbs the vw/scrollbar difference, so this never creates a horizontal
+     scrollbar. Nothing here paints a ground: the flame canvas keeps reading
+     through. */
+  .mst-bleed {
+    margin-inline: calc(50% - 50vw);
+    padding-inline: clamp(14px, 2.4vw, 36px);
   }
 
-  /* --- left rail --------------------------------------------------------- */
-  .mst-rail { display: flex; flex-direction: column; position: sticky; top: 96px; }
+  .mst-eco { margin-top: 52px; }
+
+  /* --- the grid: hairlines, not gaps ------------------------------------- */
+  /* THREE COLUMNS at full bleed, two from 1240px down, one below 820px.
+     Border scheme is column-count agnostic on purpose: the container draws
+     top and left, every card draws right and bottom, and the container's
+     ::after re-draws the bottom edge across the ragged tail of the last row.
+     That line sits exactly on the last full row's own bottom border, so a
+     complete row never doubles up. */
+  .mst-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    position: relative;
+    border-top: 1px solid #262626;
+    border-left: 1px solid #262626;
+  }
+  .mst-grid::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 1px;
+    background: #262626;
+    pointer-events: none;
+  }
+  .mstc {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    min-width: 0;
+    padding: 30px 32px 26px;
+    border-right: 1px solid #262626;
+    border-bottom: 1px solid #262626;
+    border-radius: 0;
+    background: rgba(20,20,20,0.55);
+    transition: background 0.18s;
+  }
+  .mstc:hover { background: rgba(20,20,20,0.85); }
+  .mstc-soon { background: transparent; opacity: 0.55; }
+  .mstc-soon:hover { background: transparent; }
+
+  .mstc-top { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 20px; }
+  .mstc-logo {
+    width: 52px; height: 52px;
+    flex: none;
+    border: 1px solid #262626;
+    border-radius: 0;
+    background: rgba(250,250,250,0.05);
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+    font-size: 16px;
+  }
+  .mstc-logo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .mstc-kind {
+    margin-left: auto;
+    flex: none;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(250,250,250,0.5);
+    padding: 6px 11px;
+    border: 1px solid #262626;
+    border-radius: 0;
+  }
+  .mstc-name {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--display);
+    font-size: 23px;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    color: #fafafa;
+    text-decoration: none;
+    margin-bottom: 12px;
+  }
+  a.mstc-name:hover { color: #c53400; }
+  a.mstc-name:focus-visible { outline: 1px solid #c53400; outline-offset: 3px; }
+  .mstc-ext { font-size: 16px; color: rgba(250,250,250,0.35); transition: color 0.18s; }
+  a.mstc-name:hover .mstc-ext { color: #c53400; }
+  .mstc-desc {
+    font-size: 15px;
+    line-height: 1.6;
+    color: rgba(250,250,250,0.62);
+    margin: 0 0 18px;
+  }
+  .mstc-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+  .mstc-tag {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(250,250,250,0.62);
+    padding: 6px 11px;
+    border: 1px solid #262626;
+    border-radius: 0;
+  }
+
+  /* --- the copy field: a bordered strip, full width, pinned to the foot --- */
+  .mstc-copy {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    margin-top: auto;
+    padding: 13px 14px;
+    border: 1px solid #262626;
+    border-radius: 0;
+    background: #141414;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    letter-spacing: 0.03em;
+    color: rgba(250,250,250,0.62);
+    text-align: left;
+    cursor: pointer;
+    transition: border-color 0.18s, color 0.18s;
+  }
+  .mstc-copy:hover { border-color: rgba(197,52,0,0.5); color: #fafafa; }
+  .mstc-copy:focus-visible { outline: 1px solid #c53400; outline-offset: 2px; }
+  .mstc-copy-val { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .mstc-copy-ic { flex: none; font-size: 16px; color: rgba(250,250,250,0.4); }
+  .mstc-copy:hover .mstc-copy-ic { color: #c53400; }
+  .mstc-copy.is-copied { border-color: #c53400; color: #c53400; }
+  .mstc-copy.is-copied .mstc-copy-ic { color: #c53400; }
+
+  /* --- headings ---------------------------------------------------------- */
+  .mst-title {
+    font-family: var(--display);
+    font-size: clamp(28px, 3.2vw, 44px);
+    font-weight: 600;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: #fafafa;
+    margin: 0 0 12px;
+  }
+  .mst-blurb {
+    font-size: 16px;
+    line-height: 1.6;
+    color: rgba(250,250,250,0.62);
+    margin: 0 0 28px;
+    max-width: 78ch;
+  }
+  .mst-blurb[hidden] { display: none; }
+  .mst-panel { margin-top: 40px; }
+  .mst-panel[hidden] { display: none; }
+  .mst-group {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(250,250,250,0.4);
+    margin: 0 0 14px;
+  }
+  /* the group caption only earns its place in the "All" view, where three
+     grids stack and the reader needs to know which is which */
+  .mst-eco:not([data-cat="all"]) .mst-group { display: none; }
+  .mst-eco:not([data-cat="all"]) .mst-panel { margin-top: 0; }
+
+  /* --- the filter bar, UNDER the grid ------------------------------------ */
+  /* Moved from a sticky left rail to a horizontal bar below the cards on
+     2026-09-01, in the DOM as well as on screen, so tab order still follows
+     reading order. It stays role="group" with aria-pressed toggles and is
+     deliberately NOT a tablist: there are no tabpanels, and in "All" one row
+     is pressed while three panels show. */
+  .mst-rail {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    position: static;
+    margin-top: 44px;
+    padding-top: 30px;
+    border-top: 1px solid #262626;
+  }
   .mst-rail-cap {
     font-family: var(--mono);
-    font-size: 9.5px;
+    font-size: 10.5px;
     letter-spacing: 0.18em;
     text-transform: uppercase;
     color: rgba(250,250,250,0.32);
-    margin: 22px 0 8px;
+    margin: 0 20px 0 30px;
   }
   .mst-rail-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
-    width: 100%;
-    margin-top: -1px;               /* rows share one hairline */
-    padding: 13px 14px;
+    gap: 14px;
+    width: auto;
+    margin-left: -1px;              /* rows share one hairline */
+    padding: 16px 24px;
     border: 1px solid #262626;
     border-radius: 0;
     background: transparent;
     font-family: var(--display);
-    font-size: 13.5px;
+    font-size: 16px;
     font-weight: 500;
     color: rgba(250,250,250,0.62);
     text-align: left;
     cursor: pointer;
     transition: color 0.18s, border-color 0.18s, background 0.18s;
   }
-  .mst-rail-cap + .mst-rail-row { margin-top: 0; }
+  .mst-rail-row:first-child { margin-left: 0; }
+  .mst-rail-cap + .mst-rail-row { margin-left: 0; }
   .mst-rail-row:hover { color: #fafafa; border-color: rgba(197,52,0,0.45); }
   .mst-rail-row:focus-visible { outline: 1px solid #c53400; outline-offset: 2px; }
   .mst-rail-row.is-active {
@@ -1701,185 +1853,52 @@
   }
   .mst-rail-n {
     font-family: var(--mono);
-    font-size: 10px;
+    font-size: 11.5px;
     letter-spacing: 0.06em;
     color: rgba(250,250,250,0.4);
     flex: none;
   }
   .mst-rail-row.is-active .mst-rail-n { color: #c53400; }
 
-  /* --- right column ------------------------------------------------------ */
-  .mst-title {
-    font-family: var(--display);
-    font-size: 30px;
-    font-weight: 600;
-    line-height: 1.15;
-    letter-spacing: -0.015em;
-    color: #fafafa;
-    margin: 0 0 10px;
+  /* --- settle-in on scroll ----------------------------------------------- */
+  /* The hiding state is scoped to .mst-anim, which the reveal script at the
+     foot of this page adds to #btcfiEco. With JS off, or under reduced
+     motion (the script never adds the class), every card is plainly visible
+     at its resting position. */
+  .mst-anim .mstc {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.55s cubic-bezier(0.22, 0.61, 0.36, 1),
+                transform 0.55s cubic-bezier(0.22, 0.61, 0.36, 1),
+                background 0.18s;
   }
-  .mst-blurb {
-    font-size: 13.5px;
-    line-height: 1.65;
-    color: rgba(250,250,250,0.62);
-    margin: 0 0 22px;
-    max-width: 62ch;
-  }
-  .mst-blurb[hidden] { display: none; }
-  .mst-panel { margin-top: 26px; }
-  .mst-panel[hidden] { display: none; }
-  .mst-group {
-    font-family: var(--mono);
-    font-size: 9.5px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: rgba(250,250,250,0.4);
-    margin: 0 0 10px;
-  }
-  /* the group caption only earns its place in the "All" view, where three
-     grids stack and the reader needs to know which is which */
-  .mst-eco:not([data-cat="all"]) .mst-group { display: none; }
-  .mst-eco:not([data-cat="all"]) .mst-panel { margin-top: 0; }
-
-  /* --- the grid: hairlines, not gaps ------------------------------------- */
-  .mst-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    border-top: 1px solid #262626;
-    border-left: 1px solid #262626;
-    border-right: 1px solid #262626;   /* the box's own right edge, so a half-
-                                          filled last row still closes */
-  }
-  .mstc {
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    min-width: 0;
-    padding: 20px 22px 18px;
-    border-bottom: 1px solid #262626;
-    border-radius: 0;
-    background: rgba(20,20,20,0.55);
-    transition: background 0.18s;
-  }
-  .mstc:hover { background: rgba(20,20,20,0.85); }
-  /* only the LEFT column draws the vertical divider; the grid's own
-     border-right closes the box on the other side */
-  .mstc:nth-child(odd) { border-right: 1px solid #262626; }
-  /* an odd item count leaves one empty cell: carry the bottom hairline
-     across it so the box does not end in a notch */
-  .mstc:last-child:nth-child(odd)::after {
-    content: '';
-    position: absolute;
-    left: 100%;
-    bottom: -1px;
-    width: 100%;
-    height: 1px;
-    background: #262626;
-  }
-  .mstc-soon { background: transparent; opacity: 0.55; }
-  .mstc-soon:hover { background: transparent; }
-
-  .mstc-top { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px; }
-  .mstc-logo {
-    width: 32px; height: 32px;
-    flex: none;
-    border: 1px solid #262626;
-    border-radius: 0;
-    background: rgba(250,250,250,0.05);
-    display: flex; align-items: center; justify-content: center;
-    overflow: hidden;
-  }
-  .mstc-logo img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .mstc-kind {
-    margin-left: auto;
-    flex: none;
-    font-family: var(--mono);
-    font-size: 9px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: rgba(250,250,250,0.5);
-    padding: 4px 8px;
-    border: 1px solid #262626;
-    border-radius: 0;
-  }
-  .mstc-name {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-family: var(--display);
-    font-size: 16.5px;
-    font-weight: 600;
-    line-height: 1.25;
-    color: #fafafa;
-    text-decoration: none;
-    margin-bottom: 8px;
-  }
-  a.mstc-name:hover { color: #c53400; }
-  a.mstc-name:focus-visible { outline: 1px solid #c53400; outline-offset: 3px; }
-  .mstc-ext { font-size: 13px; color: rgba(250,250,250,0.35); transition: color 0.18s; }
-  a.mstc-name:hover .mstc-ext { color: #c53400; }
-  .mstc-desc {
-    font-size: 12.5px;
-    line-height: 1.6;
-    color: rgba(250,250,250,0.62);
-    margin: 0 0 12px;
-  }
-  .mstc-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
-  .mstc-tag {
-    font-family: var(--mono);
-    font-size: 9px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: rgba(250,250,250,0.62);
-    padding: 4px 8px;
-    border: 1px solid #262626;
-    border-radius: 0;
+  .mst-anim .mstc.is-in { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .mst-anim .mstc { opacity: 1; transform: none; transition: background 0.18s; }
   }
 
-  /* --- the copy field: a bordered strip, full width, pinned to the foot --- */
-  .mstc-copy {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    width: 100%;
-    margin-top: auto;
-    padding: 9px 10px;
-    border: 1px solid #262626;
-    border-radius: 0;
-    background: #141414;
-    font-family: var(--mono);
-    font-size: 10.5px;
-    letter-spacing: 0.03em;
-    color: rgba(250,250,250,0.62);
-    text-align: left;
-    cursor: pointer;
-    transition: border-color 0.18s, color 0.18s;
+  @media (max-width: 1240px) {
+    .mst-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }
-  .mstc-copy:hover { border-color: rgba(197,52,0,0.5); color: #fafafa; }
-  .mstc-copy:focus-visible { outline: 1px solid #c53400; outline-offset: 2px; }
-  .mstc-copy-val { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .mstc-copy-ic { flex: none; font-size: 13px; color: rgba(250,250,250,0.4); }
-  .mstc-copy:hover .mstc-copy-ic { color: #c53400; }
-  .mstc-copy.is-copied { border-color: #c53400; color: #c53400; }
-  .mstc-copy.is-copied .mstc-copy-ic { color: #c53400; }
-
   @media (max-width: 900px) {
-    .mst-eco { grid-template-columns: minmax(0, 1fr); gap: 0; }
-    .mst-rail {
-      position: static;
-      flex-direction: row;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 26px;
-    }
-    .mst-rail-cap { display: none; }
-    .mst-rail-row { width: auto; margin-top: 0; padding: 9px 12px; font-size: 12.5px; }
-    .mst-title { font-size: 22px; }
+    .mst-rail { margin-top: 34px; padding-top: 22px; }
+    .mst-rail-cap { margin: 0 14px 0 18px; }
+    .mst-rail-row { padding: 12px 16px; font-size: 14px; }
+  }
+  @media (max-width: 820px) {
     .mst-grid { grid-template-columns: minmax(0, 1fr); }
+    .mstc { padding: 24px 22px 20px; }
+    .mstc-name { font-size: 20px; }
   }
   @media (max-width: 560px) {
-    .mstc { padding: 16px 16px 14px; }
-    .mstc-name { font-size: 15px; }
+    .mst-eco { margin-top: 34px; }
+    .mstc { padding: 20px 18px 18px; }
+    .mstc-name { font-size: 18px; }
+    .mstc-logo { width: 44px; height: 44px; }
+    .mstc-desc { font-size: 14px; }
+    .mst-rail { flex-wrap: wrap; gap: 8px 0; }
+    .mst-rail-cap { width: 100%; margin: 0 0 4px; }
+    .mst-rail-row { padding: 11px 14px; font-size: 13.5px; }
   }
 </style>
 <script>
@@ -1954,39 +1973,6 @@
     <p class="bfh-turn">Time to make it the best to use</p>
   </div>
 </div>
-
-<!-- claim band: every item restates something already published in the body
-     below. Mechanics are the twin of the ecosystem, digest, privacy and
-     quantum bands: seamless loop over repeated sets, edge fade masks, hover
-     pause, IO gated, same 70s duration. Three sets so the loop stays gapless
-     on an ultrawide. The first set is the readable one; the copies are
-     aria-hidden. Labels only, never links. No live figure appears here: the
-     BTC and strkBTC numbers on this page update hourly, so a static pill
-     would drift out of step with them. -->
-<div class="bf-marquee" id="bfMarquee"><div class="bf-mq-track">
-  <!-- CLAIMS ABOUT WHAT IS RUNNING DO NOT BELONG IN A TICKER UNDATED. A chip
-     has no body text to date it, no room for a caveat and no link to check, so
-     a bare "LIVE" or "TODAY" reads as present tense forever and cannot age.
-     Three were removed on 2026-08-23: "STAKING, LENDING, PERPS, LIVE",
-     "OP_CAT PROOF OF CONCEPT LIVE" and "BTCFI-READY TODAY" lost their status
-     word and kept their substance, which is the capability, not the status.
-     THE OP_CAT ONE MATTERED MOST: its demo cannot be verified at all, because
-     the project's whole web presence is gone (see the roadmap step below for
-     the DNS finding). "LIVE" was the single least supportable word on the page.
-     The dated, sourced version of each claim lives further down where there is
-     room for it, which is the same split quantum's hero band uses: the ticker
-     names the thing, the section carries the date and the source.
-     "NATIVE BTC STAKING SINCE 2025" KEEPS ITS DATE and is the exception that
-     shows the rule: it carries a year, and the metrics block on this page
-     fetches Endur live and renders BTC currently staked, so the continuity it
-     asserts is visible on the same page.
-     Architectural chips (DUAL-TOKEN PROOF OF STAKE, STRKBTC BEHAVES LIKE
-     ERC-20, BITCOIN SETTLES STARKNET SCALES) carry nothing: they describe how
-     the thing is built, and that does not rot. -->
-<div class="bf-mq-set"><span class="chip-glass">BITCOIN SETTLES, STARKNET SCALES</span><span class="chip-glass">NATIVE BTC STAKING SINCE 2025</span><span class="chip-glass">DUAL-TOKEN PROOF OF STAKE</span><span class="chip-glass">BTC 25%, STRK 75% WEIGHT</span><span class="chip-glass">STAKING, LENDING, PERPS</span><span class="chip-glass">STRKBTC BEHAVES LIKE ERC-20</span><span class="chip-glass">BTCFI-READY</span><span class="chip-glass">FULLY TRUSTLESS TOMORROW</span><span class="chip-glass">COMMUNITY-VETTED FEDERATION</span><span class="chip-glass">BITVM BRIDGE WITH ALPEN LABS</span><span class="chip-glass">OP_CAT PROOF OF CONCEPT</span><span class="chip-glass">PRIVATE BITCOIN</span><span class="chip-glass">POST-QUANTUM SECURITY</span></div>
-  <div class="bf-mq-set" data-dup aria-hidden="true"><span class="chip-glass">BITCOIN SETTLES, STARKNET SCALES</span><span class="chip-glass">NATIVE BTC STAKING SINCE 2025</span><span class="chip-glass">DUAL-TOKEN PROOF OF STAKE</span><span class="chip-glass">BTC 25%, STRK 75% WEIGHT</span><span class="chip-glass">STAKING, LENDING, PERPS</span><span class="chip-glass">STRKBTC BEHAVES LIKE ERC-20</span><span class="chip-glass">BTCFI-READY</span><span class="chip-glass">FULLY TRUSTLESS TOMORROW</span><span class="chip-glass">COMMUNITY-VETTED FEDERATION</span><span class="chip-glass">BITVM BRIDGE WITH ALPEN LABS</span><span class="chip-glass">OP_CAT PROOF OF CONCEPT</span><span class="chip-glass">PRIVATE BITCOIN</span><span class="chip-glass">POST-QUANTUM SECURITY</span></div>
-  <div class="bf-mq-set" data-dup aria-hidden="true"><span class="chip-glass">BITCOIN SETTLES, STARKNET SCALES</span><span class="chip-glass">NATIVE BTC STAKING SINCE 2025</span><span class="chip-glass">DUAL-TOKEN PROOF OF STAKE</span><span class="chip-glass">BTC 25%, STRK 75% WEIGHT</span><span class="chip-glass">STAKING, LENDING, PERPS</span><span class="chip-glass">STRKBTC BEHAVES LIKE ERC-20</span><span class="chip-glass">BTCFI-READY</span><span class="chip-glass">FULLY TRUSTLESS TOMORROW</span><span class="chip-glass">COMMUNITY-VETTED FEDERATION</span><span class="chip-glass">BITVM BRIDGE WITH ALPEN LABS</span><span class="chip-glass">OP_CAT PROOF OF CONCEPT</span><span class="chip-glass">PRIVATE BITCOIN</span><span class="chip-glass">POST-QUANTUM SECURITY</span></div>
-</div></div>
 
 
 <div class="section-divider"></div>
@@ -3043,15 +3029,8 @@
            The rail is only a filter: the "All" row is the default so those
            anchors always resolve, and the rail JS also re-opens the right
            category when a hash arrives for a card that is filtered out. -->
-      <div class="eco-section-wrap">
-        <div class="mst-eco" id="btcfiEco">
-          <div class="mst-rail" role="group" aria-label="Filter the ecosystem by category">
-            <button type="button" class="mst-rail-row is-active" aria-pressed="true" data-cat="all">All<span class="mst-rail-n" data-count="all">19</span></button>
-            <p class="mst-rail-cap">Onboarding</p>
-            <button type="button" class="mst-rail-row" aria-pressed="false" data-cat="wallets">Wallets<span class="mst-rail-n" data-count="wallets">3</span></button>
-            <button type="button" class="mst-rail-row" aria-pressed="false" data-cat="bridges">Bridges<span class="mst-rail-n" data-count="bridges">9</span></button>
-            <button type="button" class="mst-rail-row" aria-pressed="false" data-cat="defi">DeFi protocols<span class="mst-rail-n" data-count="defi">7</span></button>
-          </div>
+      <div class="eco-section-wrap mst-bleed">
+        <div class="mst-eco" id="btcfiEco" data-cat="all">
           <div class="mst-main">
             <h4 class="mst-title" id="btcfiEcoTitle">All wallets, bridges and protocols</h4>
             <p class="mst-blurb" id="btcfiEcoBlurb" hidden></p>
@@ -3298,6 +3277,13 @@
                 </div>
               </div>
             </div>
+          </div>
+          <div class="mst-rail" role="group" aria-label="Filter the ecosystem by category">
+            <button type="button" class="mst-rail-row is-active" aria-pressed="true" data-cat="all">All<span class="mst-rail-n" data-count="all">19</span></button>
+            <p class="mst-rail-cap">Onboarding</p>
+            <button type="button" class="mst-rail-row" aria-pressed="false" data-cat="wallets">Wallets<span class="mst-rail-n" data-count="wallets">3</span></button>
+            <button type="button" class="mst-rail-row" aria-pressed="false" data-cat="bridges">Bridges<span class="mst-rail-n" data-count="bridges">9</span></button>
+            <button type="button" class="mst-rail-row" aria-pressed="false" data-cat="defi">DeFi protocols<span class="mst-rail-n" data-count="defi">7</span></button>
           </div>
         </div>
       </div>
@@ -5342,14 +5328,48 @@
 })();
 </script>
 <script>
-/* claim band gate, twin of the sibling bands: the CSS only declares the
-   animation under .run, so off screen the band is not animating at all. */
+/* ECOSYSTEM CARDS: settle-in on scroll (added 2026-09-01).
+   The hiding state lives behind .mst-anim and this script is the only thing
+   that adds it, so with JS off the whole listing is plainly visible; under
+   prefers-reduced-motion the class is never added at all, and the CSS carries
+   a second reduced-motion reset for a mid-session change of preference.
+   Cards settle one after another rather than as a block: entries that cross
+   the threshold in the same callback are sorted into DOM order and given a
+   stepped transition-delay. Each card is unobserved once it has landed, and
+   btcfi:eco-rendered re-scans, because the item renderer above replaces the
+   cards wholesale when a draft or a published change exists. */
 (function(){
-  var band = document.getElementById('bfMarquee');
-  if (!band) return;
-  if ('IntersectionObserver' in window) {
-    new IntersectionObserver(function(es){ band.classList.toggle('run', es[0].isIntersecting); }, { threshold: 0 }).observe(band);
-  } else { band.classList.add('run'); }
+  var root = document.getElementById('btcfiEco');
+  if (!root) return;
+  if (!('IntersectionObserver' in window)) return;
+  try { if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return; }
+  catch (e) {}
+  root.classList.add('mst-anim');
+  var io = new IntersectionObserver(function(entries){
+    var hit = entries.filter(function(e){ return e.isIntersecting; });
+    if (!hit.length) return;
+    hit.forEach(function(e){
+      // the step comes from the card's COLUMN, not from its place in this
+      // callback's batch: a slow scroll can deliver one card per callback,
+      // and a row still has to settle left to right
+      var grid = e.target.parentNode;
+      var cols = 1;
+      try { cols = getComputedStyle(grid).gridTemplateColumns.split(' ').length || 1; } catch (err) {}
+      var i = [].indexOf.call(grid.children, e.target);
+      e.target.style.transitionDelay = ((i % cols) * 70) + 'ms';
+      e.target.classList.add('is-in');
+      io.unobserve(e.target);
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -5% 0px' });
+  function scan(){
+    [].slice.call(root.querySelectorAll('.mstc')).forEach(function(c){
+      if (c.classList.contains('is-in') || c.getAttribute('data-mst-obs') === '1') return;
+      c.setAttribute('data-mst-obs', '1');
+      io.observe(c);
+    });
+  }
+  document.addEventListener('btcfi:eco-rendered', scan);
+  scan();
 })();
 </script>
 <script>

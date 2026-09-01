@@ -24,7 +24,6 @@
 <script defer src="https://cloud.umami.is/script.js" data-website-id="45f11859-9fc2-49ae-a59e-4826e0f1e174"></script>
 <link rel="stylesheet" href="css/stride.css">
 <script defer src="js/search.js"></script>
-<script defer src="js/curtain.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -77,7 +76,8 @@
      box, contained 1160/32 content grid, left-aligned eyebrow, display and
      lede, glass CTA pair. Duplicated per page by convention, not factored,
      so keep the four copies in sync. The BACKDROP is per-page: quantum
-     keeps its aurora curtain and adds the chandelier drawing. */
+     carries the particle mark centrepiece (js/quantum-hero-mark.js) and
+     nothing else behind the copy. */
   /* FRAME: the landing hero's, and /btcfi's, rather than the old centred
      1160 content box. Full-bleed box, copy stacked top-left against the
      landing's 1.667vw gutter, so quantum, btcfi and the landing all read as
@@ -98,7 +98,7 @@
   /* the landing's kicker: Mulish, 0.9vw with an 11px floor, .2em, accent */
   .hero-eyebrow { font-family: var(--vc-tag); font-weight: 400; font-size: max(0.9vw, 11px); line-height: 1.5;
     letter-spacing: .2em; text-transform: uppercase; color: var(--accent); opacity: 1;
-    margin: 0 0 0.9vw; position: relative; }
+    margin: 0 0 0.48vw; position: relative; }
   /* the landing / btcfi display scale exactly: General Sans 300, 4.6vw,
      line-height .9, measure 52vw */
   .hero-title { font-family: var(--vc-sans); font-weight: 300; font-size: 4.6vw; line-height: .9;
@@ -120,17 +120,29 @@
      assets/hero/send-icon.svg. STRAIGHT CORNERS EVERYWHERE: no radius, no
      glass, no glow, no uppercase mono. The second is the ghost variant, a
      hairline box with chalk text and a chalk glyph, exactly as
-     .pv-cta--muted. Geometry is the privacy page's: 16px/40px block, 51px
-     tile, 4px between them. */
+     .pv-cta--muted. GEOMETRY IS THE LANDING'S, in the landing's own vw
+     units (Figma pixels / 14.4), the way .bfh-pill on /btcfi carries them:
+     4.167vw of horizontal padding, 1.111vw type, a 3.542vw tile and .278vw
+     between the two. Block and tile are both given height: 3.542vw so the
+     ghost variant's 1px border cannot make the block 2px taller than the tile
+     (the fixed-px version shipped at 53.2 against 51). At 1440 that is a
+     51 x 51 tile beside a 51-tall block, which is the landing measured.
+     Below 980 the vw units stop meaning anything, so the @media block near
+     the end of this sheet restates them in rem, exactly as /btcfi does.
+     THE max() FLOORS ARE INERT AT THE ARTBOARD and exist for the 981 to
+     ~1150 band, where 3.542vw is a 35px block carrying an 11px label. They
+     are the same idiom .hero-eyebrow and .hero-subtitle already use on this
+     page (max(0.9vw, 11px), max(1.06vw, 15px)); at 1440 every floor loses to
+     its vw term, so the measured geometry is still the landing's exactly. */
   .qh-ctas { display: flex; gap: 14px; margin: 0; flex-wrap: wrap; position: relative; }
-  .qh-cta { display: inline-flex; align-items: stretch; gap: 4px; text-decoration: none; color: #000;
+  .qh-cta { display: inline-flex; align-items: stretch; gap: .278vw; text-decoration: none; color: #000;
     outline: none; border: 0; border-radius: 0; padding: 0; background: none; box-shadow: none;
     font-family: var(--vc-sans); letter-spacing: normal; text-transform: none; }
-  .qh-cta > span { display: flex; align-items: center; justify-content: center; padding: 16px 40px;
+  .qh-cta > span { display: flex; align-items: center; justify-content: center; height: max(3.542vw, 44px); padding: 0 max(4.167vw, 28px);
     background: #fafafa; color: #000; border: 1px solid transparent; border-radius: 0; box-sizing: border-box;
-    font-family: var(--vc-sans); font-weight: 500; font-size: 16px; line-height: 1.2; white-space: nowrap;
+    font-family: var(--vc-sans); font-weight: 500; font-size: max(1.111vw, 14px); line-height: 1.2; white-space: nowrap;
     transition: background var(--hover-dur) var(--hover-ease), color var(--hover-dur) var(--hover-ease), border-color var(--hover-dur); }
-  .qh-cta > i { display: block; flex: none; width: 51px; height: 51px; background: #fafafa;
+  .qh-cta > i { display: block; flex: none; width: max(3.542vw, 44px); height: max(3.542vw, 44px); background: #fafafa;
     border: 1px solid transparent; border-radius: 0; box-sizing: border-box;
     transition: background var(--hover-dur) var(--hover-ease), border-color var(--hover-dur); }
   .qh-cta > i svg { display: block; width: 100%; height: 100%; }
@@ -400,14 +412,17 @@
 
 <!-- HERO -->
 <div class="hero">
-  <div class="hero-curtain" aria-hidden="true" data-gain="0.18"></div>
-  <!-- SOLARIS: the hero visual is a WebGL particle sun (js/quantum-solaris.js),
-       mounted into this container and drawn BEHIND the copy. The container is
-       decorative and inert: aria-hidden, pointer-events none, z-index -1, which
-       is the same stacking the chandelier drawing used to hold. If WebGL is
-       missing or the reader prefers reduced motion, the module either skips or
-       paints one settled frame and the hero copy is unaffected either way. -->
-  <div class="qh-solaris" id="qhSolaris" aria-hidden="true"></div>
+  <!-- CENTREPIECE: the hero visual is the landing hero's orb treatment, ported
+       to a static page exactly as /btcfi ports it: a glowing particle Starknet
+       mark inside a particle ring on near-black, chalk at the top fading to the
+       accent at the bottom (js/quantum-hero-mark.js). It replaces the red
+       particle wave field that used to run here, and it is the ONLY scene in
+       this hero: the aurora curtain went with it, so nothing competes with the
+       mark and nothing else animates behind the copy. The container is
+       decorative and inert: aria-hidden, pointer-events none, z-index -1. If
+       WebGL is missing or the reader prefers reduced motion the module either
+       skips or paints one settled frame, and the hero copy is unaffected. -->
+  <div class="qh-stage" id="qhStage" aria-hidden="true"></div>
   <div class="qh-inner">
   <p class="hero-eyebrow">The quantum reckoning</p>
   <h1 id="quantum-will-break-most-chains-starknet" class="hero-title">Quantum will break most chains. Starknet has been <em>waiting for it.</em></h1>
@@ -447,53 +462,6 @@
 </div>
 
 
-
-<!-- claim band: every item restates a claim already made and sourced in the
-     body below, on Starknet's side of the argument. Mechanics are the twin of the ecosystem, digest and
-     privacy bands: seamless loop over repeated sets, edge fade masks, hover
-     pause, IO gated, same 70s duration. The first set is the readable one;
-     the copies exist only so the loop is gapless and are aria-hidden. The
-     single Starknet item is scoped to the proving system, never to the
-     chain: account signature schemes still require their own PQC migration,
-     so an unscoped claim here would be indefensible. -->
-<!-- THE BAND IS A TICKER, SO THE DATES LIVE WHERE THE CLAIMS DO. Owner's
-     call, 2026-08-22: a scrolling strip is not the place to carry a date, and
-     the dated version of this claim is on the page anyway, in chapter 03,
-     with its source, its checked date and the quote it rests on. A reader who
-     wants provenance is one scroll from it. So "POST-QUANTUM WALLET LIVE"
-     stands undated on screen.
-     THE PROVENANCE STAYS IN THE DATA REGARDLESS, which is the part not to
-     undo. The chip keeps data-perishable, data-src, data-checked and
-     data-says even though nothing renders them, so the claim is still
-     auditable from the markup and still ages in a sweep even though it cannot
-     visibly age on screen. Same pattern as the video byline and the Prism
-     definition: the page shows less than the document knows.
-     THE SINGULAR IS NOT NEGOTIABLE and is independent of the date. The April
-     source names ONE wallet, S2morrow; "WALLETS" reached past it. Do not
-     restore the plural.
-     Note the band is now internally mixed: the chip beside this one still
-     reads "FALCON-512 ACCOUNT LIVE, APRIL 2026". Flagged to the owner; if the
-     ticker rule is meant to be uniform, that date should come off too.
-     Provenance sits on the readable set only, never on the two data-dup
-     aria-hidden copies, so an audit counts one claim rather than three.
-     Architectural chips (STARK NOT SNARK, NATIVE ACCOUNT ABSTRACTION,
-     UPGRADABLE SIGNATURE SCHEMES, PQC MIGRATION WITHOUT A HARD FORK) carry
-     nothing: they describe how the chain is built, and that does not rot.
-     A SECOND CHIP WAS WRONG, NOT MERELY UNDATED, and the difference matters.
-     "STATE TRIE: PEDERSEN TO BLAKE2" asserted a migration that has not
-     shipped. StarkWare's own quantum status page separates the two: the OS
-     program and configuration hashes moved to BLAKE2s-256 in v0.14.3 and are
-     "live on Mainnet", while "the trie and contract-address changes are
-     published direction, not live". Their evidence table files the contracts
-     trie under published roadmap direction, not under live on mainnet. The
-     chip now claims only the half that shipped and names the version that
-     shipped it. Do not widen it back to the trie until their page moves that
-     row, because a marquee gives a claim no room to carry its own caveat. -->
-<div class="qh-marquee" id="qhMarquee"><div class="qh-mq-track">
-  <div class="qh-mq-set"><span class="chip-glass">QUANTUM-RESISTANT PROVING SYSTEM</span><span class="chip-glass">STARK, NOT SNARK</span><span class="chip-glass">HASH-BASED SINCE 2018</span><span class="chip-glass">NATIVE ACCOUNT ABSTRACTION</span><span class="chip-glass th-claim" data-perishable="third-party" data-src="https://www.linkedin.com/posts/starkware_post-quantum-wallets-are-now-live-on-starknet-activity-7445099734052225024-MUUi" data-checked="2026-08-21" data-says="And now, S2morrow is live on Starknet Mainnet, using Falcon-512, a NIST-standardized post-quantum signature scheme." data-noun-ok="April">POST-QUANTUM WALLET LIVE</span><span class="chip-glass">FALCON-512 ACCOUNT LIVE, APRIL 2026</span><span class="chip-glass">UPGRADABLE SIGNATURE SCHEMES</span><span class="chip-glass">ONE-TRANSACTION MIGRATION</span><span class="chip-glass">PQC MIGRATION WITHOUT A HARD FORK</span><span class="chip-glass th-claim" data-perishable="third-party" data-src="https://quantum.starkware.co/" data-checked="2026-08-22" data-says="Starknet v0.14.3 replaced Pedersen with a BLAKE2s-256-based construction for the OS program and configuration hashes. The change is live on Mainnet." data-noun-ok="Starknet">OS HASHES: PEDERSEN TO BLAKE2S, v0.14.3</span></div>
-  <div class="qh-mq-set" data-dup aria-hidden="true"><span class="chip-glass">QUANTUM-RESISTANT PROVING SYSTEM</span><span class="chip-glass">STARK, NOT SNARK</span><span class="chip-glass">HASH-BASED SINCE 2018</span><span class="chip-glass">NATIVE ACCOUNT ABSTRACTION</span><span class="chip-glass">POST-QUANTUM WALLET LIVE</span><span class="chip-glass">FALCON-512 ACCOUNT LIVE, APRIL 2026</span><span class="chip-glass">UPGRADABLE SIGNATURE SCHEMES</span><span class="chip-glass">ONE-TRANSACTION MIGRATION</span><span class="chip-glass">PQC MIGRATION WITHOUT A HARD FORK</span><span class="chip-glass">OS HASHES: PEDERSEN TO BLAKE2S, v0.14.3</span></div>
-  <div class="qh-mq-set" data-dup aria-hidden="true"><span class="chip-glass">QUANTUM-RESISTANT PROVING SYSTEM</span><span class="chip-glass">STARK, NOT SNARK</span><span class="chip-glass">HASH-BASED SINCE 2018</span><span class="chip-glass">NATIVE ACCOUNT ABSTRACTION</span><span class="chip-glass">POST-QUANTUM WALLET LIVE</span><span class="chip-glass">FALCON-512 ACCOUNT LIVE, APRIL 2026</span><span class="chip-glass">UPGRADABLE SIGNATURE SCHEMES</span><span class="chip-glass">ONE-TRANSACTION MIGRATION</span><span class="chip-glass">PQC MIGRATION WITHOUT A HARD FORK</span><span class="chip-glass">OS HASHES: PEDERSEN TO BLAKE2S, v0.14.3</span></div>
-</div></div>
 
 <!-- TH-PM: shared premium design system (installed once) -->
 <style>
@@ -1684,25 +1652,20 @@ if (window.thStickyRail) {
 </script>
 
 <!-- 02 THREAT -->
-<div class="th-pm-div"></div>
-<section class="th-pm-sec">
+<div class="th-pm-div th-pm-wide"></div>
+<section class="th-pm-sec th-pm-wide">
   <div class="th-pm-head th-pm-reveal"><span class="th-pm-marker"></span><span class="th-pm-num">02</span><h2 id="q-day-and-the-fault-line" class="th-pm-title">Q-day, and the <b>fault line</b> it draws.</h2></div>
   <p class="th-pm-eyebrow th-pm-reveal">The threat</p>
 
   <div class="rxa" id="threat-index-grid" role="group" aria-label="The threat, four beats">
-    <!-- the rail: four thin square selectors, exactly one beat rendered.
-         These buttons are still .rxa-head and still carry id/data-beat/
-         data-target/aria-expanded/aria-controls, so the engine below and
-         every deep link keep working untouched. The title text stays in
-         the button, clipped rather than removed, so the accessible name
-         is still the beat's name. -->
-    <div class="rxa-rail">
-      <div class="rxa-card is-open" data-beat="0"><h3 class="rxa-hwrap"><button type="button" class="rxa-head" id="rxa-h-0" data-beat="0" data-target="one-key-two-machines" aria-expanded="true" aria-controls="qi-beat-0"><span class="rxa-n" aria-hidden="true">01</span><span class="qi-sr">HOW THE KEY BREAKS</span></button></h3></div>
-      <div class="rxa-card" data-beat="1"><h3 class="rxa-hwrap"><button type="button" class="rxa-head" id="rxa-h-1" data-beat="1" data-target="safe-every-single-day-right-up" aria-expanded="false" aria-controls="qi-beat-1"><span class="rxa-n" aria-hidden="true">02</span><span class="qi-sr">WHY SAFE DAYS PROVE NOTHING</span></button></h3></div>
-      <div class="rxa-card" data-beat="2"><h3 class="rxa-hwrap"><button type="button" class="rxa-head" id="rxa-h-2" data-beat="2" data-target="the-cost-of-the-attack-is" aria-expanded="false" aria-controls="qi-beat-2"><span class="rxa-n" aria-hidden="true">03</span><span class="qi-sr">THE COST IS COLLAPSING</span></button></h3></div>
-      <div class="rxa-card" data-beat="3"><h3 class="rxa-hwrap"><button type="button" class="rxa-head" id="rxa-h-3" data-beat="3" data-target="what-breaks-what-holds" aria-expanded="false" aria-controls="qi-beat-3"><span class="rxa-n" aria-hidden="true">04</span><span class="qi-sr">WHAT BREAKS, WHAT HOLDS</span></button></h3></div>
-    </div>
-
+    <!-- the stage first, then the rail: the four selectors are a filter
+         bar along the BOTTOM of the band (2026-09-01), matching the
+         reference, so they follow the stage in the DOM and the tab order
+         runs band then filter. Those buttons are still .rxa-head and
+         still carry id/data-beat/data-target/aria-expanded/aria-controls,
+         so the engine below and every deep link keep working untouched.
+         The title text stays in the button, clipped rather than removed,
+         so the accessible name is still the beat's name. -->
     <div class="rxa-stage">
 <div class="qi-beat is-open" data-beat="0" id="qi-beat-0" role="region" aria-labelledby="rxa-h-0">
   <div class="rxa-top"><h3 class="rxa-band"><b>01</b><span>HOW THE KEY BREAKS</span></h3><a class="rxa-more" href="#one-key-two-machines">See more</a></div>
@@ -1882,6 +1845,13 @@ if (window.thStickyRail) {
 </div>
 
     </div>
+    <div class="rxa-rail">
+      <div class="rxa-card is-open" data-beat="0"><h3 class="rxa-hwrap"><button type="button" class="rxa-head" id="rxa-h-0" data-beat="0" data-target="one-key-two-machines" aria-expanded="true" aria-controls="qi-beat-0"><span class="rxa-n" aria-hidden="true">01</span><span class="qi-sr">HOW THE KEY BREAKS</span></button></h3></div>
+      <div class="rxa-card" data-beat="1"><h3 class="rxa-hwrap"><button type="button" class="rxa-head" id="rxa-h-1" data-beat="1" data-target="safe-every-single-day-right-up" aria-expanded="false" aria-controls="qi-beat-1"><span class="rxa-n" aria-hidden="true">02</span><span class="qi-sr">WHY SAFE DAYS PROVE NOTHING</span></button></h3></div>
+      <div class="rxa-card" data-beat="2"><h3 class="rxa-hwrap"><button type="button" class="rxa-head" id="rxa-h-2" data-beat="2" data-target="the-cost-of-the-attack-is" aria-expanded="false" aria-controls="qi-beat-2"><span class="rxa-n" aria-hidden="true">03</span><span class="qi-sr">THE COST IS COLLAPSING</span></button></h3></div>
+      <div class="rxa-card" data-beat="3"><h3 class="rxa-hwrap"><button type="button" class="rxa-head" id="rxa-h-3" data-beat="3" data-target="what-breaks-what-holds" aria-expanded="false" aria-controls="qi-beat-3"><span class="rxa-n" aria-hidden="true">04</span><span class="qi-sr">WHAT BREAKS, WHAT HOLDS</span></button></h3></div>
+    </div>
+
     <p class="qi-sr" aria-live="polite" id="qiAnnounce"></p>
   </div>
 </section>
@@ -2031,51 +2001,86 @@ if (window.thStickyRail) {
 </script>
 
 <script>
-/* SECTION 02 THREAT, scroll settle.
-   Reference behaviour: a band does not appear, it rises a short way
-   and eases to rest, and its pieces follow each other rather than
-   arriving together. One observer, an 80ms step per piece, and a
-   re-arm when the rail swaps beats so a freshly rendered band
-   settles the same way it would have on first scroll.
+/* SECTION 02 THREAT, the scroll progression (RXAWIDE, 2026-09-01).
+   Reference behaviour: the section ADVANCES AS YOU SCROLL. Each block
+   of the band starts a short way above its resting place, comes down
+   and settles, and the blocks do it one after another as the section
+   travels through the viewport. It is not a reveal on entry: every
+   value is recomputed from scroll position each frame, so scrolling
+   back up runs it backwards.
+   Order is visual order: the pieces of the open beat top to bottom,
+   then the four filter cells that now sit under the panel.
+   Two things this has to get right, both have bitten it:
+   - the rect it reads already carries the translate written last
+     frame, so the applied offset is subtracted back out; reading a
+     moving value would jitter and never settle.
+   - values only change on scroll, so a beat opened from the filter
+     bar or from window.__qiOpen without the page moving would sit
+     invisible. Every path that changes the band repaints directly:
+     load, resize, and the stage mutation that marks the new beat.
+   Transform and opacity only, never scale or filter: the maze and
+   turkey canvases size themselves from getBoundingClientRect and a
+   scaled ancestor would hand them the wrong width.
    Scoped hard to #threat-index-grid so the qw rails elsewhere on the
-   page are untouched. */
+   page are untouched. The classes are added by script, so with script
+   off or reduced motion on the whole band is simply visible. */
 (function(){
   var grid = document.getElementById('threat-index-grid');
   if (!grid) return;
   var stage = grid.querySelector('.rxa-stage');
-  if (!stage || !('IntersectionObserver' in window)) return;
+  if (!stage) return;
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  var STEP = 80;
   var SEL = '.rxa-top,.rxa-rule,.rxa-sub,.rxa-feat,.rxa-keys,.qi-adv';
+  var DROP = 26;    /* px above its rest a block starts */
+  var SPAN = 0.36;  /* the travel, as a fraction of the viewport */
+  var STEP = 0.05;  /* the stagger between successive blocks */
+  var els = [];
+  var open = null;
   grid.classList.add('rxa-armed');
-  var io = new IntersectionObserver(function(entries){
-    entries.forEach(function(e){
-      if (!e.isIntersecting) return;
-      var el = e.target;
-      io.unobserve(el);
-      el.style.transitionDelay = (el.__rxaDelay || 0) + 'ms';
-      el.classList.add('is-in');
-    });
-  }, { rootMargin: '0px 0px -10% 0px', threshold: 0.05 });
-  function arm(root, step){
-    [].slice.call(root.querySelectorAll(SEL)).forEach(function(el, i){
-      io.unobserve(el);
-      el.classList.remove('is-in');
-      el.classList.add('rxa-rise');
-      el.__rxaDelay = i * step;
-      io.observe(el);
+  function collect(){
+    open = stage.querySelector('.qi-beat.is-open');
+    var list = open ? [].slice.call(open.querySelectorAll(SEL)) : [];
+    els = list.concat([].slice.call(grid.querySelectorAll('.rxa-card')));
+    els.forEach(function(el, i){
+      /* GUARDED. classList.add writes the class attribute even when the
+         token is already there, and that write is a mutation record, so
+         an unguarded add inside the observer's own callback livelocks the
+         main thread. Add it only when it is genuinely missing. */
+      if (!el.classList.contains('rxa-slide')) el.classList.add('rxa-slide');
+      el.__rxaI = i;
+      if (typeof el.__rxaY !== 'number') el.__rxaY = 0;
     });
   }
-  [].slice.call(grid.querySelectorAll('.rxa-card')).forEach(function(el, i){
-    el.classList.add('rxa-rise');
-    el.__rxaDelay = i * 70;
-    io.observe(el);
-  });
-  var last = stage.querySelector('.qi-beat.is-open');
-  if (last) arm(last, STEP);
+  function ease(t){ return 1 - Math.pow(1 - t, 3); }
+  function paint(){
+    var vh = window.innerHeight || 1;
+    for (var i = 0; i < els.length; i++){
+      var el = els[i];
+      var top = el.getBoundingClientRect().top - el.__rxaY;
+      var t = (vh - top) / (vh * SPAN) - el.__rxaI * STEP;
+      t = t < 0 ? 0 : (t > 1 ? 1 : t);
+      var e = ease(t);
+      var y = -DROP * (1 - e);
+      el.__rxaY = y;
+      el.style.transform = y ? 'translate3d(0,' + y.toFixed(2) + 'px,0)' : 'none';
+      el.style.opacity = (0.05 + 0.95 * e).toFixed(3);
+    }
+  }
+  var queued = false;
+  function tick(){
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(function(){ queued = false; paint(); });
+  }
+  function rebuild(){ collect(); paint(); }
+  rebuild();
+  window.addEventListener('scroll', tick, { passive: true });
+  window.addEventListener('resize', rebuild);
+  window.addEventListener('load', rebuild);
+  /* the devices toggle classes of their own inside the stage, so only a
+     genuine change of which beat is open is worth a rebuild */
   new MutationObserver(function(){
-    var now = stage.querySelector('.qi-beat.is-open');
-    if (now && now !== last){ last = now; arm(now, STEP); }
+    if (stage.querySelector('.qi-beat.is-open') !== open) rebuild();
   }).observe(stage, { subtree: true, attributes: true, attributeFilter: ['class'] });
 })();
 </script>
@@ -2921,65 +2926,47 @@ body.page-quantum{overflow-x:clip;}
   .th-yr-stat{font-size:clamp(30px,9vw,44px);}
 }
 
-/* SOLARIS: the hero's particle sun, behind the hero copy.
-   Same stacking the chandelier drawing held (absolute, inset 0, z-index -1,
-   clipped), and inert to the pointer so the CTAs and the countdown stay
-   interactive. The module listens for pointermove on the window and converts
-   to container-relative NDC itself, so it needs no hit area of its own. */
-.qh-solaris { position: absolute; inset: 0; z-index: -1; pointer-events: none; overflow: hidden;
-  /* EDGE MASK. The field used to be clipped by this container's box, which
-     meant it was at full brightness exactly where it was cut: a hard warm
-     band along the window edges. The mask fades the whole scene out over the
-     outer 9% horizontally and 10% vertically, on all four sides, so the
-     effect always dies inside its own frame. Two gradients intersected
-     rather than one radial, so the falloff is even on a wide viewport.
-     The shader carries its own version of this for the aurora; this one is
-     the backstop that also catches the bloomed sun. */
-  -webkit-mask-image:
-    linear-gradient(to right, transparent 0%, #000 9%, #000 91%, transparent 100%),
-    linear-gradient(to bottom, transparent 0%, #000 10%, #000 89%, transparent 100%);
-  mask-image:
-    linear-gradient(to right, transparent 0%, #000 9%, #000 91%, transparent 100%),
-    linear-gradient(to bottom, transparent 0%, #000 10%, #000 89%, transparent 100%);
-  -webkit-mask-composite: source-in; mask-composite: intersect; }
-.qh-solaris canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+/* CENTREPIECE STAGE: the particle mark and its ring, behind the hero copy.
+   Same stacking the old field held (absolute, inset 0, z-index -1, clipped),
+   and inert to the pointer so the CTAs and the countdown stay interactive.
+   NO MASK, deliberately. The old field was at full brightness exactly where
+   its box cut it, so it needed an edge fade of its own. This scene is a ring
+   fitted inside the frame by js/quantum-hero-mark.js (R_FIT against the fit
+   factors), and a 9 percent edge mask would clip the bright annulus instead
+   of the nothing that surrounds it. The .hero::after edge seal below is what
+   keeps warmth off the window edges. */
+.qh-stage { position: absolute; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
+.qh-stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 
-/* COPY SCRIM. The sun is bloomed hard (threshold 0, strength 2.33), so its
-   rim sweeps a bright arc straight through the reading column. This paints a
-   left-weighted darkening behind the copy and nothing else: it is a child of
-   .qh-inner, which already owns a stacking context (position relative,
-   z-index 1), so at z-index -1 it lands ABOVE .qh-solaris and BELOW the
-   eyebrow, display, lede, CTAs and countdown.
-   It stays translucent and hero-scoped by design. js/eco-backdrop.js is a
-   fixed canvas underneath the whole page and must never be covered by an
-   opaque layer, so the darkest stop is 0.72 and the whole thing fades out
-   before the sun's right side, which keeps the drama where there is no text. */
 /* COPY SCRIM. It hangs off .hero rather than .qh-inner so its box is the
    FULL hero, viewport wide: the earlier version was a gradient inside the
    1160 content box and its own box edges showed as hard vertical and
    horizontal seams. As a generated last child at z-index auto it paints
-   ABOVE .qh-solaris and .hero-curtain (both z-index -1) and BELOW .qh-inner
+   ABOVE .qh-stage (z-index -1) and BELOW .qh-inner
    (z-index 1), so every piece of hero copy stays on top of it.
    It stays translucent on purpose: js/eco-backdrop.js is a fixed canvas
    under the whole page and nothing opaque may sit over it. */
 .hero::after {
   content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none;
   /* TWO LAYERS, EACH WITH ONE JOB.
-     1. the reading scrim: a left-weighted ellipse that holds the kicker,
-        display, lede, CTA pair and countdown against near-black. It is wider
-        and deeper than the old one because the copy column is now the
-        landing's full-bleed left gutter, not a centred 1160 box, so the type
-        starts further left and runs further down.
+     1. the reading scrim: a narrow ellipse hugging the LEFT GUTTER, where
+        the kicker, display, lede, CTA pair and countdown all begin. It was
+        deliberately pulled back when the hero-bloomed particle sun was
+        replaced by the mark centrepiece: the old 60 percent by 72 percent
+        ellipse at .90 was sized to fight a bloomed rim sweeping the reading
+        column, and over a ring it simply swallowed the ring's left arc.
+        /btcfi runs the same centrepiece under the same display type with no
+        scrim at all, so this one only has to keep the first inch of each line
+        off the flame backdrop.
      2. the edge seal: a border-hugging fade to the page ground on all four
         sides, so whatever the field does inside its box, nothing warm ever
         reaches a window edge. This is the layer that kills the colour band.
      Both stay translucent: js/eco-backdrop.js is a fixed canvas under the
      whole page and nothing opaque may sit over it. */
   background:
-    radial-gradient(60% 72% at 26% 54%,
-      rgba(13,13,13,.90) 0%,
-      rgba(13,13,13,.78) 42%,
-      rgba(13,13,13,.30) 76%,
+    radial-gradient(34% 58% at 12% 52%,
+      rgba(13,13,13,.66) 0%,
+      rgba(13,13,13,.44) 46%,
       rgba(13,13,13,0) 100%),
     linear-gradient(to right, rgba(13,13,13,.92) 0%, rgba(13,13,13,0) 9%, rgba(13,13,13,0) 91%, rgba(13,13,13,.92) 100%),
     linear-gradient(to bottom, rgba(13,13,13,.92) 0%, rgba(13,13,13,0) 10%, rgba(13,13,13,0) 88%, rgba(13,13,13,.95) 100%);
@@ -2989,9 +2976,9 @@ body.page-quantum{overflow-x:clip;}
      than widened, which would black the whole hero out */
   .hero::after { background:
     radial-gradient(96% 60% at 46% 44%,
-      rgba(13,13,13,.90) 0%,
-      rgba(13,13,13,.78) 42%,
-      rgba(13,13,13,.28) 76%,
+      rgba(13,13,13,.78) 0%,
+      rgba(13,13,13,.62) 42%,
+      rgba(13,13,13,.20) 76%,
       rgba(13,13,13,0) 100%),
     linear-gradient(to right, rgba(13,13,13,.92) 0%, rgba(13,13,13,0) 12%, rgba(13,13,13,0) 88%, rgba(13,13,13,.92) 100%),
     linear-gradient(to bottom, rgba(13,13,13,.92) 0%, rgba(13,13,13,0) 10%, rgba(13,13,13,0) 88%, rgba(13,13,13,.95) 100%); }
@@ -3200,15 +3187,148 @@ body.page-quantum{overflow-x:clip;}
   .hero-eyebrow { font-size: .75rem; margin-bottom: .75rem; }
   .hero-title { font-size: 2.75rem; width: auto; margin-bottom: 1rem; }
   .hero-subtitle { font-size: 1rem; width: auto; max-width: 40rem; margin-bottom: 1.5rem; }
+  /* the CTA pair in rem, /btcfi's max-980 values for .bfh-pill and .bfh-tile:
+     4.167vw of padding is 16px on a phone, so the vw geometry above has to be
+     restated or the label collapses to unreadable */
   .qh-ctas { width: 100%; gap: 10px; }
-  .qh-cta { width: 100%; }
-  .qh-cta > span { flex: 1; padding: 15px 24px; }
+  .qh-cta { width: 100%; gap: .25rem; }
+  .qh-cta > span { flex: 1 1 auto; height: 3.125rem; padding: 0 1.5rem; font-size: 1rem; }
+  .qh-cta > i { width: 3.125rem; height: 3.125rem; }
   .qh-cd { margin-top: 1.25rem; }
 }
 @media (max-width: 380px) {
   .hero { padding: 5rem 1.25rem 1.5rem; }
   .hero-title { font-size: 2.375rem; }
 }
+
+/* ============================================================
+   SECTION 02 THREAT, the wide pass (RXAWIDE, 2026-09-01)
+   Four gaps against the reference product sections, all fixed here.
+   1  PADDING AND SCALE. The band used to live inside the shared
+      .th-pm-sec column (1160px cap plus 32px gutters, so a 172px
+      dead margin at 1440). The section that holds it now carries
+      .th-pm-wide, which drops the cap and runs the band to 28px
+      of the viewport edge, and every part of the band is sized up
+      to fill it: the beat title, the panel, the devices, the chips.
+   2  FILL. The panel's floor is min(80svh,900px) so the band owns
+      a real share of the screen instead of reading as a short strip.
+   3  THE RAIL IS A BOTTOM FILTER BAR. It follows the stage in the
+      DOM now, and here it becomes a single flush four-cell row
+      under the panel, each cell showing its number and its name
+      (the name was already in the button as its accessible name).
+   4  SCROLL PROGRESSION. Driven per frame from scroll position by
+      the RXAWIDE script, not by a one-shot reveal, so the blocks
+      come down and settle one after another as the section travels
+      the viewport, and go back when you scroll back up.
+   Descendant selectors off .rxa throughout, because the .th-maze-
+   and .th-turkey- rules live in later blocks than the original rxa
+   CSS and would otherwise win on source order. Straight corners.
+   ============================================================ */
+
+/* 1  the section runs close to the viewport edges */
+.th-pm-sec.th-pm-wide{max-width:none;padding-left:28px;padding-right:28px;}
+.th-pm-div.th-pm-wide{max-width:none;}
+.th-pm-sec.th-pm-wide .rxa{margin-top:44px;}
+
+/* the band is one column now: stage, then the filter bar */
+.th-pm-sec.th-pm-wide .rxa{display:grid;grid-template-columns:minmax(0,1fr);gap:0;}
+
+/* 1  scale: the beat title and its furniture */
+.rxa .rxa-band{font-size:clamp(30px,5vw,72px);gap:22px;}
+.rxa .rxa-band b{font-size:14px;}
+.rxa .rxa-more{font-size:11.5px;letter-spacing:.18em;padding:14px 26px;}
+.rxa .rxa-rule{margin-top:24px;}
+.rxa .rxa-sub{margin-top:20px;font-size:clamp(15px,1.2vw,19px);line-height:1.58;max-width:92ch;}
+.rxa .rxa-keys{gap:10px;margin-top:26px;}
+.rxa .rxa-keys li{font-size:11.5px;letter-spacing:.16em;padding:12px 16px;}
+
+/* 2  the panel fills the screen */
+.rxa .rxa-feat{margin-top:32px;padding:46px;gap:52px;
+  grid-template-columns:minmax(0,.78fr) minmax(0,1.44fr);
+  min-height:min(80svh,900px);}
+.rxa .rxa-fcol{gap:24px;justify-content:center;}
+.rxa .rxa-fcol .scale-title{font-size:clamp(26px,2.4vw,42px);margin-bottom:18px;}
+.rxa .rxa-fcol p{font-size:clamp(15px,1.1vw,18px);line-height:1.62;}
+.rxa .rxa-fcol .th-pm-stathero{padding:30px 32px;gap:26px;}
+.rxa .rxa-fcol .th-pm-stathero .big{font-size:clamp(56px,5vw,92px);}
+
+/* 1  the devices grow with their track */
+.rxa .th-maze-grid{gap:26px;}
+.rxa .th-maze-panel{padding:22px 22px 24px;}
+.rxa .th-maze-head h4{font-size:21px;}
+.rxa .th-maze-sub{font-size:13px;margin-bottom:16px;}
+.rxa .th-maze-ctrl{gap:11px;margin-top:16px;}
+.rxa .th-maze-ctrl button{font-size:12px;padding:11px 18px;}
+.rxa .th-maze-stats{font-size:12px;margin-top:14px;}
+.rxa .th-turkey-panel{padding:28px;}
+.rxa .th-turkey-ctrl{margin-top:20px;}
+.rxa .th-turkey-ctrl button{font-size:12.5px;padding:12px 20px;}
+.rxa .th-pm-note{padding:26px 30px;}
+.rxa .th-pm-note p{font-size:16px;}
+.rxa .th-pm-compare{gap:22px;}
+.rxa .th-pm-side{padding:26px 28px 28px;}
+
+/* 3  the filter bar: one flush row, borders shared, name visible.
+   position:static is explicit because the old rail was sticky, and a
+   sticky bottom bar would glue itself to the top of the viewport. */
+.rxa .rxa-rail{position:static;top:auto;display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));gap:0;margin-top:34px;}
+.rxa .rxa-card{display:flex;min-width:0;}
+.rxa .rxa-card + .rxa-card{margin-left:-1px;}
+.rxa .rxa-hwrap{display:flex;flex:1 1 auto;min-width:0;}
+.rxa .rxa-head{position:relative;flex:1 1 auto;width:auto;height:auto;
+  min-height:70px;padding:18px 22px;gap:16px;
+  justify-content:flex-start;align-items:center;text-align:left;
+  border:1px solid var(--rxa-line);background:rgba(255,255,255,.012);}
+.rxa .rxa-head .qi-sr{position:static;width:auto;height:auto;overflow:visible;
+  clip:auto;clip-path:none;white-space:normal;margin:0;
+  font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:.14em;
+  line-height:1.35;text-transform:uppercase;min-width:0;}
+.rxa .rxa-n{font-size:12px;letter-spacing:.08em;flex:none;}
+.rxa .rxa-card.is-open .rxa-head{z-index:2;color:#fafafa;border-color:var(--th-q);
+  background:color-mix(in srgb,var(--th-q) 15%,transparent);}
+.rxa .rxa-head:hover{z-index:1;}
+.rxa .rxa-head:focus-visible{z-index:3;outline:2px solid var(--th-q);outline-offset:-4px;}
+
+/* the visuals fill their track rather than floating in the middle of
+   a panel that is now most of a screen tall */
+.rxa .rxa-fviz > *{height:100%;}
+/* two exceptions keep their natural height and centre instead: the maze
+   pair, whose canvases are square and width-driven, and the breaks/holds
+   pair, whose lists are short. Stretching either only opens a gap under
+   the content. */
+.rxa .rxa-fviz > .th-maze-grid,
+.rxa .rxa-fviz > .th-pm-compare{height:auto;}
+.rxa .th-turkey-panel,
+.rxa .rxa-fviz > .th-pm-note{display:flex;flex-direction:column;justify-content:center;}
+.rxa .rxa-fviz > .th-pm-note > .chart-card{width:100%;}
+
+/* 4  the scroll progression. The blocks are positioned every frame
+   from scroll position by the script, so this only reserves the
+   compositor. The class is added by script: with script off or
+   reduced motion on, nothing here applies and the band is plain. */
+.rxa.rxa-armed .rxa-slide{will-change:transform,opacity;}
+
+@media(max-width:1080px){
+  .rxa .rxa-feat{grid-template-columns:minmax(0,1fr);min-height:0;gap:30px;padding:30px;}
+  .rxa .rxa-rail{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .rxa .rxa-card:nth-child(n+3){margin-top:-1px;}
+  .rxa .rxa-card:nth-child(3){margin-left:0;}
+}
+@media(max-width:620px){
+  .th-pm-sec.th-pm-wide{padding-left:14px;padding-right:14px;}
+  .rxa .rxa-feat{padding:16px 14px 20px;gap:22px;}
+  .rxa .rxa-rail{grid-template-columns:minmax(0,1fr);margin-top:26px;}
+  .rxa .rxa-card + .rxa-card{margin-left:0;margin-top:-1px;}
+  .rxa .rxa-card:nth-child(n+3){margin-top:-1px;}
+  .rxa .rxa-head{min-height:56px;padding:14px 16px;gap:12px;}
+  .rxa .rxa-head .qi-sr{font-size:10.5px;letter-spacing:.1em;}
+  .rxa .th-maze-panel{padding:14px;}
+  .rxa .th-turkey-panel{padding:16px;}
+  .rxa .th-pm-note{padding:16px 14px;}
+  .rxa .rxa-keys li{font-size:10px;letter-spacing:.12em;padding:9px 12px;}
+}
+/* RXAWIDE ends */
 </style>
 
   <!-- chapter: the referee -->
@@ -4719,26 +4839,9 @@ var VIDEOS = [
 })();
 </script>
 
-<script>
-/* deadline band: same gate as the sibling bands. The CSS only declares the
-   animation under .run, so off-screen the band is not animating at all
-   rather than animating invisibly. Reduced motion and the sub-981px static
-   treatment are handled in CSS, so this stays a pure visibility toggle. */
-(function(){
-  var band = document.getElementById('qhMarquee');
-  if (!band) return;
-  if ('IntersectionObserver' in window) {
-    new IntersectionObserver(function(es){
-      band.classList.toggle('run', es[0].isIntersecting);
-    }, { threshold: 0 }).observe(band);
-  } else {
-    band.classList.add('run');
-  }
-})();
-</script>
 <script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.185.0/build/three.module.js"}}</script>
 <script type="module" src="js/eco-backdrop.js"></script>
-<script type="module" src="js/quantum-solaris.js"></script>
+<script type="module" src="js/quantum-hero-mark.js"></script>
 <script src="js/quantum-vgrid.js" defer></script>
 </body>
 </html>

@@ -1247,17 +1247,7 @@ footer.site-footer .foot-bottom a:hover{color:var(--accent)}
 .sc-col.is-on::after{opacity:1}
 @media(prefers-reduced-motion:reduce){.sc-art{transition:none}}
 
-/* --- contact pins while the footer scrolls up over it (stride's last layer) --- */
-.ft-layer{position:relative}
-.ct-pin{position:sticky;top:0;z-index:0;height:100lvh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:34px;padding:0 24px;text-align:center}
-.ct-pin .vc-title{margin:0}
-.ft-layer > footer.vc-footer{position:relative;z-index:1}
-.ft-layer > footer.vc-footer::before{content:"";position:absolute;inset:0;z-index:-1;background:#0d0d0d;
-  border-radius:28px 28px 0 0;box-shadow:0 -30px 60px rgba(0,0,0,.6)}
-@media(max-width:880px){
-  .ct-pin{position:relative;height:auto;padding:64px 24px}
-  .ft-layer > footer.vc-footer::before{border-radius:0;box-shadow:none}
-}
+/* the footer is a plain static section at the end of the document; nothing pins it. */
 
 
 /* ============================================================
@@ -1267,28 +1257,12 @@ footer.site-footer .foot-bottom a:hover{color:var(--accent)}
    eco-backdrop canvas at z-index 0 still reads through.
    ============================================================ */
 
-/* --- 01 About STRK, on the treatment the privacy page gives Satoshi's line:
-   a small mono chip on a tinted ground, then one very large left-aligned
-   statement running the width of the wrap. The opening clause is full chalk
-   and the rest a dimmer grey, all inside a single flowing block rather than a
-   heading plus a subtitle. The two inline icons stay, as small square accent
-   tiles instead of round chips. Prefix sx- so the privacy page's sq- rules and
-   these can never collide. --- */
-.sx-kicker{display:inline-block;margin:0 0 26px;padding:6px 10px;background:rgba(250,250,250,.08);
-  font-family:var(--mono),monospace;font-size:12px;letter-spacing:.02em;line-height:1.2;
-  text-transform:none;color:rgba(250,250,250,.85)}
-.sx-quote{margin:0;max-width:none;text-align:left;
-  font-family:var(--display),'Helvetica Neue',Arial,sans-serif;font-weight:600;
-  font-size:clamp(34px,6.4vw,92px);line-height:1.03;letter-spacing:-.04em;color:var(--white)}
-.sx-dim{color:rgba(250,250,250,.62)}
-.sx-ic{display:inline-grid;place-items:center;width:.78em;height:.78em;
-  margin:0 .1em 0 .04em;vertical-align:-.04em;border-radius:3px;
-  background:var(--acc);color:#fff}
-.sx-ic svg{width:.42em;height:.42em}
+/* --- 01 About STRK: the statement now lives in its own full-bleed band
+   (.sxq), rebuilt as an exact copy of the privacy page's Satoshi treatment.
+   Its rules are appended at the end of this <style> so they win the cascade.
+   Only the flywheel's rhythm inside .ab-block stays here. --- */
 .ab-block .fly{margin-top:76px}
 @media(max-width:880px){
-  .sx-kicker{margin-bottom:18px}
-  .sx-quote{font-size:clamp(29px,8.4vw,46px);line-height:1.06;letter-spacing:-.03em}
   .ab-block .fly{margin-top:40px}
 }
 
@@ -1341,6 +1315,42 @@ footer.site-footer .foot-bottom a:hover{color:var(--accent)}
   .buy-item{margin:0;padding:13px 0}
   .buy-item:hover{background:transparent}
   .buy-head .bh-chev{right:0}
+}
+
+/* ============================================================
+   ABOUT STRK STATEMENT (sxq-): the exact treatment the privacy page
+   gives Satoshi's line. Source: public/privacy.html #sq-band and the
+   ".sq" block in public/css/privacy-fx.css, plus privacy.html's inline
+   full-viewport override. Full-bleed band under a dotted rule with an
+   accent square at each end, owning one viewport with the statement
+   vertically centred, a mono chip kicker, one huge tight statement, and
+   inverted highlight blocks each led by a light square icon tile.
+   Prefixed sxq- so it can never collide with privacy's sq-.
+   Appended last so it wins the cascade inside this <style>.
+   ============================================================ */
+.sxq{position:relative;width:100vw;max-width:none;margin:120px 0 0 calc(50% - 50vw);
+  display:flex;flex-direction:column;justify-content:center;align-items:flex-start;
+  min-height:100vh;min-height:100svh;padding:clamp(96px,12vh,168px) 16px}
+/* the dotted rule across the top with a square at each end */
+.sxq::before{content:"";position:absolute;left:0;right:0;top:0;border-top:2px dotted rgba(250,250,250,.35)}
+.sxq::after{content:"";position:absolute;left:0;top:-3px;width:8px;height:8px;
+  background:var(--acc);box-shadow:calc(100vw - 8px) 0 0 var(--acc)}
+.sxq-kicker{display:inline-block;margin:0 0 22px;padding:6px 10px;background:rgba(250,250,250,.08);
+  font-family:var(--mono),monospace;font-size:12px;letter-spacing:.02em;line-height:1.2;
+  text-transform:none;color:rgba(255,255,255,.85)}
+.sxq-quote{align-self:stretch;margin:0;max-width:none;text-align:left;
+  font-family:var(--display),'Helvetica Neue',Arial,sans-serif;font-weight:600;color:#fff;
+  font-size:clamp(34px,6.4vw,92px);line-height:1.02;letter-spacing:-.04em}
+.sxq-hl{display:inline-block;vertical-align:baseline;line-height:1;white-space:nowrap;
+  padding:0 .1em 0 0;background:var(--acc);color:#fff;
+  -webkit-box-decoration-break:clone;box-decoration-break:clone}
+.sxq-ic{display:inline-grid;place-items:center;width:.8em;height:.8em;margin-right:.1em;
+  vertical-align:-.08em;background:#fafafa;color:var(--acc)}
+.sxq-ic svg{width:62%;height:62%}
+@media(max-width:860px){
+  .sxq{margin-top:72px;padding:72px 12px}
+  .sxq-quote{font-size:clamp(30px,9vw,48px)}
+  .sxq-hl{white-space:normal}
 }
 </style>
 <script>
@@ -1472,14 +1482,20 @@ window.ADMIN_GATE=on;})();
   <div class="lm-row"><div class="lm-track" data-dir="right"><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>AVNU</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Ekubo</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Vesu</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Troves</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Endur</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Opus</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Braavos</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Ready</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Xverse</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Nostra</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Extended</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Meteora</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>AVNU</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Ekubo</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Vesu</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Troves</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Endur</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Opus</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Braavos</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Ready</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Xverse</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Nostra</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Extended</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Meteora</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>AVNU</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Ekubo</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Vesu</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Troves</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Endur</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Opus</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Braavos</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Ready</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Xverse</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Nostra</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Extended</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Meteora</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>AVNU</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Ekubo</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Vesu</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Troves</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Endur</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Opus</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Braavos</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Ready</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Xverse</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Nostra</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Extended</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Meteora</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>AVNU</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Ekubo</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Vesu</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Troves</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Endur</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Opus</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Braavos</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Ready</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Xverse</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Nostra</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Extended</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Meteora</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>AVNU</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Ekubo</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Vesu</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Troves</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Endur</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Opus</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Braavos</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Ready</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Xverse</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Nostra</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Extended</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Meteora</span></div></div>
 </section>
 
-<!-- 01 ROLE. stride's About: an eyebrow over one long statement set large,
-     the first half in full white and the rest muted, with round icon chips
-     sitting inline in the type. Purely typographic, as stride has it. The
-     flywheel that stood here keeps its place under the statement, since it
-     carries a real part of the STRK story. -->
+<!-- 01 ROLE. The About statement takes the exact treatment the privacy page
+     gives Satoshi's line (privacy.html #sq-band, privacy-fx.css .sq): a
+     full-bleed band under a dotted rule with an accent square at each end,
+     owning a whole viewport, a mono chip kicker, then one huge tight
+     statement whose key phrases are inverted highlight blocks, each led by a
+     light square icon tile. Prefix sxq- so privacy's sq- rules and these can
+     never collide. The flywheel keeps its place below, since it carries a
+     real part of the STRK story. -->
+<section class="sxq" id="sxq-band" aria-labelledby="what-strk-is">
+  <p class="sxq-kicker">About STRK</p>
+  <h2 id="what-strk-is" class="sxq-quote">STRK is the asset that pays for <mark class="sxq-hl"><i class="sxq-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 4 14h6l-1 8 9-12h-6z"/></svg></i>every transaction</mark>, secures the network through <mark class="sxq-hl"><i class="sxq-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 20 5v6c0 5-3.4 7.7-8 9-4.6-1.3-8-4-8-9V5z"/></svg></i>staking</mark> and <mark class="sxq-hl"><i class="sxq-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 20h4v-8H3zM10 20h4V4h-4zM17 20h4v-12h-4z"/></svg></i>captures the demand</mark> the thesis creates.</h2>
+</section>
+
 <section class="block ab-block"><div class="wrap">
-  <p class="sx-kicker">About STRK</p>
-  <h2 id="what-strk-is" class="sx-quote">STRK is the asset that pays for every <span class="sx-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 4 14h6l-1 8 9-12h-6z"/></svg></span> transaction, <span class="sx-dim">secures the network through staking <span class="sx-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 20 5v6c0 5-3.4 7.7-8 9-4.6-1.3-8-4-8-9V5z"/></svg></span> and captures the demand the thesis creates.</span></h2>
 
   <div class="fly" id="fly">
       <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" aria-label="STRK flywheel">
@@ -2215,13 +2231,12 @@ window.ADMIN_GATE=on;})();
      the product: the form pins for a viewport while the footer scrolls up over
      it. The heading and the subscribe form move into the pin; the footer keeps
      its rule and link columns. -->
-<div class="ft-layer">
-<section class="ct-pin vc-pin-band" aria-labelledby="ct-title">
+<footer class="vc-footer">
 <div class="vc-cta-band">
   <div class="vc-cta-in">
     <div class="vc-cta-say">
       <p class="vc-kicker">Starknet Thesis</p>
-      <h2 class="vc-title" id="ct-title">Three forces,<br>one chain,<br>one ticker.</h2>
+      <h2 class="vc-title">Three forces,<br>one chain,<br>one ticker.</h2>
     </div>
     <form class="vc-sub" action="https://starknetresearch.substack.com/subscribe" method="get" target="_blank" rel="noopener" data-umami-event="footer-subscribe">
       <label class="vc-sub-field">
@@ -2235,8 +2250,6 @@ window.ADMIN_GATE=on;})();
     </form>
   </div>
 </div>
-</section>
-<footer class="vc-footer">
   <div class="vc-cols">
     <nav class="vc-links" aria-label="Footer">
       <div class="vc-col"><h4>Thesis</h4><ul><li><a href="/privacy">Privacy</a></li><li><a href="/quantum">Quantum</a></li><li><a href="/btcfi">BTCFi</a></li><li><a href="/strk">STRK</a></li></ul></div>
@@ -2254,7 +2267,6 @@ window.ADMIN_GATE=on;})();
     <p class="vc-legal">Website made for educational purposes only. This is not financial advice. Always DYOR. A personal project, not affiliated with or endorsed by StarkWare. All views expressed here are my own.</p>
   </div>
 </footer>
-</div><!-- /.ft-layer -->
 
 
 <script>
