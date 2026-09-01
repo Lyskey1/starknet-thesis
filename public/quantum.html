@@ -3253,6 +3253,78 @@ body.page-quantum{overflow-x:clip;}
   .rxa-stage .qi-beat + .qi-beat{margin-top:40px;padding-top:40px;}
   .rxa .rxa-keys li{font-size:10px;letter-spacing:.12em;padding:9px 12px;}
 }
+
+/* ============================================================
+   SECTION 02, THE IDENTICAL FRAME (RXAFRAME, 2026-09-01)
+   THIS IS THE POINT OF THE REFERENCE, and the pass before this
+   one missed it. The reference repeats one block down the page
+   and the block's FURNITURE NEVER MOVES: heading baseline, rule,
+   lede, panel top edge and chip row sit at the same offset in
+   every block, and only the content inside the panel changes. So
+   as you scroll, the layout holds still and the information
+   swaps. Ours did not do that: the four panels measured 889, 780,
+   576 and 576 tall, so nothing lined up with anything.
+   Everything here exists to make the four blocks interchangeable
+   frames:
+     .rxa-top   a fixed height, so a two line title and a one line
+                title both leave the rule in the same place
+     .rxa-sub   a fixed height, two lines' worth
+     .rxa-feat  THE BOX, one fixed height for all four, holding the
+                beat's words on the left and its MOVING PARTS on
+                the right. Fixed, not min: a floor still lets a
+                taller beat push everything below it down.
+   The devices size their canvases from getBoundingClientRect, so
+   the box is sized with height and width only. NEVER transform or
+   scale it: a scaled ancestor hands them the wrong width, which is
+   the bug that made the marquees measure zero.
+   The words scroll inside the frame if a beat runs long. That is
+   deliberate: the alternative is the frame growing, which is the
+   whole thing being fixed here.
+   ============================================================ */
+
+/* the furniture above the box: fixed, so the box always starts at
+   the same offset from the block's top */
+.rxa .rxa-top{min-height:clamp(64px,7.4vw,104px);align-items:center;}
+.rxa .rxa-band{display:block;}
+.rxa .rxa-band b{display:inline-block;margin-right:.34em;vertical-align:.34em;}
+.rxa .rxa-sub{height:clamp(44px,4.4vw,62px);margin-top:18px;overflow:hidden;}
+
+/* THE BOX: one size, every beat. Words left, moving parts right. */
+.rxa .rxa-feat{display:grid;
+  grid-template-columns:minmax(0,.80fr) minmax(0,1.20fr);
+  gap:clamp(24px,2.6vw,48px);align-items:stretch;
+  height:min(74svh,820px);margin-top:26px;padding:clamp(20px,2.2vw,40px);
+  border:1px solid var(--rxa-line);background:#141414;
+  background-color:#141414;min-height:0;}
+
+.rxa .rxa-fcol{display:flex;flex-direction:column;justify-content:center;
+  gap:16px;max-width:none;margin-top:0;min-width:0;min-height:0;
+  overflow-y:auto;overscroll-behavior:contain;}
+.rxa .rxa-fcol > * + *{margin-top:0;}
+.rxa .rxa-fcol .scale-title{font-size:clamp(20px,1.7vw,29px);margin-bottom:10px;}
+.rxa .rxa-fcol p{font-size:clamp(14px,.97vw,16px);line-height:1.6;}
+.rxa .rxa-fcol .th-stark-pull{font-size:13px;}
+
+/* the moving parts, filling their half of the box */
+.rxa .rxa-fviz{display:flex;flex-direction:column;justify-content:center;
+  margin-top:0;padding:0;border:0;background:none;background-color:transparent;
+  min-height:0;min-width:0;overflow:hidden;}
+.rxa .rxa-fviz > *{width:100%;max-height:100%;}
+.rxa .rxa-fviz > .th-maze-grid,
+.rxa .rxa-fviz > .th-pm-compare{height:auto;}
+
+/* the chips close the frame at the same offset every time */
+.rxa .rxa-keys{margin-top:16px;min-height:44px;align-content:flex-start;}
+
+@media(max-width:1080px){
+  /* stacked, and the frame is released: a fixed height across a column
+     layout would crop the words rather than align anything */
+  .rxa .rxa-feat{grid-template-columns:minmax(0,1fr);height:auto;gap:26px;}
+  .rxa .rxa-fcol{overflow:visible;}
+  .rxa .rxa-fviz{overflow:visible;}
+  .rxa .rxa-top,.rxa .rxa-sub{min-height:0;height:auto;}
+  .rxa .rxa-keys{min-height:0;}
+}
 /* RXAWIDE ends */
 
 /* ============================================================
