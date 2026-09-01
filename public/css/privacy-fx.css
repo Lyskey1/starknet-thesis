@@ -229,72 +229,83 @@ body.page-privacy .hero::before { display: none; }
    reaching up behind the header, the header needs to sit above it again */
 body.page-privacy header.vc-header { z-index: 100; }
 
-/* ---------- the four proving properties, as a column accordion ----------
-   Four columns edge to edge. Hover, tap or focus one and its mesh-gradient
-   panel slides UP into the column while the previously shown one slides up
-   and out: one continuous upward conveyor, one in and one out. The reading
-   area above swaps in the same motion, carrying the section's standing
-   statement at rest and the hovered property's detail on top of it. The art
-   is layered CSS mesh gradient, no images. Timing and easing are the whole
-   effect: keep --pc-slide and --pc-ease in step across the three layers. */
-.pcore { --pc-slide: 900ms; --pc-ease: cubic-bezier(.76, 0, .18, 1);
-  position: relative; width: 100vw; max-width: none; margin: 56px 0 0 calc(50% - 50vw);
-  min-height: 100vh; display: flex; flex-direction: column; }
+/* ---------- the four proving properties, as a full-bleed feature band ----------
+   Rebuilt 2026-09-02 at section 05's proportions. The column accordion that
+   stood here (one mesh panel sliding in as the previous slid out, driven by
+   js/proof-columns.js) is retired: four properties that all have to read at
+   once do not want a selection device, so each owns a column and nothing is
+   hidden. The bleed geometry is copied from .th-pm-sec--law so the two bands
+   match: 100vw, negative side margins, and a vw padding that lands at about
+   21px on a 1440 frame (1.46 percent, measured off the reference).
+   The dotted rule is a child of the padded block rather than a full-bleed
+   element of its own, so its ends land on the column edges instead of
+   overshooting them by the padding. */
+.pcore { position: relative; width: 100vw; max-width: none;
+  margin: 56px 0 0 calc(50% - 50vw);
+  padding-inline: clamp(16px, 1.5vw, 28px); }
 
-/* the reading area: one .phead per state, only the active one shown */
-.pcore-heads { position: relative; flex: none; height: clamp(226px, 31vh, 344px); overflow: hidden;
-  padding: 0 16px 26px; }
-.phead { position: absolute; inset: 0 16px auto; transform: translateY(112%); opacity: 0;
-  transition: transform var(--pc-slide) var(--pc-ease), opacity calc(var(--pc-slide) * .7) ease; }
-.phead.-in { transform: translateY(0); opacity: 1; }
-.phead.-out { transform: translateY(-112%); opacity: 0; }
-.phead__rn, .phead__elim { font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--pf-acc); }
-.phead__elim { margin-top: 14px; }
-/* THE SATOSHI TYPOGRAPHY (2026-09-01): the same face and shape the
-   Satoshi band and the hero statement use, General Sans 600 at 1.02
-   leading and -.04em tracking, rather than 500 at -.02em, which read as
-   a different voice on the same page. The size ceiling is raised as far
-   as the conveyor's fixed height allows and .pcore-heads grows with it;
-   the band's own 92px cannot apply here because .pcore-heads is a fixed
-   height with overflow hidden, and a heading that outgrew it would be
-   clipped mid-swap. */
-.phead h4 { margin: 10px 0 12px; font-family: 'General Sans','Helvetica Neue',Arial,sans-serif;
-  font-weight: 600; font-size: clamp(30px, 4.3vw, 60px); line-height: 1.02; letter-spacing: -.04em; color: var(--pf-ink); }
-.phead p { margin: 0; max-width: 78ch; font-family: 'General Sans','Helvetica Neue',Arial,sans-serif;
-  font-size: clamp(15px, 1.25vw, 18px); line-height: 1.6; color: var(--pf-dim); }
-.phead--lede p { max-width: 44ch; font-size: clamp(20px, 2.4vw, 34px); line-height: 1.28; letter-spacing: -.01em; color: var(--pf-dim); }
-.phead--lede b { font-weight: 500; color: var(--pf-ink); }
+/* the standing statement, centred over the band. The element, its id and the
+   .phead classes stay: data/search-index.json and js/search.js resolve
+   against them. */
+.pcore-heads { position: relative; padding: 0; text-align: center; }
+.phead--lede p { margin: 0 auto; max-width: 40ch;
+  font-family: 'General Sans','Helvetica Neue',Arial,sans-serif;
+  font-size: clamp(24px, 2.9vw, 42px); font-weight: 300; line-height: 1.12;
+  letter-spacing: -.025em; color: var(--pf-dim); }
+.phead--lede b { font-weight: 300; color: var(--pf-ink); }
 
-/* the strip */
-.pcore-strip { display: flex; flex: 1 1 auto; min-height: 0; background: #0d0d0d; border-top: 1px solid var(--pf-line); border-bottom: 1px solid var(--pf-line); }
-.pcol { position: relative; flex: 1 1 0%; min-width: 0; overflow: hidden; cursor: pointer; outline: none;
-  border-left: 1px solid var(--pf-line); transition: flex-grow var(--pc-slide) var(--pc-ease); }
+/* generous ground, then the dotted rule with an accent square at each end,
+   the same device .sq and section 05 draw */
+.pcore-rule { position: relative; height: 0; margin: clamp(64px, 9vh, 132px) 0 0;
+  border-top: 2px dotted rgba(250,250,250,.35); }
+.pcore-rule::before, .pcore-rule::after { content: ""; position: absolute; top: -5px;
+  width: 8px; height: 8px; background: var(--pf-acc); }
+.pcore-rule::before { left: 0; }
+.pcore-rule::after { right: 0; }
+
+/* the four columns. Every column carries the SAME 24px inner padding, so the
+   four figure panels come out the same width; zeroing the outer padding
+   instead widens columns 01 and 04 and their panels grow taller than the
+   inner two. Same reasoning as .pl in section 05. */
+.pcore-row { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); margin: clamp(38px, 5vh, 60px) 0 0; }
+.pcol { display: flex; flex-direction: column; min-width: 0;
+  padding: 0 24px 4px; border-left: 1px solid var(--pf-line); }
 .pcol:first-child { border-left: 0; }
-.pcol.-active { flex-grow: 2.5; }
-.pcol::after { content: ""; position: absolute; inset: 0; z-index: 3; pointer-events: none;
-  box-shadow: inset 0 0 0 1.5px transparent; transition: box-shadow .4s ease; }
-.pcol:focus-visible::after { box-shadow: inset 0 0 0 2px var(--pf-acc); }
-
-/* the sliding art layer: clipped by the column, starts below, exits up */
-.pcol__media { position: absolute; inset: 0; z-index: 1; transform: translateY(101%);
-  transition: transform var(--pc-slide) var(--pc-ease); will-change: transform; }
-.pcol__media.-in { transform: translateY(0); }
-.pcol__media.-out { transform: translateY(-101%); }
-/* scrims, so the caption and name read over any panel */
-.pcol__media::before { content: ""; position: absolute; inset: 0; pointer-events: none;
-  background: linear-gradient(to bottom, rgba(13,13,13,.72) 0%, rgba(13,13,13,.15) 26%, rgba(13,13,13,.2) 62%, rgba(13,13,13,.86) 100%); }
-
-/* column chrome, always above the art */
-.pcol__cap { position: absolute; top: 20px; left: 20px; right: 16px; z-index: 2; display: flex; align-items: baseline; gap: 10px;
-  font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--pf-dim);
-  opacity: 0; transform: translateY(-6px); transition: opacity .5s ease .1s, transform .5s var(--pc-ease) .1s; }
-.pcol.-active .pcol__cap { opacity: 1; transform: none; }
-.pcol__cap b { color: var(--pf-acc); font-weight: 500; font-variant-numeric: tabular-nums; }
-.pcol__name { position: absolute; left: 20px; right: 16px; bottom: 24px; z-index: 2; margin: 0;
-  font-family: 'IBM Plex Mono', monospace; font-weight: 400; font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--pf-dim); }
-.pcol__name span { display: block; margin-top: 8px; font-family: 'General Sans','Helvetica Neue',Arial,sans-serif;
-  font-size: clamp(16px, 1.5vw, 21px); font-weight: 500; letter-spacing: -.01em; text-transform: none; color: rgba(250,250,250,.72); transition: color .4s ease; }
-.pcol.-active .pcol__name span { color: var(--pf-ink); }
+/* the label row holds on one line in every column: PROPERTY 01 is 11
+   characters of IBM Plex Mono at 10.5px, well inside the 157px the column
+   leaves between the two 30px tiles */
+.pcol__top { display: flex; align-items: center; gap: 10px; }
+.pcol__ic { flex: none; display: grid; place-items: center; width: 30px; height: 30px;
+  border: 1px solid var(--pf-line); color: var(--pf-acc); }
+.pcol__ic svg { width: 16px; height: 16px; }
+.pcol__rn { min-width: 0; font-family: 'IBM Plex Mono', monospace; font-size: 10.5px;
+  letter-spacing: .1em; white-space: nowrap; color: var(--pf-ink); }
+.pcol__arrow { flex: none; margin-left: auto; display: grid; place-items: center;
+  width: 30px; height: 30px; border: 1px solid var(--pf-line); color: var(--pf-dim); }
+.pcol__arrow svg { width: 16px; height: 16px; }
+/* the body owns the ELIMINATES line and pushes it to its own base, so the
+   four accent lines sit on one baseline however long the descriptions run */
+.pcol__body { flex: 1 1 auto; display: flex; flex-direction: column; }
+.pcol__name { margin: 22px 0 0; font-family: 'General Sans','Helvetica Neue',Arial,sans-serif;
+  font-weight: 600; font-size: 17px; line-height: 1.25; letter-spacing: -.01em; color: var(--pf-ink); }
+.pcol__sum { margin: 10px 0 0; font-family: 'General Sans','Helvetica Neue',Arial,sans-serif;
+  font-size: 13.5px; line-height: 1.62; color: var(--pf-dim); }
+.pcol__elim { margin: auto 0 0; padding-top: 14px; font-family: 'IBM Plex Mono', monospace; font-size: 10.5px;
+  letter-spacing: .12em; text-transform: uppercase; color: var(--pf-acc); }
+/* the illustration panel sits at the base of every column, so the four bottom
+   edges line up whatever the description above them measures. .pscene is
+   absolutely positioned, so the panel is the positioned box that holds it. */
+.pcol__media { position: relative; flex: none; margin: 26px 0 0; aspect-ratio: 260 / 200;
+  border: 1px solid var(--pf-line); background: #141414; overflow: hidden; }
+/* the mesh panels were built to fill a full-height column; at a quarter of
+   that size they read as flat orange, so a scrim pulls them back to the dark
+   figure panels section 05 uses and leaves the ember as texture */
+.pcol__media::after { content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none;
+  background: linear-gradient(180deg, rgba(13,13,13,.78) 0%, rgba(13,13,13,.46) 46%, rgba(13,13,13,.82) 100%); }
+/* thin-stroke line art over the mesh, the same device the law band uses */
+.pcol__art { position: absolute; inset: 0; z-index: 3; width: 100%; height: 100%;
+  color: rgba(250,250,250,.42); }
+.pcol__art .pcol-acc { stroke: var(--pf-acc); stroke-width: 1.7; }
 
 /* the panels: layered mesh gradient, strk20 palette, no images */
 .pscene { position: absolute; inset: 0; overflow: hidden; background: var(--ps-bg); }
@@ -321,24 +332,20 @@ body.page-privacy header.vc-header { z-index: 100; }
     radial-gradient(135% 130% at 62% 106%, #8a2400 0%, rgba(138,36,0,0) 60%),
     linear-gradient(153deg, #2a0a00 0%, #4a1200 54%, #0d0d0d 100%); }
 
-@media (prefers-reduced-motion: reduce) {
-  .pcol__media, .phead, .pcol { transition-duration: .01ms; }
+/* the band folds the way section 05's does: two columns, then one */
+@media (max-width: 1080px) {
+  .pcore-row { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .pcol:nth-child(odd) { border-left: 0; }
+  .pcol:nth-child(n+3) { margin-top: 34px; padding-top: 30px; border-top: 1px solid var(--pf-line); }
 }
-/* below 860 the strip stacks: the columns become a vertical accordion and the
-   reading area sizes to its content instead of being clipped to a fixed band */
 @media (max-width: 860px) {
   .pcore { margin-top: 40px; }
-  .pcore-heads { height: auto; min-height: 0; padding: 0 20px 22px; }
-  .phead { position: relative; inset: auto; transform: translateY(16px); }
-  .phead:not(.-in) { display: none; }
-  .phead--lede p { font-size: 20px; }
-  .pcore { min-height: 0; display: block; }
-  .pcore-strip { flex-direction: column; height: auto; }
-  .pcol { border-left: 0; border-top: 1px solid var(--pf-line); min-height: 76px; }
-  .pcol:first-child { border-top: 0; }
-  .pcol.-active { flex-grow: 3.4; min-height: 260px; }
-  .pcol__cap { top: 16px; }
-  .pcol__name { bottom: 16px; }
+  .phead--lede p { font-size: 22px; max-width: none; }
+}
+@media (max-width: 640px) {
+  .pcore-row { grid-template-columns: minmax(0,1fr); }
+  .pcol, .pcol:nth-child(odd) { padding: 0 0 4px; border-left: 0; }
+  .pcol + .pcol { margin-top: 32px; padding-top: 28px; border-top: 1px solid var(--pf-line); }
 }
 
 /* ---------- the comparison table, after public.com's rebate table ----------
@@ -378,16 +385,6 @@ body.page-privacy header.vc-header { z-index: 100; }
 .th-pm-head--band .th-pm-title { font-size: clamp(34px, 5.6vw, 76px); font-weight: 300;
   line-height: 1.02; letter-spacing: -.03em; }
 .th-pm-head--band + .th-pm-eyebrow { text-align: center; }
-
-/* the dotted full-width rule under the headline, with an accent square at
-   each end: the same device .sq draws across the Satoshi statement, kept to
-   the 1160 band here rather than the viewport so it cannot overflow. */
-.pl-rule { position: relative; height: 0; margin: 32px 0 0;
-  border-top: 2px dotted rgba(250,250,250,.35); }
-.pl-rule::before, .pl-rule::after { content: ""; position: absolute; top: -5px;
-  width: 8px; height: 8px; background: var(--pf-acc); }
-.pl-rule::before { left: 0; }
-.pl-rule::after { right: 0; }
 
 /* the prose, folded above the columns as two measures */
 .pl-prose { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr);
