@@ -6,6 +6,16 @@
   'use strict';
   var mount = document.getElementById('ecoIndex');
   if (!mount) return;
+  /* The mount ships with a static pre-render of the whole directory (see the
+     STATIC-ECO markers in ecosystem.html, written by scripts/build-ecosystem.js)
+     so the page is readable, and crawlable, without JS. Enhance it: build the
+     interactive index into an own container appended beside it, and clip the
+     static block via data-enhanced once the data is in. Never remove it and
+     never display:none it: the text stays in the DOM. */
+  var staticEl = mount.querySelector('.ixs');
+  var live = document.createElement('div');
+  live.className = 'ix-live';
+  mount.appendChild(live);
 
   var CATS = [
     { id: 'all', label: 'All' },
@@ -18,7 +28,7 @@
   ];
   var COLS = 4;
 
-  mount.innerHTML =
+  live.innerHTML =
     '<div class="ix-head"><p class="es-kicker">The projects</p>' +
       '<h2>Index</h2>' +
       '<div class="ix-tabs" role="tablist"></div></div>' +
@@ -37,10 +47,10 @@
       '<div class="ix-noise" aria-hidden="true"></div>' +
     '</div></div>';
 
-  var tabsEl = mount.querySelector('.ix-tabs');
-  var gridEl = mount.querySelector('.ix-grid');
-  var modal = mount.querySelector('.ix-modal');
-  var sheet = mount.querySelector('.ix-sheet');
+  var tabsEl = live.querySelector('.ix-tabs');
+  var gridEl = live.querySelector('.ix-grid');
+  var modal = live.querySelector('.ix-modal');
+  var sheet = live.querySelector('.ix-sheet');
   var filter = 'all', all = [];
 
   var esc = function (t) { return String(t == null ? '' : t).replace(/[&<>"']/g, function (c) {
@@ -120,5 +130,9 @@
       });
     });
     render();
-  }).catch(function (err) { console.error('[eco-index]', err); mount.style.display = 'none'; });
+    /* inert, set by JS only, keeps the 126 clipped links out of the tab order and
+       the a11y tree without removing a word from the DOM. Never emitted into the
+       HTML: without JS those links must stay live. */
+    if (staticEl) { staticEl.setAttribute('data-enhanced', '1'); staticEl.setAttribute('inert', ''); }
+  }).catch(function (err) { console.error('[eco-index]', err); live.style.display = 'none'; });
 })();

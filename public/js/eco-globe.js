@@ -16,7 +16,10 @@ const SHELL_Y = -0.55;   // near-centred, just clear of the copy
   MOUNT.innerHTML =
     '<div class="eg-track"><div class="eg-stick">' +
       '<div class="eg-copy eg-copy-a">' +
-        '<h2>The people building &amp; shaping Starknet</h2>' +
+        /* not a heading: the page's real h1 carries this wording, pre-rendered
+           into #ecoIndex by scripts/build-ecosystem.js. .eg-h is styled exactly
+           like .eg-copy h2 (css/eco-stage.css), so nothing moves. */
+        '<p class="eg-h">The people building &amp; shaping Starknet</p>' +
         '<p>Every project, every voice, on one chain.</p>' +
       '</div>' +
       '<div class="eg-copy eg-copy-b"><h2>Powered by Starknet</h2>' +

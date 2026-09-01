@@ -81,7 +81,7 @@
 .eg-copy { position: absolute; left: 50%; transform: translate(-50%,0); width: min(1180px, calc(100% - 56px)); text-align: center; pointer-events: none; will-change: opacity, transform; }
 .eg-copy-a { top: 13vh; }
 .eg-copy-b { top: 50%; transform: translate(-50%,-50%); width: min(760px, calc(100% - 48px)); }
-.eg-copy h2 { font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-weight: 300; font-size: clamp(26px, 3.3vw, 47px); line-height: 1.12; letter-spacing: -.02em; color: var(--es-ink); margin: 0 0 16px; }
+.eg-copy h2, .eg-copy .eg-h { font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-weight: 300; font-size: clamp(26px, 3.3vw, 47px); line-height: 1.12; letter-spacing: -.02em; color: var(--es-ink); margin: 0 0 16px; }
 .eg-copy p { font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-size: clamp(14px, 1.3vw, 18px); line-height: 1.5; color: var(--es-dim); margin: 0; }
 
 .eg-stats { position: absolute; left: 48px; bottom: 7vh; z-index: 5; display: flex; gap: 44px; pointer-events: none; }
@@ -122,6 +122,27 @@ body::before { opacity: .35; }
 /* ---------- the index: every project as a row, after Dragonfly's ---------- */
 #ecoIndex { max-width: 1400px; margin: 0 auto 96px; padding: 15vh 40px 0; }
 .ix-head { margin: 0 0 26px; }
+/* the h1 lives in the pre-rendered directory block and reads exactly like the
+   index title above it */
+.ix-head h1 { font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-weight: 300; font-size: clamp(28px, 3.4vw, 52px); line-height: 1; letter-spacing: -.03em; color: var(--es-ink); margin: 8px 0 22px; }
+
+/* ---------- the pre-rendered directory (scripts/build-ecosystem.js) ----------
+   Ships in the HTML so the page carries its h1 and all 126 entries with their
+   descriptions before a line of JS runs. With JS, eco-index.js sets
+   data-enhanced and the interactive index takes over the view: the block is
+   clipped, NOT display:none, so every word stays in the DOM. */
+.ixs-group { margin: 0 0 34px; }
+.ixs-group .es-kicker { margin: 0 0 12px; }
+.ixs-list { list-style: none; margin: 0; padding: 0; }
+.ixs-item { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px;
+  padding: 12px 14px; border-bottom: 1px solid var(--es-line);
+  font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-size: 15px; color: var(--es-dim); }
+.ixs-name { color: var(--es-ink); text-decoration: none; letter-spacing: .01em; text-transform: uppercase; }
+.ixs-name:hover { color: var(--es-acc); }
+.ixs-cat { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--es-faint); }
+.ixs-desc { flex: 1 1 320px; min-width: 0; }
+.ixs[data-enhanced] { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
 .ix-head h2 { font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-weight: 300; font-size: clamp(28px, 3.4vw, 52px); line-height: 1; letter-spacing: -.03em; color: var(--es-ink); margin: 8px 0 22px; }
 .ix-tabs { display: flex; flex-wrap: wrap; gap: 6px; }
 .ix-tabs button { padding: 7px 14px; border: 0; background: #141414; color: var(--es-dim);
