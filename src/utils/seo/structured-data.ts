@@ -22,7 +22,7 @@ export function getSiteStructuredData() {
         // The publishing entity, not the page title. Must match the
         // `#organization` node emitted by the static pages in public/.
         name: "Starknet Thesis",
-        url: siteConfig.url,
+        url: siteConfig.rootUrl,
         logo: {
           "@type": "ImageObject",
           url: `${siteConfig.url}/apple-icon-180x180.png`,
@@ -37,9 +37,9 @@ export function getSiteStructuredData() {
       {
         "@type": "WebSite",
         "@id": `${siteConfig.url}/#website`,
-        name: siteConfig.name,
+        name: siteConfig.defaultTitle,
         description: siteConfig.description,
-        url: siteConfig.url,
+        url: siteConfig.rootUrl,
         publisher: { "@id": `${siteConfig.url}/#organization` },
         inLanguage: "en",
       },

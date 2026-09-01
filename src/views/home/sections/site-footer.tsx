@@ -114,9 +114,9 @@ export const SiteFooter = ({ copy }: SiteFooterProps) => {
               key={column.heading}
               className="vc-col flex flex-col gap-[22px] border-l border-[#262626] px-[28px] pt-[56px] pb-[60px] first:border-l-0 first:pl-0 max-lg:px-0 max-lg:pt-[40px] max-lg:pb-[40px] max-lg:pl-[24px] max-lg:odd:border-l-0 max-lg:odd:pl-0 max-sm:border-l-0 max-sm:px-0 max-sm:py-[28px] max-sm:pl-0"
             >
-              <h4 className="font-hud-mono text-[11px] leading-[1.2] font-normal tracking-[0.18em] text-[rgba(250,250,250,0.65)] uppercase">
+              <h3 className="font-hud-mono text-[11px] leading-[1.2] font-normal tracking-[0.18em] text-[rgba(250,250,250,0.65)] uppercase">
                 {column.heading}
-              </h4>
+              </h3>
               <ul className="flex list-none flex-col gap-[18px] p-0">
                 {column.links.map((link) => (
                   <li key={link.label}>

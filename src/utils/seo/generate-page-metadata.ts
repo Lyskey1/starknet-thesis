@@ -27,7 +27,7 @@ interface MetadataProps {
 }
 
 export function generateMetadata({
-  title = siteConfig.name,
+  title = siteConfig.defaultTitle,
   description = siteConfig.description,
   url = "/",
   ogImage = siteConfig.ogImage,
