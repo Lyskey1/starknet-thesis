@@ -1657,6 +1657,7 @@ if (window.thStickyRail) {
          its own heading (#rxa-t-0..3) now that the rail buttons it used
          to point at are gone. -->
     <div class="rxa-stage">
+      <ol class="rxa-prog" id="rxaProg" aria-hidden="true"><li class="is-on"></li><li></li><li></li><li></li></ol>
 <div class="qi-beat is-open" data-beat="0" id="qi-beat-0" role="region" aria-labelledby="rxa-t-0">
   <div class="rxa-top"><h3 class="rxa-band" id="rxa-t-0"><b>01</b><span>HOW THE KEY BREAKS</span></h3><a class="rxa-more" href="#one-key-two-machines">See more</a></div>
   <div class="rxa-rule" aria-hidden="true"></div>
@@ -1701,7 +1702,7 @@ if (window.thStickyRail) {
 
 </div>
 
-<div class="qi-beat is-open" data-beat="1" id="qi-beat-1" role="region" aria-labelledby="rxa-t-1">
+<div class="qi-beat" data-beat="1" id="qi-beat-1" role="region" aria-labelledby="rxa-t-1">
   <div class="rxa-top"><h3 class="rxa-band" id="rxa-t-1"><b>02</b><span>WHY SAFE DAYS PROVE NOTHING</span></h3><a class="rxa-more" href="#safe-every-single-day-right-up">See more</a></div>
   <div class="rxa-rule" aria-hidden="true"></div>
   <p class="rxa-sub">A lengthening track record of safety that proves nothing about the day the machine arrives.</p>
@@ -1738,7 +1739,7 @@ if (window.thStickyRail) {
 
 </div>
 
-<div class="qi-beat is-open" data-beat="2" id="qi-beat-2" role="region" aria-labelledby="rxa-t-2">
+<div class="qi-beat" data-beat="2" id="qi-beat-2" role="region" aria-labelledby="rxa-t-2">
   <div class="rxa-top"><h3 class="rxa-band" id="rxa-t-2"><b>03</b><span>THE COST IS COLLAPSING</span></h3><a class="rxa-more" href="#the-cost-of-the-attack-is">See more</a></div>
   <div class="rxa-rule" aria-hidden="true"></div>
   <p class="rxa-sub">The estimated cost of a quantum attack on crypto's cryptography has collapsed roughly 10,000x since 2012.</p>
@@ -1781,7 +1782,7 @@ if (window.thStickyRail) {
 
 </div>
 
-<div class="qi-beat is-open" data-beat="3" id="qi-beat-3" role="region" aria-labelledby="rxa-t-3">
+<div class="qi-beat" data-beat="3" id="qi-beat-3" role="region" aria-labelledby="rxa-t-3">
   <div class="rxa-top"><h3 class="rxa-band" id="rxa-t-3"><b>04</b><span>WHAT BREAKS, WHAT HOLDS</span></h3><a class="rxa-more" href="#what-breaks-what-holds">See more</a></div>
   <div class="rxa-rule" aria-hidden="true"></div>
   <p class="rxa-sub">The paper draws a sharp line between what a quantum computer breaks and what it cannot touch.</p>
@@ -1890,73 +1891,64 @@ if (window.thStickyRail) {
 </script>
 
 <script>
-/* SECTION 02 THREAT, the scroll progression (RXAWIDE, 2026-09-01).
-   Reference behaviour: the section ADVANCES AS YOU SCROLL. Each block
-   of the band starts a short way above its resting place, comes down
-   and settles, and the blocks do it one after another as the section
-   travels through the viewport. It is not a reveal on entry: every
-   value is recomputed from scroll position each frame, so scrolling
-   back up runs it backwards.
-   Order is visual order: the pieces of the open beat top to bottom,
-   then the four filter cells that now sit under the panel.
-   Two things this has to get right, both have bitten it:
-   - the rect it reads already carries the translate written last
-     frame, so the applied offset is subtracted back out; reading a
-     moving value would jitter and never settle.
-   - values only change on scroll, so a beat opened from the filter
-     bar or from window.__qiOpen without the page moving would sit
-     invisible. Every path that changes the band repaints directly:
-     load, resize, and the stage mutation that marks the new beat.
-   Transform and opacity only, never scale or filter: the maze and
-   turkey canvases size themselves from getBoundingClientRect and a
-   scaled ancestor would hand them the wrong width.
-   Scoped hard to #threat-index-grid so the qw rails elsewhere on the
-   page are untouched. The classes are added by script, so with script
-   off or reduced motion on the whole band is simply visible. */
+/* SECTION 02 THREAT, THE PIN (RXAPIN, 2026-09-01).
+   One section. The frame pins to the viewport and scrolling advances which
+   beat is inside it; after the fourth, the band releases and the page moves
+   on to section 03.
+   THE DENOMINATOR IS THE BAND'S TRAVEL, NOT THE VIEWPORT. A band four
+   viewports tall holding a frame one viewport tall travels
+       bandHeight - frameHeight
+   and dividing by innerHeight instead is what makes a pinned section
+   release early and never show its last state.
+   EVERY BEAT SWAP FIRES A SYNTHETIC RESIZE. The maze and turkey canvases
+   size themselves from getBoundingClientRect, which reads ZERO behind
+   display:none, so a beat revealed without one comes back zero-width. This
+   is the same reason the old accordion dispatched one on open.
+   The classes are written by script, so with script off or the pin released
+   below 1080px every beat is simply visible in flow. */
 (function(){
   var grid = document.getElementById('threat-index-grid');
   if (!grid) return;
-  var stage = grid.querySelector('.rxa-stage');
-  if (!stage) return;
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  var SEL = '.rxa-top,.rxa-rule,.rxa-sub,.rxa-feat,.rxa-keys';
-  var DROP = 26;    /* px above its rest a block starts */
-  var SPAN = 0.36;  /* the travel, as a fraction of the viewport */
-  var STEP = 0.05;  /* the stagger between successive blocks */
-  var els = [];
-  grid.classList.add('rxa-armed');
-  function collect(){
-    /* all four beats render now, so this walks every block in the stage.
-       THE STAGGER INDEX RESTARTS AT EACH BEAT. It used to be the position
-       in one flat list, which was right when only one beat was on screen;
-       across four stacked beats a flat index reaches 19, and 19 * STEP
-       pushes the last blocks a whole viewport past their trigger, so the
-       fourth beat would sit at the opacity floor until far too late. Each
-       beat now staggers its own blocks from zero. */
-    els = [];
-    [].slice.call(stage.querySelectorAll('.qi-beat')).forEach(function(beat){
-      [].slice.call(beat.querySelectorAll(SEL)).forEach(function(el, i){
-        if (!el.classList.contains('rxa-slide')) el.classList.add('rxa-slide');
-        el.__rxaI = i;
-        if (typeof el.__rxaY !== 'number') el.__rxaY = 0;
-        els.push(el);
-      });
-    });
+  var frame = grid.querySelector('.rxa-stage');
+  var beats = [].slice.call(grid.querySelectorAll('.qi-beat'));
+  var ticks = [].slice.call(grid.querySelectorAll('.rxa-prog li'));
+  var announce = document.getElementById('qiAnnounce');
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  var NAMES = ['Beat 1 of 4: How the key breaks','Beat 2 of 4: Why safe days prove nothing',
+               'Beat 3 of 4: The cost is collapsing','Beat 4 of 4: What breaks, what holds'];
+  var current = -1;
+
+  function navHeight(){
+    var n = document.querySelector('nav');
+    return n ? Math.round(n.getBoundingClientRect().height) : 0;
   }
-  function ease(t){ return 1 - Math.pow(1 - t, 3); }
+  /* the sticky offset is written as a custom property so CSS and the maths
+     below can never disagree about where the frame parks */
+  function syncTop(){
+    grid.style.setProperty('--rxa-top', (navHeight() + 12) + 'px');
+  }
+  function pinned(){
+    return getComputedStyle(frame).position === 'sticky';
+  }
+  function show(k, quiet){
+    k = k < 0 ? 0 : (k > beats.length - 1 ? beats.length - 1 : k);
+    if (k === current) return;
+    current = k;
+    beats.forEach(function(b, i){ b.classList.toggle('is-open', i === k); });
+    ticks.forEach(function(t, i){ t.classList.toggle('is-on', i === k); });
+    /* the revealed beat's canvases measured zero while it was hidden */
+    window.dispatchEvent(new Event('resize'));
+    if (!quiet && announce) announce.textContent = NAMES[k];
+  }
   function paint(){
-    var vh = window.innerHeight || 1;
-    for (var i = 0; i < els.length; i++){
-      var el = els[i];
-      var top = el.getBoundingClientRect().top - el.__rxaY;
-      var t = (vh - top) / (vh * SPAN) - el.__rxaI * STEP;
-      t = t < 0 ? 0 : (t > 1 ? 1 : t);
-      var e = ease(t);
-      var y = -DROP * (1 - e);
-      el.__rxaY = y;
-      el.style.transform = y ? 'translate3d(0,' + y.toFixed(2) + 'px,0)' : 'none';
-      el.style.opacity = (0.05 + 0.95 * e).toFixed(3);
-    }
+    if (!pinned()) { beats.forEach(function(b){ b.classList.add('is-open'); }); current = -1; return; }
+    var r = grid.getBoundingClientRect();
+    var travel = grid.offsetHeight - frame.offsetHeight;
+    if (travel <= 0) { show(0, true); return; }
+    var top = navHeight() + 12;
+    var p = (top - r.top) / travel;            /* 0 at the pin, 1 at release */
+    p = p < 0 ? 0 : (p > 1 ? 1 : p);
+    show(Math.min(beats.length - 1, Math.floor(p * beats.length)));
   }
   var queued = false;
   function tick(){
@@ -1964,15 +1956,29 @@ if (window.thStickyRail) {
     queued = true;
     requestAnimationFrame(function(){ queued = false; paint(); });
   }
-  function rebuild(){ collect(); paint(); }
-  rebuild();
+  function rebuild(){ syncTop(); paint(); }
+
+  /* search.js's contract: a hit inside a beat that is not on screen. Scroll
+     the page to that beat's own slice of the band, which is the only way to
+     bring it up now that the band is scroll-driven. */
+  window.__qiOpen = function(k){
+    if (!pinned()) {
+      var b = document.getElementById('qi-beat-' + k);
+      if (b) b.scrollIntoView({ block: 'center', behavior: reduce.matches ? 'instant' : 'smooth' });
+      return;
+    }
+    var travel = grid.offsetHeight - frame.offsetHeight;
+    var slice = (k + 0.5) / beats.length;
+    var want = grid.getBoundingClientRect().top + window.scrollY - (navHeight() + 12) + travel * slice;
+    window.scrollTo({ top: want, behavior: reduce.matches ? 'instant' : 'smooth' });
+  };
+
+  syncTop();
+  show(0, true);
+  paint();
   window.addEventListener('scroll', tick, { passive: true });
   window.addEventListener('resize', rebuild);
   window.addEventListener('load', rebuild);
-  /* NO MUTATION OBSERVER. It existed to notice which beat had been opened,
-     and there is no opening any more. It is also the thing that livelocked
-     the main thread when an unguarded classList.add fired inside its own
-     callback, so it is not worth keeping for a job that no longer exists. */
 })();
 </script>
 
@@ -3534,6 +3540,59 @@ body.page-quantum{overflow-x:clip;}
   letter-spacing:-.04em !important;color:#fafafa;max-width:none;}
 .qprop-body{margin:0;max-width:78ch;font-family:'General Sans','Helvetica Neue',Arial,sans-serif;
   font-size:clamp(15px,1.25vw,18px);line-height:1.6;color:rgba(250,250,250,.62);}
+
+/* ============================================================
+   SECTION 02 AS ONE PINNED SECTION (RXAPIN, 2026-09-01)
+   The four beats were four stacked blocks, i.e. four sections on
+   the page. The reference is ONE section: the frame pins to the
+   viewport, and scrolling advances which beat is inside it. After
+   the fourth the band releases and the page moves on to 03.
+   HOW THE HEIGHT WORKS. The band is four viewports tall, so each
+   beat owns a quarter of the scroll. The frame inside is sticky at
+   one viewport, which means the band's travel is
+       bandHeight - frameHeight  =  4vh - 1vh  =  3vh
+   and that, NOT the viewport height, is the denominator for
+   progress. Getting that wrong is the classic pinned-section bug:
+   the section releases early and the last beat never shows.
+   THE FRAME MUST FIT ONE VIEWPORT, so the box is sized from svh
+   minus the furniture above and below it rather than from a fixed
+   ceiling. Last round's identical-frame work is what makes this
+   possible: the furniture already sits at the same offset in every
+   beat, so swapping the content inside the frame moves nothing.
+   is-open IS THE DISPLAYED BEAT NOW, not a class on all four. That
+   is deliberate: js/search.js surfaces a hit inside a beat with
+     if (qb && !qb.classList.contains('is-open') && window.__qiOpen)
+   so a hit in a beat that is not on screen now calls __qiOpen, and
+   __qiOpen scrolls the page to that beat's slice of the band.
+   ============================================================ */
+.rxa{position:relative;height:400svh;}
+.rxa-stage{position:sticky;top:var(--rxa-top,64px);height:100svh;
+  display:flex;flex-direction:column;justify-content:center;}
+.rxa-stage .qi-beat{display:none;}
+.rxa-stage .qi-beat.is-open{display:block;}
+/* only one beat shows, so there is nothing to separate */
+.rxa-stage .qi-beat + .qi-beat{margin-top:0;padding-top:0;border-top:0;}
+
+/* the frame has to fit one viewport, so the box takes what is left
+   after the furniture above and below it */
+.rxa .rxa-feat{height:calc(100svh - 330px);min-height:260px;margin-top:20px;}
+.rxa .rxa-keys{margin-top:14px;}
+
+/* the progress readout: which beat of four, as a row of ticks */
+.rxa-prog{display:flex;gap:6px;margin:0 0 18px;padding:0;list-style:none;}
+.rxa-prog li{width:38px;height:2px;background:rgba(250,250,250,.16);transition:background .3s ease;}
+.rxa-prog li.is-on{background:#c53400;}
+
+@media(max-width:1080px){
+  /* the pin is released below the two-column breakpoint: the box goes to
+     auto height there, and a fixed viewport frame would crop it */
+  .rxa{height:auto;}
+  .rxa-stage{position:static;height:auto;display:block;}
+  .rxa-stage .qi-beat{display:block;}
+  .rxa-stage .qi-beat + .qi-beat{margin-top:56px;padding-top:56px;border-top:1px solid var(--rxa-line);}
+  .rxa .rxa-feat{height:auto;}
+  .rxa-prog{display:none;}
+}
 </style>
 
   <!-- chapter: the referee -->
