@@ -2893,11 +2893,55 @@ body.page-quantum{overflow-x:clip;}
   </div>
 
   <style>
-  .th-adv::after{content:'';display:block;clear:both;}
-  .th-adv-photo{float:right;width:210px;height:auto;margin:32px 0 20px 28px;border-radius:14px;border:1px solid rgba(197, 52, 0,.28);}
-  .th-adv-role{margin-top:18px;font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:.08em;color:#9a9a9a;}
-  .th-adv-role b{color:#c53400;font-weight:600;}
-  @media(max-width:760px){.th-adv{display:flex;flex-direction:column;}.th-adv-photo{float:none;order:5;margin:24px auto 0;}}
+  /* THE ADVISOR AS A TESTIMONIAL (2026-09-02, owner): one large centred quote
+     owning roughly a viewport, the headshot reduced to a small round avatar
+     riding the start of the first line, attribution in mono beneath, faint
+     grid lines behind. The float-right portrait and its 760px reflow are
+     gone rather than overridden: an inline avatar has to live INSIDE the
+     paragraph, so there is no float left to cancel. The link styling that
+     .th-q-flow used to lend the paragraph is restated here, because the
+     quote no longer carries that class.
+     The avatar is assets/scott-aaronson.jpg, which is a WebP behind a .jpg
+     name (RIFF/WEBP magic). Browsers sniff the bytes, so the extension is
+     harmless; anything that PROCESSES the file must not assume JPEG.
+     object-position sits above centre so the circular crop keeps the head. */
+  .qadv{position:relative;display:flex;flex-direction:column;align-items:center;
+    justify-content:center;text-align:center;
+    min-height:min(78svh,760px);margin-top:44px;padding:clamp(44px,6vh,88px) 0;}
+  .qadv-guides{position:absolute;inset:0;z-index:0;pointer-events:none;
+    background-image:linear-gradient(90deg,rgba(250,250,250,.085) 1px,transparent 1px),
+      linear-gradient(180deg,rgba(250,250,250,.085) 1px,transparent 1px);
+    background-size:clamp(84px,8.5vw,128px) clamp(84px,8.5vw,128px);
+    background-position:center center;
+    -webkit-mask-image:radial-gradient(ellipse 76% 66% at 50% 50%,#000 10%,transparent 76%);
+    mask-image:radial-gradient(ellipse 76% 66% at 50% 50%,#000 10%,transparent 76%);}
+  .qadv > :not(.qadv-guides){position:relative;z-index:1;}
+  .qadv-quote{max-width:min(1000px,94%);margin:0;
+    font-family:'General Sans','Helvetica Neue',Arial,sans-serif;
+    font-weight:500;font-size:clamp(21px,2.25vw,34px);line-height:1.34;
+    letter-spacing:-.025em;color:#fafafa;text-wrap:pretty;}
+  .qadv-quote b{color:#fafafa;font-weight:600;}
+  .qadv-quote a{color:#c53400;text-decoration:underline;text-underline-offset:4px;
+    text-decoration-thickness:1px;text-decoration-color:rgba(197, 52, 0,.45);
+    transition:color .2s,text-decoration-color .2s;}
+  .qadv-quote a:hover{color:#fafafa;text-decoration-color:rgba(250, 250, 250,.5);}
+  .qadv-avatar{display:inline-block;vertical-align:-.2em;
+    width:clamp(36px,3.1vw,54px);height:clamp(36px,3.1vw,54px);
+    margin-right:.34em;border-radius:50%;object-fit:cover;object-position:46% 30%;
+    /* object-view-box crops to the head, so the face still reads at 45px.
+       Browsers without it fall back to the cover crop above, which is the
+       whole frame: smaller face, nothing broken. */
+    object-view-box:inset(4% 26% 30% 22%);
+    border:1px solid rgba(197, 52, 0,.45);box-shadow:0 0 0 4px rgba(197, 52, 0,.09);}
+  .qadv-role{margin:clamp(26px,3.6vh,44px) 0 0;max-width:760px;
+    font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:.08em;
+    line-height:1.9;color:#9a9a9a;}
+  .qadv-role b{color:#c53400;font-weight:600;}
+  @media(max-width:760px){
+    .qadv{min-height:0;padding:52px 0;margin-top:32px;}
+    .qadv-quote{font-size:20px;line-height:1.38;max-width:100%;}
+    .qadv-role{font-size:10.5px;letter-spacing:.06em;}
+  }
   
 /* touch targets + narrow-phone stat clamps (phase 2) */
 @media (hover: none) {
@@ -3763,7 +3807,39 @@ body.page-quantum{overflow-x:clip;}
   grid-template-columns:minmax(0,1fr) minmax(0,1fr);
   gap:clamp(28px,4vw,80px);align-items:stretch;
   min-height:min(76svh,860px);
+  /* FULL BLEED (2026-09-02, owner): this chapter runs edge to edge instead of
+     sitting inside the section's 1160px measure. Same escape hatch
+     privacy.html's .th-pm-sec--law uses on its own children. */
+  width:100vw;max-width:none;
+  margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw);
+  padding-inline:clamp(16px,1.5vw,28px);
 }
+/* Two things in the chapter device have to give way for that bleed.
+   1. .qw-shell's overflow. Its CSS overflow:hidden is dead weight at rest:
+      thMorph sets overflow:hidden INLINE for the height animation and clears
+      it afterwards, so visible here keeps the morph clip and never turns the
+      shell into a scroll container (the freeze bug the shell's comment warns
+      about needs overflow-y:hidden with an auto x, which this is not).
+      Known and deliberate: for the 400ms of a tab swap INTO this chapter the
+      inline overflow:hidden is still on, so the bled content paints clipped
+      to the shell's 1096px and widens when the morph ends. Overriding the
+      inline rule with !important removes that but replaces it with the
+      morph's real job: at 390px the chapters are 631px, 1067px and 691px
+      tall, so an unclipped box spills up to 436px of content past its own
+      edge for the same 400ms. The transient width reveal is the smaller
+      artefact, and it costs chapters 01 and 02 nothing.
+   2. The shell's card skin, whose two vertical hairlines would otherwise run
+      straight through the widened content. It is dropped only while chapter
+      0 is the open one, so chapters 01 and 02 keep their card, their width
+      and their geometry untouched. */
+#readiness-rail .qw-shell{overflow:visible;}
+#readiness-rail .qw-shell:has(.qw-ch[data-ch="0"].is-on){
+  border-color:transparent;background:none;border-radius:0;
+}
+/* the paper sits straight and does not move: this instance only. .th-doc
+   stays tilted globally for the documents elsewhere on the page. */
+.th-stark-duo--sui .th-doc,
+.th-stark-duo--sui .th-doc:hover{transform:none;}
 .th-stark-duo--sui .ssui-left{display:flex;flex-direction:column;justify-content:space-between;min-width:0;gap:32px;}
 .th-stark-duo--sui .th-st-top{display:block;margin:0;}
 .th-stark-duo--sui .th-st-top h4{
@@ -3803,10 +3879,10 @@ body.page-quantum{overflow-x:clip;}
     <h3 id="and-to-get-this-roadmap-right" class="scale-title">And to get this roadmap right, StarkWare brought in <span>one of the world's leading quantum minds.</span></h3>
   </div>
 
-  <div class="th-adv">
-    <img class="th-adv-photo" src="assets/scott-aaronson.jpg" alt="Prof. Scott Aaronson" width="776" height="714">
-    <p class="th-q-flow">In February 2026, <b>Prof. Scott Aaronson</b> joined <a href="https://starkware.co/blog/quantum-computing-expert-scott-aaronson-joins-starkware/" target="_blank" rel="noopener noreferrer">StarkWare's Scientific Advisory Board</a> with a clear mandate: pressure-test this roadmap. Every assumption about what quantum computers can and cannot do, every cryptographic choice on the path to end-to-end resistance, now gets challenged by one of the foremost authorities in the field.</p>
-    <p class="th-adv-role"><b>Scott Aaronson</b> &middot; Schlumberger Chair of Computer Science, UT Austin &middot; Founding Director, Quantum Information Center</p>
+  <div class="qadv">
+    <div class="qadv-guides" aria-hidden="true"></div>
+    <p class="qadv-quote"><img class="qadv-avatar" src="assets/scott-aaronson.jpg" alt="Prof. Scott Aaronson" width="776" height="714" loading="lazy" decoding="async">In February 2026, <b>Prof. Scott Aaronson</b> joined <a href="https://starkware.co/blog/quantum-computing-expert-scott-aaronson-joins-starkware/" target="_blank" rel="noopener noreferrer">StarkWare's Scientific Advisory Board</a> with a clear mandate: pressure-test this roadmap. Every assumption about what quantum computers can and cannot do, every cryptographic choice on the path to end-to-end resistance, now gets challenged by one of the foremost authorities in the field.</p>
+    <p class="qadv-role"><b>Scott Aaronson</b> &middot; Schlumberger Chair of Computer Science, UT Austin &middot; Founding Director, Quantum Information Center</p>
   </div>
   </div>
 </section>
