@@ -3306,10 +3306,19 @@ body.page-quantum{overflow-x:clip;}
 /* the same Satoshi voice as the privacy band: General Sans 600, 1.02
    leading, -.04em tracking. The size is set by the fixed frame it lives
    in, not by the band's 92px. */
+/* SIZED TO FILL THE COLUMN. Measured across the four beats, the words were
+   occupying only 37 to 51 percent of the column's height, so the frame read
+   as a small block of text stranded in a tall empty box. The type is scaled
+   up rather than the block being top-aligned, because the beats carry
+   different amounts of copy and top-aligning would just move the same gap to
+   the bottom. Beat 2 is the fullest, so it sets the ceiling: the scale is
+   chosen to leave it comfortably short of the point where the column starts
+   to scroll. */
+.rxa .rxa-fcol{gap:20px;}
 .rxa .rxa-fcol .scale-title{font-family:'General Sans','Helvetica Neue',Arial,sans-serif;
-  font-weight:600;font-size:clamp(22px,2vw,34px);line-height:1.02;
-  letter-spacing:-.04em;margin-bottom:12px;}
-.rxa .rxa-fcol p{font-size:clamp(14px,.97vw,16px);line-height:1.6;}
+  font-weight:600;font-size:clamp(24px,2.6vw,40px);line-height:1.04;
+  letter-spacing:-.04em;margin-bottom:14px;}
+.rxa .rxa-fcol p{font-size:clamp(15px,1.32vw,20px);line-height:1.58;}
 .rxa .rxa-fcol .th-stark-pull{font-size:13px;}
 
 /* the moving parts, filling their half of the box */
@@ -3429,11 +3438,18 @@ body.page-quantum{overflow-x:clip;}
 .rxs-stage{display:flex;align-items:center;justify-content:center;min-width:0;}
 .rxs-iso{width:100%;max-width:400px;height:auto;}
 .rxs-iso path{stroke-linejoin:round;}
-.rxs-plate .rxs-face{fill:#141414;stroke:rgba(250,250,250,.20);stroke-width:1.1;}
-.rxs-plate .rxs-side{fill:#0f0f0f;stroke:rgba(250,250,250,.13);stroke-width:1;}
-.rxs-plate .rxs-boss{fill:#0d0d0d;stroke:rgba(250,250,250,.16);stroke-width:1;}
+/* THE RESTING PLATES ARE VISIBLE WITHOUT HOVER.
+   The strokes were .20 and .13 alpha and the whole group then sat at
+   opacity .5, so the two multiplied out to about .10 and .065 against a
+   near-black ground: the inactive plates effectively were not there until
+   something lit them. Both the strokes and the group opacity go up. The
+   active plate still separates clearly, because it wins on hue (accent
+   line work plus a tinted fill) rather than on the others being invisible. */
+.rxs-plate .rxs-face{fill:#141414;stroke:rgba(250,250,250,.42);stroke-width:1.2;}
+.rxs-plate .rxs-side{fill:#0f0f0f;stroke:rgba(250,250,250,.28);stroke-width:1.05;}
+.rxs-plate .rxs-boss{fill:#0d0d0d;stroke:rgba(250,250,250,.34);stroke-width:1;}
 .rxs-plate{transition:transform .45s cubic-bezier(.22,.61,.36,1),opacity .35s ease;
-  opacity:.5;}
+  opacity:.88;}
 /* the lit plate: accent line work, a touch of fill, and it lifts */
 .rxs:has(.qw-ped[data-ch="0"][aria-selected="true"]) .rxs-plate[data-ch="0"],
 .rxs:has(.qw-ped[data-ch="1"][aria-selected="true"]) .rxs-plate[data-ch="1"],
