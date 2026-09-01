@@ -2037,24 +2037,66 @@ if (window.thStickyRail) {
   <p class="th-pm-eyebrow th-pm-reveal">The head start</p>
   <p class="th-q-flow th-pm-reveal">Every other major chain starts its quantum migration from zero: vulnerable proofs, vulnerable wallets, and a hard fork between them and safety. Starknet starts from three facts that are already true on mainnet today.</p>
 
-  <!-- The head-start rail: second instance of the qw pedestal device.
-       Three readiness arguments, one panel; argument 1 ships selected.
-       Chips stay inside the panels; the plinth labels carry the pick. -->
-  <div class="qw th-pm-reveal" id="readiness-rail">
-    <div class="qw-rail" role="tablist" aria-label="The head start, three arguments">
-      <button class="qw-ped" type="button" role="tab" data-ch="0" aria-selected="true" aria-controls="qw-panel-b" tabindex="0">
-        <span class="qw-obj" aria-hidden="true"><svg viewBox="0 0 96 84" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M39 22v40M57 22v40M28 34h40M28 50h40"/></svg></span>
-        <span class="qw-plinth"><span class="qw-label"><b>01</b>BY DESIGN</span></span>
-      </button>
-      <button class="qw-ped" type="button" role="tab" data-ch="1" aria-selected="false" aria-controls="qw-panel-b" tabindex="-1">
-        <span class="qw-obj" aria-hidden="true"><svg viewBox="0 0 96 84" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="20" y="28" width="22" height="28" rx="3"/><rect x="54" y="28" width="22" height="28" rx="3"/><path d="M44 42h8M49.5 38.5l3.5 3.5-3.5 3.5"/></svg></span>
-        <span class="qw-plinth"><span class="qw-label"><b>02</b>ACCOUNT ABSTRACTION</span></span>
-      </button>
-      <button class="qw-ped" type="button" role="tab" data-ch="2" aria-selected="false" aria-controls="qw-panel-b" tabindex="-1">
-        <span class="qw-obj" aria-hidden="true"><svg viewBox="0 0 96 84" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="48" cy="42" r="24"/><path d="M38 43l7 7 14-15"/></svg></span>
-        <span class="qw-plinth"><span class="qw-label"><b>03</b>ON MAINNET</span></span>
-      </button>
+  <!-- THE HEAD START, as the reference exploded-stack section (2026-09-01).
+       Reference anatomy: three columns over faint vertical guides. A small
+       pill and a list of layer names on the LEFT, the active one marked and
+       accented and the rest dim; an EXPLODED ISOMETRIC STACK in the middle,
+       one plate per layer, floating apart; and on the RIGHT a small accent
+       label with a few lines about the layer you are on.
+       THE ENGINE IS UNTOUCHED. The three list rows are still .qw-ped
+       buttons with role=tab, data-ch, aria-selected, aria-controls and the
+       roving tabindex, so initQw and thRove drive this exactly as they drove
+       the pedestal rail, and the detailed panel below still swaps the same
+       way. Nothing here is wired in JS at all: the lit plate and the visible
+       note are selected in CSS off aria-selected, which thRove already
+       writes, using :has(). One less thing to keep in sync.
+       The plates are hand-computed isometric geometry (a top diamond and two
+       side faces per plate), not an imported model: the reference's cleanness
+       is line work, and an actual 3D renderer would cost a canvas and still
+       look softer. Decorative, hence aria-hidden; every word the stack
+       carries is in the list and the notes beside it. -->
+  <div class="qw rxs th-pm-reveal" id="readiness-rail">
+    <div class="rxs-guides" aria-hidden="true"><i></i><i></i><i></i></div>
+    <div class="rxs-top">
+      <div class="rxs-left">
+        <p class="rxs-pill">The head start</p>
+        <div class="qw-rail" role="tablist" aria-label="The head start, three arguments">
+      <button class="qw-ped" type="button" role="tab" data-ch="0" aria-selected="true" aria-controls="qw-panel-b" tabindex="0"><span class="rxs-mark" aria-hidden="true">&#10022;</span><span class="rxs-name"><b>01</b>By design</span></button>
+      <button class="qw-ped" type="button" role="tab" data-ch="1" aria-selected="false" aria-controls="qw-panel-b" tabindex="-1"><span class="rxs-mark" aria-hidden="true">&#10022;</span><span class="rxs-name"><b>02</b>Account abstraction</span></button>
+      <button class="qw-ped" type="button" role="tab" data-ch="2" aria-selected="false" aria-controls="qw-panel-b" tabindex="-1"><span class="rxs-mark" aria-hidden="true">&#10022;</span><span class="rxs-name"><b>03</b>On mainnet</span></button>
+        </div>
+      </div>
+
+      <div class="rxs-stage" aria-hidden="true">
+        <svg class="rxs-iso" viewBox="0 0 400 560" fill="none">
+    <g class="rxs-plate" data-ch="0">
+      <path class="rxs-side" d="M32,108 L200,205 L200,220 L32,123 Z"/>
+      <path class="rxs-side" d="M200,205 L368,108 L368,123 L200,220 Z"/>
+      <path class="rxs-face" d="M200,11 L368,108 L200,205 L32,108 Z"/>
+      <ellipse class="rxs-boss" cx="200.0" cy="30.4" rx="7" ry="4"/><ellipse class="rxs-boss" cx="334.4" cy="108.0" rx="7" ry="4"/><ellipse class="rxs-boss" cx="200.0" cy="185.6" rx="7" ry="4"/><ellipse class="rxs-boss" cx="65.6" cy="108.0" rx="7" ry="4"/>
+    </g>
+    <g class="rxs-plate" data-ch="1">
+      <path class="rxs-side" d="M32,280 L200,377 L200,392 L32,295 Z"/>
+      <path class="rxs-side" d="M200,377 L368,280 L368,295 L200,392 Z"/>
+      <path class="rxs-face" d="M200,183 L368,280 L200,377 L32,280 Z"/>
+      <ellipse class="rxs-boss" cx="200.0" cy="202.4" rx="7" ry="4"/><ellipse class="rxs-boss" cx="334.4" cy="280.0" rx="7" ry="4"/><ellipse class="rxs-boss" cx="200.0" cy="357.6" rx="7" ry="4"/><ellipse class="rxs-boss" cx="65.6" cy="280.0" rx="7" ry="4"/>
+    </g>
+    <g class="rxs-plate" data-ch="2">
+      <path class="rxs-side" d="M32,452 L200,549 L200,564 L32,467 Z"/>
+      <path class="rxs-side" d="M200,549 L368,452 L368,467 L200,564 Z"/>
+      <path class="rxs-face" d="M200,355 L368,452 L200,549 L32,452 Z"/>
+      <ellipse class="rxs-boss" cx="200.0" cy="374.4" rx="7" ry="4"/><ellipse class="rxs-boss" cx="334.4" cy="452.0" rx="7" ry="4"/><ellipse class="rxs-boss" cx="200.0" cy="529.6" rx="7" ry="4"/><ellipse class="rxs-boss" cx="65.6" cy="452.0" rx="7" ry="4"/>
+    </g>
+        </svg>
+      </div>
+
+      <div class="rxs-right">
+        <div class="rxs-note" data-ch="0"><p class="rxs-nlab">Nothing to migrate</p><p class="rxs-ntext">Starknet's proofs rest on hash functions, not elliptic curves, so Shor's algorithm has nothing to attack. The proving layer, the most expensive part to change, never needs to migrate.</p></div>
+        <div class="rxs-note" data-ch="1"><p class="rxs-nlab">No hard fork needed</p><p class="rxs-ntext">Signature logic lives in the account, not the protocol. A post-quantum account can ship without the network changing and without anyone&#8217;s permission.</p></div>
+        <div class="rxs-note" data-ch="2"><p class="rxs-nlab">Already live</p><p class="rxs-ntext">A Falcon-512 account executed a real transfer on Starknet mainnet on 22 July 2026, for a fee of 1.93 STRK. Adopting one is a single transaction.</p></div>
+      </div>
     </div>
+
     <div class="qw-shell">
     <div class="qw-panel" id="qw-panel-b" role="tabpanel" aria-live="polite">
 
@@ -3248,6 +3290,124 @@ body.page-quantum{overflow-x:clip;}
   .qxq{margin-top:72px;padding:72px 12px;}
   .qxq-quote{font-size:clamp(30px,9vw,48px);}
   .qxq-foot{font-size:15px;margin-top:28px;}
+}
+
+/* ============================================================
+   THE HEAD START (rxs-): the reference exploded-stack section.
+   Three columns over faint vertical guides: the layer list left,
+   the isometric stack centre, the active layer's note right.
+   NOT ONE LINE OF JS. The lit plate and the visible note are
+   both chosen with :has() off the aria-selected that thRove
+   already writes onto the .qw-ped buttons. That is deliberate:
+   a second source of truth for "which layer is showing" is
+   exactly the thing that drifts.
+   Straight corners and hairlines, to match the rest of the page.
+   ============================================================ */
+.rxs{position:relative;margin-top:52px;}
+
+/* the faint verticals behind everything */
+.rxs-guides{position:absolute;inset:0;display:flex;justify-content:space-between;
+  pointer-events:none;z-index:0;padding:0 12%;}
+.rxs-guides i{width:1px;background:linear-gradient(180deg,transparent,rgba(250,250,250,.07) 18%,rgba(250,250,250,.07) 82%,transparent);}
+
+.rxs-top{position:relative;z-index:1;display:grid;
+  grid-template-columns:minmax(0,.82fr) minmax(0,1.36fr) minmax(0,.82fr);
+  gap:clamp(20px,3vw,48px);align-items:center;min-height:600px;}
+
+/* left: the pill, then the layer list */
+.rxs-left{display:flex;flex-direction:column;align-items:flex-start;gap:26px;}
+.rxs-pill{margin:0;padding:7px 13px;border:1px solid rgba(250,250,250,.14);
+  background:rgba(250,250,250,.05);
+  font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;
+  text-transform:uppercase;color:rgba(250,250,250,.72);}
+.rxs .qw-rail{display:flex;flex-direction:column;align-items:flex-start;gap:4px;
+  background:none;border:0;padding:0;margin:0;}
+.rxs .qw-ped{display:flex;align-items:baseline;gap:9px;width:auto;
+  padding:7px 0;margin:0;border:0;background:none;cursor:pointer;
+  font-family:'General Sans',sans-serif;font-size:clamp(17px,1.5vw,22px);
+  font-weight:500;letter-spacing:-.01em;line-height:1.25;text-align:left;
+  color:rgba(250,250,250,.34);
+  transition:color .25s ease;}
+.rxs .qw-ped:hover{color:rgba(250,250,250,.72);}
+.rxs .qw-ped[aria-selected="true"]{color:#c53400;}
+.rxs .qw-ped:focus-visible{outline:2px solid #c53400;outline-offset:3px;}
+.rxs-mark{flex:none;font-size:.62em;opacity:0;transition:opacity .25s ease;color:#c53400;}
+.rxs .qw-ped[aria-selected="true"] .rxs-mark{opacity:1;}
+.rxs-name{min-width:0;}
+.rxs-name b{font-family:'IBM Plex Mono',monospace;font-weight:500;font-size:.58em;
+  letter-spacing:.16em;margin-right:.6em;vertical-align:.12em;opacity:.7;}
+
+/* centre: the stack */
+.rxs-stage{display:flex;align-items:center;justify-content:center;min-width:0;}
+.rxs-iso{width:100%;max-width:400px;height:auto;}
+.rxs-iso path{stroke-linejoin:round;}
+.rxs-plate .rxs-face{fill:#141414;stroke:rgba(250,250,250,.20);stroke-width:1.1;}
+.rxs-plate .rxs-side{fill:#0f0f0f;stroke:rgba(250,250,250,.13);stroke-width:1;}
+.rxs-plate .rxs-boss{fill:#0d0d0d;stroke:rgba(250,250,250,.16);stroke-width:1;}
+.rxs-plate{transition:transform .45s cubic-bezier(.22,.61,.36,1),opacity .35s ease;
+  opacity:.5;}
+/* the lit plate: accent line work, a touch of fill, and it lifts */
+.rxs:has(.qw-ped[data-ch="0"][aria-selected="true"]) .rxs-plate[data-ch="0"],
+.rxs:has(.qw-ped[data-ch="1"][aria-selected="true"]) .rxs-plate[data-ch="1"],
+.rxs:has(.qw-ped[data-ch="2"][aria-selected="true"]) .rxs-plate[data-ch="2"]{
+  opacity:1;transform:translateY(-14px);
+}
+.rxs:has(.qw-ped[data-ch="0"][aria-selected="true"]) .rxs-plate[data-ch="0"] .rxs-face,
+.rxs:has(.qw-ped[data-ch="1"][aria-selected="true"]) .rxs-plate[data-ch="1"] .rxs-face,
+.rxs:has(.qw-ped[data-ch="2"][aria-selected="true"]) .rxs-plate[data-ch="2"] .rxs-face{
+  stroke:#c53400;stroke-width:1.4;
+  fill:color-mix(in srgb,#c53400 13%,#141414);
+}
+.rxs:has(.qw-ped[data-ch="0"][aria-selected="true"]) .rxs-plate[data-ch="0"] .rxs-side,
+.rxs:has(.qw-ped[data-ch="1"][aria-selected="true"]) .rxs-plate[data-ch="1"] .rxs-side,
+.rxs:has(.qw-ped[data-ch="2"][aria-selected="true"]) .rxs-plate[data-ch="2"] .rxs-side{
+  stroke:color-mix(in srgb,#c53400 62%,transparent);
+  fill:color-mix(in srgb,#c53400 7%,#0f0f0f);
+}
+
+/* right: the note for the layer you are on */
+.rxs-right{min-width:0;}
+.rxs-note{display:none;}
+.rxs:has(.qw-ped[data-ch="0"][aria-selected="true"]) .rxs-note[data-ch="0"],
+.rxs:has(.qw-ped[data-ch="1"][aria-selected="true"]) .rxs-note[data-ch="1"],
+.rxs:has(.qw-ped[data-ch="2"][aria-selected="true"]) .rxs-note[data-ch="2"]{display:block;}
+.rxs-nlab{margin:0 0 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;
+  letter-spacing:.14em;text-transform:uppercase;color:#c53400;}
+.rxs-ntext{margin:0;font-family:'General Sans',sans-serif;
+  font-size:clamp(15px,1.15vw,17.5px);line-height:1.55;color:#fafafa;max-width:34ch;}
+
+/* NO :has() (older engines): every plate stays at full opacity and every
+   note shows, which reads as a plain stack over a short list. Nothing is
+   hidden that cannot be reached. */
+@supports not selector(:has(*)){
+  .rxs-plate{opacity:1;}
+  .rxs-note{display:block;}
+  .rxs-note + .rxs-note{margin-top:18px;}
+}
+
+@media (prefers-reduced-motion: reduce){
+  .rxs-plate,.rxs .qw-ped,.rxs-mark{transition:none;}
+  .rxs:has(.qw-ped[data-ch="0"][aria-selected="true"]) .rxs-plate[data-ch="0"],
+  .rxs:has(.qw-ped[data-ch="1"][aria-selected="true"]) .rxs-plate[data-ch="1"],
+  .rxs:has(.qw-ped[data-ch="2"][aria-selected="true"]) .rxs-plate[data-ch="2"]{transform:none;}
+}
+
+@media (max-width:1000px){
+  /* the stack drops under the words, list left and note right above it */
+  .rxs-top{grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+    grid-template-areas:"left right" "stage stage";min-height:0;gap:28px 24px;}
+  .rxs-left{grid-area:left;}
+  .rxs-right{grid-area:right;}
+  .rxs-stage{grid-area:stage;}
+  .rxs-iso{max-width:330px;}
+  .rxs-guides{padding:0 6%;}
+}
+@media (max-width:620px){
+  .rxs-top{grid-template-columns:minmax(0,1fr);
+    grid-template-areas:"left" "right" "stage";gap:24px;}
+  .rxs-iso{max-width:260px;}
+  .rxs-ntext{max-width:none;}
+  .rxs-guides{display:none;}
 }
 </style>
 
