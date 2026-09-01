@@ -68,7 +68,12 @@ footer.vc-footer .vc-col { display: flex; flex-direction: column; gap: 22px; wid
 footer.vc-footer .vc-col:first-child { padding-left: 0; border-left: 0; }
 footer.vc-footer .vc-col h4 { margin: 0; font-family: var(--vc-mono); font-weight: 400; font-size: 11px; line-height: 1.2; letter-spacing: .18em; text-transform: uppercase; color: var(--vc-dim); }
 footer.vc-footer .vc-col ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 18px; }
-footer.vc-footer .vc-col a { color: var(--vc-text); text-decoration: none; font-size: 16px; line-height: 1.25; transition: color .25s; }
+/* 16px at line-height 1.25 is a 20px tap target, under the 24px minimum.
+   The padding grows the hit area and the equal negative margin cancels its
+   layout effect, so the target reaches 24px with the footer's spacing
+   rhythm unchanged. inline-block is required for the block padding to
+   apply to an inline element at all. */
+footer.vc-footer .vc-col a { display: inline-block; color: var(--vc-text); text-decoration: none; font-size: 16px; line-height: 1.25; padding-block: 2px; margin-block: -2px; transition: color .25s; }
 footer.vc-footer .vc-col a:hover { color: var(--vc-orange); }
 footer.vc-footer .vc-rule { width: calc(100% - 48px); max-width: 1392px; margin: 0 auto; border-top: 1px solid var(--vc-line); }
 footer.vc-footer .vc-base { width: calc(100% - 48px); max-width: 1392px; margin: 0 auto; padding: 32px 0 40px; display: grid; grid-template-columns: minmax(0, 396px) minmax(0, 1fr); gap: 28px 56px; align-items: start; }

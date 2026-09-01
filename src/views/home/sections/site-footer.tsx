@@ -125,7 +125,7 @@ export const SiteFooter = ({ copy }: SiteFooterProps) => {
                       {...(link.href.startsWith("http")
                         ? { target: "_blank", rel: "noopener noreferrer" }
                         : {})}
-                      className="font-general text-[16px] leading-[1.25] text-[#fafafa] no-underline transition-colors duration-250 hover:text-signal"
+                      className="inline-block py-[2px] -my-[2px] font-general text-[16px] leading-[1.25] text-[#fafafa] no-underline transition-colors duration-250 hover:text-signal"
                     >
                       {link.label}
                     </a>
