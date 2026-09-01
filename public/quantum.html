@@ -3610,6 +3610,57 @@ body.page-quantum{overflow-x:clip;}
 .qcd-sec .qh-cd-label{margin-bottom:14px;}
 .qcd-sec .qh-cd-n{font-size:clamp(44px,5.4vw,84px);}
 @media(max-width:880px){ .qcd-sec{padding-left:20px;padding-right:20px;} }
+
+/* ============================================================
+   THE FRAME DISTRIBUTES ITS OWN HEIGHT (RXAFIT, 2026-09-01)
+   The box used to be calc(100svh - 330px), a magic number for the
+   furniture around it. On a window shorter than that arithmetic
+   assumed (a browser with a bookmarks bar, say) the chip row fell
+   off the bottom of the frame: the numbers were right for a 900px
+   viewport and wrong for a real one.
+   It is a flex column now. The furniture is flex:none and the box
+   is flex:1 1 auto with min-height:0, so the box absorbs exactly
+   whatever is left at ANY viewport height and the chips are always
+   inside the frame. No arithmetic to get wrong.
+   min-height:0 is load-bearing: a flex item's default min-height is
+   auto, which refuses to shrink below its content, which is exactly
+   how content escapes a frame like this.
+   The devices scale to their track rather than overflowing it: the
+   maze canvases are square and width-driven, so they are capped by
+   HEIGHT here and take their width from that.
+   ============================================================ */
+.rxa-stage .qi-beat.is-open{display:flex;flex-direction:column;
+  height:100%;min-height:0;}
+.rxa .rxa-top,.rxa .rxa-rule,.rxa .rxa-sub,.rxa .rxa-keys{flex:none;}
+.rxa .rxa-feat{flex:1 1 auto;min-height:0;height:auto;}
+.rxa .rxa-fcol,.rxa .rxa-fviz{min-height:0;}
+.rxa .rxa-fcol{overflow-y:auto;}
+
+/* the devices, capped by the height of the track they sit in */
+.rxa .rxa-fviz{overflow:hidden;}
+.rxa .rxa-fviz > *{max-height:100%;min-height:0;}
+.rxa .th-maze-grid{min-height:0;}
+.rxa .th-maze-panel{min-height:0;overflow:hidden;}
+/* the maze panel is a flex column so its CANVAS BOX can be the flexible
+   part. max-height:100% on the canvas alone did nothing: it resolved
+   against .th-maze-cv's own auto height, which is set by the canvas, so
+   the constraint was circular. The box flexes, the canvas fills the box
+   by height and takes its width from that, staying square. */
+.rxa .th-maze-panel{display:flex;flex-direction:column;}
+.rxa .th-maze-head,.rxa .th-maze-sub,.rxa .th-maze-ctrl,.rxa .th-maze-stats{flex:none;}
+.rxa .th-maze-cv{flex:1 1 auto;min-height:0;display:flex;align-items:center;justify-content:center;}
+.rxa .th-maze-cv canvas{height:100%;width:auto;max-width:100%;max-height:100%;
+  margin-inline:auto;display:block;}
+.rxa .th-turkey-panel,.rxa .rxa-fviz > .th-pm-note{min-height:0;overflow:hidden;}
+.rxa .th-turkey-cv canvas,.rxa .chart-card canvas{max-height:100%;max-width:100%;}
+/* the bar chart and the compare lists shrink their type rather than clip */
+.rxa .rxa-fviz .qg-card,.rxa .rxa-fviz .th-pm-side{min-height:0;}
+
+/* a shorter frame wants slightly tighter furniture */
+.rxa .rxa-top{min-height:clamp(56px,6.4vw,92px);}
+.rxa .rxa-sub{height:auto;max-height:clamp(40px,4.2vw,58px);margin-top:14px;}
+.rxa .rxa-feat{margin-top:16px;padding:clamp(16px,1.8vw,30px);}
+.rxa .rxa-keys{margin-top:12px;min-height:0;}
 </style>
 
   <!-- chapter: the referee -->
