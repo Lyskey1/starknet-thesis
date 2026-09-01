@@ -180,10 +180,24 @@ void main(){
 
   /* the aurora is masked to the FAR CORNERS only, and the sine on the angle
      makes that edge breathe. The middle of the frame stays fully
-     transparent so the page's own fixed backdrop reads through it. */
+     transparent so the page's own fixed backdrop reads through it.
+
+     TWO MASKS, NOT ONE, AND BOTH MATTER.
+     The radial one pushes the band OUT of the reading column: it used to
+     open at 0.7, which on a 16:9 container is barely past the copy, so the
+     curtain sat straight under the display. It now opens at 0.94, roughly
+     the container's own half-diagonal, so only the corners light.
+     The frame one closes the band BEFORE the container border. Without it
+     the aurora is at its brightest exactly where it is clipped, which is
+     what painted a hard red band along the window edges. uv distance to the
+     nearest edge fades the whole thing to nothing over the outer 14%, so
+     the field always dies inside its own box and the page's fixed backdrop
+     is what meets the viewport edge. */
   float ang = atan(p.y, p.x);
   float edge = length(p) + 0.06 * sin(ang * 3.0 + uTime * 0.6);
-  float mask = smoothstep(0.7, 1.15, edge);
+  float mask = smoothstep(0.94, 1.42, edge);
+  vec2 fr = min(vUv, vec2(1.0) - vUv);
+  mask *= smoothstep(0.0, 0.14, min(fr.x, fr.y));
 
   float n1 = fbm(p * 2.4 + vec2(uTime * 0.25, -uTime * 0.18));
   float n2 = fbm(p * 4.1 - vec2(uTime * 0.12, uTime * 0.20));
@@ -192,11 +206,11 @@ void main(){
      0, so any lit pixel anywhere feeds the glow, and an unmasked colour term
      would push the aurora back inward through the bloom. */
   vec3 col = vec3(0.012, 0.012, 0.02);
-  col += uColorA * pow(n1, 1.6) * 0.55;
-  col += uColorB * pow(n2, 2.2) * 0.30;
+  col += uColorA * pow(n1, 1.6) * 0.34;
+  col += uColorB * pow(n2, 2.2) * 0.18;
   col *= mask;
 
-  float a = clamp(mask * (0.10 + n1 * 0.55), 0.0, 1.0);
+  float a = clamp(mask * (0.06 + n1 * 0.34), 0.0, 1.0);
   gl_FragColor = vec4(col, a);
 }`;
 
@@ -291,7 +305,11 @@ function boot(container) {
   mainPass.clearDepth = true;
   composer.addPass(mainPass);
 
-  const bloom = new UnrealBloomPass(new THREE.Vector2(w, h), 2.33, 1.16, 0);
+  /* BLOOM IS THE BLEED. At strength 2.33 / radius 1.16 every lit pixel
+     smeared far enough to wash the whole frame warm, copy column included,
+     and to carry colour into the container's own edges where the CSS mask
+     then had a hard job. Pulled back to a glow that stays around the sun. */
+  const bloom = new UnrealBloomPass(new THREE.Vector2(w, h), 1.32, 0.78, 0);
   composer.addPass(bloom);
 
   /* pointer flare */

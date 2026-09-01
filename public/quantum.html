@@ -78,62 +78,81 @@
      lede, glass CTA pair. Duplicated per page by convention, not factored,
      so keep the four copies in sync. The BACKDROP is per-page: quantum
      keeps its aurora curtain and adds the chandelier drawing. */
+  /* FRAME: the landing hero's, and /btcfi's, rather than the old centred
+     1160 content box. Full-bleed box, copy stacked top-left against the
+     landing's 1.667vw gutter, so quantum, btcfi and the landing all read as
+     one artboard. It stays a FLOW stack rather than the landing's absolute
+     placement because this hero carries a fifth block the others do not: the
+     live countdown. Order is the landing's: kicker, display, lede, CTA pair,
+     then the countdown under them. */
   .hero {
     min-height: calc(100vh - 72px); display: flex; flex-direction: column; justify-content: center;
-    align-items: stretch; overflow: visible;
-    padding: 112px 0 26px; max-width: none; margin: 0 auto; text-align: left; position: relative;
+    align-items: stretch; overflow: hidden;
+    padding: 112px 1.667vw 26px; max-width: none; margin: 0 auto; text-align: left; position: relative;
   }
-  .qh-inner { width: 100%; max-width: 1160px; margin: 0 auto; padding: 0 32px; position: relative; z-index: 1; }
-  .hero::before {
-    top: -40px; left: 18%; width: 760px; height: 420px; max-width: 100%;
-    background: radial-gradient(ellipse at center top, rgba(var(--accent-rgb),0.16), transparent 70%);
-  }
-  .hero-eyebrow { color: var(--stark-purple); opacity: 1; margin-bottom: 22px; position: relative; }
-  /* the shared display scale (css/styles.css .hero-title), so quantum and
-     the sibling heroes share one size at every width */
-  .hero-title { font-size: clamp(34px,5.4vw,76px); line-height: .98; margin-bottom: 26px; max-width: none; position: relative; }
-  .hero-title em { color: var(--stark-purple); }
-  .hero-subtitle { font-size: 18px; color: rgba(250, 250, 250,0.62); max-width: 620px; margin: 22px 0 0; line-height: 1.7; position: relative; }
+  .qh-inner { width: 100%; max-width: none; margin: 0; padding: 0; position: relative; z-index: 1; }
+  /* styles.css hangs a centred radial glow off .hero::before. This hero is
+     left-aligned and carries its own light in the WebGL field, and the glow
+     was one more warm layer reaching for the edges. */
+  .hero::before { display: none; }
+  /* the landing's kicker: Mulish, 0.9vw with an 11px floor, .2em, accent */
+  .hero-eyebrow { font-family: var(--vc-tag); font-weight: 400; font-size: max(0.9vw, 11px); line-height: 1.5;
+    letter-spacing: .2em; text-transform: uppercase; color: var(--accent); opacity: 1;
+    margin: 0 0 0.9vw; position: relative; }
+  /* the landing / btcfi display scale exactly: General Sans 300, 4.6vw,
+     line-height .9, measure 52vw */
+  .hero-title { font-family: var(--vc-sans); font-weight: 300; font-size: 4.6vw; line-height: .9;
+    letter-spacing: normal; text-transform: none; color: var(--white);
+    width: 52vw; max-width: none; margin: 0 0 1.6vw; position: relative; }
+  .hero-title em { color: var(--accent); }
+  /* the lede sits where the landing's mono note sits and keeps its position
+     in the scale (well under the display, above the CTA). It stays sentence
+     case: the landing's note is one uppercase line, this is a four-line
+     paragraph and uppercase would be unreadable at that length. */
+  .hero-subtitle { font-family: var(--vc-sans); font-weight: 300; font-size: max(1.06vw, 15px);
+    line-height: 1.7; color: rgba(250, 250, 250, .62); width: 38vw; max-width: none;
+    margin: 0 0 2vw; position: relative; }
 
-  /* HERO CTAs: twin of .eco-cta / .pv-cta on the shared dark glass tier
-     (css/glass-chips.css), reading this page's accent through the recipe's
-     --accent-rgb fallback. The two shadow stacks are copies of the locked
-     recipe: keep in sync. Anchors only, so the site's smooth scroll carries
-     them. */
-  .qh-ctas { display: flex; gap: 18px; margin-top: 24px; flex-wrap: wrap; position: relative; }
-  .qh-cta { font-family: var(--mono); font-size: 13px; letter-spacing: .14em; text-transform: uppercase; text-decoration: none; color: var(--white); padding: 12px 22px; border-radius: 99px; border: 1px solid rgba(var(--accent-rgb), .55); display: inline-flex; align-items: center; gap: 10px; }
-  .qh-cta.chip-glass { transition: background var(--hover-dur) var(--hover-ease), box-shadow var(--hover-dur) var(--hover-ease), border-color var(--hover-dur); }
-  .qh-cta i { font-style: normal; transition: transform var(--hover-dur) var(--hover-ease); }
-  .qh-cta:hover i { transform: translateX(4px); }
-  .qh-cta:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
-  .qh-cta--muted { border-color: var(--border);
-    box-shadow:
-      inset 0 1px 0 rgba(255,255,255,.5),
-      inset -1px -1px 0 rgba(255,255,255,.30),
-      inset 1px 1px 0 rgba(255,255,255,.12),
-      inset 0 10px 18px -8px rgba(255,255,255,.18),
-      inset 0 -1px 0 rgba(0,0,0,.6),
-      inset 0 -3px 5px rgba(0,0,0,.22),
-      0 0 12px rgba(var(--accent-rgb), .10); }
-  .qh-cta--muted:hover { border-color: rgba(var(--accent-rgb), .55); background: rgba(250, 250, 250,.10);
-    box-shadow:
-      inset 0 1px 0 rgba(255,255,255,.5),
-      inset -1px -1px 0 rgba(255,255,255,.30),
-      inset 1px 1px 0 rgba(255,255,255,.12),
-      inset 0 10px 18px -8px rgba(255,255,255,.18),
-      inset 0 -1px 0 rgba(0,0,0,.6),
-      inset 0 -3px 5px rgba(0,0,0,.22),
-      0 0 40px rgba(var(--accent-rgb), .45); }
+  /* HERO CTAs: the landing's SendRequest, element for element, by way of the
+     .pv-cta rules on /privacy that already carry it on a static page. A
+     rectangular chalk block with a dark sentence-case label, and beside it a
+     separate square tile of the same height holding the asterisk glyph from
+     assets/hero/send-icon.svg. STRAIGHT CORNERS EVERYWHERE: no radius, no
+     glass, no glow, no uppercase mono. The second is the ghost variant, a
+     hairline box with chalk text and a chalk glyph, exactly as
+     .pv-cta--muted. Geometry is the privacy page's: 16px/40px block, 51px
+     tile, 4px between them. */
+  .qh-ctas { display: flex; gap: 14px; margin: 0; flex-wrap: wrap; position: relative; }
+  .qh-cta { display: inline-flex; align-items: stretch; gap: 4px; text-decoration: none; color: #000;
+    outline: none; border: 0; border-radius: 0; padding: 0; background: none; box-shadow: none;
+    font-family: var(--vc-sans); letter-spacing: normal; text-transform: none; }
+  .qh-cta > span { display: flex; align-items: center; justify-content: center; padding: 16px 40px;
+    background: #fafafa; color: #000; border: 1px solid transparent; border-radius: 0; box-sizing: border-box;
+    font-family: var(--vc-sans); font-weight: 500; font-size: 16px; line-height: 1.2; white-space: nowrap;
+    transition: background var(--hover-dur) var(--hover-ease), color var(--hover-dur) var(--hover-ease), border-color var(--hover-dur); }
+  .qh-cta > i { display: block; flex: none; width: 51px; height: 51px; background: #fafafa;
+    border: 1px solid transparent; border-radius: 0; box-sizing: border-box;
+    transition: background var(--hover-dur) var(--hover-ease), border-color var(--hover-dur); }
+  .qh-cta > i svg { display: block; width: 100%; height: 100%; }
+  .qh-cta > i svg path { fill: #000; transition: fill var(--hover-dur) var(--hover-ease); }
+  .qh-cta:hover > span { background: var(--accent); color: #fafafa; }
+  .qh-cta:active > span { background: var(--accent-dim); color: #fafafa; }
+  .qh-cta:focus-visible > span { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .qh-cta--muted > span { background: rgba(255,255,255,0); color: #fafafa; border-color: rgba(255,255,255,.5); }
+  .qh-cta--muted > i { background: rgba(255,255,255,0); border-color: rgba(255,255,255,.5); }
+  .qh-cta--muted > i svg path { fill: #fafafa; }
+  .qh-cta--muted:hover > span { background: rgba(255,255,255,.12); border-color: #fff; color: #fafafa; }
+  .qh-cta--muted:hover > i { background: rgba(255,255,255,.12); border-color: #fff; }
+  .qh-cta--muted:active > span { background: rgba(255,255,255,.22); }
   @media (prefers-reduced-motion: reduce) {
-    .qh-cta.chip-glass { transition: none; }
-    .qh-cta i { transition: none; }
+    .qh-cta > span, .qh-cta > i, .qh-cta > i svg path { transition: none; }
   }
 
   /* COUNTDOWN, inline in the hero content column. No card: a hairline, a
      mono label and one row. Numbers sit at large-stat scale (34px against
      the display's 76px) so the hierarchy holds, and only the seconds digit
      carries the accent. */
-  .qh-cd { border-top: 1px solid var(--border); margin-top: 10px; padding-top: 13px; max-width: 620px; }
+  .qh-cd { border-top: 1px solid var(--border); margin-top: 2.2vw; padding-top: 13px; max-width: 620px; }
   .qh-cd-label { font-family: var(--mono); font-size: 10.5px; letter-spacing: .18em; text-transform: uppercase; color: rgba(250, 250, 250,.5); margin-bottom: 10px; }
   /* the year is written by the timer from its own target constant, so the two
      can never disagree; it is empty in the markup on purpose */
@@ -393,9 +412,15 @@
   <p class="hero-eyebrow">The quantum reckoning</p>
   <h1 id="quantum-will-break-most-chains-starknet" class="hero-title">Quantum will break most chains. Starknet has been <em>waiting for it.</em></h1>
   <p class="hero-subtitle">Governments, Big Tech, and researchers are increasingly converging on the same timeline for when quantum breaks today's cryptography. When it arrives, nearly every onchain wallet is exposed. For most of crypto, this is a threat. For Starknet, it highlights the strength of its architecture.</p>
+  <!-- CTA PAIR: the landing's SendRequest, copied. A chalk block carrying a
+       sentence-case label, and beside it a separate square tile of the same
+       height holding the asterisk from assets/hero/send-icon.svg. The glyph
+       is inlined rather than an <img> so the ghost variant can recolour its
+       path to chalk, which is the same reason /privacy inlines it. Both
+       labels and both destinations are unchanged. -->
   <div class="qh-ctas">
-    <a class="qh-cta chip-glass" href="#q-day-and-the-fault-line">See the fault line <i aria-hidden="true">&rarr;</i></a>
-    <a class="qh-cta qh-cta--muted chip-glass" href="#starknet-will-be-ready-before-q">How Starknet is ready <i aria-hidden="true">&rarr;</i></a>
+    <a class="qh-cta" href="#q-day-and-the-fault-line"><span>See the fault line</span><i aria-hidden="true"><svg viewBox="0 0 51 51" fill="none"><path d="M26.293 23.583L34.4834 15.3926L35.6064 16.5156L27.416 24.7061H39V26.2939H27.418L35.6084 34.4844L34.4854 35.6074L26.293 27.415V39H24.7051V27.417L16.5146 35.6074L15.3916 34.4844L23.582 26.2939H12V24.7061H23.584L15.3936 16.5156L16.5166 15.3926L24.7051 23.5811V12H26.293V23.583Z"/></svg></i></a>
+    <a class="qh-cta qh-cta--muted" href="#starknet-will-be-ready-before-q"><span>How Starknet is ready</span><i aria-hidden="true"><svg viewBox="0 0 51 51" fill="none"><path d="M26.293 23.583L34.4834 15.3926L35.6064 16.5156L27.416 24.7061H39V26.2939H27.418L35.6084 34.4844L34.4854 35.6074L26.293 27.415V39H24.7051V27.417L16.5146 35.6074L15.3916 34.4844L23.582 26.2939H12V24.7061H23.584L15.3936 16.5156L16.5166 15.3926L24.7051 23.5811V12H26.293V23.583Z"/></svg></i></a>
   </div>
 
     <!-- COUNTDOWN, inline. The card is gone: no border, radius, fill, padding
@@ -1685,17 +1710,21 @@ if (window.thStickyRail) {
   <p class="rxa-sub">Every wallet in crypto is protected by the same lock: elliptic-curve cryptography.</p>
 
   <div class="rxa-feat">
-
+  <div class="rxa-fcol">
   <!-- chapter 1: the race -->
   <div class="th-q-chapter th-pm-reveal">
     <h3 id="one-key-two-machines" class="scale-title">One key. <span>Two machines.</span></h3>
     <p class="scale-intro">Every wallet in crypto is protected by the same lock: elliptic-curve cryptography, the math that links your private key to your public address. Breaking it with today's computers is impossible on any human timescale. The picture changes completely with a quantum computer.</p>
   </div>
 
-  <div class="th-pm-pull th-pm-reveal">
-    <p>Picture a giant maze; the exit is your private key. A classical computer walks the corridors one by one. There are more paths than atoms in the universe, so it never escapes. A quantum computer doesn't walk the maze: it notices the maze was built by repeating one pattern, and computes the exit directly. That is Shor's algorithm against elliptic-curve cryptography, the math that links your private key to your public address and secures nearly every wallet in crypto today.</p>
+
+
+
+
+  <p class="th-q-flow th-pm-reveal">So what happens the day a quantum computer finally reaches the exit? It holds your private key, and <b class="acc">your funds are already gone</b>. That is the exact risk sitting under most blockchains today.</p>
   </div>
 
+  <div class="rxa-fviz">
   <div class="th-maze-grid">
     <div class="th-maze-panel">
       <div class="th-maze-head"><span class="d c"></span><h4 id="classical">Classical</h4></div>
@@ -1712,8 +1741,7 @@ if (window.thStickyRail) {
       <div class="th-maze-stats qu"><span>time <b id="thMzTimeQ">0.00s</b></span><span id="thMzStateQ">idle</span></div>
     </div>
   </div>
-
-  <p class="th-q-flow th-pm-reveal">So what happens the day a quantum computer finally reaches the exit? It holds your private key, and <b class="acc">your funds are already gone</b>. That is the exact risk sitting under most blockchains today.</p>
+  </div>
   </div>
 
   <ul class="rxa-keys"><li>Elliptic-curve cryptography</li><li>Shor's algorithm</li><li>Your private key</li><li>Two machines</li></ul>
@@ -1727,13 +1755,19 @@ if (window.thStickyRail) {
   <p class="rxa-sub">A lengthening track record of safety that proves nothing about the day the machine arrives.</p>
 
   <div class="rxa-feat">
-
+  <div class="rxa-fcol">
   <!-- chapter 2: the blind spot -->
   <div class="th-q-chapter th-pm-reveal">
     <h3 id="safe-every-single-day-right-up" class="scale-title">Safe every single day, <span>right up until one day in 2029.</span></h3>
     <p class="scale-intro">A turkey grows more confident every day, fed and cared for, right up to Thanksgiving, the day it gets eaten. Every safe day made the turkey more certain the next one would be safe too. Most blockchains sit on the same curve: a lengthening track record of safety that proves nothing about the day the machine arrives.</p>
   </div>
 
+
+
+  <p class="th-q-flow th-pm-reveal">Unlike the turkey, <b class="acc">we can see the knife</b>. And it is moving faster every year: the cost and the hardware needed to break these keys have been collapsing for over a decade, and every new paper brings the drop closer.</p>
+  </div>
+
+  <div class="rxa-fviz">
   <div class="th-turkey-panel">
     <div class="th-turkey-chart"><canvas id="thTkCv" width="1000" height="460"></canvas></div>
     <div class="th-turkey-ctrl">
@@ -1745,8 +1779,7 @@ if (window.thStickyRail) {
       </span>
     </div>
   </div>
-
-  <p class="th-q-flow th-pm-reveal">Unlike the turkey, <b class="acc">we can see the knife</b>. And it is moving faster every year: the cost and the hardware needed to break these keys have been collapsing for over a decade, and every new paper brings the drop closer.</p>
+  </div>
   </div>
 
   <ul class="rxa-keys"><li>The turkey</li><li>Track record of safety</li><li>One day in 2029</li><li>We can see the knife</li></ul>
@@ -1760,7 +1793,7 @@ if (window.thStickyRail) {
   <p class="rxa-sub">The estimated cost of a quantum attack on crypto's cryptography has collapsed roughly 10,000x since 2012.</p>
 
   <div class="rxa-feat">
-
+  <div class="rxa-fcol">
   <!-- chapter 3: the evidence -->
   <div class="th-q-chapter th-pm-reveal">
     <h3 id="the-cost-of-the-attack-is" class="scale-title">The cost of the attack <span>is collapsing.</span></h3>
@@ -1773,6 +1806,9 @@ if (window.thStickyRail) {
   </div>
 
   <!-- resource collapse chart (component preserved, only wrapped + labels de-em-dashed) -->
+  </div>
+
+  <div class="rxa-fviz">
   <div class="th-pm-note th-pm-reveal">
     <div class="chart-card">
       <div class="chart-head">
@@ -1788,6 +1824,7 @@ if (window.thStickyRail) {
     </div>
   </div>
   </div>
+  </div>
 
   <ul class="rxa-keys"><li>10,000x since 2012</li><li>Physical qubits</li><li>RSA-2048</li><li>ECDLP-256</li></ul>
 
@@ -1800,7 +1837,7 @@ if (window.thStickyRail) {
   <p class="rxa-sub">The paper draws a sharp line between what a quantum computer breaks and what it cannot touch.</p>
 
   <div class="rxa-feat">
-
+  <div class="rxa-fcol">
   <!-- chapter 4: what breaks, what holds -->
   <div class="th-q-chapter th-pm-reveal">
     <h3 id="what-breaks-what-holds" class="scale-title">What breaks. <span>What holds.</span></h3>
@@ -1811,7 +1848,9 @@ if (window.thStickyRail) {
   <p class="th-q-flow th-pm-reveal">The exposure is concrete. On Bitcoin, <b class="acc">6.9M BTC</b> is vulnerable. On Ethereum, <b class="acc">20.5M ETH</b> sits in exposed top accounts, with <b class="acc">$200B</b> in stablecoins behind admin keys.</p>
 
   <p class="th-q-flow th-pm-reveal">The paper draws a sharp line between what a quantum computer breaks and what it cannot touch:</p>
+  </div>
 
+  <div class="rxa-fviz">
   <div class="th-pm-compare th-pm-reveal">
     <div class="qg-bloom" aria-hidden="true">
       <i style="--bc:var(--th-red);left:5%;top:14%;width:28%;height:72%"></i>
@@ -1835,6 +1874,7 @@ if (window.thStickyRail) {
            waved through as an accepted noun. Verified 2026-08-22 against the
            v2 full text, not the abstract. -->
       <p class="note th-claim" data-perishable="third-party" data-src="https://arxiv.org/abs/2603.28846" data-checked="2026-08-22" data-says="Only protocols utilizing zkSTARKs (green) employ hash-based proofs that are currently believed to be resistant to quantum attacks. | Indeed, some zk-rollups, such as Starknet, use hash-based protocols which are believed to be resistant to quantum cryptanalysis." data-noun-ok="Google March">In <a href="https://arxiv.org/abs/2603.28846" target="_blank" rel="noopener noreferrer">the paper's March 2026 risk chart</a>, zk-STARK is the only proving category not flagged as quantum-vulnerable by Google, and Starknet's proving system is named explicitly as resistant. The authors call the chart a point-in-time assessment.</p></div>
+  </div>
   </div>
   </div>
 
@@ -1987,6 +2027,56 @@ if (window.thStickyRail) {
   /* boot: the first beat, then any hash target on top of it */
   open(0, { instant: true });
   surface();
+})();
+</script>
+
+<script>
+/* SECTION 02 THREAT, scroll settle.
+   Reference behaviour: a band does not appear, it rises a short way
+   and eases to rest, and its pieces follow each other rather than
+   arriving together. One observer, an 80ms step per piece, and a
+   re-arm when the rail swaps beats so a freshly rendered band
+   settles the same way it would have on first scroll.
+   Scoped hard to #threat-index-grid so the qw rails elsewhere on the
+   page are untouched. */
+(function(){
+  var grid = document.getElementById('threat-index-grid');
+  if (!grid) return;
+  var stage = grid.querySelector('.rxa-stage');
+  if (!stage || !('IntersectionObserver' in window)) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var STEP = 80;
+  var SEL = '.rxa-top,.rxa-rule,.rxa-sub,.rxa-feat,.rxa-keys,.qi-adv';
+  grid.classList.add('rxa-armed');
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if (!e.isIntersecting) return;
+      var el = e.target;
+      io.unobserve(el);
+      el.style.transitionDelay = (el.__rxaDelay || 0) + 'ms';
+      el.classList.add('is-in');
+    });
+  }, { rootMargin: '0px 0px -10% 0px', threshold: 0.05 });
+  function arm(root, step){
+    [].slice.call(root.querySelectorAll(SEL)).forEach(function(el, i){
+      io.unobserve(el);
+      el.classList.remove('is-in');
+      el.classList.add('rxa-rise');
+      el.__rxaDelay = i * step;
+      io.observe(el);
+    });
+  }
+  [].slice.call(grid.querySelectorAll('.rxa-card')).forEach(function(el, i){
+    el.classList.add('rxa-rise');
+    el.__rxaDelay = i * 70;
+    io.observe(el);
+  });
+  var last = stage.querySelector('.qi-beat.is-open');
+  if (last) arm(last, STEP);
+  new MutationObserver(function(){
+    var now = stage.querySelector('.qi-beat.is-open');
+    if (now && now !== last){ last = now; arm(now, STEP); }
+  }).observe(stage, { subtree: true, attributes: true, attributeFilter: ['class'] });
 })();
 </script>
 
@@ -2836,7 +2926,22 @@ body.page-quantum{overflow-x:clip;}
    clipped), and inert to the pointer so the CTAs and the countdown stay
    interactive. The module listens for pointermove on the window and converts
    to container-relative NDC itself, so it needs no hit area of its own. */
-.qh-solaris { position: absolute; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
+.qh-solaris { position: absolute; inset: 0; z-index: -1; pointer-events: none; overflow: hidden;
+  /* EDGE MASK. The field used to be clipped by this container's box, which
+     meant it was at full brightness exactly where it was cut: a hard warm
+     band along the window edges. The mask fades the whole scene out over the
+     outer 9% horizontally and 10% vertically, on all four sides, so the
+     effect always dies inside its own frame. Two gradients intersected
+     rather than one radial, so the falloff is even on a wide viewport.
+     The shader carries its own version of this for the aurora; this one is
+     the backstop that also catches the bloomed sun. */
+  -webkit-mask-image:
+    linear-gradient(to right, transparent 0%, #000 9%, #000 91%, transparent 100%),
+    linear-gradient(to bottom, transparent 0%, #000 10%, #000 89%, transparent 100%);
+  mask-image:
+    linear-gradient(to right, transparent 0%, #000 9%, #000 91%, transparent 100%),
+    linear-gradient(to bottom, transparent 0%, #000 10%, #000 89%, transparent 100%);
+  -webkit-mask-composite: source-in; mask-composite: intersect; }
 .qh-solaris canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 
 /* COPY SCRIM. The sun is bloomed hard (threshold 0, strength 2.33), so its
@@ -2859,20 +2964,37 @@ body.page-quantum{overflow-x:clip;}
    under the whole page and nothing opaque may sit over it. */
 .hero::after {
   content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none;
-  background: radial-gradient(52% 64% at 30% 58%,
-    rgba(13,13,13,.82) 0%,
-    rgba(13,13,13,.66) 46%,
-    rgba(13,13,13,.22) 78%,
-    rgba(13,13,13,0) 100%);
+  /* TWO LAYERS, EACH WITH ONE JOB.
+     1. the reading scrim: a left-weighted ellipse that holds the kicker,
+        display, lede, CTA pair and countdown against near-black. It is wider
+        and deeper than the old one because the copy column is now the
+        landing's full-bleed left gutter, not a centred 1160 box, so the type
+        starts further left and runs further down.
+     2. the edge seal: a border-hugging fade to the page ground on all four
+        sides, so whatever the field does inside its box, nothing warm ever
+        reaches a window edge. This is the layer that kills the colour band.
+     Both stay translucent: js/eco-backdrop.js is a fixed canvas under the
+     whole page and nothing opaque may sit over it. */
+  background:
+    radial-gradient(60% 72% at 26% 54%,
+      rgba(13,13,13,.90) 0%,
+      rgba(13,13,13,.78) 42%,
+      rgba(13,13,13,.30) 76%,
+      rgba(13,13,13,0) 100%),
+    linear-gradient(to right, rgba(13,13,13,.92) 0%, rgba(13,13,13,0) 9%, rgba(13,13,13,0) 91%, rgba(13,13,13,.92) 100%),
+    linear-gradient(to bottom, rgba(13,13,13,.92) 0%, rgba(13,13,13,0) 10%, rgba(13,13,13,0) 88%, rgba(13,13,13,.95) 100%);
 }
 @media (max-width: 900px) {
   /* the column runs the full width here, so the ellipse is recentred rather
      than widened, which would black the whole hero out */
-  .hero::after { background: radial-gradient(78% 52% at 46% 44%,
-    rgba(13,13,13,.82) 0%,
-    rgba(13,13,13,.66) 46%,
-    rgba(13,13,13,.20) 78%,
-    rgba(13,13,13,0) 100%); }
+  .hero::after { background:
+    radial-gradient(96% 60% at 46% 44%,
+      rgba(13,13,13,.90) 0%,
+      rgba(13,13,13,.78) 42%,
+      rgba(13,13,13,.28) 76%,
+      rgba(13,13,13,0) 100%),
+    linear-gradient(to right, rgba(13,13,13,.92) 0%, rgba(13,13,13,0) 12%, rgba(13,13,13,0) 88%, rgba(13,13,13,.92) 100%),
+    linear-gradient(to bottom, rgba(13,13,13,.92) 0%, rgba(13,13,13,0) 10%, rgba(13,13,13,0) 88%, rgba(13,13,13,.95) 100%); }
 }
 
 
@@ -2976,6 +3098,116 @@ body.page-quantum{overflow-x:clip;}
 @media (prefers-reduced-motion: reduce){
   .rxa-head,.rxa-more{transition:none;}
   .rxa-stage .qi-beat.is-open{animation:none;}
+}
+
+/* ============================================================
+   SECTION 02 THREAT, the Mistral product-section pass (2026-09-01)
+   The band was right in structure but the feature panel read as a
+   tall column of words with a picture parked under it, so most of
+   the panel was air. It is now two tracks: the beat's own words on
+   the left, the beat's own visual on the right, both stretched to
+   the panel, with a floor of 74vh so the panel owns a real share of
+   the screen the way the reference sections do.
+   Corners are square throughout this section, per the brand.
+   Scroll behaviour: nothing pops. Every piece of a band starts 26px
+   low and transparent and settles up on a long ease-out, staggered
+   80ms apart, armed by an IntersectionObserver and re-armed when the
+   rail switches beats. The arming class is added by script, so with
+   script off or reduced motion on, every element is simply visible.
+   Descendant selectors throughout because the .th-maze- and
+   .th-turkey- rules live in later blocks than the original rxa CSS.
+   ============================================================ */
+
+/* square corners, named one by one so the round dots and status
+   pills inside the devices keep their circles */
+.rxa .rxa-head,
+.rxa .rxa-more,
+.rxa .rxa-keys li,
+.rxa .rxa-feat,
+.rxa .th-maze-panel,
+.rxa .th-maze-cv,
+.rxa .th-maze-ctrl button,
+.rxa .th-turkey-panel,
+.rxa .th-turkey-chart,
+.rxa .th-turkey-ctrl button,
+.rxa .qg-card,
+.rxa .chart-card,
+.rxa .th-pm-stathero,
+.rxa .th-pm-note,
+.rxa .th-pm-side,
+.rxa .qi-next,
+.rxa .bar{border-radius:0;}
+
+.rxa{gap:34px;}
+.rxa .rxa-more{padding:10px 18px;}
+
+/* the panel */
+.rxa .rxa-feat{margin-top:26px;padding:34px;border:1px solid var(--rxa-line);
+  background:#141414;
+  display:grid;grid-template-columns:minmax(0,.72fr) minmax(0,1.46fr);
+  gap:36px;align-items:stretch;min-height:min(62vh,640px);}
+.rxa .rxa-fcol{display:flex;flex-direction:column;justify-content:flex-start;gap:20px;min-width:0;}
+.rxa .rxa-fcol > *{margin-top:0;}
+.rxa .rxa-fviz{display:flex;flex-direction:column;justify-content:center;min-width:0;}
+.rxa .rxa-fviz > *{margin-top:0;width:100%;}
+
+/* the words, sized for a column rather than a full measure */
+.rxa .rxa-fcol .scale-title{font-size:clamp(22px,1.9vw,31px);margin-bottom:14px;}
+.rxa .rxa-fcol .scale-intro{margin-bottom:0;max-width:none;}
+.rxa .rxa-fcol .th-q-flow{max-width:none;}
+.rxa .rxa-fcol .th-pm-stathero{margin-top:0;padding:24px 26px;gap:20px;}
+
+
+/* the visuals, filling their track */
+.rxa .th-maze-grid{margin-top:0;gap:20px;}
+.rxa .th-maze-panel{padding:16px 16px 18px;}
+.rxa .th-turkey-panel{margin-top:0;padding:22px;}
+.rxa .th-pm-note{margin-top:0;padding:22px 24px;}
+.rxa .th-pm-compare{margin-top:0;gap:18px;}
+.rxa .th-pm-side{padding:22px 22px 24px;}
+
+/* the settle. armed only when script runs, so no-script stays visible */
+.rxa.rxa-armed .rxa-rise{opacity:0;transform:translateY(26px);
+  transition:opacity .78s cubic-bezier(.16,1,.3,1),transform .88s cubic-bezier(.16,1,.3,1);}
+.rxa.rxa-armed .rxa-rise.is-in{opacity:1;transform:none;}
+/* the band swap is carried by the per-element settle above, so the
+   old whole-panel keyframe would double it */
+.rxa.rxa-armed .rxa-stage .qi-beat.is-open{animation:none;}
+
+@media(max-width:1080px){
+  .rxa .rxa-feat{grid-template-columns:minmax(0,1fr);min-height:0;gap:28px;padding:26px;}
+}
+@media(max-width:620px){
+  .rxa .rxa-feat{padding:16px 14px 20px;gap:22px;}
+  .rxa .th-maze-panel{padding:14px;}
+  .rxa .th-turkey-panel{padding:16px;}
+  .rxa .th-pm-note{padding:16px 14px;}
+}
+@media (prefers-reduced-motion: reduce){
+  .rxa.rxa-armed .rxa-rise{opacity:1;transform:none;transition:none;}
+}
+
+/* ============================================================
+   HERO, below the artboard. The vw type scale is the landing's
+   and stops meaning anything on a phone (4.6vw of 390px is 18px),
+   so at 980 and under the hero becomes the same rem-sized stack
+   /btcfi falls back to, with the CTA pair going full width.
+   Last in the last inline style block, like everything else that
+   has to beat css/styles.css on source order.
+   ============================================================ */
+@media (max-width: 980px) {
+  .hero { padding: 5.5rem 1.5rem 1.5rem; justify-content: flex-start; }
+  .hero-eyebrow { font-size: .75rem; margin-bottom: .75rem; }
+  .hero-title { font-size: 2.75rem; width: auto; margin-bottom: 1rem; }
+  .hero-subtitle { font-size: 1rem; width: auto; max-width: 40rem; margin-bottom: 1.5rem; }
+  .qh-ctas { width: 100%; gap: 10px; }
+  .qh-cta { width: 100%; }
+  .qh-cta > span { flex: 1; padding: 15px 24px; }
+  .qh-cd { margin-top: 1.25rem; }
+}
+@media (max-width: 380px) {
+  .hero { padding: 5rem 1.25rem 1.5rem; }
+  .hero-title { font-size: 2.375rem; }
 }
 </style>
 
@@ -3255,24 +3487,40 @@ var qvFilmChrome = thVideoChrome({
 </section>
 
 <footer class="vc-footer">
-  <h2 class="vc-title">Three forces, one chain, one ticker.</h2>
-  <form class="vc-sub" action="https://starknetresearch.substack.com/subscribe" method="get" target="_blank" rel="noopener" data-umami-event="footer-subscribe">
-    <input type="email" name="email" placeholder="Email" aria-label="Email" required>
-    <button type="submit">Subscribe <i aria-hidden="true"></i></button>
-  </form>
-  <div class="vc-rule"></div>
+<div class="vc-cta-band">
+  <div class="vc-cta-in">
+    <div class="vc-cta-say">
+      <p class="vc-kicker">Starknet Thesis</p>
+      <h2 class="vc-title">Three forces,<br>one chain,<br>one ticker.</h2>
+    </div>
+    <form class="vc-sub" action="https://starknetresearch.substack.com/subscribe" method="get" target="_blank" rel="noopener" data-umami-event="footer-subscribe">
+      <label class="vc-sub-field">
+        <span class="vc-sub-label">Get the thesis in your inbox</span>
+        <input type="email" name="email" placeholder="you@domain.com" aria-label="Email" required>
+      </label>
+      <div class="vc-acts">
+        <button type="submit" class="vc-btn vc-btn-dark">Subscribe <i aria-hidden="true"></i></button>
+        <a class="vc-btn vc-btn-light" href="/">Read the thesis <i aria-hidden="true"></i></a>
+      </div>
+    </form>
+  </div>
+</div>
   <div class="vc-cols">
+    <nav class="vc-links" aria-label="Footer">
+      <div class="vc-col"><h4>Thesis</h4><ul><li><a href="/privacy">Privacy</a></li><li><a href="/quantum">Quantum</a></li><li><a href="/btcfi">BTCFi</a></li><li><a href="/strk">STRK</a></li></ul></div>
+      <div class="vc-col"><h4>Signals</h4><ul><li><a href="/ecosystem">Ecosystem</a></li><li><a href="/digest">Digest</a></li></ul></div>
+      <div class="vc-col"><h4>Follow</h4><ul><li><a href="https://starknetresearch.substack.com" target="_blank" rel="noopener">Newsletter</a></li><li><a href="https://x.com/Lyskey" target="_blank" rel="noopener">X / Twitter</a></li></ul></div>
+      <div class="vc-col"><h4>Connect</h4><ul><li><a href="https://status.starknet.io/" target="_blank" rel="noopener noreferrer">Network status</a></li><li><a href="/llms.txt">llms.txt</a></li></ul></div>
+    </nav>
+  </div>
+  <div class="vc-rule"></div>
+  <div class="vc-base">
     <div class="vc-brand">
       <img src="/assets/hero/logo.svg" alt="Starknet Thesis">
       <p>Three forces, one chain, one ticker. The independent thesis on how Starknet makes crypto private, quantum-resistant and productive.</p>
     </div>
-    <nav class="vc-links" aria-label="Footer">
-      <div class="vc-col"><h4>Thesis</h4><ul><li><a href="/privacy">Privacy</a></li><li><a href="/quantum">Quantum</a></li><li><a href="/btcfi">BTCFi</a></li><li><a href="/strk">STRK</a></li></ul></div>
-      <div class="vc-col"><h4>Follow</h4><ul><li><a href="/ecosystem">Ecosystem</a></li><li><a href="/digest">Digest</a></li><li><a href="https://starknetresearch.substack.com" target="_blank" rel="noopener">Newsletter</a></li></ul></div>
-      <div class="vc-col"><h4>Connect</h4><ul><li><a href="https://x.com/Lyskey" target="_blank" rel="noopener">X / Twitter</a></li><li><a href="https://status.starknet.io/" target="_blank" rel="noopener noreferrer">Network status</a></li><li><a href="/llms.txt">llms.txt</a></li></ul></div>
-    </nav>
+    <p class="vc-legal">Website made for educational purposes only. This is not financial advice. Always DYOR. A personal project, not affiliated with or endorsed by StarkWare. All views expressed here are my own.</p>
   </div>
-  <p class="vc-legal">Website made for educational purposes only. This is not financial advice. Always DYOR. A personal project, not affiliated with or endorsed by StarkWare. All views expressed here are my own.</p>
 </footer>
 
 <script src="js/news-lazy.js"></script>

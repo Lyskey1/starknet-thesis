@@ -245,6 +245,11 @@
        engine the heads are all in the DOM and the hook is simply absent. */
     const bcol = target.closest && target.closest('.bhead');
     if (bcol && !bcol.classList.contains('-in') && window.__bcolShow) { did = window.__bcolShow(bcol) || did; }
+    /* btcfi: the ecosystem rail filters the three item grids, so a result
+       whose anchor is one of those grids has to re-open its category first.
+       Same contract as __bcolShow: absent without the page's rail script. */
+    const mstp = target.closest && target.closest('.mst-panel');
+    if (mstp && mstp.hidden && window.__btcfiEcoShow) { did = window.__btcfiEcoShow(mstp.getAttribute('data-panel')) || did; }
     /* generic reveal-on-scroll blocks become visible once scrolled to */
     return did;
   }

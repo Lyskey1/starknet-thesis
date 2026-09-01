@@ -1598,6 +1598,289 @@
     .bfh-title { font-size: 2.375rem; }
     .bfh-turn { font-size: 1.75rem; }
   }
+
+  /* ===== TRACK RECORD (#tr-band): a full viewport for the statement =====
+     Appended at the very end of this inline <style> so it lands after the
+     .tr block above and after every linked sheet; nothing can override it.
+     The band used to be a 460px slab with the statement pinned to its top,
+     which left a screen of dead air under the type before the lineage
+     section's streak head (.lg-streaks, which overflows ~36px ABOVE its own
+     section) drifted into frame and read as a stranded strip. Those streaks
+     belong to #lg, not here, so they are left alone: the band simply takes a
+     whole viewport and the two stop sharing a screen.
+     Column flex with align-items:flex-start is deliberate. Blockified flex
+     items stretch on the cross axis, which would smear the mono TRACK RECORD
+     chip into a 100vw grey slab; flex-start keeps it shrink-to-fit.
+     box-sizing is set because the bare `section` rule in css/styles.css does
+     not, and content-box would make this 100vh PLUS the padding.
+     svh is the second declaration so an iOS toolbar cannot overflow it.
+     NO background, NO isolation, NO overflow: js/eco-backdrop.js paints the
+     flame canvas underneath at z-index 0 and any of the three would kill it.
+     The dotted bottom border mirrors the dotted rule .tr::before draws across
+     the top, so the band closes on a deliberate edge rather than trailing
+     off. Both pseudo-elements are already spoken for (the top rule and its
+     two accent squares), hence a border rather than a third. */
+  .tr {
+    box-sizing: border-box;
+    min-height: 100vh;
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    /* symmetric, so "centred" reads centred: the old 64/24 split leaned the
+       type 40px high inside its own box */
+    padding: 72px 16px;
+    border-bottom: 2px dotted rgba(250, 250, 250, .35);
+  }
+  @media (max-width: 860px) {
+    .tr { padding: 56px 12px; }
+  }
+
+  /* ==========================================================================
+     BTCFI ECOSYSTEM LISTING (mst- prefix), rebuilt 2026-09-01.
+     Mistral's models-listing idiom, re-skinned to this page: a left rail of
+     bordered category rows, one active at a time, and a two-column card grid
+     to its right whose cells are divided by hairlines rather than gapped.
+     SITS AT THE VERY END OF THIS INLINE <style> ON PURPOSE: every linked
+     sheet (css/styles.css among them) loads BEFORE this block, and the old
+     .eco-card / .eco-chip rules still live there. Anything appended after
+     this comment must stay after it, or it loses the cascade.
+     NOTHING HERE PAINTS AN OPAQUE SECTION GROUND: js/eco-backdrop.js is a
+     fixed canvas at z-index 0 and the flame has to keep reading through.
+     Card fills are translucent and no ancestor gets `isolation: isolate`.
+     STRAIGHT CORNERS THROUGHOUT: no border-radius on cards, chips, rail rows
+     or the copy field.
+     ========================================================================== */
+  .mst-eco {
+    display: grid;
+    grid-template-columns: 232px minmax(0, 1fr);
+    gap: 0 40px;
+    align-items: start;
+    margin-top: 44px;
+  }
+
+  /* --- left rail --------------------------------------------------------- */
+  .mst-rail { display: flex; flex-direction: column; position: sticky; top: 96px; }
+  .mst-rail-cap {
+    font-family: var(--mono);
+    font-size: 9.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(250,250,250,0.32);
+    margin: 22px 0 8px;
+  }
+  .mst-rail-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+    margin-top: -1px;               /* rows share one hairline */
+    padding: 13px 14px;
+    border: 1px solid #262626;
+    border-radius: 0;
+    background: transparent;
+    font-family: var(--display);
+    font-size: 13.5px;
+    font-weight: 500;
+    color: rgba(250,250,250,0.62);
+    text-align: left;
+    cursor: pointer;
+    transition: color 0.18s, border-color 0.18s, background 0.18s;
+  }
+  .mst-rail-cap + .mst-rail-row { margin-top: 0; }
+  .mst-rail-row:hover { color: #fafafa; border-color: rgba(197,52,0,0.45); }
+  .mst-rail-row:focus-visible { outline: 1px solid #c53400; outline-offset: 2px; }
+  .mst-rail-row.is-active {
+    position: relative;
+    z-index: 1;
+    color: #fafafa;
+    border-color: #c53400;
+    background: rgba(197,52,0,0.07);
+  }
+  .mst-rail-n {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    color: rgba(250,250,250,0.4);
+    flex: none;
+  }
+  .mst-rail-row.is-active .mst-rail-n { color: #c53400; }
+
+  /* --- right column ------------------------------------------------------ */
+  .mst-title {
+    font-family: var(--display);
+    font-size: 30px;
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -0.015em;
+    color: #fafafa;
+    margin: 0 0 10px;
+  }
+  .mst-blurb {
+    font-size: 13.5px;
+    line-height: 1.65;
+    color: rgba(250,250,250,0.62);
+    margin: 0 0 22px;
+    max-width: 62ch;
+  }
+  .mst-blurb[hidden] { display: none; }
+  .mst-panel { margin-top: 26px; }
+  .mst-panel[hidden] { display: none; }
+  .mst-group {
+    font-family: var(--mono);
+    font-size: 9.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(250,250,250,0.4);
+    margin: 0 0 10px;
+  }
+  /* the group caption only earns its place in the "All" view, where three
+     grids stack and the reader needs to know which is which */
+  .mst-eco:not([data-cat="all"]) .mst-group { display: none; }
+  .mst-eco:not([data-cat="all"]) .mst-panel { margin-top: 0; }
+
+  /* --- the grid: hairlines, not gaps ------------------------------------- */
+  .mst-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    border-top: 1px solid #262626;
+    border-left: 1px solid #262626;
+    border-right: 1px solid #262626;   /* the box's own right edge, so a half-
+                                          filled last row still closes */
+  }
+  .mstc {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    min-width: 0;
+    padding: 20px 22px 18px;
+    border-bottom: 1px solid #262626;
+    border-radius: 0;
+    background: rgba(20,20,20,0.55);
+    transition: background 0.18s;
+  }
+  .mstc:hover { background: rgba(20,20,20,0.85); }
+  /* only the LEFT column draws the vertical divider; the grid's own
+     border-right closes the box on the other side */
+  .mstc:nth-child(odd) { border-right: 1px solid #262626; }
+  /* an odd item count leaves one empty cell: carry the bottom hairline
+     across it so the box does not end in a notch */
+  .mstc:last-child:nth-child(odd)::after {
+    content: '';
+    position: absolute;
+    left: 100%;
+    bottom: -1px;
+    width: 100%;
+    height: 1px;
+    background: #262626;
+  }
+  .mstc-soon { background: transparent; opacity: 0.55; }
+  .mstc-soon:hover { background: transparent; }
+
+  .mstc-top { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px; }
+  .mstc-logo {
+    width: 32px; height: 32px;
+    flex: none;
+    border: 1px solid #262626;
+    border-radius: 0;
+    background: rgba(250,250,250,0.05);
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+  .mstc-logo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .mstc-kind {
+    margin-left: auto;
+    flex: none;
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(250,250,250,0.5);
+    padding: 4px 8px;
+    border: 1px solid #262626;
+    border-radius: 0;
+  }
+  .mstc-name {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--display);
+    font-size: 16.5px;
+    font-weight: 600;
+    line-height: 1.25;
+    color: #fafafa;
+    text-decoration: none;
+    margin-bottom: 8px;
+  }
+  a.mstc-name:hover { color: #c53400; }
+  a.mstc-name:focus-visible { outline: 1px solid #c53400; outline-offset: 3px; }
+  .mstc-ext { font-size: 13px; color: rgba(250,250,250,0.35); transition: color 0.18s; }
+  a.mstc-name:hover .mstc-ext { color: #c53400; }
+  .mstc-desc {
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: rgba(250,250,250,0.62);
+    margin: 0 0 12px;
+  }
+  .mstc-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+  .mstc-tag {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(250,250,250,0.62);
+    padding: 4px 8px;
+    border: 1px solid #262626;
+    border-radius: 0;
+  }
+
+  /* --- the copy field: a bordered strip, full width, pinned to the foot --- */
+  .mstc-copy {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    margin-top: auto;
+    padding: 9px 10px;
+    border: 1px solid #262626;
+    border-radius: 0;
+    background: #141414;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.03em;
+    color: rgba(250,250,250,0.62);
+    text-align: left;
+    cursor: pointer;
+    transition: border-color 0.18s, color 0.18s;
+  }
+  .mstc-copy:hover { border-color: rgba(197,52,0,0.5); color: #fafafa; }
+  .mstc-copy:focus-visible { outline: 1px solid #c53400; outline-offset: 2px; }
+  .mstc-copy-val { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .mstc-copy-ic { flex: none; font-size: 13px; color: rgba(250,250,250,0.4); }
+  .mstc-copy:hover .mstc-copy-ic { color: #c53400; }
+  .mstc-copy.is-copied { border-color: #c53400; color: #c53400; }
+  .mstc-copy.is-copied .mstc-copy-ic { color: #c53400; }
+
+  @media (max-width: 900px) {
+    .mst-eco { grid-template-columns: minmax(0, 1fr); gap: 0; }
+    .mst-rail {
+      position: static;
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 26px;
+    }
+    .mst-rail-cap { display: none; }
+    .mst-rail-row { width: auto; margin-top: 0; padding: 9px 12px; font-size: 12.5px; }
+    .mst-title { font-size: 22px; }
+    .mst-grid { grid-template-columns: minmax(0, 1fr); }
+  }
+  @media (max-width: 560px) {
+    .mstc { padding: 16px 16px 14px; }
+    .mstc-name { font-size: 15px; }
+  }
 </style>
 <script>
 /* BTCFi ecosystem field: reserve the flight's height before layout. Classic
@@ -2467,9 +2750,12 @@
          phase's detail on top of it. Hover, tap, focus and arrow keys all
          drive it (js/bridge-columns.js). The h4 per phase keeps the old
          card's id, so every deep link into the roadmap still lands. -->
-    <div class="roadmap">
-      <p class="scale-label">The bridge roadmap</p>
-      <h3 id="btcfi-ready-today-fully-trustless-tomorrow" class="scale-title">BTCFi-ready today. <span>Fully trustless tomorrow.</span></h3>
+    <!-- The kicker + h3 heading pair was removed: the accordion's own
+         standing statement (the .bhead--lede below) already introduces the
+         roadmap, so the pair read as a duplicate title. The old heading's id
+         moves onto this wrapper so existing deep links and the committed
+         search index still land on the roadmap. -->
+    <div class="roadmap" id="btcfi-ready-today-fully-trustless-tomorrow">
       <div class="bcore" id="bcore">
         <div class="bcore-heads" id="bcore-heads" role="tabpanel" aria-live="polite">
           <div class="bhead bhead--lede"><p>Bitcoiners can already use the full DeFi stack on Starknet through a transparent, community-vetted federation. From there, <b>every phase strips away trust assumptions</b>, all the way to a fully trustless bridge once Bitcoin can verify STARK proofs natively.</p></div>
@@ -2746,140 +3032,272 @@
         </div>
       </div>
 
+      <!-- BTCFI ECOSYSTEM LISTING (mst- prefix). Rebuilt 2026-09-01 in the
+           Mistral models-listing idiom: a left rail of category selectors,
+           one active at a time, and a two-column card grid divided by
+           hairlines to its right. The three grid containers KEEP their ids
+           (#btcfiWallets / #btcfiBridges / #btcfiDefi) because the runtime
+           renderer at the foot of this page re-fills them from the published
+           JSON or a local admin draft, and every card KEEPS its #eco-* id
+           because the ecosystem field above links into them by anchor.
+           The rail is only a filter: the "All" row is the default so those
+           anchors always resolve, and the rail JS also re-opens the right
+           category when a hash arrives for a card that is filtered out. -->
       <div class="eco-section-wrap">
-        <!-- Wallets -->
-        <p class="eco-block-label">Onboarding</p>
-        <div class="eco-row">
-          <div class="eco-row-head">
-            <span class="eco-row-cat">Wallets</span>
-            <span class="eco-row-desc">Native BTC onboarding. Shield / unshield strkBTC directly in-app.</span>
+        <div class="mst-eco" id="btcfiEco">
+          <div class="mst-rail" role="group" aria-label="Filter the ecosystem by category">
+            <button type="button" class="mst-rail-row is-active" aria-pressed="true" data-cat="all">All<span class="mst-rail-n" data-count="all">19</span></button>
+            <p class="mst-rail-cap">Onboarding</p>
+            <button type="button" class="mst-rail-row" aria-pressed="false" data-cat="wallets">Wallets<span class="mst-rail-n" data-count="wallets">3</span></button>
+            <button type="button" class="mst-rail-row" aria-pressed="false" data-cat="bridges">Bridges<span class="mst-rail-n" data-count="bridges">9</span></button>
+            <button type="button" class="mst-rail-row" aria-pressed="false" data-cat="defi">DeFi protocols<span class="mst-rail-n" data-count="defi">7</span></button>
           </div>
-          <div class="eco-chips" id="btcfiWallets">
-            <a id="eco-ready" class="eco-chip" href="https://x.com/ready_co" target="_blank" rel="noopener">
-              <span class="eco-logo"><img alt="" loading="lazy" decoding="async" src="assets/logos/ready.png" onerror="this.style.display='none';this.parentNode.querySelector('.eco-mono').style.display='flex'"><span class="eco-mono" style="display:none">R</span></span><span>Ready</span>
-            </a>
-            <a id="eco-xverse" class="eco-chip" href="https://x.com/xverse" target="_blank" rel="noopener">
-              <span class="eco-logo"><img alt="" loading="lazy" decoding="async" src="assets/logos/xverse.png" onerror="this.style.display='none';this.parentNode.querySelector('.eco-mono').style.display='flex'"><span class="eco-mono" style="display:none">X</span></span><span>Xverse</span>
-            </a>
-            <a id="eco-braavos" class="eco-chip" href="https://x.com/myBraavos" target="_blank" rel="noopener">
-              <span class="eco-logo"><img alt="" loading="lazy" decoding="async" src="assets/logos/braavos.png" onerror="this.style.display='none';this.parentNode.querySelector('.eco-mono').style.display='flex'"><span class="eco-mono" style="display:none">B</span></span><span>Braavos</span>
-            </a>
-          </div>
-        </div>
-
-        <!-- Bridges -->
-        <div class="eco-row">
-          <div class="eco-row-head">
-            <span class="eco-row-cat">Bridges</span>
-            <span class="eco-row-desc">Move BTC and assets into Starknet from Bitcoin, Lightning, EVM chains, Solana, and all chains, with near-instant routing.</span>
-          </div>
-          <div class="eco-chips" id="btcfiBridges">
-            <a id="eco-starkgate" class="eco-chip" href="https://x.com/StarkWareLtd" target="_blank" rel="noopener">
-              <span class="eco-logo"><img alt="" loading="lazy" decoding="async" src="assets/logos/starkgate.png" onerror="this.style.display='none';this.parentNode.querySelector('.eco-mono').style.display='flex'"><span class="eco-mono" style="display:none">S</span></span><span>StarkGate</span>
-            </a>
-            <a id="eco-atomiq-labs" class="eco-chip" href="https://x.com/atomiqlabs" target="_blank" rel="noopener">
-              <span class="eco-logo"><img alt="" loading="lazy" decoding="async" src="assets/logos/atomiq-labs.png" onerror="this.style.display='none';this.parentNode.querySelector('.eco-mono').style.display='flex'"><span class="eco-mono" style="display:none">A</span></span><span>Atomiq Labs</span>
-            </a>
-            <a id="eco-layerswap" class="eco-chip" href="https://x.com/layerswap" target="_blank" rel="noopener">
-              <span class="eco-logo"><img alt="" loading="lazy" decoding="async" src="assets/logos/layerswap.png" onerror="this.style.display='none';this.parentNode.querySelector('.eco-mono').style.display='flex'"><span class="eco-mono" style="display:none">L</span></span><span>Layerswap</span>
-            </a>
-            <a id="eco-near-intents" class="eco-chip" href="https://x.com/near_intents" target="_blank" rel="noopener">
-              <span class="eco-logo"><img alt="" loading="lazy" decoding="async" src="assets/logos/near-intents.png" onerror="this.style.display='none';this.parentNode.querySelector('.eco-mono').style.display='flex'"><span class="eco-mono" style="display:none">N</span></span><span>Near Intents</span>
-            </a>
-            <a id="eco-rhino-fi" class="eco-chip" href="https://x.com/rhinofi" target="_blank" rel="noopener">
-              <span class="eco-logo"><img alt="" loading="lazy" decoding="async" src="assets/logos/rhino-fi.png" onerror="this.style.display='none';this.parentNode.querySelector('.eco-mono').style.display='flex'"><span class="eco-mono" style="display:none">R</span></span><span>Rhino.fi</span>
-            </a>
-            <a id="eco-rocketx" class="eco-chip" href="https://x.com/RocketXexchange" target="_blank" rel="noopener">
-              <span class="eco-logo"><img alt="" loading="lazy" decoding="async" src="assets/logos/rocketx.png" onerror="this.style.display='none';this.parentNode.querySelector('.eco-mono').style.display='flex'"><span class="eco-mono" style="display:none">R</span></span><span>RocketX</span>
-            </a>
-            <a id="eco-stargate-finance" class="eco-chip" href="https://x.com/StargateFinance" target="_blank" rel="noopener">
-              <span class="eco-logo"><img alt="" loading="lazy" decoding="async" src="assets/logos/stargate-finance.png" onerror="this.style.display='none';this.parentNode.querySelector('.eco-mono').style.display='flex'"><span class="eco-mono" style="display:none">S</span></span><span>Stargate Finance</span>
-            </a>
-            <a id="eco-layerzero" class="eco-chip" href="https://x.com/LayerZero_Core" target="_blank" rel="noopener">
-              <span class="eco-logo"><img alt="" loading="lazy" decoding="async" src="assets/logos/layerzero.png" onerror="this.style.display='none';this.parentNode.querySelector('.eco-mono').style.display='flex'"><span class="eco-mono" style="display:none">L</span></span><span>LayerZero</span>
-            </a>
-            <a id="eco-hyperlane" class="eco-chip" href="https://x.com/hyperlane" target="_blank" rel="noopener">
-              <span class="eco-logo"><img alt="" loading="lazy" decoding="async" src="assets/logos/hyperlane.png" onerror="this.style.display='none';this.parentNode.querySelector('.eco-mono').style.display='flex'"><span class="eco-mono" style="display:none">H</span></span><span>Hyperlane</span>
-            </a>
-          </div>
-        </div>
-
-        <!-- DeFi project cards -->
-        <p class="eco-block-label">DeFi protocols</p>
-        <div class="eco-cards" id="btcfiDefi">
-          <a id="eco-ekubo" class="eco-card" href="https://x.com/EkuboProtocol" target="_blank" rel="noopener">
-            <div class="eco-card-head">
-              <span class="eco-card-logo"><img alt="" loading="lazy" decoding="async" src="assets/logos/ek.png" onerror="this.style.display='none';this.parentNode.querySelector('.eco-mono').style.display='flex'"><span class="eco-mono" style="display:none">Ek</span></span>
-              <span class="eco-card-name">Ekubo</span>
-              <i class="ti ti-brand-x eco-card-ext"></i>
+          <div class="mst-main">
+            <h4 class="mst-title" id="btcfiEcoTitle">All wallets, bridges and protocols</h4>
+            <p class="mst-blurb" id="btcfiEcoBlurb" hidden></p>
+            <div class="mst-panel" data-panel="wallets">
+              <p class="mst-group">Wallets</p>
+              <div class="mst-grid" id="btcfiWallets">
+                <div class="mstc" id="eco-ready">
+                  <div class="mstc-top">
+                    <span class="mstc-logo"><img alt="" loading="lazy" decoding="async" src="assets/logos/ready.png" onerror="this.style.display='none';this.parentNode.querySelector('.eco-mono').style.display='flex'"><span class="eco-mono" style="display:none">R</span></span>
+                    <span class="mstc-kind">Wallet</span>
+                  </div>
+                  <a class="mstc-name" href="https://x.com/ready_co" target="_blank" rel="noopener">Ready<i class="ti ti-brand-x mstc-ext" aria-hidden="true"></i></a>
+                  <button type="button" class="mstc-copy" data-copy="https://x.com/ready_co" aria-label="Copy link to Ready">
+                    <span class="mstc-copy-val">x.com/ready_co</span>
+                    <i class="ti ti-copy mstc-copy-ic" aria-hidden="true"></i>
+                  </button>
+                </div>
+                <div class="mstc" id="eco-xverse">
+                  <div class="mstc-top">
+                    <span class="mstc-logo"><img alt="" loading="lazy" decoding="async" src="assets/logos/xverse.png" onerror="this.style.display='none';this.parentNode.querySelector('.eco-mono').style.display='flex'"><span class="eco-mono" style="display:none">X</span></span>
+                    <span class="mstc-kind">Wallet</span>
+                  </div>
+                  <a class="mstc-name" href="https://x.com/xverse" target="_blank" rel="noopener">Xverse<i class="ti ti-brand-x mstc-ext" aria-hidden="true"></i></a>
+                  <button type="button" class="mstc-copy" data-copy="https://x.com/xverse" aria-label="Copy link to Xverse">
+                    <span class="mstc-copy-val">x.com/xverse</span>
+                    <i class="ti ti-copy mstc-copy-ic" aria-hidden="true"></i>
+                  </button>
+                </div>
+                <div class="mstc" id="eco-braavos">
+                  <div class="mstc-top">
+                    <span class="mstc-logo"><img alt="" loading="lazy" decoding="async" src="assets/logos/braavos.png" onerror="this.style.display='none';this.parentNode.querySelector('.eco-mono').style.display='flex'"><span class="eco-mono" style="display:none">B</span></span>
+                    <span class="mstc-kind">Wallet</span>
+                  </div>
+                  <a class="mstc-name" href="https://x.com/myBraavos" target="_blank" rel="noopener">Braavos<i class="ti ti-brand-x mstc-ext" aria-hidden="true"></i></a>
+                  <button type="button" class="mstc-copy" data-copy="https://x.com/myBraavos" aria-label="Copy link to Braavos">
+                    <span class="mstc-copy-val">x.com/myBraavos</span>
+                    <i class="ti ti-copy mstc-copy-ic" aria-hidden="true"></i>
+                  </button>
+                </div>
+              </div>
             </div>
-            <div class="eco-tags"><span class="eco-tag">Swap</span><span class="eco-tag">Liquidity provision</span></div>
-            <p class="eco-card-desc">Most capital-efficient AMM on the market.</p>
-          </a>
-
-          <a id="eco-vesu" class="eco-card" href="https://x.com/vesuxyz" target="_blank" rel="noopener">
-            <div class="eco-card-head">
-              <span class="eco-card-logo"><img alt="" loading="lazy" decoding="async" src="assets/logos/ve.png" onerror="this.style.display='none';this.parentNode.querySelector('.eco-mono').style.display='flex'"><span class="eco-mono" style="display:none">Ve</span></span>
-              <span class="eco-card-name">Vesu</span>
-              <i class="ti ti-brand-x eco-card-ext"></i>
+            <div class="mst-panel" data-panel="bridges">
+              <p class="mst-group">Bridges</p>
+              <div class="mst-grid" id="btcfiBridges">
+                <div class="mstc" id="eco-starkgate">
+                  <div class="mstc-top">
+                    <span class="mstc-logo"><img alt="" loading="lazy" decoding="async" src="assets/logos/starkgate.png" onerror="this.style.display='none';this.parentNode.querySelector('.eco-mono').style.display='flex'"><span class="eco-mono" style="display:none">S</span></span>
+                    <span class="mstc-kind">Bridge</span>
+                  </div>
+                  <a class="mstc-name" href="https://x.com/StarkWareLtd" target="_blank" rel="noopener">StarkGate<i class="ti ti-brand-x mstc-ext" aria-hidden="true"></i></a>
+                  <button type="button" class="mstc-copy" data-copy="https://x.com/StarkWareLtd" aria-label="Copy link to StarkGate">
+                    <span class="mstc-copy-val">x.com/StarkWareLtd</span>
+                    <i class="ti ti-copy mstc-copy-ic" aria-hidden="true"></i>
+                  </button>
+                </div>
+                <div class="mstc" id="eco-atomiq-labs">
+                  <div class="mstc-top">
+                    <span class="mstc-logo"><img alt="" loading="lazy" decoding="async" src="assets/logos/atomiq-labs.png" onerror="this.style.display='none';this.parentNode.querySelector('.eco-mono').style.display='flex'"><span class="eco-mono" style="display:none">A</span></span>
+                    <span class="mstc-kind">Bridge</span>
+                  </div>
+                  <a class="mstc-name" href="https://x.com/atomiqlabs" target="_blank" rel="noopener">Atomiq Labs<i class="ti ti-brand-x mstc-ext" aria-hidden="true"></i></a>
+                  <button type="button" class="mstc-copy" data-copy="https://x.com/atomiqlabs" aria-label="Copy link to Atomiq Labs">
+                    <span class="mstc-copy-val">x.com/atomiqlabs</span>
+                    <i class="ti ti-copy mstc-copy-ic" aria-hidden="true"></i>
+                  </button>
+                </div>
+                <div class="mstc" id="eco-layerswap">
+                  <div class="mstc-top">
+                    <span class="mstc-logo"><img alt="" loading="lazy" decoding="async" src="assets/logos/layerswap.png" onerror="this.style.display='none';this.parentNode.querySelector('.eco-mono').style.display='flex'"><span class="eco-mono" style="display:none">L</span></span>
+                    <span class="mstc-kind">Bridge</span>
+                  </div>
+                  <a class="mstc-name" href="https://x.com/layerswap" target="_blank" rel="noopener">Layerswap<i class="ti ti-brand-x mstc-ext" aria-hidden="true"></i></a>
+                  <button type="button" class="mstc-copy" data-copy="https://x.com/layerswap" aria-label="Copy link to Layerswap">
+                    <span class="mstc-copy-val">x.com/layerswap</span>
+                    <i class="ti ti-copy mstc-copy-ic" aria-hidden="true"></i>
+                  </button>
+                </div>
+                <div class="mstc" id="eco-near-intents">
+                  <div class="mstc-top">
+                    <span class="mstc-logo"><img alt="" loading="lazy" decoding="async" src="assets/logos/near-intents.png" onerror="this.style.display='none';this.parentNode.querySelector('.eco-mono').style.display='flex'"><span class="eco-mono" style="display:none">N</span></span>
+                    <span class="mstc-kind">Bridge</span>
+                  </div>
+                  <a class="mstc-name" href="https://x.com/near_intents" target="_blank" rel="noopener">Near Intents<i class="ti ti-brand-x mstc-ext" aria-hidden="true"></i></a>
+                  <button type="button" class="mstc-copy" data-copy="https://x.com/near_intents" aria-label="Copy link to Near Intents">
+                    <span class="mstc-copy-val">x.com/near_intents</span>
+                    <i class="ti ti-copy mstc-copy-ic" aria-hidden="true"></i>
+                  </button>
+                </div>
+                <div class="mstc" id="eco-rhino-fi">
+                  <div class="mstc-top">
+                    <span class="mstc-logo"><img alt="" loading="lazy" decoding="async" src="assets/logos/rhino-fi.png" onerror="this.style.display='none';this.parentNode.querySelector('.eco-mono').style.display='flex'"><span class="eco-mono" style="display:none">R</span></span>
+                    <span class="mstc-kind">Bridge</span>
+                  </div>
+                  <a class="mstc-name" href="https://x.com/rhinofi" target="_blank" rel="noopener">Rhino.fi<i class="ti ti-brand-x mstc-ext" aria-hidden="true"></i></a>
+                  <button type="button" class="mstc-copy" data-copy="https://x.com/rhinofi" aria-label="Copy link to Rhino.fi">
+                    <span class="mstc-copy-val">x.com/rhinofi</span>
+                    <i class="ti ti-copy mstc-copy-ic" aria-hidden="true"></i>
+                  </button>
+                </div>
+                <div class="mstc" id="eco-rocketx">
+                  <div class="mstc-top">
+                    <span class="mstc-logo"><img alt="" loading="lazy" decoding="async" src="assets/logos/rocketx.png" onerror="this.style.display='none';this.parentNode.querySelector('.eco-mono').style.display='flex'"><span class="eco-mono" style="display:none">R</span></span>
+                    <span class="mstc-kind">Bridge</span>
+                  </div>
+                  <a class="mstc-name" href="https://x.com/RocketXexchange" target="_blank" rel="noopener">RocketX<i class="ti ti-brand-x mstc-ext" aria-hidden="true"></i></a>
+                  <button type="button" class="mstc-copy" data-copy="https://x.com/RocketXexchange" aria-label="Copy link to RocketX">
+                    <span class="mstc-copy-val">x.com/RocketXexchange</span>
+                    <i class="ti ti-copy mstc-copy-ic" aria-hidden="true"></i>
+                  </button>
+                </div>
+                <div class="mstc" id="eco-stargate-finance">
+                  <div class="mstc-top">
+                    <span class="mstc-logo"><img alt="" loading="lazy" decoding="async" src="assets/logos/stargate-finance.png" onerror="this.style.display='none';this.parentNode.querySelector('.eco-mono').style.display='flex'"><span class="eco-mono" style="display:none">S</span></span>
+                    <span class="mstc-kind">Bridge</span>
+                  </div>
+                  <a class="mstc-name" href="https://x.com/StargateFinance" target="_blank" rel="noopener">Stargate Finance<i class="ti ti-brand-x mstc-ext" aria-hidden="true"></i></a>
+                  <button type="button" class="mstc-copy" data-copy="https://x.com/StargateFinance" aria-label="Copy link to Stargate Finance">
+                    <span class="mstc-copy-val">x.com/StargateFinance</span>
+                    <i class="ti ti-copy mstc-copy-ic" aria-hidden="true"></i>
+                  </button>
+                </div>
+                <div class="mstc" id="eco-layerzero">
+                  <div class="mstc-top">
+                    <span class="mstc-logo"><img alt="" loading="lazy" decoding="async" src="assets/logos/layerzero.png" onerror="this.style.display='none';this.parentNode.querySelector('.eco-mono').style.display='flex'"><span class="eco-mono" style="display:none">L</span></span>
+                    <span class="mstc-kind">Bridge</span>
+                  </div>
+                  <a class="mstc-name" href="https://x.com/LayerZero_Core" target="_blank" rel="noopener">LayerZero<i class="ti ti-brand-x mstc-ext" aria-hidden="true"></i></a>
+                  <button type="button" class="mstc-copy" data-copy="https://x.com/LayerZero_Core" aria-label="Copy link to LayerZero">
+                    <span class="mstc-copy-val">x.com/LayerZero_Core</span>
+                    <i class="ti ti-copy mstc-copy-ic" aria-hidden="true"></i>
+                  </button>
+                </div>
+                <div class="mstc" id="eco-hyperlane">
+                  <div class="mstc-top">
+                    <span class="mstc-logo"><img alt="" loading="lazy" decoding="async" src="assets/logos/hyperlane.png" onerror="this.style.display='none';this.parentNode.querySelector('.eco-mono').style.display='flex'"><span class="eco-mono" style="display:none">H</span></span>
+                    <span class="mstc-kind">Bridge</span>
+                  </div>
+                  <a class="mstc-name" href="https://x.com/hyperlane" target="_blank" rel="noopener">Hyperlane<i class="ti ti-brand-x mstc-ext" aria-hidden="true"></i></a>
+                  <button type="button" class="mstc-copy" data-copy="https://x.com/hyperlane" aria-label="Copy link to Hyperlane">
+                    <span class="mstc-copy-val">x.com/hyperlane</span>
+                    <i class="ti ti-copy mstc-copy-ic" aria-hidden="true"></i>
+                  </button>
+                </div>
+              </div>
             </div>
-            <div class="eco-tags"><span class="eco-tag">Lending</span><span class="eco-tag">Borrowing</span></div>
-            <p class="eco-card-desc">Lend BTC, borrow stablecoins, one-click loop strategies.</p>
-          </a>
-
-          <a id="eco-avnu" class="eco-card" href="https://x.com/avnu_fi" target="_blank" rel="noopener">
-            <div class="eco-card-head">
-              <span class="eco-card-logo"><img alt="" loading="lazy" decoding="async" src="assets/logos/av.png" onerror="this.style.display='none';this.parentNode.querySelector('.eco-mono').style.display='flex'"><span class="eco-mono" style="display:none">av</span></span>
-              <span class="eco-card-name">avnu</span>
-              <i class="ti ti-brand-x eco-card-ext"></i>
+            <div class="mst-panel" data-panel="defi">
+              <p class="mst-group">DeFi protocols</p>
+              <div class="mst-grid" id="btcfiDefi">
+                <div class="mstc" id="eco-ekubo">
+                  <div class="mstc-top">
+                    <span class="mstc-logo"><img alt="" loading="lazy" decoding="async" src="assets/logos/ek.png" onerror="this.style.display='none';this.parentNode.querySelector('.eco-mono').style.display='flex'"><span class="eco-mono" style="display:none">Ek</span></span>
+                    <span class="mstc-kind">DeFi protocol</span>
+                  </div>
+                  <a class="mstc-name" href="https://x.com/EkuboProtocol" target="_blank" rel="noopener">Ekubo<i class="ti ti-brand-x mstc-ext" aria-hidden="true"></i></a>
+                  <p class="mstc-desc">Most capital-efficient AMM on the market.</p>
+                  <div class="mstc-tags"><span class="mstc-tag">Swap</span><span class="mstc-tag">Liquidity provision</span></div>
+                  <button type="button" class="mstc-copy" data-copy="https://x.com/EkuboProtocol" aria-label="Copy link to Ekubo">
+                    <span class="mstc-copy-val">x.com/EkuboProtocol</span>
+                    <i class="ti ti-copy mstc-copy-ic" aria-hidden="true"></i>
+                  </button>
+                </div>
+                <div class="mstc" id="eco-vesu">
+                  <div class="mstc-top">
+                    <span class="mstc-logo"><img alt="" loading="lazy" decoding="async" src="assets/logos/ve.png" onerror="this.style.display='none';this.parentNode.querySelector('.eco-mono').style.display='flex'"><span class="eco-mono" style="display:none">Ve</span></span>
+                    <span class="mstc-kind">DeFi protocol</span>
+                  </div>
+                  <a class="mstc-name" href="https://x.com/vesuxyz" target="_blank" rel="noopener">Vesu<i class="ti ti-brand-x mstc-ext" aria-hidden="true"></i></a>
+                  <p class="mstc-desc">Lend BTC, borrow stablecoins, one-click loop strategies.</p>
+                  <div class="mstc-tags"><span class="mstc-tag">Lending</span><span class="mstc-tag">Borrowing</span></div>
+                  <button type="button" class="mstc-copy" data-copy="https://x.com/vesuxyz" aria-label="Copy link to Vesu">
+                    <span class="mstc-copy-val">x.com/vesuxyz</span>
+                    <i class="ti ti-copy mstc-copy-ic" aria-hidden="true"></i>
+                  </button>
+                </div>
+                <div class="mstc" id="eco-avnu">
+                  <div class="mstc-top">
+                    <span class="mstc-logo"><img alt="" loading="lazy" decoding="async" src="assets/logos/av.png" onerror="this.style.display='none';this.parentNode.querySelector('.eco-mono').style.display='flex'"><span class="eco-mono" style="display:none">av</span></span>
+                    <span class="mstc-kind">DeFi protocol</span>
+                  </div>
+                  <a class="mstc-name" href="https://x.com/avnu_fi" target="_blank" rel="noopener">avnu<i class="ti ti-brand-x mstc-ext" aria-hidden="true"></i></a>
+                  <p class="mstc-desc">Best trading execution across Starknet. Private fee payments via Paymaster for strkBTC swaps.</p>
+                  <div class="mstc-tags"><span class="mstc-tag">Swap</span><span class="mstc-tag">DCA</span></div>
+                  <button type="button" class="mstc-copy" data-copy="https://x.com/avnu_fi" aria-label="Copy link to avnu">
+                    <span class="mstc-copy-val">x.com/avnu_fi</span>
+                    <i class="ti ti-copy mstc-copy-ic" aria-hidden="true"></i>
+                  </button>
+                </div>
+                <div class="mstc" id="eco-endur-finance">
+                  <div class="mstc-top">
+                    <span class="mstc-logo"><img alt="" loading="lazy" decoding="async" src="assets/logos/en.png" onerror="this.style.display='none';this.parentNode.querySelector('.eco-mono').style.display='flex'"><span class="eco-mono" style="display:none">En</span></span>
+                    <span class="mstc-kind">DeFi protocol</span>
+                  </div>
+                  <a class="mstc-name" href="https://x.com/endurfi" target="_blank" rel="noopener">Endur Finance<i class="ti ti-brand-x mstc-ext" aria-hidden="true"></i></a>
+                  <p class="mstc-desc">Liquid BTC staking. Earn staking yield while staying liquid for DeFi.</p>
+                  <div class="mstc-tags"><span class="mstc-tag">Stake</span><span class="mstc-tag">Liquid stake</span></div>
+                  <button type="button" class="mstc-copy" data-copy="https://x.com/endurfi" aria-label="Copy link to Endur Finance">
+                    <span class="mstc-copy-val">x.com/endurfi</span>
+                    <i class="ti ti-copy mstc-copy-ic" aria-hidden="true"></i>
+                  </button>
+                </div>
+                <div class="mstc" id="eco-extended">
+                  <div class="mstc-top">
+                    <span class="mstc-logo"><img alt="" loading="lazy" decoding="async" src="assets/logos/ex.png" onerror="this.style.display='none';this.parentNode.querySelector('.eco-mono').style.display='flex'"><span class="eco-mono" style="display:none">Ex</span></span>
+                    <span class="mstc-kind">DeFi protocol</span>
+                  </div>
+                  <a class="mstc-name" href="https://x.com/extendedapp" target="_blank" rel="noopener">Extended<i class="ti ti-brand-x mstc-ext" aria-hidden="true"></i></a>
+                  <p class="mstc-desc">Trade perps with WBTC as collateral, or use stablecoins borrowed against BTC to generate yield.</p>
+                  <div class="mstc-tags"><span class="mstc-tag">Perp trading</span><span class="mstc-tag">Liquidity provision</span></div>
+                  <button type="button" class="mstc-copy" data-copy="https://x.com/extendedapp" aria-label="Copy link to Extended">
+                    <span class="mstc-copy-val">x.com/extendedapp</span>
+                    <i class="ti ti-copy mstc-copy-ic" aria-hidden="true"></i>
+                  </button>
+                </div>
+                <div class="mstc" id="eco-troves">
+                  <div class="mstc-top">
+                    <span class="mstc-logo"><img alt="" loading="lazy" decoding="async" src="assets/logos/tr.png" onerror="this.style.display='none';this.parentNode.querySelector('.eco-mono').style.display='flex'"><span class="eco-mono" style="display:none">Tr</span></span>
+                    <span class="mstc-kind">DeFi protocol</span>
+                  </div>
+                  <a class="mstc-name" href="https://x.com/trovesfi" target="_blank" rel="noopener">Troves<i class="ti ti-brand-x mstc-ext" aria-hidden="true"></i></a>
+                  <p class="mstc-desc">Advanced one-click DeFi strategies for Bitcoiners. Private vaults are live.</p>
+                  <div class="mstc-tags"><span class="mstc-tag">Yield farming</span></div>
+                  <button type="button" class="mstc-copy" data-copy="https://x.com/trovesfi" aria-label="Copy link to Troves">
+                    <span class="mstc-copy-val">x.com/trovesfi</span>
+                    <i class="ti ti-copy mstc-copy-ic" aria-hidden="true"></i>
+                  </button>
+                </div>
+                <div class="mstc" id="eco-forge-yields">
+                  <div class="mstc-top">
+                    <span class="mstc-logo"><img alt="" loading="lazy" decoding="async" src="assets/logos/fo.png" onerror="this.style.display='none';this.parentNode.querySelector('.eco-mono').style.display='flex'"><span class="eco-mono" style="display:none">Fo</span></span>
+                    <span class="mstc-kind">DeFi protocol</span>
+                  </div>
+                  <a class="mstc-name" href="https://x.com/ForgeYields" target="_blank" rel="noopener">Forge Yields<i class="ti ti-brand-x mstc-ext" aria-hidden="true"></i></a>
+                  <p class="mstc-desc">Cross-chain yield strategies from Starknet, powered by Hyperlane.</p>
+                  <div class="mstc-tags"><span class="mstc-tag">Yield farming</span></div>
+                  <button type="button" class="mstc-copy" data-copy="https://x.com/ForgeYields" aria-label="Copy link to Forge Yields">
+                    <span class="mstc-copy-val">x.com/ForgeYields</span>
+                    <i class="ti ti-copy mstc-copy-ic" aria-hidden="true"></i>
+                  </button>
+                </div>
+                <div class="mstc mstc-soon" aria-hidden="true">
+                  <div class="mstc-top"><span class="mstc-logo"><span class="eco-mono" style="display:flex">+</span></span><span class="mstc-kind">Soon</span></div>
+                  <span class="mstc-name">Much more to come</span>
+                  <p class="mstc-desc">New protocols launching on Starknet</p>
+                </div>
+              </div>
             </div>
-            <div class="eco-tags"><span class="eco-tag">Swap</span><span class="eco-tag">DCA</span></div>
-            <p class="eco-card-desc">Best trading execution across Starknet. Private fee payments via Paymaster for strkBTC swaps.</p>
-          </a>
-
-          <a id="eco-endur-finance" class="eco-card" href="https://x.com/endurfi" target="_blank" rel="noopener">
-            <div class="eco-card-head">
-              <span class="eco-card-logo"><img alt="" loading="lazy" decoding="async" src="assets/logos/en.png" onerror="this.style.display='none';this.parentNode.querySelector('.eco-mono').style.display='flex'"><span class="eco-mono" style="display:none">En</span></span>
-              <span class="eco-card-name">Endur Finance</span>
-              <i class="ti ti-brand-x eco-card-ext"></i>
-            </div>
-            <div class="eco-tags"><span class="eco-tag">Stake</span><span class="eco-tag">Liquid stake</span></div>
-            <p class="eco-card-desc">Liquid BTC staking. Earn staking yield while staying liquid for DeFi.</p>
-          </a>
-
-          <a id="eco-extended" class="eco-card" href="https://x.com/extendedapp" target="_blank" rel="noopener">
-            <div class="eco-card-head">
-              <span class="eco-card-logo"><img alt="" loading="lazy" decoding="async" src="assets/logos/ex.png" onerror="this.style.display='none';this.parentNode.querySelector('.eco-mono').style.display='flex'"><span class="eco-mono" style="display:none">Ex</span></span>
-              <span class="eco-card-name">Extended</span>
-              <i class="ti ti-brand-x eco-card-ext"></i>
-            </div>
-            <div class="eco-tags"><span class="eco-tag">Perp trading</span><span class="eco-tag">Liquidity provision</span></div>
-            <p class="eco-card-desc">Trade perps with WBTC as collateral, or use stablecoins borrowed against BTC to generate yield.</p>
-          </a>
-
-          <a id="eco-troves" class="eco-card" href="https://x.com/trovesfi" target="_blank" rel="noopener">
-            <div class="eco-card-head">
-              <span class="eco-card-logo"><img alt="" loading="lazy" decoding="async" src="assets/logos/tr.png" onerror="this.style.display='none';this.parentNode.querySelector('.eco-mono').style.display='flex'"><span class="eco-mono" style="display:none">Tr</span></span>
-              <span class="eco-card-name">Troves</span>
-              <i class="ti ti-brand-x eco-card-ext"></i>
-            </div>
-            <div class="eco-tags"><span class="eco-tag">Yield farming</span></div>
-            <p class="eco-card-desc">Advanced one-click DeFi strategies for Bitcoiners. Private vaults are live.</p>
-          </a>
-
-          <a id="eco-forge-yields" class="eco-card" href="https://x.com/ForgeYields" target="_blank" rel="noopener">
-            <div class="eco-card-head">
-              <span class="eco-card-logo"><img alt="" loading="lazy" decoding="async" src="assets/logos/fo.png" onerror="this.style.display='none';this.parentNode.querySelector('.eco-mono').style.display='flex'"><span class="eco-mono" style="display:none">Fo</span></span>
-              <span class="eco-card-name">Forge Yields</span>
-              <i class="ti ti-brand-x eco-card-ext"></i>
-            </div>
-            <div class="eco-tags"><span class="eco-tag">Yield farming</span></div>
-            <p class="eco-card-desc">Cross-chain yield strategies from Starknet, powered by Hyperlane.</p>
-          </a>
-
-          <div class="eco-card eco-card-soon" aria-hidden="true">
-            <span class="eco-card-name">Much more to come</span>
-            <p class="eco-card-desc">New protocols launching on Starknet</p>
           </div>
         </div>
       </div>
@@ -2928,24 +3346,40 @@
 </div>
 
 <footer class="vc-footer">
-  <h2 class="vc-title">Three forces, one chain, one ticker.</h2>
-  <form class="vc-sub" action="https://starknetresearch.substack.com/subscribe" method="get" target="_blank" rel="noopener" data-umami-event="footer-subscribe">
-    <input type="email" name="email" placeholder="Email" aria-label="Email" required>
-    <button type="submit">Subscribe <i aria-hidden="true"></i></button>
-  </form>
-  <div class="vc-rule"></div>
+<div class="vc-cta-band">
+  <div class="vc-cta-in">
+    <div class="vc-cta-say">
+      <p class="vc-kicker">Starknet Thesis</p>
+      <h2 class="vc-title">Three forces,<br>one chain,<br>one ticker.</h2>
+    </div>
+    <form class="vc-sub" action="https://starknetresearch.substack.com/subscribe" method="get" target="_blank" rel="noopener" data-umami-event="footer-subscribe">
+      <label class="vc-sub-field">
+        <span class="vc-sub-label">Get the thesis in your inbox</span>
+        <input type="email" name="email" placeholder="you@domain.com" aria-label="Email" required>
+      </label>
+      <div class="vc-acts">
+        <button type="submit" class="vc-btn vc-btn-dark">Subscribe <i aria-hidden="true"></i></button>
+        <a class="vc-btn vc-btn-light" href="/">Read the thesis <i aria-hidden="true"></i></a>
+      </div>
+    </form>
+  </div>
+</div>
   <div class="vc-cols">
+    <nav class="vc-links" aria-label="Footer">
+      <div class="vc-col"><h4>Thesis</h4><ul><li><a href="/privacy">Privacy</a></li><li><a href="/quantum">Quantum</a></li><li><a href="/btcfi">BTCFi</a></li><li><a href="/strk">STRK</a></li></ul></div>
+      <div class="vc-col"><h4>Signals</h4><ul><li><a href="/ecosystem">Ecosystem</a></li><li><a href="/digest">Digest</a></li></ul></div>
+      <div class="vc-col"><h4>Follow</h4><ul><li><a href="https://starknetresearch.substack.com" target="_blank" rel="noopener">Newsletter</a></li><li><a href="https://x.com/Lyskey" target="_blank" rel="noopener">X / Twitter</a></li></ul></div>
+      <div class="vc-col"><h4>Connect</h4><ul><li><a href="https://status.starknet.io/" target="_blank" rel="noopener noreferrer">Network status</a></li><li><a href="/llms.txt">llms.txt</a></li></ul></div>
+    </nav>
+  </div>
+  <div class="vc-rule"></div>
+  <div class="vc-base">
     <div class="vc-brand">
       <img src="/assets/hero/logo.svg" alt="Starknet Thesis">
       <p>Three forces, one chain, one ticker. The independent thesis on how Starknet makes crypto private, quantum-resistant and productive.</p>
     </div>
-    <nav class="vc-links" aria-label="Footer">
-      <div class="vc-col"><h4>Thesis</h4><ul><li><a href="/privacy">Privacy</a></li><li><a href="/quantum">Quantum</a></li><li><a href="/btcfi">BTCFi</a></li><li><a href="/strk">STRK</a></li></ul></div>
-      <div class="vc-col"><h4>Follow</h4><ul><li><a href="/ecosystem">Ecosystem</a></li><li><a href="/digest">Digest</a></li><li><a href="https://starknetresearch.substack.com" target="_blank" rel="noopener">Newsletter</a></li></ul></div>
-      <div class="vc-col"><h4>Connect</h4><ul><li><a href="https://x.com/Lyskey" target="_blank" rel="noopener">X / Twitter</a></li><li><a href="https://status.starknet.io/" target="_blank" rel="noopener noreferrer">Network status</a></li><li><a href="/llms.txt">llms.txt</a></li></ul></div>
-    </nav>
+    <p class="vc-legal">Website made for educational purposes only. This is not financial advice. Always DYOR. A personal project, not affiliated with or endorsed by StarkWare. All views expressed here are my own.</p>
   </div>
-  <p class="vc-legal">Website made for educational purposes only. This is not financial advice. Always DYOR. A personal project, not affiliated with or endorsed by StarkWare. All views expressed here are my own.</p>
 </footer>
 
 <script>
@@ -4434,7 +4868,7 @@
   ]
 };
 
-  var SOON_CARD = '<div class="eco-card eco-card-soon" aria-hidden="true"><span class="eco-card-name">Much more to come</span><p class="eco-card-desc">New protocols launching on Starknet</p></div>';
+  var SOON_CARD = '<div class="mstc mstc-soon" aria-hidden="true"><div class="mstc-top"><span class="mstc-logo"><span class="eco-mono" style="display:flex">+</span></span><span class="mstc-kind">Soon</span></div><span class="mstc-name">Much more to come</span><p class="mstc-desc">New protocols launching on Starknet</p></div>';
 
   function esc(s){ return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
   function escA(s){ return esc(s).replace(/"/g,'&quot;'); }
@@ -4453,21 +4887,30 @@
   function itemId(it){
     return 'eco-' + String(it.name || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
   }
-  function chipHTML(it){
-    return '<a id="' + escA(itemId(it)) + '" class="eco-chip" href="' + escA(it.url || '#') + '" target="_blank" rel="noopener">' +
-      '<span class="eco-logo">' + logoInner(it, 1) + '</span><span>' + esc(it.name) + '</span></a>';
-  }
-  function cardHTML(it){
+  var KIND = { wallets: 'Wallet', bridges: 'Bridge', defi: 'DeFi protocol' };
+  function prettyUrl(u){ return String(u || '').replace(/^https?:\/\/(www\.)?/, '').replace(/\/+$/, ''); }
+  // ONE card form for all three categories (rebuilt 2026-09-01 with the
+  // markup): the rail filters, it never changes the card. Wallets and
+  // bridges simply carry no description and no tags, so those two rows are
+  // omitted and the copy strip still pins to the foot of the cell.
+  // Must stay byte-compatible with the static markup above, or a fresh
+  // visitor's first paint and the re-render would disagree.
+  function itemHTML(it, cat){
     var tags = Array.isArray(it.tags) ? it.tags : [];
-    return '<a id="' + escA(itemId(it)) + '" class="eco-card" href="' + escA(it.url || '#') + '" target="_blank" rel="noopener">' +
-      '<div class="eco-card-head">' +
-        '<span class="eco-card-logo">' + logoInner(it, 2) + '</span>' +
-        '<span class="eco-card-name">' + esc(it.name) + '</span>' +
-        '<i class="ti ti-brand-x eco-card-ext"></i>' +
+    var url = it.url || '#';
+    return '<div class="mstc" id="' + escA(itemId(it)) + '">' +
+      '<div class="mstc-top">' +
+        '<span class="mstc-logo">' + logoInner(it, cat === 'defi' ? 2 : 1) + '</span>' +
+        '<span class="mstc-kind">' + esc(KIND[cat] || '') + '</span>' +
       '</div>' +
-      (tags.length ? '<div class="eco-tags">' + tags.map(function(tg){ return '<span class="eco-tag">' + esc(tg) + '</span>'; }).join('') + '</div>' : '') +
-      (it.description ? '<p class="eco-card-desc">' + esc(it.description) + '</p>' : '') +
-    '</a>';
+      '<a class="mstc-name" href="' + escA(url) + '" target="_blank" rel="noopener">' + esc(it.name) + '<i class="ti ti-brand-x mstc-ext" aria-hidden="true"></i></a>' +
+      (it.description ? '<p class="mstc-desc">' + esc(it.description) + '</p>' : '') +
+      (tags.length ? '<div class="mstc-tags">' + tags.map(function(tg){ return '<span class="mstc-tag">' + esc(tg) + '</span>'; }).join('') + '</div>' : '') +
+      '<button type="button" class="mstc-copy" data-copy="' + escA(url) + '" aria-label="Copy link to ' + escA(it.name) + '">' +
+        '<span class="mstc-copy-val">' + esc(prettyUrl(url)) + '</span>' +
+        '<i class="ti ti-copy mstc-copy-ic" aria-hidden="true"></i>' +
+      '</button>' +
+    '</div>';
   }
 
   var PUBLISHED = null;
@@ -4494,9 +4937,11 @@
   }
   function renderBlock(){
     var items = currentItems();
-    els.wallets.innerHTML = items.wallets.map(chipHTML).join('');
-    els.bridges.innerHTML = items.bridges.map(chipHTML).join('');
-    els.defi.innerHTML = items.defi.map(cardHTML).join('') + SOON_CARD;
+    els.wallets.innerHTML = items.wallets.map(function(it){ return itemHTML(it, 'wallets'); }).join('');
+    els.bridges.innerHTML = items.bridges.map(function(it){ return itemHTML(it, 'bridges'); }).join('');
+    els.defi.innerHTML = items.defi.map(function(it){ return itemHTML(it, 'defi'); }).join('') + SOON_CARD;
+    // the rail owns the counts and the filter; tell it the cells changed
+    try { document.dispatchEvent(new CustomEvent('btcfi:eco-rendered')); } catch (e) {}
   }
 
   // the static markup IS the defaults render: only re-render when a draft
@@ -4754,6 +5199,146 @@
     if (editing) { work = currentItems(); renderEditor(); }
   });
   syncPill();
+})();
+</script>
+<script>
+/* BTCFI ECOSYSTEM RAIL + COPY FIELDS (mst- prefix).
+   The rail is a pure filter over the three grids that were already on the
+   page: it never re-renders a card, so it composes with the item renderer
+   above (which re-fills the same three containers from the published JSON or
+   an admin draft and then fires btcfi:eco-rendered so the counts re-read).
+   "All" is the default because the ecosystem field higher up links straight
+   to #eco-* card ids: with every panel open those anchors always resolve,
+   and openHash() re-opens "All" anyway if a hash arrives for a card the rail
+   is filtering out. The copy handlers are DELEGATED off the root, so they
+   survive a re-render without re-binding. */
+(function(){
+  var root = document.getElementById('btcfiEco');
+  if (!root) return;
+  var titleEl = document.getElementById('btcfiEcoTitle');
+  var blurbEl = document.getElementById('btcfiEcoBlurb');
+  var rows = [].slice.call(root.querySelectorAll('.mst-rail-row'));
+  var panels = [].slice.call(root.querySelectorAll('.mst-panel'));
+  // titles and blurbs are code-owned, exactly like the category labels the
+  // item editor refuses to touch. The two blurbs are the copy the old
+  // Wallets / Bridges rows carried, moved here verbatim.
+  var TITLES = {
+    all: 'All wallets, bridges and protocols',
+    wallets: 'Wallets',
+    bridges: 'Bridges',
+    defi: 'DeFi protocols'
+  };
+  var BLURBS = {
+    wallets: 'Native BTC onboarding. Shield / unshield strkBTC directly in-app.',
+    bridges: 'Move BTC and assets into Starknet from Bitcoin, Lightning, EVM chains, Solana, and all chains, with near-instant routing.'
+  };
+
+  function setCat(cat){
+    if (!TITLES[cat]) cat = 'all';
+    root.setAttribute('data-cat', cat);
+    rows.forEach(function(r){
+      var on = r.getAttribute('data-cat') === cat;
+      r.classList.toggle('is-active', on);
+      r.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+    panels.forEach(function(p){
+      p.hidden = (cat !== 'all' && p.getAttribute('data-panel') !== cat);
+    });
+    if (titleEl) titleEl.textContent = TITLES[cat];
+    if (blurbEl) {
+      var b = BLURBS[cat];
+      blurbEl.textContent = b || '';
+      blurbEl.hidden = !b;
+    }
+  }
+  rows.forEach(function(r){
+    r.addEventListener('click', function(){ setCat(r.getAttribute('data-cat')); });
+  });
+
+  // counts are read off the DOM, never off the defaults, so a published
+  // change to the JSON moves them without touching this file
+  function counts(){
+    var total = 0;
+    panels.forEach(function(p){
+      var k = p.getAttribute('data-panel');
+      var n = p.querySelectorAll('.mstc:not(.mstc-soon)').length;
+      total += n;
+      var el = root.querySelector('[data-count="' + k + '"]');
+      if (el) el.textContent = String(n);
+    });
+    var a = root.querySelector('[data-count="all"]');
+    if (a) a.textContent = String(total);
+  }
+  document.addEventListener('btcfi:eco-rendered', counts);
+
+  // an #eco-* hash (typed, or set by the globe field above on click) can
+  // point at a card the rail is filtering out: fall back to "All" first,
+  // then bring it into view, because a display:none anchor never scrolls
+  function openHash(){
+    var id = (location.hash || '').replace(/^#/, '');
+    var byPanel = { btcfiWallets: 'wallets', btcfiBridges: 'bridges', btcfiDefi: 'defi' };
+    if (byPanel[id]) setCat(byPanel[id]);
+    else if (!/^eco-/.test(id)) return;
+    var el = document.getElementById(id);
+    if (!el || !root.contains(el)) return;
+    if (!el.offsetParent) setCat('all');
+    try { el.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
+    catch (e) { el.scrollIntoView(); }
+  }
+  window.addEventListener('hashchange', openHash);
+  // the field's links can re-set a hash that is already current, which fires
+  // no hashchange at all, so the click is caught too
+  document.addEventListener('click', function(e){
+    var t = e.target;
+    if (t && t.closest && t.closest('.bgf-item')) setTimeout(openHash, 0);
+  }, true);
+
+  // one delegated copy handler for every strip, present and future
+  var timer = null;
+  function feedback(btn){
+    var val = btn.querySelector('.mstc-copy-val');
+    if (!val) return;
+    if (btn.dataset.prev == null) btn.dataset.prev = val.textContent;
+    val.textContent = 'Copied';
+    btn.classList.add('is-copied');
+    clearTimeout(timer);
+    timer = setTimeout(function(){
+      val.textContent = btn.dataset.prev;
+      delete btn.dataset.prev;
+      btn.classList.remove('is-copied');
+    }, 1400);
+  }
+  root.addEventListener('click', function(e){
+    var btn = e.target && e.target.closest ? e.target.closest('.mstc-copy') : null;
+    if (!btn) return;
+    var text = btn.getAttribute('data-copy') || '';
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function(){ feedback(btn); }, function(){ legacy(text, btn); });
+    } else { legacy(text, btn); }
+  });
+  // http:// origins and older Safari have no async clipboard
+  function legacy(text, btn){
+    try {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.setAttribute('readonly', '');
+      ta.style.cssText = 'position:fixed;top:-1000px;opacity:0';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      feedback(btn);
+    } catch (err) {}
+  }
+
+  // js/search.js lands an "ecosystem item" result on one of the three grid
+  // containers by id. Those live inside a panel the rail may be filtering
+  // out, so expose the same re-open hook the bridge-roadmap accordion does.
+  window.__btcfiEcoShow = function(cat){ setCat(cat); return true; };
+
+  setCat('all');
+  counts();
+  openHash();
 })();
 </script>
 <script>

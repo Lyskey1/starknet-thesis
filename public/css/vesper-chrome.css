@@ -6,7 +6,7 @@
 @font-face { font-family: "General Sans"; font-weight: 400; font-display: swap; src: url("/fonts/GeneralSans-Regular.woff2") format("woff2"); }
 @font-face { font-family: "General Sans"; font-weight: 500; font-display: swap; src: url("/fonts/GeneralSans-Medium.woff2") format("woff2"); }
 :root { --vc-bg: #0d0d0d; --vc-panel: #141414; --vc-line: #262626; --vc-text: #fafafa; --vc-dim: rgba(250,250,250,.65); --vc-faint: #616161; --vc-orange: #c53400; --vc-orange-d: #a02a00;
-  --vc-sans: "General Sans", "Helvetica Neue", Arial, sans-serif; --vc-tag: "Mulish", "Helvetica Neue", Arial, sans-serif; }
+  --vc-sans: "General Sans", "Helvetica Neue", Arial, sans-serif; --vc-tag: "Mulish", "Helvetica Neue", Arial, sans-serif; --vc-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace; }
 
 /* header pill */
 header.vc-header { position: fixed; top: 10px; left: 50%; transform: translateX(-50%); z-index: 100; width: min(880px, 95vw); height: 51px;
@@ -32,29 +32,71 @@ header.vc-header .vc-mobile a.vc-cta { margin-top: 12px; justify-content: center
 @media (max-width: 640px) { header.vc-header { top: 12px; width: calc(100% - 40px); } }
 /* the old chrome assumed a bar in flow; the pill floats, so pages keep their own top padding */
 
-/* footer */
-footer.vc-footer { position: relative; width: 100vw; max-width: none; margin: 0 0 0 calc(50% - 50vw); padding: 64px 0 0; background: var(--vc-bg); color: var(--vc-text); font-family: var(--vc-sans); border-top: 0; }
-.vc-title { margin: 0 auto; text-align: center; font-weight: 300; font-size: clamp(38px, 5.556vw, 80px); line-height: .9; letter-spacing: -.022em; padding: 0 24px; }
-form.vc-sub { display: flex; align-items: center; margin: 42px auto 0; width: min(551px, calc(100% - 48px)); height: 51px; border: 1px solid rgba(255,255,255,.2); background: rgba(0,0,0,.8); padding: 8px 8px 8px 24px; backdrop-filter: blur(8px); }
-form.vc-sub input { flex: 1; min-width: 0; background: transparent; border: 0; outline: none; color: var(--vc-text); font: 16px/1.2 var(--vc-sans); }
-form.vc-sub input::placeholder { color: var(--vc-text); }
-form.vc-sub input:focus-visible { outline: 2px solid var(--vc-orange); outline-offset: 4px; }
-form.vc-sub button { margin-left: auto; align-self: stretch; display: inline-flex; align-items: center; gap: 10px; padding: 0 16px; border: 1px solid rgba(255,255,255,.5); background: transparent; color: var(--vc-orange); font: 16px/1.2 var(--vc-sans); cursor: pointer; white-space: nowrap; transition: border-color .25s, background-color .25s; }
-form.vc-sub button:hover { border-color: var(--vc-orange); background: rgba(197,52,0,.16); }
-form.vc-sub button i { display: block; width: 2px; height: 2px; background: currentColor; }
-footer.vc-footer .vc-rule { margin-top: 64px; border-top: 1px solid rgba(255,255,255,.15); }
-footer.vc-footer .vc-cols { margin: 29px auto 0; width: calc(100% - 48px); max-width: 1392px; display: flex; align-items: flex-start; justify-content: space-between; padding-bottom: 64px; gap: 40px; }
-footer.vc-footer .vc-brand { display: flex; flex-direction: column; gap: 24px; width: 396px; max-width: 40%; }
+/* footer: two bands. Band one is a full-bleed accent block (statement + email
+   capture + two buttons); band two is the near-black link/brand band.
+   Band one is styled through BARE class selectors, never a
+   `footer.vc-footer ...` descendant selector, because strk.html and
+   digest.html lift it out of the footer into the pinned `.ct-pin` layer. */
+footer.vc-footer { position: relative; width: 100vw; max-width: none; margin: 0 0 0 calc(50% - 50vw); padding: 0; background: var(--vc-bg); color: var(--vc-text); font-family: var(--vc-sans); border-top: 0; }
+
+/* ---- band one: the accent statement block ---- */
+.vc-cta-band { width: 100vw; margin-left: calc(50% - 50vw); flex: none; background: var(--vc-orange); color: #fff; padding: clamp(36px, 4.5vh, 60px) 0; }
+.vc-cta-in { width: calc(100% - 48px); max-width: 1392px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 40px 56px; align-items: end; min-height: min(24vh, 250px); text-align: left; }
+.vc-cta-say { display: block; }
+.vc-kicker { margin: 0 0 20px; font-family: var(--vc-mono); font-weight: 400; font-size: 11px; line-height: 1.2; letter-spacing: .2em; text-transform: uppercase; color: #fff; }
+.vc-title { margin: 0; padding: 0; text-align: left; color: #fff; font-family: var(--vc-sans); font-weight: 300; font-size: clamp(34px, 4.4vw, 66px); line-height: .96; letter-spacing: -.022em; }
+
+form.vc-sub { display: flex; flex-direction: column; align-items: stretch; gap: 18px; width: 100%; max-width: 440px; height: auto; margin: 0 0 0 auto; border: 0; border-radius: 0; background: none; padding: 0; backdrop-filter: none; -webkit-backdrop-filter: none; }
+.vc-sub-field { display: block; }
+.vc-sub-label { display: block; margin-bottom: 9px; font-family: var(--vc-mono); font-size: 11px; line-height: 1.2; letter-spacing: .16em; text-transform: uppercase; color: rgba(255,255,255,.82); }
+form.vc-sub input { flex: none; width: 100%; height: 46px; min-width: 0; border: 1px solid rgba(255,255,255,.5); border-radius: 0; background: rgba(0,0,0,.16); padding: 0 14px; outline: none; color: #fff; font: 15px/1.2 var(--vc-sans); }
+form.vc-sub input::placeholder { color: rgba(255,255,255,.68); }
+form.vc-sub input:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+.vc-acts { display: flex; align-items: stretch; gap: 12px; }
+.vc-btn { flex: 1 1 0; min-width: 0; display: inline-flex; align-items: center; justify-content: space-between; gap: 14px; height: 52px; padding: 0 18px; margin: 0; border: 0; border-radius: 0; box-shadow: none; font: 15px/1.2 var(--vc-sans); text-decoration: none; white-space: nowrap; cursor: pointer; transition: background-color .25s, color .25s; }
+.vc-btn-dark { background: var(--vc-bg); color: var(--vc-text); }
+.vc-btn-dark:hover { background: #000; }
+.vc-btn-light { background: var(--vc-text); color: var(--vc-bg); }
+.vc-btn-light:hover { background: #fff; }
+.vc-btn i { display: block; flex: none; width: 7px; height: 7px; background: none; border-top: 1.5px solid currentColor; border-right: 1.5px solid currentColor; transform: rotate(45deg); }
+
+/* the pinned pages keep their sticky reveal; the band just rides inside it */
+.ct-pin.vc-pin-band { display: flex; flex-direction: row; align-items: flex-start; justify-content: flex-start; gap: 0; padding: 10vh 0 0; text-align: left; }
+
+/* ---- band two: link columns, then brand + legal ---- */
+footer.vc-footer .vc-cols { display: block; width: calc(100% - 48px); max-width: 1392px; margin: 0 auto; padding: 0; }
+footer.vc-footer nav.vc-links { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: stretch; gap: 0; padding: 0; }
+footer.vc-footer .vc-col { display: flex; flex-direction: column; gap: 22px; width: auto; padding: 56px 28px 60px; border-left: 1px solid var(--vc-line); }
+footer.vc-footer .vc-col:first-child { padding-left: 0; border-left: 0; }
+footer.vc-footer .vc-col h4 { margin: 0; font-family: var(--vc-mono); font-weight: 400; font-size: 11px; line-height: 1.2; letter-spacing: .18em; text-transform: uppercase; color: var(--vc-dim); }
+footer.vc-footer .vc-col ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 18px; }
+footer.vc-footer .vc-col a { color: var(--vc-text); text-decoration: none; font-size: 16px; line-height: 1.25; transition: color .25s; }
+footer.vc-footer .vc-col a:hover { color: var(--vc-orange); }
+footer.vc-footer .vc-rule { width: calc(100% - 48px); max-width: 1392px; margin: 0 auto; border-top: 1px solid var(--vc-line); }
+footer.vc-footer .vc-base { width: calc(100% - 48px); max-width: 1392px; margin: 0 auto; padding: 32px 0 40px; display: grid; grid-template-columns: minmax(0, 396px) minmax(0, 1fr); gap: 28px 56px; align-items: start; }
+footer.vc-footer .vc-brand { display: flex; flex-direction: column; gap: 16px; width: auto; max-width: none; }
 footer.vc-footer .vc-brand img { display: block; height: 26px; width: 160px; }
-footer.vc-footer .vc-brand p, footer.vc-footer .vc-col h4 { margin: 0; font-family: var(--vc-tag); font-weight: 400; font-size: 16px; line-height: 1.2; text-transform: uppercase; color: var(--vc-text); }
-footer.vc-footer nav.vc-links { display: flex; gap: 90px; }
-footer.vc-footer .vc-col { display: flex; flex-direction: column; gap: 24px; width: 180px; }
-footer.vc-footer .vc-col ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 16px; }
-footer.vc-footer .vc-col a { color: rgba(255,255,255,.7); text-decoration: none; font-size: 16px; line-height: 1.2; transition: color .25s; }
-footer.vc-footer .vc-col a:hover { color: #fff; }
-footer.vc-footer .vc-legal { margin: 0 auto; width: calc(100% - 48px); max-width: 1392px; padding-bottom: 32px; font-family: var(--vc-tag); font-size: 12px; line-height: 1.5; text-transform: uppercase; color: rgba(255,255,255,.45); }
-@media (max-width: 1023px) { footer.vc-footer .vc-cols { flex-direction: column; gap: 40px; } footer.vc-footer .vc-brand { max-width: none; width: auto; } footer.vc-footer nav.vc-links { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; width: 100%; } footer.vc-footer .vc-col { width: auto; } }
+footer.vc-footer .vc-brand p { margin: 0; font-family: var(--vc-sans); font-weight: 400; font-size: 15px; line-height: 1.5; text-transform: none; color: var(--vc-dim); }
+footer.vc-footer .vc-legal { margin: 0; width: auto; max-width: none; padding: 0; font-family: var(--vc-tag); font-size: 12px; line-height: 1.6; text-transform: uppercase; color: rgba(250,250,250,.45); }
+
+@media (max-width: 1023px) {
+  .vc-cta-in { grid-template-columns: 1fr; align-items: start; min-height: 0; gap: 32px; }
+  form.vc-sub { max-width: 520px; margin: 0; }
+  footer.vc-footer nav.vc-links { grid-template-columns: 1fr 1fr; row-gap: 40px; padding: 0; }
+  footer.vc-footer .vc-col { padding: 40px 0 40px 24px; }
+  footer.vc-footer .vc-col:nth-child(odd) { padding-left: 0; border-left: 0; }
+  footer.vc-footer .vc-base { grid-template-columns: 1fr; }
+}
+@media (max-width: 880px) {
+  .ct-pin.vc-pin-band { position: relative; height: auto; display: block; padding: 0; }
+}
+@media (max-width: 640px) {
+  .vc-acts { flex-direction: column; }
+  .vc-btn { flex: none; width: 100%; }
+  footer.vc-footer nav.vc-links { grid-template-columns: 1fr; row-gap: 0; }
+  footer.vc-footer .vc-col { padding: 28px 0; border-left: 0; }
+}
 
 /* styles.css styles the bare <nav> element as the old fixed bar; neutralise it for the chrome's navs */
-header.vc-header nav, footer.vc-footer nav { position: static; top: auto; left: auto; right: auto; z-index: auto; padding: 0; background: none; border: 0; backdrop-filter: none; -webkit-backdrop-filter: none; justify-content: flex-start; }
+header.vc-header nav, footer.vc-footer nav { position: static; top: auto; left: auto; right: auto; z-index: auto; height: auto; min-height: 0; padding: 0; background: none; border: 0; backdrop-filter: none; -webkit-backdrop-filter: none; justify-content: flex-start; }
 header.vc-header nav.vc-mobile { position: absolute; }
