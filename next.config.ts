@@ -15,6 +15,29 @@ const nextConfig: NextConfig = {
     return STATIC_PAGES.map((page) => ({ source: `/${page}.html`, destination: `/${page}`, permanent: true }));
   },
 
+  // No security headers were set anywhere in the repo. Vercel adds HSTS on a
+  // custom domain, so this covers the rest. The CSP is frame-ancestors only:
+  // a full policy would have to enumerate cdn.jsdelivr.net, cloud.umami.is and
+  // fonts.googleapis.com, and getting that wrong silently breaks the page, so
+  // it is deliberately scoped to the one directive that cannot.
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        headers: [
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          { key: "X-Frame-Options", value: "SAMEORIGIN" },
+          { key: "Content-Security-Policy", value: "frame-ancestors 'self'" },
+          {
+            key: "Permissions-Policy",
+            value: "camera=(), microphone=(), geolocation=(), interest-cohort=()",
+          },
+        ],
+      },
+    ];
+  },
+
   compiler: {
     // Strip `console.*` from production bundles, keeping error/warn for
     // monitoring. Left on in dev so logs stay available.
@@ -25,7 +48,7 @@ const nextConfig: NextConfig = {
   },
 
   images: {
-    // Modern formats — smaller than JPEG/PNG; the browser picks what it supports.
+    // Modern formats, smaller than JPEG/PNG; the browser picks what it supports.
     formats: ["image/avif", "image/webp"],
     // Breakpoints `next/image` uses to build `srcset`. `deviceSizes` covers
     // full-width images (aligned with the adaptive-grid breakpoints + retina);

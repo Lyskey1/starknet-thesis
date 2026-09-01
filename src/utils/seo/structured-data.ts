@@ -2,7 +2,7 @@
  * @fileoverview JSON-LD structured data helpers.
  *
  * Structured data lets search engines understand the site as entities
- * (Organization, WebSite) rather than just text — improving rich results.
+ * (Organization, WebSite) rather than just text, improving rich results.
  * Render the output inside a `<script type="application/ld+json">` tag.
  */
 
@@ -19,9 +19,20 @@ export function getSiteStructuredData() {
       {
         "@type": "Organization",
         "@id": `${siteConfig.url}/#organization`,
-        name: siteConfig.name,
+        // The publishing entity, not the page title. Must match the
+        // `#organization` node emitted by the static pages in public/.
+        name: "Starknet Thesis",
         url: siteConfig.url,
-        logo: `${siteConfig.url}/android-icon-192x192.png`,
+        logo: {
+          "@type": "ImageObject",
+          url: `${siteConfig.url}/apple-icon-180x180.png`,
+          width: 180,
+          height: 180,
+        },
+        sameAs: [
+          "https://x.com/Lyskey",
+          "https://starknetresearch.substack.com/",
+        ],
       },
       {
         "@type": "WebSite",
@@ -30,6 +41,7 @@ export function getSiteStructuredData() {
         description: siteConfig.description,
         url: siteConfig.url,
         publisher: { "@id": `${siteConfig.url}/#organization` },
+        inLanguage: "en",
       },
     ],
   };

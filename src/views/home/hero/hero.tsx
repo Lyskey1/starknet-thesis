@@ -93,11 +93,19 @@ const HeroCopyBlock = ({
   mode,
   enabled,
   immediateOut,
+  heading = "h1",
 }: {
   copy: HeroCopy;
   mode: "once" | "always";
   enabled: boolean;
   immediateOut?: boolean;
+  /**
+   * Which heading level this act's title renders as. The hero plays two acts
+   * through this one block, and both used to emit an h1, so the landing page
+   * shipped TWO h1 elements. The opening act is the page's heading; every
+   * later act is a section inside it, so it takes h2.
+   */
+  heading?: "h1" | "h2";
 }) => (
   <div className="absolute inset-0 max-lg:flex max-lg:flex-col max-lg:justify-between max-lg:px-[1.5rem] max-lg:pt-[6.5rem] max-lg:pb-[2rem] max-sm:px-[1.25rem] max-sm:pt-[5.5rem]">
     <Inview
@@ -111,7 +119,7 @@ const HeroCopyBlock = ({
     </Inview>
 
     <TextEngine
-      tag="h1"
+      tag={heading}
       mode={mode}
       enabled={enabled}
       immediateOut={immediateOut}
@@ -226,7 +234,7 @@ export const Hero = ({ introStarted }: HeroProps) => {
         <HeroCopyBlock copy={INTRO} mode="once" enabled={introStarted} />
       </animated.div>
       <animated.div style={{ opacity: quantumOpacity, visibility: quantumVisibility }}>
-        <HeroCopyBlock copy={QUANTUM} mode="always" enabled={quantumActive} immediateOut={false} />
+        <HeroCopyBlock copy={QUANTUM} mode="always" enabled={quantumActive} immediateOut={false} heading="h2" />
       </animated.div>
     </div>
   );
