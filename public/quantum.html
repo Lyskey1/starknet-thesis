@@ -3390,12 +3390,9 @@ body.page-quantum{overflow-x:clip;}
   font-family:'General Sans','Helvetica Neue',Arial,sans-serif;
   font-weight:600 !important;color:#fff;
   font-size:clamp(34px,7vw,124px);line-height:1.02;letter-spacing:-.04em !important;}
-.qxq-foot{margin:38px 0 0;max-width:70ch;font-size:17px;line-height:1.6;color:#9a9a9a;}
-.qxq-foot b{color:#c53400;font-weight:600;}
 @media(max-width:860px){
   .qxq{margin-top:72px;padding:72px 12px;}
   .qxq-quote{font-size:clamp(30px,9vw,48px);}
-  .qxq-foot{font-size:15px;margin-top:28px;}
 }
 
 /* ============================================================
@@ -3783,6 +3780,22 @@ body.page-quantum{overflow-x:clip;}
   .th-stark-duo--sui{grid-template-columns:minmax(0,1fr);min-height:0;gap:28px;}
   .th-stark-duo--sui .th-doc img{height:auto;max-height:none;}
 }
+
+/* the news toggle as the hero's ghost CTA. .qh-cta gives the geometry; these
+   rules only undo the old wide-bar skin and keep the tile turning on open.
+   No `color: inherit` on the label: that span IS the block element, so
+   inherit would resolve against .qh-cta and paint it black on a dark fill,
+   which is exactly the bug the btcfi toggle hit. */
+.news-toggle.qh-cta{width:auto;justify-content:center;cursor:pointer;
+  border:0;background:none;box-shadow:none;border-radius:0;padding:0;margin-inline:auto;}
+.news-toggle.qh-cta .news-toggle-title{font-family:inherit;font-size:inherit;
+  letter-spacing:normal;text-transform:none;
+  display:flex;align-items:center;justify-content:center;}
+.news-toggle.qh-cta > i{transition:transform .3s ease,background var(--hover-dur) var(--hover-ease);}
+.news-toggle.qh-cta[aria-expanded="true"] > i{transform:rotate(90deg);}
+.news-section:has(.news-toggle.qh-cta){border:0;background:none;padding:0;
+  display:flex;flex-direction:column;align-items:center;}
+.news-section:has(.news-toggle.qh-cta) .news-grid{width:100%;margin-top:26px;}
 </style>
 
   <!-- chapter: the referee -->
@@ -4056,16 +4069,19 @@ var qvFilmChrome = thVideoChrome({
 <section class="qxq th-pm-reveal" id="qxq-band" aria-labelledby="on-the-day-the-line-is">
   <p class="qxq-kicker">Q-day</p>
   <h2 id="on-the-day-the-line-is" class="qxq-quote">On the day the line is drawn for everyone, most chains will discover which side they were born on. Starknet already knows.</h2>
-  <p class="qxq-foot">The thesis needs only two recognitions: that the quantum-security premium is <b>not yet priced in</b>, and that Starknet holds the <b>structural moat</b> to capture it.</p>
 </section>
 
 <!-- NEWS -->
 <section>
   <div class="wrap">
     <div class="news-section news-flashy th-pm-reveal" id="newsSection">
-      <button class="news-toggle" id="newsToggle" aria-expanded="false">
-        <span class="news-toggle-title"><span class="news-eyebrow">Latest</span> Quantum × Starknet news</span>
-        <i class="ti ti-chevron-down news-chevron" aria-hidden="true"></i>
+      <!-- the toggle takes the hero's ghost CTA shape: a transparent block
+           with a hairline border plus a matching square tile carrying the
+           asterisk. Still a real button with aria-expanded, and #newsToggle is
+           unchanged, so the news JS and the chevron rotation keep working. -->
+      <button class="news-toggle qh-cta qh-cta--muted" id="newsToggle" aria-expanded="false">
+        <span class="news-toggle-title">Quantum × Starknet news</span>
+        <i class="news-chevron" aria-hidden="true"><svg viewBox="0 0 51 51" fill="none"><path d="M26.293 23.583L34.4834 15.3926L35.6064 16.5156L27.416 24.7061H39V26.2939H27.418L35.6084 34.4844L34.4854 35.6074L26.293 27.415V39H24.7051V27.417L16.5146 35.6074L15.3916 34.4844L23.582 26.2939H12V24.7061H23.584L15.3936 16.5156L16.5166 15.3926L24.7051 23.5811V12H26.293V23.583Z"/></svg></i>
       </button>
       <div class="news-grid" id="newsGrid"></div>
     </div>
