@@ -85,16 +85,21 @@
      placement because this hero carries a fifth block the others do not: the
      live countdown. Order is the landing's: kicker, display, lede, CTA pair,
      then the countdown under them. */
-  .hero {
-    min-height: calc(100vh - 72px); display: flex; flex-direction: column; justify-content: center;
-    align-items: stretch;
-    /* NOT overflow:hidden. The particle field is additive over the page-wide
-       backdrop canvas, so clipping it to the hero box put a hard edge exactly
-       where the two are supposed to be continuous. */
-    overflow: visible;
-    padding: 112px 1.667vw 26px; max-width: none; margin: 0 auto; text-align: left; position: relative;
-  }
-  .qh-inner { width: 100%; max-width: none; margin: 0; padding: 0; position: relative; z-index: 1; }
+  /* FULL VIEWPORT, HEADER OVER IT, ported from /btcfi element for element.
+     The header pill is NOT fixed on these pages: css/eco-stage.css declares
+     `body > *:not(.eco-bd) { position: relative; z-index: 1 }`, which
+     out-specifies vesper-chrome's `position: fixed`, so the pill occupies
+     --qh-chrome pixels of FLOW above the hero. That is why the hero used to
+     start below the nav with a dark band behind it. The negative margin gives
+     that strip back so the hero is a true 100vh, and z-index 0 (body-scoped,
+     because the eco-stage rule would otherwise win) puts the hero back UNDER
+     the pill so the pill reads over it. The flame canvas is z-index 0 too and
+     earlier in the DOM, so it stays behind. */
+  body.page-quantum { --qh-chrome: 51px; }
+  .hero { position: relative; display: block; height: 100vh; min-height: 100vh;
+    max-width: none; margin: calc(-1 * var(--qh-chrome)) 0 0; padding: 0;
+    overflow: hidden; text-align: left; background: transparent; }
+  body.page-quantum .hero { z-index: 0; }
   /* styles.css hangs a centred radial glow off .hero::before. This hero is
      left-aligned and carries its own light in the WebGL field, and the glow
      was one more warm layer reaching for the edges. */
@@ -427,9 +432,9 @@
        WebGL is missing or the reader prefers reduced motion the module either
        skips or paints one settled frame, and the hero copy is unaffected. -->
   <div class="qh-stage" id="qhStage" aria-hidden="true"></div>
-  <div class="qh-inner">
   <p class="hero-eyebrow">The quantum reckoning</p>
   <h1 id="quantum-will-break-most-chains-starknet" class="hero-title">Quantum will break most chains. Starknet has been <em>waiting for it.</em></h1>
+  <div class="qh-left">
   <p class="hero-subtitle">Governments, Big Tech, and researchers are increasingly converging on the same timeline for when quantum breaks today's cryptography. When it arrives, nearly every onchain wallet is exposed. For most of crypto, this is a threat. For Starknet, it highlights the strength of its architecture.</p>
   <!-- CTA PAIR: the landing's SendRequest, copied. A chalk block carrying a
        sentence-case label, and beside it a separate square tile of the same
@@ -441,7 +446,9 @@
     <a class="qh-cta" href="#q-day-and-the-fault-line"><span>See the fault line</span><i aria-hidden="true"><svg viewBox="0 0 51 51" fill="none"><path d="M26.293 23.583L34.4834 15.3926L35.6064 16.5156L27.416 24.7061H39V26.2939H27.418L35.6084 34.4844L34.4854 35.6074L26.293 27.415V39H24.7051V27.417L16.5146 35.6074L15.3916 34.4844L23.582 26.2939H12V24.7061H23.584L15.3936 16.5156L16.5166 15.3926L24.7051 23.5811V12H26.293V23.583Z"/></svg></i></a>
     <a class="qh-cta qh-cta--muted" href="#starknet-will-be-ready-before-q"><span>How Starknet is ready</span><i aria-hidden="true"><svg viewBox="0 0 51 51" fill="none"><path d="M26.293 23.583L34.4834 15.3926L35.6064 16.5156L27.416 24.7061H39V26.2939H27.418L35.6084 34.4844L34.4854 35.6074L26.293 27.415V39H24.7051V27.417L16.5146 35.6074L15.3916 34.4844L23.582 26.2939H12V24.7061H23.584L15.3936 16.5156L16.5166 15.3926L24.7051 23.5811V12H26.293V23.583Z"/></svg></i></a>
   </div>
+  </div>
 
+  <div class="qh-right">
     <!-- COUNTDOWN, inline. The card is gone: no border, radius, fill, padding
          or glass layer. It is a hairline, a mono label and one row of values,
          so it reads as data belonging to the hero rather than a second panel.
@@ -461,7 +468,6 @@
         <span class="qh-cd-g"><b class="qh-cd-n qh-cd-sec" id="cd-secs">38</b><i>Sec</i></span>
       </div>
     </div>
-
   </div>
 </div>
 
@@ -2037,9 +2043,20 @@ if (window.thStickyRail) {
 @media(max-width:700px){.th-st-vs{grid-template-columns:1fr;}}
 </style>
 <section class="th-pm-sec">
-  <div class="th-pm-head th-pm-reveal"><span class="th-pm-marker"></span><span class="th-pm-num">03</span><h2 id="starknet-will-be-ready-before-q" class="th-pm-title">Starknet will be ready <b>before Q-day.</b></h2></div>
-  <p class="th-pm-eyebrow th-pm-reveal">The head start</p>
-  <p class="th-q-flow th-pm-reveal">Every other major chain starts its quantum migration from zero: vulnerable proofs, vulnerable wallets, and a hard fork between them and safety. Starknet starts from three facts that are already true on mainnet today.</p>
+  <!-- The head, set as the privacy page's property block (.phead in
+       css/privacy-fx.css): a small mono accent kicker, one big solid heading,
+       then the paragraph. The "03" numeral and its marker triangle are gone,
+       and the heading is one weight in one colour rather than a white half
+       and an accent half.
+       THE ID STAYS ON THE HEADING. #starknet-will-be-ready-before-q is both a
+       committed search-index anchor and the target of this page's own hero CTA
+       ("How Starknet is ready"), so dropping the heading outright would have
+       broken the hero button. -->
+  <div class="qprop th-pm-reveal">
+    <p class="qprop-rn">The head start</p>
+    <h2 id="starknet-will-be-ready-before-q" class="qprop-name">Starknet will be ready before Q-day</h2>
+    <p class="qprop-body">Every other major chain starts its quantum migration from zero: vulnerable proofs, vulnerable wallets, and a hard fork between them and safety. Starknet starts from three facts that are already true on mainnet today.</p>
+  </div>
 
   <!-- THE HEAD START, as the reference exploded-stack section (2026-09-01).
        Reference anatomy: three columns over faint vertical guides. A small
@@ -2860,61 +2877,16 @@ body.page-quantum{overflow-x:clip;}
    its box cut it, so it needed an edge fade of its own. This scene is a ring
    fitted inside the frame by js/quantum-hero-mark.js (R_FIT against the fit
    factors), and a 9 percent edge mask would clip the bright annulus instead
-   of the nothing that surrounds it. The .hero::after edge seal below is what
-   keeps warmth off the window edges. */
+   of the nothing that surrounds it. Nothing seals the hero's edges any
+   more: the page-wide flame runs straight through it. */
 .qh-stage { position: absolute; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
 .qh-stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 
-/* COPY SCRIM. It hangs off .hero rather than .qh-inner so its box is the
-   FULL hero, viewport wide: the earlier version was a gradient inside the
-   1160 content box and its own box edges showed as hard vertical and
-   horizontal seams. As a generated last child at z-index auto it paints
-   ABOVE .qh-stage (z-index -1) and BELOW .qh-inner
-   (z-index 1), so every piece of hero copy stays on top of it.
-   It stays translucent on purpose: js/eco-backdrop.js is a fixed canvas
-   under the whole page and nothing opaque may sit over it. */
-.hero::after {
-  content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none;
-  /* TWO LAYERS, EACH WITH ONE JOB.
-     1. the reading scrim: a narrow ellipse hugging the LEFT GUTTER, where
-        the kicker, display, lede, CTA pair and countdown all begin. It was
-        deliberately pulled back when the hero-bloomed particle sun was
-        replaced by the mark centrepiece: the old 60 percent by 72 percent
-        ellipse at .90 was sized to fight a bloomed rim sweeping the reading
-        column, and over a ring it simply swallowed the ring's left arc.
-        /btcfi runs the same centrepiece under the same display type with no
-        scrim at all, so this one only has to keep the first inch of each line
-        off the flame backdrop.
-     2. the TOP seal, and only the top. It used to seal all four sides, and
-        that is what made the hero read as a box sitting on the page rather
-        than part of it: js/eco-backdrop.js paints the same flame across the
-        WHOLE page, so a hero that fades its own left, right and bottom edges
-        to near-opaque ground draws a rectangle around itself. Measured at
-        1440 before this change, the pixel one row below the hero's bottom
-        edge jumped from rgb(19,14,13) inside to rgb(73,17,6) immediately
-        below: a visible horizontal seam, which is the thing being fixed.
-        The top is different and keeps its seal, because the top of the hero
-        IS a real page edge, under the nav.
-     Both stay translucent: js/eco-backdrop.js is a fixed canvas under the
-     whole page and nothing opaque may sit over it. */
-  background:
-    radial-gradient(34% 58% at 12% 52%,
-      rgba(13,13,13,.66) 0%,
-      rgba(13,13,13,.44) 46%,
-      rgba(13,13,13,0) 100%),
-    linear-gradient(to bottom, rgba(13,13,13,.92) 0%, rgba(13,13,13,0) 12%);
-}
-@media (max-width: 900px) {
-  /* the column runs the full width here, so the ellipse is recentred rather
-     than widened, which would black the whole hero out */
-  .hero::after { background:
-    radial-gradient(96% 60% at 46% 44%,
-      rgba(13,13,13,.78) 0%,
-      rgba(13,13,13,.62) 42%,
-      rgba(13,13,13,.20) 76%,
-      rgba(13,13,13,0) 100%),
-    linear-gradient(to bottom, rgba(13,13,13,.92) 0%, rgba(13,13,13,0) 12%); }
-}
+/* NO COPY SCRIM. It used to seal the hero's edges to near-opaque ground,
+   and its TOP seal is what painted a dark band under the floating header
+   pill. /btcfi runs this same centrepiece under this same display type
+   with no scrim at all, so this hero does too: every layer stays
+   transparent over the page-wide flame canvas. */
 
 
 /* ============================================================
@@ -3495,6 +3467,73 @@ body.page-quantum{overflow-x:clip;}
   .rxs-ntext{max-width:none;}
   .rxs-guides{display:none;}
 }
+
+/* ============================================================
+   THE HERO'S FOUR SLOTS, ported from /btcfi element for element
+   (the .bfh- block in public/btcfi.html), which is itself the
+   landing artboard's geometry in the same vw units (Figma pixels
+   / 14.4): gutters 1.667vw, display 4.6vw at weight 300, mono
+   blocks in Mulish.
+     kicker   top left
+     title    top left, under it
+     .qh-left bottom left: the note, then the CTA pair
+     .qh-right bottom right: the countdown, right aligned
+   The two top offsets carry a px floor so the copy can never slide
+   under the floating header pill on a narrow desktop window; at
+   1440 the floor is inert and the offsets are the landing's.
+   Everything stays transparent: js/eco-backdrop.js paints the
+   flame on a fixed canvas underneath and no layer here fills.
+   ============================================================ */
+.hero > .hero-eyebrow{position:absolute;top:max(7.2vw,88px);left:1.667vw;z-index:2;margin:0;}
+.hero > .hero-title{position:absolute;top:max(9.028vw,114px);left:1.667vw;z-index:2;margin:0;
+  width:52vw;max-width:none;}
+.qh-left{position:absolute;left:1.667vw;bottom:2.153vw;z-index:2;width:22vw;
+  display:flex;flex-direction:column;gap:1.25vw;align-items:flex-start;}
+/* the note takes /btcfi's mono treatment: sentence case in the source,
+   caps on screen, so a screen reader and the search index get real words */
+.qh-left .hero-subtitle{margin:0;max-width:none;width:100%;
+  font-family:var(--vc-tag);font-weight:400;font-size:max(0.9vw,11px);line-height:1.5;
+  letter-spacing:.06em;text-transform:uppercase;color:rgba(250,250,250,.62);}
+/* the CTA row is allowed out of the 22vw column. That width sizes the
+   NOTE, which is /btcfi's measure for it; this hero carries two CTAs where
+   /btcfi carries one, and constraining them to 22vw stacked them. The block
+   is absolutely positioned, so overflowing its own width costs nothing. */
+.qh-left .qh-ctas{margin:0;width:max-content;max-width:none;flex-wrap:nowrap;}
+.qh-right{position:absolute;right:1.667vw;bottom:2.153vw;z-index:2;
+  display:flex;flex-direction:column;align-items:flex-end;gap:.9vw;text-align:right;}
+.qh-right .qh-cd{margin:0;width:auto;border:0;padding:0;}
+.qh-right .qh-cd-label{justify-content:flex-end;text-align:right;}
+.qh-right .qh-cd-row{justify-content:flex-end;}
+
+@media (max-width:980px){
+  /* the frame stops being an artboard and becomes a column */
+  .hero{height:auto;min-height:100svh;padding:calc(var(--qh-chrome) + 84px) 1.25rem 2rem;}
+  .hero > .hero-eyebrow,.hero > .hero-title{position:static;width:auto;}
+  .qh-left,.qh-right{position:static;width:auto;align-items:flex-start;text-align:left;}
+  .qh-left{margin-top:1.5rem;gap:1.25rem;}
+  .qh-right{margin-top:2rem;}
+  .qh-right .qh-cd-label,.qh-right .qh-cd-row{justify-content:flex-start;text-align:left;}
+}
+
+/* ============================================================
+   THE PROPERTY BLOCK (qprop-), copied from the privacy page's
+   .phead in css/privacy-fx.css: mono accent kicker at 12px/.14em,
+   one big General Sans 600 heading at 1.02 leading and -.04em
+   tracking, then the paragraph at 1.6 leading.
+   Colours are written out, not tokens: this page defines none of
+   privacy's --pf-* set.
+   font-weight carries !important because styles.css locks the whole
+   heading family with `h1, h2, ... { font-weight: 300 !important }`
+   and no amount of specificity reaches that.
+   ============================================================ */
+.qprop{margin:0;}
+.qprop-rn{margin:0 0 10px;font-family:'IBM Plex Mono',monospace;font-size:12px;
+  letter-spacing:.14em;text-transform:uppercase;color:#c53400;}
+.qprop-name{margin:0 0 14px;font-family:'General Sans','Helvetica Neue',Arial,sans-serif;
+  font-weight:600 !important;font-size:clamp(30px,4.3vw,60px);line-height:1.02;
+  letter-spacing:-.04em !important;color:#fafafa;max-width:none;}
+.qprop-body{margin:0;max-width:78ch;font-family:'General Sans','Helvetica Neue',Arial,sans-serif;
+  font-size:clamp(15px,1.25vw,18px);line-height:1.6;color:rgba(250,250,250,.62);}
 </style>
 
   <!-- chapter: the referee -->

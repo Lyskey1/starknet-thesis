@@ -495,10 +495,21 @@
   .bstk-iso { position: relative; width: 310px; height: 216px; transform: scale(var(--iso-s,1)) rotateX(58deg) rotateZ(-45deg); transform-style: preserve-3d; }
   .bstk-plane { position: absolute; inset: 0; transform-style: preserve-3d; background: none; border: 0; padding: 0; cursor: pointer;
     transform: translateZ(var(--pz)); transition: transform .42s cubic-bezier(.22,1,.36,1), opacity .5s ease; }
-  /* the out pose is fixed, never derived from the plane's slot: deriving
-     it from --pz is what glued a lifted middle plane to the plane still
-     resting above it */
-  .bstk-plane.is-out { transform: translateZ(146px) translate(54px, -54px); }
+  /* the active plane RISES IN PLACE. It used to fly out to a fixed pose
+     (translateZ(146px) translate(54px,-54px)) while the others closed up,
+     and that is what broke the 01/02/03 reading order. It now lifts a
+     little off its own slot and takes the accent, like the reference. */
+  /* NO LIFT AT ALL. A 26px rise still let the active plane overtake the one
+     above it on screen: the stack is projected through rotateX(58deg)
+     rotateZ(-45deg), so translateZ moves a plane UP the screen, and the
+     lifted plane's own raised edge label extends its box further still.
+     Measured with Strategy selected, 02 sat above 01 even though its --pz
+     was lower. Selection is now colour only, which is what the reference
+     does, and the stack reads 01 / 02 / 03 in every state. */
+  .bstk-plane.is-out { transform: translateZ(var(--pz)); }
+  .bstk-plane.is-out .bstk-ef { border-color: #c53400;
+    background: linear-gradient(180deg, rgba(197,52,0,.42), rgba(197,52,0,.16)); }
+  .bstk-plane.is-out .bstk-face { border-color: rgba(197,52,0,.75); }
   @media (hover: hover) and (pointer: fine) {
     .bstk-plane:not(.is-out):hover { transform: translateZ(calc(var(--pz) + 12px)); }
     .bstk-plane:not(.is-out):hover .bstk-ef { border-color: rgba(var(--t), .8);
@@ -567,7 +578,10 @@
   .bstk.bstk-in .bstk-plane { opacity: 1; transform: translateZ(var(--pz)); }
   .bstk.bstk-in .bstk-plane:nth-child(2) { transition-delay: .1s, .1s; }
   .bstk.bstk-in .bstk-plane:nth-child(3) { transition-delay: .2s, .2s; }
-  .bstk.bstk-in .bstk-plane.is-out { transform: translateZ(146px) translate(54px, -54px); transition-delay: 0s, 0s; }
+  /* the fly-out pose is gone here too. These two rules out-specify the
+     .bstk-plane.is-out rule above and were still displacing the active
+     plane after that one stopped. */
+  .bstk.bstk-in .bstk-plane.is-out { transform: translateZ(var(--pz)); transition-delay: 0s, 0s; }
 
   /* detail panel: liquid glass, articles stacked in one grid cell so the
      panel holds the height of the tallest bill at the current width (no
@@ -629,7 +643,7 @@
   @media (prefers-reduced-motion: reduce) {
     .bstk-plane, .bstk-bill, .bstk-bill.is-on { transition: none; animation: none; }
     .bstk.bstk-armed .bstk-plane { opacity: 1; transform: translateZ(var(--pz)); }
-    .bstk.bstk-armed .bstk-plane.is-out { transform: translateZ(146px) translate(54px, -54px); }
+    .bstk.bstk-armed .bstk-plane.is-out { transform: translateZ(var(--pz)); }
   }
 
   /* ============ 01: section exit line ============ */
@@ -1911,6 +1925,13 @@
     grid-template-areas:"pill" "tabs" "iso" "panel";gap:20px;}
   .bstk-guides{display:none;}
 }
+
+/* the bill card, trimmed. STATUS and FINE PRINT are scaffolding labels:
+   the value beneath STATUS already reads as a status, and the paragraph
+   beneath FINE PRINT is plainly the fine print. Hidden rather than deleted
+   from the markup so the search index's section spec still matches. */
+.bstk-status,.bstk-fp{display:none;}
+.bstk-value{margin-top:0;}
 </style>
 <script src="js/admin-gate.js"></script>
 </head>
@@ -1988,17 +2009,17 @@
     <div class="bstk-stage">
       <div class="bstk-iso">
         <div class="bstk-ground" aria-hidden="true"></div>
-        <button class="bstk-plane" type="button" tabindex="-1" style="--pz:0px; --t:14,122,90" data-bill="2" aria-expanded="false" aria-controls="bills-panel" aria-label="Bill 03, Absence. Waiting outside.">
+        <button class="bstk-plane" type="button" tabindex="-1" style="--pz:0px; --t:96,108,126" data-bill="2" aria-expanded="false" aria-controls="bills-panel" aria-label="Bill 03, Absence. Waiting outside.">
           <span class="bstk-face" aria-hidden="true"><span class="bstk-num">03</span></span>
           <span class="bstk-edge bstk-ef" aria-hidden="true">03 ABSENCE</span>
           <span class="bstk-edge bstk-er" aria-hidden="true"></span>
         </button>
-        <button class="bstk-plane" type="button" tabindex="-1" style="--pz:58px; --t:23,162,120" data-bill="1" aria-expanded="false" aria-controls="bills-panel" aria-label="Bill 02, Strategy. Bait, accepted.">
+        <button class="bstk-plane" type="button" tabindex="-1" style="--pz:58px; --t:140,152,170" data-bill="1" aria-expanded="false" aria-controls="bills-panel" aria-label="Bill 02, Strategy. Bait, accepted.">
           <span class="bstk-face" aria-hidden="true"><span class="bstk-num">02</span></span>
           <span class="bstk-edge bstk-ef" aria-hidden="true">02 STRATEGY</span>
           <span class="bstk-edge bstk-er" aria-hidden="true"></span>
         </button>
-        <button class="bstk-plane" type="button" tabindex="-1" style="--pz:116px; --t:31,203,148" data-bill="0" aria-expanded="false" aria-controls="bills-panel" aria-label="Bill 01, Extraction. A standing tax.">
+        <button class="bstk-plane" type="button" tabindex="-1" style="--pz:116px; --t:196,206,220" data-bill="0" aria-expanded="false" aria-controls="bills-panel" aria-label="Bill 01, Extraction. A standing tax.">
           <span class="bstk-face" aria-hidden="true"><span class="bstk-num">01</span></span>
           <span class="bstk-edge bstk-ef" aria-hidden="true">01 EXTRACTION</span>
           <span class="bstk-edge bstk-er" aria-hidden="true"></span>
@@ -2006,9 +2027,9 @@
       </div>
       <p class="bstk-pill">The bills</p>
       <div class="bstk-tabs" role="tablist" aria-label="The three bills">
-        <button class="bstk-tab" type="button" role="tab" data-bill="0" style="--t:31,203,148" aria-selected="true" aria-controls="bills-panel" tabindex="0"><span class="tn">01</span>Extraction</button>
-        <button class="bstk-tab" type="button" role="tab" data-bill="1" style="--t:23,162,120" aria-selected="false" aria-controls="bills-panel" tabindex="-1"><span class="tn">02</span>Strategy</button>
-        <button class="bstk-tab" type="button" role="tab" data-bill="2" style="--t:14,122,90" aria-selected="false" aria-controls="bills-panel" tabindex="-1"><span class="tn">03</span>Absence</button>
+        <button class="bstk-tab" type="button" role="tab" data-bill="0" style="--t:196,206,220" aria-selected="true" aria-controls="bills-panel" tabindex="0"><span class="tn">01</span>Extraction</button>
+        <button class="bstk-tab" type="button" role="tab" data-bill="1" style="--t:140,152,170" aria-selected="false" aria-controls="bills-panel" tabindex="-1"><span class="tn">02</span>Strategy</button>
+        <button class="bstk-tab" type="button" role="tab" data-bill="2" style="--t:96,108,126" aria-selected="false" aria-controls="bills-panel" tabindex="-1"><span class="tn">03</span>Absence</button>
       </div>
     </div>
     <div class="bstk-panel" id="bills-panel" role="tabpanel" aria-live="polite">
@@ -3032,11 +3053,14 @@
       planes.forEach(function(p){ p.style.setProperty('--pz', REST[+p.dataset.bill] + 'px'); });
       return;
     }
-    /* the two planes left behind close up into the bottom two slots,
-       keeping their front-to-back order; the lifted plane's own --pz is
-       untouched (its out pose is fixed and slot-independent) */
-    planes.filter(function(p){ return +p.dataset.bill !== i; })
-      .forEach(function(p, k){ p.style.setProperty('--pz', (k * 58) + 'px'); });
+    /* NO RECOMPOSITION (2026-09-01). Selecting a bill used to lift its
+       plane out and close the other two up into the bottom slots, which
+       meant the visible stack stopped reading 01 / 02 / 03 top to bottom:
+       measured with Strategy selected, plane 02 sat at the top and planes
+       02 and 01 both reported --pz:58px. The reference stack does not
+       reshuffle either, so every plane now stays in its own rest slot at
+       all times and selection only lights one. */
+    planes.forEach(function(p){ p.style.setProperty('--pz', REST[+p.dataset.bill] + 'px'); });
   }
   function select(i){
     compose(i);
