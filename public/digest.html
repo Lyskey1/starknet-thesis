@@ -108,40 +108,9 @@
     .dg-cta.chip-glass { transition: none; }
     .dg-cta i { transition: none; }
   }
-  /* marquee band: seamless -33.3333% loop over three repeats of the set, edge fades,
-     hover pause, IO gated; hidden below 981px where the content right
-     below already covers it and a wrapped list would be noise. */
-  .dg-marquee { border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); overflow: hidden; padding: 19px 0;
-    -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
-            mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent); }
-  .dg-mq-track { display: flex; width: max-content; }
-  .dg-mq-set { display: flex; gap: 14px; padding-right: 14px; }
-  .dg-mq-set > a, .dg-mq-set > span { /* child combinators, band-family rule: nested spans must never pick up pill styles */ font-family: var(--mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; white-space: nowrap; text-decoration: none;
-    border: 1px solid rgba(var(--accent-rgb), .35); color: var(--accent); padding: 9px 16px; border-radius: 99px; display: inline-flex; }
-  /* band-family layer rule (d6b1c2c): two sets below 3300px viewports,
-     three from there. One set is 3319px at 1440; an N-set track covers
-     viewports to (N-1) set widths, and each glass chip is a composited
-     layer that is never culled inside the animated track, so the third
-     set (24 layers) exists only where it covers something. Loop period
-     is one set width in both regimes: same rate, same seam. */
-  .dg-marquee.run .dg-mq-track { animation: dgmq 70s linear infinite; }
-  @keyframes dgmq { to { transform: translateX(-50%); } }
-  .dg-mq-set[data-dup] + .dg-mq-set[data-dup] { display: none; }
-  @media (min-width: 3300px) and (prefers-reduced-motion: no-preference) {
-    .dg-mq-set[data-dup] + .dg-mq-set[data-dup] { display: flex; }
-    .dg-marquee.run .dg-mq-track { animation-name: dgmq3; }
-  }
-  @keyframes dgmq3 { to { transform: translateX(-33.3333%); } }
-  .dg-marquee:hover .dg-mq-track { animation-play-state: paused; }
-  @media (prefers-reduced-motion: reduce) {
-    .dg-mq-track { animation: none !important; flex-wrap: wrap; width: auto; gap: 12px 0; }
-    .dg-mq-set[data-dup] { display: none; }
-    .dg-marquee { -webkit-mask-image: none; mask-image: none; }
-  }
   @media (max-width: 980px) {
     .dg-hero { height: auto; min-height: 0; padding: 0; }
     .dg-hero .dg-hero-inner { height: auto; padding-top: 110px; padding-bottom: 56px; }
-    .dg-marquee { display: none; }
   }
   @media (max-width: 700px) {
     .dg-hero-inner { padding: 0 24px; }
@@ -393,6 +362,169 @@
     border: 1px solid rgba(250,250,250,.3); font-size: 14px; font-weight: 500; color: #fafafa;
     text-decoration: none; transition: background .2s, border-color .2s, color .2s; }
   .dgx-archive:hover { background: #fafafa; border-color: #fafafa; color: #0d0d0d; }
+
+  /* ============================================================
+     D1: THE LATEST ISSUES, on the btcfi ecosystem grid (.mstc).
+     Border scheme is btcfi's and is column-count agnostic: the
+     container draws top and left, every card draws right and
+     bottom, and the container's ::after redraws the bottom edge
+     across the ragged tail of the last row, sitting exactly on
+     the last full row's own border so a complete row never
+     doubles up.
+     Prefix is dgw, not wk: css/stride.css and js/strk-stride.js
+     both still carry the 3D deck for /strk, so a stray wk- class
+     inside #wk would be picked up by the deck loop.
+     ============================================================ */
+  .dgw { padding: 110px 0; }
+  /* aligned with the recap feed right below it: the global section cap is
+     1100px, and the feed grid measures 1096 at left 172 on a 1440 frame, so
+     the issues grid has to sit on the same two edges or the two grids read
+     as two different columns. */
+  .dgw-wrap { box-sizing: border-box; max-width: 1096px; margin: 0 auto; padding: 0; }
+  @media (max-width: 1180px) { .dgw-wrap { padding: 0 24px; } }
+  .dgw-h { margin: 0 0 40px; font-family: var(--display); font-weight: 300;
+    font-size: clamp(30px, 3.4vw, 52px); line-height: 1.04; letter-spacing: -.03em;
+    color: var(--sd-ink, #fafafa); }
+  .dgw-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); position: relative;
+    border-top: 1px solid var(--sd-line, #262626); border-left: 1px solid var(--sd-line, #262626); }
+  .dgw-grid::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 1px;
+    background: var(--sd-line, #262626); pointer-events: none; }
+  .dgw-card { display: flex; flex-direction: column; position: relative; min-width: 0;
+    padding: 30px 32px 26px; text-decoration: none; color: inherit;
+    background: rgba(20, 20, 20, .55); transition: background .18s;
+    border-right: 1px solid var(--sd-line, #262626); border-bottom: 1px solid var(--sd-line, #262626); }
+  .dgw-card:hover { background: rgba(20, 20, 20, .85); }
+  .dgw-card:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+  .dgw-top { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 20px; }
+  .dgw-art { width: 52px; height: 52px; flex: none; border: 1px solid var(--sd-line, #262626); }
+  .dgw-cat { margin-left: auto; flex: none; font-family: var(--mono); font-size: 10.5px;
+    letter-spacing: .14em; text-transform: uppercase; color: rgba(250, 250, 250, .5);
+    padding: 6px 11px; border: 1px solid var(--sd-line, #262626); }
+  .dgw-title { display: block; margin: 0 0 14px; font-family: var(--display); font-size: 23px;
+    font-weight: 600; line-height: 1.2; letter-spacing: -.01em; color: var(--sd-ink, #fafafa);
+    transition: color .18s; }
+  .dgw-card:hover .dgw-title { color: var(--accent); }
+  .dgw-ext { font-size: 16px; color: rgba(250, 250, 250, .35); transition: color .18s; }
+  .dgw-card:hover .dgw-ext { color: var(--accent); }
+  .dgw-date { margin-top: auto; font-family: var(--mono); font-size: 11.5px; letter-spacing: .1em;
+    text-transform: uppercase; color: rgba(250, 250, 250, .45); }
+  .dgw-foot { margin-top: 36px; }
+  .dgw-view { display: inline-block; padding: 12px 24px; border-radius: 999px;
+    border: 1px solid rgba(250, 250, 250, .3); font-size: 14px; font-weight: 500; color: #fafafa;
+    text-decoration: none; transition: background .2s, border-color .2s, color .2s; }
+  .dgw-view:hover { background: #fafafa; border-color: #fafafa; color: #0d0d0d; }
+  /* the six gradients the retired deck used, now the per-issue art tile */
+  .dgw-art--a { background: radial-gradient(120% 95% at 16% 10%, #7a2400 0, rgba(122,36,0,0) 54%), radial-gradient(95% 85% at 90% 20%, #c53400 0, rgba(197,52,0,0) 58%), linear-gradient(148deg, #1a0600, #3a0e00 54%, #0d0d0d); }
+  .dgw-art--b { background: radial-gradient(115% 95% at 84% 12%, #8a2400 0, rgba(138,36,0,0) 54%), radial-gradient(100% 90% at 10% 30%, #e07a4a 0, rgba(224,122,74,0) 58%), linear-gradient(158deg, #240800, #4a1200 54%, #0d0d0d); }
+  .dgw-art--c { background: radial-gradient(115% 92% at 22% 14%, #b03000 0, rgba(176,48,0,0) 54%), radial-gradient(100% 95% at 88% 28%, #ff8a4a 0, rgba(255,138,74,0) 58%), linear-gradient(153deg, #120400, #3a0e00 54%, #0d0d0d); }
+  .dgw-art--d { background: radial-gradient(115% 92% at 80% 12%, #ff8a4a 0, rgba(255,138,74,0) 52%), radial-gradient(110% 100% at 14% 34%, #c53400 0, rgba(197,52,0,0) 58%), linear-gradient(153deg, #2a0a00, #4a1200 54%, #0d0d0d); }
+  .dgw-art--e { background: radial-gradient(120% 95% at 60% 8%, #c53400 0, rgba(197,52,0,0) 56%), radial-gradient(100% 90% at 12% 80%, #e86a30 0, rgba(232,106,48,0) 58%), linear-gradient(140deg, #1a0600, #2a0a00 54%, #0d0d0d); }
+  .dgw-art--f { background: radial-gradient(120% 95% at 30% 90%, #8a2400 0, rgba(138,36,0,0) 56%), radial-gradient(100% 90% at 84% 16%, #ff8a4a 0, rgba(255,138,74,0) 58%), linear-gradient(165deg, #240800, #3a0e00 54%, #0d0d0d); }
+  @media (max-width: 1240px) { .dgw-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 820px) {
+    .dgw { padding: 72px 0; }
+    .dgw-grid { grid-template-columns: minmax(0, 1fr); }
+    .dgw-card { padding: 24px 22px 20px; }
+    .dgw-title { font-size: 20px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .dgw-card, .dgw-title, .dgw-ext, .dgw-view { transition: none; }
+  }
+
+  /* ============================================================
+     D4: ABOUT THE DIGEST, at /privacy's .th-pm-sec--law proportions.
+     That section runs its rule and its four columns almost to the
+     viewport edge: 1.46 percent of the frame, expressed in vw so it
+     lands at about 21px at 1440. The headline keeps the page column,
+     only the band widens. html{overflow-x:clip} in css/styles.css is
+     what keeps the 100vw band off the horizontal scrollbar.
+     The reference lives in css/privacy-fx.css, which digest does NOT
+     load, so its --pf-* tokens are re-pointed at the tokens this page
+     already has (--border, --accent, --sd-ink, --sd-dim).
+     The dotted line is a background, not a border-top, so that
+     padding-inline actually insets it and it lines up with the
+     columns instead of running the full 100vw.
+     ============================================================ */
+  .dga-st { --dga-pad: clamp(16px, 1.5vw, 28px); }
+  .dga-st .dgx-eyebrow { text-align: center; }
+  .dga-st .ab-lead.dgx-lead { max-width: 24ch; margin-inline: auto; text-align: center;
+    font-size: clamp(30px, 4.2vw, 62px); line-height: 1.06; letter-spacing: -.03em; }
+  .dga-rule, .dga-cols {
+    width: 100vw; max-width: none;
+    margin-left: calc(50% - 50vw); margin-right: calc(50% - 50vw);
+    padding-inline: var(--dga-pad);
+  }
+  .dga-rule { position: relative; height: 2px; margin-top: 76px; box-sizing: border-box;
+    background-image: repeating-linear-gradient(90deg, rgba(250, 250, 250, .35) 0 3px, transparent 3px 9px);
+    background-clip: content-box; }
+  .dga-rule::before, .dga-rule::after { content: ''; position: absolute; top: -3px;
+    width: 8px; height: 8px; background: var(--accent); }
+  .dga-rule::before { left: var(--dga-pad); }
+  .dga-rule::after { right: var(--dga-pad); }
+  .dga-cols { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin-top: 62px; margin-bottom: 0; gap: 0; box-sizing: border-box; }
+  /* the buttons keep class dgx-card so js/digest-stride.js still binds them,
+     so every card rule it sets has to be unwound here */
+  .dga-cols .dga-col { display: flex; flex-direction: column; align-items: stretch; min-width: 0;
+    gap: 0; width: auto; text-align: left; border-radius: 0; background: transparent;
+    padding: 0 24px 4px; border: 0; border-left: 1px solid var(--border);
+    transition: border-color var(--hover-dur, .25s) var(--hover-ease, ease); }
+  .dga-cols .dga-col:first-child { border-left: 0; }
+  .dga-cols .dga-col:hover { background: transparent; border-color: var(--border); }
+  .dga-cols .dga-col:first-child:hover { border-color: transparent; }
+  .dga-top { display: flex; align-items: center; gap: 10px; }
+  .dga-ic { flex: none; display: grid; place-items: center; width: 30px; height: 30px;
+    border: 1px solid var(--border); color: var(--accent); }
+  .dga-ic svg { width: 16px; height: 16px; }
+  /* the name row has to hold on ONE line in every column and the longest is
+     "04 THE EVERYTHING" with its separator, at 20 characters: the column's content width at 1440
+     less two 30px tiles and two 10px gaps is the whole budget, so fattening
+     the tiles, the gap or the tracking wraps column 04 alone and drops its
+     title out of line with the other three. */
+  .dga-name { min-width: 0; font-family: var(--mono); font-size: 10.5px; letter-spacing: .1em;
+    white-space: nowrap; color: var(--sd-ink, #fafafa); }
+  .dga-arrow { flex: none; margin-left: auto; display: grid; place-items: center;
+    width: 30px; height: 30px; border: 1px solid var(--border);
+    color: var(--sd-dim, rgba(250, 250, 250, .62));
+    transition: color var(--hover-dur, .25s) var(--hover-ease, ease),
+                border-color var(--hover-dur, .25s) var(--hover-ease, ease); }
+  .dga-arrow svg { width: 16px; height: 16px; }
+  .dga-col:hover .dga-arrow { color: var(--accent); border-color: rgba(var(--accent-rgb), .5); }
+  .dga-body { flex: 1 1 auto; display: block; }
+  .dga-title { display: block; margin-top: 22px; font-family: var(--display); font-weight: 600;
+    font-size: 17px; line-height: 1.25; letter-spacing: -.01em; color: var(--sd-ink, #fafafa); }
+  .dga-sum { display: block; margin-top: 10px; font-size: 13.5px; line-height: 1.62;
+    color: var(--sd-dim, rgba(250, 250, 250, .62)); }
+  /* the panel sits at the base of every column, so the four bottom edges line
+     up whatever the description above them measures */
+  .dga-fig { display: block; margin-top: 26px; border: 1px solid var(--border); background: #141414;
+    color: rgba(250, 250, 250, .34); }
+  .dga-fig svg { display: block; width: 100%; height: auto; }
+  .dga-fig .dga-acc { stroke: var(--accent); stroke-width: 1.5; }
+  .dga-st .dgx-archive { display: block; width: max-content; margin: 52px auto 0; }
+  @media (max-width: 1080px) {
+    .dga-cols { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .dga-cols .dga-col:nth-child(odd) { border-left: 0; }
+    .dga-cols .dga-col:nth-child(n+3) { margin-top: 34px; padding-top: 30px; border-top: 1px solid var(--border); }
+  }
+  @media (max-width: 820px) {
+    .dga-rule, .dga-cols { padding-inline: 16px; }
+    .dga-rule::before { left: 16px; }
+    .dga-rule::after { right: 16px; }
+  }
+  @media (max-width: 640px) {
+    .dga-cols { grid-template-columns: minmax(0, 1fr); }
+    .dga-cols .dga-col, .dga-cols .dga-col:nth-child(odd) { padding: 0 0 4px; border-left: 0; }
+    /* one stack, so every column but the first takes the divider, instead of
+       inheriting the two-up rule where only 03 and 04 got one */
+    .dga-cols .dga-col, .dga-cols .dga-col:nth-child(n+3) { margin-top: 34px; padding-top: 30px; border-top: 1px solid var(--border); }
+    .dga-cols .dga-col:first-child { margin-top: 0; padding-top: 0; border-top: 0; }
+    .dga-rule { margin-top: 52px; }
+    .dga-cols { margin-top: 46px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .dga-cols .dga-col, .dga-arrow { transition: none; }
+  }
 </style>
 <script src="js/admin-gate.js"></script>
   <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://starknetthesis.io/#organization","name":"Starknet Thesis","url":"https://starknetthesis.io/","logo":{"@type":"ImageObject","url":"https://starknetthesis.io/apple-icon-180x180.png","width":180,"height":180},"sameAs":["https://x.com/Lyskey","https://starknetresearch.substack.com/"]},{"@type":"Person","@id":"https://starknetthesis.io/#lyskey","name":"Lyskey","url":"https://x.com/Lyskey","sameAs":["https://x.com/Lyskey","https://starknetresearch.substack.com/"]},{"@type":"WebSite","@id":"https://starknetthesis.io/#website","name":"Starknet Thesis: Privacy, Quantum Security, BTCFi","description":"An independent thesis on Starknet's three differentiators: private transfers via STRK20, a post-quantum proving system, and Bitcoin staking and DeFi (BTCFi).","url":"https://starknetthesis.io/","publisher":{"@id":"https://starknetthesis.io/#organization"},"inLanguage":"en"},{"@type":"CollectionPage","@id":"https://starknetthesis.io/digest#webpage","url":"https://starknetthesis.io/digest","name":"Starknet Digest: Weekly Roundups and Research","description":"Weekly roundups, monthly digests and research notes covering what is shipping and changing across the Starknet ecosystem, from the Starknet Research newsletter.","isPartOf":{"@id":"https://starknetthesis.io/#website"},"breadcrumb":{"@id":"https://starknetthesis.io/digest#breadcrumb"},"primaryImageOfPage":{"@id":"https://starknetthesis.io/digest#primaryimage"},"mainEntity":{"@id":"https://starknetthesis.io/digest#newsletter"},"isBasedOn":{"@id":"https://starknetthesis.io/digest#newsletter"},"about":{"@type":"Thing","name":"Starknet","sameAs":"https://www.starknet.io/"},"author":{"@id":"https://starknetthesis.io/#lyskey"},"publisher":{"@id":"https://starknetthesis.io/#organization"},"inLanguage":"en"},{"@type":"ImageObject","@id":"https://starknetthesis.io/digest#primaryimage","url":"https://starknetthesis.io/assets/og-default.png","contentUrl":"https://starknetthesis.io/assets/og-default.png","width":1200,"height":630},{"@type":"BreadcrumbList","@id":"https://starknetthesis.io/digest#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://starknetthesis.io/"},{"@type":"ListItem","position":2,"name":"Digest","item":"https://starknetthesis.io/digest"}]},{"@type":"Blog","@id":"https://starknetthesis.io/digest#newsletter","name":"Starknet Research","description":"Weekly roundups, monthly recaps and research notes on the Starknet ecosystem. Published on Substack and indexed here.","url":"https://starknetresearch.substack.com/","author":{"@id":"https://starknetthesis.io/#lyskey"},"publisher":{"@id":"https://starknetthesis.io/#organization"},"inLanguage":"en"}]}</script>
@@ -457,51 +589,117 @@
 </div>
 </div>
 
-<!-- content-types marquee: the four digest types repeated to fill the
-     seamless loop (static markup, not build-generated). Typed items jump
-     to the feed and activate the matching filter tab; THESIS has no
-     distinct on-page filter (research carries the deep dives) so it is
-     a plain label, not a dead link. -->
-<!-- stride's logo marquee, carrying what the digest covers: two rows whose
-     horizontal offset is tied to scroll position in opposite directions, each
-     wrapped into one set's width so it stays seamless (js/strk-marquee.js). -->
-<section class="lm" aria-label="What the digest covers">
-  <p class="lm-label">What the digest covers</p>
-  <div class="lm-row"><div class="lm-track" data-dir="left"><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Weekly roundup</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Monthly recap</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Original research</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Ecosystem news</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Protocol upgrades</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Funding</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Governance</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Tooling</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Data</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Interviews</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Releases</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Milestones</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Weekly roundup</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Monthly recap</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Original research</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Ecosystem news</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Protocol upgrades</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Funding</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Governance</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Tooling</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Data</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Interviews</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Releases</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Milestones</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Weekly roundup</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Monthly recap</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Original research</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Ecosystem news</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Protocol upgrades</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Funding</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Governance</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Tooling</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Data</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Interviews</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Releases</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Milestones</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Weekly roundup</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Monthly recap</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Original research</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Ecosystem news</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Protocol upgrades</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Funding</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Governance</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Tooling</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Data</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Interviews</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Releases</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Milestones</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Weekly roundup</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Monthly recap</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Original research</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Ecosystem news</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Protocol upgrades</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Funding</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Governance</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Tooling</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Data</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Interviews</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Releases</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Milestones</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Weekly roundup</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Monthly recap</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Original research</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Ecosystem news</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Protocol upgrades</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Funding</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Governance</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Tooling</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Data</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Interviews</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Releases</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Milestones</span></div></div>
-  <div class="lm-row"><div class="lm-track" data-dir="right"><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Weekly roundup</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Monthly recap</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Original research</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Ecosystem news</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Protocol upgrades</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Funding</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Governance</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Tooling</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Data</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Interviews</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Releases</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Milestones</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Weekly roundup</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Monthly recap</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Original research</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Ecosystem news</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Protocol upgrades</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Funding</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Governance</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Tooling</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Data</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Interviews</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Releases</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Milestones</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Weekly roundup</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Monthly recap</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Original research</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Ecosystem news</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Protocol upgrades</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Funding</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Governance</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Tooling</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Data</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Interviews</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Releases</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Milestones</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Weekly roundup</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Monthly recap</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Original research</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Ecosystem news</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Protocol upgrades</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Funding</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Governance</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Tooling</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Data</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Interviews</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Releases</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Milestones</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Weekly roundup</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Monthly recap</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Original research</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Ecosystem news</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Protocol upgrades</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Funding</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Governance</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Tooling</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Data</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Interviews</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Releases</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Milestones</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Weekly roundup</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Monthly recap</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Original research</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Ecosystem news</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Protocol upgrades</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Funding</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Governance</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Tooling</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Data</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Interviews</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Releases</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Milestones</span></div></div>
-</section>
-
-
-<!-- stride's About: an eyebrow over one long statement set large, chips inline. -->
-<section class="block ab-block dgx-st" aria-label="About the digest"><div class="wrap dgx-wrap">
+<!-- About the digest: a centred headline, a dotted rule, then the four
+     reading tracks as a full-bleed four-column band. -->
+<section class="block ab-block dgx-st dga-st" aria-label="About the digest"><div class="wrap dgx-wrap">
   <p class="ab-eyebrow dgx-eyebrow">About the digest</p>
   <h2 id="every-week-the-ecosystem-ships-and" class="ab-lead dgx-lead"><span class="dgx-chalk">Every week the ecosystem ships, <span class="dgx-sq" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 5h18v14H3z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 6l9 7 9-7" fill="none" stroke="currentColor" stroke-width="2"/></svg></span></span> <span class="dgx-dim">and every week it gets written down, so the record <span class="dgx-sq" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="12" width="4" height="8" rx="1"/><rect x="10" y="7" width="4" height="13" rx="1"/><rect x="16" y="3" width="4" height="17" rx="1"/></svg></span> is there when the thesis needs proving.</span></h2>
-  <!-- the same four reading tracks as the showcase below, as numbered rows.
-       They carry the same data-filter values and are wired by the same
-       js/digest-stride.js bridge (tab switch + scroll to the archive). -->
-  <div class="dgx-cards">
-    <button type="button" class="dgx-card" data-filter="monthly"><span class="dgx-num">01</span><span class="dgx-label"><span class="dgx-pre">The</span> Monthly</span><span class="dgx-tile" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2"/></svg></span></button>
-    <button type="button" class="dgx-card" data-filter="weekly"><span class="dgx-num">02</span><span class="dgx-label"><span class="dgx-pre">The</span> Weekly</span><span class="dgx-tile" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2"/></svg></span></button>
-    <button type="button" class="dgx-card" data-filter="research"><span class="dgx-num">03</span><span class="dgx-label"><span class="dgx-pre">The</span> Research</span><span class="dgx-tile" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2"/></svg></span></button>
-    <button type="button" class="dgx-card" data-filter="all"><span class="dgx-num">04</span><span class="dgx-label"><span class="dgx-pre">The</span> Everything</span><span class="dgx-tile" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2"/></svg></span></button>
+  <div class="dga-rule" aria-hidden="true"></div>
+  <!-- The four reading tracks as a four-column feature band, on the layout
+       /privacy uses for .th-pm-sec--law: centred headline, a dotted rule,
+       then columns that run to about 21px of the viewport edge at 1440.
+       They keep their data-filter values and the class dgx-card, which is
+       what js/digest-stride.js binds to (tab switch plus scroll to the
+       archive). Buttons take phrasing content only, so the column titles
+       are spans and not headings. -->
+  <div class="dga-cols">
+    <button type="button" class="dgx-card dga-col" data-filter="monthly">
+      <span class="dga-top">
+        <span class="dga-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15"/><path d="M3.5 10h17"/><path d="M8 3v4M16 3v4"/></svg></span>
+        <span class="dga-name">01 &middot; THE MONTHLY</span>
+        <span class="dga-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></span>
+      </span>
+      <span class="dga-body">
+        <span class="dga-title">The month in one read</span>
+        <span class="dga-sum">Every monthly recap, from the first to the latest, each one the whole month condensed into a single sitting.</span>
+      </span>
+      <span class="dga-fig" aria-hidden="true"><svg viewBox="0 0 260 200" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round" stroke-linecap="round"><path d="M40 58 130 22l90 36-90 36z"/><path d="M40 58v92l90 36 90-36V58"/><path d="M130 94v92"/><path class="dga-acc" d="M85 76 130 94l45-18"/><path d="M64 82v66M88 94v66M112 106v66"/><path d="M196 82v66M172 94v66M148 106v66"/><path d="M40 92 130 128 220 92"/><path d="M40 122 130 158 220 122"/></svg></span>
+    </button>
+    <button type="button" class="dgx-card dga-col" data-filter="weekly">
+      <span class="dga-top">
+        <span class="dga-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V9M9 19V5M14 19v-7M19 19v-11"/></svg></span>
+        <span class="dga-name">02 &middot; THE WEEKLY</span>
+        <span class="dga-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></span>
+      </span>
+      <span class="dga-body">
+        <span class="dga-title">The week, without a gap</span>
+        <span class="dga-sum">Two hundred and thirty one roundups and counting, one every week, no week skipped.</span>
+      </span>
+      <span class="dga-fig" aria-hidden="true"><svg viewBox="0 0 260 200" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round" stroke-linecap="round"><path d="M30 150 130 104l100 46-100 46z"/><path d="M58 138v-28l20 9v28z"/><path d="M58 110 78 101"/><path d="M88 152v-52l20 9v52z"/><path d="M88 100 108 91"/><path class="dga-acc" d="M118 166v-84l20 9v84z"/><path class="dga-acc" d="M118 82 138 73"/><path d="M148 152v-46l20 9v46z"/><path d="M148 106 168 97"/><path d="M178 138v-24l20 9v24z"/><path d="M178 114 198 105"/></svg></span>
+    </button>
+    <button type="button" class="dgx-card dga-col" data-filter="research">
+      <span class="dga-top">
+        <span class="dga-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="10.5" r="6"/><path d="m15 15 5 5"/></svg></span>
+        <span class="dga-name">03 &middot; THE RESEARCH</span>
+        <span class="dga-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></span>
+      </span>
+      <span class="dga-body">
+        <span class="dga-title">The long-form work</span>
+        <span class="dga-sum">Original research and the deep dives the thesis is argued from, published in full.</span>
+      </span>
+      <span class="dga-fig" aria-hidden="true"><svg viewBox="0 0 260 200" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round" stroke-linecap="round"><path d="M46 122 126 84l88 40-80 38z"/><path d="M46 122v14l88 40 80-38v-14"/><path d="M56 96 136 58l88 40-80 38z"/><path d="M66 70 146 32l88 40-80 38z"/><path class="dga-acc" d="M104 66a26 26 0 1 0 52 0 26 26 0 1 0-52 0z"/><path class="dga-acc" d="m154 78 22 16"/></svg></span>
+    </button>
+    <button type="button" class="dgx-card dga-col" data-filter="all">
+      <span class="dga-top">
+        <span class="dga-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h18v4H3z"/><path d="M5 11v9h14v-9"/><path d="M10 15h4"/></svg></span>
+        <span class="dga-name">04 &middot; THE EVERYTHING</span>
+        <span class="dga-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></span>
+      </span>
+      <span class="dga-body">
+        <span class="dga-title">The whole archive</span>
+        <span class="dga-sum">Every issue in one feed, newest first, with nothing filtered out of it.</span>
+      </span>
+      <span class="dga-fig" aria-hidden="true"><svg viewBox="0 0 260 200" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round" stroke-linecap="round"><path d="M40 74 106 44l66 30-66 30z"/><path d="M40 74v30l66 30 66-30V74"/><path d="M88 118 154 88l66 30-66 30z"/><path d="M88 118v30l66 30 66-30v-30"/><path class="dga-acc" d="M74 66 106 81l32-15"/><path class="dga-acc" d="M122 110l32 15 32-15"/><path d="M40 88 106 118 172 88"/></svg></span>
+    </button>
   </div>
     <a class="dgx-archive" href="#latest-from-the-starknet-ecosystem">Go to the archive</a>
 </div></section>
 
-<!-- stride's Works: the latest issues as a scroll-driven 3D card stack, on
-     their real cover art (js/strk-stride.js). -->
-<section class="wk" id="wk" aria-label="The latest issues">
-  <div class="wk-pin">
-    <div class="wk-backs" aria-hidden="true"><div class="wk-back" style="background-image:url(https://substackcdn.com/image/fetch/$s_!Ahvp!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F291b23a1-2f17-4fba-9345-8414b8e61b2a_1920x1080.png);background-size:cover;background-position:center"></div><div class="wk-back" style="background-image:url(https://substackcdn.com/image/fetch/$s_!Ahvp!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F291b23a1-2f17-4fba-9345-8414b8e61b2a_1920x1080.png);background-size:cover;background-position:center"></div><div class="wk-back" style="background-image:url(https://substackcdn.com/image/fetch/$s_!3DgR!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F25b61362-513e-48b4-b16a-8bbbcfefad01_3840x2160.jpeg);background-size:cover;background-position:center"></div><div class="wk-back" style="background-image:url(https://substackcdn.com/image/fetch/$s_!Ahvp!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F291b23a1-2f17-4fba-9345-8414b8e61b2a_1920x1080.png);background-size:cover;background-position:center"></div><div class="wk-back" style="background-image:url(https://substackcdn.com/image/fetch/$s_!Ahvp!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F291b23a1-2f17-4fba-9345-8414b8e61b2a_1920x1080.png);background-size:cover;background-position:center"></div><div class="wk-back" style="background-image:url(https://substackcdn.com/image/fetch/$s_!Ahvp!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F291b23a1-2f17-4fba-9345-8414b8e61b2a_1920x1080.png);background-size:cover;background-position:center"></div><div class="wk-backs-dim"></div></div>
-    <h2 class="wk-h">The latest issues</h2>
-    <div class="wk-stage"><a class="wk-card" href="https://starknetresearch.substack.com/p/starknet-roundup-231" target="_blank" rel="noopener" data-name="Starknet roundup 231"><img class="wk-art" src="https://substackcdn.com/image/fetch/$s_!Ahvp!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F291b23a1-2f17-4fba-9345-8414b8e61b2a_1920x1080.png" alt="" loading="lazy" width="1920" height="1080"><div class="wk-scrim" aria-hidden="true"></div><div class="wk-title">Starknet roundup 231</div><div class="wk-meta"><span>Weekly digest</span><span class="wk-yr">Aug 17, 2026</span></div></a><a class="wk-card" href="https://starknetresearch.substack.com/p/starknet-roundup-230" target="_blank" rel="noopener" data-name="Starknet roundup 230"><img class="wk-art" src="https://substackcdn.com/image/fetch/$s_!Ahvp!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F291b23a1-2f17-4fba-9345-8414b8e61b2a_1920x1080.png" alt="" loading="lazy" width="1920" height="1080"><div class="wk-scrim" aria-hidden="true"></div><div class="wk-title">Starknet roundup 230</div><div class="wk-meta"><span>Weekly digest</span><span class="wk-yr">Aug 10, 2026</span></div></a><a class="wk-card" href="https://starknetresearch.substack.com/p/starknet-monthly-recap-34-june-2026-ef8" target="_blank" rel="noopener" data-name="Starknet monthly recap #35: July 2026"><img class="wk-art" src="https://substackcdn.com/image/fetch/$s_!3DgR!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F25b61362-513e-48b4-b16a-8bbbcfefad01_3840x2160.jpeg" alt="" loading="lazy" width="3840" height="2160"><div class="wk-scrim" aria-hidden="true"></div><div class="wk-title">Starknet monthly recap #35: July 2026</div><div class="wk-meta"><span>Monthly digest</span><span class="wk-yr">Aug 4, 2026</span></div></a><a class="wk-card" href="https://starknetresearch.substack.com/p/starknet-roundup-229" target="_blank" rel="noopener" data-name="Starknet roundup 229"><img class="wk-art" src="https://substackcdn.com/image/fetch/$s_!Ahvp!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F291b23a1-2f17-4fba-9345-8414b8e61b2a_1920x1080.png" alt="" loading="lazy" width="1920" height="1080"><div class="wk-scrim" aria-hidden="true"></div><div class="wk-title">Starknet roundup 229</div><div class="wk-meta"><span>Weekly digest</span><span class="wk-yr">Aug 3, 2026</span></div></a><a class="wk-card" href="https://starknetresearch.substack.com/p/starknet-roundup-228" target="_blank" rel="noopener" data-name="Starknet roundup 228"><img class="wk-art" src="https://substackcdn.com/image/fetch/$s_!Ahvp!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F291b23a1-2f17-4fba-9345-8414b8e61b2a_1920x1080.png" alt="" loading="lazy" width="1920" height="1080"><div class="wk-scrim" aria-hidden="true"></div><div class="wk-title">Starknet roundup 228</div><div class="wk-meta"><span>Weekly digest</span><span class="wk-yr">Jul 27, 2026</span></div></a><a class="wk-card" href="https://starknetresearch.substack.com/p/starknet-roundup-227" target="_blank" rel="noopener" data-name="Starknet roundup 227"><img class="wk-art" src="https://substackcdn.com/image/fetch/$s_!Ahvp!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F291b23a1-2f17-4fba-9345-8414b8e61b2a_1920x1080.png" alt="" loading="lazy" width="1920" height="1080"><div class="wk-scrim" aria-hidden="true"></div><div class="wk-title">Starknet roundup 227</div><div class="wk-meta"><span>Weekly digest</span><span class="wk-yr">Jul 20, 2026</span></div></a></div>
-    <div class="wk-row">
-      <span class="wk-i"><span class="wk-idx">01</span> / 06</span>
-      <span class="wk-name">Starknet roundup 231</span>
-      <a class="wk-view" href="#latest-from-the-starknet-ecosystem">The full archive</a>
-    </div>
+<!-- The latest issues, on the btcfi ecosystem grid (.mstc): bordered cards,
+     each with art, a category chip, a title and a date inside one link.
+     This replaced a 400vh scroll-driven 3D card deck on 2026-09-02. The art
+     is the page gradient set, one per issue, because the six real covers are
+     near-identical and read as noise repeated six times.
+     The wk anchor is committed to the search index and must survive. The class
+     prefix is dgw and NOT wk on purpose: css/stride.css .wk rules and the
+     deck loop in js/strk-stride.js are both shared with /strk, so any
+     surviving wk- class here would pull the deck straight back on. -->
+<section class="dgw" id="wk" aria-label="The latest issues"><div class="dgw-wrap">
+  <h2 class="dgw-h">The latest issues</h2>
+  <div class="dgw-grid">
+    <a class="dgw-card" href="https://starknetresearch.substack.com/p/starknet-roundup-231" target="_blank" rel="noopener">
+      <span class="dgw-top"><span class="dgw-art dgw-art--a" aria-hidden="true"></span><span class="dgw-cat">Weekly digest</span></span>
+      <span class="dgw-title">Starknet roundup 231 <span class="dgw-ext" aria-hidden="true">↗</span></span>
+      <time class="dgw-date" datetime="2026-08-17">Aug 17, 2026</time>
+    </a>
+    <a class="dgw-card" href="https://starknetresearch.substack.com/p/starknet-roundup-230" target="_blank" rel="noopener">
+      <span class="dgw-top"><span class="dgw-art dgw-art--b" aria-hidden="true"></span><span class="dgw-cat">Weekly digest</span></span>
+      <span class="dgw-title">Starknet roundup 230 <span class="dgw-ext" aria-hidden="true">↗</span></span>
+      <time class="dgw-date" datetime="2026-08-10">Aug 10, 2026</time>
+    </a>
+    <a class="dgw-card" href="https://starknetresearch.substack.com/p/starknet-monthly-recap-34-june-2026-ef8" target="_blank" rel="noopener">
+      <span class="dgw-top"><span class="dgw-art dgw-art--c" aria-hidden="true"></span><span class="dgw-cat">Monthly digest</span></span>
+      <span class="dgw-title">Starknet monthly recap #35: July 2026 <span class="dgw-ext" aria-hidden="true">↗</span></span>
+      <time class="dgw-date" datetime="2026-08-04">Aug 4, 2026</time>
+    </a>
+    <a class="dgw-card" href="https://starknetresearch.substack.com/p/starknet-roundup-229" target="_blank" rel="noopener">
+      <span class="dgw-top"><span class="dgw-art dgw-art--d" aria-hidden="true"></span><span class="dgw-cat">Weekly digest</span></span>
+      <span class="dgw-title">Starknet roundup 229 <span class="dgw-ext" aria-hidden="true">↗</span></span>
+      <time class="dgw-date" datetime="2026-08-03">Aug 3, 2026</time>
+    </a>
+    <a class="dgw-card" href="https://starknetresearch.substack.com/p/starknet-roundup-228" target="_blank" rel="noopener">
+      <span class="dgw-top"><span class="dgw-art dgw-art--e" aria-hidden="true"></span><span class="dgw-cat">Weekly digest</span></span>
+      <span class="dgw-title">Starknet roundup 228 <span class="dgw-ext" aria-hidden="true">↗</span></span>
+      <time class="dgw-date" datetime="2026-07-27">Jul 27, 2026</time>
+    </a>
+    <a class="dgw-card" href="https://starknetresearch.substack.com/p/starknet-roundup-227" target="_blank" rel="noopener">
+      <span class="dgw-top"><span class="dgw-art dgw-art--f" aria-hidden="true"></span><span class="dgw-cat">Weekly digest</span></span>
+      <span class="dgw-title">Starknet roundup 227 <span class="dgw-ext" aria-hidden="true">↗</span></span>
+      <time class="dgw-date" datetime="2026-07-20">Jul 20, 2026</time>
+    </a>
   </div>
-</section>
+  <div class="dgw-foot"><a class="dgw-view" href="#latest-from-the-starknet-ecosystem">The full archive</a></div>
+</div></section>
 
 <!-- RECAPS FEED -->
 <section class="dg-feed">
@@ -523,17 +721,17 @@
          `node scripts/build-digest.js` manually is only needed to preview
          locally after updating data/recap.json. -->
     <!-- STATIC-DIGEST:START -->
-    <!-- Pre-rendered from data/recap.json — regenerated automatically on deploy (npm run build); run node scripts/build-digest.js for local preview -->
-    <a class="recap-card" data-umami-event="digest-entry-click" data-cat="weekly" href="https://starknetresearch.substack.com/p/starknet-roundup-231" target="_blank" rel="noopener"><div class="recap-cover"><img src="https://substackcdn.com/image/fetch/$s_!Ahvp!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F291b23a1-2f17-4fba-9345-8414b8e61b2a_1920x1080.png" loading="lazy" alt=""></div><div class="recap-content"><span class="recap-cat weekly">Weekly digest</span><h3 class="recap-title">Starknet roundup 231</h3><time class="recap-date" datetime="2026-08-17">Aug 17, 2026</time><p class="recap-excerpt">Everything you need to know about what happened in the Starknet ecosystem over the past week</p></div></a>
-    <a class="recap-card" data-umami-event="digest-entry-click" data-cat="weekly" href="https://starknetresearch.substack.com/p/starknet-roundup-230" target="_blank" rel="noopener"><div class="recap-cover"><img src="https://substackcdn.com/image/fetch/$s_!Ahvp!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F291b23a1-2f17-4fba-9345-8414b8e61b2a_1920x1080.png" loading="lazy" alt=""></div><div class="recap-content"><span class="recap-cat weekly">Weekly digest</span><h3 class="recap-title">Starknet roundup 230</h3><time class="recap-date" datetime="2026-08-10">Aug 10, 2026</time><p class="recap-excerpt">Everything you need to know about what happened in the Starknet ecosystem over the past week</p></div></a>
-    <a class="recap-card" data-umami-event="digest-entry-click" data-cat="monthly" href="https://starknetresearch.substack.com/p/starknet-monthly-recap-34-june-2026-ef8" target="_blank" rel="noopener"><div class="recap-cover"><img src="https://substackcdn.com/image/fetch/$s_!3DgR!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F25b61362-513e-48b4-b16a-8bbbcfefad01_3840x2160.jpeg" loading="lazy" alt=""></div><div class="recap-content"><span class="recap-cat monthly">Monthly digest</span><h3 class="recap-title">Starknet monthly recap #35: July 2026</h3><time class="recap-date" datetime="2026-08-04">Aug 4, 2026</time><p class="recap-excerpt">All you need to know about Starknet in June</p></div></a>
-    <a class="recap-card" data-umami-event="digest-entry-click" data-cat="weekly" href="https://starknetresearch.substack.com/p/starknet-roundup-229" target="_blank" rel="noopener"><div class="recap-cover"><img src="https://substackcdn.com/image/fetch/$s_!Ahvp!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F291b23a1-2f17-4fba-9345-8414b8e61b2a_1920x1080.png" loading="lazy" alt=""></div><div class="recap-content"><span class="recap-cat weekly">Weekly digest</span><h3 class="recap-title">Starknet roundup 229</h3><time class="recap-date" datetime="2026-08-03">Aug 3, 2026</time><p class="recap-excerpt">Everything you need to know about what happened in the Starknet ecosystem over the past week</p></div></a>
-    <a class="recap-card" data-umami-event="digest-entry-click" data-cat="weekly" href="https://starknetresearch.substack.com/p/starknet-roundup-228" target="_blank" rel="noopener"><div class="recap-cover"><img src="https://substackcdn.com/image/fetch/$s_!Ahvp!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F291b23a1-2f17-4fba-9345-8414b8e61b2a_1920x1080.png" loading="lazy" alt=""></div><div class="recap-content"><span class="recap-cat weekly">Weekly digest</span><h3 class="recap-title">Starknet roundup 228</h3><time class="recap-date" datetime="2026-07-27">Jul 27, 2026</time><p class="recap-excerpt">Everything you need to know about what happened in the Starknet ecosystem over the past week</p></div></a>
-    <a class="recap-card" data-umami-event="digest-entry-click" data-cat="weekly" href="https://starknetresearch.substack.com/p/starknet-roundup-227" target="_blank" rel="noopener"><div class="recap-cover"><img src="https://substackcdn.com/image/fetch/$s_!Ahvp!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F291b23a1-2f17-4fba-9345-8414b8e61b2a_1920x1080.png" loading="lazy" alt=""></div><div class="recap-content"><span class="recap-cat weekly">Weekly digest</span><h3 class="recap-title">Starknet roundup 227</h3><time class="recap-date" datetime="2026-07-20">Jul 20, 2026</time><p class="recap-excerpt">Everything you need to know about what happened in the Starknet ecosystem over the past week</p></div></a>
-    <a class="recap-card" data-umami-event="digest-entry-click" data-cat="research" href="https://starknetresearch.substack.com/p/the-privacy-thesis" target="_blank" rel="noopener"><div class="recap-cover"><img src="https://substackcdn.com/image/fetch/$s_!cgTT!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F3e1df64f-d892-447d-b217-1de059ac97de_1200x675.png" loading="lazy" alt=""></div><div class="recap-content"><span class="recap-cat research">Research</span><h3 class="recap-title">The Privacy Thesis</h3><time class="recap-date" datetime="2026-07-16">Jul 16, 2026</time><p class="recap-excerpt">The most complete privacy stack in crypto is live on Starknet, and the market hasn't noticed yet</p></div></a>
-    <a class="recap-card" data-umami-event="digest-entry-click" data-cat="weekly" href="https://starknetresearch.substack.com/p/starknet-roundup-226" target="_blank" rel="noopener"><div class="recap-cover"><img src="https://substackcdn.com/image/fetch/$s_!Ahvp!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F291b23a1-2f17-4fba-9345-8414b8e61b2a_1920x1080.png" loading="lazy" alt=""></div><div class="recap-content"><span class="recap-cat weekly">Weekly digest</span><h3 class="recap-title">Starknet roundup 226</h3><time class="recap-date" datetime="2026-07-13">Jul 13, 2026</time><p class="recap-excerpt">Everything you need to know about what happened in the Starknet ecosystem over the past week</p></div></a>
-    <a class="recap-card" data-umami-event="digest-entry-click" data-cat="weekly" href="https://starknetresearch.substack.com/p/starknet-roundup-225" target="_blank" rel="noopener"><div class="recap-cover"><img src="https://substackcdn.com/image/fetch/$s_!Ahvp!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F291b23a1-2f17-4fba-9345-8414b8e61b2a_1920x1080.png" loading="lazy" alt=""></div><div class="recap-content"><span class="recap-cat weekly">Weekly digest</span><h3 class="recap-title">Starknet roundup 225</h3><time class="recap-date" datetime="2026-07-06">Jul 6, 2026</time><p class="recap-excerpt">Everything you need to know about what happened in the Starknet ecosystem over the past week</p></div></a>
-    <a class="recap-card" data-umami-event="digest-entry-click" data-cat="monthly" href="https://starknetresearch.substack.com/p/starknet-monthly-recap-34-june-2026" target="_blank" rel="noopener"><div class="recap-cover"><img src="https://substack-post-media.s3.amazonaws.com/public/images/70f32e5d-12eb-4f2f-a96a-7819ff02b8d0_3024x1632.png" loading="lazy" alt=""></div><div class="recap-content"><span class="recap-cat monthly">Monthly digest</span><h3 class="recap-title">Starknet monthly recap #34: June 2026</h3><time class="recap-date" datetime="2026-07-03">Jul 3, 2026</time><p class="recap-excerpt">All you need to know about Starknet in June</p></div></a>
+    <!-- Pre-rendered from data/recap.json: regenerated automatically on deploy (npm run build). Run node scripts/build-digest.js for local preview. -->
+    <a class="recap-card" data-umami-event="digest-entry-click" data-cat="weekly" href="https://starknetresearch.substack.com/p/starknet-roundup-231" target="_blank" rel="noopener"><div class="recap-content"><span class="recap-cat weekly">Weekly digest</span><h3 class="recap-title">Starknet roundup 231</h3><time class="recap-date" datetime="2026-08-17">Aug 17, 2026</time><p class="recap-excerpt">Everything you need to know about what happened in the Starknet ecosystem over the past week</p></div></a>
+    <a class="recap-card" data-umami-event="digest-entry-click" data-cat="weekly" href="https://starknetresearch.substack.com/p/starknet-roundup-230" target="_blank" rel="noopener"><div class="recap-content"><span class="recap-cat weekly">Weekly digest</span><h3 class="recap-title">Starknet roundup 230</h3><time class="recap-date" datetime="2026-08-10">Aug 10, 2026</time><p class="recap-excerpt">Everything you need to know about what happened in the Starknet ecosystem over the past week</p></div></a>
+    <a class="recap-card" data-umami-event="digest-entry-click" data-cat="monthly" href="https://starknetresearch.substack.com/p/starknet-monthly-recap-34-june-2026-ef8" target="_blank" rel="noopener"><div class="recap-content"><span class="recap-cat monthly">Monthly digest</span><h3 class="recap-title">Starknet monthly recap #35: July 2026</h3><time class="recap-date" datetime="2026-08-04">Aug 4, 2026</time><p class="recap-excerpt">All you need to know about Starknet in June</p></div></a>
+    <a class="recap-card" data-umami-event="digest-entry-click" data-cat="weekly" href="https://starknetresearch.substack.com/p/starknet-roundup-229" target="_blank" rel="noopener"><div class="recap-content"><span class="recap-cat weekly">Weekly digest</span><h3 class="recap-title">Starknet roundup 229</h3><time class="recap-date" datetime="2026-08-03">Aug 3, 2026</time><p class="recap-excerpt">Everything you need to know about what happened in the Starknet ecosystem over the past week</p></div></a>
+    <a class="recap-card" data-umami-event="digest-entry-click" data-cat="weekly" href="https://starknetresearch.substack.com/p/starknet-roundup-228" target="_blank" rel="noopener"><div class="recap-content"><span class="recap-cat weekly">Weekly digest</span><h3 class="recap-title">Starknet roundup 228</h3><time class="recap-date" datetime="2026-07-27">Jul 27, 2026</time><p class="recap-excerpt">Everything you need to know about what happened in the Starknet ecosystem over the past week</p></div></a>
+    <a class="recap-card" data-umami-event="digest-entry-click" data-cat="weekly" href="https://starknetresearch.substack.com/p/starknet-roundup-227" target="_blank" rel="noopener"><div class="recap-content"><span class="recap-cat weekly">Weekly digest</span><h3 class="recap-title">Starknet roundup 227</h3><time class="recap-date" datetime="2026-07-20">Jul 20, 2026</time><p class="recap-excerpt">Everything you need to know about what happened in the Starknet ecosystem over the past week</p></div></a>
+    <a class="recap-card" data-umami-event="digest-entry-click" data-cat="research" href="https://starknetresearch.substack.com/p/the-privacy-thesis" target="_blank" rel="noopener"><div class="recap-content"><span class="recap-cat research">Research</span><h3 class="recap-title">The Privacy Thesis</h3><time class="recap-date" datetime="2026-07-16">Jul 16, 2026</time><p class="recap-excerpt">The most complete privacy stack in crypto is live on Starknet, and the market hasn't noticed yet</p></div></a>
+    <a class="recap-card" data-umami-event="digest-entry-click" data-cat="weekly" href="https://starknetresearch.substack.com/p/starknet-roundup-226" target="_blank" rel="noopener"><div class="recap-content"><span class="recap-cat weekly">Weekly digest</span><h3 class="recap-title">Starknet roundup 226</h3><time class="recap-date" datetime="2026-07-13">Jul 13, 2026</time><p class="recap-excerpt">Everything you need to know about what happened in the Starknet ecosystem over the past week</p></div></a>
+    <a class="recap-card" data-umami-event="digest-entry-click" data-cat="weekly" href="https://starknetresearch.substack.com/p/starknet-roundup-225" target="_blank" rel="noopener"><div class="recap-content"><span class="recap-cat weekly">Weekly digest</span><h3 class="recap-title">Starknet roundup 225</h3><time class="recap-date" datetime="2026-07-06">Jul 6, 2026</time><p class="recap-excerpt">Everything you need to know about what happened in the Starknet ecosystem over the past week</p></div></a>
+    <a class="recap-card" data-umami-event="digest-entry-click" data-cat="monthly" href="https://starknetresearch.substack.com/p/starknet-monthly-recap-34-june-2026" target="_blank" rel="noopener"><div class="recap-content"><span class="recap-cat monthly">Monthly digest</span><h3 class="recap-title">Starknet monthly recap #34: June 2026</h3><time class="recap-date" datetime="2026-07-03">Jul 3, 2026</time><p class="recap-excerpt">All you need to know about Starknet in June</p></div></a>
     <!-- STATIC-DIGEST:END -->
   </div>
   <div class="recap-empty" id="recapEmpty" hidden>No posts in this category yet.</div>
@@ -664,9 +862,7 @@
 
   // ---------- render ----------
   function cardHTML(p){
-    var cover = p.image ? '<div class="recap-cover"><img src="' + escA(p.image) + '" loading="lazy" alt=""></div>' : '';
     return '<a class="recap-card" data-umami-event="digest-entry-click" data-cat="' + p.cat + '" href="' + escA(p.link) + '" target="_blank" rel="noopener">' +
-      cover +
       '<div class="recap-content">' +
         '<span class="recap-cat ' + p.cat + '">' + CAT_LABELS[p.cat] + '</span>' +
         '<h3 class="recap-title">' + esc(p.title) + '</h3>' +
@@ -790,7 +986,6 @@
 </script>
 <script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.185.0/build/three.module.js"}}</script>
 <script type="module" src="js/eco-backdrop.js"></script>
-<script src="js/strk-marquee.js" defer></script>
 <script src="js/strk-stride.js" defer></script>
 <script src="js/digest-stride.js" defer></script>
 <script>

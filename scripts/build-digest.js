@@ -7,14 +7,14 @@
    LOCAL PREVIEW after updating data/recap.json.
 
    CI-safe: exits non-zero with a loud message if recap.json is missing,
-   malformed, empty, or if the markers are gone from digest.html — a broken
+   malformed, empty, or if the markers are gone from digest.html. A broken
    data file blocks the deploy instead of shipping a broken digest.
 
    Reads data/recap.json, renders the 10 most recent entries with EXACTLY the
-   markup the client-side renderer in digest.html produces (same classes, so
-   the same styles apply — the only intentional difference is a semantic
+   markup the client-side renderer in digest.html produces: same classes, so
+   the same styles apply. The only intentional difference is a semantic
    <time datetime> element for the date, visually identical because
-   .recap-content is a flex column), and rewrites everything between
+   .recap-content is a flex column. Rewrites everything between
    <!-- STATIC-DIGEST:START --> and <!-- STATIC-DIGEST:END --> in digest.html.
    Idempotent: running it twice produces the same file. On load, the page's
    JS replaces the whole block with the full hydrated archive; without JS,
@@ -63,11 +63,9 @@ function cardHTML(post){
   const link = post.canonical_url || (post.slug ? SUBSTACK_URL + 'p/' + post.slug : SUBSTACK_URL);
   const cat = classify(title);
   const ex = excerpt(post.description || post.subtitle || post.truncated_body_text, 180);
-  const cover = post.cover_image ? '<div class="recap-cover"><img src="' + escA(post.cover_image) + '" loading="lazy" alt=""></div>' : '';
   const dateHtml = isNaN(d.getTime()) || !d.getTime() ? '' :
     '<time class="recap-date" datetime="' + d.toISOString().slice(0, 10) + '">' + esc(fmtDate(d)) + '</time>';
   return '<a class="recap-card" data-umami-event="digest-entry-click" data-cat="' + cat + '" href="' + escA(link) + '" target="_blank" rel="noopener">' +
-    cover +
     '<div class="recap-content">' +
       '<span class="recap-cat ' + cat + '">' + CAT_LABELS[cat] + '</span>' +
       '<h3 class="recap-title">' + esc(title) + '</h3>' +
@@ -95,7 +93,7 @@ const posts = raw
 if (posts.length === 0) die('no posts to render');
 
 const block = START +
-  '\n    <!-- Pre-rendered from data/recap.json — regenerated automatically on deploy (npm run build); run node scripts/build-digest.js for local preview -->\n    ' +
+  '\n    <!-- Pre-rendered from data/recap.json: regenerated automatically on deploy (npm run build). Run node scripts/build-digest.js for local preview. -->\n    ' +
   posts.map(cardHTML).join('\n    ') + '\n    ' + END;
 
 let page = fs.readFileSync(PAGE, 'utf8');
