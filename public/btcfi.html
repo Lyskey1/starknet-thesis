@@ -162,18 +162,43 @@
      recipe's --accent-rgb fallback. It was the hero's, and the hero now
      carries the landing's solid pill instead; the rules stay because section
      01's "see what the gap costs" link still uses them. */
-  .bf-cta { font-family: var(--mono); font-size: 13px; letter-spacing: .14em; text-transform: uppercase; text-decoration: none; color: var(--white); padding: 12px 22px; border-radius: 99px; border: 1px solid rgba(var(--accent-rgb), .55); display: inline-flex; align-items: center; gap: 10px; }
-  .bf-cta.chip-glass { transition: background var(--hover-dur) var(--hover-ease), box-shadow var(--hover-dur) var(--hover-ease), border-color var(--hover-dur); }
-  .bf-cta i { font-style: normal; transition: transform var(--hover-dur) var(--hover-ease); }
-  .bf-cta:hover i { transform: translateX(4px); }
-  .bf-cta:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  /* THE ONE CTA SHAPE (2026-09-01). Was a rounded mono pill with a glow;
+     it is now the landing hero's "Read the thesis" button exactly: a filled
+     block plus a separate square tile carrying the arrow, straight corners,
+     sans label at sentence case. Same numbers as .qh-cta / .pv-cta /
+     .eco-cta, which are themselves ports of the landing's SendRequest:
+     block and tile both max(3.542vw,44px) tall, tile square, gap .278vw,
+     label max(1.111vw,14px). The max() floors only bite between 981 and
+     1150, where the raw vw would render a 35px block with an 11px label. */
+  .bf-cta { display: inline-flex; align-items: stretch; gap: .278vw; text-decoration: none;
+    color: #000; outline: none; border: 0; border-radius: 0; padding: 0; background: none;
+    box-shadow: none; font-family: var(--vc-sans, var(--display)); letter-spacing: normal; text-transform: none; }
+  .bf-cta > span { display: flex; align-items: center; justify-content: center;
+    height: max(3.542vw, 44px); padding: 0 max(4.167vw, 28px);
+    background: #fafafa; color: #000; border: 1px solid transparent; border-radius: 0; box-sizing: border-box;
+    font-family: inherit; font-weight: 500; font-size: max(1.111vw, 14px); line-height: 1.2; white-space: nowrap;
+    transition: background var(--hover-dur) var(--hover-ease), color var(--hover-dur) var(--hover-ease), border-color var(--hover-dur); }
+  .bf-cta > i { display: block; flex: none; width: max(3.542vw, 44px); height: max(3.542vw, 44px);
+    background: #fafafa; border: 1px solid transparent; border-radius: 0; box-sizing: border-box;
+    transition: background var(--hover-dur) var(--hover-ease), border-color var(--hover-dur); }
+  .bf-cta > i svg { display: block; width: 100%; height: 100%; }
+  .bf-cta > i svg path { fill: #000; transition: fill var(--hover-dur) var(--hover-ease); }
+  .bf-cta:hover > span { background: var(--accent); color: #fafafa; }
+  .bf-cta:hover > i { background: var(--accent); }
+  .bf-cta:hover > i svg path { fill: #fafafa; }
+  .bf-cta:active > span { background: var(--accent-dim); color: #fafafa; }
+  .bf-cta:focus-visible > span { outline: 2px solid var(--accent); outline-offset: 2px; }
+  @media (max-width: 700px) {
+    .bf-cta { gap: .25rem; }
+    .bf-cta > span { height: 3.125rem; padding: 0 1.5rem; font-size: 1rem; }
+    .bf-cta > i { width: 3.125rem; height: 3.125rem; }
+  }
 
   /* The glass CTA keeps the band family's hover transition: the claim band
      that used to share this rule was removed on 2026-09-01, section 01's
      link still uses it. */
-  .bf-cta.chip-glass { transition: background var(--hover-dur) var(--hover-ease), box-shadow var(--hover-dur) var(--hover-ease); }
   @media (prefers-reduced-motion: reduce) {
-    .bf-cta.chip-glass, .bf-cta i { transition: none; }
+    .bf-cta > span, .bf-cta > i, .bf-cta > i svg path { transition: none; }
   }
 </style>
 <style>
@@ -2141,7 +2166,7 @@
   <div class="th-pm-head"><span class="th-pm-marker"></span><span class="th-pm-num">01</span><h2 id="bitcoins-unfinished-mission" class="th-pm-title">Bitcoin's unfinished mission</h2></div>
 
   <p class="bum-sub">Bitcoin does every one of these four things. It does none of them far enough. <br>That shortfall is what leaves the hardest money ever made sitting idle.</p>
-  <p class="bum-act"><a class="bf-cta chip-glass" href="#the-market-risk-if-bitcoin-stays">See what the gap costs <i aria-hidden="true">&rarr;</i></a></p>
+  <p class="bum-act"><a class="bf-cta" href="#the-market-risk-if-bitcoin-stays"><span>See what the gap costs</span><i aria-hidden="true"><svg viewBox="0 0 51 51" fill="none"><path d="M26.293 23.583L34.4834 15.3926L35.6064 16.5156L27.416 24.7061H39V26.2939H27.418L35.6084 34.4844L34.4854 35.6074L26.293 27.415V39H24.7051V27.417L16.5146 35.6074L15.3916 34.4844L23.582 26.2939H12V24.7061H23.584L15.3936 16.5156L16.5166 15.3926L24.7051 23.5811V12H26.293V23.583Z"/></svg></i></a></p>
 
   <!-- THE MISSION BAND (.bum). Replaced the broken-orbit radial device
        (.bgap, removed 2026-09-01: four arcs that ran solid, broke, and

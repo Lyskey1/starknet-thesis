@@ -87,7 +87,11 @@
      then the countdown under them. */
   .hero {
     min-height: calc(100vh - 72px); display: flex; flex-direction: column; justify-content: center;
-    align-items: stretch; overflow: hidden;
+    align-items: stretch;
+    /* NOT overflow:hidden. The particle field is additive over the page-wide
+       backdrop canvas, so clipping it to the hero box put a hard edge exactly
+       where the two are supposed to be continuous. */
+    overflow: visible;
     padding: 112px 1.667vw 26px; max-width: none; margin: 0 auto; text-align: left; position: relative;
   }
   .qh-inner { width: 100%; max-width: none; margin: 0; padding: 0; position: relative; z-index: 1; }
@@ -2881,9 +2885,16 @@ body.page-quantum{overflow-x:clip;}
         /btcfi runs the same centrepiece under the same display type with no
         scrim at all, so this one only has to keep the first inch of each line
         off the flame backdrop.
-     2. the edge seal: a border-hugging fade to the page ground on all four
-        sides, so whatever the field does inside its box, nothing warm ever
-        reaches a window edge. This is the layer that kills the colour band.
+     2. the TOP seal, and only the top. It used to seal all four sides, and
+        that is what made the hero read as a box sitting on the page rather
+        than part of it: js/eco-backdrop.js paints the same flame across the
+        WHOLE page, so a hero that fades its own left, right and bottom edges
+        to near-opaque ground draws a rectangle around itself. Measured at
+        1440 before this change, the pixel one row below the hero's bottom
+        edge jumped from rgb(19,14,13) inside to rgb(73,17,6) immediately
+        below: a visible horizontal seam, which is the thing being fixed.
+        The top is different and keeps its seal, because the top of the hero
+        IS a real page edge, under the nav.
      Both stay translucent: js/eco-backdrop.js is a fixed canvas under the
      whole page and nothing opaque may sit over it. */
   background:
@@ -2891,8 +2902,7 @@ body.page-quantum{overflow-x:clip;}
       rgba(13,13,13,.66) 0%,
       rgba(13,13,13,.44) 46%,
       rgba(13,13,13,0) 100%),
-    linear-gradient(to right, rgba(13,13,13,.92) 0%, rgba(13,13,13,0) 9%, rgba(13,13,13,0) 91%, rgba(13,13,13,.92) 100%),
-    linear-gradient(to bottom, rgba(13,13,13,.92) 0%, rgba(13,13,13,0) 10%, rgba(13,13,13,0) 88%, rgba(13,13,13,.95) 100%);
+    linear-gradient(to bottom, rgba(13,13,13,.92) 0%, rgba(13,13,13,0) 12%);
 }
 @media (max-width: 900px) {
   /* the column runs the full width here, so the ellipse is recentred rather
@@ -2903,8 +2913,7 @@ body.page-quantum{overflow-x:clip;}
       rgba(13,13,13,.62) 42%,
       rgba(13,13,13,.20) 76%,
       rgba(13,13,13,0) 100%),
-    linear-gradient(to right, rgba(13,13,13,.92) 0%, rgba(13,13,13,0) 12%, rgba(13,13,13,0) 88%, rgba(13,13,13,.92) 100%),
-    linear-gradient(to bottom, rgba(13,13,13,.92) 0%, rgba(13,13,13,0) 10%, rgba(13,13,13,0) 88%, rgba(13,13,13,.95) 100%); }
+    linear-gradient(to bottom, rgba(13,13,13,.92) 0%, rgba(13,13,13,0) 12%); }
 }
 
 
