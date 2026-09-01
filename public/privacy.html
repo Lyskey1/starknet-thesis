@@ -1934,6 +1934,43 @@
    from the markup so the search index's section spec still matches. */
 .bstk-status,.bstk-fp{display:none;}
 .bstk-value{margin-top:0;}
+
+/* ============================================================
+   SECTION 01 HEAD AND THE BILLS (2026-09-02)
+   ============================================================ */
+.th-pm-head--bare{display:block;}
+
+/* the intro takes the .phead--lede treatment: the same large dim setting
+   with bold white segments that the four-properties line uses, rather than
+   17px body copy. Values copied from .phead--lede p in css/privacy-fx.css
+   so the two read as one voice. */
+#the-cost-of-being-visible ~ .th-pm-intro,
+.th-pm-head--bare + .th-pm-eyebrow + .th-pm-intro,
+.th-pm-head--bare ~ .th-pm-intro{
+  max-width:44ch;font-size:clamp(20px,2.4vw,34px);line-height:1.28;
+  letter-spacing:-.01em;margin-top:28px;
+}
+
+/* THE BILLS COME BACK INTO THE COLUMN.
+   The block was full bleed at 100vw, which left the list stranded at the far
+   left and the card at the far right with a lake of ground between them.
+   The reference section on /btcfi holds its content at the site's usual cap,
+   measured starting at x=218 on a 1440 viewport, so this matches that and
+   the three columns close up. */
+.bstk{
+  width:auto;max-width:1160px;margin-inline:auto;
+  padding:clamp(32px,5vh,72px) 32px;
+  grid-template-columns:minmax(0,.62fr) minmax(0,1.18fr) minmax(0,1.2fr);
+  gap:clamp(16px,2vw,32px);
+  min-height:min(78svh,860px);
+}
+.bstk-guides{padding:0 8%;}
+@media(max-width:1100px){
+  .bstk{padding-inline:24px;}
+}
+@media(max-width:720px){
+  .bstk{padding-inline:20px;}
+}
 </style>
 <script src="js/admin-gate.js"></script>
 </head>
@@ -2001,7 +2038,8 @@
 <!-- ================= SECTION 01 ================= -->
 <div class="th-pm-div"></div>
 <section class="th-pm-sec">
-  <div class="th-pm-head th-pm-reveal"><span class="th-pm-marker"></span><span class="th-pm-num">01</span><h2 id="the-cost-of-being-visible" class="th-pm-title">The cost of being visible</h2></div>
+  <!-- no numeral and no marker: the head is the heading alone -->
+  <div class="th-pm-head th-pm-head--bare th-pm-reveal"><h2 id="the-cost-of-being-visible" class="th-pm-title">The cost of being visible</h2></div>
   <p class="th-pm-eyebrow th-pm-reveal">The problem</p>
   <p class="th-pm-intro th-pm-reveal">Transparency is not free. The invoice arrives on <b>three separate bills: extraction, strategy, and absence</b>.</p>
 
