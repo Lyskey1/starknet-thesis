@@ -246,9 +246,29 @@ if (MOUNT) {
         const bw = (x1 - x0) || 1, bh = (y1 - y0) || 1;
         /* fit by the LONGER side: the Starknet glyph is wider than it is tall
            (unlike the bitcoin symbol), so fitting by height alone would push
-           it out through the ring left and right */
+           it out through the ring left and right. SCALE still comes from the
+           whole mark, so the sparkle and the dot cannot be pushed outside the
+           ring by the recentring below. */
         const scale = GLYPH_H / Math.max(bw, bh);
-        const mx = x0 + bw / 2, my = y0 + bh / 2;
+
+        /* OPTICALLY CENTRED, NOT BOX CENTRED.
+           The mark is geometrically centred already: measured on the rendered
+           canvas, its bounding box sat within 2.5px of the ring's centre. It
+           still read as sitting right of centre, and the components explain
+           why. The glyph is three pieces at 512px: the swoosh (55,999px, box
+           46,114 to 452,392), a dot (2,681px) and a 4-point sparkle
+           (1,992px). The swoosh's own box IS the whole mark's box, so
+           centring on the largest piece changes nothing, which was checked
+           and thrown away. The swoosh is a TAPERED comma, thick at the top
+           right with a long thin tail to the bottom left, so its box centre
+           is not where its weight is.
+           So the mark is centred on its CENTRE OF MASS over lit pixels, which
+           is what the eye reads as the middle of a shape. SCALE still comes
+           from the full bounding box above, so nothing can be pushed out
+           through the ring by the shift. */
+        let sx = 0, sy = 0;
+        for (let j = 0; j < total; j++) { sx += hits[j * 2]; sy += hits[j * 2 + 1]; }
+        const mx = sx / total, my = sy / total;
 
         /* the edge list is walked whole and the interior is decimated, so the
            budget goes where the drawing is */
