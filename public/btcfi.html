@@ -1803,15 +1803,20 @@
      reading order. It stays role="group" with aria-pressed toggles and is
      deliberately NOT a tablist: there are no tabpanels, and in "All" one row
      is pressed while three panels show. */
+  /* THE FILTER SITS ABOVE THE GRID (2026-09-01). It was briefly a bottom
+     bar, on the reading that the reference page's bottom row of chips was
+     a filter; it is not, it is a static tag list. So the filter goes back
+     to the head of the block, where a control that governs what follows
+     belongs, and its hairline is a bottom edge rather than a top one. */
   .mst-rail {
     display: flex;
     flex-direction: row;
     align-items: center;
     flex-wrap: wrap;
     position: static;
-    margin-top: 44px;
-    padding-top: 30px;
-    border-top: 1px solid #262626;
+    margin-bottom: 34px;
+    padding-bottom: 30px;
+    border-bottom: 1px solid #262626;
   }
   .mst-rail-cap {
     font-family: var(--mono);
@@ -1881,7 +1886,7 @@
     .mst-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }
   @media (max-width: 900px) {
-    .mst-rail { margin-top: 34px; padding-top: 22px; }
+    .mst-rail { margin-bottom: 26px; padding-bottom: 22px; }
     .mst-rail-cap { margin: 0 14px 0 18px; }
     .mst-rail-row { padding: 12px 16px; font-size: 14px; }
   }
@@ -1900,6 +1905,118 @@
     .mst-rail-cap { width: 100%; margin: 0 0 4px; }
     .mst-rail-row { padding: 11px 14px; font-size: 13.5px; }
   }
+
+/* ============================================================
+   THE LIVE FIGURES, as the reference stat cards (2026-09-01).
+   Reference anatomy: a thin bordered card with NO fill, everything
+   left aligned, the number very large and pinned to the TOP, and
+   the words pinned to the BOTTOM as a bold label with a lighter
+   description under it. The card holds a real height so the gap
+   between the number and the words is the point.
+   THE FIELD ORDER INVERTS, which is why the markup moved too.
+   Ours used to read value, then the dollar figure, then the label.
+   The reference reads number, then label, then description, so
+   .metric-label is now the bold line and .metric-sub (the "= $75.6M"
+   figure) is the description beneath it.
+   Scoped to .metrics-row: .metric-box and friends live in the
+   shared styles.css, and this treatment is only wanted here.
+   background is set to none AND background-color to transparent:
+   the shared rule uses the `background` shorthand, so clearing one
+   without the other leaves the old fill painting behind the border.
+   Every data-bm / data-fmt / data-bm-sub hook is untouched; the
+   live updater writes into these same nodes.
+   ============================================================ */
+.metrics-row .metric-box{
+  display:flex;flex-direction:column;justify-content:space-between;
+  align-items:flex-start;text-align:left;
+  min-height:300px;padding:32px 30px 30px;
+  border:1px solid var(--border);
+  background:none;background-color:transparent;
+}
+.metrics-row .metric-val{
+  font-size:clamp(40px,4.2vw,64px);font-weight:700;line-height:.98;
+  margin-bottom:0;letter-spacing:-.02em;
+}
+/* the words, as one block pinned to the foot of the card */
+.metrics-row .metric-label{
+  order:2;margin-top:auto;padding-top:26px;
+  font-family:var(--display);font-size:19px;font-weight:600;letter-spacing:-.005em;
+  line-height:1.25;color:#fafafa;text-transform:none;
+}
+.metrics-row .metric-sub{
+  order:3;margin-bottom:0;margin-top:8px;
+  font-family:var(--display);font-size:14.5px;font-weight:400;line-height:1.45;
+  color:rgba(245,242,236,0.5);
+}
+@media (max-width:1240px){
+  .metrics-row .metric-box{min-height:250px;padding:26px 24px 24px;}
+  .metrics-row .metric-label{font-size:17px;padding-top:20px;}
+}
+@media (max-width:700px){
+  .metrics-row .metric-box{min-height:190px;padding:22px 20px 20px;}
+  .metrics-row .metric-label{font-size:16px;padding-top:16px;}
+  .metrics-row .metric-sub{font-size:13.5px;}
+}
+
+/* ============================================================
+   SCALE, as the reference token-supply section (2026-09-01).
+   Reference anatomy: two columns. The words on the LEFT, with the
+   heading against the top of the column and the running copy
+   against the bottom of it, so a large gap opens between them.
+   The visual on the RIGHT, beside the words rather than under them.
+   THE GAP IS space-between, NOT A MARGIN. That is the whole trick
+   of the reference: the distance between the heading and the copy
+   is whatever is left over once the visual has set the row height,
+   so the two columns always end level.
+   The chart keeps its natural aspect and centres in its column.
+   Stretching it to the row height would distort a 900x480 viewBox,
+   and the chart's overlays (#bfcToday, #bfcChip) are positioned
+   from the svg's measured box, so a squashed svg would misplace
+   both.
+   Collapses to one column under 1000px, words first.
+   ============================================================ */
+.scale-sui{
+  display:grid;grid-template-columns:minmax(0,0.86fr) minmax(0,1.14fr);
+  gap:clamp(32px,4.4vw,72px);align-items:stretch;
+}
+.scale-sui-copy{
+  display:flex;flex-direction:column;justify-content:space-between;min-width:0;
+}
+/* the heading group hugs the top, the copy group hugs the bottom */
+.scale-sui-copy > .scale-label{margin-top:0;}
+.scale-sui-copy > .scale-intro{margin-top:auto;padding-top:48px;}
+.scale-sui-copy > .chart-toggle{margin-top:26px;align-self:flex-start;}
+.scale-sui-viz{
+  display:flex;flex-direction:column;justify-content:center;min-width:0;
+}
+.scale-sui-viz > .chart-wrap{width:100%;margin-top:0;}
+
+@media (max-width:1000px){
+  .scale-sui{grid-template-columns:minmax(0,1fr);gap:34px;}
+  .scale-sui-copy > .scale-intro{margin-top:0;padding-top:18px;}
+  .scale-sui-copy > .chart-toggle{margin-top:22px;}
+}
+
+/* THE CHART'S TEXT, now that it renders at about half scale.
+   The svg is a 900x480 viewBox letterboxed into its column. In one
+   column it drew ~1300px wide (scale ~1.45); beside the copy it
+   draws ~500px (scale ~0.56), which renders the desktop-sized svg
+   lettering at about 7.5px. There is already a fix for exactly this
+   regime, the max-width:560px tier, which re-sizes the lettering in
+   viewBox units. It cannot fire here: it keys on the VIEWPORT, and
+   the viewport is 1440 while the chart is 500.
+   So the same sizing is re-applied as a CONTAINER query on the
+   chart's own column, which is the thing whose width actually sets
+   the scale. Same values, same reasoning, different trigger. */
+.scale-sui-viz{container-type:inline-size;}
+@container (max-width: 660px){
+  .bfc-minor,.bfc-vlab{display:none;}
+  .bfc-glab,.bfc-axis{font-size:24px;}
+  .bfc-todaylab,.bfc-projlab{font-size:22px;}
+  .bfc-bound-lab,.bfc-floor-lab{font-size:26px;letter-spacing:.06em;}
+  .bfc-vol,.bfc-schip-t{font-size:24px;letter-spacing:.06em;}
+  #scaleChart text{letter-spacing:.05em;}
+}
 </style>
 <script>
 /* BTCFi ecosystem field: reserve the flight's height before layout. Classic
@@ -2281,17 +2398,9 @@
     </div>
   </div>
 
-  <!-- THE DOLLAR TRANSLATION IS A LIVE SLOT (.idle-cap), fed by the metrics
-       engine's existing CoinGecko call (see the idle-capital module in the
-       engine below): idle = market cap x 0.99, rendered "more than $X.XT"
-       ROUNDED DOWN to one decimal so the sentence stays defensible whatever
-       the market does; if the cap fell below ~$1.52T the same rule degrades
-       the figure to $1.4T on its own. The markup text is the committed
-       fallback and its data-as-of is the fallback's verified date; a fetch
-       failure changes nothing, never an empty slot. The share itself is
-       sourced on the paragraph (Spark, Q1 2026: 0.46% strict, ~0.8% by the
-       generous definition -- both sides of the same-round measurement stay
-       under 1%). -->
+  <!-- The <1% band that stood here was removed 2026-09-01. It held the
+       page's only [data-idle-cap] slot; the idle-capital module below still
+       runs and simply finds no element to write into. -->
   <!-- THE BAND IS THE DEEPER-RISK BOX'S SIBLING BY CLASS, NOT BY COPY: it
        joins .btcg-card, the page's one glass recipe, so the two surfaces
        cannot drift apart -- same ink-glass fill, hairline, blur, inset
@@ -2302,17 +2411,6 @@
        border -- the muddy brown) loses to the class at specificity, and the
        accent ambience comes the same way the coral one does: a btcg-bloom
        child mirroring .btcg-bloom-quote's geometry. -->
-  <div class="big-stat btcg-card">
-    <div class="btcg-bloom btcg-bloom-stat" aria-hidden="true"><i></i></div>
-    <div class="big-stat-num">&lt;1%</div>
-    <p class="big-stat-label th-claim" data-perishable="third-party"
-       data-src="https://www.spark.money/research/btcfi-bitcoin-defi-landscape-2026"
-       data-checked="2026-08-23"
-       data-says="the broader BTCFi ecosystem fared slightly better but still declined roughly 10%, from a cumulative 101,721 BTC to approximately 91,332 BTC | That represents just 0.46% of all Bitcoin in circulation | Even using a generous definition that includes Babylon staking and all wrapped BTC variants, the figure reaches only about 0.8% of supply"
-       data-noun-ok="BTCFi Babylon Q1 Spark"><strong>Less than 1% of all Bitcoin participates in DeFi.</strong> At today's market cap, that is more than <span class="idle-cap" data-idle-cap data-perishable="live"
-       data-src="https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&amp;vs_currencies=usd&amp;include_market_cap=true"
-       data-checked="2026-08-23" data-as-of="2026-08-23">$1.5T</span> in capital sitting idle. Bitcoin is the largest pool of capital in crypto, yet most of it remains financially inactive. Not because demand is missing. Because the infrastructure doesn't exist yet.</p>
-  </div>
 </section>
 
 <div class="section-divider"></div>
@@ -2503,6 +2601,18 @@
     <!-- SCALE: interactive chart -->
     <!-- ============================================================ -->
     <div class="scale-section">
+      <!-- SUI TWO-COLUMN (2026-09-01). Copied from the reference token-supply
+           section: the words in a left column with the heading pinned to its
+           TOP and the running copy pinned to its BOTTOM, and the visual filling
+           a right column beside them. The left column is a flex column with
+           space-between, which is what produces the reference's large gap
+           between the heading and the paragraphs; it is not a fixed margin,
+           so the gap tracks the height of the chart next to it.
+           Nothing inside either half is re-ordered: the chart keeps its own
+           toggle, its overlays and the visually-hidden data table that is the
+           real content behind the picture. -->
+      <div class="scale-sui">
+        <div class="scale-sui-copy">
       <p class="scale-label">Scalability over time</p>
       <h3 id="bitcoin-settles-starknet-scales" class="scale-title">Bitcoin settles. <span>Starknet scales.</span></h3>
       <p class="scale-intro">Bitcoin's base layer is capped at around 7 transactions per second, by design, and that's a feature, not a bug: it keeps Bitcoin decentralized and secure as the settlement layer. But it means Bitcoin can't be the execution layer. Its fees are also unpredictable, spiking as high as ~$128 during the April 2024 halving. Starknet absorbs the execution: throughput climbing toward 10,000+ TPS while fees stay locked under $0.01, permanently.</p>
@@ -2533,6 +2643,8 @@
         <button class="toggle-btn" data-view="cost" role="tab" aria-selected="false">Cost per transfer</button>
       </div>
 
+        </div>
+        <div class="scale-sui-viz">
       <div class="chart-wrap bfc-wrap" id="bfcWrap">
         <svg id="scaleChart" viewBox="0 0 900 480" role="img" aria-label="Throughput over time, log scale: Starknet's trajectory from 1 TPS in September 2022 to about 1,000 TPS today, projected toward 4,000 and 10,000+; Bitcoin's base layer holds a ceiling of about 7 TPS"></svg>
         <div class="bfc-today" id="bfcToday" aria-hidden="true"><i></i></div>
@@ -2557,6 +2669,9 @@
           <tr><td>2027 and beyond</td><td>10,000 and above</td><td>about 7</td><td>volatile, can spike far higher</td><td>under $0.01</td><td>projection</td></tr>
         </tbody>
       </table></div>
+
+        </div>
+      </div>
 
       <!-- strkBTC / Privacy -->
       <div class="tl-section">
@@ -3031,6 +3146,13 @@
            category when a hash arrives for a card that is filtered out. -->
       <div class="eco-section-wrap mst-bleed">
         <div class="mst-eco" id="btcfiEco" data-cat="all">
+          <div class="mst-rail" role="group" aria-label="Filter the ecosystem by category">
+            <button type="button" class="mst-rail-row is-active" aria-pressed="true" data-cat="all">All<span class="mst-rail-n" data-count="all">19</span></button>
+            <p class="mst-rail-cap">Onboarding</p>
+            <button type="button" class="mst-rail-row" aria-pressed="false" data-cat="wallets">Wallets<span class="mst-rail-n" data-count="wallets">3</span></button>
+            <button type="button" class="mst-rail-row" aria-pressed="false" data-cat="bridges">Bridges<span class="mst-rail-n" data-count="bridges">9</span></button>
+            <button type="button" class="mst-rail-row" aria-pressed="false" data-cat="defi">DeFi protocols<span class="mst-rail-n" data-count="defi">7</span></button>
+          </div>
           <div class="mst-main">
             <h4 class="mst-title" id="btcfiEcoTitle">All wallets, bridges and protocols</h4>
             <p class="mst-blurb" id="btcfiEcoBlurb" hidden></p>
@@ -3278,13 +3400,6 @@
               </div>
             </div>
           </div>
-          <div class="mst-rail" role="group" aria-label="Filter the ecosystem by category">
-            <button type="button" class="mst-rail-row is-active" aria-pressed="true" data-cat="all">All<span class="mst-rail-n" data-count="all">19</span></button>
-            <p class="mst-rail-cap">Onboarding</p>
-            <button type="button" class="mst-rail-row" aria-pressed="false" data-cat="wallets">Wallets<span class="mst-rail-n" data-count="wallets">3</span></button>
-            <button type="button" class="mst-rail-row" aria-pressed="false" data-cat="bridges">Bridges<span class="mst-rail-n" data-count="bridges">9</span></button>
-            <button type="button" class="mst-rail-row" aria-pressed="false" data-cat="defi">DeFi protocols<span class="mst-rail-n" data-count="defi">7</span></button>
-          </div>
         </div>
       </div>
     </div>
@@ -3298,23 +3413,23 @@
     <div class="metrics-row" style="margin-top:36px;" id="btcMetrics">
       <div class="metric-box">
         <a class="metric-val metric-link" data-bm="network" data-fmt="dec1" href="https://www.bitcoinlayers.org/layers/starknet" target="_blank" rel="noopener">1,102.4</a>
-        <div class="metric-sub" data-bm-sub="network">≈ $69.9M</div>
         <div class="metric-label">BTC on Starknet network</div>
+        <div class="metric-sub" data-bm-sub="network">≈ $69.9M</div>
       </div>
       <div class="metric-box">
         <a class="metric-val metric-link" data-bm="staked" data-fmt="dec1" href="https://dashboard.endur.fi/" target="_blank" rel="noopener">686.8</a>
-        <div class="metric-sub" data-bm-sub="staked">≈ $43.6M</div>
         <div class="metric-label">BTC staked</div>
+        <div class="metric-sub" data-bm-sub="staked">≈ $43.6M</div>
       </div>
       <div class="metric-box">
         <a class="metric-val metric-link" data-bm="supply" data-fmt="dec1" href="https://voyager.online/contract/0x0787150e306e6eae6e3f79dea881770e8bbff2c1b8eb490f969669ee945b3135" target="_blank" rel="noopener">102.6</a>
-        <div class="metric-sub" data-bm-sub="supply">≈ $6.5M</div>
         <div class="metric-label">strkBTC supply</div>
+        <div class="metric-sub" data-bm-sub="supply">≈ $6.5M</div>
       </div>
       <div class="metric-box">
         <a class="metric-val metric-link" data-bm="shielded" data-fmt="dec2" href="https://starkscan.co/privacy-pool" target="_blank" rel="noopener">2.48</a>
-        <div class="metric-sub" data-bm-sub="shielded">≈ $157K</div>
         <div class="metric-label">Encrypted strkBTC</div>
+        <div class="metric-sub" data-bm-sub="shielded">≈ $157K</div>
       </div>
     </div>
     <div class="bm-updated" id="bmUpdated"></div>
