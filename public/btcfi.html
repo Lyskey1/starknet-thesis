@@ -2124,8 +2124,13 @@
    inherit resolves against .bf-cta, which sets color:#000 for the light
    variant, and the label came out black on the dark fill. Colour is left to
    .bf-cta--dark > span. */
+/* display stays FLEX. Setting display:block here overrode `.bf-cta > span
+   { display:flex; align-items:center }`, and the label sat against the top of
+   the block instead of centred in it. This span IS the CTA's block element,
+   so it has to keep the block's own display. */
 .news-toggle.bf-cta .news-toggle-title{font-family:inherit;font-size:inherit;
-  letter-spacing:normal;text-transform:none;display:block;}
+  letter-spacing:normal;text-transform:none;
+  display:flex;align-items:center;justify-content:center;}
 /* the chevron slot is the tile: it turns when the panel opens */
 .news-toggle.bf-cta > i{transition:transform .3s ease,background var(--hover-dur) var(--hover-ease);}
 .news-toggle.bf-cta[aria-expanded="true"] > i{transform:rotate(90deg);}
@@ -2141,6 +2146,19 @@
 @media(min-width:881px){
   #bitcoins-unfinished-mission.th-pm-title{white-space:nowrap;font-size:min(84px,5.1vw);}
 }
+
+/* THE ADMIN BAR IS LOCAL CHROME, OUT OF FLOW. js/admin-gate.js turns the
+   gate on automatically for localhost and 127.0.0.1, so this bar renders on
+   a dev machine and NEVER in production (a reader's DOM has no admin markup
+   at all). It was sitting in the centred column directly above the section's
+   CTA, so it read as part of the design. It is pinned to the section's top
+   right corner instead, where it cannot disturb the layout it is not part
+   of. To hide it on this machine as well, visit any page with #admin-off. */
+.bmsec{position:relative;}
+.bmsec .news-admin-bar{position:absolute;top:14px;right:clamp(14px,2.4vw,36px);
+  z-index:5;margin:0;display:flex;gap:10px;align-items:center;opacity:.5;
+  transition:opacity .2s ease;}
+.bmsec .news-admin-bar:hover{opacity:1;}
 </style>
 <script>
 /* BTCFi ecosystem field: reserve the flight's height before layout. Classic

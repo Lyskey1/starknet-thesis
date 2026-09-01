@@ -448,16 +448,25 @@
   </div>
   </div>
 
-  <div class="qh-right">
-    <!-- COUNTDOWN, inline. The card is gone: no border, radius, fill, padding
-         or glass layer. It is a hairline, a mono label and one row of values,
-         so it reads as data belonging to the hero rather than a second panel.
-         The seconds value carries the page accent, which makes the only
-         moving digit the only accented one. Ids and the timer JS are
-         untouched; the progress track went with the card and the JS already
-         guarded those two nodes. -->
+</div>
+
+
+
+<!-- THE DEADLINE, its own section (2026-09-01). It used to sit bottom right
+     inside the hero, which made it hero furniture; it is the page's first
+     argument, so it gets a section of its own directly after the hero. The
+     head takes the same treatment as the other section heads on this page and
+     on /privacy: a mono accent kicker over one big solid heading. Every id is
+     unchanged (#cd-year, #cd-days, #cd-hours, #cd-mins, #cd-secs and the
+     block's own id), so the timer JS is untouched. -->
+<section class="qcd-sec">
+  <p class="qprop-rn">The industry's converging deadline</p>
+  <h2 id="q-day-is-a-date-not-a-rumour" class="qprop-name">Q-day is a date, not a rumour</h2>
+  <p class="qprop-body">Governments, standards bodies and researchers keep landing on the same window. This is the clock the whole industry is now working against.</p>
     <div class="qh-cd" id="the-industrys-converging-deadline">
-      <div class="qh-cd-label">The industry's converging deadline <span class="qh-cd-sep" aria-hidden="true">/</span> <b class="qh-cd-yr" id="cd-year"></b></div>
+      <!-- the phrase moved to the section kicker above, so this label keeps
+           only the year. #cd-year stays: the timer JS writes into it. -->
+      <div class="qh-cd-label">Target <b class="qh-cd-yr" id="cd-year"></b></div>
       <div class="qh-cd-row">
         <span class="qh-cd-g"><b class="qh-cd-n" id="cd-days">876</b><i>Days</i></span>
         <span class="qh-cd-s" aria-hidden="true">/</span>
@@ -468,9 +477,7 @@
         <span class="qh-cd-g"><b class="qh-cd-n qh-cd-sec" id="cd-secs">38</b><i>Sec</i></span>
       </div>
     </div>
-  </div>
-</div>
-
+</section>
 
 
 <!-- TH-PM: shared premium design system (installed once) -->
@@ -3593,6 +3600,16 @@ body.page-quantum{overflow-x:clip;}
   .rxa .rxa-feat{height:auto;}
   .rxa-prog{display:none;}
 }
+
+/* the deadline's own section: the page's section-head treatment over the
+   countdown, which keeps its own .qh-cd styling. The row is scaled up now
+   that it is not competing with a hero. */
+.qcd-sec{max-width:1160px;margin:0 auto;padding:clamp(64px,9vh,120px) 32px 0;}
+.qcd-sec .qprop-body{margin-bottom:clamp(28px,4vh,52px);}
+.qcd-sec .qh-cd{margin:0;width:auto;border:0;padding:0;}
+.qcd-sec .qh-cd-label{margin-bottom:14px;}
+.qcd-sec .qh-cd-n{font-size:clamp(44px,5.4vw,84px);}
+@media(max-width:880px){ .qcd-sec{padding-left:20px;padding-right:20px;} }
 </style>
 
   <!-- chapter: the referee -->
