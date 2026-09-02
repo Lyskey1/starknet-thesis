@@ -503,8 +503,9 @@
      unchanged (#cd-year, #cd-days, #cd-hours, #cd-mins, #cd-secs and the
      block's own id), so the timer JS is untouched. -->
 <section class="qcd-sec">
+  <div class="qcd-ascii" data-ascii-text="Q-DAY" data-ascii-font-size="8" data-text-font-size="210" data-plane-base-height="8" aria-hidden="true"></div>
   <p class="qprop-rn">The industry's converging deadline</p>
-  <h2 id="q-day-is-a-date-not-a-rumour" class="qprop-name">Q-day is a date, not a rumour</h2>
+  <h2 id="q-day-is-a-date-not-a-rumour" class="qprop-name" data-glitch="Q-day is a date, not a rumour">Q-day is a date, not a rumour</h2>
   <p class="qprop-body">Governments, standards bodies and researchers keep landing on the same window. This is the clock the whole industry is now working against.</p>
     <div class="qh-cd" id="the-industrys-converging-deadline">
       <!-- the phrase moved to the section kicker above, so this label keeps
@@ -1431,6 +1432,69 @@ a.qg-card:focus-visible,.qg-linkcard:has(.th-eo-main:focus-visible){outline:2px 
 .qv-btn:hover{border-color:color-mix(in srgb,var(--th-q) 50%,transparent);background:color-mix(in srgb,var(--th-q) 7%,transparent);}
 .qv-btn.primary{background:var(--th-q);border-color:var(--th-q);color:#06121f;font-weight:600;}
 @media(max-width:880px){.th-pm-compare,.th-pm-video{grid-template-columns:1fr;}.th-pm-stathero .big{font-size:60px;}}
+
+/* Catalyst rail restyled as the STRK/Digest column band. The tabs stay real
+   tabs, but the plinths become flat columns with square icons and arrow
+   affordances, then the active chapter opens below the band. */
+#catalyst-chapters{position:relative;width:100vw;max-width:none;margin:56px 0 0 calc(50% - 50vw);}
+#catalyst-chapters::before{content:"";position:absolute;left:clamp(20px,1.55vw,30px);right:clamp(20px,1.55vw,30px);top:0;border-top:1px dotted rgba(250,250,250,.34);}
+#catalyst-chapters::after{content:"";position:absolute;left:clamp(20px,1.55vw,30px);top:-4px;width:8px;height:8px;background:var(--th-q);box-shadow:calc(100vw - clamp(40px,3.1vw,60px) - 8px) 0 0 var(--th-q);}
+#catalyst-chapters .qw-rail{
+  grid-template-columns:repeat(4,minmax(0,1fr));gap:0;max-width:none;
+  padding:56px clamp(20px,1.55vw,30px) 0;
+}
+#catalyst-chapters .qw-ped{
+  min-height:260px;display:grid;grid-template-columns:auto minmax(0,1fr) auto;
+  grid-template-rows:auto auto 1fr;align-items:start;justify-items:start;gap:24px 18px;
+  padding:34px clamp(18px,2vw,34px) 30px;border-left:1px solid var(--th-hair);
+  border-radius:0;opacity:1;background:transparent;
+}
+#catalyst-chapters .qw-ped:first-child{border-left:0;}
+#catalyst-chapters .qw-ped::before{content:none;}
+#catalyst-chapters .qw-ped::after{
+  content:"\2192";grid-column:3;grid-row:1;display:grid;place-items:center;
+  width:44px;height:44px;border:1px solid var(--th-hair);font-family:'IBM Plex Mono',monospace;
+  font-size:20px;color:rgba(250,250,250,.58);transition:border-color .22s,color .22s,background .22s;
+}
+#catalyst-chapters .qw-ped[aria-selected="true"]::after,
+#catalyst-chapters .qw-ped:hover::after{
+  color:var(--th-q);border-color:color-mix(in srgb,var(--th-q) 70%,transparent);
+  background:color-mix(in srgb,var(--th-q) 7%,transparent);
+}
+#catalyst-chapters .qw-obj{
+  grid-column:1;grid-row:1;width:44px;height:44px;margin:0;padding:10px;
+  color:var(--th-q);border:1px solid var(--th-hair);align-self:start;justify-self:start;
+  transform:none;filter:none;
+}
+#catalyst-chapters .qw-ped[aria-selected="true"] .qw-obj{transform:none;filter:none;}
+#catalyst-chapters .qw-plinth{grid-column:1 / -1;grid-row:2;width:auto;height:auto;display:block;border:0;border-radius:0;background:none;box-shadow:none;}
+#catalyst-chapters .qw-plinth::after{content:none;}
+#catalyst-chapters .qw-label{
+  display:block;font-size:13px;line-height:1.2;letter-spacing:.2em;color:var(--th-ink);
+}
+#catalyst-chapters .qw-label b{color:var(--th-q);margin-right:10px;}
+#catalyst-chapters .qw-ped[aria-selected="false"] .qw-label{color:rgba(250,250,250,.68);}
+#catalyst-chapters .qw-ped:focus-visible{outline:2px solid var(--th-q);outline-offset:-2px;}
+#catalyst-chapters .qw-shell{
+  margin:0;padding:44px clamp(20px,1.55vw,30px) 0;border:0;border-top:1px solid var(--th-hair);
+  border-radius:0;background:transparent;overflow:hidden;
+}
+#catalyst-chapters .qw-panel{padding:0;}
+#catalyst-chapters .th-q-chapter{margin-top:0;padding-top:0;}
+@media(max-width:980px){
+  #catalyst-chapters{margin-top:42px;}
+  #catalyst-chapters .qw-rail{grid-template-columns:repeat(2,minmax(0,1fr));padding-top:42px;}
+  #catalyst-chapters .qw-ped{min-height:190px;border-top:1px solid var(--th-hair);}
+  #catalyst-chapters .qw-ped:nth-child(-n+2){border-top:0;}
+  #catalyst-chapters .qw-ped:nth-child(odd){border-left:0;}
+}
+@media(max-width:560px){
+  #catalyst-chapters .qw-rail{grid-template-columns:1fr;}
+  #catalyst-chapters .qw-ped{min-height:0;border-left:0;border-top:1px solid var(--th-hair);padding:24px 20px;}
+  #catalyst-chapters .qw-ped:first-child{border-top:0;}
+  #catalyst-chapters .qw-ped:nth-child(2){border-top:1px solid var(--th-hair);}
+  #catalyst-chapters .qw-shell{padding-top:34px;}
+}
 
 
 </style>
@@ -3720,19 +3784,49 @@ body.page-quantum{overflow-x:clip;}
    full viewport and the digits get to be the biggest thing on it. The
    content is centred vertically, and the row scales with the viewport
    rather than sitting at a fixed size. */
-.qcd-sec{display:flex;flex-direction:column;justify-content:center;
-  min-height:100svh;max-width:1160px;margin:0 auto;
-  padding:clamp(48px,8vh,110px) 32px;}
+.qcd-sec{position:relative;isolation:isolate;display:flex;flex-direction:column;justify-content:center;
+  width:100%;min-height:100svh;max-width:min(1480px,100%);margin:0 auto;
+  padding:clamp(48px,8vh,110px) 32px;overflow:hidden;}
+.qcd-sec>*:not(.qcd-ascii){position:relative;z-index:1;}
+.qcd-sec .qprop-name{display:inline-block;text-shadow:0 0 22px rgba(197,52,0,.16);}
+.qcd-sec .qprop-name::before,.qcd-sec .qprop-name::after{content:attr(data-glitch);
+  position:absolute;inset:0;pointer-events:none;mix-blend-mode:screen;opacity:.62;}
+.qcd-sec .qprop-name::before{color:#c53400;transform:translate(2px,-1px);
+  clip-path:inset(0 0 58% 0);animation:qcdGlitchA 3.4s steps(1,end) infinite;}
+.qcd-sec .qprop-name::after{color:#f0b8a0;transform:translate(-2px,1px);
+  clip-path:inset(56% 0 0 0);animation:qcdGlitchB 4.1s steps(1,end) infinite;}
+@keyframes qcdGlitchA{0%,86%,100%{transform:translate(0,0);opacity:0}87%{transform:translate(3px,-1px);opacity:.7}88%{transform:translate(-2px,1px);opacity:.35}89%{transform:translate(0,0);opacity:0}}
+@keyframes qcdGlitchB{0%,72%,100%{transform:translate(0,0);opacity:0}73%{transform:translate(-3px,1px);opacity:.58}74%{transform:translate(2px,0);opacity:.28}75%{transform:translate(0,0);opacity:0}}
+.qcd-ascii{position:absolute;z-index:0;left:50%;top:clamp(74px,9vh,130px);
+  width:min(1040px,72vw);height:clamp(120px,20vh,210px);transform:translateX(-50%);
+  opacity:.38;pointer-events:none;overflow:hidden;mix-blend-mode:screen;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent);
+          mask-image:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent);}
+.ascii-text-container{position:absolute;inset:0;width:100%;height:100%;}
+.ascii-text-container canvas{position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated;}
+.ascii-text-container pre{position:absolute;inset:0;margin:0;padding:0;line-height:1em;text-align:left;
+  user-select:none;white-space:pre;overflow:hidden;mix-blend-mode:difference;
+  background-image:radial-gradient(circle,#fafafa 0%,#f0b8a0 44%,#c53400 100%);
+  background-attachment:fixed;-webkit-text-fill-color:transparent;-webkit-background-clip:text;background-clip:text;}
 .qcd-sec .qprop-body{margin-bottom:clamp(36px,6vh,80px);}
-.qcd-sec .qh-cd{margin:0;width:auto;border:0;padding:0;}
+.qcd-sec .qh-cd{margin:0;width:100%;border:0;padding:0;}
 .qcd-sec .qh-cd-label{margin-bottom:clamp(14px,2vh,26px);font-size:13px;letter-spacing:.16em;}
-.qcd-sec .qh-cd-row{gap:clamp(14px,2.2vw,38px);align-items:baseline;flex-wrap:wrap;}
-.qcd-sec .qh-cd-n{font-size:clamp(56px,9.4vw,168px);line-height:.92;letter-spacing:-.03em;}
-.qcd-sec .qh-cd-g i{font-size:clamp(11px,1vw,16px);letter-spacing:.18em;}
-.qcd-sec .qh-cd-s{font-size:clamp(24px,3.4vw,56px);opacity:.35;}
+.qcd-sec .qh-cd-row{display:flex;gap:clamp(10px,1.45vw,24px);align-items:baseline;flex-wrap:nowrap;white-space:nowrap;}
+.qcd-sec .qh-cd-g{flex:0 1 auto;gap:clamp(5px,.5vw,9px);}
+.qcd-sec .qh-cd-n{font-size:clamp(48px,6.6vw,124px);line-height:.92;letter-spacing:-.04em;}
+.qcd-sec .qh-cd-g i{font-size:clamp(10px,.82vw,14px);letter-spacing:.16em;}
+.qcd-sec .qh-cd-s{font-size:clamp(20px,2.2vw,40px);opacity:.35;}
 @media(max-width:880px){
   .qcd-sec{padding-left:20px;padding-right:20px;min-height:0;}
-  .qcd-sec .qh-cd-n{font-size:clamp(44px,13vw,84px);}
+  .qcd-ascii{width:92vw;height:120px;top:54px;opacity:.28;}
+  .qcd-sec .qh-cd-row{gap:8px;}
+  .qcd-sec .qh-cd-n{font-size:clamp(26px,8vw,46px);}
+  .qcd-sec .qh-cd-g i{font-size:9px;letter-spacing:.1em;}
+  .qcd-sec .qh-cd-s{font-size:18px;}
+}
+@media(prefers-reduced-motion:reduce){
+  .qcd-sec .qprop-name::before,.qcd-sec .qprop-name::after{animation:none;display:none;}
+  .qcd-ascii{display:none;}
 }
 
 /* ============================================================
@@ -5432,6 +5526,7 @@ var VIDEOS = [
 
 <script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.185.0/build/three.module.js"}}</script>
 <script type="module" src="js/eco-backdrop.js"></script>
+<script type="module" src="js/ascii-text.js"></script>
 <script type="module" src="js/quantum-hero-mark.js"></script>
 <script src="js/quantum-vgrid.js" defer></script>
 </body>

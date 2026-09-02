@@ -344,18 +344,10 @@ if (MOUNT) {
       renderer.setSize(w, h, false);
       camera.aspect = w / h;
       const sm = smallMQ.matches;
-      const byH = R_FIT / ((sm ? 0.40 : 0.64) * HALF_FOV);
-      const byW = R_FIT / ((sm ? 0.80 : 0.50) * HALF_FOV * camera.aspect);
+      const byH = R_FIT / ((sm ? 0.40 : 0.52) * HALF_FOV);
+      const byW = R_FIT / ((sm ? 0.80 : 0.42) * HALF_FOV * camera.aspect);
       camera.position.z = Math.max(byH, byW);
-      /* OFF CENTRE ON PURPOSE, on the artboard only. The btcfi twin centres
-         its mark because that hero's display is two short lines. This one
-         carries a two-line display and a stat rail plus a lede down the left
-         gutter, so the whole object is pushed right by 0.75 world units,
-         which clears the reading column without letting the annulus reach
-         the right edge (the fit keeps it at 0.50 of the half width, so the
-         far side lands near 0.66). On the sub-980 stack the copy owns the
-         full width and the object goes back to centre. */
-      world.position.x = smallMQ.matches ? 0 : 0.75;
+      world.position.x = 0;
       camera.updateProjectionMatrix();
       const pix = Math.min(devicePixelRatio || 1, 2);
       mats.forEach((m) => { m.uniforms.uH.value = h; m.uniforms.uPix.value = pix; });

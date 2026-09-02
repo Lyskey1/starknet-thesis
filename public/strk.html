@@ -1146,11 +1146,7 @@ footer.site-footer .foot-bottom a:hover{color:var(--accent)}
   font-size:14px;font-weight:500;color:var(--white);text-decoration:none;transition:background .2s,border-color .2s,color .2s}
 .sc-cta:hover{background:var(--white);border-color:var(--white);color:#0d0d0d}
 @media(min-width:1101px){
-  /* stride overlays this heading on the right half because its columns are
-     full-bleed images with nothing at the top. Ours carry live readouts up
-     there, so the heading keeps stride's right-half placement but stays in
-     flow instead of sitting on top of the data. */
-  .sc-head{margin-left:50%;padding-left:36px;max-width:none}
+  .sc-head{margin-left:0;padding-left:0;max-width:34rem}
   .sc-title{max-width:18ch}
 }
 /* the columns lose their card fill here: edge to edge, split by hairlines */
@@ -1252,6 +1248,65 @@ footer.site-footer .foot-bottom a:hover{color:var(--accent)}
 .sc-col.is-on::after{opacity:1}
 @media(prefers-reduced-motion:reduce){.sc-art{transition:none}}
 
+/* --- utilities in the digest column-band idiom: dotted rule, four columns,
+   compact mono headers and framed line-art panels. This intentionally wins
+   over the older stride hover-photo and bento utility rules above. --- */
+.util-rule{--util-pad:clamp(16px,1.5vw,28px);position:relative;width:100vw;max-width:none;height:8px;
+  margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw);padding-inline:var(--util-pad);box-sizing:border-box}
+.util-rule::before{content:"";position:absolute;left:var(--util-pad);right:var(--util-pad);top:3px;height:2px;
+  background-image:repeating-linear-gradient(90deg,rgba(250,250,250,.35) 0 3px,transparent 3px 9px)}
+.util-rule::after{content:"";position:absolute;top:0;left:var(--util-pad);width:8px;height:8px;background:var(--acc);
+  box-shadow:calc(100vw - (var(--util-pad) * 2) - 8px) 0 0 var(--acc)}
+.util.util-grid{--util-pad:clamp(16px,1.5vw,28px);width:100vw;max-width:none;margin-left:calc(50% - 50vw);
+  margin-right:calc(50% - 50vw);padding-inline:var(--util-pad);display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+  grid-template-rows:auto auto auto;gap:0;border-top:0;box-sizing:border-box}
+.util-grid .util-panel{display:grid;grid-template-rows:subgrid;grid-row:span 3;align-items:stretch;min-width:0;
+  padding:40px 24px 0;border:0;border-left:1px solid var(--line);border-radius:0;background:transparent;color:inherit}
+.util-grid .util-panel:first-child{border-left:0}
+.util-grid .util-panel:hover{background:transparent}
+.util-grid .util-panel .sc-art{display:none}
+.util-grid .util-panel::after{display:none}
+.util-top{display:flex;align-items:center;gap:10px;min-width:0}
+.util-grid .ucard-ico{display:grid;place-items:center;flex:none;width:30px;height:30px;margin:0;border-radius:0;
+  border:1px solid var(--line);background:transparent;color:var(--acc)}
+.util-grid .ucard-ico i{font-size:16px;line-height:1}
+.util-name{min-width:0;font-family:var(--mono),monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+  white-space:nowrap;color:var(--white)}
+.util-arrow{display:grid;place-items:center;flex:none;margin-left:auto;width:30px;height:30px;border:1px solid var(--line);
+  color:var(--muted-2);transition:color .2s ease,border-color .2s ease}
+.util-arrow svg{width:16px;height:16px}
+.util-arrow:hover,.util-arrow:focus-visible{color:var(--acc);border-color:rgba(197,52,0,.5)}
+.util-arrow:focus-visible{outline:2px solid var(--acc);outline-offset:3px}
+.util-body{display:block;min-width:0}
+.util-grid .eyebrow{display:block;margin-top:22px;font-family:var(--display),sans-serif;font-weight:600;
+  font-size:17px;line-height:1.25;letter-spacing:-.01em;text-transform:none;color:var(--white)}
+.util-grid .util-panel h3{display:block;margin:10px 0 0;font-family:var(--mono),monospace;font-weight:500;
+  font-size:11px;letter-spacing:.16em;line-height:1.35;text-transform:uppercase;color:var(--acc)}
+.util-grid .util-panel p{display:block;margin-top:10px;font-size:13.5px;line-height:1.62;color:var(--muted-2);max-width:none}
+.util-grid .util-panel .viz{display:block;order:initial;height:auto;margin:28px 0 0;padding:0;border:1px solid var(--line);
+  background:#141414;color:rgba(250,250,250,.34);overflow:hidden}
+.util-fig{display:block;width:100%;aspect-ratio:260/200}
+.util-fig svg{display:block;width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.1;
+  stroke-linecap:round;stroke-linejoin:round}
+.util-fig .uacc{stroke:var(--acc);stroke-width:1.5}
+.util-grid .ticks,.util-grid .chips,.util-grid .basebar,.util-grid .barrow,.util-grid .vrow{display:none}
+.util-stats{display:none}
+@media(max-width:1080px){
+  .util.util-grid{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,auto auto auto)}
+  .util-grid .util-panel:nth-child(odd){border-left:0}
+  .util-grid .util-panel:nth-child(n+3){margin-top:40px;padding-top:40px;border-top:1px solid var(--line)}
+}
+@media(max-width:820px){
+  .util-rule,.util.util-grid{--util-pad:16px}
+}
+@media(max-width:640px){
+  .util.util-grid{grid-template-columns:minmax(0,1fr);grid-template-rows:repeat(4,auto auto auto)}
+  .util-grid .util-panel,.util-grid .util-panel:nth-child(odd){padding:40px 0 0;border-left:0}
+  .util-grid .util-panel,.util-grid .util-panel:nth-child(n+3){margin-top:40px;padding-top:40px;border-top:1px solid var(--line)}
+  .util-grid .util-panel:first-child{margin-top:0;border-top:0}
+}
+@media(prefers-reduced-motion:reduce){.util-arrow{transition:none}}
+
 /* the footer is a plain static section at the end of the document; nothing pins it. */
 
 
@@ -1266,9 +1321,12 @@ footer.site-footer .foot-bottom a:hover{color:var(--accent)}
    (.sxq), rebuilt as an exact copy of the privacy page's Satoshi treatment.
    Its rules are appended at the end of this <style> so they win the cascade.
    Only the flywheel's rhythm inside .ab-block stays here. --- */
-.ab-block .fly{margin-top:76px}
+.ab-block{min-height:100svh;display:flex;align-items:center}
+.ab-block .wrap{width:100%}
+.ab-block .fly{width:100%;max-width:min(860px,calc(100svh - 11rem));margin:0 auto}
 @media(max-width:880px){
-  .ab-block .fly{margin-top:40px}
+  .ab-block{min-height:auto}
+  .ab-block .fly{max-width:min(520px,calc(100svh - 8rem));margin:0 auto}
 }
 
 /* --- 05 Where to get STRK: the four categories stop being floating cards and
@@ -1292,16 +1350,18 @@ footer.site-footer .foot-bottom a:hover{color:var(--accent)}
 
 .buy-head{position:relative;display:block;width:100%;padding:4px 40px 18px 22px;text-align:left}
 .buy-head:hover{background:transparent}
-.buy-head:hover .bh-title{color:var(--acc-2)}
-.buy-head .bh-l{display:grid;grid-template-columns:auto 1fr;align-items:baseline;column-gap:10px;row-gap:14px}
+.buy-head:hover .bh-title{color:#fff}
+.buy-head .bh-l{display:grid;grid-template-columns:minmax(0,auto) auto;align-items:end;column-gap:12px;row-gap:18px}
 .buy-head .bh-mark,.buy-head .bh-l>i{grid-column:1 / -1;justify-self:start}
 .buy-head .bh-count{justify-self:start}
-.buy-head .bh-mark{width:22px;height:22px;color:var(--acc-2)}
-.buy-head .bh-l>i{font-size:22px;line-height:1;color:var(--acc-2)}
-.buy-head .bh-title{font-size:clamp(16px,1.25vw,18px);line-height:1.14;transition:color .2s}
-.buy-head .bh-count{border:0;border-radius:0;padding:0;font-size:11px;letter-spacing:.14em;color:var(--muted)}
-.buy-head .bh-chev{position:absolute;right:16px;top:2px;font-size:17px;transition:transform .25s,color .2s}
-.buy-cat.open .bh-title,.buy-cat.open .bh-count{color:var(--acc-2)}
+.buy-head .bh-mark{width:30px;height:30px;color:var(--acc-2)}
+.buy-head .bh-l>i{font-size:30px;line-height:1;color:var(--acc-2)}
+.buy-head .bh-title{min-width:0;font-size:clamp(26px,2.1vw,36px);font-weight:400;line-height:1.02;
+  letter-spacing:-.035em;color:#f4ede8;transition:color .2s;text-wrap:balance}
+.buy-head .bh-count{border:0;border-radius:0;padding:0;font-size:13px;letter-spacing:.12em;color:var(--acc-2)}
+.buy-head .bh-chev{position:absolute;right:16px;top:2px;font-size:19px;transition:transform .25s,color .2s}
+.buy-cat.open .bh-title{color:#f4ede8}
+.buy-cat.open .bh-count{color:var(--acc-2)}
 .buy-cat.open .bh-chev{color:var(--acc-2)}
 .buy-cat.open .buy-body{max-height:2200px}
 
@@ -1335,6 +1395,10 @@ footer.site-footer .foot-bottom a:hover{color:var(--accent)}
   .buy-cat:first-child{border-top:0;padding-top:0;margin-top:0}
   .buy-cat:nth-child(n+3){margin-top:24px;padding-top:24px}
   .buy-head{padding:4px 40px 16px 0}
+  .buy-head .bh-l{row-gap:15px}
+  .buy-head .bh-mark{width:26px;height:26px}
+  .buy-head .bh-l>i{font-size:26px}
+  .buy-head .bh-title{font-size:clamp(25px,8vw,34px)}
   .buy-body .buy-list{padding:0 0 20px}
   .buy-item{margin:0;padding:16px 0}
   .buy-item:hover{background:transparent}
@@ -1461,7 +1525,7 @@ footer.site-footer .foot-bottom a:hover{color:var(--accent)}
    at exactly 100vh at all of them. The pill's own painted box is 56px tall
    below ~1024, offset further down, which is why the kicker floor below is
    set against the pill's BOTTOM EDGE rather than against this number. */
-body > .hero{position:relative;display:block;height:100vh;min-height:100vh;
+body > .hero{position:relative;display:block;height:calc(100svh + var(--skh-chrome));min-height:calc(100svh + var(--skh-chrome));
   max-width:none;margin:calc(-1 * var(--skh-chrome)) 0 0;padding:0;
   overflow:hidden;text-align:left;background:transparent;z-index:0;
   align-items:stretch;justify-content:flex-start}
@@ -1546,7 +1610,7 @@ body > .hero{position:relative;display:block;height:100vh;min-height:100vh;
    here: the pill is taller relative to the viewport and the hero no longer
    needs to be exactly 100vh once it is a stack. */
 @media (max-width:980px){
-  body > .hero{height:auto;min-height:0;margin:0;padding:5.5rem 1.5rem 2rem;overflow:visible}
+  body > .hero{height:auto;min-height:calc(100svh + 12rem);margin:0;padding:5.5rem 1.5rem 2rem;overflow:visible}
   .hero > .skh-stage{display:none}
   .hero > .hero-eyebrow,.hero > .hero-title,.hero > .skh-left,.hero > .skh-right{
     position:static;width:auto;max-width:none;z-index:auto}
@@ -1571,45 +1635,26 @@ body > .hero{position:relative;display:block;height:100vh;min-height:100vh;
 }
 
 /* ===== STRK ACROSS THE ECOSYSTEM: THE TICKER ================================
-   Overrides css/stride.css's .lm rules from this page's own sheet, which
-   loads after it, rather than editing that shared file. See the markup note.
-   1  ONE SEAMLESS LOOP. The set is in the markup exactly twice, each copy its
-      own .lm-set, so track width is exactly 2x one set by construction. The
-      keyframe runs 0 to -50% of the TRACK, which is exactly one set, so copy
-      two arrives where copy one began and the wrap cannot be seen. Percent of
-      the transformed element, never pixels: no measurement, nothing to fall
-      out of step on resize or on a webfont swap.
-   2  SOFT EDGES. mask-image fades the first and last 9% instead of
-      guillotining a name mid-word. Both the prefixed and unprefixed
-      properties, because Safari still needs the prefix.
-   3  LEGIBLE. stride.css sets .lm-i at var(--sd-faint), rgba(250,250,250,.34).
-      Composited on this #0d0d0d ground that is rgb(94,94,94) and measures
-      APCA Lc -19.3, far under the |Lc| 60 floor the site's contrast pass
-      holds text to. Here it is .82, rgb(207,207,207), APCA Lc -77.4. (APCA is
-      signed: light text on a dark ground reads negative, so it is the
-      magnitude that clears the floor.) The dot keeps its dimmer .34 ring: it
-      is decoration, not text, and no floor applies.
-   4  UNHURRIED. 64s for a full cycle, linear, and it holds on hover so a name
-      can be read. Declared only under .lm.run, which the IntersectionObserver
-      in the inline script at the foot toggles, so an off-screen band animates
-      nothing at all.
-   5  ONE ROW, NOT TWO. Twelve names is a short set; two rows of the same
-      twelve read as duplication whichever way they travel. */
-.lm-row{display:flex;overflow:hidden;
-  -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 9%,#000 91%,transparent 100%);
-          mask-image:linear-gradient(90deg,transparent 0,#000 9%,#000 91%,transparent 100%)}
+   Mistral-style logo strip: one tall dark row, vertical cell dividers, centred
+   white wordmarks, and a seamless duplicated track that pauses on hover. */
+.lm{padding:0;background:#111114;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.lm-label{display:none}
+.lm-row{display:flex;overflow:hidden}
 .lm-row + .lm-row{margin-top:0}
 .lm-track{display:flex;width:max-content;flex:none;align-items:center;
   will-change:transform;transform:translate3d(0,0,0)}
 .lm-set{display:flex;flex:none;align-items:center}
-.lm.run .lm-track{animation:lmRun 64s linear infinite}
+.lm.run .lm-track{animation:lmRun 72s linear infinite}
 .lm-row:hover .lm-track,.lm-row:focus-within .lm-track{animation-play-state:paused}
 @keyframes lmRun{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
-.lm-i{display:inline-flex;align-items:center;gap:12px;padding:0 34px;
-  font-family:var(--display),sans-serif;font-size:26px;font-weight:400;
-  letter-spacing:-.01em;color:rgba(250,250,250,.82);white-space:nowrap}
-.lm-m{width:26px;height:26px;flex:none;border-radius:50%;
-  border:1px solid rgba(250,250,250,.34)}
+.lm-i{display:grid;place-items:center;width:18vw;min-width:230px;height:360px;padding:0 32px;
+  border-left:1px solid var(--line);font-family:var(--display),sans-serif;font-size:30px;font-weight:700;
+  letter-spacing:-.01em;color:#fafafa;white-space:nowrap;text-transform:none;background:#111114}
+.lm-i:nth-child(2n){background:#18181b}
+.lm-logo{display:block;max-width:min(150px,72%);max-height:78px;object-fit:contain;
+  filter:grayscale(1) brightness(0) invert(1);opacity:.92}
+.lm-word{display:block;font-family:var(--display),sans-serif;font-size:clamp(24px,2vw,38px);
+  font-weight:700;line-height:1;letter-spacing:-.02em;color:#fafafa}
 @media (prefers-reduced-motion: reduce){
   /* HOLDS STILL, and holds still at the START of the cycle so copy one is
      the one on screen. No animation is declared at all, rather than a paused
@@ -1617,9 +1662,9 @@ body > .hero{position:relative;display:block;height:100vh;min-height:100vh;
   .lm.run .lm-track{animation:none;transform:translate3d(0,0,0)}
 }
 @media(max-width:880px){
-  .lm-i{font-size:19px;padding:0 22px}
-  .lm-m{width:20px;height:20px}
-  .lm.run .lm-track{animation-duration:44s}
+  .lm-i{width:44vw;min-width:170px;height:230px;padding:0 22px}
+  .lm-logo{max-width:min(120px,76%);max-height:58px}
+  .lm.run .lm-track{animation-duration:54s}
 }
 </style>
 <script>
@@ -1736,8 +1781,8 @@ window.ADMIN_GATE=on;})();
   <p class="lm-label">STRK across the ecosystem</p>
   <div class="lm-row">
     <div class="lm-track">
-      <span class="lm-set"><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>AVNU</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Ekubo</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Vesu</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Troves</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Endur</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Opus</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Braavos</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Ready</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Xverse</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Nostra</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Extended</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Meteora</span></span>
-      <span class="lm-set" aria-hidden="true"><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>AVNU</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Ekubo</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Vesu</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Troves</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Endur</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Opus</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Braavos</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Ready</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Xverse</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Nostra</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Extended</span><span class="lm-i"><i class="lm-m" aria-hidden="true"></i>Meteora</span></span>
+      <span class="lm-set"><span class="lm-i"><span class="lm-word">AVNU</span></span><span class="lm-i"><span class="lm-word">Ekubo</span></span><span class="lm-i"><span class="lm-word">Vesu</span></span><span class="lm-i"><span class="lm-word">Troves</span></span><span class="lm-i"><span class="lm-word">Endur</span></span><span class="lm-i"><span class="lm-word">Opus</span></span><span class="lm-i"><span class="lm-word">Braavos</span></span><span class="lm-i"><span class="lm-word">Ready</span></span><span class="lm-i"><span class="lm-word">Xverse</span></span><span class="lm-i"><span class="lm-word">Nostra</span></span><span class="lm-i"><span class="lm-word">Extended</span></span><span class="lm-i"><span class="lm-word">Meteora</span></span></span>
+      <span class="lm-set" aria-hidden="true"><span class="lm-i"><span class="lm-word">AVNU</span></span><span class="lm-i"><span class="lm-word">Ekubo</span></span><span class="lm-i"><span class="lm-word">Vesu</span></span><span class="lm-i"><span class="lm-word">Troves</span></span><span class="lm-i"><span class="lm-word">Endur</span></span><span class="lm-i"><span class="lm-word">Opus</span></span><span class="lm-i"><span class="lm-word">Braavos</span></span><span class="lm-i"><span class="lm-word">Ready</span></span><span class="lm-i"><span class="lm-word">Xverse</span></span><span class="lm-i"><span class="lm-word">Nostra</span></span><span class="lm-i"><span class="lm-word">Extended</span></span><span class="lm-i"><span class="lm-word">Meteora</span></span></span>
     </div>
   </div>
 </section>
@@ -1818,88 +1863,27 @@ window.ADMIN_GATE=on;})();
     <linearGradient id="gv" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#c53400"/><stop offset="1" stop-color="#f0b8a0"/></linearGradient>
   </defs></svg>
 
+  <div class="util-rule" aria-hidden="true"></div>
   <div class="util util-grid">
-      <!-- FEES -->
-      <div id="fees" class="util-panel sc-col show" data-k="fees"><div class="sc-art" aria-hidden="true"><img src="/assets/stride/images/3rd/approach.png" alt="" loading="lazy" width="1536" height="2752"></div>
-        <span class="ucard-idx">01</span><span class="ucard-ico"><svg viewBox="0 0 24 24"><path fill="url(#gv)" d="M13 2 4 13h6l-1 9 9-12h-6l1-8z"/></svg></span><div class="eyebrow">Execution</div>
-        <h3>Fees</h3>
-        <p>Every transaction on Starknet is paid in STRK. Beyond standard gas, each private transaction also carries a protocol privacy fee: a target of about $0.12 per action, settled in STRK, with the STRK amount adjusted by the protocol as the price moves.</p>
-        <div class="viz">
-          <div class="barrow">
-            <div class="bl" style="display:flex;justify-content:space-between"><span>Standard transaction</span><span style="color:var(--white)">~$0.01</span></div>
-            <div class="bartrack"><div class="barfill gas" data-w="10%"></div></div>
-          </div>
-          <div class="barrow">
-            <div class="bl">Private transaction</div>
-            <div class="bartrack"><div class="barfill gas" data-w="10%"></div><div class="barfill priv" data-w="80%"></div></div>
-            <div class="seglbl"><i><span class="dotc gas"></span>Gas <span style="color:var(--white)">~$0.01</span></i><i><span class="dotc priv"></span>Privacy fee · paid in STRK <span style="color:var(--white)"><span data-fee-usd>$0.15</span> today</span></i></div>
-          </div>
-        </div>
+      <div id="fees" class="util-panel show" data-k="fees">
+        <div class="util-top"><span class="ucard-ico" aria-hidden="true"><i class="ti ti-bolt"></i></span><span class="util-name">01 &middot; THE FEES</span><a class="util-arrow" href="#the-numbers" aria-label="See fee numbers"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></a></div>
+        <div class="util-body"><span class="eyebrow">The cost of using Starknet</span><h3>Execution</h3><p>Every transaction is paid in STRK. Private actions add a protocol privacy fee, also settled in STRK and adjusted as the token price moves.</p></div>
+        <div class="viz"><span class="util-fig" aria-hidden="true"><svg viewBox="0 0 260 200"><path d="M42 52h176v96H42z"/><path d="M42 84h176M42 116h176"/><path d="M78 52v96M130 52v96M182 52v96"/><path class="uacc" d="M94 100h48l-12 34 42-54h-48l12-34z"/><path d="M62 164h136"/></svg></span></div>
       </div>
-      <!-- STAKING -->
-      <div id="staking-2" class="util-panel sc-col show" data-k="staking"><div class="sc-art" aria-hidden="true"><img src="/assets/stride/images/3rd/technology.jpg" alt="" loading="lazy" width="735" height="976"></div>
-        <span class="ucard-idx">02</span><span class="ucard-ico"><svg viewBox="0 0 24 24"><path fill="url(#gv)" d="M12 2 20 5v6c0 5-3.4 7.7-8 9-4.6-1.3-8-4-8-9V5z"/><path fill="none" stroke="#0d0d0d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M9 12l2.2 2.2L15 10.2"/></svg></span><div class="eyebrow">Security</div>
-        <h3>Staking</h3>
-        <p>Staking STRK is the core of Starknet's decentralization, carrying 75% of all staking power. Bitcoin staking was added on top to tie STRK and BTC value in a flywheel: BTC stakers take a fixed 25% share of staking rewards, so the more STRK is staked, the higher their rewards and APR, pulling even more Bitcoin into consensus. All of it runs on less than 1% annual STRK inflation.</p>
-        <div class="viz">
-          <div class="barrow">
-            <div class="bl">Staking power</div>
-            <div class="bartrack"><div class="barfill strk" data-w="75%"></div><div class="barfill btc" data-w="25%"></div></div>
-            <div class="seglbl"><i><span class="dotc strk"></span>STRK 75%</i><i><span class="dotc btc"></span>BTC 25%</i></div>
-          </div>
-          <div class="barrow">
-            <div class="bl">Circulating supply staked</div>
-            <div class="bartrack"><div class="barfill meter" data-w="21.18%"></div></div>
-          </div>
-          <div class="vrow">
-            <a class="figlink" href="https://dashboard.endur.fi/" target="_blank" rel="noopener noreferrer"><div class="bignum" data-metric="strk_staked_pct">21.18%</div><div class="subt">Of circulating STRK supply staked <span class="arr">↗</span></div></a>
-            <a class="figlink" href="https://dashboard.endur.fi/" target="_blank" rel="noopener noreferrer"><div class="bignum" data-metric="strk_staked_total">1.43B STRK</div><div class="subt">STRK staked <span class="arr">↗</span></div></a>
-            <div><div class="bignum">75 / 25</div><div class="subt">STRK / BTC power</div></div>
-          </div>
-          <div id="stakingUpdated" style="font-family:var(--mono),monospace;font-size:10px;letter-spacing:.12em;color:var(--muted);text-align:right;margin-top:10px;min-height:13px"></div>
-        </div>
+      <div id="staking-2" class="util-panel show" data-k="staking">
+        <div class="util-top"><span class="ucard-ico" aria-hidden="true"><i class="ti ti-shield-check"></i></span><span class="util-name">02 &middot; THE STAKING</span><a class="util-arrow" href="https://dashboard.endur.fi/" target="_blank" rel="noopener noreferrer" aria-label="Open staking dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></a></div>
+        <div class="util-body"><span class="eyebrow">The security flywheel</span><h3>Security</h3><p>Staked STRK anchors decentralization and carries 75% of staking power, with Bitcoin staking tied into the reward loop beside it.</p></div>
+        <div class="viz"><span class="util-fig" aria-hidden="true"><svg viewBox="0 0 260 200"><path d="M130 28 210 62v46c0 50-34 78-80 94-46-16-80-44-80-94V62z"/><path d="M130 58v112"/><path d="M76 84h108"/><path d="M72 116h116"/><path class="uacc" d="M130 58 210 92M130 170 50 136"/><path class="uacc" d="M96 112l22 22 48-58"/></svg></span></div>
       </div>
-      <!-- GOVERNANCE -->
-      <div id="governance" class="util-panel sc-col show" data-k="gov"><div class="sc-art" aria-hidden="true"><img src="/assets/stride/images/3rd/security.jpg" alt="" loading="lazy" width="736" height="1104"></div>
-        <span class="ucard-idx">03</span><span class="ucard-ico"><svg viewBox="0 0 24 24"><path fill="url(#gv)" d="M12 3 21.5 8.2H2.5z"/><rect x="5.4" y="9.3" width="2.4" height="7.6" fill="url(#gv)"/><rect x="10.8" y="9.3" width="2.4" height="7.6" fill="url(#gv)"/><rect x="16.2" y="9.3" width="2.4" height="7.6" fill="url(#gv)"/><rect x="3.2" y="17.6" width="17.6" height="2.4" rx="1" fill="url(#gv)"/></svg></span><div class="eyebrow">Control</div>
-        <h3>Governance</h3>
-        <p>Governance is powered by STRK, and only staked or delegated STRK carries a vote. Stakers and delegators set the direction of the protocol, from upgrades to economic parameters and everything in between. It is already live, with 10 votes held as of 20 July 2026.</p>
-        <div class="viz">
-          <div class="bl" style="font-family:var(--mono),monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:12px">On-chain votes</div>
-          <div class="gov-votes" id="govVotes" style="position:relative">
-            <div class="ticks">
-              <a href="https://governance.starknet.io/#/sn:0x009fedaf0d7a480d21a27683b0965c0f8ded35b3f1cac39827a25a06a8a682a4/proposal/5" target="_blank" rel="noopener noreferrer" data-title="Staking on Starknet"></a>
-              <a href="https://governance.starknet.io/#/sn:0x009fedaf0d7a480d21a27683b0965c0f8ded35b3f1cac39827a25a06a8a682a4/proposal/6" target="_blank" rel="noopener noreferrer" data-title="Termination of Transaction Versions 0, 1, 2"></a>
-              <a href="https://governance.starknet.io/#/sn:0x009fedaf0d7a480d21a27683b0965c0f8ded35b3f1cac39827a25a06a8a682a4/proposal/8" target="_blank" rel="noopener noreferrer" data-title="Staking on Starknet V2"></a>
-              <a href="https://governance.starknet.io/#/sn:0x009fedaf0d7a480d21a27683b0965c0f8ded35b3f1cac39827a25a06a8a682a4/proposal/9" target="_blank" rel="noopener noreferrer" data-title="Starknet v0.14.0"></a>
-              <a href="https://governance.starknet.io/#/sn:0x009fedaf0d7a480d21a27683b0965c0f8ded35b3f1cac39827a25a06a8a682a4/proposal/10" target="_blank" rel="noopener noreferrer" data-title="Bitcoin Staking on Starknet"></a>
-              <a href="https://governance.starknet.io/#/sn:0x009fedaf0d7a480d21a27683b0965c0f8ded35b3f1cac39827a25a06a8a682a4/proposal/11" target="_blank" rel="noopener noreferrer" data-title="Starknet v0.14.2"></a>
-              <a href="https://governance.starknet.io/#/sn:0x009fedaf0d7a480d21a27683b0965c0f8ded35b3f1cac39827a25a06a8a682a4/proposal/12" target="_blank" rel="noopener noreferrer" data-title="strkBTC - Bitcoin on Starknet (SNIP-38)"></a>
-              <a href="https://governance.starknet.io/#/sn:0x009fedaf0d7a480d21a27683b0965c0f8ded35b3f1cac39827a25a06a8a682a4/proposal/13" target="_blank" rel="noopener noreferrer" data-title="strkBTC as a Stakable Token on Starknet (SNIP-39)"></a>
-              <a href="https://governance.starknet.io/#/sn:0x009fedaf0d7a480d21a27683b0965c0f8ded35b3f1cac39827a25a06a8a682a4/proposal/14" target="_blank" rel="noopener noreferrer" data-title="Starknet v0.14.3"></a>
-              <a href="https://governance.starknet.io/#/sn:0x009fedaf0d7a480d21a27683b0965c0f8ded35b3f1cac39827a25a06a8a682a4/proposal/15" target="_blank" rel="noopener noreferrer" data-title="Starknet v0.14.3 (Updated)"></a>
-            </div>
-            <div class="tip" id="govTip"><div class="tt"><span id="govTipT"></span> <span style="opacity:.7">↗</span></div></div>
-          </div>
-          <div class="vrow"><div><div class="bignum">10</div><div class="subt">Votes to date</div></div></div>
-        </div>
+      <div id="governance" class="util-panel show" data-k="gov">
+        <div class="util-top"><span class="ucard-ico" aria-hidden="true"><i class="ti ti-building-bank"></i></span><span class="util-name">03 &middot; THE VOTES</span><a class="util-arrow" href="https://governance.starknet.io/" target="_blank" rel="noopener noreferrer" aria-label="Open Starknet governance"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></a></div>
+        <div class="util-body"><span class="eyebrow">The protocol control layer</span><h3>Governance</h3><p>Only staked or delegated STRK carries a vote, setting upgrades, economics, and the operating direction of the protocol.</p></div>
+        <div class="viz"><span class="util-fig" aria-hidden="true"><svg viewBox="0 0 260 200"><path d="M130 36 218 78H42z"/><path d="M62 88v58M98 88v58M134 88v58M170 88v58M206 88v58"/><path d="M50 154h160M38 174h184"/><path class="uacc" d="M70 66h120"/><path class="uacc" d="M72 122h20M108 106h20M144 132h20M180 96h20"/></svg></span></div>
       </div>
-      <!-- COLLATERAL -->
-      <div id="defi-collateral" class="util-panel sc-col show" data-k="coll"><div class="sc-art" aria-hidden="true"><img src="/assets/stride/images/3rd/team.jpg" alt="" loading="lazy" width="1536" height="2752"></div>
-        <span class="ucard-idx">04</span><span class="ucard-ico"><svg viewBox="0 0 24 24"><path fill="url(#gv)" d="M12 2.6 21.5 8 12 13.4 2.5 8z"/><path fill="none" stroke="url(#gv)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" opacity=".6" d="M3 12l9 5.4L21 12M3 16l9 5.4L21 16"/></svg></span><div class="eyebrow">Capital</div>
-        <h3>DeFi collateral</h3>
-        <p>Across Starknet DeFi, STRK is a core collateral asset. From lending and trading to leverage, liquid staking, and stablecoins, the native token plugs into every major venue, put to work instead of sitting idle.</p>
-        <div class="viz">
-          <div class="bl" style="font-family:var(--mono),monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:12px">Used across</div>
-          <div class="chips">
-            <a class="chip" href="https://vesu.xyz/lite/markets" target="_blank" rel="noopener noreferrer">Lending <span class="arr">↗</span></a>
-            <a class="chip" href="https://ekubo.org/positions?chainId=23448594291968334" target="_blank" rel="noopener noreferrer">LP <span class="arr">↗</span></a>
-            <a class="chip" href="https://www.troves.fi/" target="_blank" rel="noopener noreferrer">Leverage yield <span class="arr">↗</span></a>
-            <a class="chip" href="https://app.endur.fi/strk" target="_blank" rel="noopener noreferrer">Liquid stake <span class="arr">↗</span></a>
-            <a class="chip" href="https://www.opus.money/" target="_blank" rel="noopener noreferrer">Mint stablecoin <span class="arr">↗</span></a>
-          </div>
-          <div class="basebar">STRK · base collateral</div>
-        </div>
+      <div id="defi-collateral" class="util-panel show" data-k="coll">
+        <div class="util-top"><span class="ucard-ico" aria-hidden="true"><i class="ti ti-layers-intersect"></i></span><span class="util-name">04 &middot; THE COLLATERAL</span><a class="util-arrow" href="#where-strk-is-put-to-work" aria-label="See where STRK is put to work"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></a></div>
+        <div class="util-body"><span class="eyebrow">The asset used across DeFi</span><h3>Capital</h3><p>From lending and trading to leverage, liquid staking, and stablecoins, STRK plugs into Starknet's major venues as working collateral.</p></div>
+        <div class="viz"><span class="util-fig" aria-hidden="true"><svg viewBox="0 0 260 200"><path d="M58 68 130 36l72 32-72 32z"/><path d="M58 68v34l72 32 72-32V68"/><path d="M40 118 112 86l72 32-72 32z"/><path d="M40 118v34l72 32 72-32v-34"/><path class="uacc" d="M94 62 130 78l36-16"/><path class="uacc" d="M76 112l36 16 36-16"/></svg></span></div>
       </div>
   </div>
   <div class="util-stats">
