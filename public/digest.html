@@ -46,7 +46,10 @@
   }
 </style>
 <style>
-  /* ===== Hero shell (the scene layer is now the dgx- field, below).
+  /* ===== Hero shell. NO LONGER APPLIED ON THIS PAGE as of 2026-09-02: the
+     hero was rebuilt on /btcfi's frame and uses .dgh-hero, not .dg-hero (see
+     the dgh- block further down). The block is kept because it is the shell
+     ecosystem.html shares, and removing it here would break that sync note.
      KEEP IN SYNC with ecosystem.html's eco-hero block (eco- prefix), but
      only the SHELL: hero frame, content grid, glass CTAs, scrim, marquee
      band and breakpoints must stay byte-identical modulo the prefix.
@@ -130,27 +133,43 @@
   /* ===== coherence pass (audit/digest-vs-landing.md). The feed's base
      rules live in css/styles.css (off limits); each rule below
      page-scopes the canon value over the shared selector it names. */
-  /* D3: feed container to 1160/32 (overrides the global section
-     padding: 120px 48px; mobile mirrors the shared 80/24 step) */
-  section.dg-feed { max-width: 1160px; margin: 0 auto; padding: 120px 32px; }
-  @media (max-width: 768px) { section.dg-feed { padding: 80px 24px; } }
-  /* D4 + D9: two muted tiers + 14.5px excerpt (overrides .recap-excerpt,
-     .recap-date, .recap-count) */
-  .recap-excerpt { color: #9a9a9a; font-size: 14.5px; }
-  .recap-date, .recap-count { color: #9a9a9a; }
-  /* D7 + D11: entry cards onto the site's NON-glass card tier, the one
-     ecosystem's .eco-card established for many-surfaces grids (opaque
-     #141414 fill, card-glass border alpha, 14px radius, shared hover
-     signature: card-glass-lift + accent border + accent glow). Cards stay
-     non-glass by design (a hydrated archive grid is the same
-     many-backdrop-filter case as the directory). Also fixes the UA
-     link-blue computing on the anchor itself. Overrides .recap-card. */
-  .recap-card { border-radius: 14px; color: inherit;
-    border-color: var(--card-glass-border); background: #141414;
-    transition: transform var(--hover-dur) var(--hover-ease), border-color var(--hover-dur), background var(--hover-dur), box-shadow var(--hover-dur); }
-  .recap-card:hover { transform: translateY(var(--card-glass-lift)); border-color: var(--accent);
-    background: rgba(255,255,255,0.03); box-shadow: 0 10px 30px rgba(var(--accent-rgb), .22); }
-  @media (prefers-reduced-motion: reduce) { .recap-card:hover { transform: none; } .recap-card { transition: none; } }
+  /* D3 (2026-09-02): the feed section opens up to the same gutter the
+     latest-issues band above it now carries, so the two grids still sit on
+     one pair of edges. It replaces the earlier 1160/32 box. */
+  section.dg-feed { max-width: none; margin: 0 auto; padding: 120px clamp(16px, 1.5vw, 28px); }
+  @media (max-width: 768px) { section.dg-feed { padding: 80px 16px; } }
+  /* D9: the muted readout tier. .recap-excerpt and .recap-content went with
+     the card redesign (D4 below); .recap-count is the "showing X of Y" line
+     under the grid and is still emitted. */
+  .recap-count { color: #9a9a9a; }
+  /* D4 (2026-09-02): THE ARCHIVE FEED USES THE LATEST-ISSUES CARD, exactly.
+     It used to be its own design: 14px radius, a pill-shaped category chip
+     and a body excerpt. Both renderers (scripts/build-digest.js for the
+     static prerender and the client renderer at the foot of this page) now
+     emit the .dgw-card markup instead, so the two grids on this page are one
+     card design. The .recap-card class stays on the anchor because the
+     filter and Load-more code queries it; every rule that class used to
+     carry is unwound below, and the border scheme becomes .dgw-grid's, which
+     is column-count agnostic: the container draws top and left, every card
+     draws right and bottom, and the container's ::after redraws the bottom
+     edge across the ragged tail of the last row. That ::after matters more
+     here than on the fixed six above, because this feed's length varies with
+     the filter and the Load-more batches.
+     Also fixes the UA link-blue computing on the anchor itself. */
+  .recap-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0; position: relative;
+    border-top: 1px solid var(--sd-line, #262626); border-left: 1px solid var(--sd-line, #262626); }
+  .recap-grid::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 1px;
+    background: var(--sd-line, #262626); pointer-events: none; }
+  .recap-card.dgw-card { border-radius: 0; overflow: visible; color: inherit;
+    border: 0; border-right: 1px solid var(--sd-line, #262626); border-bottom: 1px solid var(--sd-line, #262626);
+    background: rgba(20, 20, 20, .55); box-shadow: none; transform: none;
+    transition: background .18s; }
+  .recap-card.dgw-card:hover { background: rgba(20, 20, 20, .85); border-color: var(--sd-line, #262626);
+    box-shadow: none; transform: none; }
+  @media (max-width: 1240px) { .recap-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 820px) { .recap-grid { grid-template-columns: minmax(0, 1fr); } }
+  @media (prefers-reduced-motion: reduce) { .recap-card.dgw-card { transition: none; } }
   /* D5: filter tabs adopt ecosystem's filter pill vocabulary in this
      page's accent (overrides .chart-toggle and .toggle-btn; behavior,
      classes and the marquee band's tab wiring untouched) */
@@ -161,19 +180,11 @@
   #recapTabs .toggle-btn.active { color: var(--accent); border-color: var(--accent); background: rgba(var(--accent-rgb), .12);
     box-shadow: 0 0 16px rgba(var(--accent-rgb), .22); }
   @media (prefers-reduced-motion: reduce) { #recapTabs .toggle-btn { transition: none; } }
-  /* layout pass: 3-up at wide viewports (the 2x540px grid tiled the same
-     cover art down a ~5000px column), the pills get back their breathing
-     room below the eyebrow, and two-line clamps keep rows even at the
-     narrower card width. Page-scoped; css/styles.css keeps the shared
-     2-col/1-col behavior for narrower viewports. */
-  @media (min-width: 1200px) { .recap-grid { grid-template-columns: repeat(3, 1fr); gap: 18px; } }
+  /* the pills get back their breathing room below the eyebrow. The 3-up
+     grid, the line clamps, the .recap-content padding and the .recap-cat
+     badge scheme all went with the card redesign (D4 above): the feed now
+     renders .dgw-card markup, which carries its own geometry. */
   #recapTabs { margin-top: 14px; }
-  .recap-title, .recap-excerpt { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-  .recap-content { padding: 18px 20px 20px; gap: 8px; }
-  /* D6: badge scheme on the page palette (overrides .recap-cat.weekly's
-     hardcoded blue-violet): monthly keeps the full accent alias, weekly
-     becomes a reduced-intensity accent variant, research stays neutral */
-  .recap-cat.weekly { color: rgba(var(--accent-rgb), .8); border-color: rgba(var(--accent-rgb), .28); background: rgba(var(--accent-rgb), .07); }
   /* D10: closing block.
      KEEP IN SYNC: twin of ecosystem.html's closing block (.cta-block
      .ecg-glass) and its section; geometry must stay identical, the two
@@ -230,87 +241,120 @@
      win the cascade over stride.css and styles.css at equal specificity;
      where an existing selector is more specific it is named in full. ===== */
 
-  /* ---- hero shell: full viewport, everything centred ---- */
-  .dgx-hero { height: 100lvh; min-height: 0; padding: 0; text-align: center; }
-  .dgx-hero .dg-hero-inner { display: flex; flex-direction: column; align-items: center; justify-content: center;
-    height: 100%; padding-top: 120px; padding-bottom: 56px; text-align: center; }
-  .dgx-kicker { margin: 0 0 26px; }
-  .dgx-hero .dgx-foot { margin-top: 0; display: block; }
+  /* ---- D5: THE HERO, on /btcfi's .bfh- frame ----
+     What was here until 2026-09-02: a dense tiled field of repeating mono
+     tokens (ROUNDUP / RECAP / WEEKLY / NO GAPS, built by an inline script at
+     the foot of the page) with the display over it and one line of the
+     display knocked out in a white block. It went in full. The tiled text
+     fought the headline, the knockout band read as a rendering error, and
+     there was no focal point.
+     What replaces it is /btcfi's hero frame, ported slot for slot: kicker
+     and display top left, a PARTICLE CENTREPIECE filling the middle
+     (js/digest-hero-mark.js, the twin of js/quantum-hero-mark.js), a mono
+     note plus the CTA pair bottom left, and a mono readout over a big
+     uppercase turn line bottom right. No card, no panel, no ground: every
+     layer is transparent over js/eco-backdrop.js, which paints on a FIXED
+     canvas underneath the whole page.
+     Geometry is the landing artboard's in the same vw units btcfi uses
+     (Figma pixels / 14.4): gutter 1.667vw, display 4.6vw at weight 300 over
+     52vw, turn line 4.2vw bold uppercase over 38vw, mono blocks in Mulish,
+     CTA pill 4.167vw/1.111vw beside a 3.542vw icon tile. The two top offsets
+     carry a px floor so the copy can never slide under the floating header
+     on a narrow desktop window.
+     FULL VIEWPORT, HEADER OVER IT, the way btcfi frames the same hero.
+     css/eco-stage.css declares `body > *:not(.eco-bd) { position: relative;
+     z-index: 1 }`, which out-specifies vesper-chrome's `position: fixed`, so
+     the header occupies --dgh-chrome pixels of flow above the hero. The
+     negative margin gives that strip back so the hero is a true 100svh, and
+     z-index 0 (body-scoped, because the eco-stage rule would otherwise win)
+     puts the hero back UNDER the header so the header still reads over it.
+     svh, not vh, so mobile browser chrome cannot overshoot the frame.
+     Selectors are body-scoped rather than single-class so nothing in
+     css/styles.css's own .hero block can win on specificity. */
+  body.page-recap { --dgh-chrome: 51px; }
+  body.page-recap .hero.dgh-hero { position: relative; display: block;
+    height: 100svh; min-height: 100svh; max-width: none;
+    margin: calc(-1 * var(--dgh-chrome)) 0 0; padding: 0;
+    overflow: hidden; text-align: left; background: transparent; z-index: 0; }
+  /* styles.css hangs a centred radial glow off .hero::before for the centred
+     heroes. This hero is not centred and carries its own light, so it goes. */
+  body.page-recap .hero.dgh-hero::before { display: none; }
 
-  /* scene: ground colour at the top ramping into a warm accent floor */
-  .dgx-scene { position: absolute; inset: 0; z-index: -1; overflow: hidden;
-    background: linear-gradient(180deg, var(--black) 0%, #0d0d0d 34%, #150c09 64%, #21120d 86%, #291509 100%); }
-  .dgx-field { position: absolute; inset: 0; overflow: hidden; }
-  .dgx-layer { position: absolute; left: -30%; right: -30%; top: -14%; bottom: -14%;
-    display: flex; flex-direction: column; justify-content: center; gap: clamp(8px, 1.5vh, 18px);
-    transform: translateY(var(--dy, 0px)); will-change: transform; }
-  .dgx-layer--chalk { color: rgba(250, 250, 250, .085);
-    -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 34%, rgba(0,0,0,.15) 76%, transparent 100%);
-            mask-image: linear-gradient(180deg, #000 0%, #000 34%, rgba(0,0,0,.15) 76%, transparent 100%); }
-  .dgx-layer--warm { color: rgba(255, 122, 62, .42);
-    -webkit-mask-image: linear-gradient(180deg, transparent 30%, rgba(0,0,0,.25) 58%, #000 92%);
-            mask-image: linear-gradient(180deg, transparent 30%, rgba(0,0,0,.25) 58%, #000 92%); }
-  .dgx-row { white-space: nowrap; font-family: var(--mono); font-weight: 400;
-    font-size: clamp(11px, 1.02vw, 15px); line-height: 1.5; letter-spacing: .34em; text-transform: uppercase;
-    transform: translateX(calc(var(--x, 0px) + var(--dir, 1) * var(--d, 0px))); }
-  .dgx-glow { position: absolute; inset: 0; pointer-events: none;
-    background: radial-gradient(74% 44% at 50% 104%, rgba(var(--accent-rgb), .38), rgba(var(--accent-rgb), 0) 72%); }
-  /* the field has to stay a texture, not a background the headline fights:
-     a soft centre scrim sits between the field and the content. */
-  .dgx-scrim { position: absolute; inset: 0; pointer-events: none;
-    background:
-      radial-gradient(62% 46% at 50% 42%, rgba(13,13,13,.9), rgba(13,13,13,.62) 52%, rgba(13,13,13,0) 80%),
-      linear-gradient(180deg, rgba(13,13,13,0) 52%, rgba(13,13,13,.5) 68%, rgba(13,13,13,.42) 86%, rgba(13,13,13,0) 100%); }
+  .dgh-stage { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+  .dgh-stage canvas { display: block; width: 100%; height: 100%; }
 
-  /* ---- headline with the inline tile ---- */
-  .dgx-display { margin: 0; max-width: 18ch; font-family: var(--display); font-weight: 300;
-    font-size: clamp(42px, 8.2vw, 132px); line-height: .96; letter-spacing: -.035em; color: var(--sd-ink, #fafafa); }
-  .dgx-display em { font-style: normal; color: var(--accent); }
-  /* inverted tile: inline-block + nowrap so it paints as one clean slab
-     instead of leaving stray fragments at line ends. line-height 1 keeps
-     the box on cap height at display size. box-decoration-break is kept
-     for the sub-860px fallback below, where the tile wraps normally. */
-  .dgx-hl { display: inline-block; white-space: nowrap; vertical-align: baseline; line-height: 1;
-    padding: .06em .16em .1em; background: #fafafa; color: #0d0d0d;
-    -webkit-box-decoration-break: clone; box-decoration-break: clone; }
-  .dgx-ic { display: inline-grid; place-items: center; width: .62em; height: .62em; margin-right: .16em;
-    vertical-align: .04em; background: var(--accent); color: #fafafa; }
-  .dgx-ic svg { width: 58%; height: 58%; }
+  .dgh-kicker { position: absolute; top: max(7.2vw, 88px); left: 1.667vw; z-index: 2; margin: 0;
+    font-family: var(--vc-tag); font-weight: 400; font-size: max(0.9vw, 11px); line-height: 1.5;
+    letter-spacing: .2em; text-transform: uppercase; color: var(--accent); }
+  .dgh-title { position: absolute; top: max(9.028vw, 114px); left: 1.667vw; z-index: 2; margin: 0;
+    width: 52vw; max-width: none; font-family: var(--vc-sans); font-weight: 300; font-size: 4.6vw;
+    line-height: .9; letter-spacing: normal; text-transform: none; color: var(--white); }
 
-  /* ---- the rest, below the headline ---- */
-  .dgx-stats { justify-content: center; flex-wrap: wrap; margin: 40px 0 0; }
-  .dgx-stats li { border-left: 1px solid var(--border); padding-left: 20px; text-align: left; }
-  .dgx-stats .sk-stat-v { font-size: clamp(30px, 3vw, 44px); }
-  .dgx-stats .sk-stat-l { font-size: 12px; color: var(--sd-dim, rgba(250,250,250,.62)); margin-top: 8px; }
-  .dgx-hero .dgx-insight { max-width: 44rem; margin: 26px auto 0; }
-  .dgx-hero .sk-insight-t { font-size: clamp(16px, 1.35vw, 20px); }
-  .dgx-hero .sk-insight-b { font-size: 15px; }
-  .dgx-hero .dgx-acts { margin-top: 26px; justify-content: center; }
+  .dgh-left { position: absolute; left: 1.667vw; bottom: 2.153vw; z-index: 2; width: 26vw;
+    display: flex; flex-direction: column; align-items: flex-start; gap: 1.25vw; }
+  /* SENTENCE CASE IN THE SOURCE, CAPS ON SCREEN, the way the landing carries
+     its own mono blocks: text-transform does the shouting, so a screen reader
+     and the search index still get real words. */
+  .dgh-note { margin: 0; max-width: none; font-family: var(--vc-tag); font-weight: 400;
+    font-size: max(0.85vw, 11px); line-height: 1.7; letter-spacing: .06em;
+    text-transform: uppercase; color: rgba(250, 250, 250, .82); }
+  /* the supporting paragraph stays sentence case: it is a sentence, not a
+     readout, and 40-odd words of tracked-out caps is unreadable. */
+  .dgh-body { margin: 0; font-family: var(--vc-sans); font-weight: 400;
+    font-size: max(0.9vw, 13px); line-height: 1.55; color: rgba(250, 250, 250, .6); }
+  /* the pill and the tile are two separate links, one per destination, which
+     is why the tile carries its own aria-label */
+  .dgh-cta { display: flex; align-items: center; gap: .278vw; }
+  .dgh-pill { display: inline-flex; align-items: center; justify-content: center;
+    padding: 1.111vw 4.167vw; font-family: var(--vc-sans); font-weight: 500; font-size: 1.111vw;
+    line-height: 1.2; white-space: nowrap; text-decoration: none; border: 0; border-radius: 0;
+    background: #fafafa; color: #000;
+    transition: background-color var(--hover-dur, .25s) var(--hover-ease, ease), color var(--hover-dur, .25s) var(--hover-ease, ease); }
+  .dgh-pill:hover { background: var(--accent); color: #fafafa; }
+  .dgh-pill:active { background: var(--accent-dim); color: #fafafa; }
+  .dgh-tile { display: block; flex: none; width: 3.542vw; height: 3.542vw; line-height: 0; }
+  .dgh-tile img { display: block; width: 100%; height: 100%; }
+  .dgh-pill:focus-visible, .dgh-tile:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
+  .dgh-right { position: absolute; right: 1.667vw; bottom: 2.153vw; z-index: 2;
+    display: flex; flex-direction: column; align-items: flex-end; gap: 1.25vw; }
+  /* the readout carries two of the three hero stats; the third is the turn
+     line under it, which is where that number was always headed. */
+  .dgh-stat { margin: 0; width: 34vw; text-align: right; font-family: var(--vc-tag); font-weight: 400;
+    font-size: max(0.8vw, 11px); line-height: 1.5; letter-spacing: .12em;
+    text-transform: uppercase; color: rgba(250, 250, 250, .7); }
+  .dgh-n { color: #fafafa; }
+  .dgh-slash { color: rgba(var(--accent-rgb), .85); margin: 0 .25em; }
+  .dgh-turn { margin: 0; width: 38vw; text-align: right; font-family: var(--vc-sans); font-weight: 700;
+    font-size: 4.2vw; line-height: .95; letter-spacing: -.01em; text-transform: uppercase;
+    color: #fafafa; }
+
+  /* Below the artboard the vw offsets stop meaning anything (52vw of a 390px
+     phone is 203px), so the frame becomes a plain top-to-bottom stack sized
+     in rem, exactly as btcfi's does. The centrepiece stays behind it, dimmed
+     by the renderer, so the copy keeps its contrast. */
+  @media (max-width: 1023px) { body.page-recap { --dgh-chrome: 56px; } }
   @media (max-width: 980px) {
-    /* .sk-stage is absolutely positioned, so a height:auto hero would
-       collapse to nothing. Below the desktop breakpoint the stage goes
-       back into flow and the scene absolute-fills it instead. */
-    .dgx-hero { height: auto; min-height: 0; padding: 0; }
-    .dgx-hero .sk-stage { position: relative; inset: auto; width: 100%; }
-    .dgx-hero .dgx-scene { position: absolute; inset: 0; }
-    .dgx-hero .dg-hero-inner { height: auto; padding-top: 132px; padding-bottom: 80px; }
-    .dgx-layer { gap: 10px; }
-    .dgx-scrim { background: radial-gradient(78% 42% at 50% 42%, rgba(13,13,13,.9), rgba(13,13,13,.62) 56%, rgba(13,13,13,.1) 92%); }
+    body.page-recap .hero.dgh-hero { height: auto; min-height: 100svh;
+      display: flex; flex-direction: column; justify-content: flex-start;
+      align-items: stretch; text-align: left; padding: 6.5rem 1.5rem 2rem; }
+    .dgh-kicker, .dgh-title, .dgh-left, .dgh-right { position: static; width: auto; }
+    .dgh-kicker { font-size: .75rem; }
+    .dgh-title { margin-top: .75rem; font-size: 2.75rem; }
+    .dgh-left { margin-top: auto; padding-top: 1.5rem; }
+    .dgh-right { margin-top: 1.5rem; }
+    .dgh-left, .dgh-right { align-items: flex-start; gap: 1rem; }
+    .dgh-note, .dgh-stat { width: auto; text-align: left; font-size: .75rem; }
+    .dgh-body { font-size: .875rem; }
+    .dgh-turn { width: auto; text-align: left; font-size: 2rem; }
+    .dgh-cta { width: 100%; gap: .25rem; }
+    .dgh-pill { flex: 1 1 auto; padding: .9375rem 1.5rem; font-size: 1rem; }
+    .dgh-tile { width: 3.125rem; height: 3.125rem; }
   }
-  @media (max-width: 860px) {
-    /* html { overflow-x: clip } in styles.css would silently crop an
-       overflowing nowrap tile rather than give a scrollbar, so below this
-       width the tile wraps like ordinary text. */
-    .dgx-hl { display: inline; white-space: normal; }
-    .dgx-display { max-width: none; letter-spacing: -.028em; }
-  }
-  @media (max-width: 700px) {
-    .dgx-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
-    .dgx-stats li { padding-left: 10px; }
-    .dgx-stats .sk-stat-v { font-size: 24px; }
-    .dgx-stats .sk-stat-l { font-size: 10.5px; line-height: 1.35; margin-top: 6px; }
-    .dgx-hero .dgx-acts { flex-direction: row; }
+  @media (max-width: 380px) {
+    body.page-recap .hero.dgh-hero { padding: 5.5rem 1.25rem 2rem; }
+    .dgh-title { font-size: 2.375rem; }
+    .dgh-turn { font-size: 1.75rem; }
   }
 
   /* ===== About the digest: one full-width statement + four track rows ===== */
@@ -376,44 +420,57 @@
      inside #wk would be picked up by the deck loop.
      ============================================================ */
   .dgw { padding: 110px 0; }
-  /* aligned with the recap feed right below it: the global section cap is
-     1100px, and the feed grid measures 1096 at left 172 on a 1440 frame, so
-     the issues grid has to sit on the same two edges or the two grids read
-     as two different columns. */
-  .dgw-wrap { box-sizing: border-box; max-width: 1096px; margin: 0 auto; padding: 0; }
-  @media (max-width: 1180px) { .dgw-wrap { padding: 0 24px; } }
-  .dgw-h { margin: 0 0 40px; font-family: var(--display); font-weight: 300;
+  /* D3: FULL BLEED, on the geometry the rest of the site standardised on
+     (/privacy's law section, and the four-column band further up this page):
+     width 100vw pulled out of the 1100px section cap, with the gutter as
+     padding-inline: clamp(16px, 1.5vw, 28px), about 21px at 1440. The grid
+     was previously boxed to 1096px at left 172 to sit on the recap feed's
+     edges; the feed section below now carries the same gutter, so the two
+     grids still share their two edges, just much further out.
+     html { overflow-x: clip } in css/styles.css is what keeps the 100vw
+     band off the horizontal scrollbar. */
+  .dgw-wrap { box-sizing: border-box; width: 100vw; max-width: none;
+    margin-left: calc(50% - 50vw); margin-right: calc(50% - 50vw);
+    padding-inline: clamp(16px, 1.5vw, 28px); }
+  .dgw-h { margin: 0 0 44px; font-family: var(--display); font-weight: 300;
     font-size: clamp(30px, 3.4vw, 52px); line-height: 1.04; letter-spacing: -.03em;
     color: var(--sd-ink, #fafafa); }
   .dgw-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); position: relative;
     border-top: 1px solid var(--sd-line, #262626); border-left: 1px solid var(--sd-line, #262626); }
   .dgw-grid::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 1px;
     background: var(--sd-line, #262626); pointer-events: none; }
+  /* scaled up with the band: at 1440 a column went from 365px to 465px, so
+     the padding, the art tile and the title all step up with it rather than
+     leaving the extra width as empty card. */
   .dgw-card { display: flex; flex-direction: column; position: relative; min-width: 0;
-    padding: 30px 32px 26px; text-decoration: none; color: inherit;
+    padding: 36px 38px 32px; text-decoration: none; color: inherit;
     background: rgba(20, 20, 20, .55); transition: background .18s;
     border-right: 1px solid var(--sd-line, #262626); border-bottom: 1px solid var(--sd-line, #262626); }
   .dgw-card:hover { background: rgba(20, 20, 20, .85); }
   .dgw-card:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
   .dgw-top { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 20px; }
-  .dgw-art { width: 52px; height: 52px; flex: none; border: 1px solid var(--sd-line, #262626); }
+  .dgw-art { width: 64px; height: 64px; flex: none; border: 1px solid var(--sd-line, #262626); }
   .dgw-cat { margin-left: auto; flex: none; font-family: var(--mono); font-size: 10.5px;
     letter-spacing: .14em; text-transform: uppercase; color: rgba(250, 250, 250, .5);
     padding: 6px 11px; border: 1px solid var(--sd-line, #262626); }
-  .dgw-title { display: block; margin: 0 0 14px; font-family: var(--display); font-size: 23px;
+  .dgw-title { display: block; margin: 0 0 16px; font-family: var(--display); font-size: 27px;
     font-weight: 600; line-height: 1.2; letter-spacing: -.01em; color: var(--sd-ink, #fafafa);
     transition: color .18s; }
   .dgw-card:hover .dgw-title { color: var(--accent); }
   .dgw-ext { font-size: 16px; color: rgba(250, 250, 250, .35); transition: color .18s; }
   .dgw-card:hover .dgw-ext { color: var(--accent); }
-  .dgw-date { margin-top: auto; font-family: var(--mono); font-size: 11.5px; letter-spacing: .1em;
+  .dgw-date { margin-top: auto; font-family: var(--mono); font-size: 12px; letter-spacing: .1em;
     text-transform: uppercase; color: rgba(250, 250, 250, .45); }
   .dgw-foot { margin-top: 36px; }
   .dgw-view { display: inline-block; padding: 12px 24px; border-radius: 999px;
     border: 1px solid rgba(250, 250, 250, .3); font-size: 14px; font-weight: 500; color: #fafafa;
     text-decoration: none; transition: background .2s, border-color .2s, color .2s; }
   .dgw-view:hover { background: #fafafa; border-color: #fafafa; color: #0d0d0d; }
-  /* the six gradients the retired deck used, now the per-issue art tile */
+  /* the six gradients the retired deck used, now the per-issue art tile.
+     The six hand-written cards above pick their variant with the same
+     link hash artVariant() uses in both feed renderers, so a post that
+     appears in both grids (the latest six do) carries the same tile in
+     each. Change one and you have to change the other. */
   .dgw-art--a { background: radial-gradient(120% 95% at 16% 10%, #7a2400 0, rgba(122,36,0,0) 54%), radial-gradient(95% 85% at 90% 20%, #c53400 0, rgba(197,52,0,0) 58%), linear-gradient(148deg, #1a0600, #3a0e00 54%, #0d0d0d); }
   .dgw-art--b { background: radial-gradient(115% 95% at 84% 12%, #8a2400 0, rgba(138,36,0,0) 54%), radial-gradient(100% 90% at 10% 30%, #e07a4a 0, rgba(224,122,74,0) 58%), linear-gradient(158deg, #240800, #4a1200 54%, #0d0d0d); }
   .dgw-art--c { background: radial-gradient(115% 92% at 22% 14%, #b03000 0, rgba(176,48,0,0) 54%), radial-gradient(100% 95% at 88% 28%, #ff8a4a 0, rgba(255,138,74,0) 58%), linear-gradient(153deg, #120400, #3a0e00 54%, #0d0d0d); }
@@ -424,8 +481,9 @@
   @media (max-width: 820px) {
     .dgw { padding: 72px 0; }
     .dgw-grid { grid-template-columns: minmax(0, 1fr); }
-    .dgw-card { padding: 24px 22px 20px; }
-    .dgw-title { font-size: 20px; }
+    .dgw-card { padding: 26px 24px 22px; }
+    .dgw-title { font-size: 21px; }
+    .dgw-art { width: 52px; height: 52px; }
   }
   @media (prefers-reduced-motion: reduce) {
     .dgw-card, .dgw-title, .dgw-ext, .dgw-view { transition: none; }
@@ -446,28 +504,64 @@
      columns instead of running the full 100vw.
      ============================================================ */
   .dga-st { --dga-pad: clamp(16px, 1.5vw, 28px); }
+  /* D1: the statement owns a full viewport of its own, and the four-column
+     band moved to the section below it. 100svh, not 100vh, so mobile browser
+     chrome cannot overshoot the frame. Block padding is zeroed because
+     min-height does the sizing; leaving the shared 120px on would also stack
+     120 + 120 of dead space at the seam with the band. The centring is a
+     grid, not a row flexbox: a row flexbox would shrink-wrap .dgx-wrap to
+     the lead's 24ch max-content and the 40px gutter would stop meaning
+     anything. */
+  section.dgx-st.dga-say { min-height: 100svh; padding: 0;
+    display: grid; align-content: center; }
+  .dga-say .dgx-wrap { width: 100%; }
   .dga-st .dgx-eyebrow { text-align: center; }
   .dga-st .ab-lead.dgx-lead { max-width: 24ch; margin-inline: auto; text-align: center;
     font-size: clamp(30px, 4.2vw, 62px); line-height: 1.06; letter-spacing: -.03em; }
+  /* D2: the band's own section, and one deliberate vertical scale rather
+     than four loose values. The steps ascend toward the section break:
+     rule to header row 40, header to title 22, title to copy 10, copy block
+     to panel 28, panel to button 64. The rule sits at the top of the
+     section, so its old 76px margin is gone and the section padding owns
+     that space instead. */
+  section.dgx-st.dga-band { padding-top: 96px; padding-bottom: 120px; }
   .dga-rule, .dga-cols {
     width: 100vw; max-width: none;
     margin-left: calc(50% - 50vw); margin-right: calc(50% - 50vw);
     padding-inline: var(--dga-pad);
   }
-  .dga-rule { position: relative; height: 2px; margin-top: 76px; box-sizing: border-box;
+  .dga-rule { position: relative; height: 2px; margin-top: 0; box-sizing: border-box;
     background-image: repeating-linear-gradient(90deg, rgba(250, 250, 250, .35) 0 3px, transparent 3px 9px);
     background-clip: content-box; }
   .dga-rule::before, .dga-rule::after { content: ''; position: absolute; top: -3px;
     width: 8px; height: 8px; background: var(--accent); }
   .dga-rule::before { left: var(--dga-pad); }
   .dga-rule::after { right: var(--dga-pad); }
+  /* THE COLUMNS ARE ROW-ALIGNED BY SUBGRID, which is the whole fix.
+     The four descriptions measure three, two, two and two lines at 1440, so
+     laying each column out on its own put every illustration panel on a
+     different line and left a different gap under every description. The
+     band declares three rows (header, description, panel) and each column
+     adopts them with grid-template-rows: subgrid, so the description block
+     is one shared height and all four panels start on the same line at any
+     width. Row bands are repeated per wrapped row at the narrower column
+     counts, so the same alignment holds two-up and stacked.
+     The columns start flush under the rule and carry their own top padding,
+     so each divider runs the full height of the band, from the rule to the
+     bottom of the panels, instead of stopping short. */
   .dga-cols { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
-    margin-top: 62px; margin-bottom: 0; gap: 0; box-sizing: border-box; }
+    grid-template-rows: auto auto auto;
+    margin-top: 0; margin-bottom: 0; gap: 0; box-sizing: border-box; }
   /* the buttons keep class dgx-card so js/digest-stride.js still binds them,
      so every card rule it sets has to be unwound here */
-  .dga-cols .dga-col { display: flex; flex-direction: column; align-items: stretch; min-width: 0;
-    gap: 0; width: auto; text-align: left; border-radius: 0; background: transparent;
-    padding: 0 24px 4px; border: 0; border-left: 1px solid var(--border);
+  /* align-items:stretch is not decoration: Chrome's UA sheet sets
+     align-items:center on <button>, which centred each row's content in the
+     shared row band and pushed the two-line descriptions 10.9px lower than
+     the three-line one even though the rows themselves lined up. */
+  .dga-cols .dga-col { display: grid; grid-template-rows: subgrid; grid-row: span 3;
+    align-items: stretch; justify-items: stretch;
+    min-width: 0; gap: 0; width: auto; text-align: left; border-radius: 0; background: transparent;
+    padding: 40px 24px 0; border: 0; border-left: 1px solid var(--border);
     transition: border-color var(--hover-dur, .25s) var(--hover-ease, ease); }
   .dga-cols .dga-col:first-child { border-left: 0; }
   .dga-cols .dga-col:hover { background: transparent; border-color: var(--border); }
@@ -490,22 +584,25 @@
                 border-color var(--hover-dur, .25s) var(--hover-ease, ease); }
   .dga-arrow svg { width: 16px; height: 16px; }
   .dga-col:hover .dga-arrow { color: var(--accent); border-color: rgba(var(--accent-rgb), .5); }
-  .dga-body { flex: 1 1 auto; display: block; }
+  .dga-body { display: block; }
   .dga-title { display: block; margin-top: 22px; font-family: var(--display); font-weight: 600;
     font-size: 17px; line-height: 1.25; letter-spacing: -.01em; color: var(--sd-ink, #fafafa); }
   .dga-sum { display: block; margin-top: 10px; font-size: 13.5px; line-height: 1.62;
     color: var(--sd-dim, rgba(250, 250, 250, .62)); }
-  /* the panel sits at the base of every column, so the four bottom edges line
-     up whatever the description above them measures */
-  .dga-fig { display: block; margin-top: 26px; border: 1px solid var(--border); background: #141414;
+  /* the description row is one shared height across the band, so every panel
+     opens on the same line. The short descriptions carry the slack as air
+     under their last line, which is the intended cost of the alignment. */
+  .dga-fig { display: block; margin-top: 28px; border: 1px solid var(--border); background: #141414;
     color: rgba(250, 250, 250, .34); }
   .dga-fig svg { display: block; width: 100%; height: auto; }
   .dga-fig .dga-acc { stroke: var(--accent); stroke-width: 1.5; }
-  .dga-st .dgx-archive { display: block; width: max-content; margin: 52px auto 0; }
+  .dga-st .dgx-archive { display: block; width: max-content; margin: 64px auto 0; }
   @media (max-width: 1080px) {
-    .dga-cols { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    /* two row bands of the same three rows, so the pairs stay aligned */
+    .dga-cols { grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-rows: repeat(2, auto auto auto); }
     .dga-cols .dga-col:nth-child(odd) { border-left: 0; }
-    .dga-cols .dga-col:nth-child(n+3) { margin-top: 34px; padding-top: 30px; border-top: 1px solid var(--border); }
+    .dga-cols .dga-col:nth-child(n+3) { margin-top: 40px; padding-top: 40px; border-top: 1px solid var(--border); }
   }
   @media (max-width: 820px) {
     .dga-rule, .dga-cols { padding-inline: 16px; }
@@ -513,14 +610,14 @@
     .dga-rule::after { right: 16px; }
   }
   @media (max-width: 640px) {
-    .dga-cols { grid-template-columns: minmax(0, 1fr); }
-    .dga-cols .dga-col, .dga-cols .dga-col:nth-child(odd) { padding: 0 0 4px; border-left: 0; }
+    .dga-cols { grid-template-columns: minmax(0, 1fr);
+      grid-template-rows: repeat(4, auto auto auto); }
+    .dga-cols .dga-col, .dga-cols .dga-col:nth-child(odd) { padding: 40px 0 0; border-left: 0; }
     /* one stack, so every column but the first takes the divider, instead of
        inheriting the two-up rule where only 03 and 04 got one */
-    .dga-cols .dga-col, .dga-cols .dga-col:nth-child(n+3) { margin-top: 34px; padding-top: 30px; border-top: 1px solid var(--border); }
-    .dga-cols .dga-col:first-child { margin-top: 0; padding-top: 0; border-top: 0; }
-    .dga-rule { margin-top: 52px; }
-    .dga-cols { margin-top: 46px; }
+    .dga-cols .dga-col, .dga-cols .dga-col:nth-child(n+3) { margin-top: 40px; padding-top: 40px; border-top: 1px solid var(--border); }
+    .dga-cols .dga-col:first-child { margin-top: 0; border-top: 0; }
+    section.dgx-st.dga-band { padding-top: 72px; padding-bottom: 80px; }
   }
   @media (prefers-reduced-motion: reduce) {
     .dga-cols .dga-col, .dga-arrow { transition: none; }
@@ -543,57 +640,51 @@
 </header>
 
 <!-- HERO -->
-<!-- HERO: dark composition sharing ecosystem.html's hero shell (frame,
-     content grid, glass CTAs, scrim, marquee band, breakpoints: keep those
-     in sync with that page). The SVG scene inside is this page's own: a
-     publishing-cadence chart, not ecosystem's node network. Accent comes
-     from var(--accent-rgb), so the salmon tint rides body.page-recap and
-     is never hardcoded. -->
-<div class="hero dg-hero dgx-hero"><div class="sk-stage">
-  <!-- SCENE (digest, 2026-09): a dense field of faint repeating mono tokens,
-       built by the inline dgx script at the foot of the page. Two identical
-       row stacks are drawn: the chalk layer is masked to fade out toward the
-       bottom, the warm layer to fade in, so the field reads as the ground
-       colour at the top ramping into the accent glow at the bottom. Rows
-       drift horizontally with scroll (alternating direction) and the stack
-       drifts a little vertically; the whole drift is skipped under
-       prefers-reduced-motion. No three.js on this page. -->
-  <div class="dgx-scene" aria-hidden="true">
-    <div class="dgx-field" id="dgxField">
-      <div class="dgx-layer dgx-layer--chalk"></div>
-      <div class="dgx-layer dgx-layer--warm"></div>
-    </div>
-    <div class="dgx-glow"></div>
-    <div class="dgx-scrim"></div>
-  </div>
-  <div class="dg-hero-inner dgx-inner">
-    <p class="hero-eyebrow dgx-kicker">Digest</p>
-    <h1 id="never-miss-whatsshipping-on-starknet" class="dgx-display">Never miss what's <span class="dgx-hl"><span class="dgx-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12"/></svg></span>shipping on</span> <em>Starknet</em>.</h1>
+<!-- D5: /btcfi's hero frame, ported slot for slot. Kicker and display top
+     left, the particle centrepiece filling the middle, the mono note plus the
+     CTA pair bottom left, the mono stat readout over the turn line bottom
+     right. The retired composition (a tiled mono word field with a white
+     knockout band through the display) is described in the dgh- CSS block.
+     Nothing here paints a ground: js/eco-backdrop.js is a FIXED canvas at
+     z-index 0 and every layer above it stays transparent.
+     The centrepiece container is decorative and inert: aria-hidden, pointer
+     events off. If WebGL is missing or the reader prefers reduced motion the
+     module either skips or paints one settled frame, and the copy in the four
+     corners is unaffected either way. -->
+<div class="hero dgh-hero">
+  <div class="dgh-stage" id="dghStage" aria-hidden="true"></div>
 
-    <div class="dgx-foot">
-      <ul class="sk-stats dgx-stats">
-        <li><span class="sk-stat-v">231</span><span class="sk-stat-l">Weekly roundups published</span></li>
-        <li><span class="sk-stat-v">35</span><span class="sk-stat-l">Monthly recaps</span></li>
-        <li><span class="sk-stat-v">Weekly</span><span class="sk-stat-l">Every week, without a gap</span></li>
-      </ul>
-      <div class="sk-insight dgx-insight">
-        <p class="sk-insight-t">A thesis only holds if the ecosystem actually ships behind it.</p>
-        <p class="sk-insight-b">Starknet is among the very few ecosystems shipping this much, this consistently. The digest is the record of it: weekly roundups, monthly recaps, and original research.</p>
-        <div class="sk-acts dgx-acts">
-          <a class="sk-pill" href="https://starknetresearch.substack.com/subscribe" target="_blank" rel="noopener">Subscribe</a>
-          <a class="sk-link" href="#latest-from-the-starknet-ecosystem">Read the latest</a>
-        </div>
-      </div>
+  <p class="dgh-kicker">Digest</p>
+  <!-- the id is the search index's anchor for this page's opening claim
+       (public/data/search-index.json); it stays on the display heading. -->
+  <h1 id="never-miss-whatsshipping-on-starknet" class="dgh-title">Never miss what's shipping on Starknet.</h1>
+
+  <div class="dgh-left">
+    <p class="dgh-note">A thesis only holds if the ecosystem actually ships behind it.</p>
+    <p class="dgh-body">Starknet is among the very few ecosystems shipping this much, this consistently. The digest is the record of it: weekly roundups, monthly recaps, and original research.</p>
+    <div class="dgh-cta">
+      <a class="dgh-pill" href="https://starknetresearch.substack.com/subscribe" target="_blank" rel="noopener">Subscribe</a>
+      <a class="dgh-tile" href="#latest-from-the-starknet-ecosystem" aria-label="Read the latest"><img src="assets/hero/send-icon.svg" alt="" width="51" height="51"></a>
     </div>
   </div>
-</div>
+
+  <div class="dgh-right">
+    <p class="dgh-stat"><span class="dgh-n">231</span> weekly roundups published<span class="dgh-slash" aria-hidden="true">/</span><span class="dgh-n">35</span> monthly recaps</p>
+    <p class="dgh-turn">Every week, without a gap</p>
+  </div>
 </div>
 
-<!-- About the digest: a centred headline, a dotted rule, then the four
-     reading tracks as a full-bleed four-column band. -->
-<section class="block ab-block dgx-st dga-st" aria-label="About the digest"><div class="wrap dgx-wrap">
+<!-- About the digest, D1: the statement owns a full viewport of its own
+     (min-height 100svh, vertically centred). The four reading tracks moved
+     to their own section directly below it. -->
+<section class="block ab-block dgx-st dga-st dga-say" aria-label="About the digest"><div class="wrap dgx-wrap">
   <p class="ab-eyebrow dgx-eyebrow">About the digest</p>
   <h2 id="every-week-the-ecosystem-ships-and" class="ab-lead dgx-lead"><span class="dgx-chalk">Every week the ecosystem ships, <span class="dgx-sq" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 5h18v14H3z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 6l9 7 9-7" fill="none" stroke="currentColor" stroke-width="2"/></svg></span></span> <span class="dgx-dim">and every week it gets written down, so the record <span class="dgx-sq" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="12" width="4" height="8" rx="1"/><rect x="10" y="7" width="4" height="13" rx="1"/><rect x="16" y="3" width="4" height="17" rx="1"/></svg></span> is there when the thesis needs proving.</span></h2>
+</div></section>
+
+<!-- The four reading tracks, D2: their own section below the statement, on
+     one deliberate vertical scale. -->
+<section class="block ab-block dgx-st dga-st dga-band" aria-label="The four reading tracks"><div class="wrap dgx-wrap">
   <div class="dga-rule" aria-hidden="true"></div>
   <!-- The four reading tracks as a four-column feature band, on the layout
        /privacy uses for .th-pm-sec--law: centred headline, a dotted rule,
@@ -668,7 +759,7 @@
   <h2 class="dgw-h">The latest issues</h2>
   <div class="dgw-grid">
     <a class="dgw-card" href="https://starknetresearch.substack.com/p/starknet-roundup-231" target="_blank" rel="noopener">
-      <span class="dgw-top"><span class="dgw-art dgw-art--a" aria-hidden="true"></span><span class="dgw-cat">Weekly digest</span></span>
+      <span class="dgw-top"><span class="dgw-art dgw-art--c" aria-hidden="true"></span><span class="dgw-cat">Weekly digest</span></span>
       <span class="dgw-title">Starknet roundup 231 <span class="dgw-ext" aria-hidden="true">↗</span></span>
       <time class="dgw-date" datetime="2026-08-17">Aug 17, 2026</time>
     </a>
@@ -678,7 +769,7 @@
       <time class="dgw-date" datetime="2026-08-10">Aug 10, 2026</time>
     </a>
     <a class="dgw-card" href="https://starknetresearch.substack.com/p/starknet-monthly-recap-34-june-2026-ef8" target="_blank" rel="noopener">
-      <span class="dgw-top"><span class="dgw-art dgw-art--c" aria-hidden="true"></span><span class="dgw-cat">Monthly digest</span></span>
+      <span class="dgw-top"><span class="dgw-art dgw-art--b" aria-hidden="true"></span><span class="dgw-cat">Monthly digest</span></span>
       <span class="dgw-title">Starknet monthly recap #35: July 2026 <span class="dgw-ext" aria-hidden="true">↗</span></span>
       <time class="dgw-date" datetime="2026-08-04">Aug 4, 2026</time>
     </a>
@@ -688,12 +779,12 @@
       <time class="dgw-date" datetime="2026-08-03">Aug 3, 2026</time>
     </a>
     <a class="dgw-card" href="https://starknetresearch.substack.com/p/starknet-roundup-228" target="_blank" rel="noopener">
-      <span class="dgw-top"><span class="dgw-art dgw-art--e" aria-hidden="true"></span><span class="dgw-cat">Weekly digest</span></span>
+      <span class="dgw-top"><span class="dgw-art dgw-art--c" aria-hidden="true"></span><span class="dgw-cat">Weekly digest</span></span>
       <span class="dgw-title">Starknet roundup 228 <span class="dgw-ext" aria-hidden="true">↗</span></span>
       <time class="dgw-date" datetime="2026-07-27">Jul 27, 2026</time>
     </a>
     <a class="dgw-card" href="https://starknetresearch.substack.com/p/starknet-roundup-227" target="_blank" rel="noopener">
-      <span class="dgw-top"><span class="dgw-art dgw-art--f" aria-hidden="true"></span><span class="dgw-cat">Weekly digest</span></span>
+      <span class="dgw-top"><span class="dgw-art dgw-art--b" aria-hidden="true"></span><span class="dgw-cat">Weekly digest</span></span>
       <span class="dgw-title">Starknet roundup 227 <span class="dgw-ext" aria-hidden="true">↗</span></span>
       <time class="dgw-date" datetime="2026-07-20">Jul 20, 2026</time>
     </a>
@@ -722,16 +813,16 @@
          locally after updating data/recap.json. -->
     <!-- STATIC-DIGEST:START -->
     <!-- Pre-rendered from data/recap.json: regenerated automatically on deploy (npm run build). Run node scripts/build-digest.js for local preview. -->
-    <a class="recap-card" data-umami-event="digest-entry-click" data-cat="weekly" href="https://starknetresearch.substack.com/p/starknet-roundup-231" target="_blank" rel="noopener"><div class="recap-content"><span class="recap-cat weekly">Weekly digest</span><h3 class="recap-title">Starknet roundup 231</h3><time class="recap-date" datetime="2026-08-17">Aug 17, 2026</time><p class="recap-excerpt">Everything you need to know about what happened in the Starknet ecosystem over the past week</p></div></a>
-    <a class="recap-card" data-umami-event="digest-entry-click" data-cat="weekly" href="https://starknetresearch.substack.com/p/starknet-roundup-230" target="_blank" rel="noopener"><div class="recap-content"><span class="recap-cat weekly">Weekly digest</span><h3 class="recap-title">Starknet roundup 230</h3><time class="recap-date" datetime="2026-08-10">Aug 10, 2026</time><p class="recap-excerpt">Everything you need to know about what happened in the Starknet ecosystem over the past week</p></div></a>
-    <a class="recap-card" data-umami-event="digest-entry-click" data-cat="monthly" href="https://starknetresearch.substack.com/p/starknet-monthly-recap-34-june-2026-ef8" target="_blank" rel="noopener"><div class="recap-content"><span class="recap-cat monthly">Monthly digest</span><h3 class="recap-title">Starknet monthly recap #35: July 2026</h3><time class="recap-date" datetime="2026-08-04">Aug 4, 2026</time><p class="recap-excerpt">All you need to know about Starknet in June</p></div></a>
-    <a class="recap-card" data-umami-event="digest-entry-click" data-cat="weekly" href="https://starknetresearch.substack.com/p/starknet-roundup-229" target="_blank" rel="noopener"><div class="recap-content"><span class="recap-cat weekly">Weekly digest</span><h3 class="recap-title">Starknet roundup 229</h3><time class="recap-date" datetime="2026-08-03">Aug 3, 2026</time><p class="recap-excerpt">Everything you need to know about what happened in the Starknet ecosystem over the past week</p></div></a>
-    <a class="recap-card" data-umami-event="digest-entry-click" data-cat="weekly" href="https://starknetresearch.substack.com/p/starknet-roundup-228" target="_blank" rel="noopener"><div class="recap-content"><span class="recap-cat weekly">Weekly digest</span><h3 class="recap-title">Starknet roundup 228</h3><time class="recap-date" datetime="2026-07-27">Jul 27, 2026</time><p class="recap-excerpt">Everything you need to know about what happened in the Starknet ecosystem over the past week</p></div></a>
-    <a class="recap-card" data-umami-event="digest-entry-click" data-cat="weekly" href="https://starknetresearch.substack.com/p/starknet-roundup-227" target="_blank" rel="noopener"><div class="recap-content"><span class="recap-cat weekly">Weekly digest</span><h3 class="recap-title">Starknet roundup 227</h3><time class="recap-date" datetime="2026-07-20">Jul 20, 2026</time><p class="recap-excerpt">Everything you need to know about what happened in the Starknet ecosystem over the past week</p></div></a>
-    <a class="recap-card" data-umami-event="digest-entry-click" data-cat="research" href="https://starknetresearch.substack.com/p/the-privacy-thesis" target="_blank" rel="noopener"><div class="recap-content"><span class="recap-cat research">Research</span><h3 class="recap-title">The Privacy Thesis</h3><time class="recap-date" datetime="2026-07-16">Jul 16, 2026</time><p class="recap-excerpt">The most complete privacy stack in crypto is live on Starknet, and the market hasn't noticed yet</p></div></a>
-    <a class="recap-card" data-umami-event="digest-entry-click" data-cat="weekly" href="https://starknetresearch.substack.com/p/starknet-roundup-226" target="_blank" rel="noopener"><div class="recap-content"><span class="recap-cat weekly">Weekly digest</span><h3 class="recap-title">Starknet roundup 226</h3><time class="recap-date" datetime="2026-07-13">Jul 13, 2026</time><p class="recap-excerpt">Everything you need to know about what happened in the Starknet ecosystem over the past week</p></div></a>
-    <a class="recap-card" data-umami-event="digest-entry-click" data-cat="weekly" href="https://starknetresearch.substack.com/p/starknet-roundup-225" target="_blank" rel="noopener"><div class="recap-content"><span class="recap-cat weekly">Weekly digest</span><h3 class="recap-title">Starknet roundup 225</h3><time class="recap-date" datetime="2026-07-06">Jul 6, 2026</time><p class="recap-excerpt">Everything you need to know about what happened in the Starknet ecosystem over the past week</p></div></a>
-    <a class="recap-card" data-umami-event="digest-entry-click" data-cat="monthly" href="https://starknetresearch.substack.com/p/starknet-monthly-recap-34-june-2026" target="_blank" rel="noopener"><div class="recap-content"><span class="recap-cat monthly">Monthly digest</span><h3 class="recap-title">Starknet monthly recap #34: June 2026</h3><time class="recap-date" datetime="2026-07-03">Jul 3, 2026</time><p class="recap-excerpt">All you need to know about Starknet in June</p></div></a>
+    <a class="recap-card dgw-card" data-umami-event="digest-entry-click" data-cat="weekly" href="https://starknetresearch.substack.com/p/starknet-roundup-231" target="_blank" rel="noopener"><span class="dgw-top"><span class="dgw-art dgw-art--c" aria-hidden="true"></span><span class="dgw-cat">Weekly digest</span></span><span class="dgw-title">Starknet roundup 231 <span class="dgw-ext" aria-hidden="true">↗</span></span><time class="dgw-date" datetime="2026-08-17">Aug 17, 2026</time></a>
+    <a class="recap-card dgw-card" data-umami-event="digest-entry-click" data-cat="weekly" href="https://starknetresearch.substack.com/p/starknet-roundup-230" target="_blank" rel="noopener"><span class="dgw-top"><span class="dgw-art dgw-art--b" aria-hidden="true"></span><span class="dgw-cat">Weekly digest</span></span><span class="dgw-title">Starknet roundup 230 <span class="dgw-ext" aria-hidden="true">↗</span></span><time class="dgw-date" datetime="2026-08-10">Aug 10, 2026</time></a>
+    <a class="recap-card dgw-card" data-umami-event="digest-entry-click" data-cat="monthly" href="https://starknetresearch.substack.com/p/starknet-monthly-recap-34-june-2026-ef8" target="_blank" rel="noopener"><span class="dgw-top"><span class="dgw-art dgw-art--b" aria-hidden="true"></span><span class="dgw-cat">Monthly digest</span></span><span class="dgw-title">Starknet monthly recap #35: July 2026 <span class="dgw-ext" aria-hidden="true">↗</span></span><time class="dgw-date" datetime="2026-08-04">Aug 4, 2026</time></a>
+    <a class="recap-card dgw-card" data-umami-event="digest-entry-click" data-cat="weekly" href="https://starknetresearch.substack.com/p/starknet-roundup-229" target="_blank" rel="noopener"><span class="dgw-top"><span class="dgw-art dgw-art--d" aria-hidden="true"></span><span class="dgw-cat">Weekly digest</span></span><span class="dgw-title">Starknet roundup 229 <span class="dgw-ext" aria-hidden="true">↗</span></span><time class="dgw-date" datetime="2026-08-03">Aug 3, 2026</time></a>
+    <a class="recap-card dgw-card" data-umami-event="digest-entry-click" data-cat="weekly" href="https://starknetresearch.substack.com/p/starknet-roundup-228" target="_blank" rel="noopener"><span class="dgw-top"><span class="dgw-art dgw-art--c" aria-hidden="true"></span><span class="dgw-cat">Weekly digest</span></span><span class="dgw-title">Starknet roundup 228 <span class="dgw-ext" aria-hidden="true">↗</span></span><time class="dgw-date" datetime="2026-07-27">Jul 27, 2026</time></a>
+    <a class="recap-card dgw-card" data-umami-event="digest-entry-click" data-cat="weekly" href="https://starknetresearch.substack.com/p/starknet-roundup-227" target="_blank" rel="noopener"><span class="dgw-top"><span class="dgw-art dgw-art--b" aria-hidden="true"></span><span class="dgw-cat">Weekly digest</span></span><span class="dgw-title">Starknet roundup 227 <span class="dgw-ext" aria-hidden="true">↗</span></span><time class="dgw-date" datetime="2026-07-20">Jul 20, 2026</time></a>
+    <a class="recap-card dgw-card" data-umami-event="digest-entry-click" data-cat="research" href="https://starknetresearch.substack.com/p/the-privacy-thesis" target="_blank" rel="noopener"><span class="dgw-top"><span class="dgw-art dgw-art--e" aria-hidden="true"></span><span class="dgw-cat">Research</span></span><span class="dgw-title">The Privacy Thesis <span class="dgw-ext" aria-hidden="true">↗</span></span><time class="dgw-date" datetime="2026-07-16">Jul 16, 2026</time></a>
+    <a class="recap-card dgw-card" data-umami-event="digest-entry-click" data-cat="weekly" href="https://starknetresearch.substack.com/p/starknet-roundup-226" target="_blank" rel="noopener"><span class="dgw-top"><span class="dgw-art dgw-art--a" aria-hidden="true"></span><span class="dgw-cat">Weekly digest</span></span><span class="dgw-title">Starknet roundup 226 <span class="dgw-ext" aria-hidden="true">↗</span></span><time class="dgw-date" datetime="2026-07-13">Jul 13, 2026</time></a>
+    <a class="recap-card dgw-card" data-umami-event="digest-entry-click" data-cat="weekly" href="https://starknetresearch.substack.com/p/starknet-roundup-225" target="_blank" rel="noopener"><span class="dgw-top"><span class="dgw-art dgw-art--f" aria-hidden="true"></span><span class="dgw-cat">Weekly digest</span></span><span class="dgw-title">Starknet roundup 225 <span class="dgw-ext" aria-hidden="true">↗</span></span><time class="dgw-date" datetime="2026-07-06">Jul 6, 2026</time></a>
+    <a class="recap-card dgw-card" data-umami-event="digest-entry-click" data-cat="monthly" href="https://starknetresearch.substack.com/p/starknet-monthly-recap-34-june-2026" target="_blank" rel="noopener"><span class="dgw-top"><span class="dgw-art dgw-art--f" aria-hidden="true"></span><span class="dgw-cat">Monthly digest</span></span><span class="dgw-title">Starknet monthly recap #34: June 2026 <span class="dgw-ext" aria-hidden="true">↗</span></span><time class="dgw-date" datetime="2026-07-03">Jul 3, 2026</time></a>
     <!-- STATIC-DIGEST:END -->
   </div>
   <div class="recap-empty" id="recapEmpty" hidden>No posts in this category yet.</div>
@@ -861,14 +952,31 @@
   }
 
   // ---------- render ----------
+  // KEEP IN SYNC with cardHTML() in scripts/build-digest.js: the static
+  // prerender and this renderer must emit the same markup, and the ONLY
+  // intentional difference is the date element (a <time datetime> there, a
+  // <div> here). The card is /digest's latest-issues card (.dgw-card): a
+  // square art tile top left, a rectangular outlined category chip top
+  // right, the title with its external-link arrow, then the date.
+  // .recap-card stays on the anchor because the filter, the Load-more code
+  // and hasStatic() all query it.
+  // THE ART VARIANT IS HASHED FROM THE LINK, not taken from the array index:
+  // loadMore() renders a slice, so an index-based cycle would restart at "a"
+  // for every batch and disagree with both the first render and the static
+  // prerender.
+  function artVariant(link){
+    var h = 0, str = String(link || '');
+    for (var i = 0; i < str.length; i++) h = (h * 31 + str.charCodeAt(i)) >>> 0;
+    return 'abcdef'.charAt(h % 6);
+  }
   function cardHTML(p){
-    return '<a class="recap-card" data-umami-event="digest-entry-click" data-cat="' + p.cat + '" href="' + escA(p.link) + '" target="_blank" rel="noopener">' +
-      '<div class="recap-content">' +
-        '<span class="recap-cat ' + p.cat + '">' + CAT_LABELS[p.cat] + '</span>' +
-        '<h3 class="recap-title">' + esc(p.title) + '</h3>' +
-        (p.dateLabel ? '<div class="recap-date">' + esc(p.dateLabel) + '</div>' : '') +
-        (p.excerpt ? '<p class="recap-excerpt">' + esc(p.excerpt) + '</p>' : '') +
-      '</div>' +
+    return '<a class="recap-card dgw-card" data-umami-event="digest-entry-click" data-cat="' + p.cat + '" href="' + escA(p.link) + '" target="_blank" rel="noopener">' +
+      '<span class="dgw-top">' +
+        '<span class="dgw-art dgw-art--' + artVariant(p.link) + '" aria-hidden="true"></span>' +
+        '<span class="dgw-cat">' + CAT_LABELS[p.cat] + '</span>' +
+      '</span>' +
+      '<span class="dgw-title">' + esc(p.title) + ' <span class="dgw-ext" aria-hidden="true">\u2197</span></span>' +
+      (p.dateLabel ? '<div class="dgw-date">' + esc(p.dateLabel) + '</div>' : '') +
     '</a>';
   }
 
@@ -986,49 +1094,8 @@
 </script>
 <script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.185.0/build/three.module.js"}}</script>
 <script type="module" src="js/eco-backdrop.js"></script>
+<script type="module" src="js/digest-hero-mark.js"></script>
 <script src="js/strk-stride.js" defer></script>
 <script src="js/digest-stride.js" defer></script>
-<script>
-/* the hero's mono-token field. Rows are built once, then cloned into the
-   warm layer so both stacks stay identical; each row carries its own
-   stagger (--x) and direction (--dir), and scroll only moves a single
-   --d / --dy pair, so the drift costs one rAF-batched style write.
-   Skipped entirely under prefers-reduced-motion. */
-(() => {
-  const field = document.getElementById('dgxField');
-  if (!field) return;
-  const chalk = field.querySelector('.dgx-layer--chalk');
-  const warm = field.querySelector('.dgx-layer--warm');
-  if (!chalk || !warm) return;
-  const TOKENS = ['ROUNDUP', 'RECAP', 'RESEARCH', 'SHIPPED', 'WEEKLY', 'MONTHLY', 'DIGEST', 'STARKNET', 'ARCHIVE', 'NO GAPS'];
-  const ROWS = 30, PER = 26;
-  const frag = document.createDocumentFragment();
-  for (let r = 0; r < ROWS; r++) {
-    const row = document.createElement('div');
-    row.className = 'dgx-row';
-    const words = [];
-    for (let i = 0; i < PER; i++) words.push(TOKENS[(r * 3 + i * 5) % TOKENS.length]);
-    row.textContent = words.join('   ');
-    row.style.setProperty('--x', (((r * 137) % 260) - 130) + 'px');
-    row.style.setProperty('--dir', r % 2 ? -1 : 1);
-    frag.appendChild(row);
-  }
-  chalk.appendChild(frag);
-  warm.innerHTML = chalk.innerHTML;
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  let ticking = false;
-  const apply = () => {
-    ticking = false;
-    const y = window.scrollY || 0;
-    field.style.setProperty('--d', (y * 0.16).toFixed(2) + 'px');
-    chalk.style.setProperty('--dy', (y * -0.05).toFixed(2) + 'px');
-    warm.style.setProperty('--dy', (y * -0.05).toFixed(2) + 'px');
-  };
-  window.addEventListener('scroll', () => {
-    if (!ticking) { ticking = true; requestAnimationFrame(apply); }
-  }, { passive: true });
-  apply();
-})();
-</script>
 </body>
 </html>

@@ -13,8 +13,8 @@
    Reads data/recap.json, renders the 10 most recent entries with EXACTLY the
    markup the client-side renderer in digest.html produces: same classes, so
    the same styles apply. The only intentional difference is a semantic
-   <time datetime> element for the date, visually identical because
-   .recap-content is a flex column. Rewrites everything between
+   <time datetime> element for the date, where the client renderer emits a
+   <div>; both are the card's last child so they land in the same place. Rewrites everything between
    <!-- STATIC-DIGEST:START --> and <!-- STATIC-DIGEST:END --> in digest.html.
    Idempotent: running it twice produces the same file. On load, the page's
    JS replaces the whole block with the full hydrated archive; without JS,
@@ -42,36 +42,33 @@ function classify(title){
   if (t.indexOf('roundup') !== -1) return 'weekly';
   return 'research';
 }
-function stripHTML(html){
-  return String(html || '').replace(/<[^>]*>/g, ' ')
-    .replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&nbsp;/g,' ')
-    .replace(/\s+/g, ' ').trim();
-}
-function excerpt(html, n){
-  const t = stripHTML(html);
-  if (t.length <= n) return t;
-  let cut = t.slice(0, n);
-  const sp = cut.lastIndexOf(' ');
-  if (sp > 60) cut = cut.slice(0, sp);
-  return cut.replace(/[\s,.;:!?\-–—]+$/, '') + '…';
-}
 const fmtDate = d => MN[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
 
+/* THE ART VARIANT IS HASHED FROM THE LINK, not taken from the array index:
+   the client's loadMore() renders a slice and would restart an index-based
+   cycle at "a" for every batch, so the three render paths (this prerender,
+   the first hydrated render, every Load-more batch) would disagree. Keep
+   this function byte-identical to artVariant() in digest.html. */
+function artVariant(link){
+  let h = 0;
+  const str = String(link || '');
+  for (let i = 0; i < str.length; i++) h = (h * 31 + str.charCodeAt(i)) >>> 0;
+  return 'abcdef'.charAt(h % 6);
+}
 function cardHTML(post){
   const d = new Date(post.post_date || post.published_at || post.date || 0);
   const title = post.title || '(untitled)';
   const link = post.canonical_url || (post.slug ? SUBSTACK_URL + 'p/' + post.slug : SUBSTACK_URL);
   const cat = classify(title);
-  const ex = excerpt(post.description || post.subtitle || post.truncated_body_text, 180);
   const dateHtml = isNaN(d.getTime()) || !d.getTime() ? '' :
-    '<time class="recap-date" datetime="' + d.toISOString().slice(0, 10) + '">' + esc(fmtDate(d)) + '</time>';
-  return '<a class="recap-card" data-umami-event="digest-entry-click" data-cat="' + cat + '" href="' + escA(link) + '" target="_blank" rel="noopener">' +
-    '<div class="recap-content">' +
-      '<span class="recap-cat ' + cat + '">' + CAT_LABELS[cat] + '</span>' +
-      '<h3 class="recap-title">' + esc(title) + '</h3>' +
-      dateHtml +
-      (ex ? '<p class="recap-excerpt">' + esc(ex) + '</p>' : '') +
-    '</div>' +
+    '<time class="dgw-date" datetime="' + d.toISOString().slice(0, 10) + '">' + esc(fmtDate(d)) + '</time>';
+  return '<a class="recap-card dgw-card" data-umami-event="digest-entry-click" data-cat="' + cat + '" href="' + escA(link) + '" target="_blank" rel="noopener">' +
+    '<span class="dgw-top">' +
+      '<span class="dgw-art dgw-art--' + artVariant(link) + '" aria-hidden="true"></span>' +
+      '<span class="dgw-cat">' + CAT_LABELS[cat] + '</span>' +
+    '</span>' +
+    '<span class="dgw-title">' + esc(title) + ' <span class="dgw-ext" aria-hidden="true">\u2197</span></span>' +
+    dateHtml +
   '</a>';
 }
 
