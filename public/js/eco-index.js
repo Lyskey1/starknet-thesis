@@ -1,7 +1,5 @@
-/* The index: every project as one row, grouped alphabetically across four
-   columns, after Dragonfly's. Hover fills a row with the accent and shows the
-   move glyph; clicking one opens a centred detail panel with the logo, the
-   name, what it does, its category and a link out. strk20 colours. */
+/* The index: every ecosystem account as grouped cards, matching the square
+   BTCFi directory treatment while keeping the same modal detail handoff. */
 (function () {
   'use strict';
   var mount = document.getElementById('ecoIndex');
@@ -24,13 +22,17 @@
     { id: 'consumer', label: 'Consumer' },
     { id: 'nft', label: 'NFT' },
     { id: 'appchains', label: 'Appchains' },
-    { id: 'tooling', label: 'Tooling' }
+    { id: 'tooling', label: 'Tooling' },
+    { id: 'starkware', label: 'StarkWare' },
+    { id: 'snf', label: 'Foundation' },
+    { id: 'builders', label: 'Builders' },
+    { id: 'shitposter', label: 'Culture' }
   ];
-  var COLS = 4;
+  var CAT_BY_ID = CATS.reduce(function (m, c) { m[c.id] = c; return m; }, {});
 
   live.innerHTML =
     '<div class="ix-head"><p class="es-kicker">The projects</p>' +
-      '<h2>Index</h2>' +
+      '<h2 class="ix-title">All projects, builders and protocols</h2>' +
       '<div class="ix-tabs" role="tablist"></div></div>' +
     '<div class="ix-grid"></div>' +
     '<div class="ix-modal" hidden><div class="ix-sheet" role="dialog" aria-modal="true" aria-label="Project detail">' +
@@ -55,30 +57,58 @@
 
   var esc = function (t) { return String(t == null ? '' : t).replace(/[&<>"']/g, function (c) {
     return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
-  var initials = function (acc) { return (acc.handle || '?').replace(/^[@_]+/, '').slice(0, 2).toUpperCase(); };
+  var initials = function (acc) { return (acc.handle || acc.name || '?').replace(/^[@_]+/, '').slice(0, 2).toUpperCase(); };
   var sortKey = function (acc) { return (acc.name || acc.handle || '').replace(/^@/, '').toUpperCase(); };
+  var cleanName = function (acc) { return (acc.name || acc.handle || '').replace(/^@/, ''); };
+  var prettyUrl = function (u) {
+    try {
+      var url = new URL(u);
+      return (url.hostname + url.pathname).replace(/^www\./, '').replace(/\/$/, '');
+    } catch (e) { return u || ''; }
+  };
+  var avatarSrc = function (acc) {
+    if (acc.avatar) return acc.avatar.startsWith('data:') ? acc.avatar : '/' + acc.avatar.replace(/^\//, '');
+    if (acc.handle) return '/assets/avatars/' + acc.handle.replace(/^@/, '') + '.jpg';
+    return '';
+  };
+  var titleForFilter = function () {
+    if (filter === 'all') return 'All projects, builders and protocols';
+    var cat = CAT_BY_ID[filter];
+    return cat ? cat.label + ' accounts' : 'Ecosystem accounts';
+  };
+  var card = function (r) {
+    var acc = r.acc, src = avatarSrc(acc), label = (CAT_BY_ID[r.cat] || {}).label || r.cat;
+    return '<button type="button" class="ix-card" data-uid="' + esc(r.uid) + '">' +
+      '<span class="ix-card-top">' +
+        '<span class="ix-card-logo">' +
+          (src ? '<img alt="" src="' + esc(src) + '" onerror="this.style.display=&quot;none&quot;">' : '') +
+          '<span class="ix-card-mono">' + esc(initials(acc)) + '</span>' +
+        '</span>' +
+        '<span class="ix-kind">' + esc(label) + '</span>' +
+      '</span>' +
+      '<span class="ix-card-name">' + esc(cleanName(acc)) + '<i class="ti ti-brand-x ix-card-ext" aria-hidden="true"></i></span>' +
+      '<span class="ix-card-desc">' + esc(acc.description || 'Starknet ecosystem account') + '</span>' +
+      '<span class="ix-card-link"><span>' + esc(prettyUrl(acc.url)) + '</span><i class="ti ti-copy" aria-hidden="true"></i></span>' +
+    '</button>';
+  };
 
   function render() {
+    live.querySelector('.ix-title').textContent = titleForFilter();
     var rows = all.filter(function (a) { return filter === 'all' || a.cat === filter; })
                   .sort(function (a, b) { return sortKey(a.acc) < sortKey(b.acc) ? -1 : 1; });
-    /* split into four columns of roughly equal length, breaking on a letter */
-    var per = Math.ceil(rows.length / COLS);
-    var cols = [], i = 0;
-    for (var c = 0; c < COLS; c++) {
-      var take = rows.slice(i, i + per); i += per;
-      cols.push(take);
-    }
-    gridEl.innerHTML = cols.map(function (col) {
-      var out = '', letter = '';
-      col.forEach(function (r) {
-        var L = sortKey(r.acc).charAt(0);
-        if (L !== letter) { letter = L; out += '<div class="ix-letter">' + esc(L) + '</div>'; }
-        out += '<button type="button" class="ix-row" data-uid="' + esc(r.uid) + '">' +
-          '<span>' + esc((r.acc.name || '').replace(/^@/, '')) + '</span>' +
-          '<i class="ix-move" aria-hidden="true"></i></button>';
-      });
-      return '<div class="ix-col">' + out + '</div>';
+    var groups = (filter === 'all' ? CATS.filter(function (c) { return c.id !== 'all'; }) : [CAT_BY_ID[filter]])
+      .filter(Boolean).map(function (cat) {
+        var items = rows.filter(function (r) { return r.cat === cat.id; });
+        return { cat: cat, items: items };
+      }).filter(function (g) { return g.items.length; });
+
+    gridEl.innerHTML = groups.map(function (g) {
+      return '<section class="ix-panel" data-cat="' + esc(g.cat.id) + '">' +
+        '<p class="ix-group">' + esc(g.cat.label) + ' <b>' + g.items.length + '</b></p>' +
+        '<div class="ix-card-grid">' + g.items.map(card).join('') + '</div>' +
+      '</section>';
     }).join('');
+    requestAnimationFrame(function () { mount.style.minHeight = live.offsetHeight + 'px'; });
   }
 
   function open(rec) {
@@ -103,7 +133,7 @@
   function close() { modal.hidden = true; document.documentElement.style.overflow = ''; }
 
   gridEl.addEventListener('click', function (e) {
-    var btn = e.target.closest ? e.target.closest('.ix-row') : null;
+    var btn = e.target.closest ? e.target.closest('.ix-card') : null;
     if (!btn) return;
     var rec = all.filter(function (r) { return r.uid === btn.getAttribute('data-uid'); })[0];
     if (rec) open(rec);
@@ -112,6 +142,12 @@
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !modal.hidden) close(); });
 
   fetch('/data/ecosystem.json').then(function (r) { return r.json(); }).then(function (data) {
+    Object.keys(data).forEach(function (id) {
+      if (!CAT_BY_ID[id]) {
+        CATS.push({ id: id, label: id.replace(/[-_]/g, ' ') });
+        CAT_BY_ID[id] = CATS[CATS.length - 1];
+      }
+    });
     CATS.forEach(function (c, i) {
       if (c.id !== 'all' && !(data[c.id] || []).length) return;
       var b = document.createElement('button');
