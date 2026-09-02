@@ -139,7 +139,10 @@ body::before { opacity: .35; }
   font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-size: 15px; color: var(--es-dim); }
 .ixs-name { color: var(--es-ink); text-decoration: none; letter-spacing: .01em; text-transform: uppercase; }
 .ixs-name:hover { color: var(--es-acc); }
-.ixs-cat { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--es-faint); }
+/* --es-faint (#616161) on the accent chip measures APCA Lc 0.0, invisible.
+   #fafafa on #c53400 measures 77.7 and clears both thresholds, and it needs
+   no change to the chip fill. */
+.ixs-cat { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: #fafafa; }
 .ixs-desc { flex: 1 1 320px; min-width: 0; }
 /* clipped from first paint when JS is available (html.eco-live, set by an
    inline head script), and also once the handoff completes. The first
