@@ -66,7 +66,10 @@ footer.vc-footer .vc-cols { display: block; width: calc(100% - 48px); max-width:
 footer.vc-footer nav.vc-links { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: stretch; gap: 0; padding: 0; }
 footer.vc-footer .vc-col { display: flex; flex-direction: column; gap: 22px; width: auto; padding: 56px 28px 60px; border-left: 1px solid var(--vc-line); }
 footer.vc-footer .vc-col:first-child { padding-left: 0; border-left: 0; }
-footer.vc-footer .vc-col h4 { margin: 0; font-family: var(--vc-mono); font-weight: 400; font-size: 11px; line-height: 1.2; letter-spacing: .18em; text-transform: uppercase; color: var(--vc-dim); }
+/* h3, not h4: the column headings sit under the footer's own h2, so h4 skipped
+   a level. The selector has to move with the markup or the six static footers
+   lose their styling entirely. */
+footer.vc-footer .vc-col h3 { margin: 0; font-family: var(--vc-mono); font-weight: 400; font-size: 11px; line-height: 1.2; letter-spacing: .18em; text-transform: uppercase; color: var(--vc-dim); }
 footer.vc-footer .vc-col ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 18px; }
 /* 16px at line-height 1.25 is a 20px tap target, under the 24px minimum.
    The padding grows the hit area and the equal negative margin cancels its
