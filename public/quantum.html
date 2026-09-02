@@ -2951,9 +2951,12 @@ body.page-quantum{overflow-x:clip;}
     text-decoration-thickness:1px;text-decoration-color:rgba(197, 52, 0,.45);
     transition:color .2s,text-decoration-color .2s;}
   .qadv-quote a:hover{color:#fafafa;text-decoration-color:rgba(250, 250, 250,.5);}
-  .qadv-avatar{display:inline-block;vertical-align:-.2em;
-    width:clamp(36px,3.1vw,54px);height:clamp(36px,3.1vw,54px);
-    margin-right:.34em;border-radius:50%;object-fit:cover;object-position:46% 30%;
+  /* Bigger and square, per the reference. Was a clamp(36,3.1vw,54) circle.
+     The square keeps a small corner radius so it matches the card idiom on
+     the rest of the page rather than reading as a hard-cut tile. */
+  .qadv-avatar{display:inline-block;vertical-align:-.28em;
+    width:clamp(72px,6.2vw,112px);height:clamp(72px,6.2vw,112px);
+    margin-right:.4em;border-radius:6px;object-fit:cover;object-position:46% 30%;
     /* object-view-box crops to the head, so the face still reads at 45px.
        Browsers without it fall back to the cover crop above, which is the
        whole frame: smaller face, nothing broken. */
@@ -3832,7 +3835,13 @@ body.page-quantum{overflow-x:clip;}
 .th-stark-duo--sui{
   grid-template-columns:minmax(0,1fr) minmax(0,1fr);
   gap:clamp(28px,4vw,80px);align-items:stretch;
-  min-height:min(76svh,860px);
+  /* A WHOLE SECTION (2026-09-02, owner). Was min(76svh,860px), which left the
+     chapter short of the fold with a lake of ground in the left column. It
+     now claims a full viewport and the left column distributes into it, so
+     the headline sits against the top and the copy against the bottom with
+     the gap between them tracking the paper's height rather than a fixed
+     margin. svh, not vh, so mobile browser chrome does not overshoot. */
+  min-height:100svh;padding-block:clamp(32px,6vh,80px);
   /* FULL BLEED (2026-09-02, owner): this chapter runs edge to edge instead of
      sitting inside the section's 1160px measure. Same escape hatch
      privacy.html's .th-pm-sec--law uses on its own children. */
@@ -3877,7 +3886,7 @@ body.page-quantum{overflow-x:clip;}
 .th-stark-duo--sui .ssui-body p{font-size:clamp(15px,1.15vw,18px);line-height:1.62;margin:0 0 20px;max-width:none;}
 .th-stark-duo--sui .th-stark-pull{margin:0;}
 .th-stark-duo--sui .th-doc{display:flex;align-items:center;justify-content:center;width:100%;margin:0;align-self:stretch;}
-.th-stark-duo--sui .th-doc img{width:auto;max-width:100%;height:100%;max-height:min(76svh,860px);object-fit:contain;}
+.th-stark-duo--sui .th-doc img{width:auto;max-width:100%;height:100%;max-height:min(84svh,980px);object-fit:contain;}
 @media(max-width:1000px){
   .th-stark-duo--sui{grid-template-columns:minmax(0,1fr);min-height:0;gap:28px;}
   .th-stark-duo--sui .th-doc img{height:auto;max-height:none;}
@@ -3900,12 +3909,10 @@ body.page-quantum{overflow-x:clip;}
 .news-section:has(.news-toggle.qh-cta) .news-grid{width:100%;margin-top:26px;}
 </style>
 
-  <!-- chapter: the referee -->
-  <div class="th-q-chapter th-pm-reveal">
-    <h3 id="and-to-get-this-roadmap-right" class="scale-title">And to get this roadmap right, StarkWare brought in <span>one of the world's leading quantum minds.</span></h3>
-  </div>
-
-  <div class="qadv">
+  <!-- chapter: the referee. The heading was removed on request; its id moves
+       onto the section itself because #and-to-get-this-roadmap-right is a
+       committed search-index anchor and the hero has no other target for it. -->
+  <div class="qadv" id="and-to-get-this-roadmap-right">
     <div class="qadv-guides" aria-hidden="true"></div>
     <p class="qadv-quote"><img class="qadv-avatar" src="assets/scott-aaronson.jpg" alt="Prof. Scott Aaronson" width="776" height="714" loading="lazy" decoding="async">In February 2026, <b>Prof. Scott Aaronson</b> joined <a href="https://starkware.co/blog/quantum-computing-expert-scott-aaronson-joins-starkware/" target="_blank" rel="noopener noreferrer">StarkWare's Scientific Advisory Board</a> with a clear mandate: pressure-test this roadmap. Every assumption about what quantum computers can and cannot do, every cryptographic choice on the path to end-to-end resistance, now gets challenged by one of the foremost authorities in the field.</p>
     <p class="qadv-role"><b>Scott Aaronson</b> &middot; Schlumberger Chair of Computer Science, UT Austin &middot; Founding Director, Quantum Information Center</p>
