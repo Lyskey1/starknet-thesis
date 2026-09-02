@@ -231,123 +231,79 @@ body.page-privacy .hero::before { display: none; }
    reaching up behind the header, the header needs to sit above it again */
 body.page-privacy header.vc-header { z-index: 100; }
 
-/* ---------- the four proving properties, as a full-bleed feature band ----------
-   Rebuilt 2026-09-02 at section 05's proportions. The column accordion that
-   stood here (one mesh panel sliding in as the previous slid out, driven by
-   js/proof-columns.js) is retired: four properties that all have to read at
-   once do not want a selection device, so each owns a column and nothing is
-   hidden. The bleed geometry is copied from .th-pm-sec--law so the two bands
-   match: 100vw, negative side margins, and a vw padding that lands at about
-   21px on a 1440 frame (1.46 percent, measured off the reference).
-   The dotted rule is a child of the padded block rather than a full-bleed
-   element of its own, so its ends land on the column edges instead of
-   overshooting them by the padding. */
+/* ---------- the four proving properties, as a flat full-bleed column band ----------
+   Rebuilt 2026-09-02 as the band /btcfi uses for the bridge phases: one tall
+   strip running the full viewport width with no outer gutter, four equal
+   columns divided by 1px hairlines that run the whole column height, square
+   corners throughout, a flat near-black ground with no gradient wash and no
+   accent tint, and each column's text anchored to its base so the ground
+   above it is the band's main gesture.
+   What the previous build carried and this one drops: the icon tiles, the
+   right-aligned arrow buttons, and the illustration panels with their mesh
+   gradients and line art (.pcol__ic, .pcol__arrow, .pcol__media, .pcol__art,
+   .pscene). The target is text and hairlines only.
+   The dotted rule with the accent squares (.pcore-rule) goes too. It is not
+   removed so much as replaced: the strip's own border-top is now the
+   boundary between the standing statement and the band, which is how the
+   /btcfi band draws it. The #sq-band dotted rule further down the page is a
+   different device and is untouched. */
 .pcore { position: relative; width: 100vw; max-width: none;
-  margin: 56px 0 0 calc(50% - 50vw);
-  padding-inline: clamp(16px, 1.5vw, 28px); }
+  margin: 56px 0 0 calc(50% - 50vw); }
 
 /* the standing statement, centred over the band. The element, its id and the
    .phead classes stay: data/search-index.json and js/search.js resolve
-   against them. */
-.pcore-heads { position: relative; padding: 0; text-align: center; }
+   against them. The band itself is edge to edge, so the side gutter the
+   statement needs lives here rather than on .pcore. */
+.pcore-heads { position: relative; padding: 0 clamp(16px, 1.5vw, 28px); text-align: center; }
 .phead--lede p { margin: 0 auto; max-width: 40ch;
   font-family: 'General Sans','Helvetica Neue',Arial,sans-serif;
   font-size: clamp(24px, 2.9vw, 42px); font-weight: 300; line-height: 1.12;
   letter-spacing: -.025em; color: var(--pf-dim); }
 .phead--lede b { font-weight: 300; color: var(--pf-ink); }
 
-/* generous ground, then the dotted rule with an accent square at each end,
-   the same device .sq and section 05 draw */
-.pcore-rule { position: relative; height: 0; margin: clamp(64px, 9vh, 132px) 0 0;
-  border-top: 2px dotted rgba(250,250,250,.35); }
-.pcore-rule::before, .pcore-rule::after { content: ""; position: absolute; top: -5px;
-  width: 8px; height: 8px; background: var(--pf-acc); }
-.pcore-rule::before { left: 0; }
-.pcore-rule::after { right: 0; }
-
-/* the four columns. Every column carries the SAME 24px inner padding, so the
-   four figure panels come out the same width; zeroing the outer padding
-   instead widens columns 01 and 04 and their panels grow taller than the
-   inner two. Same reasoning as .pl in section 05. */
-.pcore-row { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); margin: clamp(38px, 5vh, 60px) 0 0; }
-.pcol { display: flex; flex-direction: column; min-width: 0;
-  padding: 0 24px 4px; border-left: 1px solid var(--pf-line); }
+/* the strip: one band, not a row of boxes. The min-height is what makes it
+   read as a band rather than as four stacked captions, since these
+   descriptions are longer than the two-line bodies the reference carries. */
+.pcore-row { display: flex; margin: clamp(64px, 9vh, 132px) 0 0;
+  min-height: clamp(440px, 66vh, 760px); background: var(--pf-bg);
+  border-top: 1px solid var(--pf-line); border-bottom: 1px solid var(--pf-line); }
+.pcol { position: relative; flex: 1 1 0%; min-width: 0; display: flex;
+  padding: 26px 20px 28px; border-left: 1px solid var(--pf-line); }
 .pcol:first-child { border-left: 0; }
-/* the label row holds on one line in every column: PROPERTY 01 is 11
-   characters of IBM Plex Mono at 10.5px, well inside the 157px the column
-   leaves between the two 30px tiles */
-.pcol__top { display: flex; align-items: center; gap: 10px; }
-.pcol__ic { flex: none; display: grid; place-items: center; width: 30px; height: 30px;
-  border: 1px solid var(--pf-line); color: var(--pf-acc); }
-.pcol__ic svg { width: 16px; height: 16px; }
-.pcol__rn { min-width: 0; font-family: 'IBM Plex Mono', monospace; font-size: 10.5px;
-  letter-spacing: .1em; white-space: nowrap; color: var(--pf-ink); }
-.pcol__arrow { flex: none; margin-left: auto; display: grid; place-items: center;
-  width: 30px; height: 30px; border: 1px solid var(--pf-line); color: var(--pf-dim); }
-.pcol__arrow svg { width: 16px; height: 16px; }
-/* the body owns the ELIMINATES line and pushes it to its own base, so the
-   four accent lines sit on one baseline however long the descriptions run */
-.pcol__body { flex: 1 1 auto; display: flex; flex-direction: column; }
-.pcol__name { margin: 22px 0 0; font-family: 'General Sans','Helvetica Neue',Arial,sans-serif;
-  font-weight: 600; font-size: 17px; line-height: 1.25; letter-spacing: -.01em; color: var(--pf-ink); }
-.pcol__sum { margin: 10px 0 0; font-family: 'General Sans','Helvetica Neue',Arial,sans-serif;
+/* margin-top:auto is the whole bottom anchor: the text block sits on the base
+   of the column and the empty ground collects above it */
+.pcol__body { width: 100%; margin-top: auto; }
+.pcol__rn { font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+  letter-spacing: .16em; text-transform: uppercase; color: var(--pf-dim); }
+.pcol__name { margin: 8px 0 0; font-family: 'General Sans','Helvetica Neue',Arial,sans-serif;
+  font-weight: 500; font-size: clamp(16px, 1.5vw, 21px); line-height: 1.2;
+  letter-spacing: -.01em; color: var(--pf-ink); }
+.pcol__sum { margin: 12px 0 0; font-family: 'General Sans','Helvetica Neue',Arial,sans-serif;
   font-size: 13.5px; line-height: 1.62; color: var(--pf-dim); }
-.pcol__elim { margin: auto 0 0; padding-top: 14px; font-family: 'IBM Plex Mono', monospace; font-size: 10.5px;
+.pcol__elim { margin: 16px 0 0; font-family: 'IBM Plex Mono', monospace; font-size: 10.5px;
   letter-spacing: .12em; text-transform: uppercase; color: var(--pf-acc); }
-/* the illustration panel sits at the base of every column, so the four bottom
-   edges line up whatever the description above them measures. .pscene is
-   absolutely positioned, so the panel is the positioned box that holds it. */
-.pcol__media { position: relative; flex: none; margin: 26px 0 0; aspect-ratio: 260 / 200;
-  border: 1px solid var(--pf-line); background: #141414; overflow: hidden; }
-/* the mesh panels were built to fill a full-height column; at a quarter of
-   that size they read as flat orange, so a scrim pulls them back to the dark
-   figure panels section 05 uses and leaves the ember as texture */
-.pcol__media::after { content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none;
-  background: linear-gradient(180deg, rgba(13,13,13,.78) 0%, rgba(13,13,13,.46) 46%, rgba(13,13,13,.82) 100%); }
-/* thin-stroke line art over the mesh, the same device the law band uses */
-.pcol__art { position: absolute; inset: 0; z-index: 3; width: 100%; height: 100%;
-  color: rgba(250,250,250,.42); }
-.pcol__art .pcol-acc { stroke: var(--pf-acc); stroke-width: 1.7; }
 
-/* the panels: layered mesh gradient, strk20 palette, no images */
-.pscene { position: absolute; inset: 0; overflow: hidden; background: var(--ps-bg); }
-.pscene::after { content: ""; position: absolute; inset: 0; pointer-events: none;
-  background: radial-gradient(120% 62% at 28% -12%, rgba(255,255,255,.14), rgba(255,255,255,0) 58%); mix-blend-mode: soft-light; }
-.pscene--ember { --ps-bg:
-    radial-gradient(120% 95% at 16% 10%, #7a2400 0%, rgba(122,36,0,0) 54%),
-    radial-gradient(95% 85% at 90% 20%, #c53400 0%, rgba(197,52,0,0) 58%),
-    radial-gradient(130% 120% at 74% 104%, #ff8a4a 0%, rgba(255,138,74,0) 60%),
-    linear-gradient(148deg, #1a0600 0%, #3a0e00 54%, #0d0d0d 100%); }
-.pscene--rust { --ps-bg:
-    radial-gradient(115% 95% at 84% 12%, #8a2400 0%, rgba(138,36,0,0) 54%),
-    radial-gradient(100% 90% at 10% 30%, #c53400 0%, rgba(197,52,0,0) 58%),
-    radial-gradient(130% 120% at 60% 108%, #e07a4a 0%, rgba(224,122,74,0) 60%),
-    linear-gradient(158deg, #240800 0%, #4a1200 54%, #0d0d0d 100%); }
-.pscene--copper { --ps-bg:
-    radial-gradient(115% 92% at 22% 14%, #b03000 0%, rgba(176,48,0,0) 54%),
-    radial-gradient(100% 95% at 88% 28%, #e86a30 0%, rgba(232,106,48,0) 58%),
-    radial-gradient(130% 125% at 70% 104%, #7a2400 0%, rgba(122,36,0,0) 60%),
-    linear-gradient(153deg, #120400 0%, #3a0e00 54%, #0d0d0d 100%); }
-.pscene--flare { --ps-bg:
-    radial-gradient(115% 92% at 80% 12%, #ff8a4a 0%, rgba(255,138,74,0) 52%),
-    radial-gradient(110% 100% at 14% 34%, #c53400 0%, rgba(197,52,0,0) 58%),
-    radial-gradient(135% 130% at 62% 106%, #8a2400 0%, rgba(138,36,0,0) 60%),
-    linear-gradient(153deg, #2a0a00 0%, #4a1200 54%, #0d0d0d 100%); }
-
-/* the band folds the way section 05's does: two columns, then one */
+/* the band folds twice. The reference carries two-line bodies and holds four
+   columns down to 860; these descriptions are longer, and measured at 1000px
+   wide the ELIMINATES lines wrap onto two lines, which breaks the single
+   baseline the four accent lines otherwise share. So the fold to two columns
+   comes early, at 1080, and it stays a wrapping strip rather than reverting
+   to a grid: same hairlines, same flat ground, same bottom anchor. */
 @media (max-width: 1080px) {
-  .pcore-row { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .pcore-row { flex-wrap: wrap; min-height: 0; }
+  .pcol { flex: 1 1 50%; max-width: 50%; min-height: clamp(300px, 40vh, 420px); }
   .pcol:nth-child(odd) { border-left: 0; }
-  .pcol:nth-child(n+3) { margin-top: 34px; padding-top: 30px; border-top: 1px solid var(--pf-line); }
+  .pcol:nth-child(n+3) { border-top: 1px solid var(--pf-line); }
 }
+/* below 860 the four columns become one and the vertical hairline becomes a
+   horizontal one, as the reference does */
 @media (max-width: 860px) {
   .pcore { margin-top: 40px; }
   .phead--lede p { font-size: 22px; max-width: none; }
-}
-@media (max-width: 640px) {
-  .pcore-row { grid-template-columns: minmax(0,1fr); }
-  .pcol, .pcol:nth-child(odd) { padding: 0 0 4px; border-left: 0; }
-  .pcol + .pcol { margin-top: 32px; padding-top: 28px; border-top: 1px solid var(--pf-line); }
+  .pcore-row { flex-direction: column; flex-wrap: nowrap; min-height: 0; }
+  .pcol { flex: 0 0 auto; max-width: none; min-height: 0;
+    border-left: 0; border-top: 1px solid var(--pf-line); padding: 30px 20px 32px; }
+  .pcol:first-child { border-top: 0; }
 }
 
 /* ---------- the comparison table, after public.com's rebate table ----------
