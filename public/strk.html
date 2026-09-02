@@ -871,23 +871,8 @@ a.chip:hover{background:var(--acc);border-color:var(--acc);color:#0d0d0d}
 
 
 /* conclusion */
-/* hairline divider between section 05 and the conclusion */
+/* hairline divider between section 05 and the footer */
 .sec-sep{height:1px;background:var(--border)}
-.conclude{text-align:center;padding:80px 0}
-.conclude h2{font-size:clamp(28px,4vw,46px);max-width:18ch;margin:0 auto 14px}
-.pillar-links{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin-top:30px}
-.pillar-links a{display:inline-flex;align-items:center;gap:9px;border:1px solid var(--line);border-radius:10px;padding:13px 20px;font-family:var(--mono),monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted-2);transition:.2s}
-.pillar-links a:hover{border-color:var(--clr);color:var(--white)}
-/* pillar glyphs: two hand-drawn stroke SVGs + the ZK braces. The braces are
-   IBM Plex Mono TEXT at 11px (the font IS the design; ink height 9.9px vs
-   the 13px SVGs' 9.5px ink), flex-centered: the em-box vs ink-box offset
-   measures ~0.1px at this size, below a device pixel, so no nudge. The
-   drawn glyphs' 1.9-unit stroke matches the braces' apparent stem weight.
-   Everything inherits the pill accent via --clr, as the font glyphs did. */
-.pillar-links a svg{color:var(--clr);flex:none}
-.pillar-links .pg-braces{display:inline-flex;align-items:center;font:400 11px var(--mono),monospace;line-height:1;color:var(--clr)}
-.pillar-links .pg-dot{display:block;width:2.4px;height:2.4px;border-radius:50%;background:currentColor;margin:0 1.5px}
-.pillar-links .l-btcfi{--clr:var(--p-btcfi)}.pillar-links .l-privacy{--clr:var(--p-privacy)}.pillar-links .l-quantum{--clr:var(--p-quantum)}
 
 /* footer */
 /* shared footer + buttons: copied verbatim from css/styles.css so it matches every other page */
@@ -1290,11 +1275,15 @@ footer.site-footer .foot-bottom a:hover{color:var(--accent)}
    become one mega-menu band. Each column group is headed by its icon, name and
    count, and a DOTTED rule divides one group from the next: the same 2px dotted
    idiom the privacy page uses for its rails (public/css/privacy-fx.css .lg-line).
-   Rows underneath are tight, each an icon tile plus a name plus a small mono
-   subtitle, with an arrow on the rows that leave the site. Click drives the
+   The band owns a full viewport (100svh, so mobile browser chrome cannot
+   overshoot it) and the columns stretch into it. Each row is an icon tile plus
+   a name plus a mono subtitle, with an arrow on the rows that leave the site. Click drives the
    open/closed state: the open column's title, count and chevron go accent and
    the panel gets a faint ground, so which group is open reads at a glance.
    Every href, id, logo and label is untouched. --- */
+.buy-block{min-height:100svh;display:flex;flex-direction:column;justify-content:center}
+.buy-block>.wrap{flex:1;display:flex;flex-direction:column}
+.buy-block .buy-acc{flex:1}
 .buy-acc{display:grid;grid-template-columns:repeat(4,1fr);gap:0;grid-gap:0;align-items:stretch}
 .buy-cat{border:0;border-left:2px dotted rgba(250,250,250,.28);border-radius:0;background:transparent;overflow:hidden;
   transition:background .2s}
@@ -1318,21 +1307,22 @@ footer.site-footer .foot-bottom a:hover{color:var(--accent)}
 
 .buy-body .buy-list{padding:0 22px 22px}
 .buy-list{gap:0}
-/* tighter rows: icon tile + name on one line, the small mono subtitle under it */
-.buy-item{flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:2px;
-  margin:0 -10px;padding:9px 10px;border:0;border-top:1px solid var(--line);border-radius:0;
+/* rows: icon tile + name on one line, the mono subtitle under it, sized so
+   both are legible at arm's length */
+.buy-item{flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:6px;
+  margin:0 -10px;padding:14px 10px;border:0;border-top:1px solid var(--line);border-radius:0;
   background:transparent}
 .buy-item:hover{background:rgba(250,250,250,.035);border-color:var(--line);transform:none}
 .buy-item:hover .bi-name{color:var(--acc-2)}
-.buy-item .bi-name{gap:9px;transition:color .2s}
-.buy-item .bi-logo{width:22px;height:22px;border-radius:6px}
-.buy-item .bi-logo img{inset:4px;width:14px;height:14px}
-.buy-item .bi-logo i{font-size:10px}
+.buy-item .bi-name{gap:11px;font-size:17px;transition:color .2s}
+.buy-item .bi-logo{width:40px;height:40px;border-radius:11px}
+.buy-item .bi-logo img{inset:8px;width:24px;height:24px}
+.buy-item .bi-logo i{font-size:16px}
 /* the arrow that marks a row leaving the site */
-.buy-item .bi-ext{flex:none;font-size:11px;line-height:1;color:rgba(250,250,250,.3);transition:color .2s}
+.buy-item .bi-ext{flex:none;font-size:13px;line-height:1;color:rgba(250,250,250,.45);transition:color .2s}
 .buy-item:hover .bi-ext{color:var(--acc-2)}
 /* the badge becomes the row's subtitle, indented under the name */
-.buy-item .badge{flex:none;padding-left:31px;font-family:var(--mono),monospace;font-size:9.5px;letter-spacing:.13em}
+.buy-item .badge{flex:none;padding-left:51px;font-family:var(--mono),monospace;font-size:12.5px;letter-spacing:.11em;color:rgba(250,250,250,.72)}
 
 @media(max-width:1100px){
   .buy-acc{grid-template-columns:repeat(2,1fr)}
@@ -1346,7 +1336,7 @@ footer.site-footer .foot-bottom a:hover{color:var(--accent)}
   .buy-cat:nth-child(n+3){margin-top:24px;padding-top:24px}
   .buy-head{padding:4px 40px 16px 0}
   .buy-body .buy-list{padding:0 0 20px}
-  .buy-item{margin:0;padding:13px 0}
+  .buy-item{margin:0;padding:16px 0}
   .buy-item:hover{background:transparent}
   .buy-head .bh-chev{right:0}
 }
@@ -2260,7 +2250,7 @@ window.ADMIN_GATE=on;})();
 </div><!-- /.cv-layer -->
 
 <!-- BUY -->
-<section class="block"><div class="wrap">
+<section class="block buy-block"><div class="wrap">
   <div class="th-pm-head"><span class="th-pm-marker"></span><span class="th-pm-num">05</span><h2 id="where-to-get-strk" class="th-pm-title">Where to get STRK</h2></div>
   <div class="buy-acc">
     <div id="on-starknet" class="buy-cat">
@@ -2293,27 +2283,8 @@ window.ADMIN_GATE=on;})();
   </div>
 </div></section>
 
-<!-- divider between section 05 and the conclusion -->
+<!-- divider between section 05 and the footer -->
 <div class="wrap"><div class="sec-sep"></div></div>
-
-<!-- CONCLUSION -->
-<section class="conclude"><div class="wrap">
-  <p class="eyebrow" style="display:block;margin-bottom:18px">The whole bet, one ticker</p>
-  <h2 id="strk-is-a-bet-on-privacy">STRK is a bet on <span class="hl-privacy">privacy</span>, <span class="hl-quantum">quantum resistance</span> &amp; <span class="hl-btcfi">BTCFi</span>.</h2>
-  <p class="lead" style="margin:0 auto;text-align:center">Read the three pillars it's built on.</p>
-  <!-- pillar glyphs, one 24-grid hand-drawn set (Tabler webfont glyphs
-       replaced; the font itself stays for the accordion chevrons and other
-       icons). PRIVACY: ZK braces with the hidden dot, the one fill in the
-       set. QUANTUM: the qh-chandelier from quantum.html distilled to its
-       silhouette: axis, three shrinking plates, mixing chamber. BTCFI: the
-       Bitcoin B silhouette redrawn in the trio's stroke. aria-hidden
-       throughout: the labels carry the meaning. -->
-  <div class="pillar-links">
-    <a class="l-privacy" href="/privacy"><span class="pg-braces" aria-hidden="true">{<i class="pg-dot"></i>}</span> Privacy</a>
-    <a class="l-quantum" href="/quantum"><svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5v13"/><path d="M5 6.5h14"/><path d="M6.75 10.5h10.5"/><path d="M8.5 14.5h7"/><rect x="9.75" y="16.5" width="4.5" height="4.5" rx="0.8"/></svg> Quantum</a>
-    <a class="l-btcfi" href="/btcfi"><svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6h7.5a3 3 0 0 1 0 6a3 3 0 0 1 0 6H6.5"/><path d="M8.5 6v12"/><path d="M8.5 12h5.5"/><path d="M10 3.5V6"/><path d="M13 3.5V6"/><path d="M10 18v2.5"/><path d="M13 18v2.5"/></svg> BTCFi</a>
-  </div>
-</div></section>
 
 <!-- CONTACT + FOOTER. stride layers these the same way it layers the chain and
      the product: the form pins for a viewport while the footer scrolls up over
@@ -2324,7 +2295,14 @@ window.ADMIN_GATE=on;})();
   <div class="vc-cta-in">
     <div class="vc-cta-say">
       <p class="vc-kicker">Starknet Thesis</p>
-      <h2 class="vc-title">Three forces,<br>one chain,<br>one ticker.</h2>
+      <!-- the tagline is now the thesis sentence itself. The "whole bet, one
+           ticker" section that carried it was removed on request, so its id
+           moves here, onto the element that repeats the sentence:
+           #strk-is-a-bet-on-privacy is a committed search-index anchor. Same
+           move as quantum.html's #and-to-get-this-roadmap-right. Note the
+           index builder skips <footer>, so the anchor resolves but no longer
+           produces a search entry, exactly as in the quantum case. -->
+      <h2 id="strk-is-a-bet-on-privacy" class="vc-title">STRK is a bet on privacy,<br>quantum resistance<br>&amp; BTCFi</h2>
     </div>
     <form class="vc-sub" action="https://starknetresearch.substack.com/subscribe" method="get" target="_blank" rel="noopener" data-umami-event="footer-subscribe">
       <label class="vc-sub-field">
