@@ -141,6 +141,30 @@ body::before { opacity: .35; }
 .ixs-name:hover { color: var(--es-acc); }
 .ixs-cat { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--es-faint); }
 .ixs-desc { flex: 1 1 320px; min-width: 0; }
+/* clipped from first paint when JS is available (html.eco-live, set by an
+   inline head script), and also once the handoff completes. The first
+   selector is what removes the layout shift; the second keeps the state
+   correct if the flag is ever cleared after enhancement. */
+/* SPACE RESERVED FOR THE LIVE INDEX (2026-09-02).
+   The interactive index is built from a fetch of /data/ecosystem.json, and
+   it lands late: measured at 3.8 seconds on a PRODUCTION build, not just in
+   dev, which was checked before assuming latency was the cause. Until then
+   the container is 135px, and when the index arrives it grows to its full
+   height and shoves everything below it down. That single shift measured a
+   CLS of 0.670.
+   These floors reserve the settled height per breakpoint so the arrival
+   changes nothing below it. Values are measured on the production build,
+   not guessed: 1774 at 1440, 2940 at 1100, 2931 at 820, 5333 at 390. They
+   are floors on the container, so if the directory grows the container
+   simply exceeds them and the layout still holds.
+   Scoped to .eco-live, so with JS off the static directory renders at its
+   own natural height and nothing is reserved. */
+.eco-live #ecoIndex { min-height: 1774px; }
+@media (max-width: 1240px) { .eco-live #ecoIndex { min-height: 2940px; } }
+@media (max-width: 900px)  { .eco-live #ecoIndex { min-height: 2931px; } }
+@media (max-width: 620px)  { .eco-live #ecoIndex { min-height: 5333px; } }
+
+.eco-live .ixs,
 .ixs[data-enhanced] { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
 .ix-head h2 { font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-weight: 300; font-size: clamp(28px, 3.4vw, 52px); line-height: 1; letter-spacing: -.03em; color: var(--es-ink); margin: 8px 0 22px; }

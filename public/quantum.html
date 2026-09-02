@@ -414,6 +414,32 @@
 <style>
 </style>
 <script src="js/admin-gate.js"></script>
+<style>
+/* ============================================================
+   HERO POSITIONING, HOISTED INTO THE HEAD (2026-09-02)
+   These rules also live in the big style block near the foot of
+   <body>. Chrome painted the hero in static flow first and only
+   reflowed it into the artboard when it reached that block roughly
+   2,450 lines later, which measured as a CLS of 0.413 on this page:
+   .qh-left, .qh-right and .qh-ctas each jumping from full-width
+   flow (x:0, w:1440) to their absolute corners (x:24, y:625,
+   w:317). Layout-affecting rules for above-the-fold content belong
+   in the head; the rest can stay where they are.
+   NOTE ON .qh-right: the page declares it TWICE with different
+   values, gap .9vw earlier and gap 1.25vw plus margin:0 later. The
+   later one wins, so that is the one copied here. Copying the first
+   would have hoisted a rule the page does not actually use and left
+   the shift in place.
+   ============================================================ */
+.hero > .hero-eyebrow{position:absolute;top:max(7.2vw,88px);left:1.667vw;z-index:2;margin:0;}
+.hero > .hero-title{position:absolute;top:max(9.028vw,114px);left:1.667vw;z-index:2;margin:0;
+  width:52vw;max-width:none;}
+.qh-left{position:absolute;left:1.667vw;bottom:2.153vw;z-index:2;width:22vw;
+  display:flex;flex-direction:column;gap:1.25vw;align-items:flex-start;}
+.qh-right{position:absolute;right:1.667vw;bottom:2.153vw;z-index:2;
+  display:flex;flex-direction:column;align-items:flex-end;gap:1.25vw;
+  margin:0;text-align:right;}
+</style>
 </head>
 <body class="page-quantum">
 

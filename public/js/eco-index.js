@@ -134,5 +134,13 @@
        the a11y tree without removing a word from the DOM. Never emitted into the
        HTML: without JS those links must stay live. */
     if (staticEl) { staticEl.setAttribute('data-enhanced', '1'); staticEl.setAttribute('inert', ''); }
-  }).catch(function (err) { console.error('[eco-index]', err); live.style.display = 'none'; });
+  }).catch(function (err) {
+    console.error('[eco-index]', err);
+    live.style.display = 'none';
+    /* the head script clipped the static directory on the assumption this
+       fetch would succeed. It did not, so give it back rather than leaving
+       the reader an empty section. */
+    document.documentElement.classList.remove('eco-live');
+    if (staticEl) { staticEl.removeAttribute('data-enhanced'); staticEl.removeAttribute('inert'); }
+  });
 })();
