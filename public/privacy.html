@@ -2003,18 +2003,22 @@
 
 /* ============================================================
    SECTION 04 AS A MISTRAL-STYLE PRODUCT SURFACE (2026-09-02)
-   A light framed section with a flat tab bar, large black typography and
-   one orange product field. The existing movement markup and tab script stay
+   Mistral's framed product-section anatomy, translated into the Starknet
+   Thesis dark palette. The existing movement markup and tab script stay
    intact; this is a skin over the same four panels.
    ============================================================ */
 .th-pm-sec--mistral{
-  --mi-bg:#f7f7f2;--mi-ink:#080808;--mi-muted:#4d4c49;
-  --mi-line:#dfddd5;--mi-orange:#ff4f0f;--mi-orange-2:#e83b00;
+  --mi-bg:#070303;--mi-ink:#fafafa;--mi-muted:#9a8f8a;
+  --mi-line:rgba(250,250,250,.12);--mi-orange:#c53400;--mi-orange-2:#e85b27;
   width:100vw;max-width:none;margin:0 calc(50% - 50vw);padding:0 0 64px;
-  background:#f7f7f2;background-color:#f7f7f2!important;color:var(--mi-ink);border-top:1px solid var(--mi-line);
+  background:
+    radial-gradient(circle at 82% 20%,rgba(197,52,0,.16),transparent 34%),
+    radial-gradient(circle at 16% 74%,rgba(197,52,0,.10),transparent 32%),
+    linear-gradient(180deg,#070303,#0d0503 48%,#070303);
+  background-color:#070303!important;color:var(--mi-ink);border-top:1px solid var(--mi-line);
   border-bottom:1px solid var(--mi-line);overflow:hidden;
 }
-body section.th-pm-sec--mistral{background-color:#f7f7f2!important;}
+body section.th-pm-sec--mistral{background-color:#070303!important;}
 .th-pm-sec--mistral::before{display:none;}
 .th-pm-sec--mistral>.th-pm-head,
 .th-pm-sec--mistral>.th-pm-eyebrow,
@@ -2027,24 +2031,24 @@ body section.th-pm-sec--mistral{background-color:#f7f7f2!important;}
 .th-pm-sec--mistral .th-pm-marker{border-left-color:var(--mi-orange);filter:none;}
 .th-pm-sec--mistral .th-pm-num{color:var(--mi-orange);font-size:clamp(52px,6.2vw,90px);}
 .th-pm-sec--mistral .th-pm-title{
-  color:var(--mi-ink);font-weight:600;font-size:clamp(42px,5.2vw,76px);
+  color:var(--mi-ink);font-weight:300;font-size:clamp(42px,5.2vw,76px);
   line-height:.98;letter-spacing:-.04em;
 }
 .th-pm-sec--mistral>.th-pm-eyebrow{
   color:var(--mi-orange-2);padding:26px 32px 0;margin-top:0;
 }
 .th-pm-sec--mistral>.th-pm-intro{
-  color:var(--mi-ink);font-size:clamp(20px,2vw,28px);line-height:1.32;
+  color:rgba(250,250,250,.72);font-size:clamp(20px,2vw,28px);line-height:1.32;
   max-width:1440px;padding:22px 32px 0;margin-top:0;
 }
 .th-pm-sec--mistral .pmv{margin-top:30px;padding:0 32px;}
 .th-pm-sec--mistral .pmv-row{
   display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;
-  border:1px solid var(--mi-line);border-bottom:0;border-radius:0;background:#fbfbf7;
+  border:1px solid var(--mi-line);border-bottom:0;border-radius:0;background:rgba(8,5,4,.78);
 }
 .th-pm-sec--mistral .pmv.stick-on .pmv-row{position:static;top:auto;z-index:auto;}
 .th-pm-sec--mistral .pmv.is-stuck .pmv-row{
-  gap:0;padding:0;margin:0;background:#fbfbf7;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none;
+  gap:0;padding:0;margin:0;background:rgba(8,5,4,.94);box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none;
 }
 .th-pm-sec--mistral .pmv-spacer{display:none;}
 .th-pm-sec--mistral .pmv-ped,
@@ -2068,34 +2072,35 @@ body section.th-pm-sec--mistral{background-color:#f7f7f2!important;}
   text-transform:none;white-space:nowrap;
 }
 .th-pm-sec--mistral .pmv-label b{font-family:var(--mono);font-size:12px;letter-spacing:.12em;color:var(--mi-orange);margin-right:8px;}
-.th-pm-sec--mistral .pmv-ped[aria-selected="true"]{background:#f0efea;}
+.th-pm-sec--mistral .pmv-ped[aria-selected="true"]{background:rgba(197,52,0,.10);}
 .th-pm-sec--mistral .pmv-ped:focus-visible{outline:2px solid var(--mi-orange);outline-offset:-2px;}
 .th-pm-sec--mistral .pmv-stage{
   margin-top:0;padding-top:0;border:1px solid var(--mi-line);overflow:hidden;
-  background:#fbfbf7;transition:height .42s var(--hover-ease);
+  background:rgba(8,5,4,.60);transition:height .42s var(--hover-ease);
 }
 .th-pm-sec--mistral .pmv-panel{padding:42px 0 0;}
 .th-pm-sec--mistral .pmv-title{
   max-width:none;margin:0 0 34px;padding:0 24px;color:var(--mi-ink);
-  font-weight:600;font-size:clamp(34px,4.8vw,70px);line-height:.98;letter-spacing:-.045em;
+  font-weight:700;font-size:clamp(34px,4.8vw,70px);line-height:.98;letter-spacing:-.045em;
 }
 .th-pm-sec--mistral .pmv-title .em{color:var(--mi-orange);}
 .th-pm-sec--mistral .awin{
-  position:relative;margin:0;border:0;border-radius:0;background:var(--mi-orange);
+  position:relative;margin:0;border:0;border-radius:0;
+  background:linear-gradient(135deg,#2b0903 0%,#c53400 46%,#7b1607 100%);
   min-height:clamp(480px,52vw,720px);padding:clamp(32px,5vw,74px);
   box-shadow:none;overflow:hidden;
 }
 .th-pm-sec--mistral .awin::before{
   content:"";position:absolute;inset:0;pointer-events:none;opacity:.24;
   background-image:
-    linear-gradient(rgba(255,255,255,.36) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(255,255,255,.36) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(255,255,255,.12) 0 10%,transparent 10% 18%,rgba(255,255,255,.10) 18% 24%,transparent 24% 100%);
+    linear-gradient(rgba(250,250,250,.20) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(250,250,250,.20) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,0,0,.10) 0 10%,transparent 10% 18%,rgba(250,250,250,.08) 18% 24%,transparent 24% 100%);
   background-size:92px 92px,92px 92px,100% 100%;
 }
 .th-pm-sec--mistral .awin::after{
   content:"";position:absolute;left:15%;right:15%;top:30%;height:42%;
-  border:2px solid rgba(255,255,255,.48);border-top:0;border-bottom:0;
+  border:2px solid rgba(250,250,250,.40);border-top:0;border-bottom:0;
   opacity:.55;pointer-events:none;
 }
 .th-pm-sec--mistral .awin-bar,
@@ -2110,8 +2115,9 @@ body section.th-pm-sec--mistral{background-color:#f7f7f2!important;}
 .th-pm-sec--mistral .awin-body>.pmx,
 .th-pm-sec--mistral .awin-body>.pv-bento{
   width:min(760px,100%);max-height:min(520px,70vh);overflow:auto;
-  border:1px solid rgba(8,8,8,.18);border-radius:10px;background:#fffefa;
-  color:var(--mi-ink);box-shadow:0 22px 60px rgba(70,22,0,.24);
+  border:1px solid rgba(250,250,250,.14);border-radius:0;
+  background:linear-gradient(180deg,rgba(13,13,13,.94),rgba(7,7,7,.96));
+  color:var(--mi-ink);box-shadow:0 22px 60px rgba(0,0,0,.46);
 }
 .th-pm-sec--mistral .awin-body>.fst{padding:22px;}
 .th-pm-sec--mistral .fst-head,
@@ -2119,12 +2125,12 @@ body section.th-pm-sec--mistral{background-color:#f7f7f2!important;}
 .th-pm-sec--mistral .wn,
 .th-pm-sec--mistral .bnt-n,
 .th-pm-sec--mistral .bnt-sum,
-.th-pm-sec--mistral .pmx-sub{color:#6d645e;}
+.th-pm-sec--mistral .pmx-sub{color:rgba(250,250,250,.48);}
 .th-pm-sec--mistral .fst-layer,
 .th-pm-sec--mistral .wp-card,
 .th-pm-sec--mistral .pmx-card,
 .th-pm-sec--mistral .pmf{
-  border-color:rgba(8,8,8,.12);background:#fffefa;color:var(--mi-ink);
+  border-color:rgba(250,250,250,.12);background:#0d0d0d;color:var(--mi-ink);
 }
 .th-pm-sec--mistral .fst-layer h5,
 .th-pm-sec--mistral .fst-layer p b,
@@ -2135,25 +2141,25 @@ body section.th-pm-sec--mistral{background-color:#f7f7f2!important;}
 .th-pm-sec--mistral .fst-layer p,
 .th-pm-sec--mistral .wp-card p,
 .th-pm-sec--mistral .wlt-row,
-.th-pm-sec--mistral .pmx-card{color:#5b5753;}
+.th-pm-sec--mistral .pmx-card{color:rgba(250,250,250,.62);}
 .th-pm-sec--mistral .fst-n,
 .th-pm-sec--mistral .fst-chip,
 .th-pm-sec--mistral .bnt-fbtn,
 .th-pm-sec--mistral .wp-row .pill.live,
 .th-pm-sec--mistral .bnt-chip .pill.live{color:var(--mi-orange);border-color:rgba(255,79,15,.38);}
-.th-pm-sec--mistral .fst-stack::before{background:linear-gradient(180deg,var(--mi-orange),rgba(8,8,8,.16) 44%,transparent);}
-.th-pm-sec--mistral .fst-layer::before{background:#fffefa;border-color:var(--mi-orange);}
-.th-pm-sec--mistral .fst-base{border-color:rgba(255,79,15,.34);background:#fff6ef;}
-.th-pm-sec--mistral .fst-chip{background:#fffefa;}
+.th-pm-sec--mistral .fst-stack::before{background:linear-gradient(180deg,var(--mi-orange),rgba(250,250,250,.14) 44%,transparent);}
+.th-pm-sec--mistral .fst-layer::before{background:#0d0d0d;border-color:var(--mi-orange);}
+.th-pm-sec--mistral .fst-base{border-color:rgba(197,52,0,.42);background:rgba(197,52,0,.08);}
+.th-pm-sec--mistral .fst-chip{background:#0d0d0d;}
 .th-pm-sec--mistral .wlt-val .rv,
 .th-pm-sec--mistral .em,
 .th-pm-sec--mistral .ba{color:var(--mi-orange);}
 .th-pm-sec--mistral .peo,
 .th-pm-sec--mistral .peo-cap{display:none;}
-.th-pm-sec--mistral .pv-bento{padding:18px;background:#fffefa;}
+.th-pm-sec--mistral .pv-bento{padding:18px;background:#0d0d0d;}
 .th-pm-sec--mistral .builders{display:none;}
-.th-pm-sec--mistral .pmf iframe{height:360px;background:#fffefa;}
-.th-pm-sec--mistral .pmf-fall{border-color:rgba(8,8,8,.12);color:#6d645e;}
+.th-pm-sec--mistral .pmf iframe{height:360px;background:#0d0d0d;}
+.th-pm-sec--mistral .pmf-fall{border-color:rgba(250,250,250,.12);color:rgba(250,250,250,.48);}
 .th-pm-sec--mistral .pmf-fall a{color:var(--mi-orange);}
 @media(max-width:900px){
   .th-pm-sec--mistral>.th-pm-head{grid-template-columns:auto minmax(0,1fr);padding:34px 20px 26px;}
@@ -2625,54 +2631,59 @@ body section.th-pm-sec--mistral{background-color:#f7f7f2!important;}
   </div>
 
 
-  <!-- The four proving properties, as the flat column band /btcfi uses for
-       the bridge phases: the standing statement centred at the top, then one
-       tall strip running edge to edge, four equal columns divided by 1px
-       hairlines, square corners, flat near-black ground, and each column's
-       text anchored to its base with open ground above it. The column
-       accordion that stood here (js/proof-columns.js) is retired: four
-       properties that all have to read at once do not want a selection
-       device, and nothing is hidden now, so the tab semantics go too. The
-       icon tiles, the arrow buttons and the illustration panels are gone
-       with the rebuild: the target is text and hairlines only. The h4 per
-       property stays the search index's anchor. Styles:
-       css/privacy-fx.css (.pcore / .pcol). -->
+  <!-- The four proving properties as the same column accordion BTCFi uses for
+       bridge phases: a top reading panel, then four edge-to-edge columns with
+       square hairline dividers and a sliding mesh field for the active item.
+       The copy stays privacy-specific; the instrument is deliberately shared
+       in behaviour and proportion with /btcfi. -->
   <div class="pcore th-pm-reveal" id="pcore">
-    <div class="pcore-heads" id="pcore-heads">
+    <div class="pcore-heads" id="pcore-heads" role="tabpanel" aria-live="polite">
       <div class="phead phead--lede"><p>With these four properties in place, Starknet is now shipping <b>the most complete privacy ecosystem the market has seen</b>, designed against the failure list of the past decade.</p></div>
+      <div class="phead">
+        <div class="phead__rn">Property 01</div>
+        <h4 id="speed">Speed</h4>
+        <p>A privacy system is a consumer product before it is a cryptographic one, and private UX dies at high latency. Starknet runs at around 1,000 TPS today, with 10,000+ targeted for 2027, and latency sits in the hundreds of milliseconds for regular transactions, a few seconds for private ones.</p>
+        <div class="phead__elim">Eliminates: dedicated privacy L1s</div>
+      </div>
+      <div class="phead">
+        <div class="phead__rn">Property 02</div>
+        <h4 id="succinct-verifiability">Succinct verifiability</h4>
+        <p>Privacy at scale eventually needs clients, on browsers or phones, that verify the chain without borrowing trust from someone else&rsquo;s server. That requires compact proofs, not replaying everything.</p>
+        <div class="phead__elim">Eliminates: fast-but-heavy chains</div>
+      </div>
+      <div class="phead">
+        <div class="phead__rn">Property 03</div>
+        <h4 id="zk-native-end-to-end">ZK-native, end to end</h4>
+        <p>Private computation means proving everything, constantly. Cairo was designed as a language whose execution is cheap to prove; EVM chains run a virtual machine that predates the idea, where every opcode never designed to be proven adds a cost that cannot be optimized away, and Ethereum itself is now converging on the bet StarkWare made in 2018.</p>
+        <div class="phead__elim">Eliminates: EVM chains</div>
+      </div>
+      <div class="phead">
+        <div class="phead__rn">Property 04</div>
+        <h4 id="in-protocol-proof-verification">In-protocol proof verification</h4>
+        <p>The last missing piece of the proving stack. The Shinobi upgrade (SNIP-36) moved proof verification into consensus itself: a transaction carries its proof, the network checks it as part of ordinary block work, and private transactions went from impractical to seconds and cents.</p>
+        <div class="phead__elim">Arrived: April 2026 (SNIP-36)</div>
+      </div>
     </div>
-    <div class="pcore-row">
-      <article class="pcol">
-        <div class="pcol__body">
-          <div class="pcol__rn">PROPERTY 01</div>
-          <h4 class="pcol__name" id="speed">Speed</h4>
-          <p class="pcol__sum">A privacy system is a consumer product before it is a cryptographic one, and private UX dies at high latency. Starknet runs at around 1,000 TPS today, with 10,000+ targeted for 2027, and latency sits in the hundreds of milliseconds for regular transactions, a few seconds for private ones.</p>
-          <div class="pcol__elim">ELIMINATES: DEDICATED PRIVACY L1s</div>
-        </div>
+    <div class="pcore-strip" role="tablist" aria-label="The four proving properties">
+      <article class="pcol" tabindex="0" role="tab" aria-selected="false" aria-controls="pcore-heads" data-p="0" aria-label="Property 1, Speed">
+        <div class="pcol__media"><div class="pscene pscene--ember"></div></div>
+        <div class="pcol__cap"><b>01</b><span>Consumer latency</span></div>
+        <h3 class="pcol__name">Property<span>Speed</span></h3>
       </article>
-      <article class="pcol">
-        <div class="pcol__body">
-          <div class="pcol__rn">PROPERTY 02</div>
-          <h4 class="pcol__name" id="succinct-verifiability">Succinct verifiability</h4>
-          <p class="pcol__sum">Privacy at scale eventually needs clients, on browsers or phones, that verify the chain without borrowing trust from someone else&rsquo;s server. That requires compact proofs, not replaying everything.</p>
-          <div class="pcol__elim">ELIMINATES: FAST-BUT-HEAVY CHAINS</div>
-        </div>
+      <article class="pcol" tabindex="0" role="tab" aria-selected="false" aria-controls="pcore-heads" data-p="1" aria-label="Property 2, Succinct verifiability">
+        <div class="pcol__media"><div class="pscene pscene--rust"></div></div>
+        <div class="pcol__cap"><b>02</b><span>Client proofs</span></div>
+        <h3 class="pcol__name">Property<span>Succinct verifiability</span></h3>
       </article>
-      <article class="pcol">
-        <div class="pcol__body">
-          <div class="pcol__rn">PROPERTY 03</div>
-          <h4 class="pcol__name" id="zk-native-end-to-end">ZK-native, end to end</h4>
-          <p class="pcol__sum">Private computation means proving everything, constantly. Cairo was designed as a language whose execution is cheap to prove; EVM chains run a virtual machine that predates the idea, where every opcode never designed to be proven adds a cost that cannot be optimized away, and Ethereum itself is now converging on the bet StarkWare made in 2018.</p>
-          <div class="pcol__elim">ELIMINATES: EVM CHAINS</div>
-        </div>
+      <article class="pcol" tabindex="0" role="tab" aria-selected="false" aria-controls="pcore-heads" data-p="2" aria-label="Property 3, ZK-native, end to end">
+        <div class="pcol__media"><div class="pscene pscene--copper"></div></div>
+        <div class="pcol__cap"><b>03</b><span>Status: production</span></div>
+        <h3 class="pcol__name">Property<span>ZK-native, end to end</span></h3>
       </article>
-      <article class="pcol">
-        <div class="pcol__body">
-          <div class="pcol__rn">PROPERTY 04</div>
-          <h4 class="pcol__name" id="in-protocol-proof-verification">In-protocol proof verification</h4>
-          <p class="pcol__sum">The last missing piece of the proving stack. The Shinobi upgrade (SNIP-36) moved proof verification into consensus itself: a transaction carries its proof, the network checks it as part of ordinary block work, and private transactions went from impractical to seconds and cents.</p>
-          <div class="pcol__elim">ARRIVED: APRIL 2026 (SNIP-36)</div>
-        </div>
+      <article class="pcol" tabindex="0" role="tab" aria-selected="false" aria-controls="pcore-heads" data-p="3" aria-label="Property 4, In-protocol proof verification">
+        <div class="pcol__media"><div class="pscene pscene--flare"></div></div>
+        <div class="pcol__cap"><b>04</b><span>Arrived: SNIP-36</span></div>
+        <h3 class="pcol__name">Property<span>In-protocol proof verification</span></h3>
       </article>
     </div>
   </div>
@@ -5377,6 +5388,7 @@ var pvVideoChrome = thVideoChrome({
 </script>
 <script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.185.0/build/three.module.js"}}</script>
 <script type="module" src="js/eco-backdrop.js"></script>
+<script src="js/proof-columns.js"></script>
 <script type="module" src="js/pv-human-key.js"></script>
 <script type="module" src="js/pv-eco-orb.js"></script>
 </body>

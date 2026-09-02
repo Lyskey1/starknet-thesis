@@ -214,9 +214,10 @@
        panel and click the tab it names through aria-labelledby. */
     const pmv = target.closest && target.closest('.pmv-panel');
     if (pmv && pmv.hidden) did = clickIf(document.getElementById(pmv.getAttribute('aria-labelledby'))) || did;
-    /* privacy: the proving-properties panel shows one property at a time */
-    const pci = target.closest && target.closest('.pcore-item');
-    if (pci && !pci.classList.contains('is-on')) did = clickIf(document.querySelectorAll('#pcore .pcore-node')[+pci.dataset.p]) || did;
+    /* privacy: the proving-properties accordion moves the headings into the
+       top reading panel; ask its local controller to reveal the matching head. */
+    const phead = target.closest && target.closest('#pcore .phead');
+    if (phead && window.__pcolShow) did = window.__pcolShow(phead) || did;
     /* quantum: section 02's gated beats render one at a time and rows
        beyond the furthest reached are disabled, so clicking the row
        cannot open them; the gate exposes an explicit-intent hook that
