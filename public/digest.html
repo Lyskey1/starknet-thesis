@@ -476,17 +476,28 @@
      emptiness, so they go, and the block tightens to its content. */
   body.page-recap footer.vc-footer .vc-col { border-left: 0; padding: 40px 28px 44px; }
   body.page-recap footer.vc-footer .vc-col:first-child { padding-left: 0; }
-  /* 2. the brand block carries only the descriptive one-liner now; the base
-     grid collapses to it. */
-  body.page-recap footer.vc-footer .vc-base { grid-template-columns: minmax(0, 480px); padding: 30px 0 6px; }
-  /* 3. the disclaimer, demoted to a legal line: sentence case, 11.5px, the
-     dimmest ink that still clears 4.6:1 on the #0d0d0d ground
-     (rgba(250,250,250,.52) blends to about #888, 5.3:1), 90ch cap,
-     left-aligned on the container grid, down in the baseline bar area. */
-  .dgf-foot { width: calc(100% - 48px); max-width: 1392px; margin: 0 auto; }
-  body.page-recap footer.vc-footer .dgf-foot .vc-legal { margin: 0; max-width: 90ch;
+  /* 2 + 3. the identity / legal row: one flex row on the container (flex,
+     not the shared sheet's grid, so the sub-1024 grid collapse cannot leak
+     in), the brand and its 40ch tagline left, the disclaimer right as a
+     right-aligned block capped at 55ch, both hanging from the same top
+     line under the .vc-rule hairline. The disclaimer keeps its demoted
+     legal style: sentence case, 11.5px, the dimmest ink that still clears
+     4.6:1 on the near-black ground (rgba(250,250,250,.52) blends to about
+     #888, 5.3:1). */
+  body.page-recap footer.vc-footer .vc-base { display: flex; align-items: flex-start;
+    justify-content: space-between; gap: 32px 56px; padding: 30px 0 10px; }
+  body.page-recap footer.vc-footer .vc-brand p { max-width: 40ch; }
+  body.page-recap footer.vc-footer .vc-legal { margin: 0; max-width: 55ch;
+    flex: 0 1 auto; text-align: right;
     font-family: var(--vc-sans); font-size: 11.5px; line-height: 1.6;
     letter-spacing: 0; text-transform: none; color: rgba(250, 250, 250, .52); }
+  /* the row stacks where the two measures stop fitting side by side:
+     identity, then legal (left-aligned again), then the baseline bar */
+  @media (max-width: 860px) {
+    body.page-recap footer.vc-footer .vc-base { flex-direction: column; }
+    body.page-recap footer.vc-footer .vc-legal { text-align: left; }
+  }
+  .dgf-foot { width: calc(100% - 48px); max-width: 1392px; margin: 0 auto; }
   /* 4. the classic baseline bar, one hairline above it. The status pill is
      the shared .status/.dot component from css/styles.css, which this page
      already loads; its pulse sits out under reduced motion there. */
@@ -655,23 +666,27 @@
     <nav class="vc-links" aria-label="Footer">
       <div class="vc-col"><h3>Thesis</h3><ul><li><a href="/privacy">Privacy</a></li><li><a href="/quantum">Quantum</a></li><li><a href="/btcfi">BTCFi</a></li><li><a href="/strk">STRK</a></li></ul></div>
       <div class="vc-col"><h3>Signals</h3><ul><li><a href="/ecosystem">Ecosystem</a></li><li><a href="/digest">Digest</a></li></ul></div>
+      <!-- CONNECT went 2026-09-04: /llms.txt keeps being served, only its
+           footer link goes, and network status stays reachable through the
+           baseline bar's status pill. The grid keeps its four tracks; the
+           three groups sit on the left three and the fourth breathes. -->
       <div class="vc-col"><h3>Follow</h3><ul><li><a href="https://starknetresearch.substack.com" target="_blank" rel="noopener">Newsletter</a></li><li><a href="https://x.com/Lyskey" target="_blank" rel="noopener">X / Twitter</a></li></ul></div>
-      <div class="vc-col"><h3>Connect</h3><ul><li><a href="https://status.starknet.io/" target="_blank" rel="noopener noreferrer">Network status</a></li><li><a href="/llms.txt">llms.txt</a></li></ul></div>
     </nav>
   </div>
   <div class="vc-rule"></div>
-  <!-- The brand line no longer repeats the banner headline: one "Three
-       forces, one chain, one ticker." per viewport, and the banner owns it.
-       The disclaimer moved down into the baseline bar area, demoted to a
-       sentence-case legal line: same words, different weight. -->
+  <!-- The identity / legal row (2026-09-04): one row on the container under
+       the hairline above. Left, the mark plus the one-line tagline (the
+       banner owns "Three forces, one chain, one ticker.", said once per
+       viewport); right, the disclaimer in its demoted legal style, a
+       right-aligned block. Same words in both, zero copy change. -->
   <div class="vc-base">
     <div class="vc-brand">
       <img src="/assets/hero/logo.svg" alt="Starknet Thesis" width="200" height="26">
       <p>The independent thesis on how Starknet makes crypto private, quantum-resistant and productive.</p>
     </div>
+    <p class="vc-legal">Website made for educational purposes only. This is not financial advice. Always DYOR. A personal project, not affiliated with or endorsed by StarkWare. All views expressed here are my own.</p>
   </div>
   <div class="dgf-foot">
-    <p class="vc-legal">Website made for educational purposes only. This is not financial advice. Always DYOR. A personal project, not affiliated with or endorsed by StarkWare. All views expressed here are my own.</p>
     <!-- the classic baseline bar, on the shared .status/.dot component from
          css/styles.css (pulse and its reduced-motion guard included) -->
     <div class="dgf-bar">
