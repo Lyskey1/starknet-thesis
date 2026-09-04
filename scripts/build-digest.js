@@ -1,24 +1,43 @@
 #!/usr/bin/env node
-/* Static pre-render of the digest list.
+/* Static pre-render of the digest list, plus the page's live counts.
 
    Runs automatically on every Vercel deploy (vercel.json buildCommand →
-   `npm run build`), so production always ships a fresh static block.
-   Running it manually (`node scripts/build-digest.js`) is only needed for
-   LOCAL PREVIEW after updating data/recap.json.
+   `npm run build`), so production always ships a fresh static block and
+   fresh numbers. Running it manually (`node scripts/build-digest.js`) is
+   only needed for LOCAL PREVIEW after updating data/recap.json.
 
    CI-safe: exits non-zero with a loud message if recap.json is missing,
    malformed, empty, or if the markers are gone from digest.html. A broken
    data file blocks the deploy instead of shipping a broken digest.
 
-   Reads data/recap.json, renders the 10 most recent entries with EXACTLY the
-   markup the client-side renderer in digest.html produces: same classes, so
-   the same styles apply. The only intentional difference is a semantic
-   <time datetime> element for the date, where the client renderer emits a
-   <div>; both are the card's last child so they land in the same place. Rewrites everything between
-   <!-- STATIC-DIGEST:START --> and <!-- STATIC-DIGEST:END --> in digest.html.
+   TWO JOBS:
+
+   1. STATIC BLOCK. Reads data/recap.json, renders the 10 most recent entries
+   with EXACTLY the markup the client-side renderer in digest.html produces:
+   same classes, so the same styles apply. The only intentional difference is
+   a semantic <time datetime> element for the date, where the client renderer
+   emits a <div>; both are the card's last child so they land in the same
+   place. Rewrites everything between <!-- STATIC-DIGEST:START --> and
+   <!-- STATIC-DIGEST:END --> in digest.html.
+
+   2. DIGEST COUNTS. Every count the page displays is derived from
+   data/recap.json here, never hand-edited, so the numbers advance on their
+   own as the workflow merges new posts:
+     - weekly-roundups: the HIGHEST roundup number parsed from the weekly
+       titles ("Starknet roundup 233", "Starknet roundup 219-220" → 220).
+       A count of weekly ENTRIES would be wrong twice over: double issues
+       are one entry for two roundups, and the Substack archive only starts
+       at roundup 51 (the earlier ones predate the publication), so the
+       issue numbering is the real published total.
+     - monthly-recaps: the count of entries titled "monthly recap". The
+       numbering and the entry count agree here (the archive holds every
+       recap from #1), and the build fails loudly if they ever diverge.
+   The values are stamped into every element carrying a data-count
+   attribute; the numbers committed in digest.html are only the last stamp.
+
    Idempotent: running it twice produces the same file. On load, the page's
-   JS replaces the whole block with the full hydrated archive; without JS,
-   these 10 entries stay readable. No dependencies. */
+   JS replaces the whole static block with the full hydrated archive; without
+   JS, these 10 entries stay readable. No dependencies. */
 
 const fs = require('fs');
 const path = require('path');
@@ -44,30 +63,20 @@ function classify(title){
 }
 const fmtDate = d => MN[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
 
-/* THE ART VARIANT IS HASHED FROM THE LINK, not taken from the array index:
-   the client's loadMore() renders a slice and would restart an index-based
-   cycle at "a" for every batch, so the three render paths (this prerender,
-   the first hydrated render, every Load-more batch) would disagree. Keep
-   this function byte-identical to artVariant() in digest.html. */
-function artVariant(link){
-  let h = 0;
-  const str = String(link || '');
-  for (let i = 0; i < str.length; i++) h = (h * 31 + str.charCodeAt(i)) >>> 0;
-  return 'abcdef'.charAt(h % 6);
-}
 function cardHTML(post){
   const d = new Date(post.post_date || post.published_at || post.date || 0);
   const title = post.title || '(untitled)';
   const link = post.canonical_url || (post.slug ? SUBSTACK_URL + 'p/' + post.slug : SUBSTACK_URL);
+  const cover = post.cover_image || '';
   const cat = classify(title);
   const dateHtml = isNaN(d.getTime()) || !d.getTime() ? '' :
     '<time class="dgw-date" datetime="' + d.toISOString().slice(0, 10) + '">' + esc(fmtDate(d)) + '</time>';
   return '<a class="recap-card dgw-card" data-umami-event="digest-entry-click" data-cat="' + cat + '" href="' + escA(link) + '" target="_blank" rel="noopener">' +
+    '<span class="recap-cover dgw-cover">' + (cover ? '<img src="' + escA(cover) + '" loading="lazy" alt="">' : '') + '</span>' +
     '<span class="dgw-top">' +
-      '<span class="dgw-art dgw-art--' + artVariant(link) + '" aria-hidden="true"></span>' +
       '<span class="dgw-cat">' + CAT_LABELS[cat] + '</span>' +
     '</span>' +
-    '<span class="dgw-title">' + esc(title) + ' <span class="dgw-ext" aria-hidden="true">\u2197</span></span>' +
+    '<span class="dgw-title">' + esc(title) + ' <span class="dgw-ext" aria-hidden="true">↗</span></span>' +
     dateHtml +
   '</a>';
 }
@@ -89,6 +98,30 @@ const posts = raw
   .slice(0, N);
 if (posts.length === 0) die('no posts to render');
 
+/* ---- the displayed counts, derived from the same data (see the header) ---- */
+let weeklyRoundups = 0;   // highest roundup number in the archive's titles
+let monthlyRecaps = 0;    // count of monthly recap entries
+let monthlyMaxNum = 0;    // highest recap number, cross-check only
+for (const p of raw) {
+  const cat = classify(p.title);
+  if (cat === 'weekly') {
+    // "roundup 233" and the double issues "roundup 219-220" both parse; the
+    // range's END is the number the issue ran to
+    const m = /roundup\s*#?\s*(\d+)(?:\s*-\s*(\d+))?/i.exec(p.title || '');
+    if (m) weeklyRoundups = Math.max(weeklyRoundups, +(m[2] || m[1]));
+  } else if (cat === 'monthly') {
+    monthlyRecaps++;
+    const m = /recap\s*#\s*(\d+)/i.exec(p.title || '');
+    if (m) monthlyMaxNum = Math.max(monthlyMaxNum, +m[1]);
+  }
+}
+if (!weeklyRoundups) die('no roundup number could be parsed from any weekly title');
+if (!monthlyRecaps) die('no monthly recap entries in data/recap.json');
+if (monthlyMaxNum && monthlyMaxNum !== monthlyRecaps)
+  die('monthly recap numbering (#' + monthlyMaxNum + ') and entry count (' + monthlyRecaps + ') disagree: a recap is missing from or duplicated in the data');
+
+const COUNTS = { 'weekly-roundups': weeklyRoundups, 'monthly-recaps': monthlyRecaps };
+
 const block = START +
   '\n    <!-- Pre-rendered from data/recap.json: regenerated automatically on deploy (npm run build). Run node scripts/build-digest.js for local preview. -->\n    ' +
   posts.map(cardHTML).join('\n    ') + '\n    ' + END;
@@ -97,5 +130,19 @@ let page = fs.readFileSync(PAGE, 'utf8');
 const si = page.indexOf(START), ei = page.indexOf(END);
 if (si < 0 || ei < 0 || ei < si) die('STATIC-DIGEST markers not found (or reversed) in digest.html');
 page = page.slice(0, si) + block + page.slice(ei + END.length);
+
+/* stamp every data-count element; each key must hit at least once, so a
+   reworded page that drops a marker fails the build instead of shipping a
+   number that silently stops advancing */
+for (const key of Object.keys(COUNTS)) {
+  let hits = 0;
+  page = page.replace(
+    new RegExp('(<[^>]*\\bdata-count="' + key + '"[^>]*>)[^<]*(</)', 'g'),
+    (_, open, close) => { hits++; return open + COUNTS[key] + close; }
+  );
+  if (!hits) die('no data-count="' + key + '" element found in digest.html');
+}
+
 fs.writeFileSync(PAGE, page);
 console.log('digest.html: static block rebuilt with ' + posts.length + ' entries (latest: ' + (posts[0] && posts[0].title) + ')');
+console.log('digest.html: counts stamped: weekly-roundups ' + weeklyRoundups + ', monthly-recaps ' + monthlyRecaps);

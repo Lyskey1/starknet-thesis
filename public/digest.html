@@ -133,8 +133,8 @@
   /* ===== coherence pass (audit/digest-vs-landing.md). The feed's base
      rules live in css/styles.css (off limits); each rule below
      page-scopes the canon value over the shared selector it names. */
-  /* D3 (2026-09-02): the feed section opens up to the same gutter the
-     latest-issues band above it now carries, so the two grids still sit on
+  /* D3 (2026-09-02): the feed section opens up to the near-viewport gutter
+     the four-track band above it carries, so the page's wide bands sit on
      one pair of edges. It replaces the earlier 1160/32 box. */
   section.dg-feed { max-width: none; margin: 0 auto; padding: 120px clamp(16px, 1.5vw, 28px); }
   @media (max-width: 768px) { section.dg-feed { padding: 80px 16px; } }
@@ -142,19 +142,16 @@
      the card redesign (D4 below); .recap-count is the "showing X of Y" line
      under the grid and is still emitted. */
   .recap-count { color: #9a9a9a; }
-  /* D4 (2026-09-02): THE ARCHIVE FEED USES THE LATEST-ISSUES CARD, exactly.
-     It used to be its own design: 14px radius, a pill-shaped category chip
-     and a body excerpt. Both renderers (scripts/build-digest.js for the
-     static prerender and the client renderer at the foot of this page) now
-     emit the .dgw-card markup instead, so the two grids on this page are one
-     card design. The .recap-card class stays on the anchor because the
-     filter and Load-more code queries it; every rule that class used to
-     carry is unwound below, and the border scheme becomes .dgw-grid's, which
-     is column-count agnostic: the container draws top and left, every card
-     draws right and bottom, and the container's ::after redraws the bottom
-     edge across the ragged tail of the last row. That ::after matters more
-     here than on the fixed six above, because this feed's length varies with
-     the filter and the Load-more batches.
+  /* D4 (2026-09-02, covers 2026-09-04): the feed renders the .dgw-card
+     design. Both renderers (scripts/build-digest.js for the static prerender
+     and the client renderer at the foot of this page) emit the same markup.
+     The .recap-card class stays on the anchor because the filter and
+     Load-more code queries it; every rule that class used to carry is
+     unwound below, and the border scheme is column-count agnostic: the
+     container draws top and left, every card draws right and bottom, and the
+     container's ::after redraws the bottom edge across the ragged tail of
+     the last row, which matters because this feed's length varies with the
+     filter and the Load-more batches.
      Also fixes the UA link-blue computing on the anchor itself. */
   .recap-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 0; position: relative;
@@ -185,51 +182,9 @@
      badge scheme all went with the card redesign (D4 above): the feed now
      renders .dgw-card markup, which carries its own geometry. */
   #recapTabs { margin-top: 14px; }
-  /* D10: closing block.
-     KEEP IN SYNC: twin of ecosystem.html's closing block (.cta-block
-     .ecg-glass) and its section; geometry must stay identical, the two
-     differ only in copy, the action, and this page's accent.
-     The section deliberately sets NO margin shorthand and NO border-top:
-     the shared `section` rule supplies `max-width:1100px; margin:0 auto`
-     (a shorthand here drops the horizontal `auto` and pins the block
-     left), and the feed/closing boundary is already carried by the
-     .section-divider above it, so a border-top here doubles that
-     hairline. Type scale, radius and panel width stay on the shared
-     .cta-block base, as ecosystem's do. */
-  .dg-close { position: relative; overflow: hidden; padding: 88px 48px 120px; }
-  .dg-close .cta-block {
-    background: var(--card-glass-fill); border-color: var(--card-glass-border);
-    -webkit-backdrop-filter: blur(var(--card-glass-blur)) saturate(var(--card-glass-sat));
-    backdrop-filter: blur(var(--card-glass-blur)) saturate(var(--card-glass-sat));
-    box-shadow:
-      inset -1px -1px 0 rgba(255,255,255,.42),
-      inset 1px 1px 0 rgba(255,255,255,.10),
-      inset 0 1px 0 rgba(255,255,255,.26),
-      inset 0 -1px 0 rgba(255,255,255,.22),
-      inset 0 0 24px rgba(255,255,255,.05),
-      0 18px 50px -30px rgba(0,0,0,.9);
-  }
-  .dg-close .cta-block::after {
-    content: ""; position: absolute; top: 0; left: 0; right: 0; height: 42%;
-    pointer-events: none;
-    background: linear-gradient(180deg, rgba(255,255,255,.062), transparent);
-  }
-  /* the panel's own bloom (base .cta-block::before) is the light source on
-     both twins; retinted here off the page accent instead of the base
-     rule's hardcoded violet */
-  .dg-close .cta-block::before {
-    background: radial-gradient(ellipse at center bottom, rgba(var(--accent-rgb),0.15) 0%, transparent 70%);
-  }
-  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-    .dg-close .cta-block { background: #141414; }
-  }
-  /* mobile, site rule: no backdrop-filter below 981px, solid surface with a
-     barely perceptible accent tint (ecosystem's closing panel, same step) */
-  @media (max-width: 980px) {
-    .dg-close .cta-block { -webkit-backdrop-filter: none; backdrop-filter: none;
-      background: color-mix(in srgb, var(--accent) 2.5%, #141414); }
-  }
-  @media (max-width: 768px) { .dg-close { padding: 88px 24px 80px; } }
+  /* The .dg-close closing panel (ecosystem's .cta-block twin) went on
+     2026-09-04 with its section: it sat back to back with the footer band's
+     own subscribe form. Ecosystem still carries the original. */
 </style>
 <style>
   /* ===== dgx-: the 2026-09 digest hero field and the About statement.
@@ -357,49 +312,24 @@
     .dgh-turn { font-size: 1.75rem; }
   }
 
-  /* ===== About the digest: one full-width statement + four track rows ===== */
-  /* styles.css caps every section at 1100px; the statement is meant to
+  /* ===== About the digest (dgx-). The full-viewport statement this block
+     used to style went on 2026-09-04 (it repeated the hero subtitle); what
+     remains is the section shell the four-track band sits in, plus the
+     .dgx-card base the band's buttons keep so js/digest-stride.js still
+     binds them. ===== */
+  /* styles.css caps every section at 1100px; the band is meant to
      run wide, so the section opens up and the wrap carries the gutter. */
   section.dgx-st { max-width: 1440px; padding: 120px 0; }
   .dgx-st .dgx-wrap { max-width: none; padding: 0 40px; }
-  .dgx-eyebrow { margin: 0 0 30px; }
-  /* stride's .ab-lead caps the measure at 22ch; this statement is meant to
-     run the full width, so the cap is lifted at matching specificity here. */
-  .ab-lead.dgx-lead { max-width: none; font-size: clamp(32px, 5.6vw, 86px); line-height: 1.02; letter-spacing: -.035em; }
-  .dgx-chalk { color: var(--sd-ink, #fafafa); }
-  .dgx-lead .dgx-dim { color: var(--sd-dim, rgba(250,250,250,.62)); }
-  /* square accent tiles, not round chips */
-  .dgx-sq { display: inline-grid; place-items: center; width: .74em; height: .74em; margin: 0 .12em;
-    vertical-align: -.02em; background: var(--accent); color: #fafafa; }
-  .dgx-sq svg { width: 56%; height: 56%; }
-
-  .dgx-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 64px; }
-  .dgx-card { display: flex; align-items: center; gap: 18px; width: 100%; text-align: left;
-    padding: 22px 22px 22px 24px; background: #141414; border: 1px solid var(--sd-line, #262626); border-radius: 12px;
-    color: inherit; font: inherit; cursor: pointer;
+  .dgx-card { cursor: pointer; color: inherit; font: inherit;
     transition: border-color var(--hover-dur, .25s) var(--hover-ease, ease), background var(--hover-dur, .25s); }
-  .dgx-card:hover { border-color: var(--accent); background: rgba(255, 255, 255, .03); }
   .dgx-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
-  .dgx-num { flex: none; display: inline-grid; place-items: center; min-width: 40px; padding: 5px 0;
-    font-family: var(--mono); font-size: 11px; letter-spacing: .14em; color: var(--accent);
-    border: 1px solid rgba(var(--accent-rgb), .4); border-radius: 999px; }
-  .dgx-label { flex: 1 1 auto; font-family: var(--display); font-weight: 400;
-    font-size: clamp(20px, 1.9vw, 28px); line-height: 1.05; letter-spacing: -.02em; color: var(--sd-ink, #fafafa); }
-  .dgx-pre { color: var(--sd-dim, rgba(250,250,250,.62)); }
-  .dgx-tile { flex: none; display: inline-grid; place-items: center; width: 38px; height: 38px;
-    background: var(--accent); color: #fafafa;
-    transition: transform var(--hover-dur, .25s) var(--hover-ease, ease); }
-  .dgx-tile svg { width: 20px; height: 20px; }
-  .dgx-card:hover .dgx-tile { transform: translateX(4px); }
   @media (prefers-reduced-motion: reduce) {
-    .dgx-card, .dgx-tile { transition: none; }
-    .dgx-card:hover .dgx-tile { transform: none; }
+    .dgx-card { transition: none; }
   }
   @media (max-width: 880px) {
     section.dgx-st { padding: 80px 0; }
     .dgx-st .dgx-wrap { padding: 0 24px; }
-    .dgx-cards { grid-template-columns: 1fr; margin-top: 44px; }
-    .dgx-label { font-size: 22px; }
   }
   /* the four track rows carry the archive link the retired showcase held */
   .dgx-archive { display: inline-block; margin-top: 30px; padding: 12px 24px; border-radius: 999px;
@@ -408,85 +338,52 @@
   .dgx-archive:hover { background: #fafafa; border-color: #fafafa; color: #0d0d0d; }
 
   /* ============================================================
-     D1: THE LATEST ISSUES, on the btcfi ecosystem grid (.mstc).
-     Border scheme is btcfi's and is column-count agnostic: the
-     container draws top and left, every card draws right and
-     bottom, and the container's ::after redraws the bottom edge
-     across the ragged tail of the last row, sitting exactly on
-     the last full row's own border so a complete row never
-     doubles up.
-     Prefix is dgw, not wk: css/stride.css and js/strk-stride.js
-     both still carry the 3D deck for /strk, so a stray wk- class
-     inside #wk would be picked up by the deck loop.
+     THE ARCHIVE CARD (dgw-). The separate "The latest issues" grid
+     that introduced these rules went on 2026-09-04 (it repeated the
+     feed's newest six a screen apart); the filtered feed below is
+     their only consumer now, so the section shell (.dgw, .dgw-wrap,
+     .dgw-h, .dgw-grid, .dgw-foot) went with it and .recap-grid owns
+     the border scheme. The card leads with the issue's real Substack
+     cover (cover_image in data/recap.json, the field the
+     pre-redesign page rendered), full bleed to the card's borders,
+     then the category chip, the title and the date. The .recap-cover
+     class rides the shared css/styles.css rules (16:9 aspect,
+     object-fit cover, the hover zoom); .dgw-cover carries only what
+     is page-specific. This inline block sits after the styles.css
+     link, so its equal-specificity overrides win by source order.
      ============================================================ */
-  .dgw { padding: 110px 0; }
-  /* D3: FULL BLEED, on the geometry the rest of the site standardised on
-     (/privacy's law section, and the four-column band further up this page):
-     width 100vw pulled out of the 1100px section cap, with the gutter as
-     padding-inline: clamp(16px, 1.5vw, 28px), about 21px at 1440. The grid
-     was previously boxed to 1096px at left 172 to sit on the recap feed's
-     edges; the feed section below now carries the same gutter, so the two
-     grids still share their two edges, just much further out.
-     html { overflow-x: clip } in css/styles.css is what keeps the 100vw
-     band off the horizontal scrollbar. */
-  .dgw-wrap { box-sizing: border-box; width: 100vw; max-width: none;
-    margin-left: calc(50% - 50vw); margin-right: calc(50% - 50vw);
-    padding-inline: clamp(16px, 1.5vw, 28px); }
-  .dgw-h { margin: 0 0 44px; font-family: var(--display); font-weight: 300;
-    font-size: clamp(30px, 3.4vw, 52px); line-height: 1.04; letter-spacing: -.03em;
-    color: var(--sd-ink, #fafafa); }
-  .dgw-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); position: relative;
-    border-top: 1px solid var(--sd-line, #262626); border-left: 1px solid var(--sd-line, #262626); }
-  .dgw-grid::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 1px;
-    background: var(--sd-line, #262626); pointer-events: none; }
-  /* scaled up with the band: at 1440 a column went from 365px to 465px, so
-     the padding, the art tile and the title all step up with it rather than
-     leaving the extra width as empty card. */
   .dgw-card { display: flex; flex-direction: column; position: relative; min-width: 0;
-    padding: 36px 38px 32px; text-decoration: none; color: inherit;
+    padding: 0 0 28px; text-decoration: none; color: inherit;
     background: rgba(20, 20, 20, .55); transition: background .18s;
     border-right: 1px solid var(--sd-line, #262626); border-bottom: 1px solid var(--sd-line, #262626); }
   .dgw-card:hover { background: rgba(20, 20, 20, .85); }
   .dgw-card:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
-  .dgw-top { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 20px; }
-  .dgw-art { width: 64px; height: 64px; flex: none; border: 1px solid var(--sd-line, #262626); }
-  .dgw-cat { margin-left: auto; flex: none; font-family: var(--mono); font-size: 10.5px;
+  /* the shared rule paints .recap-cover with the light-theme --gray-light,
+     which would flash a light plate behind every lazy image on this dark
+     page, so the ground is re-pointed at the card's own surface tone */
+  .dgw-cover { display: block; width: 100%; background: #141414;
+    border-bottom: 1px solid var(--sd-line, #262626); }
+  .dgw-top { display: flex; align-items: flex-start; margin: 24px 28px 18px; }
+  .dgw-cat { flex: none; font-family: var(--mono); font-size: 10.5px;
     letter-spacing: .14em; text-transform: uppercase; color: rgba(250, 250, 250, .5);
     padding: 6px 11px; border: 1px solid var(--sd-line, #262626); }
-  .dgw-title { display: block; margin: 0 0 16px; font-family: var(--display); font-size: 27px;
+  .dgw-title { display: block; margin: 0 28px 16px; font-family: var(--display); font-size: 24px;
     font-weight: 600; line-height: 1.2; letter-spacing: -.01em; color: var(--sd-ink, #fafafa);
     transition: color .18s; }
   .dgw-card:hover .dgw-title { color: var(--accent); }
   .dgw-ext { font-size: 16px; color: rgba(250, 250, 250, .35); transition: color .18s; }
   .dgw-card:hover .dgw-ext { color: var(--accent); }
-  .dgw-date { margin-top: auto; font-family: var(--mono); font-size: 12px; letter-spacing: .1em;
+  /* margin-top auto pins the date to the card's foot across the row */
+  .dgw-date { margin: auto 28px 0; font-family: var(--mono); font-size: 12px; letter-spacing: .1em;
     text-transform: uppercase; color: rgba(250, 250, 250, .45); }
-  .dgw-foot { margin-top: 36px; }
-  .dgw-view { display: inline-block; padding: 12px 24px; border-radius: 999px;
-    border: 1px solid rgba(250, 250, 250, .3); font-size: 14px; font-weight: 500; color: #fafafa;
-    text-decoration: none; transition: background .2s, border-color .2s, color .2s; }
-  .dgw-view:hover { background: #fafafa; border-color: #fafafa; color: #0d0d0d; }
-  /* the six gradients the retired deck used, now the per-issue art tile.
-     The six hand-written cards above pick their variant with the same
-     link hash artVariant() uses in both feed renderers, so a post that
-     appears in both grids (the latest six do) carries the same tile in
-     each. Change one and you have to change the other. */
-  .dgw-art--a { background: radial-gradient(120% 95% at 16% 10%, #7a2400 0, rgba(122,36,0,0) 54%), radial-gradient(95% 85% at 90% 20%, #c53400 0, rgba(197,52,0,0) 58%), linear-gradient(148deg, #1a0600, #3a0e00 54%, #0d0d0d); }
-  .dgw-art--b { background: radial-gradient(115% 95% at 84% 12%, #8a2400 0, rgba(138,36,0,0) 54%), radial-gradient(100% 90% at 10% 30%, #e07a4a 0, rgba(224,122,74,0) 58%), linear-gradient(158deg, #240800, #4a1200 54%, #0d0d0d); }
-  .dgw-art--c { background: radial-gradient(115% 92% at 22% 14%, #b03000 0, rgba(176,48,0,0) 54%), radial-gradient(100% 95% at 88% 28%, #ff8a4a 0, rgba(255,138,74,0) 58%), linear-gradient(153deg, #120400, #3a0e00 54%, #0d0d0d); }
-  .dgw-art--d { background: radial-gradient(115% 92% at 80% 12%, #ff8a4a 0, rgba(255,138,74,0) 52%), radial-gradient(110% 100% at 14% 34%, #c53400 0, rgba(197,52,0,0) 58%), linear-gradient(153deg, #2a0a00, #4a1200 54%, #0d0d0d); }
-  .dgw-art--e { background: radial-gradient(120% 95% at 60% 8%, #c53400 0, rgba(197,52,0,0) 56%), radial-gradient(100% 90% at 12% 80%, #e86a30 0, rgba(232,106,48,0) 58%), linear-gradient(140deg, #1a0600, #2a0a00 54%, #0d0d0d); }
-  .dgw-art--f { background: radial-gradient(120% 95% at 30% 90%, #8a2400 0, rgba(138,36,0,0) 56%), radial-gradient(100% 90% at 84% 16%, #ff8a4a 0, rgba(255,138,74,0) 58%), linear-gradient(165deg, #240800, #3a0e00 54%, #0d0d0d); }
-  @media (max-width: 1240px) { .dgw-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   @media (max-width: 820px) {
-    .dgw { padding: 72px 0; }
-    .dgw-grid { grid-template-columns: minmax(0, 1fr); }
-    .dgw-card { padding: 26px 24px 22px; }
-    .dgw-title { font-size: 21px; }
-    .dgw-art { width: 52px; height: 52px; }
+    .dgw-top { margin: 20px 22px 14px; }
+    .dgw-title { font-size: 21px; margin: 0 22px 14px; }
+    .dgw-date { margin: auto 22px 0; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .dgw-card, .dgw-title, .dgw-ext, .dgw-view { transition: none; }
+    .dgw-card, .dgw-title, .dgw-ext { transition: none; }
+    .recap-card:hover .recap-cover img { transform: none; }
   }
 
   /* ============================================================
@@ -504,20 +401,8 @@
      columns instead of running the full 100vw.
      ============================================================ */
   .dga-st { --dga-pad: clamp(16px, 1.5vw, 28px); }
-  /* D1: the statement owns a full viewport of its own, and the four-column
-     band moved to the section below it. 100svh, not 100vh, so mobile browser
-     chrome cannot overshoot the frame. Block padding is zeroed because
-     min-height does the sizing; leaving the shared 120px on would also stack
-     120 + 120 of dead space at the seam with the band. The centring is a
-     grid, not a row flexbox: a row flexbox would shrink-wrap .dgx-wrap to
-     the lead's 24ch max-content and the 40px gutter would stop meaning
-     anything. */
-  section.dgx-st.dga-say { min-height: 100svh; padding: 0;
-    display: grid; align-content: center; }
-  .dga-say .dgx-wrap { width: 100%; }
-  .dga-st .dgx-eyebrow { text-align: center; }
-  .dga-st .ab-lead.dgx-lead { max-width: 24ch; margin-inline: auto; text-align: center;
-    font-size: clamp(30px, 4.2vw, 62px); line-height: 1.06; letter-spacing: -.03em; }
+  /* The dga-say statement section these rules centred went on 2026-09-04
+     with its markup (see the note where it stood in the body). */
   /* D2: the band's own section, and one deliberate vertical scale rather
      than four loose values. The steps ascend toward the section break:
      rule to header row 40, header to title 22, title to copy 10, copy block
@@ -669,21 +554,22 @@
   </div>
 
   <div class="dgh-right">
-    <p class="dgh-stat"><span class="dgh-n">231</span> weekly roundups published<span class="dgh-slash" aria-hidden="true">/</span><span class="dgh-n">35</span> monthly recaps</p>
-    <p class="dgh-turn">Every week, without a gap</p>
+    <!-- The two numbers are stamped at build time by scripts/build-digest.js
+         from data/recap.json (see the DIGEST COUNTS block there): the weekly
+         figure is the highest roundup number in the archive's titles, the
+         monthly figure is the count of monthly recap entries. The values in
+         the source are only the last stamp; never edit them by hand. -->
+    <p class="dgh-stat"><span class="dgh-n" data-count="weekly-roundups">233</span> weekly roundups published<span class="dgh-slash" aria-hidden="true">/</span><span class="dgh-n" data-count="monthly-recaps">36</span> monthly recaps</p>
+    <p class="dgh-turn">Every week accounted for</p>
   </div>
 </div>
 
-<!-- About the digest, D1: the statement owns a full viewport of its own
-     (min-height 100svh, vertically centred). The four reading tracks moved
-     to their own section directly below it. -->
-<section class="block ab-block dgx-st dga-st dga-say" aria-label="About the digest"><div class="wrap dgx-wrap">
-  <p class="ab-eyebrow dgx-eyebrow">About the digest</p>
-  <h2 id="every-week-the-ecosystem-ships-and" class="ab-lead dgx-lead"><span class="dgx-chalk">Every week the ecosystem ships, <span class="dgx-sq" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 5h18v14H3z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 6l9 7 9-7" fill="none" stroke="currentColor" stroke-width="2"/></svg></span></span> <span class="dgx-dim">and every week it gets written down, so the record <span class="dgx-sq" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="12" width="4" height="8" rx="1"/><rect x="10" y="7" width="4" height="13" rx="1"/><rect x="16" y="3" width="4" height="17" rx="1"/></svg></span> is there when the thesis needs proving.</span></h2>
-</div></section>
-
-<!-- The four reading tracks, D2: their own section below the statement, on
-     one deliberate vertical scale. -->
+<!-- The full-viewport About statement that used to sit here went on 2026-09-04:
+     it restated the hero subtitle a screen later, so the page said the same
+     thing twice before the reader reached anything new. The hero's dgh-note
+     and dgh-body carry that content now. -->
+<!-- The four reading tracks, D2: their own section on one deliberate
+     vertical scale. -->
 <section class="block ab-block dgx-st dga-st dga-band" aria-label="The four reading tracks"><div class="wrap dgx-wrap">
   <div class="dga-rule" aria-hidden="true"></div>
   <!-- The four reading tracks as a four-column feature band, on the layout
@@ -713,8 +599,10 @@
         <span class="dga-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></span>
       </span>
       <span class="dga-body">
-        <span class="dga-title">The week, without a gap</span>
-        <span class="dga-sum">Two hundred and thirty one roundups and counting, one every week, no week skipped.</span>
+        <span class="dga-title">The week, accounted for</span>
+        <!-- the number is stamped at build time by scripts/build-digest.js;
+             see the hero stat note. -->
+        <span class="dga-sum"><span data-count="weekly-roundups">233</span> roundups and counting, every week accounted for.</span>
       </span>
       <span class="dga-fig" aria-hidden="true"><svg viewBox="0 0 260 200" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round" stroke-linecap="round"><path d="M30 150 130 104l100 46-100 46z"/><path d="M58 138v-28l20 9v28z"/><path d="M58 110 78 101"/><path d="M88 152v-52l20 9v52z"/><path d="M88 100 108 91"/><path class="dga-acc" d="M118 166v-84l20 9v84z"/><path class="dga-acc" d="M118 82 138 73"/><path d="M148 152v-46l20 9v46z"/><path d="M148 106 168 97"/><path d="M178 138v-24l20 9v24z"/><path d="M178 114 198 105"/></svg></span>
     </button>
@@ -746,53 +634,10 @@
     <a class="dgx-archive" href="#latest-from-the-starknet-ecosystem">Go to the archive</a>
 </div></section>
 
-<!-- The latest issues, on the btcfi ecosystem grid (.mstc): bordered cards,
-     each with art, a category chip, a title and a date inside one link.
-     This replaced a 400vh scroll-driven 3D card deck on 2026-09-02. The art
-     is the page gradient set, one per issue, because the six real covers are
-     near-identical and read as noise repeated six times.
-     The wk anchor is committed to the search index and must survive. The class
-     prefix is dgw and NOT wk on purpose: css/stride.css .wk rules and the
-     deck loop in js/strk-stride.js are both shared with /strk, so any
-     surviving wk- class here would pull the deck straight back on. -->
-<section class="dgw" id="wk" aria-label="The latest issues"><div class="dgw-wrap">
-  <h2 class="dgw-h">The latest issues</h2>
-  <div class="dgw-grid">
-    <a class="dgw-card" href="https://starknetresearch.substack.com/p/starknet-roundup-231" target="_blank" rel="noopener">
-      <span class="dgw-top"><span class="dgw-art dgw-art--c" aria-hidden="true"></span><span class="dgw-cat">Weekly digest</span></span>
-      <span class="dgw-title">Starknet roundup 231 <span class="dgw-ext" aria-hidden="true">↗</span></span>
-      <time class="dgw-date" datetime="2026-08-17">Aug 17, 2026</time>
-    </a>
-    <a class="dgw-card" href="https://starknetresearch.substack.com/p/starknet-roundup-230" target="_blank" rel="noopener">
-      <span class="dgw-top"><span class="dgw-art dgw-art--b" aria-hidden="true"></span><span class="dgw-cat">Weekly digest</span></span>
-      <span class="dgw-title">Starknet roundup 230 <span class="dgw-ext" aria-hidden="true">↗</span></span>
-      <time class="dgw-date" datetime="2026-08-10">Aug 10, 2026</time>
-    </a>
-    <a class="dgw-card" href="https://starknetresearch.substack.com/p/starknet-monthly-recap-34-june-2026-ef8" target="_blank" rel="noopener">
-      <span class="dgw-top"><span class="dgw-art dgw-art--b" aria-hidden="true"></span><span class="dgw-cat">Monthly digest</span></span>
-      <span class="dgw-title">Starknet monthly recap #35: July 2026 <span class="dgw-ext" aria-hidden="true">↗</span></span>
-      <time class="dgw-date" datetime="2026-08-04">Aug 4, 2026</time>
-    </a>
-    <a class="dgw-card" href="https://starknetresearch.substack.com/p/starknet-roundup-229" target="_blank" rel="noopener">
-      <span class="dgw-top"><span class="dgw-art dgw-art--d" aria-hidden="true"></span><span class="dgw-cat">Weekly digest</span></span>
-      <span class="dgw-title">Starknet roundup 229 <span class="dgw-ext" aria-hidden="true">↗</span></span>
-      <time class="dgw-date" datetime="2026-08-03">Aug 3, 2026</time>
-    </a>
-    <a class="dgw-card" href="https://starknetresearch.substack.com/p/starknet-roundup-228" target="_blank" rel="noopener">
-      <span class="dgw-top"><span class="dgw-art dgw-art--c" aria-hidden="true"></span><span class="dgw-cat">Weekly digest</span></span>
-      <span class="dgw-title">Starknet roundup 228 <span class="dgw-ext" aria-hidden="true">↗</span></span>
-      <time class="dgw-date" datetime="2026-07-27">Jul 27, 2026</time>
-    </a>
-    <a class="dgw-card" href="https://starknetresearch.substack.com/p/starknet-roundup-227" target="_blank" rel="noopener">
-      <span class="dgw-top"><span class="dgw-art dgw-art--b" aria-hidden="true"></span><span class="dgw-cat">Weekly digest</span></span>
-      <span class="dgw-title">Starknet roundup 227 <span class="dgw-ext" aria-hidden="true">↗</span></span>
-      <time class="dgw-date" datetime="2026-07-20">Jul 20, 2026</time>
-    </a>
-  </div>
-  <div class="dgw-foot"><a class="dgw-view" href="#latest-from-the-starknet-ecosystem">The full archive</a></div>
-</div></section>
-
-<!-- RECAPS FEED -->
+<!-- THE ARCHIVE: the page's single issue list. A separate "The latest issues"
+     grid (section id="wk") used to sit above this one showing the same six
+     newest entries a screen apart; it went on 2026-09-04 and this filtered
+     feed, with its Load more and its counter, is the one archive. -->
 <section class="dg-feed">
   <div class="th-pm-head"><span class="th-pm-marker"></span><h2 id="latest-from-the-starknet-ecosystem" class="th-pm-title">Latest from the Starknet ecosystem</h2></div>
   <p class="th-pm-eyebrow">The newsletter</p>
@@ -813,16 +658,16 @@
          locally after updating data/recap.json. -->
     <!-- STATIC-DIGEST:START -->
     <!-- Pre-rendered from data/recap.json: regenerated automatically on deploy (npm run build). Run node scripts/build-digest.js for local preview. -->
-    <a class="recap-card dgw-card" data-umami-event="digest-entry-click" data-cat="weekly" href="https://starknetresearch.substack.com/p/starknet-roundup-231" target="_blank" rel="noopener"><span class="dgw-top"><span class="dgw-art dgw-art--c" aria-hidden="true"></span><span class="dgw-cat">Weekly digest</span></span><span class="dgw-title">Starknet roundup 231 <span class="dgw-ext" aria-hidden="true">↗</span></span><time class="dgw-date" datetime="2026-08-17">Aug 17, 2026</time></a>
-    <a class="recap-card dgw-card" data-umami-event="digest-entry-click" data-cat="weekly" href="https://starknetresearch.substack.com/p/starknet-roundup-230" target="_blank" rel="noopener"><span class="dgw-top"><span class="dgw-art dgw-art--b" aria-hidden="true"></span><span class="dgw-cat">Weekly digest</span></span><span class="dgw-title">Starknet roundup 230 <span class="dgw-ext" aria-hidden="true">↗</span></span><time class="dgw-date" datetime="2026-08-10">Aug 10, 2026</time></a>
-    <a class="recap-card dgw-card" data-umami-event="digest-entry-click" data-cat="monthly" href="https://starknetresearch.substack.com/p/starknet-monthly-recap-34-june-2026-ef8" target="_blank" rel="noopener"><span class="dgw-top"><span class="dgw-art dgw-art--b" aria-hidden="true"></span><span class="dgw-cat">Monthly digest</span></span><span class="dgw-title">Starknet monthly recap #35: July 2026 <span class="dgw-ext" aria-hidden="true">↗</span></span><time class="dgw-date" datetime="2026-08-04">Aug 4, 2026</time></a>
-    <a class="recap-card dgw-card" data-umami-event="digest-entry-click" data-cat="weekly" href="https://starknetresearch.substack.com/p/starknet-roundup-229" target="_blank" rel="noopener"><span class="dgw-top"><span class="dgw-art dgw-art--d" aria-hidden="true"></span><span class="dgw-cat">Weekly digest</span></span><span class="dgw-title">Starknet roundup 229 <span class="dgw-ext" aria-hidden="true">↗</span></span><time class="dgw-date" datetime="2026-08-03">Aug 3, 2026</time></a>
-    <a class="recap-card dgw-card" data-umami-event="digest-entry-click" data-cat="weekly" href="https://starknetresearch.substack.com/p/starknet-roundup-228" target="_blank" rel="noopener"><span class="dgw-top"><span class="dgw-art dgw-art--c" aria-hidden="true"></span><span class="dgw-cat">Weekly digest</span></span><span class="dgw-title">Starknet roundup 228 <span class="dgw-ext" aria-hidden="true">↗</span></span><time class="dgw-date" datetime="2026-07-27">Jul 27, 2026</time></a>
-    <a class="recap-card dgw-card" data-umami-event="digest-entry-click" data-cat="weekly" href="https://starknetresearch.substack.com/p/starknet-roundup-227" target="_blank" rel="noopener"><span class="dgw-top"><span class="dgw-art dgw-art--b" aria-hidden="true"></span><span class="dgw-cat">Weekly digest</span></span><span class="dgw-title">Starknet roundup 227 <span class="dgw-ext" aria-hidden="true">↗</span></span><time class="dgw-date" datetime="2026-07-20">Jul 20, 2026</time></a>
-    <a class="recap-card dgw-card" data-umami-event="digest-entry-click" data-cat="research" href="https://starknetresearch.substack.com/p/the-privacy-thesis" target="_blank" rel="noopener"><span class="dgw-top"><span class="dgw-art dgw-art--e" aria-hidden="true"></span><span class="dgw-cat">Research</span></span><span class="dgw-title">The Privacy Thesis <span class="dgw-ext" aria-hidden="true">↗</span></span><time class="dgw-date" datetime="2026-07-16">Jul 16, 2026</time></a>
-    <a class="recap-card dgw-card" data-umami-event="digest-entry-click" data-cat="weekly" href="https://starknetresearch.substack.com/p/starknet-roundup-226" target="_blank" rel="noopener"><span class="dgw-top"><span class="dgw-art dgw-art--a" aria-hidden="true"></span><span class="dgw-cat">Weekly digest</span></span><span class="dgw-title">Starknet roundup 226 <span class="dgw-ext" aria-hidden="true">↗</span></span><time class="dgw-date" datetime="2026-07-13">Jul 13, 2026</time></a>
-    <a class="recap-card dgw-card" data-umami-event="digest-entry-click" data-cat="weekly" href="https://starknetresearch.substack.com/p/starknet-roundup-225" target="_blank" rel="noopener"><span class="dgw-top"><span class="dgw-art dgw-art--f" aria-hidden="true"></span><span class="dgw-cat">Weekly digest</span></span><span class="dgw-title">Starknet roundup 225 <span class="dgw-ext" aria-hidden="true">↗</span></span><time class="dgw-date" datetime="2026-07-06">Jul 6, 2026</time></a>
-    <a class="recap-card dgw-card" data-umami-event="digest-entry-click" data-cat="monthly" href="https://starknetresearch.substack.com/p/starknet-monthly-recap-34-june-2026" target="_blank" rel="noopener"><span class="dgw-top"><span class="dgw-art dgw-art--f" aria-hidden="true"></span><span class="dgw-cat">Monthly digest</span></span><span class="dgw-title">Starknet monthly recap #34: June 2026 <span class="dgw-ext" aria-hidden="true">↗</span></span><time class="dgw-date" datetime="2026-07-03">Jul 3, 2026</time></a>
+    <a class="recap-card dgw-card" data-umami-event="digest-entry-click" data-cat="monthly" href="https://starknetresearch.substack.com/p/starknet-monthly-recap-36-august" target="_blank" rel="noopener"><span class="recap-cover dgw-cover"><img src="https://substackcdn.com/image/fetch/$s_!majj!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F601f5191-c83f-4c9c-ad9d-7b64ed07d7be_3016x1532.jpeg" loading="lazy" alt=""></span><span class="dgw-top"><span class="dgw-cat">Monthly digest</span></span><span class="dgw-title">Starknet monthly recap #36: August 2026 <span class="dgw-ext" aria-hidden="true">↗</span></span><time class="dgw-date" datetime="2026-09-02">Sep 2, 2026</time></a>
+    <a class="recap-card dgw-card" data-umami-event="digest-entry-click" data-cat="weekly" href="https://starknetresearch.substack.com/p/starknet-roundup-233" target="_blank" rel="noopener"><span class="recap-cover dgw-cover"><img src="https://substackcdn.com/image/fetch/$s_!Ahvp!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F291b23a1-2f17-4fba-9345-8414b8e61b2a_1920x1080.png" loading="lazy" alt=""></span><span class="dgw-top"><span class="dgw-cat">Weekly digest</span></span><span class="dgw-title">Starknet roundup 233 <span class="dgw-ext" aria-hidden="true">↗</span></span><time class="dgw-date" datetime="2026-08-31">Aug 31, 2026</time></a>
+    <a class="recap-card dgw-card" data-umami-event="digest-entry-click" data-cat="weekly" href="https://starknetresearch.substack.com/p/starknet-roundup-232" target="_blank" rel="noopener"><span class="recap-cover dgw-cover"><img src="https://substackcdn.com/image/fetch/$s_!Ahvp!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F291b23a1-2f17-4fba-9345-8414b8e61b2a_1920x1080.png" loading="lazy" alt=""></span><span class="dgw-top"><span class="dgw-cat">Weekly digest</span></span><span class="dgw-title">Starknet roundup 232 <span class="dgw-ext" aria-hidden="true">↗</span></span><time class="dgw-date" datetime="2026-08-24">Aug 24, 2026</time></a>
+    <a class="recap-card dgw-card" data-umami-event="digest-entry-click" data-cat="weekly" href="https://starknetresearch.substack.com/p/starknet-roundup-231" target="_blank" rel="noopener"><span class="recap-cover dgw-cover"><img src="https://substackcdn.com/image/fetch/$s_!Ahvp!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F291b23a1-2f17-4fba-9345-8414b8e61b2a_1920x1080.png" loading="lazy" alt=""></span><span class="dgw-top"><span class="dgw-cat">Weekly digest</span></span><span class="dgw-title">Starknet roundup 231 <span class="dgw-ext" aria-hidden="true">↗</span></span><time class="dgw-date" datetime="2026-08-17">Aug 17, 2026</time></a>
+    <a class="recap-card dgw-card" data-umami-event="digest-entry-click" data-cat="weekly" href="https://starknetresearch.substack.com/p/starknet-roundup-230" target="_blank" rel="noopener"><span class="recap-cover dgw-cover"><img src="https://substackcdn.com/image/fetch/$s_!Ahvp!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F291b23a1-2f17-4fba-9345-8414b8e61b2a_1920x1080.png" loading="lazy" alt=""></span><span class="dgw-top"><span class="dgw-cat">Weekly digest</span></span><span class="dgw-title">Starknet roundup 230 <span class="dgw-ext" aria-hidden="true">↗</span></span><time class="dgw-date" datetime="2026-08-10">Aug 10, 2026</time></a>
+    <a class="recap-card dgw-card" data-umami-event="digest-entry-click" data-cat="monthly" href="https://starknetresearch.substack.com/p/starknet-monthly-recap-34-june-2026-ef8" target="_blank" rel="noopener"><span class="recap-cover dgw-cover"><img src="https://substackcdn.com/image/fetch/$s_!3DgR!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F25b61362-513e-48b4-b16a-8bbbcfefad01_3840x2160.jpeg" loading="lazy" alt=""></span><span class="dgw-top"><span class="dgw-cat">Monthly digest</span></span><span class="dgw-title">Starknet monthly recap #35: July 2026 <span class="dgw-ext" aria-hidden="true">↗</span></span><time class="dgw-date" datetime="2026-08-04">Aug 4, 2026</time></a>
+    <a class="recap-card dgw-card" data-umami-event="digest-entry-click" data-cat="weekly" href="https://starknetresearch.substack.com/p/starknet-roundup-229" target="_blank" rel="noopener"><span class="recap-cover dgw-cover"><img src="https://substackcdn.com/image/fetch/$s_!Ahvp!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F291b23a1-2f17-4fba-9345-8414b8e61b2a_1920x1080.png" loading="lazy" alt=""></span><span class="dgw-top"><span class="dgw-cat">Weekly digest</span></span><span class="dgw-title">Starknet roundup 229 <span class="dgw-ext" aria-hidden="true">↗</span></span><time class="dgw-date" datetime="2026-08-03">Aug 3, 2026</time></a>
+    <a class="recap-card dgw-card" data-umami-event="digest-entry-click" data-cat="weekly" href="https://starknetresearch.substack.com/p/starknet-roundup-228" target="_blank" rel="noopener"><span class="recap-cover dgw-cover"><img src="https://substackcdn.com/image/fetch/$s_!Ahvp!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F291b23a1-2f17-4fba-9345-8414b8e61b2a_1920x1080.png" loading="lazy" alt=""></span><span class="dgw-top"><span class="dgw-cat">Weekly digest</span></span><span class="dgw-title">Starknet roundup 228 <span class="dgw-ext" aria-hidden="true">↗</span></span><time class="dgw-date" datetime="2026-07-27">Jul 27, 2026</time></a>
+    <a class="recap-card dgw-card" data-umami-event="digest-entry-click" data-cat="weekly" href="https://starknetresearch.substack.com/p/starknet-roundup-227" target="_blank" rel="noopener"><span class="recap-cover dgw-cover"><img src="https://substackcdn.com/image/fetch/$s_!Ahvp!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F291b23a1-2f17-4fba-9345-8414b8e61b2a_1920x1080.png" loading="lazy" alt=""></span><span class="dgw-top"><span class="dgw-cat">Weekly digest</span></span><span class="dgw-title">Starknet roundup 227 <span class="dgw-ext" aria-hidden="true">↗</span></span><time class="dgw-date" datetime="2026-07-20">Jul 20, 2026</time></a>
+    <a class="recap-card dgw-card" data-umami-event="digest-entry-click" data-cat="research" href="https://starknetresearch.substack.com/p/the-privacy-thesis" target="_blank" rel="noopener"><span class="recap-cover dgw-cover"><img src="https://substackcdn.com/image/fetch/$s_!cgTT!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F3e1df64f-d892-447d-b217-1de059ac97de_1200x675.png" loading="lazy" alt=""></span><span class="dgw-top"><span class="dgw-cat">Research</span></span><span class="dgw-title">The Privacy Thesis <span class="dgw-ext" aria-hidden="true">↗</span></span><time class="dgw-date" datetime="2026-07-16">Jul 16, 2026</time></a>
     <!-- STATIC-DIGEST:END -->
   </div>
   <div class="recap-empty" id="recapEmpty" hidden>No posts in this category yet.</div>
@@ -832,19 +677,10 @@
   </div>
 </section>
 
-<div class="section-divider"></div>
-
-<!-- SUBSCRIBE CTA -->
-<section class="dg-close">
-  <div class="cta-block">
-    <h2 id="get-every-digest-in-your-inbox">Get every digest in your inbox.</h2>
-    <p>Subscribe to Starknet Research for weekly roundups, monthly digests and original research on the Starknet ecosystem.</p>
-    <div class="cta-buttons">
-      <a class="btn-primary" href="https://starknetresearch.substack.com/subscribe" target="_blank" rel="noopener">Subscribe</a>
-    </div>
-  </div>
-</section>
-
+<!-- The standalone "Get every digest in your inbox" panel that closed the page
+     went on 2026-09-04: it sat back to back with the footer band's own email
+     form, so the page asked twice in one screen. The footer band is the
+     site-wide close and carries the subscribe form alone now. -->
 <footer class="vc-footer">
 <div class="vc-cta-band">
   <div class="vc-cta-in">
@@ -955,24 +791,16 @@
   // KEEP IN SYNC with cardHTML() in scripts/build-digest.js: the static
   // prerender and this renderer must emit the same markup, and the ONLY
   // intentional difference is the date element (a <time datetime> there, a
-  // <div> here). The card is /digest's latest-issues card (.dgw-card): a
-  // square art tile top left, a rectangular outlined category chip top
-  // right, the title with its external-link arrow, then the date.
+  // <div> here). The card: the issue's real Substack cover on top (16:9,
+  // cover_image from data/recap.json; an empty span keeps the plate if an
+  // entry ever ships without one), then the outlined category chip, the
+  // title with its external-link arrow, then the date.
   // .recap-card stays on the anchor because the filter, the Load-more code
   // and hasStatic() all query it.
-  // THE ART VARIANT IS HASHED FROM THE LINK, not taken from the array index:
-  // loadMore() renders a slice, so an index-based cycle would restart at "a"
-  // for every batch and disagree with both the first render and the static
-  // prerender.
-  function artVariant(link){
-    var h = 0, str = String(link || '');
-    for (var i = 0; i < str.length; i++) h = (h * 31 + str.charCodeAt(i)) >>> 0;
-    return 'abcdef'.charAt(h % 6);
-  }
   function cardHTML(p){
     return '<a class="recap-card dgw-card" data-umami-event="digest-entry-click" data-cat="' + p.cat + '" href="' + escA(p.link) + '" target="_blank" rel="noopener">' +
+      '<span class="recap-cover dgw-cover">' + (p.image ? '<img src="' + escA(p.image) + '" loading="lazy" alt="">' : '') + '</span>' +
       '<span class="dgw-top">' +
-        '<span class="dgw-art dgw-art--' + artVariant(p.link) + '" aria-hidden="true"></span>' +
         '<span class="dgw-cat">' + CAT_LABELS[p.cat] + '</span>' +
       '</span>' +
       '<span class="dgw-title">' + esc(p.title) + ' <span class="dgw-ext" aria-hidden="true">\u2197</span></span>' +
@@ -1070,32 +898,9 @@
 })();
 </script>
 
-<script>
-/* Marquee band: static content-types markup above; this script only
-   gates the animation to the viewport and wires typed items to the
-   matching feed filter tab (the anchor itself handles the scroll). */
-(function(){
-  var band = document.getElementById('dgMarquee');
-  if (!band) return;
-  if ('IntersectionObserver' in window) {
-    new IntersectionObserver(function(es){
-      band.classList.toggle('run', es[0].isIntersecting);
-    }, { threshold: 0 }).observe(band);
-  } else {
-    band.classList.add('run');
-  }
-  band.addEventListener('click', function(e){
-    var a = e.target.closest('a[data-mqfilter]');
-    if (!a) return;
-    var tab = document.querySelector('#recapTabs [data-filter="' + a.getAttribute('data-mqfilter') + '"]');
-    if (tab) tab.click();
-  });
-})();
-</script>
 <script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.185.0/build/three.module.js"}}</script>
 <script type="module" src="js/eco-backdrop.js"></script>
 <script type="module" src="js/digest-hero-mark.js"></script>
-<script src="js/strk-stride.js" defer></script>
 <script src="js/digest-stride.js" defer></script>
 </body>
 </html>
