@@ -468,6 +468,46 @@
     .dgh-turn { font-size: 1.125rem; }
   }
 
+  /* ===== dgf-: the footer patch (2026-09-04), PAGE-SCOPED. The footer is
+     shared chrome (css/vesper-chrome.css plus inline markup on every page),
+     and this pass fixes the digest page only, so every override rides
+     body.page-recap and the shared sheet stays untouched. ===== */
+  /* 1. columns: the full-height dividers showcased the short columns'
+     emptiness, so they go, and the block tightens to its content. */
+  body.page-recap footer.vc-footer .vc-col { border-left: 0; padding: 40px 28px 44px; }
+  body.page-recap footer.vc-footer .vc-col:first-child { padding-left: 0; }
+  /* 2. the brand block carries only the descriptive one-liner now; the base
+     grid collapses to it. */
+  body.page-recap footer.vc-footer .vc-base { grid-template-columns: minmax(0, 480px); padding: 30px 0 6px; }
+  /* 3. the disclaimer, demoted to a legal line: sentence case, 11.5px, the
+     dimmest ink that still clears 4.6:1 on the #0d0d0d ground
+     (rgba(250,250,250,.52) blends to about #888, 5.3:1), 90ch cap,
+     left-aligned on the container grid, down in the baseline bar area. */
+  .dgf-foot { width: calc(100% - 48px); max-width: 1392px; margin: 0 auto; }
+  body.page-recap footer.vc-footer .dgf-foot .vc-legal { margin: 0; max-width: 90ch;
+    font-family: var(--vc-sans); font-size: 11.5px; line-height: 1.6;
+    letter-spacing: 0; text-transform: none; color: rgba(250, 250, 250, .52); }
+  /* 4. the classic baseline bar, one hairline above it. The status pill is
+     the shared .status/.dot component from css/styles.css, which this page
+     already loads; its pulse sits out under reduced motion there. */
+  .dgf-bar { display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 14px; margin-top: 20px; padding: 20px 0 34px;
+    border-top: 1px solid var(--vc-line);
+    font-family: var(--vc-mono); font-size: 12px; letter-spacing: .06em;
+    color: rgba(250, 250, 250, .55); }
+  .dgf-bar a { color: rgba(250, 250, 250, .72); text-decoration: none; transition: color .25s; }
+  .dgf-bar a:hover { color: var(--vc-orange); }
+  .dgf-bar .dgf-status, .dgf-bar .dgf-status:hover { color: inherit; }
+  .dgf-bar .status { font-size: 12px; }
+  @media (prefers-reduced-motion: reduce) { .dgf-bar a { transition: none; } }
+  @media (max-width: 1023px) {
+    body.page-recap footer.vc-footer .vc-col { padding: 32px 0 32px 24px; }
+    body.page-recap footer.vc-footer .vc-col:nth-child(odd) { padding-left: 0; }
+  }
+  @media (max-width: 640px) {
+    body.page-recap footer.vc-footer .vc-col { padding: 24px 0; }
+  }
+
 </style>
 <script src="js/admin-gate.js"></script>
   <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://starknetthesis.io/#organization","name":"Starknet Thesis","url":"https://starknetthesis.io/","logo":{"@type":"ImageObject","url":"https://starknetthesis.io/apple-icon-180x180.png","width":180,"height":180},"sameAs":["https://x.com/Lyskey","https://starknetresearch.substack.com/"]},{"@type":"Person","@id":"https://starknetthesis.io/#lyskey","name":"Lyskey","url":"https://x.com/Lyskey","sameAs":["https://x.com/Lyskey","https://starknetresearch.substack.com/"]},{"@type":"WebSite","@id":"https://starknetthesis.io/#website","name":"Starknet Thesis: Privacy, Quantum Security, BTCFi","description":"An independent thesis on Starknet's three differentiators: private transfers via STRK20, a post-quantum proving system, and Bitcoin staking and DeFi (BTCFi).","url":"https://starknetthesis.io/","publisher":{"@id":"https://starknetthesis.io/#organization"},"inLanguage":"en"},{"@type":"CollectionPage","@id":"https://starknetthesis.io/digest#webpage","url":"https://starknetthesis.io/digest","name":"Starknet Digest: Weekly Roundups and Research","description":"Weekly roundups, monthly digests and research notes covering what is shipping and changing across the Starknet ecosystem, from the Starknet Research newsletter.","isPartOf":{"@id":"https://starknetthesis.io/#website"},"breadcrumb":{"@id":"https://starknetthesis.io/digest#breadcrumb"},"primaryImageOfPage":{"@id":"https://starknetthesis.io/digest#primaryimage"},"mainEntity":{"@id":"https://starknetthesis.io/digest#newsletter"},"isBasedOn":{"@id":"https://starknetthesis.io/digest#newsletter"},"about":{"@type":"Thing","name":"Starknet","sameAs":"https://www.starknet.io/"},"author":{"@id":"https://starknetthesis.io/#lyskey"},"publisher":{"@id":"https://starknetthesis.io/#organization"},"inLanguage":"en"},{"@type":"ImageObject","@id":"https://starknetthesis.io/digest#primaryimage","url":"https://starknetthesis.io/assets/og-default.png","contentUrl":"https://starknetthesis.io/assets/og-default.png","width":1200,"height":630},{"@type":"BreadcrumbList","@id":"https://starknetthesis.io/digest#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://starknetthesis.io/"},{"@type":"ListItem","position":2,"name":"Digest","item":"https://starknetthesis.io/digest"}]},{"@type":"Blog","@id":"https://starknetthesis.io/digest#newsletter","name":"Starknet Research","description":"Weekly roundups, monthly recaps and research notes on the Starknet ecosystem. Published on Substack and indexed here.","url":"https://starknetresearch.substack.com/","author":{"@id":"https://starknetthesis.io/#lyskey"},"publisher":{"@id":"https://starknetthesis.io/#organization"},"inLanguage":"en"}]}</script>
@@ -620,12 +660,24 @@
     </nav>
   </div>
   <div class="vc-rule"></div>
+  <!-- The brand line no longer repeats the banner headline: one "Three
+       forces, one chain, one ticker." per viewport, and the banner owns it.
+       The disclaimer moved down into the baseline bar area, demoted to a
+       sentence-case legal line: same words, different weight. -->
   <div class="vc-base">
     <div class="vc-brand">
       <img src="/assets/hero/logo.svg" alt="Starknet Thesis" width="200" height="26">
-      <p>Three forces, one chain, one ticker. The independent thesis on how Starknet makes crypto private, quantum-resistant and productive.</p>
+      <p>The independent thesis on how Starknet makes crypto private, quantum-resistant and productive.</p>
     </div>
+  </div>
+  <div class="dgf-foot">
     <p class="vc-legal">Website made for educational purposes only. This is not financial advice. Always DYOR. A personal project, not affiliated with or endorsed by StarkWare. All views expressed here are my own.</p>
+    <!-- the classic baseline bar, on the shared .status/.dot component from
+         css/styles.css (pulse and its reduced-motion guard included) -->
+    <div class="dgf-bar">
+      <span>© 2026 · Made by <a href="https://x.com/Lyskey" target="_blank" rel="noopener">Lyskey</a></span>
+      <a class="dgf-status" href="https://status.starknet.io/" target="_blank" rel="noopener noreferrer"><span class="status"><span class="dot" aria-hidden="true"></span> All systems operational</span></a>
+    </div>
   </div>
 </footer>
 
