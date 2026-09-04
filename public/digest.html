@@ -227,9 +227,13 @@
      Selectors are body-scoped rather than single-class so nothing in
      css/styles.css's own .hero block can win on specificity. */
   body.page-recap { --dgh-chrome: 51px; }
+  /* HEIGHT FITS CONTENT (2026-09-04 proportions patch): the hero is no
+     longer pinned to 100svh, which left an empty third between the CTAs and
+     the strip. The scene band's min-height is the only vertical slack, and
+     the whole hero lands near 78svh at 1440x900, inside the 80-85vh cap. */
   body.page-recap .hero.dgh-hero { position: relative;
     display: flex; flex-direction: column; align-items: stretch;
-    height: 100svh; min-height: 100svh; max-width: none;
+    height: auto; min-height: 0; max-width: none;
     margin: calc(-1 * var(--dgh-chrome)) 0 0;
     padding: calc(var(--dgh-chrome) + max(4.5vw, 56px)) 1.667vw 2.153vw;
     overflow: hidden; text-align: left; background: transparent; z-index: 0; }
@@ -237,9 +241,17 @@
      heroes. This hero is not centred and carries its own light, so it goes. */
   body.page-recap .hero.dgh-hero::before { display: none; }
 
-  /* the stage ignores the hero padding on purpose: the centrepiece frames
-     itself against the full viewport, centre right of the column */
-  .dgh-stage { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+  /* the scene band: the column centres vertically in it, and the stage
+     fills it, so the envelope's own centring (js/digest-hero-mark.js
+     centres the ring in its mount) lands on the column block, not the
+     viewport. The min-height is what gives the envelope its room. */
+  .dgh-scene { position: relative; display: flex; align-items: center;
+    min-height: 54svh; }
+  /* the stage bleeds 8svh past the band top and bottom, centre unchanged:
+     the renderer fits the ring to 58% of the mount's half-height, and
+     against the bare band that read too small. The bleed stays inside the
+     hero's own padding, so nothing clips the bright annulus. */
+  .dgh-stage { position: absolute; inset: -8svh 0; z-index: 0; pointer-events: none; }
   .dgh-stage canvas { display: block; width: 100%; height: 100%; }
 
   /* zone one: the editorial column, one reading order top to bottom */
@@ -256,27 +268,33 @@
   .dgh-body { margin: 1.6vw 0 0; max-width: 30vw; font-family: var(--vc-sans); font-weight: 400;
     font-size: max(0.9vw, 13px); line-height: 1.55; color: rgba(250, 250, 250, .6); }
   .dgh-cta { display: flex; align-items: center; gap: .833vw; margin-top: 2.2vw; }
-  /* the pills keep their dimensions; the surface is the dg-glass tier below */
+  /* CTAs size to content: no fixed width, horizontal padding near 26px at
+     1440 (the old 4.167vw slab read as fixed-width plates). The surface is
+     the dg-glass tier below. */
   .dgh-pill { display: inline-flex; align-items: center; justify-content: center;
-    padding: 1.111vw 4.167vw; font-family: var(--vc-sans); font-weight: 500; font-size: 1.111vw;
+    padding: .9vw 1.8vw; font-family: var(--vc-sans); font-weight: 500; font-size: 1.111vw;
     line-height: 1.2; white-space: nowrap; text-decoration: none; border-radius: 0;
     color: var(--white); }
 
-  /* zone three: the baseline strip, full hero width, one shared baseline */
-  .dgh-strip { position: relative; z-index: 2; margin-top: auto;
+  /* zone three: the baseline strip, full hero width, one shared baseline.
+     No margin-top auto: the hero fits its content now, and the balanced air
+     around the column comes from the scene band's own centring. */
+  .dgh-strip { position: relative; z-index: 2; margin-top: 0;
     display: flex; align-items: baseline; justify-content: space-between; gap: 2vw;
     border-top: 1px solid rgba(250, 250, 250, .16); padding-top: 1.25vw; }
+  /* one step up from the old 11px whisper, so the strip reads as one bar */
   .dgh-stat { margin: 0; text-align: left; font-family: var(--vc-tag); font-weight: 400;
-    font-size: max(0.8vw, 11px); line-height: 1.5; letter-spacing: .12em;
+    font-size: max(0.87vw, 12px); line-height: 1.5; letter-spacing: .12em;
     text-transform: uppercase; color: rgba(250, 250, 250, .7); }
   .dgh-n { color: #fafafa; }
   .dgh-slash { color: rgba(var(--accent-rgb), .85); margin: 0 .25em; }
   /* SENTENCE CASE IN THE SOURCE, CAPS ON SCREEN: text-transform does the
      shouting, so a screen reader and the search index still get real words.
-     2.3vw = half the display size, a signature and not a rival headline. */
+     2.3vw = half the 4.6vw display, measured 33.1px against 66.2px at 1440;
+     nowrap holds the signature to one line at every desktop width. */
   .dgh-turn { margin: 0; text-align: right; font-family: var(--vc-sans); font-weight: 700;
     font-size: 2.3vw; line-height: .95; letter-spacing: -.01em; text-transform: uppercase;
-    color: #fafafa; }
+    white-space: nowrap; color: #fafafa; }
 
   /* ===== dg-glass: this page's liquid glass control tier (2026-09-04).
      One shared surface for the filter pills and every Subscribe button on
@@ -396,23 +414,29 @@
      below, both left-aligned. */
   @media (max-width: 1023px) { body.page-recap { --dgh-chrome: 56px; } }
   @media (max-width: 980px) {
-    body.page-recap .hero.dgh-hero { height: auto; min-height: 100svh;
+    body.page-recap .hero.dgh-hero { height: auto; min-height: 0;
       justify-content: flex-start; padding: 6.5rem 1.5rem 2rem; }
+    .dgh-scene { min-height: 0; }
+    /* the stacked hero puts the envelope directly BEHIND the copy, not
+       beside it, and the renderer's own mobile dim (0.62) was tuned for
+       the old empty-middle layout: the paragraph sat unreadable on the
+       dust. Stacked, the envelope is texture, so it dims to ambient. */
+    .dgh-stage { inset: 0; opacity: .3; }
     .dgh-col { width: auto; }
     .dgh-kicker { font-size: .75rem; }
     .dgh-title { margin-top: .75rem; font-size: 2.75rem; }
     .dgh-body { margin-top: 1rem; max-width: 40ch; font-size: .875rem; }
-    .dgh-cta { width: 100%; gap: .5rem; margin-top: 1.5rem; }
-    .dgh-pill { flex: 1 1 auto; padding: .9375rem 1.5rem; font-size: 1rem; }
+    .dgh-cta { gap: .5rem; margin-top: 1.5rem; }
+    .dgh-pill { padding: .8125rem 1.5rem; font-size: 1rem; }
     .dgh-strip { flex-direction: column; align-items: flex-start; gap: .9rem;
-      margin-top: auto; padding-top: 1.25rem; }
+      margin-top: 2rem; padding-top: 1.25rem; }
     .dgh-stat { font-size: .75rem; text-align: left; }
-    .dgh-turn { text-align: left; font-size: 1.5rem; }
+    .dgh-turn { text-align: left; font-size: 1.25rem; }
   }
   @media (max-width: 380px) {
     body.page-recap .hero.dgh-hero { padding: 5.5rem 1.25rem 2rem; }
     .dgh-title { font-size: 2.375rem; }
-    .dgh-turn { font-size: 1.375rem; }
+    .dgh-turn { font-size: 1.125rem; }
   }
 
 </style>
@@ -447,26 +471,31 @@
      module either skips or paints one settled frame, and the copy is
      unaffected either way. -->
 <div class="hero dgh-hero">
-  <div class="dgh-stage" id="dghStage" aria-hidden="true"></div>
+  <!-- The scene band holds zones one and two: the stage fills the band, so
+       the envelope's own centring lands on the column block instead of the
+       viewport, and the column centres vertically against it. -->
+  <div class="dgh-scene">
+    <div class="dgh-stage" id="dghStage" aria-hidden="true"></div>
 
-  <!-- Zone one: the editorial column, in reading order. The old hero
-       scattered these across three corners; the kicker note and the body
-       paragraph are folded into one argument (both sentences verbatim). -->
-  <div class="dgh-col">
-    <p class="dgh-kicker">Digest</p>
-    <!-- the id is the search index's anchor for this page's opening claim
-         (public/data/search-index.json); it stays on the display heading. -->
-    <h1 id="never-miss-whatsshipping-on-starknet" class="dgh-title">Never miss what's shipping on Starknet.</h1>
-    <p class="dgh-body">A thesis only holds if the ecosystem actually ships behind it. Starknet is among the very few ecosystems shipping this much, this consistently, and the digest is the record of it: weekly roundups, monthly recaps, and original research.</p>
-    <div class="dgh-cta">
-      <a class="dgh-pill dg-glass dg-glass--primary" href="https://starknetresearch.substack.com/subscribe" target="_blank" rel="noopener">Subscribe</a>
-      <a class="dgh-pill dg-glass" href="#latest-from-the-starknet-ecosystem">Read the latest</a>
+    <!-- Zone one: the editorial column, in reading order. The old hero
+         scattered these across three corners; the kicker note and the body
+         paragraph are folded into one argument (both sentences verbatim). -->
+    <div class="dgh-col">
+      <p class="dgh-kicker">Digest</p>
+      <!-- the id is the search index's anchor for this page's opening claim
+           (public/data/search-index.json); it stays on the display heading. -->
+      <h1 id="never-miss-whatsshipping-on-starknet" class="dgh-title">Never miss what's shipping on Starknet.</h1>
+      <p class="dgh-body">A thesis only holds if the ecosystem actually ships behind it. Starknet is among the very few ecosystems shipping this much, this consistently, and the digest is the record of it: weekly roundups, monthly recaps, and original research.</p>
+      <div class="dgh-cta">
+        <a class="dgh-pill dg-glass dg-glass--primary" href="https://starknetresearch.substack.com/subscribe" target="_blank" rel="noopener">Subscribe</a>
+        <a class="dgh-pill dg-glass" href="#latest-from-the-starknet-ecosystem">Read the latest</a>
+      </div>
     </div>
   </div>
 
   <!-- Zone two is the particle envelope (js/digest-hero-mark.js) on the
-       stage above, centre right, untouched. Zone three: the baseline strip
-       across the hero's full width, split from the scene by a hairline. -->
+       scene's stage. Zone three: the baseline strip across the hero's full
+       width, split from the scene by a hairline. -->
   <div class="dgh-strip">
     <!-- The two numbers are stamped at build time by scripts/build-digest.js
          from data/recap.json (see the DIGEST COUNTS block there): the weekly
