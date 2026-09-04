@@ -242,16 +242,22 @@
   body.page-recap .hero.dgh-hero::before { display: none; }
 
   /* the scene band: the column centres vertically in it, and the stage
-     fills it, so the envelope's own centring (js/digest-hero-mark.js
-     centres the ring in its mount) lands on the column block, not the
-     viewport. The min-height is what gives the envelope its room. */
+     anchors to it, so the envelope's centring lands on the column block,
+     not the viewport. The min-height is what gives the band its air. */
   .dgh-scene { position: relative; display: flex; align-items: center;
     min-height: 54svh; }
-  /* the stage bleeds 8svh past the band top and bottom, centre unchanged:
-     the renderer fits the ring to 58% of the mount's half-height, and
-     against the bare band that read too small. The bleed stays inside the
-     hero's own padding, so nothing clips the bright annulus. */
-  .dgh-stage { position: absolute; inset: -8svh 0; z-index: 0; pointer-events: none; }
+  /* THE STAGE IS A CENTRE-RIGHT BOX, NOT A FULL-BLEED LAYER (2026-09-04
+     correction). js/digest-hero-mark.js centres its ring in the mount and
+     fits it to 58% of the mount height, and POINT STROKE WEIGHT SCALES
+     WITH MOUNT HEIGHT (the uH/900 term in the point shader): the previous
+     full-band mount was short enough to thin the dense dust into a dashed
+     outline. This box gives the renderer the height that keeps the
+     original stroke weight, lands the ring at about 380px at 1440x900
+     (against the 333px column, the balance the spec asks for), and parks
+     it centre right (box centre 70vw), clear of the 47vw column. Top 50%
+     on the band = vertically centred against the column. */
+  .dgh-stage { position: absolute; top: 50%; right: 0; transform: translateY(-50%);
+    width: 60vw; height: min(72svh, 660px); z-index: 0; pointer-events: none; }
   .dgh-stage canvas { display: block; width: 100%; height: 100%; }
 
   /* zone one: the editorial column, one reading order top to bottom */
@@ -421,16 +427,25 @@
        beside it, and the renderer's own mobile dim (0.62) was tuned for
        the old empty-middle layout: the paragraph sat unreadable on the
        dust. Stacked, the envelope is texture, so it dims to ambient. */
-    .dgh-stage { inset: 0; opacity: .3; }
+    .dgh-stage { inset: 0; width: auto; height: auto; transform: none; opacity: .3; }
     .dgh-col { width: auto; }
     .dgh-kicker { font-size: .75rem; }
     .dgh-title { margin-top: .75rem; font-size: 2.75rem; }
     .dgh-body { margin-top: 1rem; max-width: 40ch; font-size: .875rem; }
     .dgh-cta { gap: .5rem; margin-top: 1.5rem; }
     .dgh-pill { padding: .8125rem 1.5rem; font-size: 1rem; }
-    .dgh-strip { flex-direction: column; align-items: flex-start; gap: .9rem;
-      margin-top: 2rem; padding-top: 1.25rem; }
-    .dgh-stat { font-size: .75rem; text-align: left; }
+    /* THE STRIP STAYS ONE ROW down to 700px: counters left, signature
+       right, one baseline. The signature holds near half the 2.75rem
+       display; the counters may wrap before the strip does. */
+    .dgh-strip { margin-top: 2rem; padding-top: 1.25rem; }
+    .dgh-stat { font-size: .75rem; }
+    .dgh-turn { font-size: 1.375rem; }
+  }
+  /* below 700px the row cannot hold both: stack, counters above, signature
+     below, both left-aligned */
+  @media (max-width: 700px) {
+    .dgh-strip { flex-direction: column; align-items: flex-start; gap: .9rem; }
+    .dgh-stat { text-align: left; }
     .dgh-turn { text-align: left; font-size: 1.25rem; }
   }
   @media (max-width: 380px) {
