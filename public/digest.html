@@ -226,7 +226,20 @@
      svh, not vh, so mobile browser chrome cannot overshoot the frame.
      Selectors are body-scoped rather than single-class so nothing in
      css/styles.css's own .hero block can win on specificity. */
-  body.page-recap { --dgh-chrome: 51px; }
+  body.page-recap { --dgh-chrome: 51px;
+    /* THE CAPPED UNIT: 1vw, frozen at its 1440 value (14.4px) above 1440.
+       Every hero dimension that was authored in vw rides it, so the hero
+       scales down exactly as before but stops growing once the container
+       stops: on a wide monitor the type and geometry hold their 1440
+       sizes inside the centred 1392px box instead of stretching with the
+       viewport. */
+    --dgh-u: min(1vw, 14.4px); }
+  /* the hero's centred container: the exact geometry of the footer band's
+     .vc-cta-in (css/vesper-chrome.css), the page's capped centred box. The
+     column and the strip's hairline sit on its left edge, the signature on
+     its right, the envelope's stage right-aligned inside it. */
+  .dgh-wrap { width: calc(100% - 48px); max-width: 1392px; margin: 0 auto;
+    display: flex; flex-direction: column; align-items: stretch; }
   /* HEIGHT FITS CONTENT (2026-09-04 proportions patch): the hero is no
      longer pinned to 100svh, which left an empty third between the CTAs and
      the strip. The scene band's min-height is the only vertical slack, and
@@ -235,7 +248,7 @@
     display: flex; flex-direction: column; align-items: stretch;
     height: auto; min-height: 0; max-width: none;
     margin: calc(-1 * var(--dgh-chrome)) 0 0;
-    padding: calc(var(--dgh-chrome) + max(4.5vw, 56px)) 1.667vw 2.153vw;
+    padding: calc(var(--dgh-chrome) + max(4.5 * var(--dgh-u), 56px)) 0 calc(2.153 * var(--dgh-u));
     overflow: hidden; text-align: left; background: transparent; z-index: 0; }
   /* styles.css hangs a centred radial glow off .hero::before for the centred
      heroes. This hero is not centred and carries its own light, so it goes. */
@@ -257,28 +270,28 @@
      it centre right (box centre 70vw), clear of the 47vw column. Top 50%
      on the band = vertically centred against the column. */
   .dgh-stage { position: absolute; top: 50%; right: 0; transform: translateY(-50%);
-    width: 60vw; height: min(72svh, 660px); z-index: 0; pointer-events: none; }
+    width: calc(60 * var(--dgh-u)); height: min(72svh, 660px); z-index: 0; pointer-events: none; }
   .dgh-stage canvas { display: block; width: 100%; height: 100%; }
 
   /* zone one: the editorial column, one reading order top to bottom */
-  .dgh-col { position: relative; z-index: 2; width: 47vw; max-width: none;
+  .dgh-col { position: relative; z-index: 2; width: calc(47 * var(--dgh-u)); max-width: none;
     display: flex; flex-direction: column; align-items: flex-start; }
   .dgh-kicker { margin: 0; font-family: var(--vc-tag); font-weight: 400;
-    font-size: max(0.9vw, 11px); line-height: 1.5;
+    font-size: max(0.9 * var(--dgh-u), 11px); line-height: 1.5;
     letter-spacing: .2em; text-transform: uppercase; color: var(--accent); }
-  .dgh-title { margin: 1vw 0 0; font-family: var(--vc-sans); font-weight: 300; font-size: 4.6vw;
+  .dgh-title { margin: var(--dgh-u) 0 0; font-family: var(--vc-sans); font-weight: 300; font-size: calc(4.6 * var(--dgh-u));
     line-height: .9; letter-spacing: normal; text-transform: none; color: var(--white); max-width: none; }
   /* the one argument paragraph: the retired mono kicker note and the body
      sentence, folded. Sentence case: it is a sentence, not a readout. The
      30vw cap keeps the measure near 60ch over the 47vw column. */
-  .dgh-body { margin: 1.6vw 0 0; max-width: 30vw; font-family: var(--vc-sans); font-weight: 400;
-    font-size: max(0.9vw, 13px); line-height: 1.55; color: rgba(250, 250, 250, .6); }
-  .dgh-cta { display: flex; align-items: center; gap: .833vw; margin-top: 2.2vw; }
+  .dgh-body { margin: calc(1.6 * var(--dgh-u)) 0 0; max-width: calc(30 * var(--dgh-u)); font-family: var(--vc-sans); font-weight: 400;
+    font-size: max(0.9 * var(--dgh-u), 13px); line-height: 1.55; color: rgba(250, 250, 250, .6); }
+  .dgh-cta { display: flex; align-items: center; gap: calc(.833 * var(--dgh-u)); margin-top: calc(2.2 * var(--dgh-u)); }
   /* CTAs size to content: no fixed width, horizontal padding near 26px at
      1440 (the old 4.167vw slab read as fixed-width plates). The surface is
      the dg-glass tier below. */
   .dgh-pill { display: inline-flex; align-items: center; justify-content: center;
-    padding: .9vw 1.8vw; font-family: var(--vc-sans); font-weight: 500; font-size: 1.111vw;
+    padding: calc(.9 * var(--dgh-u)) calc(1.8 * var(--dgh-u)); font-family: var(--vc-sans); font-weight: 500; font-size: calc(1.111 * var(--dgh-u));
     line-height: 1.2; white-space: nowrap; text-decoration: none; border-radius: 0;
     color: var(--white); }
 
@@ -286,11 +299,11 @@
      No margin-top auto: the hero fits its content now, and the balanced air
      around the column comes from the scene band's own centring. */
   .dgh-strip { position: relative; z-index: 2; margin-top: 0;
-    display: flex; align-items: baseline; justify-content: space-between; gap: 2vw;
-    border-top: 1px solid rgba(250, 250, 250, .16); padding-top: 1.25vw; }
+    display: flex; align-items: baseline; justify-content: space-between; gap: calc(2 * var(--dgh-u));
+    border-top: 1px solid rgba(250, 250, 250, .16); padding-top: calc(1.25 * var(--dgh-u)); }
   /* one step up from the old 11px whisper, so the strip reads as one bar */
   .dgh-stat { margin: 0; text-align: left; font-family: var(--vc-tag); font-weight: 400;
-    font-size: max(0.87vw, 12px); line-height: 1.5; letter-spacing: .12em;
+    font-size: max(0.87 * var(--dgh-u), 12px); line-height: 1.5; letter-spacing: .12em;
     text-transform: uppercase; color: rgba(250, 250, 250, .7); }
   .dgh-n { color: #fafafa; }
   .dgh-slash { color: rgba(var(--accent-rgb), .85); margin: 0 .25em; }
@@ -299,7 +312,7 @@
      2.3vw = half the 4.6vw display, measured 33.1px against 66.2px at 1440;
      nowrap holds the signature to one line at every desktop width. */
   .dgh-turn { margin: 0; text-align: right; font-family: var(--vc-sans); font-weight: 700;
-    font-size: 2.3vw; line-height: .95; letter-spacing: -.01em; text-transform: uppercase;
+    font-size: calc(2.3 * var(--dgh-u)); line-height: .95; letter-spacing: -.01em; text-transform: uppercase;
     white-space: nowrap; color: #fafafa; }
 
   /* ===== dg-glass: this page's liquid glass control tier (2026-09-04).
@@ -422,6 +435,7 @@
   @media (max-width: 980px) {
     body.page-recap .hero.dgh-hero { height: auto; min-height: 0;
       justify-content: flex-start; padding: 6.5rem 1.5rem 2rem; }
+    .dgh-wrap { width: 100%; max-width: none; }
     .dgh-scene { min-height: 0; }
     /* the stacked hero puts the envelope directly BEHIND the copy, not
        beside it, and the renderer's own mobile dim (0.62) was tuned for
@@ -486,6 +500,12 @@
      module either skips or paints one settled frame, and the copy is
      unaffected either way. -->
 <div class="hero dgh-hero">
+  <!-- The container (2026-09-04): the page's capped centred box, the exact
+       geometry of the footer band's .vc-cta-in (max-width 1392px, 24px side
+       margins). Column and hairline sit on its left edge, the signature on
+       its right, and the envelope's stage right-aligns inside it, so wide
+       monitors get a centred hero instead of viewport-pinned corners. -->
+  <div class="dgh-wrap">
   <!-- The scene band holds zones one and two: the stage fills the band, so
        the envelope's own centring lands on the column block instead of the
        viewport, and the column centres vertically against it. -->
@@ -519,6 +539,7 @@
          the source are only the last stamp; never edit them by hand. -->
     <p class="dgh-stat"><span class="dgh-n" data-count="weekly-roundups">233</span> weekly roundups published<span class="dgh-slash" aria-hidden="true">/</span><span class="dgh-n" data-count="monthly-recaps">36</span> monthly recaps</p>
     <p class="dgh-turn">Every week accounted for</p>
+  </div>
   </div>
 </div>
 
