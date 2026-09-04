@@ -69,9 +69,9 @@
   .dg-hero-inner { width: 100%; max-width: 1160px; margin: 0 auto; padding: 0 32px; position: relative; z-index: 1; }
   .dg-hero .hero-title { margin-left: 0; margin-right: 0; max-width: none; }
   .dg-hero .hero-subtitle { margin: 22px 0 0; max-width: 620px; }
-  /* The SVG cadence scene that used to live here was replaced on
-     2026-09 by the dgx- mono-token field (see the dgx- block at the end
-     of the head). Its rules were removed with it. */
+  /* The SVG cadence scene that used to live here went in the 2026-09
+     hero rebuilds (see the dgh- block at the end of the head). Its rules
+     were removed with it. */
   /* hero CTAs: the locked shared dark glass tier (css/glass-chips.css
      .chip-glass) at button scale (nav-CTA-like padding, chip pill
      radius). The recipe's accent terms read --chip-accent-rgb with an
@@ -126,8 +126,9 @@
   .th-pm-num{font-family:var(--display);font-weight:900;font-size:64px;line-height:1;color:var(--accent);letter-spacing:-.02em;}
   .th-pm-title{font-family:var(--display);font-weight:300;font-size:52px;line-height:1.02;letter-spacing:-.015em;color:var(--white);max-width:none;}
   .th-pm-title b, .th-pm-title em{color:var(--accent);font-weight:800;font-style:normal;}
-  /* eyebrow: the landing's spec (13px, .04em, sentence case, opacity .9) */
-  .th-pm-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:.04em;color:var(--accent);opacity:.9;margin-top:16px;}
+  /* eyebrow: the landing's spec (13px, .04em, sentence case, opacity .9).
+     Kicker position, ABOVE the title, like every other section of the site. */
+  .th-pm-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:.04em;color:var(--accent);opacity:.9;margin:0 0 14px;}
   @media(max-width:880px){.th-pm-title{font-size:38px;}.th-pm-num{font-size:48px;}}
 
   /* ===== coherence pass (audit/digest-vs-landing.md). The feed's base
@@ -170,52 +171,51 @@
   /* D5: filter tabs adopt ecosystem's filter pill vocabulary in this
      page's accent (overrides .chart-toggle and .toggle-btn; behavior,
      classes and the marquee band's tab wiring untouched) */
+  /* the pill SURFACE (fill, hairline, active state) is the shared dg-glass
+     tier at the end of the head; these rules carry only geometry and text.
+     The old 1px border went to the glass hairline, so the padding grows 1px
+     on both axes and the pill's outer size holds. */
   #recapTabs.chart-toggle { border: none; padding: 0; gap: 8px; border-radius: 0; background: none; }
-  #recapTabs .toggle-btn { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: #9a9a9a; padding: 7px 14px; border: 1px solid var(--border); border-radius: 40px; background: transparent;
-    transition: color var(--hover-dur) var(--hover-ease), border-color var(--hover-dur), background var(--hover-dur), box-shadow var(--hover-dur); }
-  #recapTabs .toggle-btn:hover { color: var(--white); border-color: rgba(250, 250, 250,0.25); }
-  #recapTabs .toggle-btn.active { color: var(--accent); border-color: var(--accent); background: rgba(var(--accent-rgb), .12);
-    box-shadow: 0 0 16px rgba(var(--accent-rgb), .22); }
-  @media (prefers-reduced-motion: reduce) { #recapTabs .toggle-btn { transition: none; } }
-  /* the pills get back their breathing room below the eyebrow. The 3-up
-     grid, the line clamps, the .recap-content padding and the .recap-cat
-     badge scheme all went with the card redesign (D4 above): the feed now
-     renders .dgw-card markup, which carries its own geometry. */
-  #recapTabs { margin-top: 14px; }
+  #recapTabs .toggle-btn { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: #9a9a9a; padding: 8px 15px; border-radius: 40px; }
+  #recapTabs .toggle-btn:hover { color: var(--white); }
+  #recapTabs .toggle-btn.active { color: var(--accent); }
+  /* the pills' breathing room below the h2. The 3-up grid, the line
+     clamps, the .recap-content padding and the .recap-cat badge scheme all
+     went with the card redesign (D4 above): the feed now renders .dgw-card
+     markup, which carries its own geometry. */
+  #recapTabs { margin-top: 26px; }
   /* The .dg-close closing panel (ecosystem's .cta-block twin) went on
      2026-09-04 with its section: it sat back to back with the footer band's
      own subscribe form. Ecosystem still carries the original. */
 </style>
 <style>
-  /* ===== dgx-: the 2026-09 digest hero field and the About statement.
-     Its own prefix so it can never collide with privacy-fx's sq- family,
-     whose .sq-hl / .sq-ic inverted-tile geometry this borrows (here the
-     tile is inverted the other way: light fill, dark text, with an accent
-     square glyph inside). This block sits LAST in the head, after every
-     linked sheet and after the page's own inline styles, so these rules
-     win the cascade over stride.css and styles.css at equal specificity;
-     where an existing selector is more specific it is named in full. ===== */
+  /* ===== The hero (dgh-) and the page's glass control tier (dg-glass).
+     The dgx-/dga- About statement and four-track band this block also
+     carried went on 2026-09-04 with their markup; their isometric SVGs
+     survive as files in assets/img/digest-iso-*.svg. This block sits LAST
+     in the head, after every linked sheet and after the page's own inline
+     styles, so these rules win the cascade over stride.css and styles.css
+     at equal specificity; where an existing selector is more specific it
+     is named in full. ===== */
 
-  /* ---- D5: THE HERO, on /btcfi's .bfh- frame ----
-     What was here until 2026-09-02: a dense tiled field of repeating mono
-     tokens (ROUNDUP / RECAP / WEEKLY / NO GAPS, built by an inline script at
-     the foot of the page) with the display over it and one line of the
-     display knocked out in a white block. It went in full. The tiled text
-     fought the headline, the knockout band read as a rendering error, and
-     there was no focal point.
-     What replaces it is /btcfi's hero frame, ported slot for slot: kicker
-     and display top left, a PARTICLE CENTREPIECE filling the middle
-     (js/digest-hero-mark.js, the twin of js/quantum-hero-mark.js), a mono
-     note plus the CTA pair bottom left, and a mono readout over a big
-     uppercase turn line bottom right. No card, no panel, no ground: every
-     layer is transparent over js/eco-backdrop.js, which paints on a FIXED
-     canvas underneath the whole page.
-     Geometry is the landing artboard's in the same vw units btcfi uses
-     (Figma pixels / 14.4): gutter 1.667vw, display 4.6vw at weight 300 over
-     52vw, turn line 4.2vw bold uppercase over 38vw, mono blocks in Mulish,
-     CTA pill 4.167vw/1.111vw beside a 3.542vw icon tile. The two top offsets
-     carry a px floor so the copy can never slide under the floating header
-     on a narrow desktop window.
+  /* ---- D5 (recomposed 2026-09-04): THE HERO, three zones ----
+     The btcfi port scattered the copy across three corners (kicker and
+     display top left, note plus CTAs bottom left, readout and turn line
+     bottom right, the turn line at 4.2vw rivalling the 4.6vw display).
+     Now: ONE editorial column top left in reading order (kicker, display,
+     one argument paragraph, the CTA pair), the particle centrepiece
+     (js/digest-hero-mark.js) untouched on its full-bleed stage centre
+     right, and a BASELINE STRIP across the hero's full width at the foot,
+     split from the scene by a hairline: the generated counters left, the
+     streak signature right, on one shared baseline. The signature steps
+     down to 2.3vw, half the display, so it reads as a sign-off and not a
+     second headline. No card, no panel, no ground: every layer is
+     transparent over js/eco-backdrop.js, which paints on a FIXED canvas
+     underneath the whole page.
+     Geometry stays in btcfi's vw units (Figma pixels / 14.4): gutter
+     1.667vw, display 4.6vw at weight 300, CTA pill 4.167vw/1.111vw. The
+     top padding carries a px floor so the copy can never slide under the
+     floating header on a narrow desktop window.
      FULL VIEWPORT, HEADER OVER IT, the way btcfi frames the same hero.
      css/eco-stage.css declares `body > *:not(.eco-bd) { position: relative;
      z-index: 1 }`, which out-specifies vesper-chrome's `position: fixed`, so
@@ -227,115 +227,118 @@
      Selectors are body-scoped rather than single-class so nothing in
      css/styles.css's own .hero block can win on specificity. */
   body.page-recap { --dgh-chrome: 51px; }
-  body.page-recap .hero.dgh-hero { position: relative; display: block;
+  body.page-recap .hero.dgh-hero { position: relative;
+    display: flex; flex-direction: column; align-items: stretch;
     height: 100svh; min-height: 100svh; max-width: none;
-    margin: calc(-1 * var(--dgh-chrome)) 0 0; padding: 0;
+    margin: calc(-1 * var(--dgh-chrome)) 0 0;
+    padding: calc(var(--dgh-chrome) + max(4.5vw, 56px)) 1.667vw 2.153vw;
     overflow: hidden; text-align: left; background: transparent; z-index: 0; }
   /* styles.css hangs a centred radial glow off .hero::before for the centred
      heroes. This hero is not centred and carries its own light, so it goes. */
   body.page-recap .hero.dgh-hero::before { display: none; }
 
+  /* the stage ignores the hero padding on purpose: the centrepiece frames
+     itself against the full viewport, centre right of the column */
   .dgh-stage { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
   .dgh-stage canvas { display: block; width: 100%; height: 100%; }
 
-  .dgh-kicker { position: absolute; top: max(7.2vw, 88px); left: 1.667vw; z-index: 2; margin: 0;
-    font-family: var(--vc-tag); font-weight: 400; font-size: max(0.9vw, 11px); line-height: 1.5;
+  /* zone one: the editorial column, one reading order top to bottom */
+  .dgh-col { position: relative; z-index: 2; width: 47vw; max-width: none;
+    display: flex; flex-direction: column; align-items: flex-start; }
+  .dgh-kicker { margin: 0; font-family: var(--vc-tag); font-weight: 400;
+    font-size: max(0.9vw, 11px); line-height: 1.5;
     letter-spacing: .2em; text-transform: uppercase; color: var(--accent); }
-  .dgh-title { position: absolute; top: max(9.028vw, 114px); left: 1.667vw; z-index: 2; margin: 0;
-    width: 52vw; max-width: none; font-family: var(--vc-sans); font-weight: 300; font-size: 4.6vw;
-    line-height: .9; letter-spacing: normal; text-transform: none; color: var(--white); }
-
-  .dgh-left { position: absolute; left: 1.667vw; bottom: 2.153vw; z-index: 2; width: 26vw;
-    display: flex; flex-direction: column; align-items: flex-start; gap: 1.25vw; }
-  /* SENTENCE CASE IN THE SOURCE, CAPS ON SCREEN, the way the landing carries
-     its own mono blocks: text-transform does the shouting, so a screen reader
-     and the search index still get real words. */
-  .dgh-note { margin: 0; max-width: none; font-family: var(--vc-tag); font-weight: 400;
-    font-size: max(0.85vw, 11px); line-height: 1.7; letter-spacing: .06em;
-    text-transform: uppercase; color: rgba(250, 250, 250, .82); }
-  /* the supporting paragraph stays sentence case: it is a sentence, not a
-     readout, and 40-odd words of tracked-out caps is unreadable. */
-  .dgh-body { margin: 0; font-family: var(--vc-sans); font-weight: 400;
+  .dgh-title { margin: 1vw 0 0; font-family: var(--vc-sans); font-weight: 300; font-size: 4.6vw;
+    line-height: .9; letter-spacing: normal; text-transform: none; color: var(--white); max-width: none; }
+  /* the one argument paragraph: the retired mono kicker note and the body
+     sentence, folded. Sentence case: it is a sentence, not a readout. The
+     30vw cap keeps the measure near 60ch over the 47vw column. */
+  .dgh-body { margin: 1.6vw 0 0; max-width: 30vw; font-family: var(--vc-sans); font-weight: 400;
     font-size: max(0.9vw, 13px); line-height: 1.55; color: rgba(250, 250, 250, .6); }
-  /* the pill and the tile are two separate links, one per destination, which
-     is why the tile carries its own aria-label */
-  .dgh-cta { display: flex; align-items: center; gap: .278vw; }
+  .dgh-cta { display: flex; align-items: center; gap: .833vw; margin-top: 2.2vw; }
+  /* the pills keep their dimensions; the surface is the dg-glass tier below */
   .dgh-pill { display: inline-flex; align-items: center; justify-content: center;
     padding: 1.111vw 4.167vw; font-family: var(--vc-sans); font-weight: 500; font-size: 1.111vw;
-    line-height: 1.2; white-space: nowrap; text-decoration: none; border: 0; border-radius: 0;
-    background: #fafafa; color: #000;
-    transition: background-color var(--hover-dur, .25s) var(--hover-ease, ease), color var(--hover-dur, .25s) var(--hover-ease, ease); }
-  .dgh-pill:hover { background: var(--accent); color: #fafafa; }
-  .dgh-pill:active { background: var(--accent-dim); color: #fafafa; }
-  .dgh-tile { display: block; flex: none; width: 3.542vw; height: 3.542vw; line-height: 0; }
-  .dgh-tile img { display: block; width: 100%; height: 100%; }
-  .dgh-pill:focus-visible, .dgh-tile:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+    line-height: 1.2; white-space: nowrap; text-decoration: none; border-radius: 0;
+    color: var(--white); }
 
-  .dgh-right { position: absolute; right: 1.667vw; bottom: 2.153vw; z-index: 2;
-    display: flex; flex-direction: column; align-items: flex-end; gap: 1.25vw; }
-  /* the readout carries two of the three hero stats; the third is the turn
-     line under it, which is where that number was always headed. */
-  .dgh-stat { margin: 0; width: 34vw; text-align: right; font-family: var(--vc-tag); font-weight: 400;
+  /* zone three: the baseline strip, full hero width, one shared baseline */
+  .dgh-strip { position: relative; z-index: 2; margin-top: auto;
+    display: flex; align-items: baseline; justify-content: space-between; gap: 2vw;
+    border-top: 1px solid rgba(250, 250, 250, .16); padding-top: 1.25vw; }
+  .dgh-stat { margin: 0; text-align: left; font-family: var(--vc-tag); font-weight: 400;
     font-size: max(0.8vw, 11px); line-height: 1.5; letter-spacing: .12em;
     text-transform: uppercase; color: rgba(250, 250, 250, .7); }
   .dgh-n { color: #fafafa; }
   .dgh-slash { color: rgba(var(--accent-rgb), .85); margin: 0 .25em; }
-  .dgh-turn { margin: 0; width: 38vw; text-align: right; font-family: var(--vc-sans); font-weight: 700;
-    font-size: 4.2vw; line-height: .95; letter-spacing: -.01em; text-transform: uppercase;
+  /* SENTENCE CASE IN THE SOURCE, CAPS ON SCREEN: text-transform does the
+     shouting, so a screen reader and the search index still get real words.
+     2.3vw = half the display size, a signature and not a rival headline. */
+  .dgh-turn { margin: 0; text-align: right; font-family: var(--vc-sans); font-weight: 700;
+    font-size: 2.3vw; line-height: .95; letter-spacing: -.01em; text-transform: uppercase;
     color: #fafafa; }
 
-  /* Below the artboard the vw offsets stop meaning anything (52vw of a 390px
-     phone is 203px), so the frame becomes a plain top-to-bottom stack sized
-     in rem, exactly as btcfi's does. The centrepiece stays behind it, dimmed
-     by the renderer, so the copy keeps its contrast. */
-  @media (max-width: 1023px) { body.page-recap { --dgh-chrome: 56px; } }
+  /* ===== dg-glass: this page's liquid glass control tier (2026-09-04).
+     One shared surface for the filter pills and every Subscribe button on
+     the page (nav, hero, footer band form): translucent dark fill sampling
+     the scene through a backdrop blur, a half-pixel outer hairline drawn as
+     a spread box-shadow so it follows any radius, and one inset top
+     highlight for the light catching the upper edge. The active / primary
+     state steps the fill up and swaps the hairline to the accent.
+     Deliberately quieter than the locked css/glass-chips.css chip tier (no
+     specular rim stack, no glow): these are controls. Site glass rules
+     hold: solid surface below 981px and where backdrop-filter is
+     unsupported, no nested glass, transitions sit out under reduced motion.
+     Each element keeps its own size, type and padding; where the glass
+     replaces a 1px border the element's padding grows 1px so nothing
+     shifts. */
+  .dg-glass { border: 0;
+    background: rgba(16, 16, 16, .55);
+    -webkit-backdrop-filter: blur(12px) saturate(115%);
+    backdrop-filter: blur(12px) saturate(115%);
+    box-shadow:
+      0 0 0 .5px rgba(250, 250, 250, .28),
+      inset 0 1px 0 rgba(255, 255, 255, .14);
+    transition: background var(--hover-dur, .25s) var(--hover-ease, ease),
+                box-shadow var(--hover-dur, .25s) var(--hover-ease, ease),
+                color var(--hover-dur, .25s) var(--hover-ease, ease); }
+  .dg-glass:hover {
+    background: rgba(30, 30, 30, .66);
+    box-shadow:
+      0 0 0 .5px rgba(250, 250, 250, .45),
+      inset 0 1px 0 rgba(255, 255, 255, .22); }
+  .dg-glass.active, .dg-glass--primary {
+    background: rgba(38, 38, 38, .74);
+    box-shadow:
+      0 0 0 .5px rgba(var(--accent-rgb), .65),
+      inset 0 1px 0 rgba(255, 255, 255, .22); }
+  .dg-glass.active:hover, .dg-glass--primary:hover {
+    background: rgba(48, 48, 48, .8);
+    box-shadow:
+      0 0 0 .5px rgba(var(--accent-rgb), .9),
+      inset 0 1px 0 rgba(255, 255, 255, .28); }
+  .dg-glass:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  /* the nav CTA: full specificity to beat vesper-chrome's rules. Its 1px
+     border goes (padding +1px holds the width), and it takes NO blur of its
+     own: it sits inside the header bar, which is already a glass surface
+     (rgba(13,13,13,.82) + blur), and the site rule is no nested glass. Over
+     that near-solid bar the fill plus hairline read the same. */
+  header.vc-header .vc-cta.dg-glass { border: 0; padding: 0 17px;
+    -webkit-backdrop-filter: none; backdrop-filter: none; }
+  header.vc-header .vc-cta.dg-glass:hover { background: rgba(48, 48, 48, .8); }
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .dg-glass { background: #161616; }
+    .dg-glass:hover { background: #202020; }
+    .dg-glass.active, .dg-glass--primary { background: #262626; }
+    .dg-glass.active:hover, .dg-glass--primary:hover { background: #2e2e2e; }
+  }
   @media (max-width: 980px) {
-    body.page-recap .hero.dgh-hero { height: auto; min-height: 100svh;
-      display: flex; flex-direction: column; justify-content: flex-start;
-      align-items: stretch; text-align: left; padding: 6.5rem 1.5rem 2rem; }
-    .dgh-kicker, .dgh-title, .dgh-left, .dgh-right { position: static; width: auto; }
-    .dgh-kicker { font-size: .75rem; }
-    .dgh-title { margin-top: .75rem; font-size: 2.75rem; }
-    .dgh-left { margin-top: auto; padding-top: 1.5rem; }
-    .dgh-right { margin-top: 1.5rem; }
-    .dgh-left, .dgh-right { align-items: flex-start; gap: 1rem; }
-    .dgh-note, .dgh-stat { width: auto; text-align: left; font-size: .75rem; }
-    .dgh-body { font-size: .875rem; }
-    .dgh-turn { width: auto; text-align: left; font-size: 2rem; }
-    .dgh-cta { width: 100%; gap: .25rem; }
-    .dgh-pill { flex: 1 1 auto; padding: .9375rem 1.5rem; font-size: 1rem; }
-    .dgh-tile { width: 3.125rem; height: 3.125rem; }
+    .dg-glass { -webkit-backdrop-filter: none; backdrop-filter: none; background: #161616; }
+    .dg-glass:hover { background: #202020; }
+    .dg-glass.active, .dg-glass--primary { background: #262626; }
+    .dg-glass.active:hover, .dg-glass--primary:hover { background: #2e2e2e; }
   }
-  @media (max-width: 380px) {
-    body.page-recap .hero.dgh-hero { padding: 5.5rem 1.25rem 2rem; }
-    .dgh-title { font-size: 2.375rem; }
-    .dgh-turn { font-size: 1.75rem; }
-  }
-
-  /* ===== About the digest (dgx-). The full-viewport statement this block
-     used to style went on 2026-09-04 (it repeated the hero subtitle); what
-     remains is the section shell the four-track band sits in, plus the
-     .dgx-card base the band's buttons keep so js/digest-stride.js still
-     binds them. ===== */
-  /* styles.css caps every section at 1100px; the band is meant to
-     run wide, so the section opens up and the wrap carries the gutter. */
-  section.dgx-st { max-width: 1440px; padding: 120px 0; }
-  .dgx-st .dgx-wrap { max-width: none; padding: 0 40px; }
-  .dgx-card { cursor: pointer; color: inherit; font: inherit;
-    transition: border-color var(--hover-dur, .25s) var(--hover-ease, ease), background var(--hover-dur, .25s); }
-  .dgx-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
-  @media (prefers-reduced-motion: reduce) {
-    .dgx-card { transition: none; }
-  }
-  @media (max-width: 880px) {
-    section.dgx-st { padding: 80px 0; }
-    .dgx-st .dgx-wrap { padding: 0 24px; }
-  }
-  /* the four track rows carry the archive link the retired showcase held */
-  .dgx-archive { display: inline-block; margin-top: 30px; padding: 12px 24px; border-radius: 999px;
-    border: 1px solid rgba(250,250,250,.3); font-size: 14px; font-weight: 500; color: #fafafa;
-    text-decoration: none; transition: background .2s, border-color .2s, color .2s; }
-  .dgx-archive:hover { background: #fafafa; border-color: #fafafa; color: #0d0d0d; }
+  @media (prefers-reduced-motion: reduce) { .dg-glass { transition: none; } }
 
   /* ============================================================
      THE ARCHIVE CARD (dgw-). The separate "The latest issues" grid
@@ -386,127 +389,32 @@
     .recap-card:hover .recap-cover img { transform: none; }
   }
 
-  /* ============================================================
-     D4: ABOUT THE DIGEST, at /privacy's .th-pm-sec--law proportions.
-     That section runs its rule and its four columns almost to the
-     viewport edge: 1.46 percent of the frame, expressed in vw so it
-     lands at about 21px at 1440. The headline keeps the page column,
-     only the band widens. html{overflow-x:clip} in css/styles.css is
-     what keeps the 100vw band off the horizontal scrollbar.
-     The reference lives in css/privacy-fx.css, which digest does NOT
-     load, so its --pf-* tokens are re-pointed at the tokens this page
-     already has (--border, --accent, --sd-ink, --sd-dim).
-     The dotted line is a background, not a border-top, so that
-     padding-inline actually insets it and it lines up with the
-     columns instead of running the full 100vw.
-     ============================================================ */
-  .dga-st { --dga-pad: clamp(16px, 1.5vw, 28px); }
-  /* The dga-say statement section these rules centred went on 2026-09-04
-     with its markup (see the note where it stood in the body). */
-  /* D2: the band's own section, and one deliberate vertical scale rather
-     than four loose values. The steps ascend toward the section break:
-     rule to header row 40, header to title 22, title to copy 10, copy block
-     to panel 28, panel to button 64. The rule sits at the top of the
-     section, so its old 76px margin is gone and the section padding owns
-     that space instead. */
-  section.dgx-st.dga-band { padding-top: 96px; padding-bottom: 120px; }
-  .dga-rule, .dga-cols {
-    width: 100vw; max-width: none;
-    margin-left: calc(50% - 50vw); margin-right: calc(50% - 50vw);
-    padding-inline: var(--dga-pad);
+  /* Below the artboard the vw sizes stop meaning anything, so the frame
+     becomes a plain top-to-bottom stack sized in rem, exactly as btcfi's
+     does. The centrepiece stays behind it, dimmed by the renderer, so the
+     copy keeps its contrast. The strip stacks: counters above, signature
+     below, both left-aligned. */
+  @media (max-width: 1023px) { body.page-recap { --dgh-chrome: 56px; } }
+  @media (max-width: 980px) {
+    body.page-recap .hero.dgh-hero { height: auto; min-height: 100svh;
+      justify-content: flex-start; padding: 6.5rem 1.5rem 2rem; }
+    .dgh-col { width: auto; }
+    .dgh-kicker { font-size: .75rem; }
+    .dgh-title { margin-top: .75rem; font-size: 2.75rem; }
+    .dgh-body { margin-top: 1rem; max-width: 40ch; font-size: .875rem; }
+    .dgh-cta { width: 100%; gap: .5rem; margin-top: 1.5rem; }
+    .dgh-pill { flex: 1 1 auto; padding: .9375rem 1.5rem; font-size: 1rem; }
+    .dgh-strip { flex-direction: column; align-items: flex-start; gap: .9rem;
+      margin-top: auto; padding-top: 1.25rem; }
+    .dgh-stat { font-size: .75rem; text-align: left; }
+    .dgh-turn { text-align: left; font-size: 1.5rem; }
   }
-  .dga-rule { position: relative; height: 2px; margin-top: 0; box-sizing: border-box;
-    background-image: repeating-linear-gradient(90deg, rgba(250, 250, 250, .35) 0 3px, transparent 3px 9px);
-    background-clip: content-box; }
-  .dga-rule::before, .dga-rule::after { content: ''; position: absolute; top: -3px;
-    width: 8px; height: 8px; background: var(--accent); }
-  .dga-rule::before { left: var(--dga-pad); }
-  .dga-rule::after { right: var(--dga-pad); }
-  /* THE COLUMNS ARE ROW-ALIGNED BY SUBGRID, which is the whole fix.
-     The four descriptions measure three, two, two and two lines at 1440, so
-     laying each column out on its own put every illustration panel on a
-     different line and left a different gap under every description. The
-     band declares three rows (header, description, panel) and each column
-     adopts them with grid-template-rows: subgrid, so the description block
-     is one shared height and all four panels start on the same line at any
-     width. Row bands are repeated per wrapped row at the narrower column
-     counts, so the same alignment holds two-up and stacked.
-     The columns start flush under the rule and carry their own top padding,
-     so each divider runs the full height of the band, from the rule to the
-     bottom of the panels, instead of stopping short. */
-  .dga-cols { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
-    grid-template-rows: auto auto auto;
-    margin-top: 0; margin-bottom: 0; gap: 0; box-sizing: border-box; }
-  /* the buttons keep class dgx-card so js/digest-stride.js still binds them,
-     so every card rule it sets has to be unwound here */
-  /* align-items:stretch is not decoration: Chrome's UA sheet sets
-     align-items:center on <button>, which centred each row's content in the
-     shared row band and pushed the two-line descriptions 10.9px lower than
-     the three-line one even though the rows themselves lined up. */
-  .dga-cols .dga-col { display: grid; grid-template-rows: subgrid; grid-row: span 3;
-    align-items: stretch; justify-items: stretch;
-    min-width: 0; gap: 0; width: auto; text-align: left; border-radius: 0; background: transparent;
-    padding: 40px 24px 0; border: 0; border-left: 1px solid var(--border);
-    transition: border-color var(--hover-dur, .25s) var(--hover-ease, ease); }
-  .dga-cols .dga-col:first-child { border-left: 0; }
-  .dga-cols .dga-col:hover { background: transparent; border-color: var(--border); }
-  .dga-cols .dga-col:first-child:hover { border-color: transparent; }
-  .dga-top { display: flex; align-items: center; gap: 10px; }
-  .dga-ic { flex: none; display: grid; place-items: center; width: 30px; height: 30px;
-    border: 1px solid var(--border); color: var(--accent); }
-  .dga-ic svg { width: 16px; height: 16px; }
-  /* the name row has to hold on ONE line in every column and the longest is
-     "04 THE EVERYTHING" with its separator, at 20 characters: the column's content width at 1440
-     less two 30px tiles and two 10px gaps is the whole budget, so fattening
-     the tiles, the gap or the tracking wraps column 04 alone and drops its
-     title out of line with the other three. */
-  .dga-name { min-width: 0; font-family: var(--mono); font-size: 10.5px; letter-spacing: .1em;
-    white-space: nowrap; color: var(--sd-ink, #fafafa); }
-  .dga-arrow { flex: none; margin-left: auto; display: grid; place-items: center;
-    width: 30px; height: 30px; border: 1px solid var(--border);
-    color: var(--sd-dim, rgba(250, 250, 250, .62));
-    transition: color var(--hover-dur, .25s) var(--hover-ease, ease),
-                border-color var(--hover-dur, .25s) var(--hover-ease, ease); }
-  .dga-arrow svg { width: 16px; height: 16px; }
-  .dga-col:hover .dga-arrow { color: var(--accent); border-color: rgba(var(--accent-rgb), .5); }
-  .dga-body { display: block; }
-  .dga-title { display: block; margin-top: 22px; font-family: var(--display); font-weight: 600;
-    font-size: 17px; line-height: 1.25; letter-spacing: -.01em; color: var(--sd-ink, #fafafa); }
-  .dga-sum { display: block; margin-top: 10px; font-size: 13.5px; line-height: 1.62;
-    color: var(--sd-dim, rgba(250, 250, 250, .62)); }
-  /* the description row is one shared height across the band, so every panel
-     opens on the same line. The short descriptions carry the slack as air
-     under their last line, which is the intended cost of the alignment. */
-  .dga-fig { display: block; margin-top: 28px; border: 1px solid var(--border); background: #141414;
-    color: rgba(250, 250, 250, .34); }
-  .dga-fig svg { display: block; width: 100%; height: auto; }
-  .dga-fig .dga-acc { stroke: var(--accent); stroke-width: 1.5; }
-  .dga-st .dgx-archive { display: block; width: max-content; margin: 64px auto 0; }
-  @media (max-width: 1080px) {
-    /* two row bands of the same three rows, so the pairs stay aligned */
-    .dga-cols { grid-template-columns: repeat(2, minmax(0, 1fr));
-      grid-template-rows: repeat(2, auto auto auto); }
-    .dga-cols .dga-col:nth-child(odd) { border-left: 0; }
-    .dga-cols .dga-col:nth-child(n+3) { margin-top: 40px; padding-top: 40px; border-top: 1px solid var(--border); }
+  @media (max-width: 380px) {
+    body.page-recap .hero.dgh-hero { padding: 5.5rem 1.25rem 2rem; }
+    .dgh-title { font-size: 2.375rem; }
+    .dgh-turn { font-size: 1.375rem; }
   }
-  @media (max-width: 820px) {
-    .dga-rule, .dga-cols { padding-inline: 16px; }
-    .dga-rule::before { left: 16px; }
-    .dga-rule::after { right: 16px; }
-  }
-  @media (max-width: 640px) {
-    .dga-cols { grid-template-columns: minmax(0, 1fr);
-      grid-template-rows: repeat(4, auto auto auto); }
-    .dga-cols .dga-col, .dga-cols .dga-col:nth-child(odd) { padding: 40px 0 0; border-left: 0; }
-    /* one stack, so every column but the first takes the divider, instead of
-       inheriting the two-up rule where only 03 and 04 got one */
-    .dga-cols .dga-col, .dga-cols .dga-col:nth-child(n+3) { margin-top: 40px; padding-top: 40px; border-top: 1px solid var(--border); }
-    .dga-cols .dga-col:first-child { margin-top: 0; border-top: 0; }
-    section.dgx-st.dga-band { padding-top: 72px; padding-bottom: 80px; }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .dga-cols .dga-col, .dga-arrow { transition: none; }
-  }
+
 </style>
 <script src="js/admin-gate.js"></script>
   <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://starknetthesis.io/#organization","name":"Starknet Thesis","url":"https://starknetthesis.io/","logo":{"@type":"ImageObject","url":"https://starknetthesis.io/apple-icon-180x180.png","width":180,"height":180},"sameAs":["https://x.com/Lyskey","https://starknetresearch.substack.com/"]},{"@type":"Person","@id":"https://starknetthesis.io/#lyskey","name":"Lyskey","url":"https://x.com/Lyskey","sameAs":["https://x.com/Lyskey","https://starknetresearch.substack.com/"]},{"@type":"WebSite","@id":"https://starknetthesis.io/#website","name":"Starknet Thesis: Privacy, Quantum Security, BTCFi","description":"An independent thesis on Starknet's three differentiators: private transfers via STRK20, a post-quantum proving system, and Bitcoin staking and DeFi (BTCFi).","url":"https://starknetthesis.io/","publisher":{"@id":"https://starknetthesis.io/#organization"},"inLanguage":"en"},{"@type":"CollectionPage","@id":"https://starknetthesis.io/digest#webpage","url":"https://starknetthesis.io/digest","name":"Starknet Digest: Weekly Roundups and Research","description":"Weekly roundups, monthly digests and research notes covering what is shipping and changing across the Starknet ecosystem, from the Starknet Research newsletter.","isPartOf":{"@id":"https://starknetthesis.io/#website"},"breadcrumb":{"@id":"https://starknetthesis.io/digest#breadcrumb"},"primaryImageOfPage":{"@id":"https://starknetthesis.io/digest#primaryimage"},"mainEntity":{"@id":"https://starknetthesis.io/digest#newsletter"},"isBasedOn":{"@id":"https://starknetthesis.io/digest#newsletter"},"about":{"@type":"Thing","name":"Starknet","sameAs":"https://www.starknet.io/"},"author":{"@id":"https://starknetthesis.io/#lyskey"},"publisher":{"@id":"https://starknetthesis.io/#organization"},"inLanguage":"en"},{"@type":"ImageObject","@id":"https://starknetthesis.io/digest#primaryimage","url":"https://starknetthesis.io/assets/og-default.png","contentUrl":"https://starknetthesis.io/assets/og-default.png","width":1200,"height":630},{"@type":"BreadcrumbList","@id":"https://starknetthesis.io/digest#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://starknetthesis.io/"},{"@type":"ListItem","position":2,"name":"Digest","item":"https://starknetthesis.io/digest"}]},{"@type":"Blog","@id":"https://starknetthesis.io/digest#newsletter","name":"Starknet Research","description":"Weekly roundups, monthly recaps and research notes on the Starknet ecosystem. Published on Substack and indexed here.","url":"https://starknetresearch.substack.com/","author":{"@id":"https://starknetthesis.io/#lyskey"},"publisher":{"@id":"https://starknetthesis.io/#organization"},"inLanguage":"en"}]}</script>
@@ -518,42 +426,48 @@
   <div class="vc-in">
     <a href="/" class="vc-logo" aria-label="Starknet Thesis, home"><img src="/assets/hero/logo.svg" alt="Starknet Thesis" width="200" height="26"></a>
     <nav class="vc-nav" aria-label="Main"><a href="/privacy">Privacy</a><a href="/quantum">Quantum</a><a href="/btcfi">BTCFi</a><a href="/strk">STRK</a><a href="/ecosystem">Ecosystem</a><a href="/digest" class="active">Digest</a></nav>
-    <a href="https://starknetresearch.substack.com" target="_blank" rel="noopener" class="vc-cta" data-umami-event="cta-subscribe">Subscribe <i aria-hidden="true"></i></a>
+    <a href="https://starknetresearch.substack.com" target="_blank" rel="noopener" class="vc-cta dg-glass dg-glass--primary" data-umami-event="cta-subscribe">Subscribe <i aria-hidden="true"></i></a>
     <button type="button" class="vc-burger" aria-label="Open menu" aria-expanded="false" aria-controls="vc-mobile" onclick="var h=this.closest('header');var o=h.classList.toggle('open');this.setAttribute('aria-expanded',o);this.setAttribute('aria-label',o?'Close menu':'Open menu')"><span></span><span></span></button>
     <nav class="vc-mobile" id="vc-mobile" aria-label="Main"><a href="/privacy">Privacy</a><a href="/quantum">Quantum</a><a href="/btcfi">BTCFi</a><a href="/strk">STRK</a><a href="/ecosystem">Ecosystem</a><a href="/digest">Digest</a><a href="https://starknetresearch.substack.com" target="_blank" rel="noopener" class="vc-cta">Subscribe <i aria-hidden="true"></i></a></nav>
   </div>
 </header>
 
 <!-- HERO -->
-<!-- D5: /btcfi's hero frame, ported slot for slot. Kicker and display top
-     left, the particle centrepiece filling the middle, the mono note plus the
-     CTA pair bottom left, the mono stat readout over the turn line bottom
-     right. The retired composition (a tiled mono word field with a white
-     knockout band through the display) is described in the dgh- CSS block.
+<!-- D5, recomposed 2026-09-04: three zones. Zone one is the editorial column
+     top left (kicker, display, one argument paragraph, the CTA pair, in
+     reading order); zone two is the particle centrepiece on its full-bleed
+     stage, centre right, untouched; zone three is the baseline strip across
+     the hero's foot (generated counters left, the streak signature right,
+     one baseline, split from the scene by a hairline). The corner-scatter
+     composition this replaces is described in the dgh- CSS block.
      Nothing here paints a ground: js/eco-backdrop.js is a FIXED canvas at
      z-index 0 and every layer above it stays transparent.
      The centrepiece container is decorative and inert: aria-hidden, pointer
      events off. If WebGL is missing or the reader prefers reduced motion the
-     module either skips or paints one settled frame, and the copy in the four
-     corners is unaffected either way. -->
+     module either skips or paints one settled frame, and the copy is
+     unaffected either way. -->
 <div class="hero dgh-hero">
   <div class="dgh-stage" id="dghStage" aria-hidden="true"></div>
 
-  <p class="dgh-kicker">Digest</p>
-  <!-- the id is the search index's anchor for this page's opening claim
-       (public/data/search-index.json); it stays on the display heading. -->
-  <h1 id="never-miss-whatsshipping-on-starknet" class="dgh-title">Never miss what's shipping on Starknet.</h1>
-
-  <div class="dgh-left">
-    <p class="dgh-note">A thesis only holds if the ecosystem actually ships behind it.</p>
-    <p class="dgh-body">Starknet is among the very few ecosystems shipping this much, this consistently. The digest is the record of it: weekly roundups, monthly recaps, and original research.</p>
+  <!-- Zone one: the editorial column, in reading order. The old hero
+       scattered these across three corners; the kicker note and the body
+       paragraph are folded into one argument (both sentences verbatim). -->
+  <div class="dgh-col">
+    <p class="dgh-kicker">Digest</p>
+    <!-- the id is the search index's anchor for this page's opening claim
+         (public/data/search-index.json); it stays on the display heading. -->
+    <h1 id="never-miss-whatsshipping-on-starknet" class="dgh-title">Never miss what's shipping on Starknet.</h1>
+    <p class="dgh-body">A thesis only holds if the ecosystem actually ships behind it. Starknet is among the very few ecosystems shipping this much, this consistently, and the digest is the record of it: weekly roundups, monthly recaps, and original research.</p>
     <div class="dgh-cta">
-      <a class="dgh-pill" href="https://starknetresearch.substack.com/subscribe" target="_blank" rel="noopener">Subscribe</a>
-      <a class="dgh-tile" href="#latest-from-the-starknet-ecosystem" aria-label="Read the latest"><img src="assets/hero/send-icon.svg" alt="" width="51" height="51"></a>
+      <a class="dgh-pill dg-glass dg-glass--primary" href="https://starknetresearch.substack.com/subscribe" target="_blank" rel="noopener">Subscribe</a>
+      <a class="dgh-pill dg-glass" href="#latest-from-the-starknet-ecosystem">Read the latest</a>
     </div>
   </div>
 
-  <div class="dgh-right">
+  <!-- Zone two is the particle envelope (js/digest-hero-mark.js) on the
+       stage above, centre right, untouched. Zone three: the baseline strip
+       across the hero's full width, split from the scene by a hairline. -->
+  <div class="dgh-strip">
     <!-- The two numbers are stamped at build time by scripts/build-digest.js
          from data/recap.json (see the DIGEST COUNTS block there): the weekly
          figure is the highest roundup number in the archive's titles, the
@@ -564,89 +478,21 @@
   </div>
 </div>
 
-<!-- The full-viewport About statement that used to sit here went on 2026-09-04:
-     it restated the hero subtitle a screen later, so the page said the same
-     thing twice before the reader reached anything new. The hero's dgh-note
-     and dgh-body carry that content now. -->
-<!-- The four reading tracks, D2: their own section on one deliberate
-     vertical scale. -->
-<section class="block ab-block dgx-st dga-st dga-band" aria-label="The four reading tracks"><div class="wrap dgx-wrap">
-  <div class="dga-rule" aria-hidden="true"></div>
-  <!-- The four reading tracks as a four-column feature band, on the layout
-       /privacy uses for .th-pm-sec--law: centred headline, a dotted rule,
-       then columns that run to about 21px of the viewport edge at 1440.
-       They keep their data-filter values and the class dgx-card, which is
-       what js/digest-stride.js binds to (tab switch plus scroll to the
-       archive). Buttons take phrasing content only, so the column titles
-       are spans and not headings. -->
-  <div class="dga-cols">
-    <button type="button" class="dgx-card dga-col" data-filter="monthly">
-      <span class="dga-top">
-        <span class="dga-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15"/><path d="M3.5 10h17"/><path d="M8 3v4M16 3v4"/></svg></span>
-        <span class="dga-name">01 &middot; THE MONTHLY</span>
-        <span class="dga-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></span>
-      </span>
-      <span class="dga-body">
-        <span class="dga-title">The month in one read</span>
-        <span class="dga-sum">Every monthly recap, from the first to the latest, each one the whole month condensed into a single sitting.</span>
-      </span>
-      <span class="dga-fig" aria-hidden="true"><svg viewBox="0 0 260 200" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round" stroke-linecap="round"><path d="M40 58 130 22l90 36-90 36z"/><path d="M40 58v92l90 36 90-36V58"/><path d="M130 94v92"/><path class="dga-acc" d="M85 76 130 94l45-18"/><path d="M64 82v66M88 94v66M112 106v66"/><path d="M196 82v66M172 94v66M148 106v66"/><path d="M40 92 130 128 220 92"/><path d="M40 122 130 158 220 122"/></svg></span>
-    </button>
-    <button type="button" class="dgx-card dga-col" data-filter="weekly">
-      <span class="dga-top">
-        <span class="dga-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V9M9 19V5M14 19v-7M19 19v-11"/></svg></span>
-        <span class="dga-name">02 &middot; THE WEEKLY</span>
-        <span class="dga-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></span>
-      </span>
-      <span class="dga-body">
-        <span class="dga-title">The week, accounted for</span>
-        <!-- the number is stamped at build time by scripts/build-digest.js;
-             see the hero stat note. -->
-        <span class="dga-sum"><span data-count="weekly-roundups">233</span> roundups and counting, every week accounted for.</span>
-      </span>
-      <span class="dga-fig" aria-hidden="true"><svg viewBox="0 0 260 200" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round" stroke-linecap="round"><path d="M30 150 130 104l100 46-100 46z"/><path d="M58 138v-28l20 9v28z"/><path d="M58 110 78 101"/><path d="M88 152v-52l20 9v52z"/><path d="M88 100 108 91"/><path class="dga-acc" d="M118 166v-84l20 9v84z"/><path class="dga-acc" d="M118 82 138 73"/><path d="M148 152v-46l20 9v46z"/><path d="M148 106 168 97"/><path d="M178 138v-24l20 9v24z"/><path d="M178 114 198 105"/></svg></span>
-    </button>
-    <button type="button" class="dgx-card dga-col" data-filter="research">
-      <span class="dga-top">
-        <span class="dga-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="10.5" r="6"/><path d="m15 15 5 5"/></svg></span>
-        <span class="dga-name">03 &middot; THE RESEARCH</span>
-        <span class="dga-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></span>
-      </span>
-      <span class="dga-body">
-        <span class="dga-title">The long-form work</span>
-        <span class="dga-sum">Original research and the deep dives the thesis is argued from, published in full.</span>
-      </span>
-      <span class="dga-fig" aria-hidden="true"><svg viewBox="0 0 260 200" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round" stroke-linecap="round"><path d="M46 122 126 84l88 40-80 38z"/><path d="M46 122v14l88 40 80-38v-14"/><path d="M56 96 136 58l88 40-80 38z"/><path d="M66 70 146 32l88 40-80 38z"/><path class="dga-acc" d="M104 66a26 26 0 1 0 52 0 26 26 0 1 0-52 0z"/><path class="dga-acc" d="m154 78 22 16"/></svg></span>
-    </button>
-    <button type="button" class="dgx-card dga-col" data-filter="all">
-      <span class="dga-top">
-        <span class="dga-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h18v4H3z"/><path d="M5 11v9h14v-9"/><path d="M10 15h4"/></svg></span>
-        <span class="dga-name">04 &middot; THE EVERYTHING</span>
-        <span class="dga-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></span>
-      </span>
-      <span class="dga-body">
-        <span class="dga-title">The whole archive</span>
-        <span class="dga-sum">Every issue in one feed, newest first, with nothing filtered out of it.</span>
-      </span>
-      <span class="dga-fig" aria-hidden="true"><svg viewBox="0 0 260 200" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round" stroke-linecap="round"><path d="M40 74 106 44l66 30-66 30z"/><path d="M40 74v30l66 30 66-30V74"/><path d="M88 118 154 88l66 30-66 30z"/><path d="M88 118v30l66 30 66-30v-30"/><path class="dga-acc" d="M74 66 106 81l32-15"/><path class="dga-acc" d="M122 110l32 15 32-15"/><path d="M40 88 106 118 172 88"/></svg></span>
-    </button>
-  </div>
-    <a class="dgx-archive" href="#latest-from-the-starknet-ecosystem">Go to the archive</a>
-</div></section>
-
 <!-- THE ARCHIVE: the page's single issue list. A separate "The latest issues"
      grid (section id="wk") used to sit above this one showing the same six
      newest entries a screen apart; it went on 2026-09-04 and this filtered
      feed, with its Load more and its counter, is the one archive. -->
 <section class="dg-feed">
-  <div class="th-pm-head"><span class="th-pm-marker"></span><h2 id="latest-from-the-starknet-ecosystem" class="th-pm-title">Latest from the Starknet ecosystem</h2></div>
+  <!-- kicker above the title, the position every other section of the site
+       gives its mono label; the filter row stays below the h2 -->
   <p class="th-pm-eyebrow">The newsletter</p>
+  <div class="th-pm-head"><span class="th-pm-marker"></span><h2 id="latest-from-the-starknet-ecosystem" class="th-pm-title">Latest from the Starknet ecosystem</h2></div>
 
   <div class="chart-toggle" role="tablist" id="recapTabs">
-    <button class="toggle-btn active" data-filter="all" role="tab">All</button>
-    <button class="toggle-btn" data-filter="monthly" role="tab">Monthly</button>
-    <button class="toggle-btn" data-filter="weekly" role="tab">Weekly</button>
-    <button class="toggle-btn" data-filter="research" role="tab">Research</button>
+    <button class="toggle-btn dg-glass active" data-filter="all" role="tab">All</button>
+    <button class="toggle-btn dg-glass" data-filter="monthly" role="tab">Monthly</button>
+    <button class="toggle-btn dg-glass" data-filter="weekly" role="tab">Weekly</button>
+    <button class="toggle-btn dg-glass" data-filter="research" role="tab">Research</button>
   </div>
 
   <div class="recap-grid" id="recapGrid">
@@ -694,7 +540,7 @@
         <input type="email" name="email" placeholder="you@domain.com" aria-label="Email" required>
       </label>
       <div class="vc-acts">
-        <button type="submit" class="vc-btn vc-btn-dark">Subscribe <i aria-hidden="true"></i></button>
+        <button type="submit" class="vc-btn vc-btn-dark dg-glass dg-glass--primary">Subscribe <i aria-hidden="true"></i></button>
         <a class="vc-btn vc-btn-light" href="/">Read the thesis <i aria-hidden="true"></i></a>
       </div>
     </form>
@@ -901,6 +747,5 @@
 <script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.185.0/build/three.module.js"}}</script>
 <script type="module" src="js/eco-backdrop.js"></script>
 <script type="module" src="js/digest-hero-mark.js"></script>
-<script src="js/digest-stride.js" defer></script>
 </body>
 </html>
