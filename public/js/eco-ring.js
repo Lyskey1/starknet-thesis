@@ -16,13 +16,16 @@ if (MOUNT) {
   ];
   /* the ring: card size in world units, and the gap between neighbours. The
      radius is solved from the member count so that gap never changes. */
-  const CARD_W = 2.15, CARD_H = 3.05, CARD_GAP = 0.34, CARD_LIFT = 0.05, CARD_CURVE = 1;
+  /* 2026-09-05 fit pass: cards about 22% smaller so title, tabs, ring and
+     the focused caption share one 1440x900 viewport; the water reflection
+     is a true mirror, so it scales with the cards by itself. */
+  const CARD_W = 1.68, CARD_H = 2.38, CARD_GAP = 0.30, CARD_LIFT = 0.05, CARD_CURVE = 1;
   /* how many cards either side of the front stay lit: the rest sink into the
      dark rather than crowding the frame */
   const LIT_FROM = 2.1, LIT_TO = 3.1;
   /* the lens stands INSIDE the ring, as the reference's does: the cards face
      the axis, so from within the arc reads concave and fills the frame. */
-  const FOV = 56, CAM_H = 1.52, CAM_INSET = 0.70;
+  const FOV = 56, CAM_H = 1.22, CAM_INSET = 0.70;
   const AUTO_SPIN = 0.035, DRAG_SPEED = 0.0085, DAMP = 0.9, SNAP = 0.10;
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -379,13 +382,19 @@ if (MOUNT) {
       const p = _v.clone().project(camera);
       const facing = _v.clone().sub(camera.position).normalize();
       const near = p.z < 1 && Math.abs(p.x) < 0.62;
+      /* lit cards keep a floor of 0.95 label opacity so the accent role
+         stays over the 4.6:1 line on neighbours; only the cards already
+         sinking into the dark fade their bands with them */
+      const n2 = cards.length || 1;
+      let dd = Math.abs(i - front); dd = Math.min(dd, n2 - dd);
+      const litHere = 1 - Math.min(1, Math.max(0, (dd - LIT_FROM) / (LIT_TO - LIT_FROM)));
       const falloff = Math.max(0, 1 - Math.abs(p.x) / 0.62);
       const y = (-p.y * 0.5 + 0.5) * rect.height;
       /* the label anchors by its BOTTOM edge (translate -100%), so the
          two-line handle + role band must clear the tab row by its own
          height, not just its baseline */
       const clear = y - l.el.offsetHeight > guard;
-      l.el.style.opacity = (near && clear) ? String(falloff * (i === front ? 1 : 0.55)) : '0';
+      l.el.style.opacity = (near && clear) ? String(i === front ? 1 : Math.max(0.95 * litHere, falloff * 0.55)) : '0';
       l.el.style.transform = 'translate(-50%,-100%) translate(' + ((p.x * 0.5 + 0.5) * rect.width) + 'px,' + y + 'px)';
       l.el.classList.toggle('is-front', i === front);
     });
