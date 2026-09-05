@@ -1351,93 +1351,108 @@
   }
 
   /* ============================================================
-     HERO (bfh-): the landing hero's layout, ported element for element.
+     HERO (bfh-): the strk hero's three-zone frame, ported name for name
+     (2026-09-05): the editorial column top left (eyebrow, display, one
+     paragraph), the particle bitcoin mark on the right-column stage
+     (js/btcfi-hero-mark.js), and a baseline strip across the container:
+     three live stats left, the section 03 claim right at half the display
+     size. The wrap is the site's 1392px container, so the eyebrow, the
+     mark and the strip sit on the same lines as the nav and the footer
+     (the old 1.667vw gutter started 20px inside the container; fixed).
      Sits at the END of this inline <style> on purpose: every linked sheet
      loads before it, and css/styles.css carries its own .hero rules that
      would otherwise win on source order.
-     Geometry is the landing artboard's, in the same vw units
-     (Figma pixels / 14.4): left/right gutter 1.667vw, display 4.6vw at
-     weight 300 over 52vw, turn line 4.2vw bold uppercase over 38vw, mono
-     blocks in Mulish, CTA pill 4.167vw/1.111vw beside a 3.542vw icon tile.
-     The two top offsets carry a px floor so the copy can never slide under
-     the floating header pill on a narrow desktop window; at 1440 the floor
-     is inert and the offsets are the landing's exactly.
      Everything stays transparent: js/eco-backdrop.js paints the flame
      shader on a fixed canvas at z-index 0 underneath. */
-  /* FULL VIEWPORT, HEADER OVER IT, exactly as the landing frames its own
-     hero. The header pill is NOT fixed on these pages: css/eco-stage.css
-     declares `body > *:not(.eco-bd) { position: relative; z-index: 1 }`, which
-     out-specifies vesper-chrome's `position: fixed`, so the pill occupies
-     --bfh-chrome pixels of flow above the hero. The negative margin gives that
-     strip back to the hero so it is a true 100vh, and z-index 0 (body-scoped,
-     because the eco-stage rule would otherwise win) puts the hero back UNDER
-     the pill so the pill still reads over it. The flame canvas is z-index 0
-     too and earlier in the DOM, so it stays behind. */
-  /* --bfh-chrome is 0 since the 2026-09-05 baseline rule: the nav is truly
-     fixed with a body offset, so the old pull-up double-counted 51px and
-     the hero overshot the fold by 13. Height, not min-height: exactly one
-     viewport under the nav; below 700px viewport height it grows to fit. */
-  body.page-btcfi { --bfh-chrome: 0px; }
-  .hero { position: relative; display: block; height: calc(100svh - var(--vcnav-h, 64px)); min-height: 0;
-    max-width: none; margin: 0; padding: 0;
+  /* HERO = EXACTLY ONE VIEWPORT (2026-09-05 baseline rule): height, not
+     min-height. The scene band takes the flex slack, so the column and the
+     mark center between the nav and the strip; the strip pins to the bottom
+     edge under a fixed 32px pad (24px at 375), and the next section starts
+     at the fold. Below 700px viewport HEIGHT the hero grows to its content.
+     --bfh-chrome stays 0: the nav is truly fixed with a body offset. */
+  body.page-btcfi { --bfh-chrome: 0px; --bfh-u: min(1vw, 14.4px); }
+  .hero { position: relative; display: flex; flex-direction: column;
+    height: calc(100svh - var(--vcnav-h, 64px)); min-height: 0;
+    max-width: none; margin: 0; padding: 0 0 32px;
     overflow: hidden; text-align: left; background: transparent; }
   @media (max-height: 700px) {
-    .hero { height: auto; min-height: calc(100svh - var(--vcnav-h, 64px)); }
+    .hero { height: auto; min-height: calc(100svh - var(--vcnav-h, 64px)); padding-top: calc(2 * var(--bfh-u)); }
+    .bfh-scene { min-height: 54svh; }
   }
   body.page-btcfi .hero { z-index: 0; }
   /* styles.css hangs a centred radial glow off .hero::before for the centred
      heroes. This hero is not centred and carries its own light, so it goes. */
   .hero::before { display: none; }
 
-  .bfh-stage { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
-  .bfh-stage canvas { display: block; width: 100%; height: 100%; }
-
-  .bfh-kicker { position: absolute; top: max(7.2vw, 88px); left: 1.667vw; z-index: 2; margin: 0;
-    font-family: var(--vc-tag); font-weight: 400; font-size: max(0.9vw, 11px); line-height: 1.5;
+  .bfh-wrap { width: calc(100% - 48px); max-width: 1392px; margin: 0 auto;
+    display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; }
+  .bfh-scene { position: relative; display: flex; align-items: center; flex: 1 1 auto; min-height: 0; }
+  /* the stage is the RIGHT COLUMN: everything from the editorial column's
+     right edge (47u) to the container edge, full scene height. The renderer
+     centres its ring in the mount and fits it to 80% of the mount height
+     (the 2026-09-05 mark size rule: ring outer diameter = 80% of the column
+     between the nav and the baseline strip), so the ring is centred in the
+     free column and can never touch the nav or the strip. */
+  .bfh-stage { position: absolute; top: 0; bottom: 0; left: calc(47 * var(--bfh-u)); right: 0;
+    z-index: 0; pointer-events: none; overflow: hidden; }
+  .bfh-stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .bfh-col { position: relative; z-index: 2; width: calc(47 * var(--bfh-u));
+    display: flex; flex-direction: column; align-items: flex-start; }
+  .hero .hero-eyebrow { margin: 0; font-family: var(--sans); font-weight: 400;
+    font-size: max(calc(0.9 * var(--bfh-u)), 11px); line-height: 1.5;
     letter-spacing: .2em; text-transform: uppercase; color: var(--accent); }
-  .bfh-title { position: absolute; top: max(9.028vw, 114px); left: 1.667vw; z-index: 2; margin: 0;
-    width: 88vw; max-width: none; font-family: var(--vc-sans); font-weight: 300; font-size: 3.9vw;
-    line-height: 1.02; letter-spacing: normal; text-transform: none; color: var(--white); }
+  .hero .hero-title { margin: var(--bfh-u) 0 0; font-family: var(--display); font-weight: 300;
+    font-size: calc(4.6 * var(--bfh-u)); line-height: .9; letter-spacing: normal;
+    text-transform: none; color: var(--white); max-width: none; text-align: left; }
+  .hero .hero-subtitle { margin: calc(1.6 * var(--bfh-u)) 0 0; max-width: calc(32 * var(--bfh-u));
+    font-family: var(--sans); font-weight: 300; font-size: max(calc(1.06 * var(--bfh-u)), 15px);
+    line-height: 1.7; color: rgba(250, 250, 250, .72); text-align: left; }
+  /* live idle-capital slot inside the paragraph, same hook as the <1% band */
+  .hero .idle-cap { font-variant-numeric: tabular-nums; white-space: nowrap; }
 
-  .bfh-left { position: absolute; left: 1.667vw; bottom: 2.153vw; z-index: 2; width: 30vw;
-    display: flex; flex-direction: column; align-items: flex-start; gap: 1.25vw; }
-  .bfh-note { margin: 0; max-width: none; font-family: var(--vc-sans); font-weight: 400;
-    font-size: max(1vw, 14px); line-height: 1.65; letter-spacing: 0;
-    text-transform: none; color: rgba(250, 250, 250, .7); }
+  /* the baseline strip: three live stats left, the claim right, one shared
+     baseline under a container-wide hairline. The stats mirror the Live
+     on-chain block's snapshot (data-bm-hero, filled by the same setStat that
+     paints the metric boxes: one snapshot, one fetch, one vintage). */
+  .bfh-strip { position: relative; z-index: 2; margin-top: 0;
+    display: flex; align-items: baseline; justify-content: space-between; gap: calc(2 * var(--bfh-u));
+    border-top: 1px solid rgba(250, 250, 250, .16); padding-top: calc(1.25 * var(--bfh-u)); }
+  .bfh-stats { display: flex; flex-wrap: wrap; gap: calc(2 * var(--bfh-u)); margin: 0; padding: 0; list-style: none; }
+  .bfh-stats li { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+  .bfh-stats b { font-family: var(--display); font-weight: 300; font-size: max(calc(1.7 * var(--bfh-u)), 22px);
+    line-height: 1; letter-spacing: -.01em; color: var(--white); font-variant-numeric: tabular-nums; }
+  .bfh-stats span { font-family: var(--mono), monospace; font-size: max(calc(0.68 * var(--bfh-u)), 10px);
+    letter-spacing: .14em; text-transform: uppercase; color: rgba(250, 250, 250, .72); max-width: 16ch; }
+  /* half the 4.6 display: a signature, not a rival headline */
+  .bfh-turn { margin: 0; text-align: right; font-family: var(--display); font-weight: 700;
+    font-size: calc(2.3 * var(--bfh-u)); line-height: .95; letter-spacing: -.01em;
+    text-transform: uppercase; white-space: nowrap; color: #fafafa; }
 
-  /* main's two anchors on the site's glass tier (dg-glass, the chrome's
-     control surface); both land with the nav offset via scroll-padding */
-  .bfh-cta { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-  .bfh-glass { display: inline-flex; align-items: center; padding: 12px 20px;
-    font-family: var(--vc-sans); font-weight: 500; font-size: max(1vw, 14px); line-height: 1.2;
-    white-space: nowrap; text-decoration: none; color: var(--white); }
-  .bfh-glass:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
-
-  /* Below the artboard the vw offsets stop meaning anything (52vw of a 390px
-     phone is 203px), so the frame becomes a plain top-to-bottom stack sized
-     in rem, exactly as the landing's max-lg: rules do. The centrepiece stays
-     behind it, dimmed by the renderer, so the copy keeps its contrast. */
+  /* below the artboard: a rem-sized stack. Unlike the strk twin the stage
+     stays, full-bleed BEHIND the stack (as shipped on this page): the
+     renderer dims itself to 0.62 below 980 and the copy keeps its contrast. */
   @media (max-width: 980px) {
-    /* align-items and text-align are reset off styles.css's centred .hero:
-       this stack is left aligned, the way the landing's max-lg: layout is.
-       The kicker and display stay together at the top and .bfh-left takes the
-       slack with margin-top:auto, so the two bottom blocks sit on the floor
-       rather than the four being spread evenly down the frame. */
-    .hero { height: auto; min-height: 100vh; display: flex; flex-direction: column;
-      justify-content: flex-start; align-items: stretch; text-align: left;
-      padding: 6.5rem 1.5rem 2rem; }
-    .bfh-kicker, .bfh-title, .bfh-left { position: static; width: auto; }
-    .bfh-kicker { font-size: .75rem; }
-    .bfh-title { margin-top: .75rem; font-size: 2.75rem; }
-    .bfh-left { margin-top: auto; padding-top: 1.5rem; }
-    .bfh-left { align-items: flex-start; gap: 1rem; }
-    .bfh-note { width: auto; text-align: left; font-size: .875rem; }
-    .bfh-cta { width: 100%; gap: .5rem; }
-    .bfh-glass { padding: .8rem 1.25rem; font-size: .9375rem; }
+    .hero { height: auto; min-height: calc(100svh - var(--vcnav-h, 64px)); padding: 2.5rem 1.5rem 32px; overflow: visible; }
+    .bfh-wrap { width: 100%; max-width: none; }
+    .bfh-scene { min-height: 0; position: static; }
+    .bfh-stage { left: 0; overflow: hidden; }
+    .bfh-col { width: auto; }
+    .hero .hero-eyebrow { font-size: .75rem; }
+    .hero .hero-title { margin-top: .75rem; font-size: 2.75rem; }
+    .hero .hero-subtitle { margin-top: 1rem; max-width: 40rem; font-size: 1rem; }
+    .bfh-strip { margin-top: 2rem; padding-top: 1.25rem; }
+    .bfh-stats { gap: 1.5rem; }
+    .bfh-stats b { font-size: 1.5rem; }
+    .bfh-stats span { font-size: 10px; }
+    .bfh-turn { font-size: 1.375rem; }
+  }
+  @media (max-width: 700px) {
+    .bfh-strip { flex-direction: column; align-items: flex-start; gap: 1rem; }
+    .bfh-turn { text-align: left; font-size: 1.25rem; white-space: normal; }
   }
   @media (max-width: 380px) {
-    .hero { padding: 5.5rem 1.25rem 2rem; }
-    .bfh-title { font-size: 2.375rem; }
+    .hero { padding: 2rem 1.25rem 24px; }
+    .hero .hero-title { font-size: 2.375rem; }
   }
 
   /* ==========================================================================
@@ -1952,34 +1967,45 @@
 <!-- HERO -->
 <!-- ============================================================ -->
 <div class="hero">
-  <!-- HERO: an element-for-element port of the landing hero
-       (src/views/home/hero/hero.tsx). Same frame, same slots, same vw-scaled
-       type: the kicker and the display half of the statement top left, the
-       mono support paragraph and the CTA pair bottom left, the mono readout
-       and the accent turn line bottom right, and the particle centrepiece
-       filling the middle. One deviation from the landing, deliberate: the
-       landing hangs its CTA under the turn line bottom right, but this hero's
-       bottom right already carries two blocks, so the pill and its icon tile
-       sit bottom left under the note.
-       Nothing here paints a ground. The flame shader (js/eco-backdrop.js) is
-       a FIXED canvas at z-index 0 and every layer above it stays transparent:
-       no opaque fill, no isolation. -->
-  <div class="bfh-stage" id="bfhStage" aria-hidden="true"></div>
-
-  <p class="bfh-kicker">Bitcoin's next chapter</p>
-  <!-- the id is the search index's anchor for this page's opening claim
-       (public/data/search-index.json); it stays on the display heading. -->
-  <h1 id="bitcoin-is-the-best-asset-to" class="bfh-title">Bitcoin is the best asset to hold.<br>It's time to make it the best to use.</h1>
-
-  <div class="bfh-left">
-    <!-- main's hero subline verbatim; the figure is the SAME live slot as
-         the <1% band's (one number, one story, one fetch). -->
-    <p class="bfh-note">More than <span class="idle-cap" data-idle-cap data-perishable="live"
-       data-src="https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&amp;vs_currencies=usd&amp;include_market_cap=true"
-       data-checked="2026-08-23" data-as-of="2026-08-23">$1.5T</span> in capital sitting idle. Starknet is building the execution layer Bitcoin has always needed: private, scalable, and built to last.</p>
-    <div class="bfh-cta">
-      <a class="bfh-glass dg-glass" href="#bitcoins-unfinished-mission">The unfinished mission</a>
-      <a class="bfh-glass dg-glass" href="#defi-scale-privacy-resilience-all-four">See the stack</a>
+  <!-- HERO: the strk hero's three-zone frame, name for name (2026-09-05).
+       The editorial column top left in reading order (eyebrow, display, one
+       paragraph), the particle bitcoin mark on its right-column stage
+       (js/btcfi-hero-mark.js), and a baseline strip across the container:
+       three live stats left, the section 03 claim right at half the display
+       size. The two glass CTAs are gone, the same decision as strk; both
+       target sections keep their ids. The stats are data-bm-hero mirrors of
+       the Live on-chain block's snapshot: the same setStat that paints the
+       metric boxes paints these, so one fetch, one vintage, one truth. No
+       dollar equivalents in the strip. Nothing here paints a ground: the
+       flame shader (js/eco-backdrop.js) is a FIXED canvas at z-index 0 and
+       every layer above it stays transparent. -->
+  <div class="bfh-wrap">
+    <div class="bfh-scene">
+      <div class="bfh-stage" id="bfhStage" aria-hidden="true"></div>
+      <div class="bfh-col">
+        <p class="hero-eyebrow">Bitcoin's next chapter</p>
+        <!-- the id is the search index's anchor for this page's opening claim
+             (public/data/search-index.json); it stays on the display heading. -->
+        <h1 id="bitcoin-is-the-best-asset-to" class="hero-title">Bitcoin is the best asset to hold. It's time to make it the best to use.</h1>
+        <!-- main's hero subline verbatim; the figure is the SAME live slot as
+             the <1% band's (one number, one story, one fetch). -->
+        <p class="hero-subtitle">More than <span class="idle-cap" data-idle-cap data-perishable="live"
+           data-src="https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&amp;vs_currencies=usd&amp;include_market_cap=true"
+           data-checked="2026-08-23" data-as-of="2026-08-23">$1.5T</span> in capital sitting idle. Starknet is building the execution layer Bitcoin has always needed: private, scalable, and built to last.</p>
+      </div>
+    </div>
+    <div class="bfh-strip">
+      <!-- three live stats, one snapshot: the Live on-chain block's numbers
+           (BTC across the counted representations, BTC staked, strkBTC
+           supply), seed-committed here at the block's own committed values
+           and repainted by its setStat on every render. -->
+      <ul class="bfh-stats">
+        <li><b data-bm-hero="network">1,102.4</b><span>BTC on Starknet</span></li>
+        <li><b data-bm-hero="staked">686.8</b><span>BTC staked</span></li>
+        <li><b data-bm-hero="supply">102.6</b><span>strkBTC supply</span></li>
+      </ul>
+      <!-- the section 03 headline, existing copy, caps by CSS like strk's -->
+      <p class="bfh-turn">Bitcoin settles. Starknet scales.</p>
     </div>
   </div>
 </div>
@@ -4203,6 +4229,9 @@
       })(t0);
     }
     if (e.sub && usd != null) e.sub.textContent = fmtUsd(usd);
+    // the hero strip mirrors the same snapshot: same key, same format, no
+    // dollar line, no tween (the strip is read at rest, not watched change)
+    document.querySelectorAll('[data-bm-hero="' + key + '"]').forEach(function(el){ el.textContent = fmt(btc); });
   }
 
   function loadCache(){
