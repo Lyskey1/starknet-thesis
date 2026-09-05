@@ -148,31 +148,54 @@ const SHELL_Y = -0.55;   // near-centred, just clear of the copy
   }
 
   function scatter(list) {
-    /* Three concentric rings turned by the golden angle: an ordered field
-       reads as a system where the random scatter read as clutter. The middle
-       band is left clear so the copy is never covered. */
     /* A jittered grid, not rings: rings banded the field into arcs with holes
        between them. Each cell gets one project nudged off its centre, which
        gives an even spread that still reads as scattered. The middle cells are
-       pushed aside so the copy is never covered. */
-    const N = list.length;
+       pushed aside so the copy is never covered.
+       THE SPANS ARE SOLVED FROM THE FRUSTUM, NOT FIXED (2026-09-05): the old
+       13.5 x 8.2 world-unit grid overflowed the visible cone at the tile
+       depth, so a deterministic outer ring of projects (avnu, Extended,
+       Schizodio among them) rendered permanently offscreen at 1440x900.
+       layoutField() computes the usable half-extents from the settled camera
+       (z = -1.6 after the dive) at the NEAREST tile depth and relays the
+       grid on every resize, so every tile projects inside |NDC| <= 1 at any
+       aspect. */
+    list.forEach((acc, i) => {
+      const j1 = Math.abs(Math.sin((i + 1) * 12.9898) * 43758.5453 % 1);
+      const j3 = Math.abs(Math.sin((i + 1) * 39.425) * 6789.1 % 1);
+      const spr = new THREE.Sprite(new THREE.SpriteMaterial({ map: tile(acc), transparent: true, opacity: 0, depthWrite: false }));
+      spr.scale.setScalar(0.52 + j3 * 0.10);   // the reference's size: readable marks
+      spr.userData = { acc, i, base: new THREE.Vector3(), seed: j1, hover: 0, size: spr.scale.x };
+      scene.add(spr); tiles.push(spr);
+    });
+    layoutField();
+  }
+
+  function layoutField() {
+    const N = tiles.length; if (!N) return;
     const cols = Math.ceil(Math.sqrt(N * 1.7));
     const rows = Math.ceil(N / cols);
-    const SPAN_X = 13.5, SPAN_Y = 8.2;
-    list.forEach((acc, i) => {
+    /* the settled lens: z = 16.4 - 18.0; nearest tiles sit at z = -9.5 */
+    const CAM_Z = -1.6, NEAR_TILE_Z = -9.5, dist = CAM_Z - NEAR_TILE_Z;
+    const halfH = Math.tan((46 / 2) * Math.PI / 180) * dist;
+    const aspect = camera.aspect || 1.6;
+    const MARGIN = 0.5;  // half a tile plus the idle wobble
+    const spanX = Math.max(2.4, (halfH * aspect - MARGIN) * 2);
+    const spanY = Math.max(2.0, (halfH - MARGIN) * 2);
+    tiles.forEach((spr) => {
+      const i = spr.userData.i;
       const cx = i % cols, cy = Math.floor(i / cols);
       const j1 = Math.abs(Math.sin((i + 1) * 12.9898) * 43758.5453 % 1);
       const j2 = Math.abs(Math.sin((i + 1) * 78.233) * 12345.678 % 1);
       const j3 = Math.abs(Math.sin((i + 1) * 39.425) * 6789.1 % 1);
-      let x = ((cx + 0.5) / cols - 0.5) * SPAN_X + (j1 - 0.5) * (SPAN_X / cols) * 0.85;
-      let yy = ((cy + 0.5) / rows - 0.5) * SPAN_Y + (j2 - 0.5) * (SPAN_Y / rows) * 0.85;
-      if (Math.abs(x) < 3.6 && Math.abs(yy) < 1.5) x += x < 0 ? -2.6 : 2.6;   // clear the copy
-      const seed = j1;
-      const spr = new THREE.Sprite(new THREE.SpriteMaterial({ map: tile(acc), transparent: true, opacity: 0, depthWrite: false }));
-      spr.position.set(x, yy, -9.5 - j3 * 2.4);
-      spr.scale.setScalar(0.52 + j3 * 0.10);   // the reference's size: readable marks
-      spr.userData = { acc, base: spr.position.clone(), seed, hover: 0, size: spr.scale.x };
-      scene.add(spr); tiles.push(spr);
+      let x = ((cx + 0.5) / cols - 0.5) * spanX + (j1 - 0.5) * (spanX / cols) * 0.85;
+      let yy = ((cy + 0.5) / rows - 0.5) * spanY + (j2 - 0.5) * (spanY / rows) * 0.85;
+      /* clear the copy, then CLAMP back inside the frustum so the push can
+         never shove a tile offscreen */
+      if (Math.abs(x) < spanX * 0.27 && Math.abs(yy) < 1.5) x += x < 0 ? -2.6 : 2.6;
+      x = Math.max(-spanX / 2, Math.min(spanX / 2, x));
+      spr.userData.base.set(x, yy, -9.5 - j3 * 2.4);
+      spr.position.copy(spr.userData.base);
     });
   }
 
@@ -203,6 +226,7 @@ const SHELL_Y = -0.55;   // near-centred, just clear of the copy
     const w = stick.clientWidth, h = stick.clientHeight;
     renderer.setSize(w, h, false);
     camera.aspect = w / h; camera.updateProjectionMatrix();
+    layoutField();  // the grid spans follow the frustum
     shell.userData.mat.uniforms.uPix.value = renderer.getPixelRatio();
     shell.userData.mat.uniforms.uH.value = h;
   }
@@ -271,6 +295,17 @@ const SHELL_Y = -0.55;   // near-centred, just clear of the copy
     renderer.render(scene, camera);
     requestAnimationFrame(frame);
   }
+
+  /* debug hook, no runtime cost: projects every field tile through the live
+     camera and reports whether its avatar texture loaded and whether its
+     centre sits inside the frustum. Drives the field's visibility proof. */
+  window.__ecoFieldReport = () => tiles.map((s) => {
+    const v = s.position.clone().project(camera);
+    return { handle: s.userData.acc.handle, x: +v.x.toFixed(2), y: +v.y.toFixed(2),
+      onScreen: Math.abs(v.x) <= 1 && Math.abs(v.y) <= 1 && v.z < 1,
+      imgLoaded: !!(s.material.map && s.material.map.image && (s.material.map.image.width || s.material.map.image instanceof HTMLCanvasElement)),
+      opacity: +s.material.opacity.toFixed(2) };
+  });
 
   fetch('/data/ecosystem.json').then(r => r.json()).then(data => {
     const projects = ['official', 'defi', 'consumer', 'nft', 'appchains', 'tooling'].flatMap(k => data[k] || []);

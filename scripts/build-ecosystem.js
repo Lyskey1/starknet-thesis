@@ -118,5 +118,39 @@ const block = START +
 const si = page.indexOf(START), ei = page.indexOf(END);
 if (si < 0 || ei < 0 || ei < si) die('STATIC-ECO markers not found (or reversed) in ecosystem.html');
 page = page.slice(0, si) + block + page.slice(ei + END.length);
+
+/* ---- the ld+json ItemList: regenerated from the same data (2026-09-05) ----
+   The directory's structured data used to be a hand-maintained blob and
+   silently rotted (it still carried pre-reorder positions and retired
+   handles). Rebuild the #directory ItemList's numberOfItems and
+   itemListElement from data/ecosystem.json on every run, so the structured
+   data can never disagree with the page again. Project categories emit
+   Organization items, the people categories Person items, matching the
+   original markup. */
+const PEOPLE_CATS = ['starkware', 'snf', 'builders', 'shitposter'];
+const LD_RE = /(<script type="application\/ld\+json">)([\s\S]*?)(<\/script>)/;
+const ldMatch = page.match(LD_RE);
+if (!ldMatch) die('ld+json block not found in ecosystem.html');
+let graph;
+try { graph = JSON.parse(ldMatch[2]); }
+catch (e) { die('ld+json block is not valid JSON: ' + e.message); }
+const dir = (graph['@graph'] || []).find(n => n['@id'] === 'https://starknetthesis.io/ecosystem#directory');
+if (!dir) die('#directory ItemList not found in the ld+json graph');
+let pos = 0;
+dir.itemListElement = cats.flatMap(cat => data[cat].map(acc => {
+  const handle = String(acc.handle || '').replace(/^@/, '');
+  pos += 1;
+  const item = {
+    '@type': PEOPLE_CATS.indexOf(cat) !== -1 ? 'Person' : 'Organization',
+    name: handle || String(acc.name || '').replace(/^@/, ''),
+    url: acc.url || ('https://x.com/' + handle),
+  };
+  if (acc.description) item.description = acc.description;
+  item.sameAs = [item.url];
+  return { '@type': 'ListItem', position: pos, item };
+}));
+dir.numberOfItems = pos;
+page = page.replace(LD_RE, ldMatch[1] + JSON.stringify(graph) + ldMatch[3]);
+
 fs.writeFileSync(PAGE, page);
-console.log('ecosystem.html: static block rebuilt with ' + count + ' accounts across ' + cats.length + ' categories');
+console.log('ecosystem.html: static block rebuilt with ' + count + ' accounts across ' + cats.length + ' categories; ld+json ItemList regenerated (' + pos + ' items)');
