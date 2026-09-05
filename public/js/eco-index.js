@@ -97,7 +97,10 @@
       }).filter(function (g) { return g.items.length; });
 
     gridEl.innerHTML = groups.map(function (g) {
-      return '<section class="ix-panel" data-cat="' + esc(g.cat.id) + '">' +
+      /* the category id doubles as the section's anchor: the search palette
+         and the static prerender both address #official, #defi and so on,
+         and the clipped static block cannot receive the landing */
+      return '<section class="ix-panel" id="' + esc(g.cat.id) + '" data-cat="' + esc(g.cat.id) + '">' +
         '<p class="ix-group">' + esc(g.cat.label) + ' <b>' + g.items.length + '</b></p>' +
         '<div class="ix-card-grid">' + g.items.map(card).join('') + '</div>' +
       '</section>';
@@ -142,9 +145,9 @@
       });
       setActivePill(best.id === 'ecoRing' ? null : best.getAttribute('data-cat'));
     }, (function () {
-      /* the band top follows the bar's real height (two rows now) */
+      /* the band top follows the fixed nav plus the bar's real height */
       var bar = document.querySelector('.eco-subnav');
-      var top = (bar ? bar.offsetHeight : 66) + 24;
+      var top = 64 + (bar ? bar.offsetHeight : 88) + 24; // fixed nav + measured bar
       return { rootMargin: '-' + top + 'px 0px -55% 0px', threshold: 0 };
     })());
     gridEl.querySelectorAll('.ix-panel').forEach(function (p) { spyIO.observe(p); });
