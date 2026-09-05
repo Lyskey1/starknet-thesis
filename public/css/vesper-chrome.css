@@ -62,15 +62,29 @@ form.vc-sub input:focus-visible { outline: 2px solid #fff; outline-offset: 2px; 
 .vc-btn i { display: block; flex: none; width: 7px; height: 7px; background: none; border-top: 1.5px solid currentColor; border-right: 1.5px solid currentColor; transform: rotate(45deg); }
 
 /* ---- band two: link columns, then brand + legal ---- */
+/* ===== BAND TWO ON ONE 12-COLUMN GRID (2026-09-05, promoted from the digest
+   pass). Everything below the banner sits on one 12-column grid (24px
+   gutters) inside the 1392px container, as .dgf-grid on all three rows:
+   links on cols 1 / 5 / 9 as equal thirds, identity on cols 1-5 with the
+   legal line LEFT-aligned on cols 9-12, and the baseline bar with the
+   copyright on col 1 and the status pill on col 9, so the rows share two
+   vertical alignment lines (col 9 lands 8px off the banner form's left
+   edge). Nothing right-aligns or touches the viewport edge. The rows stack
+   single column below 700px. KEEP IN SYNC: the landing's React port in
+   src/views/home/sections/site-footer.tsx mirrors these rules. ===== */
 footer.vc-footer .vc-cols { display: block; width: calc(100% - 48px); max-width: 1392px; margin: 0 auto; padding: 0; }
-footer.vc-footer nav.vc-links { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: stretch; gap: 0; padding: 0; }
-footer.vc-footer .vc-col { display: flex; flex-direction: column; gap: 22px; width: auto; padding: 56px 28px 60px; border-left: 1px solid var(--vc-line); }
-footer.vc-footer .vc-col:first-child { padding-left: 0; border-left: 0; }
+footer.vc-footer .dgf-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; align-items: start; }
+footer.vc-footer nav.vc-links { padding: 0; }
+/* row 1, links: 48px row padding, 12px between links, no dividers */
+footer.vc-footer .vc-col { display: flex; flex-direction: column; gap: 20px; width: auto; padding: 48px 0; border-left: 0; }
+footer.vc-footer .vc-col:nth-child(1) { grid-column: 1 / 5; }
+footer.vc-footer .vc-col:nth-child(2) { grid-column: 5 / 9; }
+footer.vc-footer .vc-col:nth-child(3) { grid-column: 9 / 13; }
 /* h3, not h4: the column headings sit under the footer's own h2, so h4 skipped
-   a level. The selector has to move with the markup or the six static footers
+   a level. The selector has to move with the markup or the seven footers
    lose their styling entirely. */
 footer.vc-footer .vc-col h3 { margin: 0; font-family: var(--vc-mono); font-weight: 400; font-size: 11px; line-height: 1.2; letter-spacing: .18em; text-transform: uppercase; color: var(--vc-dim); }
-footer.vc-footer .vc-col ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 18px; }
+footer.vc-footer .vc-col ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
 /* 16px at line-height 1.25 is a 20px tap target, under the 24px minimum.
    The padding grows the hit area and the equal negative margin cancels its
    layout effect, so the target reaches 24px with the footer's spacing
@@ -79,25 +93,104 @@ footer.vc-footer .vc-col ul { list-style: none; margin: 0; padding: 0; display: 
 footer.vc-footer .vc-col a { display: inline-block; color: var(--vc-text); text-decoration: none; font-size: 16px; line-height: 1.25; padding-block: 2px; margin-block: -2px; transition: color .25s; }
 footer.vc-footer .vc-col a:hover { color: var(--vc-orange); }
 footer.vc-footer .vc-rule { width: calc(100% - 48px); max-width: 1392px; margin: 0 auto; border-top: 1px solid var(--vc-line); }
-footer.vc-footer .vc-base { width: calc(100% - 48px); max-width: 1392px; margin: 0 auto; padding: 32px 0 40px; display: grid; grid-template-columns: minmax(0, 396px) minmax(0, 1fr); gap: 28px 56px; align-items: start; }
-footer.vc-footer .vc-brand { display: flex; flex-direction: column; gap: 16px; width: auto; max-width: none; }
+/* row 2, identity + legal: same column starts as row 1, one shared top line */
+footer.vc-footer .vc-base { width: calc(100% - 48px); max-width: 1392px; margin: 0 auto; padding: 24px 0 48px; }
+footer.vc-footer .vc-brand { grid-column: 1 / 6; display: flex; flex-direction: column; gap: 8px; width: auto; max-width: none; }
 footer.vc-footer .vc-brand img { display: block; height: 26px; width: 160px; }
-footer.vc-footer .vc-brand p { margin: 0; font-family: var(--vc-sans); font-weight: 400; font-size: 15px; line-height: 1.5; text-transform: none; color: var(--vc-dim); }
-footer.vc-footer .vc-legal { margin: 0; width: auto; max-width: none; padding: 0; font-family: var(--vc-tag); font-size: 12px; line-height: 1.6; text-transform: uppercase; color: rgba(250,250,250,.45); }
+footer.vc-footer .vc-brand p { margin: 0; max-width: 40ch; font-family: var(--vc-sans); font-weight: 400; font-size: 15px; line-height: 1.5; text-transform: none; color: var(--vc-dim); }
+/* the disclaimer, demoted to a legal line: sentence case, 11.5px, the
+   dimmest ink that still clears 4.6:1 on the near-black ground
+   (rgba(250,250,250,.52) blends to about #888, 5.3:1), LEFT-aligned on
+   cols 9-12 so its edge lines up with FOLLOW above it */
+footer.vc-footer .vc-legal { margin: 0; grid-column: 9 / 13; width: auto; max-width: none; padding: 0; text-align: left; font-family: var(--vc-sans); font-size: 11.5px; line-height: 1.6; letter-spacing: 0; text-transform: none; color: rgba(250,250,250,.52); }
+/* row 3, the classic baseline bar: copyright on col 1, the status pill on
+   col 9. The pill is the shared .status/.dot component from css/styles.css
+   on the static pages; the landing's React footer carries its own copy. */
+footer.vc-footer .dgf-foot { width: calc(100% - 48px); max-width: 1392px; margin: 0 auto; }
+footer.vc-footer .dgf-bar { padding: 24px 0 40px; border-top: 1px solid var(--vc-line); font-family: var(--vc-mono); font-size: 12px; letter-spacing: .06em; color: rgba(250,250,250,.55); }
+footer.vc-footer .dgf-bar > span { grid-column: 1 / 6; }
+footer.vc-footer .dgf-bar .dgf-status { grid-column: 9 / 13; justify-self: start; }
+footer.vc-footer .dgf-bar a { color: rgba(250,250,250,.72); text-decoration: none; transition: color .25s; }
+footer.vc-footer .dgf-bar a:hover { color: var(--vc-orange); }
+footer.vc-footer .dgf-bar .dgf-status, footer.vc-footer .dgf-bar .dgf-status:hover { color: inherit; }
+footer.vc-footer .dgf-bar .status { font-size: 12px; }
+/* single column below 700px: rows stack, all left-aligned on the container */
+@media (max-width: 700px) {
+  footer.vc-footer .dgf-grid { display: flex; flex-direction: column; align-items: stretch; gap: 0; }
+  footer.vc-footer .vc-col { padding: 24px 0; }
+  footer.vc-footer .vc-base { padding: 24px 0 32px; }
+  footer.vc-footer .vc-base.dgf-grid { gap: 28px; }
+  footer.vc-footer .dgf-bar { padding: 20px 0 36px; }
+  footer.vc-footer .dgf-bar.dgf-grid { gap: 12px; }
+}
+
+/* ===== dg-glass: the liquid glass control tier (promoted from the digest
+   pass with the footer). One shared surface for the chrome's Subscribe
+   controls and the digest page's pills and hero CTAs: translucent dark
+   fill sampling the scene through a backdrop blur, a half-pixel outer
+   hairline drawn as a spread box-shadow so it follows any radius, and one
+   inset top highlight. The active / primary state steps the fill up and
+   swaps the hairline to the accent (--accent-rgb is the unified 197,52,0
+   on every page; the fallback covers a page that skips styles.css).
+   THE SELECTORS STACK THE CLASS for specificity on purpose: this sheet
+   loads before css/styles.css, whose .toggle-btn (background: transparent)
+   and .toggle-btn.active (background) rules would otherwise win the
+   cascade over a single-class tier. Site glass rules hold: solid surface
+   below 981px and where backdrop-filter is unsupported, no nested glass,
+   transitions sit out under reduced motion. */
+.dg-glass.dg-glass.dg-glass { border: 0;
+  background: rgba(16, 16, 16, .55);
+  -webkit-backdrop-filter: blur(12px) saturate(115%);
+  backdrop-filter: blur(12px) saturate(115%);
+  box-shadow:
+    0 0 0 .5px rgba(250, 250, 250, .28),
+    inset 0 1px 0 rgba(255, 255, 255, .14);
+  transition: background var(--hover-dur, .25s) var(--hover-ease, ease),
+              box-shadow var(--hover-dur, .25s) var(--hover-ease, ease),
+              color var(--hover-dur, .25s) var(--hover-ease, ease); }
+.dg-glass.dg-glass.dg-glass:hover {
+  background: rgba(30, 30, 30, .66);
+  box-shadow:
+    0 0 0 .5px rgba(250, 250, 250, .45),
+    inset 0 1px 0 rgba(255, 255, 255, .22); }
+.dg-glass.dg-glass.dg-glass.active, .dg-glass.dg-glass.dg-glass.dg-glass--primary {
+  background: rgba(38, 38, 38, .74);
+  box-shadow:
+    0 0 0 .5px rgba(var(--accent-rgb, 197, 52, 0), .65),
+    inset 0 1px 0 rgba(255, 255, 255, .22); }
+.dg-glass.dg-glass.dg-glass.active:hover, .dg-glass.dg-glass.dg-glass.dg-glass--primary:hover {
+  background: rgba(48, 48, 48, .8);
+  box-shadow:
+    0 0 0 .5px rgba(var(--accent-rgb, 197, 52, 0), .9),
+    inset 0 1px 0 rgba(255, 255, 255, .28); }
+.dg-glass.dg-glass.dg-glass:focus-visible { outline: 2px solid var(--vc-orange); outline-offset: 3px; }
+/* the nav CTA: its 1px border goes (padding +1px holds the width), and it
+   takes NO blur of its own: it sits inside the header bar, which is
+   already a glass surface, and the site rule is no nested glass. */
+header.vc-header .vc-cta.dg-glass.dg-glass { border: 0; padding: 0 17px;
+  -webkit-backdrop-filter: none; backdrop-filter: none; }
+header.vc-header .vc-cta.dg-glass.dg-glass:hover { background: rgba(48, 48, 48, .8); }
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .dg-glass.dg-glass.dg-glass { background: #161616; }
+  .dg-glass.dg-glass.dg-glass:hover { background: #202020; }
+  .dg-glass.dg-glass.dg-glass.active, .dg-glass.dg-glass.dg-glass.dg-glass--primary { background: #262626; }
+  .dg-glass.dg-glass.dg-glass.active:hover, .dg-glass.dg-glass.dg-glass.dg-glass--primary:hover { background: #2e2e2e; }
+}
+@media (max-width: 980px) {
+  .dg-glass.dg-glass.dg-glass { -webkit-backdrop-filter: none; backdrop-filter: none; background: #161616; }
+  .dg-glass.dg-glass.dg-glass:hover { background: #202020; }
+  .dg-glass.dg-glass.dg-glass.active, .dg-glass.dg-glass.dg-glass.dg-glass--primary { background: #262626; }
+  .dg-glass.dg-glass.dg-glass.active:hover, .dg-glass.dg-glass.dg-glass.dg-glass--primary:hover { background: #2e2e2e; }
+}
+@media (prefers-reduced-motion: reduce) { .dg-glass.dg-glass.dg-glass { transition: none; } }
 
 @media (max-width: 1023px) {
   .vc-cta-in { grid-template-columns: 1fr; align-items: start; min-height: 0; gap: 32px; }
   form.vc-sub { max-width: 520px; margin: 0; }
-  footer.vc-footer nav.vc-links { grid-template-columns: 1fr 1fr; row-gap: 40px; padding: 0; }
-  footer.vc-footer .vc-col { padding: 40px 0 40px 24px; }
-  footer.vc-footer .vc-col:nth-child(odd) { padding-left: 0; border-left: 0; }
-  footer.vc-footer .vc-base { grid-template-columns: 1fr; }
 }
 @media (max-width: 640px) {
   .vc-acts { flex-direction: column; }
   .vc-btn { flex: none; width: 100%; }
-  footer.vc-footer nav.vc-links { grid-template-columns: 1fr; row-gap: 0; }
-  footer.vc-footer .vc-col { padding: 28px 0; border-left: 0; }
 }
 
 /* styles.css styles the bare <nav> element as the old fixed bar; neutralise it for the chrome's navs */

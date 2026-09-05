@@ -71,7 +71,9 @@ export const homeFaq: FaqCopy = {
 
 export const homeFooter: FooterCopy = {
   wordmark: "Starknet Thesis",
-  tagline: "Three forces, one chain, one ticker. The independent thesis on how Starknet makes crypto private, quantum-resistant and productive.",
+  // the banner headline owns "Three forces, one chain, one ticker.", said
+  // once per viewport; the identity block carries only the descriptive line
+  tagline: "The independent thesis on how Starknet makes crypto private, quantum-resistant and productive.",
   columns: [
     {
       heading: "Thesis",
@@ -96,13 +98,9 @@ export const homeFooter: FooterCopy = {
         { label: "X / Twitter", href: "https://x.com/Lyskey" },
       ],
     },
-    {
-      heading: "Connect",
-      links: [
-        { label: "Network status", href: "https://status.starknet.io/" },
-        { label: "llms.txt", href: "/llms.txt" },
-      ],
-    },
+    // CONNECT went with the 2026-09 footer grid: /llms.txt keeps being
+    // served, only its footer link went, and network status stays reachable
+    // through the baseline bar's status pill.
   ],
   legal:
     "Website made for educational purposes only. This is not financial advice. Always DYOR. A personal project, not affiliated with or endorsed by StarkWare. All views expressed here are my own.",

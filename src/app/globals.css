@@ -192,3 +192,9 @@ body {
 @utility text-shadow-title {
   text-shadow: 0 0 30px rgba(255, 255, 255, 0.08);
 }
+
+/* the footer status pill's pulse (the landing's copy of css/styles.css's
+   .status .dot animation, named apart so the two can never collide) */
+@keyframes vcStatusPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+.vc-status-dot { animation: vcStatusPulse 2s infinite; }
+@media (prefers-reduced-motion: reduce) { .vc-status-dot { animation: none; } }

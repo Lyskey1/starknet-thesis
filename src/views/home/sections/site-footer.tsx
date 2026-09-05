@@ -84,9 +84,13 @@ export const SiteFooter = ({ copy }: SiteFooterProps) => {
               />
             </label>
             <div className="flex items-stretch gap-[12px] max-sm:flex-col">
+              {/* the dg-glass primary surface from vesper-chrome.css,
+                  transliterated to Tailwind: translucent fill over the band,
+                  backdrop blur, half-pixel accent hairline, inset top
+                  highlight; solid below 980px per the site glass rule */}
               <button
                 type="submit"
-                className="vc-btn inline-flex h-[52px] min-w-0 flex-1 items-center justify-between gap-[14px] bg-[#0d0d0d] px-[18px] font-general text-[15px] leading-[1.2] whitespace-nowrap text-[#fafafa] transition-colors duration-250 hover:bg-black max-sm:w-full max-sm:flex-none"
+                className="vc-btn inline-flex h-[52px] min-w-0 flex-1 items-center justify-between gap-[14px] bg-[rgba(38,38,38,0.74)] px-[18px] font-general text-[15px] leading-[1.2] whitespace-nowrap text-[#fafafa] backdrop-blur-[12px] backdrop-saturate-[1.15] transition-colors duration-250 shadow-[0_0_0_0.5px_rgba(197,52,0,0.65),inset_0_1px_0_rgba(255,255,255,0.22)] hover:bg-[rgba(48,48,48,0.8)] hover:shadow-[0_0_0_0.5px_rgba(197,52,0,0.9),inset_0_1px_0_rgba(255,255,255,0.28)] max-[980px]:bg-[#262626] max-[980px]:backdrop-blur-none max-sm:w-full max-sm:flex-none"
               >
                 Subscribe
                 <Arrow />
@@ -103,21 +107,26 @@ export const SiteFooter = ({ copy }: SiteFooterProps) => {
         </div>
       </div>
 
-      {/* ---- band two: link columns, then brand + legal ---- */}
+      {/* ---- band two: three rows on one 12-column grid (24px gutters),
+           mirroring vesper-chrome.css's .dgf-grid rules: links on cols
+           1 / 5 / 9 as equal thirds, identity on cols 1-5 with the legal
+           line LEFT-aligned on cols 9-12, and the baseline bar with the
+           copyright on col 1 and the status pill on col 9, so the rows
+           share two vertical alignment lines. Rows stack below 700px. ---- */}
       <div className="vc-cols mx-auto w-[calc(100%-48px)] max-w-[1392px]">
         <nav
           aria-label="Footer"
-          className="vc-links grid grid-cols-4 items-stretch max-lg:grid-cols-2 max-lg:gap-y-[40px] max-sm:grid-cols-1 max-sm:gap-y-0"
+          className="vc-links dgf-grid grid grid-cols-12 items-start gap-x-[24px] max-[700px]:flex max-[700px]:flex-col"
         >
           {copy.columns.map((column) => (
             <div
               key={column.heading}
-              className="vc-col flex flex-col gap-[22px] border-l border-[#262626] px-[28px] pt-[56px] pb-[60px] first:border-l-0 first:pl-0 max-lg:px-0 max-lg:pt-[40px] max-lg:pb-[40px] max-lg:pl-[24px] max-lg:odd:border-l-0 max-lg:odd:pl-0 max-sm:border-l-0 max-sm:px-0 max-sm:py-[28px] max-sm:pl-0"
+              className="vc-col col-span-4 flex flex-col gap-[20px] py-[48px] max-[700px]:py-[24px]"
             >
               <h3 className="font-hud-mono text-[11px] leading-[1.2] font-normal tracking-[0.18em] text-[rgba(250,250,250,0.65)] uppercase">
                 {column.heading}
               </h3>
-              <ul className="flex list-none flex-col gap-[18px] p-0">
+              <ul className="flex list-none flex-col gap-[12px] p-0">
                 {column.links.map((link) => (
                   <li key={link.label}>
                     <a
@@ -139,8 +148,8 @@ export const SiteFooter = ({ copy }: SiteFooterProps) => {
 
       <div className="vc-rule mx-auto w-[calc(100%-48px)] max-w-[1392px] border-t border-[#262626]" />
 
-      <div className="vc-base mx-auto grid w-[calc(100%-48px)] max-w-[1392px] grid-cols-[minmax(0,396px)_minmax(0,1fr)] items-start gap-x-[56px] gap-y-[28px] pt-[32px] pb-[40px] max-lg:grid-cols-1">
-        <div className="vc-brand flex flex-col gap-[16px]">
+      <div className="vc-base dgf-grid mx-auto grid w-[calc(100%-48px)] max-w-[1392px] grid-cols-12 items-start gap-x-[24px] pt-[24px] pb-[48px] max-[700px]:flex max-[700px]:flex-col max-[700px]:gap-y-[28px] max-[700px]:pb-[32px]">
+        <div className="vc-brand col-span-5 flex flex-col gap-[8px]">
           <span className="block h-[26px] w-[160px]">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
@@ -149,15 +158,48 @@ export const SiteFooter = ({ copy }: SiteFooterProps) => {
               className="block h-full w-full"
             />
           </span>
-          <p className="font-general text-[15px] leading-[1.5] font-normal text-[rgba(250,250,250,0.65)] normal-case">
+          <p className="max-w-[40ch] font-general text-[15px] leading-[1.5] font-normal text-[rgba(250,250,250,0.65)] normal-case">
             {copy.tagline}
           </p>
         </div>
         {copy.legal && (
-          <p className="vc-legal font-tag text-[12px] leading-[1.6] text-[rgba(250,250,250,0.45)] uppercase">
+          <p className="vc-legal col-span-4 col-start-9 font-general text-[11.5px] leading-[1.6] text-[rgba(250,250,250,0.52)] normal-case">
             {copy.legal}
           </p>
         )}
+      </div>
+
+      {/* the classic baseline bar; the status pill mirrors css/styles.css's
+          .status/.dot component (its pulse lives in globals.css with a
+          reduced-motion guard) */}
+      <div className="dgf-foot mx-auto w-[calc(100%-48px)] max-w-[1392px]">
+        <div className="dgf-bar dgf-grid grid grid-cols-12 items-start gap-x-[24px] border-t border-[#262626] pt-[24px] pb-[40px] font-hud-mono text-[12px] tracking-[0.06em] text-[rgba(250,250,250,0.55)] max-[700px]:flex max-[700px]:flex-col max-[700px]:gap-y-[12px] max-[700px]:pt-[20px] max-[700px]:pb-[36px]">
+          <span className="col-span-5">
+            © 2026 · Made by{" "}
+            <a
+              href="https://x.com/Lyskey"
+              target="_blank"
+              rel="noopener"
+              className="text-[rgba(250,250,250,0.72)] no-underline transition-colors duration-250 hover:text-signal"
+            >
+              Lyskey
+            </a>
+          </span>
+          <a
+            className="dgf-status col-span-4 col-start-9 justify-self-start text-inherit no-underline"
+            href="https://status.starknet.io/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span className="inline-flex items-center gap-[8px] text-[#c53400]">
+              <span
+                aria-hidden
+                className="vc-status-dot block size-[7px] rounded-full bg-[#c53400] shadow-[0_0_8px_#c53400]"
+              />
+              All systems operational
+            </span>
+          </a>
+        </div>
       </div>
     </footer>
   );
