@@ -1264,27 +1264,14 @@ body > .hero{position:relative;display:block;height:auto;min-height:0;
 .hero .hero-subtitle{margin:calc(1.6 * var(--skh-u)) 0 0;max-width:calc(32 * var(--skh-u));
   font-family:var(--sans);font-weight:300;font-size:max(calc(1.06 * var(--skh-u)),15px);
   line-height:1.7;color:rgba(250,250,250,.72);text-align:left}
-/* the contents index: number mono accent, title sans ink, arrow at the
-   right edge; 40px rows on .12-ink hairlines, no chrome. The measure is
-   the paragraph's own (32 skh units). */
-.skh-toc{width:100%;margin:calc(2.2 * var(--skh-u)) 0 0;max-width:calc(32 * var(--skh-u))}
-.skh-toc-row{display:flex;align-items:center;gap:14px;height:40px;text-decoration:none;
-  border-bottom:1px solid rgba(245,242,236,.12)}
-.skh-toc-row:first-child{border-top:1px solid rgba(245,242,236,.12)}
-.skh-toc-row b{font-family:var(--mono),monospace;font-weight:400;font-size:11px;
-  letter-spacing:.08em;color:var(--acc-2);font-variant-numeric:tabular-nums}
-.skh-toc-row span{font-family:var(--sans);font-weight:400;font-size:13.5px;line-height:1.2;
-  color:rgba(250,250,250,.78);transition:color .28s ease}
-.skh-toc-row i{margin-left:auto;font-size:15px;color:rgba(250,250,250,.45);transition:color .28s ease}
-.skh-toc-row:hover span{color:#fafafa}
-.skh-toc-row:hover i{color:var(--acc-2)}
-.skh-toc-row:focus-visible{outline:2px solid var(--acc-2);outline-offset:2px}
+/* anchor jumps land instantly under reduced motion: styles.css sets
+   html{scroll-behavior:smooth} with no release; this inline sheet loads
+   after it. (Kept when the hero contents index was removed, 2026-09-05:
+   it governs every in-page anchor, not just that component.) */
 @media (prefers-reduced-motion: reduce){
-  .skh-toc-row span,.skh-toc-row i{transition:none}
-  /* anchor jumps land instantly: styles.css sets html{scroll-behavior:smooth}
-     with no reduced-motion release; this inline sheet loads after it */
   html{scroll-behavior:auto}
 }
+
 /* the baseline strip: three live stats left, the signature right, one
    shared baseline under a container-wide hairline */
 .skh-strip{position:relative;z-index:2;margin-top:0;
@@ -1310,7 +1297,6 @@ body > .hero{position:relative;display:block;height:auto;min-height:0;
   .hero .hero-eyebrow{font-size:.75rem}
   .hero .hero-title{margin-top:.75rem;font-size:2.75rem}
   .hero .hero-subtitle{margin-top:1rem;max-width:40rem;font-size:1rem}
-  .skh-toc{width:100%;max-width:none;margin-top:1.5rem}
   .skh-strip{margin-top:2rem;padding-top:1.25rem}
   .skh-stats{gap:1.5rem}
   .skh-stats b{font-size:1.5rem}
@@ -1405,21 +1391,7 @@ window.ADMIN_GATE=on;})();
         <p class="hero-eyebrow">One token. Three engines.</p>
         <h1 id="the-thesis-in-a-single-asset" class="hero-title">The thesis, in a <em>single asset</em>.</h1>
         <p class="hero-subtitle">Privacy, quantum resistance, and Bitcoin all run on Starknet. STRK is the asset that secures the network and captures the demand the thesis creates.</p>
-        <!-- the contents index (2026-09-05): a mono table of contents for
-             the page's five numbered sections, titles verbatim from their
-             headings, replacing the two CTA buttons. Rows are plain anchors;
-             the page's scroll-padding lands them under the nav, and the
-             reduced-motion override below makes the jump instant. A table of
-             contents, not a nav: deliberately NOT wired into any spy.
-             div[role=navigation], never a bare <nav>: css/styles.css styles
-             the bare element as the old fixed bar (the landmark trap). -->
-        <div class="skh-toc" role="navigation" aria-label="Contents">
-          <a class="skh-toc-row" href="#what-strk-is" aria-label="Go to section 1, What STRK is"><b>01</b><span>What STRK is</span><i class="ti ti-arrow-down" aria-hidden="true"></i></a>
-          <a class="skh-toc-row" href="#the-utilities" aria-label="Go to section 2, The utilities"><b>02</b><span>The utilities</span><i class="ti ti-arrow-down" aria-hidden="true"></i></a>
-          <a class="skh-toc-row" href="#the-convergence" aria-label="Go to section 3, The convergence"><b>03</b><span>The convergence</span><i class="ti ti-arrow-down" aria-hidden="true"></i></a>
-          <a class="skh-toc-row" href="#the-numbers" aria-label="Go to section 4, The numbers"><b>04</b><span>The numbers</span><i class="ti ti-arrow-down" aria-hidden="true"></i></a>
-          <a class="skh-toc-row" href="#where-to-get-strk" aria-label="Go to section 5, Where to get STRK"><b>05</b><span>Where to get STRK</span><i class="ti ti-arrow-down" aria-hidden="true"></i></a>
-        </div>
+
       </div>
     </div>
     <div class="skh-strip">
