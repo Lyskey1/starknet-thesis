@@ -50,6 +50,11 @@
   letter-spacing: .14em; text-transform: uppercase; color: rgba(250, 250, 250, .78); white-space: nowrap;
   text-shadow: 0 1px 6px rgba(0, 0, 0, .8);
   will-change: transform, opacity; transition: color .25s; }
+/* labels never exceed the card: the stage publishes the front card's
+   rendered width (--es-cardw); anything longer ellipsizes on the card and
+   reads in full in the dock readout below the ring */
+.es-label { max-width: var(--es-cardw, 220px); }
+.es-label b, .es-label .es-label-role { display: block; max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
 .es-label b { font-weight: 400; font-size: 10.5px; color: rgba(250, 250, 250, .68); }
 /* THE ROLE LEADS THE BAND (2026-09-05): it drives the click, so it sits
    first, mono caps at 12.5px in the accent family. #e07a4a, not the base

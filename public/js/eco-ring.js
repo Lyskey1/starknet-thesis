@@ -37,6 +37,16 @@ if (HOST) {
   const CARD_W = 1.68, CARD_H = 2.38, CARD_GAP = 0.30, CARD_LIFT = 0.05, CARD_CURVE = 1;
   const LIT_FROM = 2.1, LIT_TO = 3.1;
   const FOV = 56, CAM_H = 1.22, CAM_INSET = 0.70;
+  /* FIXED CARD, FIXED ARC, FIXED FRONT (2026-09-05): the card is one
+     constant size on every ring; the radius comes from the count at a
+     constant arc per card, R(n) = n * (cardW + gap) / 2PI, so neighbors sit
+     at identical spacing on all four rings; and the camera keeps ONE
+     distance to the front card (the StarkWare ring's own, n = 18), so the
+     front card renders at the same on-screen size everywhere and a larger
+     ring simply recedes further into depth behind it. The reflection is a
+     mirror of this same camera, so it follows by construction. */
+  const RADIUS = n => (n * (CARD_W + CARD_GAP)) / (2 * Math.PI);
+  const D_REF = (1 + CAM_INSET) * RADIUS(18);
   const AUTO_SPIN = 0.035, DRAG_SPEED = 0.0085, DAMP = 0.9, SNAP = 0.10;
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
@@ -158,6 +168,10 @@ if (HOST) {
       camera.aspect = w / h; camera.updateProjectionMatrix();
       const dpr = renderer.getPixelRatio();
       reflectRT.setSize(Math.max(2, Math.floor(w * dpr * REFLECT_SCALE)), Math.max(2, Math.floor(h * dpr * REFLECT_SCALE)));
+      /* the front card's on-screen width, for the label clamp: constant
+         camera-to-front distance makes this one number per viewport */
+      const focal = (h / 2) / Math.tan((FOV * Math.PI / 180) / 2);
+      stage.style.setProperty('--es-cardw', (CARD_W * focal / D_REF).toFixed(1) + 'px');
     }
 
     function updateReflection() {
@@ -204,7 +218,7 @@ if (HOST) {
       }
       carousel.rotation.y = spin;
 
-      camera.position.set(0, CAM_H, ringRadius * CAM_INSET);
+      camera.position.set(0, CAM_H, D_REF - ringRadius);
       camera.lookAt(0, CARD_LIFT + CARD_H * 0.34, -ringRadius * 0.5);
       wu.uCamPos.value.copy(camera.position);
 
@@ -297,7 +311,7 @@ if (HOST) {
       /* cards */
       cards = []; labels = []; labelsEl.innerHTML = '';
       const n = Math.max(list.length, 3);
-      ringRadius = (CARD_W + CARD_GAP) / (2 * Math.sin(Math.PI / n));
+      ringRadius = RADIUS(n);
       const cardY = CARD_LIFT + CARD_H / 2;
       list.forEach((acc, i) => {
         const a = (i / n) * Math.PI * 2;
@@ -424,7 +438,7 @@ if (HOST) {
         if (reduced) {
           /* settled render: one frame, no loop */
           carousel.rotation.y = spin;
-          camera.position.set(0, CAM_H, ringRadius * CAM_INSET);
+          camera.position.set(0, CAM_H, D_REF - ringRadius);
           camera.lookAt(0, CARD_LIFT + CARD_H * 0.34, -ringRadius * 0.5);
           wu.uCamPos.value.copy(camera.position);
           updateReflection(); renderer.render(scene, camera);
@@ -447,7 +461,7 @@ if (HOST) {
       '<p class="es-lede">The people building, shaping and shitposting Starknet. Drag the ring.</p></div>' +
     GANGS.map(g =>
       '<section class="es-gang" id="gang-' + g.id + '" data-gang="' + g.id + '">' +
-        '<div class="es-gbar"><span class="es-gname">' + g.name + '</span><span class="es-gcount"></span></div>' +
+        '<div class="es-gbar"><span class="es-gname">' + g.label + '</span><span class="es-gcount"></span></div>' +
         '<div class="es-screen">' +
           '<div class="es-stage"><div class="es-labels"></div>' +
             '<div class="es-hint">Drag to explore</div></div>' +
