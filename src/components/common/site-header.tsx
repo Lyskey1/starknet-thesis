@@ -8,15 +8,18 @@ import { MobileNav } from "./mobile-nav";
  * (2026-09-05 nav typography pass over the nav pass; mirrors
  * public/css/vesper-chrome.css so all seven routes carry one bar).
  *
- * The inner row is the FOOTER'S OWN 12-column grid (24px gaps), so the
- * three clusters sit on the footer's axes: brand cluster on col 1 (22px
- * three-bar mark, 10px gap, Archivo Expanded 500 wordmark at 15px), the
- * page links on the col 4 line in the site's mono uppercase eyebrow
- * grammar (IBM Plex Mono 11.5px, .14em, muted .62 ink, hover ink, 280ms),
- * socials + Subscribe ending on the col 13 line. Between 1024 and 1280 the
- * link tracking drops to .10em before anything else; the row never wraps.
- * Glass over content, one hairline bottom border at .10 ink, 64px tall,
- * always there: no hide-on-scroll, no shrink.
+ * The inner row is the page container itself (calc(100%-48px) capped at
+ * 1392, no padding of its own): the brand cluster (22px three-bar mark,
+ * 10px gap, Archivo Expanded 500 wordmark at 15px) flush on its left edge,
+ * socials + Subscribe flush on its right edge, and the page links (the
+ * site's mono uppercase eyebrow grammar: IBM Plex Mono 11.5px, .14em,
+ * muted .62 ink, hover ink, 280ms) absolutely centered on the bar's TRUE
+ * center, which equals the viewport's 50% because the container is
+ * viewport-centered. The centered row never collides above the 1024 fold
+ * (right-cluster contact math lands near 966px), so no tracking or gap
+ * guard ships; the row never wraps. Glass over content, one hairline
+ * bottom border at .10 ink, 64px tall, always there: no hide-on-scroll,
+ * no shrink.
  *
  * Below 1024px the bar keeps the brand cluster AND the Subscribe button;
  * the links and the socials hand over to {@link MobileNav}, whose toggle is
@@ -56,13 +59,13 @@ const SOCIALS = [
 export const SiteHeader = () => {
   return (
     <header className="pointer-events-auto fixed inset-x-0 top-0 z-50 h-16 border-b border-[rgba(245,242,236,0.10)] bg-black/80 backdrop-blur-[12px] backdrop-saturate-[1.15] max-[980px]:bg-black/95 max-[980px]:backdrop-blur-none">
-      <div className="mx-auto grid h-full w-[calc(100%-48px)] max-w-[1392px] grid-cols-12 items-center gap-x-6 max-lg:flex max-lg:w-[calc(100%-32px)] max-lg:gap-3.5 max-sm:w-[calc(100%-24px)]">
-        {/* brand cluster on col 1: mark 22px, wordmark Archivo Expanded 500 */}
+      <div className="relative mx-auto flex h-full w-[calc(100%-48px)] max-w-[1392px] items-center justify-between max-lg:w-[calc(100%-32px)] max-lg:gap-3.5 max-sm:w-[calc(100%-24px)]">
+        {/* brand cluster flush on the container's left edge */}
         <PressableLink
           href="/"
           aria-label="Starknet Thesis, home"
           interaction={QUIET}
-          className="col-start-1 col-end-4 flex items-center gap-[10px] justify-self-start max-lg:shrink-0"
+          className="flex shrink-0 items-center gap-[10px]"
         >
           <svg
             viewBox="2.4 5.4 21.2 15.2"
@@ -79,10 +82,10 @@ export const SiteHeader = () => {
           </span>
         </PressableLink>
 
-        {/* page links start on the footer's col 4 axis; mono eyebrow grammar */}
+        {/* page links centered on the bar's true center (= viewport 50%) */}
         <nav
           aria-label="Main"
-          className="col-start-4 col-end-10 flex items-center gap-[22px] font-[family-name:var(--font-plex-mono)] text-[11.5px] leading-[1.2] font-normal tracking-[0.14em] uppercase whitespace-nowrap max-[1279px]:tracking-[0.10em] max-lg:hidden"
+          className="absolute top-1/2 left-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center gap-[22px] font-[family-name:var(--font-plex-mono)] text-[11.5px] leading-[1.2] font-normal tracking-[0.14em] uppercase whitespace-nowrap max-lg:hidden"
         >
           {NAV.map((item) => (
             <PressableLink
@@ -96,8 +99,8 @@ export const SiteHeader = () => {
           ))}
         </nav>
 
-        {/* right cluster ends on the col 13 line (container right edge) */}
-        <div className="col-start-10 col-end-13 flex items-center justify-end gap-3 max-lg:ml-auto">
+        {/* right cluster flush on the container's right edge */}
+        <div className="flex shrink-0 items-center justify-end gap-3 max-lg:ml-auto">
           <div className="flex items-center gap-1 max-lg:hidden">
             {SOCIALS.map((s) => (
               <a

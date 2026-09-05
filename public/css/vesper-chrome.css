@@ -10,11 +10,12 @@
   --vcnav-h: 64px; }
 
 /* ===== HEADER: a full-width fixed bar on the site container (2026-09-05
-   typography pass over the nav pass). The inner row is the FOOTER'S OWN
-   12-column grid (repeat(12) + 24px gaps on the 1392 container), so the
-   three clusters sit on the footer's axes: the brand cluster starts on
-   col 1, the link row starts on the col 4 line, and the right cluster ends
-   on the col 13 line (the container's right edge). Hierarchy: the three-bar
+   typography pass, then the same-day alignment fix). The inner row is the
+   page container itself (calc(100% - 48px) capped at 1392, no padding of
+   its own): brand cluster flush on its left edge, right cluster flush on
+   its right edge, and the link row absolutely centered on the bar's TRUE
+   center, which equals the viewport's 50% because the container is
+   viewport-centered. Hierarchy: the three-bar
    mark at 22px over an Archivo Expanded 500 wordmark at 15px; the page
    links drop to the site's mono uppercase eyebrow grammar (IBM Plex Mono
    11.5px, .14em, muted at .62 ink) instead of 16px sentence-case sans.
@@ -38,20 +39,32 @@ body > header.vc-header, header.vc-header { position: fixed; top: 0; left: 0; ri
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   body > header.vc-header, header.vc-header { background: rgba(13,13,13,.96); }
 }
-header.vc-header .vc-in { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; align-items: center; height: 100%;
-  width: calc(100% - 48px); max-width: 1392px; margin: 0 auto; }
-/* brand cluster on col 1: 22px mark, 10px gap, 15px expanded wordmark,
-   vertically centered on the mark's optical center by the flex row */
-header.vc-header .vc-logo { grid-column: 1 / 4; display: flex; align-items: center; gap: 10px; text-decoration: none; justify-self: start; }
+/* ONE CONTAINER (2026-09-05 alignment fix): the row is the page container
+   itself, calc(100% - 48px) capped at 1392 with NO padding of its own, so
+   the mark's left edge sits on the content's left edge and Subscribe's
+   right edge on the content's right edge. It is position:relative so the
+   link row can center on it; the container is viewport-centered, so its
+   50% IS the viewport's 50%. */
+header.vc-header .vc-in { display: flex; align-items: center; justify-content: space-between; position: relative; height: 100%;
+  width: calc(100% - 48px); max-width: 1392px; margin: 0 auto; padding: 0; }
+/* brand cluster on the container's left edge: 22px mark, 10px gap, 15px
+   expanded wordmark, vertically centered on the mark's optical center */
+header.vc-header .vc-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; flex: none; }
 header.vc-header .vc-mark { display: block; width: 22px; height: auto; flex: none; }
 header.vc-header .vc-word { font-family: "Archivo", var(--vc-sans); font-stretch: 125%; font-weight: 500; font-size: 15px; line-height: 1; letter-spacing: -.01em; color: #F5F2EC; white-space: nowrap; }
-/* page links on the footer's col 4 axis, the mono uppercase eyebrow grammar */
-header.vc-header nav.vc-nav { grid-column: 4 / 10; display: flex; align-items: center; gap: 22px; white-space: nowrap; }
+/* page links centered on the bar's TRUE center (the alignment fix dropped
+   the col 4 rule): absolutely positioned at 50% of the viewport-centered
+   container, so the row's midpoint equals viewport width / 2 at any width.
+   The centered-guard math: at .14em the row is ~433px wide, so the right
+   cluster (~254px + 24px inset) would touch it only below ~966px, and the
+   brand side even later; the 1023px fold arrives first, so neither guard
+   (tracking to .10em, then gap to 16px) ever fires and none is shipped. */
+header.vc-header nav.vc-nav { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); display: flex; align-items: center; gap: 22px; white-space: nowrap; }
 header.vc-header nav.vc-nav a { font-family: var(--vc-mono); font-weight: 400; font-size: 11.5px; line-height: 1.2; letter-spacing: .14em; text-transform: uppercase; color: rgba(245,242,236,.62); text-decoration: none; transition: color .28s ease; }
 header.vc-header nav.vc-nav a:hover { color: #F5F2EC; }
 header.vc-header nav.vc-nav a.active { color: var(--vc-orange); }
-/* right cluster ends on the col 13 line (container right edge) */
-header.vc-header .vc-right { grid-column: 10 / 13; display: flex; align-items: center; justify-content: flex-end; gap: 12px; min-width: 0; }
+/* right cluster ends on the container's right edge */
+header.vc-header .vc-right { display: flex; align-items: center; justify-content: flex-end; gap: 12px; flex: none; }
 header.vc-header .vc-social { display: flex; align-items: center; gap: 4px; }
 header.vc-header .vc-social a { display: grid; place-items: center; width: 34px; height: 34px; color: rgba(245,242,236,.70); transition: color .28s ease; }
 header.vc-header .vc-social a:hover { color: var(--vc-orange); }
@@ -74,11 +87,6 @@ header.vc-header .vc-mobile a { font-family: var(--vc-mono); font-weight: 400; f
 header.vc-header .vc-mobile a:hover { color: #F5F2EC; }
 header.vc-header .vc-mobile a.active { color: var(--vc-orange); }
 header.vc-header .vc-mobile a.vc-cta { margin-top: 12px; justify-content: center; padding: 10px 14px; color: var(--vc-text); }
-/* between 1024 and 1280 the tracking drops first; nothing else moves and
-   the row never wraps (nowrap above). At 1280 itself the .14em base holds. */
-@media (min-width: 1024px) and (max-width: 1279px) {
-  header.vc-header nav.vc-nav a { letter-spacing: .10em; }
-}
 @media (max-width: 1023px) {
   header.vc-header .vc-in { display: flex; align-items: center; width: calc(100% - 32px); gap: 14px; }
   header.vc-header nav.vc-nav, header.vc-header .vc-right .vc-social { display: none; }
