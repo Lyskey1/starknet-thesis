@@ -1094,151 +1094,35 @@
      privacy-fx.css nor stride.css, and because this inline <style> is the
      last thing the page loads, so nothing can override it. Keep the two
      copies in sync. */
-/* ---------- the lineage, after sui.io's stack ----------
-   Title over light streaks (fading out on scroll: --st), then a dotted rail
-   down the middle with a square playhead pinned at mid-viewport (sticky), and
-   a card per stop alternating sides. A card's visual and description unfold
-   when js/lineage.js marks it .is-open; the art's strokes draw in. */
-  /* the four tokens the copied block reads. btcfi does not load
-     css/privacy-fx.css, where they sit on :root, so they are declared here
-     on the section itself. The values are the site's, unchanged. */
-  .lg { --pf-ink: #fafafa; --pf-dim: rgba(250,250,250,.62); --pf-line: #262626; --pf-acc: #c53400; }
-  /* padding and max-width reset the bare `section` rule in css/styles.css,
-     which privacy's copy never had to fight */
-  .lg { --open: 0; --tt: 0; position: relative; margin: 140px 0 0; padding: 0; max-width: none; }
-/* the intro, as sui.io does it: a 170vh band whose inner 100vh is pinned
-   over the start of the rail. Two curtain halves part outward from the
-   centre (--open, 0 to 1) while the title, top-aligned, comes up (--tt).
-   The track starts under the pin (negative margin), so the playhead and
-   the first card are already in the frame as the curtain opens. */
-.lg-head { position: relative; width: 100vw; margin-left: calc(50% - 50vw); height: 170vh; z-index: 2; pointer-events: none; }
-.lg-pin { position: sticky; top: 0; height: 100vh; display: flex; align-items: flex-start; justify-content: center; text-align: center; overflow: hidden; padding-top: 11vh; }
-.lg-streaks, .lg-streaks-r { position: absolute; top: -4%; bottom: -4%; width: 52%; filter: blur(2px) saturate(1.2); pointer-events: none;
-  background: repeating-linear-gradient(90deg, #1a0600 0 6px, #c53400 6px 12px, #6a1a00 12px 22px, #ff8a4a 22px 25px, #2a0a00 25px 40px, #b03000 40px 45px, #120400 45px 62px, #e86a30 62px 64px, #3a0e00 64px 84px);
-  animation: lgStreak 24s linear infinite alternate; }
-.lg-streaks { left: -2%; transform: translateX(calc(var(--open) * -110%));
-  -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 60%, transparent 100%); mask-image: linear-gradient(90deg, #000 0%, #000 60%, transparent 100%); }
-.lg-streaks-r { right: -2%; transform: translateX(calc(var(--open) * 110%));
-  -webkit-mask-image: linear-gradient(270deg, #000 0%, #000 60%, transparent 100%); mask-image: linear-gradient(270deg, #000 0%, #000 60%, transparent 100%); }
-@keyframes lgStreak { from { background-position: 0 0; } to { background-position: 168px 0; } }
-.lg-head-in { position: relative; opacity: var(--tt); transform: translateY(calc((1 - var(--tt)) * 24px)); }
-.lg-title { margin: 0; font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-weight: 300; font-size: clamp(40px, 6.4vw, 104px); line-height: .98; letter-spacing: -.03em; color: var(--pf-ink); }
-.lg-sub { display: inline-flex; align-items: center; gap: 10px; margin: 26px 0 0; font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-size: 18px; color: rgba(250,250,250,.85); }
-.lg-sq { width: 12px; height: 12px; background: var(--pf-acc); }
-.lg-track { position: relative; z-index: 1; max-width: 1400px; margin: -62vh auto 0; padding: 0 32px 20vh; }
-.lg-line { position: absolute; top: 0; bottom: 0; left: 50%; width: 0; border-left: 2px dotted rgba(250,250,250,.45); transform: translateX(-1px); }
-.lg-play { position: sticky; top: 50vh; z-index: 2; width: 14px; height: 14px; margin: 0 auto -14px; background: #fafafa; }
-.lg-play::before { content: ""; position: absolute; left: 6px; bottom: 14px; width: 2px; height: 44px; background: var(--pf-acc); }
-.lg-list { list-style: none; margin: 0; padding: 0; }
-.lg-stop { position: relative; display: flex; align-items: center; min-height: 88vh; }
-.lg-stop.lg-r { justify-content: flex-end; }
-.lg-stop.lg-l { justify-content: flex-start; }
-.lg-card { position: relative; width: min(46%, 620px); border: 1px solid #3a3a3a; background: rgba(13,13,13,.85); }
-.lg-r .lg-card { margin-left: calc(50% + 72px); margin-right: 0; width: min(100%, 620px); }
-.lg-l .lg-card { margin-right: calc(50% + 72px); margin-left: 0; width: min(100%, 620px); }
-.lg-stop.lg-r, .lg-stop.lg-l { justify-content: flex-start; }
-.lg-l { flex-direction: row-reverse; }
-.lg-ch { position: relative; display: flex; align-items: center; gap: 18px; padding: 22px 24px; }
-.lg-num { display: grid; place-items: center; width: 50px; height: 50px; border: 1px solid #5a5a5a; font-family: 'IBM Plex Mono', monospace; font-size: 16px; color: var(--pf-ink); background: #0d0d0d; position: relative; z-index: 1; }
-.lg-ct { margin: 0; font-family: 'IBM Plex Mono', monospace; font-weight: 400; font-size: 15px; letter-spacing: .12em; text-transform: uppercase; color: var(--pf-ink); }
-/* the connector: from the number box down the card's left gutter to the year tile */
-.lg-card::before { content: ""; position: absolute; left: 48px; top: 72px; bottom: 47px; width: 1px; background: #5a5a5a; }
-.lg-card::after { content: ""; position: absolute; left: 48px; bottom: 47px; width: 20px; height: 1px; background: #5a5a5a; }
-.lg-cv { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .9s cubic-bezier(.2,.7,.2,1); border-top: 1px solid transparent; }
-.lg-cv-in { overflow: hidden; min-height: 0; }
-.lg-art { display: block; width: 100%; height: auto; max-height: 300px; margin: 8px auto 0; padding: 0 24px 0 72px; }
-.lg-art path, .lg-art circle, .lg-art rect, .lg-art ellipse { stroke-dasharray: 700; stroke-dashoffset: 700; }
-.lg-cd { margin: 0; padding: 4px 24px 26px 72px; font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-size: 15px; line-height: 1.55; color: var(--pf-dim); }
-.lg-cf { display: flex; align-items: center; gap: 18px; padding: 20px 24px 22px 68px; border-top: 1px solid #3a3a3a; }
-.lg-yr { display: grid; place-items: center; height: 50px; padding: 0 12px; border: 1px solid #5a5a5a; background: #0d0d0d; font-family: 'IBM Plex Mono', monospace; font-size: 15px; color: var(--pf-ink); position: relative; z-index: 1; }
-.lg-src { font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-size: 18px; color: rgba(250,250,250,.6); text-decoration: none; }
-.lg-src:hover { color: var(--pf-acc); }
-.lg-card.is-open .lg-cv { grid-template-rows: 1fr; border-top-color: #3a3a3a; }
-.lg-card.is-open .lg-art path, .lg-card.is-open .lg-art circle, .lg-card.is-open .lg-art rect, .lg-card.is-open .lg-art ellipse { animation: lgDraw 1.6s cubic-bezier(.3,.6,.2,1) .2s forwards; }
-.lg-card.is-open .lg-acc { animation: lgPulse 3s ease-in-out 1.6s infinite; }
-@keyframes lgDraw { to { stroke-dashoffset: 0; } }
-@keyframes lgPulse { 0%, 100% { opacity: 1; } 50% { opacity: .55; } }
-.lg-card.is-open .lg-num, .lg-card.is-open .lg-yr { border-color: var(--pf-acc); }
-@media (prefers-reduced-motion: reduce) {
-  .lg-streaks, .lg-streaks-r { animation: none; }
-  .lg-head-in { transform: none; }
-  .lg-cv { transition: none; }
-  .lg-art path, .lg-art circle, .lg-art rect, .lg-art ellipse { stroke-dasharray: none; stroke-dashoffset: 0; animation: none !important; }
-  .lg-card.is-open .lg-acc { animation: none; }
-}
-@media (max-width: 860px) {
-  .lg { margin-top: 80px; }
-  .lg-head { height: 150vh; }
-  .lg-pin { padding-top: 14vh; }
-  .lg-track { margin-top: -50vh; }
-  .lg-sub { font-size: 15px; }
-  .lg-track { padding: 0 20px 12vh; }
-  .lg-line { left: 20px; transform: none; }
-  .lg-play { margin: 0 0 -14px -6px; }
-  .lg-stop { min-height: 0; margin: 40px 0; }
-  .lg-l { flex-direction: row; }
-  .lg-r .lg-card, .lg-l .lg-card { margin: 0 0 0 28px; width: 100%; }
-  .lg-art { padding: 0 20px 0 20px; }
-  .lg-cd { padding: 4px 20px 22px; }
-}
-
-  /* No local wash here. js/eco-backdrop.js paints the flame shader page-wide
-     and these sections only need to stay out of its way, which is exactly what
-     the privacy page does: its .lg is transparent and carries no pseudo layer.
-     A CSS gradient here read as a hard-edged band clipped to the track, and the
-     isolation it needed was what hid the real shader. */
-  #btcGlobe .bg-stick{ background: transparent; }
-
-  /* The flame shader (js/eco-backdrop.js) is a FIXED canvas at z-index 0, so
-     every ancestor above it has to stay transparent for it to read through.
-     On the privacy page the whole chain already is, which is why its lineage
-     sits on the wash. This page wraps those sections in .solution, which
-     styles.css paints #0d0d0d, and that was covering the canvas. html already
-     carries the same ground colour, so dropping the fill changes nothing
-     except letting the shader through. */
-  body.page-btcfi .solution { background: transparent; }
-
-  /* two copy states, exactly as css/eco-stage.css carries them: the first sits
-     at the top over the shell, the second is centred for the landed field so
-     the logos orbit around the words rather than across them */
-  .bg-copy-b { top: 50%; transform: translate(-50%, -50%);
-    width: min(760px, calc(100% - 48px)); opacity: 0; visibility: hidden; }
-
-  /* ============ TRACK RECORD: the statement (#tr-band) ============
-     A copy of privacy.html's Satoshi statement treatment, the block in
-     css/privacy-fx.css commented "Satoshi's statement, after sui.io's thesis
-     line". It sits inline rather than in a shared sheet because btcfi loads
-     neither privacy-fx.css nor stride.css, and because this inline <style> is
-     the last thing the page loads, so nothing can override it. The prefix is
-     .tr- where privacy's is .sq-, so the two copies can never collide. Keep
-     them in sync. */
-  /* the three tokens the copied block reads, declared on the section itself
-     the way .lg above declares its own. The values are the site's, unchanged. */
-  .tr { --pf-ink: #fafafa; --pf-dim: rgba(250,250,250,.62); --pf-acc: #c53400; }
-  /* the full-bleed band. padding and max-width also reset the bare `section`
-     rule in css/styles.css, which privacy's copy never had to fight */
-  .tr { position: relative; width: 100vw; max-width: none; margin: 56px 0 0 calc(50% - 50vw); padding: 64px 16px 24px; }
-  /* the dotted rule across the top with a square at each end, as sui.io draws it */
-  .tr::before { content: ""; position: absolute; left: 0; right: 0; top: 0; border-top: 2px dotted rgba(250,250,250,.35); }
-  .tr::after { content: ""; position: absolute; left: 0; top: -3px; width: 8px; height: 8px; background: var(--pf-acc); box-shadow: calc(100vw - 8px) 0 0 var(--pf-acc); }
-  .tr-kicker { display: inline-block; margin: 0 0 22px; padding: 6px 10px; background: rgba(250,250,250,.08);
-    font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: .02em; text-transform: uppercase; color: rgba(255,255,255,.85); }
-  .tr-quote { margin: 0; max-width: none; font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-weight: 600; color: #fff;
-    font-size: clamp(24px, 3.3vw, 52px); line-height: 1.08; letter-spacing: -.035em; text-transform: none; }
-  /* inline-block + nowrap, not plain inline: as plain inline the blocks left
-     stray slabs at line ends */
-  .tr-hl { display: inline-block; vertical-align: baseline; line-height: 1; white-space: nowrap; padding: 0 .1em 0 0; background: var(--pf-acc); color: #fff; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
-  .tr-ic { display: inline-grid; place-items: center; width: .8em; height: .8em; margin-right: .1em; vertical-align: -.08em; background: #fafafa; color: var(--pf-acc); }
-  .tr-ic svg { width: 62%; height: 62%; }
-  @media (max-width: 860px) {
-    .tr { margin-top: 32px; padding: 44px 12px 0; }
-    .tr-quote { font-size: clamp(25px, 6.6vw, 36px); line-height: 1.12; }
-    /* the longest highlight is wider than a phone, and html{overflow-x:clip}
-       would silently crop the tail, so let the blocks wrap here. The cloned
-       decoration paints each fragment; the zeroed padding and the absence of
-       any space inside the <mark> keep it off the line ends. */
-    .tr-hl { display: inline; white-space: normal; padding: 0; }
-  }
+/* ---------- the track record timeline (main's horizontal device) ----------
+   12 nodes on one axis, years and labels alternating above and below the
+   rail, one detail card below for the active node (first node active on
+   load; click, hover or arrow keys move it). Unified accent: the violet
+   main gives non-BTC nodes folds into this page's one accent, per the
+   branded treatment. At small widths the strip scrolls horizontally. */
+  .tl-section { margin-top: 64px; padding-top: 8px; }
+  .tl-scroll { overflow-x: auto; overflow-y: hidden; padding-bottom: 4px; margin: 36px 0 20px; }
+  .timeline { position: relative; height: 300px; min-width: 980px; }
+  .tl-rail { position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(var(--accent-rgb),0.45) 6%, rgba(var(--accent-rgb),0.45) 94%, transparent); }
+  .tl-track { display: flex; height: 100%; position: relative; }
+  .tl-col { flex: 1 0 0; position: relative; min-width: 78px; cursor: pointer; background: none; border: 0; padding: 0; font: inherit; color: inherit; }
+  .tl-col:focus-visible { outline: 2px solid rgba(250,250,250,.5); outline-offset: 2px; }
+  .tl-dot { position: absolute; top: 50%; left: 50%; width: 14px; height: 14px; border-radius: 50%; transform: translate(-50%,-50%);
+    background: #141414; border: 2px solid var(--accent); box-shadow: 0 0 0 4px rgba(var(--accent-rgb),0.12); transition: all 0.25s; z-index: 3; }
+  .tl-col:hover .tl-dot, .tl-col.active .tl-dot { background: var(--accent); box-shadow: 0 0 0 6px rgba(var(--accent-rgb),0.22), 0 0 18px rgba(var(--accent-rgb),0.65); }
+  .tl-conn { position: absolute; left: 50%; width: 1px; background: rgba(245,242,236,0.15); transform: translateX(-50%); z-index: 1; }
+  .tl-col.top .tl-conn { bottom: 50%; height: 26px; }
+  .tl-col.bottom .tl-conn { top: 50%; height: 26px; }
+  .tl-label { position: absolute; left: 50%; transform: translateX(-50%); width: 124px; text-align: center; }
+  .tl-col.top .tl-label { bottom: calc(50% + 30px); }
+  .tl-col.bottom .tl-label { top: calc(50% + 30px); }
+  .tl-year { font-family: var(--display); font-weight: 700; font-size: 15px; color: var(--accent); transition: color 0.2s; }
+  .tl-name { font-family: var(--mono); font-size: 10px; letter-spacing: 0.03em; text-transform: uppercase; color: rgba(245,242,236,0.45); line-height: 1.45; margin-top: 5px; transition: color 0.2s; }
+  .tl-col:hover .tl-name, .tl-col.active .tl-name { color: rgba(245,242,236,0.85); }
+  .tl-detail { border: 1px solid rgba(var(--accent-rgb),0.3); background: rgba(var(--accent-rgb),0.04); border-radius: 8px; padding: 24px 28px; min-height: 96px; }
+  .tl-detail-year { font-family: var(--mono); font-size: 11px; letter-spacing: 0.15em; color: var(--accent); }
+  .tl-detail-title { font-family: var(--display); font-size: 19px; font-weight: 600; margin: 6px 0 8px; color: var(--white); }
+  .tl-detail-desc { font-size: 14px; color: rgba(245,242,236,0.6); line-height: 1.7; }
 
   /* ================= THE RISK BAND (.brkl), section 01's close =========
      The reference layout, followed literally: a paragraph-style lede whose
@@ -1578,44 +1462,6 @@
     .hero { padding: 5.5rem 1.25rem 2rem; }
     .bfh-title { font-size: 2.375rem; }
     .bfh-turn { font-size: 1.75rem; }
-  }
-
-  /* ===== TRACK RECORD (#tr-band): a full viewport for the statement =====
-     Appended at the very end of this inline <style> so it lands after the
-     .tr block above and after every linked sheet; nothing can override it.
-     The band used to be a 460px slab with the statement pinned to its top,
-     which left a screen of dead air under the type before the lineage
-     section's streak head (.lg-streaks, which overflows ~36px ABOVE its own
-     section) drifted into frame and read as a stranded strip. Those streaks
-     belong to #lg, not here, so they are left alone: the band simply takes a
-     whole viewport and the two stop sharing a screen.
-     Column flex with align-items:flex-start is deliberate. Blockified flex
-     items stretch on the cross axis, which would smear the mono TRACK RECORD
-     chip into a 100vw grey slab; flex-start keeps it shrink-to-fit.
-     box-sizing is set because the bare `section` rule in css/styles.css does
-     not, and content-box would make this 100vh PLUS the padding.
-     svh is the second declaration so an iOS toolbar cannot overflow it.
-     NO background, NO isolation, NO overflow: js/eco-backdrop.js paints the
-     flame canvas underneath at z-index 0 and any of the three would kill it.
-     The dotted bottom border mirrors the dotted rule .tr::before draws across
-     the top, so the band closes on a deliberate edge rather than trailing
-     off. Both pseudo-elements are already spoken for (the top rule and its
-     two accent squares), hence a border rather than a third. */
-  .tr {
-    box-sizing: border-box;
-    min-height: 100vh;
-    min-height: 100svh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
-    /* symmetric, so "centred" reads centred: the old 64/24 split leaned the
-       type 40px high inside its own box */
-    padding: 72px 16px;
-    border-bottom: 2px dotted rgba(250, 250, 250, .35);
-  }
-  @media (max-width: 860px) {
-    .tr { padding: 56px 12px; }
   }
 
   /* ==========================================================================
@@ -2882,127 +2728,22 @@
 
       <!-- Track record timeline -->
       <div class="tl-section">
-        <!-- The statement, set the way privacy.html sets Satoshi's (its
-             `section.sq#sq-band`): a full-bleed band under a dotted rule with
-             an accent square at each end, a mono chip for the kicker, then one
-             huge tight statement with three inverted highlight blocks, each led
-             by a small square icon tile. Same copy as before, run together as
-             one sentence. The h3 keeps its id: scripts/build-search-index.js
-             anchors the page's search entry on it. -->
-        <section class="tr" id="tr-band" aria-labelledby="built-by-an-og-team-a">
-          <p class="tr-kicker">Track record</p>
-          <h3 id="built-by-an-og-team-a" class="tr-quote">Built by an OG team, this isn't a one-cycle experiment but <mark class="tr-hl"><i class="tr-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V3"/><path d="M5 4.5h11.5l-2.8 3.8 2.8 3.8H5"/></svg></i>a decade of scaling breakthroughs</mark>: again and again, what StarkWare shipped <mark class="tr-hl"><i class="tr-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.4 3.4h17.2v17.2H3.4z"/><path d="M7.6 12.2l3.1 3.3 5.9-6.9"/></svg></i>became the standard</mark> the rest of the industry later adopted, from the first production of STARK technology to protocol-level privacy, ten years of cryptographic firsts, <mark class="tr-hl"><i class="tr-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2.4l4 4.4M20 2.4l-4 4.4"/><path d="M8.4 9.2v12.2"/><path d="M8.4 9.2h5.4a3 3 0 0 1 0 6H8.4"/><path d="M8.4 15.2h5.8a3 3 0 0 1 0 6.2H8.4"/></svg></i>now converging on Bitcoin</mark>.</h3>
-        </section>
+        <p class="scale-label">Track record</p>
+        <h3 id="built-by-an-og-team-a" class="scale-title">Built by an OG team. <span>A decade of scaling breakthroughs.</span></h3>
+        <p class="scale-intro">This isn't a one-cycle experiment. Again and again, what StarkWare shipped became the standard the rest of the industry later adopted, from the first production of STARK technology to protocol-level privacy. Ten years of cryptographic firsts, now converging on Bitcoin.</p>
 
-        <!-- The track record, set the way sui.io sets its stack (a twin of
-             privacy.html's lineage, sharing js/lineage.js): a title over light
-             streaks that part as you scroll, then one dotted rail down the
-             middle with a square playhead pinned at mid-viewport, and a card
-             per milestone alternating left and right. A card opens (its
-             line-art visual and description unfold) when it reaches the middle.
-             The art is inline SVG line drawings, drawn on open, no imagery. -->
-        <section class="lg" id="lg" aria-label="StarkWare's track record, 2018 to 2026">
-          <div class="lg-head">
-            <div class="lg-pin">
-              <div class="lg-streaks" aria-hidden="true"></div>
-              <div class="lg-streaks-r" aria-hidden="true"></div>
-              <div class="lg-head-in">
-                <p class="lg-title">A decade<br>of firsts</p>
-                <p class="lg-sub"><span class="lg-sq" aria-hidden="true"></span>Twelve breakthroughs, from the first STARK to STRK20</p>
-              </div>
-            </div>
+        <div class="tl-scroll">
+          <div class="timeline">
+            <div class="tl-rail"></div>
+            <div class="tl-track" id="tlTrack"></div>
           </div>
+        </div>
 
-          <div class="lg-track">
-            <span class="lg-line" aria-hidden="true"></span>
-            <div class="lg-play" aria-hidden="true"></div>
-            <ol class="lg-list">
-      <li class="lg-stop lg-r">
-        <article class="lg-card" id="ms-2018-stark">
-          <header class="lg-ch"><span class="lg-num">01</span><h4 class="lg-ct">STARK</h4></header>
-          <div class="lg-cv"><div class="lg-cv-in"><svg class="lg-art" viewBox="0 0 320 220" aria-hidden="true"><g stroke="#4a4a4a" stroke-width="1.2" fill="none" stroke-linejoin="round" stroke-linecap="round"><path d="M160 26 254 60v56c0 40-38 64-94 78-56-14-94-38-94-78V60z"/><path d="M104 138h112M104 158h78"/></g><g stroke="#c53400" stroke-width="1.4" fill="none" stroke-linejoin="round" stroke-linecap="round" class="lg-acc"><path d="M160 52 169 78h27l-22 17 8 27-22-16-22 16 8-27-22-17h27z"/></g></svg><p class="lg-cd">StarkWare introduced STARK-based proving systems into production-grade blockchain infrastructure. STARKs are uniquely suited to combine privacy, scalability and post-quantum security in one system.</p></div></div>
-          <footer class="lg-cf"><span class="lg-yr">2018</span></footer>
-      </article>
-      </li>
-      <li class="lg-stop lg-l">
-        <article class="lg-card" id="ms-2019-production-grade-prover">
-          <header class="lg-ch"><span class="lg-num">02</span><h4 class="lg-ct">Production-grade prover</h4></header>
-          <div class="lg-cv"><div class="lg-cv-in"><svg class="lg-art" viewBox="0 0 320 220" aria-hidden="true"><g stroke="#4a4a4a" stroke-width="1.2" fill="none" stroke-linejoin="round" stroke-linecap="round"><rect x="30" y="52" width="152" height="112" rx="4"/><circle cx="86" cy="98" r="28"/><circle cx="86" cy="98" r="10"/><path d="M86 70v-10M86 126v10M56 98h-10M116 98h10M66 78l-7-7M106 118l7 7M106 78l7-7M66 118l-7 7"/><path d="M40 164v22h132v-22"/><path d="M182 112h44"/></g><g stroke="#c53400" stroke-width="1.4" fill="none" stroke-linejoin="round" stroke-linecap="round" class="lg-acc"><rect x="226" y="86" width="58" height="52" rx="3"/><path d="M240 112l11 11 19-24"/></g></svg><p class="lg-cd">Launched production-grade proving infrastructure, proving that validity proofs could move beyond research papers and become real infrastructure for applications.</p></div></div>
-          <footer class="lg-cf"><span class="lg-yr">2019</span></footer>
-      </article>
-      </li>
-      <li class="lg-stop lg-r">
-        <article class="lg-card" id="ms-2019-validium">
-          <header class="lg-ch"><span class="lg-num">03</span><h4 class="lg-ct">Validium</h4></header>
-          <div class="lg-cv"><div class="lg-cv-in"><svg class="lg-art" viewBox="0 0 320 220" aria-hidden="true"><g stroke="#4a4a4a" stroke-width="1.2" fill="none" stroke-linejoin="round" stroke-linecap="round"><rect x="36" y="34" width="248" height="30" rx="3"/><path d="M52 49h44M112 49h30M158 49h26"/><rect x="40" y="146" width="52" height="44" rx="3"/><rect x="102" y="146" width="52" height="44" rx="3"/><rect x="164" y="146" width="52" height="44" rx="3"/><rect x="226" y="146" width="52" height="44" rx="3"/><path d="M40 134h238"/></g><g stroke="#c53400" stroke-width="1.4" fill="none" stroke-linejoin="round" stroke-linecap="round" class="lg-acc"><path d="M160 130V96"/><path d="M160 66l16 16-16 16-16-16z"/></g></svg><p class="lg-cd">Brought Validium-based scaling to production: off-chain data availability secured by on-chain validity proofs, for higher throughput at lower cost.</p></div></div>
-          <footer class="lg-cf"><span class="lg-yr">2019</span></footer>
-      </article>
-      </li>
-      <li class="lg-stop lg-l">
-        <article class="lg-card" id="ms-2020-l2-rollup-starkex">
-          <header class="lg-ch"><span class="lg-num">04</span><h4 class="lg-ct">L2 rollup StarkEx</h4></header>
-          <div class="lg-cv"><div class="lg-cv-in"><svg class="lg-art" viewBox="0 0 320 220" aria-hidden="true"><g stroke="#4a4a4a" stroke-width="1.2" fill="none" stroke-linejoin="round" stroke-linecap="round"><rect x="34" y="26" width="30" height="24" rx="2"/><rect x="76" y="26" width="30" height="24" rx="2"/><rect x="118" y="26" width="30" height="24" rx="2"/><rect x="160" y="26" width="30" height="24" rx="2"/><rect x="202" y="26" width="30" height="24" rx="2"/><rect x="244" y="26" width="30" height="24" rx="2"/><path d="M49 58l78 56M275 58l-84 56M160 58v56"/><rect x="34" y="176" width="252" height="30" rx="3"/><path d="M52 191h46M116 191h40M174 191h58"/></g><g stroke="#c53400" stroke-width="1.4" fill="none" stroke-linejoin="round" stroke-linecap="round" class="lg-acc"><rect x="118" y="118" width="84" height="38" rx="3"/><path d="M160 156v20"/></g></svg><p class="lg-cd">StarkEx became the first L2 validity system used in production, powering high-throughput applications like dYdX, ImmutableX and Sorare.</p></div></div>
-          <footer class="lg-cf"><span class="lg-yr">2020</span></footer>
-      </article>
-      </li>
-      <li class="lg-stop lg-r">
-        <article class="lg-card" id="ms-2020-proof-aggregation-sharp">
-          <header class="lg-ch"><span class="lg-num">05</span><h4 class="lg-ct">Proof aggregation SHARP</h4></header>
-          <div class="lg-cv"><div class="lg-cv-in"><svg class="lg-art" viewBox="0 0 320 220" aria-hidden="true"><g stroke="#4a4a4a" stroke-width="1.2" fill="none" stroke-linejoin="round" stroke-linecap="round"><rect x="34" y="24" width="44" height="26" rx="2"/><rect x="110" y="24" width="44" height="26" rx="2"/><rect x="186" y="24" width="44" height="26" rx="2"/><rect x="262" y="24" width="44" height="26" rx="2"/><path d="M56 50v18h76V50M96 68v24M208 50v18h76V50M224 68v24"/><rect x="72" y="92" width="48" height="28" rx="2"/><rect x="200" y="92" width="48" height="28" rx="2"/><path d="M96 120v18h128v-18M160 138v22"/></g><g stroke="#c53400" stroke-width="1.4" fill="none" stroke-linejoin="round" stroke-linecap="round" class="lg-acc"><rect x="126" y="160" width="68" height="34" rx="3"/><path d="M142 177h16M168 177h12"/></g></svg><p class="lg-cd">SHARP, StarkWare’s proof aggregation system, let many applications and transactions share proving infrastructure efficiently.</p></div></div>
-          <footer class="lg-cf"><span class="lg-yr">2020</span></footer>
-      </article>
-      </li>
-      <li class="lg-stop lg-l">
-        <article class="lg-card" id="ms-2021-general-purpose-zk-rollup">
-          <header class="lg-ch"><span class="lg-num">06</span><h4 class="lg-ct">General-purpose ZK rollup Starknet</h4></header>
-          <div class="lg-cv"><div class="lg-cv-in"><svg class="lg-art" viewBox="0 0 320 220" aria-hidden="true"><g stroke="#4a4a4a" stroke-width="1.2" fill="none" stroke-linejoin="round" stroke-linecap="round"><rect x="26" y="40" width="140" height="120" rx="4"/><path d="M26 62h140"/><circle cx="42" cy="51" r="3"/><circle cx="56" cy="51" r="3"/><path d="M44 84h60M44 102h84M60 120h64M44 138h44"/><circle cx="232" cy="60" r="13"/><circle cx="286" cy="104" r="13"/><circle cx="232" cy="150" r="13"/><circle cx="196" cy="104" r="13"/><path d="M226 71l-20 22M243 69l34 26M243 141l34-26M226 139l-20-22"/></g><g stroke="#c53400" stroke-width="1.4" fill="none" stroke-linejoin="round" stroke-linecap="round" class="lg-acc"><circle cx="241" cy="104" r="19"/><path d="M235 104l5 6 10-13"/></g></svg><p class="lg-cd">Starknet launched as a permissionless, general-purpose ZK rollup, where developers can build any application using Cairo.</p></div></div>
-          <footer class="lg-cf"><span class="lg-yr">2021</span></footer>
-      </article>
-      </li>
-      <li class="lg-stop lg-r">
-        <article class="lg-card" id="ms-2022-recursive-proving-l3s">
-          <header class="lg-ch"><span class="lg-num">07</span><h4 class="lg-ct">Recursive proving &amp; L3s</h4></header>
-          <div class="lg-cv"><div class="lg-cv-in"><svg class="lg-art" viewBox="0 0 320 220" aria-hidden="true"><g stroke="#4a4a4a" stroke-width="1.2" fill="none" stroke-linejoin="round" stroke-linecap="round"><rect x="24" y="152" width="272" height="46" rx="3"/><rect x="52" y="94" width="216" height="46" rx="3"/><rect x="80" y="36" width="160" height="46" rx="3"/><path d="M40 175h30M68 117h26M96 59h22"/><path d="M160 82v12M160 140v12"/></g><g stroke="#c53400" stroke-width="1.4" fill="none" stroke-linejoin="round" stroke-linecap="round" class="lg-acc"><rect x="140" y="46" width="86" height="26" rx="2"/><rect x="152" y="52" width="62" height="14" rx="2"/><rect x="164" y="56" width="38" height="6" rx="1"/></g></svg><p class="lg-cd">Recursive proving and L3 architectures opened the door to proof aggregation, application-specific scaling and more modular execution models.</p></div></div>
-          <footer class="lg-cf"><span class="lg-yr">2022</span></footer>
-      </article>
-      </li>
-      <li class="lg-stop lg-l">
-        <article class="lg-card" id="ms-2024-circle-stark-stwo">
-          <header class="lg-ch"><span class="lg-num">08</span><h4 class="lg-ct">Circle STARK &amp; Stwo</h4></header>
-          <div class="lg-cv"><div class="lg-cv-in"><svg class="lg-art" viewBox="0 0 320 220" aria-hidden="true"><g stroke="#4a4a4a" stroke-width="1.2" fill="none" stroke-linejoin="round" stroke-linecap="round"><circle cx="160" cy="94" r="66"/><circle cx="160" cy="28" r="5"/><circle cx="217" cy="61" r="5"/><circle cx="217" cy="127" r="5"/><circle cx="160" cy="160" r="5"/><circle cx="103" cy="127" r="5"/><circle cx="103" cy="61" r="5"/><rect x="34" y="186" width="252" height="26" rx="3"/><path d="M50 199h22M84 199h34M130 199h18M160 199h30M202 199h26M240 199h30"/></g><g stroke="#c53400" stroke-width="1.4" fill="none" stroke-linejoin="round" stroke-linecap="round" class="lg-acc"><circle cx="160" cy="94" r="30"/><path d="M160 94l26-14"/></g></svg><p class="lg-cd">The next-generation prover Stwo uses a field much friendlier to Bitcoin Script constraints, making STARK verification on Bitcoin realistic. A key step toward settling on Bitcoin.</p></div></div>
-          <footer class="lg-cf"><span class="lg-yr">2024</span></footer>
-      </article>
-      </li>
-      <li class="lg-stop lg-r">
-        <article class="lg-card" id="ms-2024-l2-staking">
-          <header class="lg-ch"><span class="lg-num">09</span><h4 class="lg-ct">L2 staking</h4></header>
-          <div class="lg-cv"><div class="lg-cv-in"><svg class="lg-art" viewBox="0 0 320 220" aria-hidden="true"><g stroke="#4a4a4a" stroke-width="1.2" fill="none" stroke-linejoin="round" stroke-linecap="round"><ellipse cx="100" cy="176" rx="50" ry="16"/><ellipse cx="100" cy="146" rx="50" ry="16"/><ellipse cx="100" cy="116" rx="50" ry="16"/><path d="M50 116v60M150 116v60"/><rect x="196" y="118" width="94" height="66" rx="4"/><path d="M214 102a29 29 0 0 1 58 0v16"/><circle cx="243" cy="146" r="9"/><path d="M243 155v14"/></g><g stroke="#c53400" stroke-width="1.4" fill="none" stroke-linejoin="round" stroke-linecap="round" class="lg-acc"><ellipse cx="100" cy="82" rx="50" ry="16"/><path d="M100 40v26M88 52l12-12 12 12"/></g></svg><p class="lg-cd">Advanced L2 staking and decentralized infrastructure, moving Starknet toward deeper decentralization.</p></div></div>
-          <footer class="lg-cf"><span class="lg-yr">2024</span></footer>
-      </article>
-      </li>
-      <li class="lg-stop lg-l">
-        <article class="lg-card" id="ms-2025-dual-token-consensus-strk">
-          <header class="lg-ch"><span class="lg-num">10</span><h4 class="lg-ct">Dual-token consensus (STRK &amp; BTC)</h4></header>
-          <div class="lg-cv"><div class="lg-cv-in"><svg class="lg-art" viewBox="0 0 320 220" aria-hidden="true"><g stroke="#4a4a4a" stroke-width="1.2" fill="none" stroke-linejoin="round" stroke-linecap="round"><circle cx="106" cy="72" r="38"/><path d="M96 60h22M96 72h22M96 84h16"/><rect x="34" y="158" width="252" height="40" rx="3"/><path d="M118 158v-16M202 158v-16M160 178h44M56 178h72"/></g><g stroke="#c53400" stroke-width="1.4" fill="none" stroke-linejoin="round" stroke-linecap="round" class="lg-acc"><circle cx="214" cy="72" r="38"/><path d="M200 58h20a8 8 0 0 1 0 15h-20M200 73h24a8 8 0 0 1 0 15h-24M207 50v42M217 50v42"/><path d="M144 72h32"/></g></svg><p class="lg-cd">Introduced a dual-token consensus mechanism where STRK and BTC secure the network together, bringing Bitcoin into Starknet’s security model.</p></div></div>
-          <footer class="lg-cf"><span class="lg-yr">2025</span></footer>
-      </article>
-      </li>
-      <li class="lg-stop lg-r">
-        <article class="lg-card" id="ms-2025-decentralized-sequencer-architecture">
-          <header class="lg-ch"><span class="lg-num">11</span><h4 class="lg-ct">Decentralized sequencer architecture</h4></header>
-          <div class="lg-cv"><div class="lg-cv-in"><svg class="lg-art" viewBox="0 0 320 220" aria-hidden="true"><g stroke="#4a4a4a" stroke-width="1.2" fill="none" stroke-linejoin="round" stroke-linecap="round"><circle cx="160" cy="86" r="58"/><rect x="200" y="44" width="30" height="26" rx="2"/><rect x="200" y="104" width="30" height="26" rx="2"/><rect x="145" y="136" width="30" height="26" rx="2"/><rect x="90" y="104" width="30" height="26" rx="2"/><rect x="90" y="44" width="30" height="26" rx="2"/><rect x="34" y="184" width="40" height="26" rx="2"/><rect x="82" y="184" width="40" height="26" rx="2"/><rect x="130" y="184" width="40" height="26" rx="2"/><rect x="178" y="184" width="40" height="26" rx="2"/><path d="M74 197h8M122 197h8M170 197h8M218 197h28"/></g><g stroke="#c53400" stroke-width="1.4" fill="none" stroke-linejoin="round" stroke-linecap="round" class="lg-acc"><rect x="144" y="8" width="32" height="28" rx="2"/><path d="M180 24a48 48 0 0 1 30 26"/><path d="M210 50l-11-2M210 50l-2-11"/></g></svg><p class="lg-cd">Decentralized sequencer architecture and the transition toward full decentralization of the network.</p></div></div>
-          <footer class="lg-cf"><span class="lg-yr">2025</span></footer>
-      </article>
-      </li>
-      <li class="lg-stop lg-l">
-        <article class="lg-card" id="ms-2026-strk20">
-          <header class="lg-ch"><span class="lg-num">12</span><h4 class="lg-ct">STRK20</h4></header>
-          <div class="lg-cv"><div class="lg-cv-in"><svg class="lg-art" viewBox="0 0 320 220" aria-hidden="true"><g stroke="#4a4a4a" stroke-width="1.2" fill="none" stroke-linejoin="round" stroke-linecap="round"><rect x="34" y="70" width="164" height="112" rx="4"/><path d="M34 100h164"/><path d="M54 126h60M54 146h96M54 166h44"/><circle cx="54" cy="85" r="6"/><path d="M72 85h44"/></g><g stroke="#c53400" stroke-width="1.4" fill="none" stroke-linejoin="round" stroke-linecap="round" class="lg-acc"><path d="M232 40l54 20v40c0 28-24 44-54 54-30-10-54-26-54-54V60z"/><circle cx="232" cy="104" r="11"/><path d="M232 115v18"/></g></svg><p class="lg-cd">Protocol-level privacy for ERC-20 assets, with strkBTC as the first major expression of the privacy roadmap. Bitcoin, made private and programmable.</p></div></div>
-          <footer class="lg-cf"><span class="lg-yr">2026</span></footer>
-      </article>
-      </li>
-            </ol>
-          </div>
+        <div class="tl-detail btcg-card" id="tlDetail">
+          <div class="tl-detail-year" id="tlDYear"></div>
+          <div class="tl-detail-title" id="tlDTitle"></div>
+          <div class="tl-detail-desc" id="tlDDesc"></div>
+        </div>
         </section>
       </div>
     </div>
@@ -3911,8 +3652,74 @@
 /* the staking band's reveal went with the band itself. */
 </script>
 
-<script src="js/lineage.js" defer></script>
 
+<script>
+(function() {
+  var track = document.getElementById('tlTrack');
+  if (!track) return;
+  var milestones = [
+    {year:'2018', name:'STARK', desc:'StarkWare introduced STARK-based proving systems into production-grade blockchain infrastructure. STARKs are uniquely suited to combine privacy, scalability and post-quantum security in one system.'},
+    {year:'2019', name:'Production-grade prover', desc:'Launched production-grade proving infrastructure, proving that validity proofs could move beyond research papers and become real infrastructure for applications.'},
+    {year:'2019', name:'Validium', desc:'Brought Validium-based scaling to production: off-chain data availability secured by on-chain validity proofs, for higher throughput at lower cost.'},
+    {year:'2020', name:'L2 rollup StarkEx', desc:'StarkEx became the first L2 validity system used in production, powering high-throughput applications like dYdX, ImmutableX and Sorare.'},
+    {year:'2020', name:'Proof aggregation SHARP', desc:'SHARP, StarkWare\u2019s proof aggregation system, let many applications and transactions share proving infrastructure efficiently.'},
+    {year:'2021', name:'General-purpose ZK rollup Starknet', desc:'Starknet launched as a permissionless, general-purpose ZK rollup, where developers can build any application using Cairo.'},
+    {year:'2022', name:'Recursive proving & L3s', desc:'Recursive proving and L3 architectures opened the door to proof aggregation, application-specific scaling and more modular execution models.'},
+    {year:'2024', name:'Circle STARK & Stwo', desc:'The next-generation prover Stwo uses a field much friendlier to Bitcoin Script constraints, making STARK verification on Bitcoin realistic. A key step toward settling on Bitcoin.'},
+    {year:'2024', name:'L2 staking', desc:'Advanced L2 staking and decentralized infrastructure, moving Starknet toward deeper decentralization.'},
+    {year:'2025', name:'Dual-token consensus (STRK & BTC)', desc:'Introduced a dual-token consensus mechanism where STRK and BTC secure the network together, bringing Bitcoin into Starknet\u2019s security model.'},
+    {year:'2025', name:'Decentralized sequencer architecture', desc:'Decentralized sequencer architecture and the transition toward full decentralization of the network.'},
+    {year:'2026', name:'STRK20', desc:'Protocol-level privacy for ERC-20 assets, with strkBTC as the first major expression of the privacy roadmap. Bitcoin, made private and programmable.'}
+  ];
+
+  var active = 0;
+  milestones.forEach(function(m, i) {
+    var col = document.createElement('button');
+    col.type = 'button';
+    col.className = 'tl-col ' + (i % 2 === 0 ? 'bottom' : 'top');
+    col.setAttribute('aria-label', m.year + ': ' + m.name);
+    col.innerHTML =
+      '<div class="tl-label"><div class="tl-year">' + m.year + '</div><div class="tl-name">' + m.name + '</div></div>' +
+      '<div class="tl-conn"></div>' +
+      '<div class="tl-dot"></div>';
+    col.addEventListener('mouseenter', function() { select(i); });
+    col.addEventListener('click', function() { select(i); });
+    track.appendChild(col);
+  });
+
+  var cols = track.querySelectorAll('.tl-col');
+  var detail = document.getElementById('tlDetail');
+  var dYear = document.getElementById('tlDYear');
+  var dTitle = document.getElementById('tlDTitle');
+  var dDesc = document.getElementById('tlDDesc');
+
+  function select(i) {
+    active = i;
+    cols.forEach(function(c, j) {
+      c.classList.toggle('active', j === i);
+      c.tabIndex = j === i ? 0 : -1;
+    });
+    var m = milestones[i];
+    dYear.textContent = m.year;
+    dTitle.textContent = m.name;
+    dDesc.textContent = m.desc;
+  }
+
+  /* arrow keys walk the nodes (roving tabindex; Home/End jump) */
+  track.addEventListener('keydown', function(e) {
+    var to = null;
+    if (e.key === 'ArrowRight') to = Math.min(milestones.length - 1, active + 1);
+    else if (e.key === 'ArrowLeft') to = Math.max(0, active - 1);
+    else if (e.key === 'Home') to = 0;
+    else if (e.key === 'End') to = milestones.length - 1;
+    if (to === null) return;
+    e.preventDefault();
+    select(to); cols[to].focus();
+  });
+
+  select(0); /* first node active on load */
+})();
+</script>
 <script src="js/selector-rove.js"></script>
 <script src="js/news-lazy.js"></script>
 <script src="js/news-loading.js"></script>
