@@ -32,6 +32,9 @@
      - monthly-recaps: the count of entries titled "monthly recap". The
        numbering and the entry count agree here (the archive holds every
        recap from #1), and the build fails loudly if they ever diverge.
+     - research-articles: the count of entries the shared classify() calls
+       research, i.e. a title with neither "monthly recap" nor "roundup" in
+       it. Same taxonomy as the page's filter pills, by construction.
    The values are stamped into every element carrying a data-count
    attribute; the numbers committed in digest.html are only the last stamp.
 
@@ -102,6 +105,7 @@ if (posts.length === 0) die('no posts to render');
 let weeklyRoundups = 0;   // highest roundup number in the archive's titles
 let monthlyRecaps = 0;    // count of monthly recap entries
 let monthlyMaxNum = 0;    // highest recap number, cross-check only
+let researchArticles = 0; // count of entries classify() marks research
 for (const p of raw) {
   const cat = classify(p.title);
   if (cat === 'weekly') {
@@ -113,14 +117,17 @@ for (const p of raw) {
     monthlyRecaps++;
     const m = /recap\s*#\s*(\d+)/i.exec(p.title || '');
     if (m) monthlyMaxNum = Math.max(monthlyMaxNum, +m[1]);
+  } else {
+    researchArticles++;
   }
 }
 if (!weeklyRoundups) die('no roundup number could be parsed from any weekly title');
 if (!monthlyRecaps) die('no monthly recap entries in data/recap.json');
+if (!researchArticles) die('no research entries in data/recap.json (classify() found nothing outside roundups and recaps)');
 if (monthlyMaxNum && monthlyMaxNum !== monthlyRecaps)
   die('monthly recap numbering (#' + monthlyMaxNum + ') and entry count (' + monthlyRecaps + ') disagree: a recap is missing from or duplicated in the data');
 
-const COUNTS = { 'weekly-roundups': weeklyRoundups, 'monthly-recaps': monthlyRecaps };
+const COUNTS = { 'weekly-roundups': weeklyRoundups, 'monthly-recaps': monthlyRecaps, 'research-articles': researchArticles };
 
 const block = START +
   '\n    <!-- Pre-rendered from data/recap.json: regenerated automatically on deploy (npm run build). Run node scripts/build-digest.js for local preview. -->\n    ' +
@@ -145,4 +152,4 @@ for (const key of Object.keys(COUNTS)) {
 
 fs.writeFileSync(PAGE, page);
 console.log('digest.html: static block rebuilt with ' + posts.length + ' entries (latest: ' + (posts[0] && posts[0].title) + ')');
-console.log('digest.html: counts stamped: weekly-roundups ' + weeklyRoundups + ', monthly-recaps ' + monthlyRecaps);
+console.log('digest.html: counts stamped: weekly-roundups ' + weeklyRoundups + ', monthly-recaps ' + monthlyRecaps + ', research-articles ' + researchArticles);
