@@ -2084,11 +2084,11 @@ window.ADMIN_GATE=on;})();
     </div>
     <div class="snum-col">
       <p class="snum-l">Share of circulating supply staked</p>
-      <div class="snum-v" data-metric="strk_staked_pct">21.20%</div>
+      <div class="snum-v" data-metric="strk_staked_pct">21.2%</div>
     </div>
     <div class="snum-col">
       <p class="snum-l">Onchain governance votes</p>
-      <div class="snum-v">10</div>
+      <div class="snum-v" data-metric="gov_votes">10</div>
       <p class="snum-d">Only staked or delegated STRK carries a vote.</p>
     </div>
     <div class="snum-col">
@@ -4009,7 +4009,8 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
     strkStaked: 1430248556, strkStakedUsd: 36123874, stakePct: 21.198, btcStaked: 692.25, btcStakedUsd: 44266227, valueStaked: 80390101,
     tvl: 169146064, tvs: 375481582, netflow: -9893561, stables: 162419648, apprev: 2124918, chainrev: 127790,
     dau: 15295, wau: 45166, totaltx: 309219399, tps: 1.748, downloads: 7609, blocktime: 1.69, totalblocks: 13093652, accounts: 6981372,
-    p_tvl: 587068, p_tx: 168, p_rev: 342, p_users: 2347, p_vol: 147128
+    p_tvl: 587068, p_tx: 168, p_rev: 342, p_users: 2347, p_vol: 147128,
+    govVotes: 10 // real (non-test, uncancelled) votes; live-refreshed from the Snapshot X API
   };
   var CACHE_KEY = 'strkNumbers_v2'; // v2: state carries per-cluster provenance; older cache shapes are dropped
   var NPM_FIRST_PUBLISH = '2026-02-24'; // starkzap first npm release
@@ -4125,9 +4126,15 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
     var k = el.getAttribute('data-stat');
     (statEls[k] = statEls[k] || []).push(el);
   });
+  /* PAGE-WIDE METRIC HOOKS (2026-09-05). The fill used to look only inside
+     the staking util-panel, so when the redesign emptied that panel the
+     hero and the By-the-numbers tiles kept their orphaned data-metric hooks
+     and painted the July seed forever (the 21% / 21.20% / 1.43B trio the
+     correction pass was called on). Every hook on the page fills now. */
   var stakePanel = document.querySelector('.util-panel[data-k="staking"]');
-  var spPct = stakePanel && stakePanel.querySelector('[data-metric="strk_staked_pct"]');
-  var spTot = stakePanel && stakePanel.querySelector('[data-metric="strk_staked_total"]');
+  var spPct = document.querySelectorAll('[data-metric="strk_staked_pct"]');
+  var spTot = document.querySelectorAll('[data-metric="strk_staked_total"]');
+  var spGov = document.querySelectorAll('[data-metric="gov_votes"]');
   var spBar = stakePanel && stakePanel.querySelector('.barfill.meter');
   var spUp = document.getElementById('stakingUpdated');
   var updPill = document.getElementById('upd');
@@ -4205,11 +4212,13 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
       var up = window.__nextUnlock.amount / state.circ * 100;
       (statEls.nextunlockpct || []).forEach(function(el){ el.textContent = '≈' + up.toFixed(2) + '%'; });
     }
-    // utilities > Staking panel (same pair semantics as before)
-    if (spTot) tween(spTot, state.strkStaked, function(v){ return (v / 1e9).toFixed(2) + 'B STRK'; });
-    if (spPct) tween(spPct, state.stakePct, function(v){ return v.toFixed(2) + '%'; });
+    // staking metrics, everywhere they appear: ONE precision per metric
+    // (21.2% is 21.2% in the hero, the panel and the tile)
+    spTot.forEach(function(el){ tween(el, state.strkStaked, function(v){ return (v / 1e9).toFixed(2) + 'B STRK'; }); });
+    spPct.forEach(function(el){ tween(el, state.stakePct, function(v){ return v.toFixed(1) + '%'; }); });
+    if (isFinite(state.govVotes)) spGov.forEach(function(el){ el.textContent = String(state.govVotes); });
     if (spBar && isFinite(state.stakePct)) {
-      spBar.dataset.w = state.stakePct.toFixed(2) + '%';
+      spBar.dataset.w = state.stakePct.toFixed(1) + '%';
       if (stakePanel.classList.contains('show')) spBar.style.width = spBar.dataset.w;
     }
     // keep the chart registry's headline values current (charts themselves
@@ -4222,6 +4231,42 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
     }
     tickUpdated();
   }
+  /* live governance votes: proposals from the Snapshot X API (the engine
+     behind governance.starknet.io). Counted = not cancelled and not titled
+     as a test vote (\btest\b, word-bounded so a future "attestation"
+     proposal can never be excluded); today that reproduces the curated 10
+     exactly (real votes are proposals 5, 6, 8..15; 1-4 and 7 are titled
+     [Test]/[test]/[TEST]/Test Vote) and a new vote raises the count with
+     no edit. The ticks re-render from the same list, so the bar and the
+     number can never disagree; titles are rendered with ASCII hyphens
+     (source titles carry typographic dashes; our copy carries none). */
+  var GOV_SPACE = '0x009fedaf0d7a480d21a27683b0965c0f8ded35b3f1cac39827a25a06a8a682a4';
+  function fetchGov(){
+    return fetch('https://api.snapshot.box/graphql', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query: '{ proposals(first: 100, where: { space: "' + GOV_SPACE + '" }) { proposal_id cancelled vote_count metadata { title } } }' })
+    }).then(function(r){ if (!r.ok) throw new Error('gov'); return r.json(); }).then(function(d){
+      var ps = (d.data && d.data.proposals) || [];
+      var real = ps.filter(function(pp){
+        var t = (pp.metadata && pp.metadata.title) || '';
+        return !pp.cancelled && pp.vote_count > 0 && !/\btest\b/i.test(t);
+      }).sort(function(a, b){ return +a.proposal_id - +b.proposal_id; });
+      if (!real.length) throw new Error('gov empty');
+      return real;
+    });
+  }
+  function renderGov(real){
+    state.govVotes = real.length;
+    spGov.forEach(function(el){ el.textContent = String(real.length); });
+    var ticks = document.querySelector('#govVotes .ticks');
+    if (ticks) ticks.innerHTML = real.map(function(pp){
+      var t = ((pp.metadata && pp.metadata.title) || ('Proposal ' + pp.proposal_id)).replace(/[\u2013\u2014]/g, '-');
+      return '<a href="https://governance.starknet.io/#/sn:' + GOV_SPACE + '/proposal/' + pp.proposal_id +
+        '" target="_blank" rel="noopener noreferrer" data-title="' + t.replace(/"/g, '&quot;') + '"></a>';
+    }).join('');
+  }
+  fetchGov().then(renderGov).catch(function(){}); // the baked ten stay on failure
+
   renderAll(); // paint last-known (cache or seed) immediately
 
   /* ---------- fetch helpers ---------- */
@@ -4647,6 +4692,42 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
     });
     tickUpdated();
   }
+  /* live governance votes: proposals from the Snapshot X API (the engine
+     behind governance.starknet.io). Counted = not cancelled and not titled
+     as a test vote (\btest\b, word-bounded so a future "attestation"
+     proposal can never be excluded); today that reproduces the curated 10
+     exactly (real votes are proposals 5, 6, 8..15; 1-4 and 7 are titled
+     [Test]/[test]/[TEST]/Test Vote) and a new vote raises the count with
+     no edit. The ticks re-render from the same list, so the bar and the
+     number can never disagree; titles are rendered with ASCII hyphens
+     (source titles carry typographic dashes; our copy carries none). */
+  var GOV_SPACE = '0x009fedaf0d7a480d21a27683b0965c0f8ded35b3f1cac39827a25a06a8a682a4';
+  function fetchGov(){
+    return fetch('https://api.snapshot.box/graphql', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query: '{ proposals(first: 100, where: { space: "' + GOV_SPACE + '" }) { proposal_id cancelled vote_count metadata { title } } }' })
+    }).then(function(r){ if (!r.ok) throw new Error('gov'); return r.json(); }).then(function(d){
+      var ps = (d.data && d.data.proposals) || [];
+      var real = ps.filter(function(pp){
+        var t = (pp.metadata && pp.metadata.title) || '';
+        return !pp.cancelled && pp.vote_count > 0 && !/\btest\b/i.test(t);
+      }).sort(function(a, b){ return +a.proposal_id - +b.proposal_id; });
+      if (!real.length) throw new Error('gov empty');
+      return real;
+    });
+  }
+  function renderGov(real){
+    state.govVotes = real.length;
+    spGov.forEach(function(el){ el.textContent = String(real.length); });
+    var ticks = document.querySelector('#govVotes .ticks');
+    if (ticks) ticks.innerHTML = real.map(function(pp){
+      var t = ((pp.metadata && pp.metadata.title) || ('Proposal ' + pp.proposal_id)).replace(/[\u2013\u2014]/g, '-');
+      return '<a href="https://governance.starknet.io/#/sn:' + GOV_SPACE + '/proposal/' + pp.proposal_id +
+        '" target="_blank" rel="noopener noreferrer" data-title="' + t.replace(/"/g, '&quot;') + '"></a>';
+    }).join('');
+  }
+  fetchGov().then(renderGov).catch(function(){}); // the baked ten stay on failure
+
   renderAll(); // paint last-known (cache or seed) immediately
 
   function getJson(url){
