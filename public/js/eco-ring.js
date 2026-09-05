@@ -10,9 +10,9 @@ const MOUNT = document.getElementById('ecoRing');
 if (MOUNT) {
   const GANGS = [
     { id: 'starkware', label: 'StarkWare gang' },
-    { id: 'snf', label: 'Starknet Foundation' },
-    { id: 'builders', label: 'Builders' },
-    { id: 'shitposter', label: 'Shitposters' }
+    { id: 'snf', label: 'Starknet Foundation gang' },
+    { id: 'builders', label: 'Builders gang' },
+    { id: 'shitposter', label: 'Shitposter gang' }
   ];
   /* the ring: card size in world units, and the gap between neighbours. The
      radius is solved from the member count so that gap never changes. */
@@ -37,13 +37,17 @@ if (MOUNT) {
         '<div class="es-top"><p class="es-kicker">The voices</p>' +
           '<h2>Meet the gang</h2>' +
           '<p class="es-lede">The people building, shaping and shitposting Starknet. Drag the ring.</p>' +
-          '<div class="es-ring-tabs" role="tablist"></div></div>' +
+          /* the gang tabs live in the sticky bar's THE VOICES row now (one
+             control, not two); this in-ring row is only the fallback for a
+             page without the bar */
+          (document.querySelector('.eco-subnav .eco-gang-tabs') ? '' : '<div class="es-ring-tabs" role="tablist"></div>') +
+          '</div>' +
         '<div class="es-dock"><div class="es-count">[ <b>01</b> / 01 ]</div><div class="es-name"></div>' +
           '<div class="es-role"></div><div class="es-dots"></div></div>' +
       '</div>' +
     '</div>';
 
-  const tabsEl = MOUNT.querySelector('.es-ring-tabs');
+  const tabsEl = document.querySelector('.eco-subnav .eco-gang-tabs') || MOUNT.querySelector('.es-ring-tabs');
   const stage = MOUNT.querySelector('.es-stage');
   const labelsEl = MOUNT.querySelector('.es-labels');
   const hintEl = MOUNT.querySelector('.es-hint');
@@ -408,10 +412,13 @@ if (MOUNT) {
     GANGS.forEach((g, i) => {
       const b = document.createElement('button');
       b.type = 'button'; b.textContent = g.label + ' (' + (data[g.id] || []).length + ')';
-      if (i === 0) b.className = 'on';
+      if (tabsEl.closest('.eco-subnav')) b.classList.add('dg-glass');
+      if (i === 0) { b.classList.add('on'); b.classList.add('active'); }
       b.addEventListener('click', () => {
-        tabsEl.querySelectorAll('button').forEach(x => x.classList.remove('on'));
-        b.classList.add('on'); gang = g.id; buildRing(data[g.id] || []); resize();
+        tabsEl.querySelectorAll('button').forEach(x => { x.classList.remove('on'); x.classList.remove('active'); });
+        b.classList.add('on'); b.classList.add('active'); gang = g.id; buildRing(data[g.id] || []); resize();
+        /* from the sticky bar the reader may be anywhere: land at the ring */
+        if (tabsEl.closest('.eco-subnav')) MOUNT.scrollIntoView({ behavior: 'smooth', block: 'start' });
       });
       tabsEl.appendChild(b);
     });

@@ -223,26 +223,22 @@
   @media (max-width: 980px) {
     .eco-scope > .eco-subnav { -webkit-backdrop-filter: none; backdrop-filter: none; background: var(--black); }
   }
-  .eco-subnav .ix-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; border: 0; }
-  .eco-subnav .ix-tabs button { min-height: 0; padding: 8px 15px; border: 0; border-radius: 40px;
+  .eco-subnav .eco-pill-set { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; border: 0; }
+  .eco-subnav .eco-pill-set button { min-height: 0; padding: 8px 15px; border: 0; border-radius: 40px;
     font-family: var(--mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase;
-    color: #9a9a9a; cursor: pointer; }
-  .eco-subnav .ix-tabs button:hover { color: var(--white); }
-  .eco-subnav .ix-tabs button.on { color: var(--accent); }
-  .eco-voices-jump { flex: none; padding: 8px 15px; border-radius: 40px; text-decoration: none;
-    font-family: var(--mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase;
-    color: #9a9a9a; transition: color var(--hover-dur, .25s) var(--hover-ease, ease); }
-  .eco-voices-jump:hover { color: var(--white); }
-  .eco-voices-jump.active { color: var(--accent); }
+    color: #9a9a9a; cursor: pointer; white-space: nowrap; }
+  .eco-subnav .eco-pill-set button:hover { color: var(--white); }
+  .eco-subnav .eco-pill-set button.on { color: var(--accent); }
   /* hash targets land clear of the two stacked bars */
-  #ecoRing, #ecoIndex { scroll-margin-top: 84px; }
+  #ecoRing, #ecoIndex { scroll-margin-top: 122px; }
   /* edit mode (admin gate only): the drag/edit surface replaces the reader
      views, so the two never show the same accounts twice on one page */
   body.eco-editing #ecoIndex, body.eco-editing #ecoRing { display: none; }
   @media (max-width: 768px) {
     .eco-scope > .eco-subnav { padding: 10px 16px; }
-    .eco-subnav .ix-tabs { flex: 1 1 auto; flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-    .eco-subnav .ix-tabs button { flex: none; }
+    /* both rows scroll horizontally, each on its own axis */
+    .eco-subnav .eco-pill-set { flex: 1 1 auto; flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .eco-subnav .eco-pill-set button { flex: none; }
   }
   .eco-pills { display: flex; flex-direction: column; gap: 7px; }
   .eco-pill-row { display: flex; align-items: center; gap: 12px; }
@@ -785,8 +781,14 @@ document.documentElement.className += ' eco-live';
      the scope too: the admin controls ride the same bar. -->
 <div class="eco-scope">
 <div class="eco-subnav" id="ecoSubnav" aria-label="Directory sections">
-  <div class="ix-tabs" role="tablist"></div>
-  <a class="eco-voices-jump dg-glass" href="#ecoRing">The voices</a>
+  <!-- the previous site's two-row bar: THE PROJECTS pills (eco-index renders
+       and drives the grid filter) over THE VOICES pills (eco-ring renders;
+       they switch the ring's gang and scroll to it). The admin controls
+       (gate only) mount after the pills, on the bar's right. -->
+  <div class="eco-pills">
+    <div class="eco-pill-row"><span class="eco-pill-glabel">The projects</span><div class="ix-tabs eco-pill-set" role="tablist"></div></div>
+    <div class="eco-pill-row"><span class="eco-pill-glabel">The voices</span><div class="eco-gang-tabs eco-pill-set" role="tablist"></div></div>
+  </div>
 </div>
 
 

@@ -116,13 +116,13 @@
      panels are observed rather than the bare header lines because a
      header-only observer loses the active state on upward scroll. */
   var spyIO = null;
-  var voicesEl = document.querySelector('.eco-voices-jump');
   function setActivePill(catId) {
+    /* catId null = the ring is in view: row one clears and THE VOICES row
+       keeps showing the ring's active gang, which eco-ring maintains */
     tabsEl.querySelectorAll('button').forEach(function (b) {
-      var on = b.getAttribute('data-cat') === catId;
+      var on = catId !== null && b.getAttribute('data-cat') === catId;
       b.classList.toggle('on', on); b.classList.toggle('active', on);
     });
-    if (voicesEl) voicesEl.classList.toggle('active', catId === 'voices');
   }
   function setupSpy() {
     if (!('IntersectionObserver' in window)) return;
@@ -140,8 +140,13 @@
         var t = el.getBoundingClientRect().top;
         if (t < bestTop) { bestTop = t; best = el; }
       });
-      setActivePill(best.id === 'ecoRing' ? 'voices' : best.getAttribute('data-cat'));
-    }, { rootMargin: '-90px 0px -55% 0px', threshold: 0 });
+      setActivePill(best.id === 'ecoRing' ? null : best.getAttribute('data-cat'));
+    }, (function () {
+      /* the band top follows the bar's real height (two rows now) */
+      var bar = document.querySelector('.eco-subnav');
+      var top = (bar ? bar.offsetHeight : 66) + 24;
+      return { rootMargin: '-' + top + 'px 0px -55% 0px', threshold: 0 };
+    })());
     gridEl.querySelectorAll('.ix-panel').forEach(function (p) { spyIO.observe(p); });
     var ring = document.getElementById('ecoRing');
     if (ring) spyIO.observe(ring);
