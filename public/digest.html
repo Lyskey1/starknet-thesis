@@ -468,55 +468,70 @@
     .dgh-turn { font-size: 1.125rem; }
   }
 
-  /* ===== dgf-: the footer patch (2026-09-04), PAGE-SCOPED. The footer is
+  /* ===== dgf-: the footer patch (2026-09-05), PAGE-SCOPED. The footer is
      shared chrome (css/vesper-chrome.css plus inline markup on every page),
      and this pass fixes the digest page only, so every override rides
-     body.page-recap and the shared sheet stays untouched. ===== */
-  /* 1. columns: the full-height dividers showcased the short columns'
-     emptiness, so they go, and the block tightens to its content. */
-  body.page-recap footer.vc-footer .vc-col { border-left: 0; padding: 40px 28px 44px; }
-  body.page-recap footer.vc-footer .vc-col:first-child { padding-left: 0; }
-  /* 2 + 3. the identity / legal row: one flex row on the container (flex,
-     not the shared sheet's grid, so the sub-1024 grid collapse cannot leak
-     in), the brand and its 40ch tagline left, the disclaimer right as a
-     right-aligned block capped at 55ch, both hanging from the same top
-     line under the .vc-rule hairline. The disclaimer keeps its demoted
-     legal style: sentence case, 11.5px, the dimmest ink that still clears
-     4.6:1 on the near-black ground (rgba(250,250,250,.52) blends to about
-     #888, 5.3:1). */
-  body.page-recap footer.vc-footer .vc-base { display: flex; align-items: flex-start;
-    justify-content: space-between; gap: 32px 56px; padding: 30px 0 10px; }
+     body.page-recap and the shared sheet stays untouched.
+     EVERYTHING BELOW THE BANNER SITS ON ONE 12-COLUMN GRID inside the
+     1392px container (24px gutters, so a column is 94px at 1440). The
+     three rows share two vertical alignment lines: col 1 and col 9.
+     Col 9's left edge lands at 944px, 2.7px off the banner form's own
+     left edge above it (2fr + 56px gap = 946.7px), so 1 / 5 / 9 already
+     matches the form and the 4.5 / 8 fallback is not needed. Nothing is
+     positioned to the viewport edge and nothing right-aligns: every
+     block starts on a grid column, left-aligned.
+     The rows are laid out with the page's own grid rules rather than the
+     shared sheet's, so vesper-chrome's sub-1024 collapse cannot leak in;
+     the page carries its own stack rules below 700px. */
+  body.page-recap footer.vc-footer .dgf-grid { display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px;
+    align-items: start; }
+  /* row 1, links: three equal thirds spanning the full container, groups
+     starting on cols 1 / 5 / 9. The vertical rhythm steps down: 48px
+     row padding, 12px between links. */
+  body.page-recap footer.vc-footer .vc-col { border-left: 0; padding: 48px 0; gap: 20px; }
+  body.page-recap footer.vc-footer .vc-col:nth-child(1) { grid-column: 1 / 5; }
+  body.page-recap footer.vc-footer .vc-col:nth-child(2) { grid-column: 5 / 9; }
+  body.page-recap footer.vc-footer .vc-col:nth-child(3) { grid-column: 9 / 13; }
+  body.page-recap footer.vc-footer .vc-col ul { gap: 12px; }
+  /* row 2, identity + legal, same column starts as row 1 under the
+     container-spanning .vc-rule hairline: identity on cols 1-5 (8px
+     between logo and tagline), the disclaimer on cols 9-12, LEFT-aligned
+     so its left edge lines up with FOLLOW above it, in its demoted legal
+     style (sentence case, 11.5px, rgba(250,250,250,.52): about #888 on
+     the near-black ground, 5.3:1). align-items: start puts both blocks
+     on one top line. */
+  body.page-recap footer.vc-footer .vc-base { padding: 24px 0 48px; }
+  body.page-recap footer.vc-footer .vc-brand { grid-column: 1 / 6; gap: 8px; }
   body.page-recap footer.vc-footer .vc-brand p { max-width: 40ch; }
-  body.page-recap footer.vc-footer .vc-legal { margin: 0; max-width: 55ch;
-    flex: 0 1 auto; text-align: right;
+  body.page-recap footer.vc-footer .vc-legal { margin: 0; grid-column: 9 / 13;
+    text-align: left; max-width: none;
     font-family: var(--vc-sans); font-size: 11.5px; line-height: 1.6;
     letter-spacing: 0; text-transform: none; color: rgba(250, 250, 250, .52); }
-  /* the row stacks where the two measures stop fitting side by side:
-     identity, then legal (left-aligned again), then the baseline bar */
-  @media (max-width: 860px) {
-    body.page-recap footer.vc-footer .vc-base { flex-direction: column; }
-    body.page-recap footer.vc-footer .vc-legal { text-align: left; }
-  }
   .dgf-foot { width: calc(100% - 48px); max-width: 1392px; margin: 0 auto; }
-  /* 4. the classic baseline bar, one hairline above it. The status pill is
-     the shared .status/.dot component from css/styles.css, which this page
-     already loads; its pulse sits out under reduced motion there. */
-  .dgf-bar { display: flex; align-items: center; justify-content: space-between;
-    flex-wrap: wrap; gap: 14px; margin-top: 20px; padding: 20px 0 34px;
-    border-top: 1px solid var(--vc-line);
+  /* row 3, the baseline bar: copyright starts col 1, the status pill
+     starts col 9 on the same alignment line as FOLLOW and the legal
+     block. The hairline is the bar's own border-top, container-wide.
+     The status pill is the shared .status/.dot component from
+     css/styles.css; its pulse sits out under reduced motion there. */
+  .dgf-bar { padding: 24px 0 40px; border-top: 1px solid var(--vc-line);
     font-family: var(--vc-mono); font-size: 12px; letter-spacing: .06em;
     color: rgba(250, 250, 250, .55); }
+  .dgf-bar > span { grid-column: 1 / 6; }
+  .dgf-bar .dgf-status { grid-column: 9 / 13; justify-self: start; }
   .dgf-bar a { color: rgba(250, 250, 250, .72); text-decoration: none; transition: color .25s; }
   .dgf-bar a:hover { color: var(--vc-orange); }
   .dgf-bar .dgf-status, .dgf-bar .dgf-status:hover { color: inherit; }
   .dgf-bar .status { font-size: 12px; }
   @media (prefers-reduced-motion: reduce) { .dgf-bar a { transition: none; } }
-  @media (max-width: 1023px) {
-    body.page-recap footer.vc-footer .vc-col { padding: 32px 0 32px 24px; }
-    body.page-recap footer.vc-footer .vc-col:nth-child(odd) { padding-left: 0; }
-  }
-  @media (max-width: 640px) {
+  /* single column: the rows stack, everything left-aligned on the
+     container, in order links / identity / legal / bar. */
+  @media (max-width: 700px) {
+    body.page-recap footer.vc-footer .dgf-grid { display: flex; flex-direction: column;
+      align-items: stretch; gap: 0; }
     body.page-recap footer.vc-footer .vc-col { padding: 24px 0; }
+    body.page-recap footer.vc-footer .vc-base { padding: 24px 0 32px; gap: 28px; }
+    .dgf-bar { padding: 20px 0 36px; gap: 12px; }
   }
 
 </style>
@@ -663,7 +678,7 @@
   </div>
 </div>
   <div class="vc-cols">
-    <nav class="vc-links" aria-label="Footer">
+    <nav class="vc-links dgf-grid" aria-label="Footer">
       <div class="vc-col"><h3>Thesis</h3><ul><li><a href="/privacy">Privacy</a></li><li><a href="/quantum">Quantum</a></li><li><a href="/btcfi">BTCFi</a></li><li><a href="/strk">STRK</a></li></ul></div>
       <div class="vc-col"><h3>Signals</h3><ul><li><a href="/ecosystem">Ecosystem</a></li><li><a href="/digest">Digest</a></li></ul></div>
       <!-- CONNECT went 2026-09-04: /llms.txt keeps being served, only its
@@ -679,7 +694,7 @@
        banner owns "Three forces, one chain, one ticker.", said once per
        viewport); right, the disclaimer in its demoted legal style, a
        right-aligned block. Same words in both, zero copy change. -->
-  <div class="vc-base">
+  <div class="vc-base dgf-grid">
     <div class="vc-brand">
       <img src="/assets/hero/logo.svg" alt="Starknet Thesis" width="200" height="26">
       <p>The independent thesis on how Starknet makes crypto private, quantum-resistant and productive.</p>
@@ -689,7 +704,7 @@
   <div class="dgf-foot">
     <!-- the classic baseline bar, on the shared .status/.dot component from
          css/styles.css (pulse and its reduced-motion guard included) -->
-    <div class="dgf-bar">
+    <div class="dgf-bar dgf-grid">
       <span>© 2026 · Made by <a href="https://x.com/Lyskey" target="_blank" rel="noopener">Lyskey</a></span>
       <a class="dgf-status" href="https://status.starknet.io/" target="_blank" rel="noopener noreferrer"><span class="status"><span class="dot" aria-hidden="true"></span> All systems operational</span></a>
     </div>
