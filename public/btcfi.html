@@ -779,91 +779,208 @@
     .page-btcfi .btcg-card,.page-btcfi .btcg-card:hover{transform:none;transition:none;}
   }
 
-  /* ===== strkBTC modes: editorial grid ==============================
-     Three cells, three per row on desktop. Each cell reads top to
-     bottom: mono eyebrow, two-line display title, square image, mono
-     uppercase caption. Everything left aligned inside its own column,
-     with a thin line framing the whole block. Palette stays ours:
-     #0d0d0d ground, #141414 panels, #262626 lines, #fafafa text,
-     rgba(250,250,250,.62) dim, #c53400 accent. Captions are uppercased
-     in CSS, never in the markup, so the copy stays verbatim in the DOM
-     and in the search index. */
-  .page-btcfi .bfed-grid{
-    display:grid; grid-template-columns:repeat(3,1fr);
-    border:1px solid #262626; border-radius:4px; background:#0d0d0d;
-    width:100vw; max-width:none; margin-left:calc(50% - 50vw); box-sizing:border-box;
-    padding:clamp(18px,1.6vw,26px) 16px;
-    column-gap:clamp(20px,2.4vw,38px); row-gap:56px;
+  /* ===== Staking column (bsk- prefix). One shared column split 25/75: replaces the two disconnected consensus bars. Base state (no classes)
+     is the END state so no-JS renders finished; the engine adds .bsk-pre
+     (initial state) then .bsk-on (reveal) once, via IntersectionObserver,
+     and never adds .bsk-pre under prefers-reduced-motion. All animation is
+     transform/opacity transitions: compositor-only, nothing runs after
+     the reveal completes. */
+  .bsk-visual { flex-shrink: 0; width: 348px; }
+  .bsk-cap, .bsk-sig, .bsk-pct {
+    font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.16em;
   }
-  .page-btcfi .bfed-cell{
-    display:flex; flex-direction:column; align-items:flex-start;
-    text-align:left; min-width:0;
+  .bsk-cap { font-size: 10px; color: rgba(250, 250, 250,0.45); margin-bottom: 12px; }
+  .bsk-col {
+    position: relative; width: 72px; height: 224px;
+    border: 1px solid rgba(250, 250, 250,0.16); border-radius: 6px;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.01)),
+      rgba(20, 20, 20,0.6);
   }
-  /* subgrid so eyebrow, title, plate and caption sit on shared baselines
-     across the row: card 3's title is set smaller, and without this its
-     square would ride higher than its neighbours'. row-gap:0 stops the
-     56px outer row gap from being inherited between a cell's own rows;
-     the internal rhythm stays on the element margins. The flex rules
-     above remain the fallback where subgrid is unsupported. */
-  @supports (grid-template-rows: subgrid){
-    .page-btcfi .bfed-cell{
-      display:grid; grid-template-rows:subgrid; grid-row:span 4;
-      row-gap:0; align-items:start; justify-items:start;
-    }
+  .bsk-seg { position: relative; }
+  .bsk-seg-btc  { height: 25%; }
+  .bsk-seg-strk { height: 75%; }
+  .bsk-fill { position: absolute; inset: 0; display: block; }
+  .bsk-seg-btc .bsk-fill {
+    background: rgba(var(--accent-rgb), 0.16);
+    border-radius: 5px 5px 0 0;
+    transform-origin: top;
+    transition: transform 0.9s cubic-bezier(0.22, 0.61, 0.36, 1);
   }
-  .page-btcfi .bfed-eyebrow{
-    font-family:var(--mono); font-size:10.5px; letter-spacing:.18em;
-    text-transform:uppercase; color:#c53400; margin:0 0 18px;
+  .bsk-seg-strk .bsk-fill {
+    background: rgba(197, 52, 0, 0.14);
+    border-radius: 0 0 5px 5px;
+    transform-origin: bottom;
+    transition: transform 1.2s cubic-bezier(0.22, 0.61, 0.36, 1) 0.15s;
   }
-  /* the eyebrow is one unit, all accent: a dim word next to an accent
-     numeral read as two half-labels rather than one */
-  .page-btcfi .bfed-eyebrow span{ color:inherit; margin-left:.45em; }
-  .page-btcfi .bfed-title{
-    font-family:var(--display); font-weight:500;
-    font-size:clamp(24px,2.5vw,36px); line-height:1.08;
-    letter-spacing:-.02em; color:#fafafa; margin:0 0 26px;
-    overflow-wrap:anywhere;
+  /* the 25/75 boundary: one solid accent line, the join of the composition */
+  .bsk-line {
+    position: absolute; left: 0; right: 0; top: 25%; height: 1.5px;
+    margin-top: -0.75px; background: var(--accent); display: block;
   }
-  /* explicit line boxes: the title is set in two lines, per cell */
-  .page-btcfi .bfed-title span{ display:block; color:inherit; }
-  .page-btcfi .bfed-title--long{ font-size:clamp(20px,1.85vw,27px); }
-  /* square plate. isolation:isolate keeps mix-blend-mode:color inside
-     the plate: without it the accent blends through to the page ground. */
-  .page-btcfi .bfed-shot{
-    position:relative; isolation:isolate; width:100%; aspect-ratio:1/1;
-    overflow:hidden; background:#141414; border:1px solid #262626;
+  .bsk-pct {
+    position: absolute; left: 0; width: 100%; top: 50%; transform: translateY(-50%);
+    text-align: center; font-size: 12px; font-weight: 600;
   }
-  .page-btcfi .bfed-shot img{
-    display:block; width:100%; height:100%; object-fit:cover;
-    filter:grayscale(1) contrast(1.15) brightness(.92);
+  .bsk-seg-btc  .bsk-pct { color: var(--orange); }
+  .bsk-seg-strk .bsk-pct { color: #f0b8a0; }
+  /* role labels: leader tick to the segment's vertical center. These carry
+     the consolidated middle-paragraph copy (see the panel comment). */
+  .bsk-role {
+    position: absolute; left: calc(100% + 34px); top: 50%; transform: translateY(-50%);
+    width: 232px; font-size: 12.5px; line-height: 1.55; color: rgba(250, 250, 250,0.55);
   }
-  .page-btcfi .bfed-tint{
-    position:absolute; inset:0; background:#c53400;
-    mix-blend-mode:color; opacity:.55; pointer-events:none;
+  .bsk-role b { display: block; font-family: var(--mono); font-size: 11px;
+    letter-spacing: 0.14em; font-weight: 600; margin-bottom: 3px; }
+  .bsk-seg-btc  .bsk-role b { color: var(--orange); }
+  .bsk-seg-strk .bsk-role b { color: #f0b8a0; }
+  .bsk-role::before {
+    content: ''; position: absolute; right: 100%; margin-right: 10px; top: 50%;
+    width: 16px; height: 1px; background: rgba(250, 250, 250,0.3);
   }
-  .page-btcfi .bfed-caption{
-    font-family:var(--mono); font-size:11px; line-height:1.75;
-    letter-spacing:.055em; text-transform:uppercase;
-    color:rgba(250,250,250,.62); margin:22px 0 0; max-width:44ch;
-    overflow-wrap:anywhere;
+  .bsk-sig { font-size: 10px; color: rgba(250, 250, 250,0.5); margin-top: 16px; }
+  /* fade cascade: line and percents just after the growth, roles next, the
+     signature last */
+  .bsk-fade { opacity: 1; }
+  .bsk-cap  { transition: opacity 0.5s ease 0.1s; }
+  .bsk-line { transition: opacity 0.5s ease 1.0s; }
+  .bsk-pct  { transition: opacity 0.5s ease 1.1s; }
+  .bsk-seg-btc  .bsk-role { transition: opacity 0.5s ease 1.25s; }
+  .bsk-seg-strk .bsk-role { transition: opacity 0.5s ease 1.4s; }
+  .bsk-sig  { transition: opacity 0.5s ease 1.55s; }
+  /* pre-reveal state, applied by JS only, released by .bsk-on */
+  .bsk-pre:not(.bsk-on) .bsk-fill { transform: scaleY(0); }
+  .bsk-pre:not(.bsk-on) .bsk-fade { opacity: 0; }
+  @media (max-width: 860px) {
+    .bsk-visual { width: 100%; max-width: 348px; }
   }
-  .page-btcfi .bfed-caption a{
-    color:#c53400; text-decoration:none;
-    border-bottom:1px solid rgba(197,52,0,.5);
+  /* 375: the vertical column wastes ~150px of height under stacked text, so
+     the composition goes HORIZONTAL: one split band, 25 left / 75 right,
+     same exact proportions, roles as legend rows beneath. The pre-reveal
+     override swaps the growth axis to match. */
+  @media (max-width: 560px) {
+    .staking-band { padding: 32px 24px; }
+    .bsk-visual { max-width: none; }
+    .bsk-col { width: 100%; height: 64px; display: flex; }
+    .bsk-seg-btc  { width: 25%; height: 100%; }
+    .bsk-seg-strk { width: 75%; height: 100%; }
+    .bsk-seg-btc .bsk-fill  { border-radius: 5px 0 0 5px; transform-origin: left; }
+    .bsk-seg-strk .bsk-fill { border-radius: 0 5px 5px 0; transform-origin: right; }
+    .bsk-line { left: 25%; top: 0; bottom: 0; width: 1.5px; height: auto;
+      margin: 0 0 0 -0.75px; }
+    /* legend rows span the full band; each role's % width resolves against
+       its own segment (25% and 75% wide), hence 400% and 133.34% */
+    .bsk-role { top: calc(100% + 14px); left: 0; transform: none; width: 400%; }
+    .bsk-seg-strk .bsk-role { top: calc(100% + 64px); left: -33.34%; width: 133.34%; }
+    .bsk-role b { display: inline; margin-right: 7px; }
+    .bsk-role::before { position: static; display: inline-block; width: 8px; height: 8px;
+      border-radius: 2px; margin: 0 8px 0 0; vertical-align: baseline; }
+    .bsk-seg-btc  .bsk-role::before { background: rgba(var(--accent-rgb), 0.7); }
+    .bsk-seg-strk .bsk-role::before { background: rgba(197, 52, 0, 0.7); }
+    .bsk-sig { margin-top: 126px; }
+    .bsk-pre:not(.bsk-on) .bsk-fill { transform: scaleX(0); }
   }
-  .page-btcfi .bfed-caption a:hover{ color:#fafafa; border-bottom-color:#fafafa; }
-  @media (max-width:1080px){
-    .page-btcfi .bfed-grid{ grid-template-columns:repeat(2,1fr); row-gap:48px; }
-    .page-btcfi .bfed-title{ font-size:clamp(22px,3.4vw,30px); }
-    .page-btcfi .bfed-title--long{ font-size:clamp(18px,2.5vw,22px); }
+
+  /* ===== Tiered liquid glass (btcg- prefix). backdrop-filter lives on the
+     listed Tier A cards ONLY: the 001-004 problem cards, the five risk
+     cards, the deeper-risk panel, the three strkBTC mode cards and the
+     timeline detail card. It is NEVER applied to the live BTC metrics
+     block (#btcMetrics), its four cards, their tooltips, or any ancestor
+     of them, and no overflow, filter, transform or containment property is
+     introduced on that chain: the hover tooltips must keep overflowing
+     their card. Tier B (metrics, ecosystem, news, charts) appears in no
+     selector below. No SVG refraction anywhere. Existing radius, padding,
+     grid, gap and type scale are all inherited untouched. */
+  .page-btcfi .btcg-card{position:relative;z-index:1;--ba:var(--accent);
+    background:rgba(250, 250, 250,.032);
+    border:1px solid rgba(250, 250, 250,.07);
+    -webkit-backdrop-filter:blur(16px) saturate(112%);
+    backdrop-filter:blur(16px) saturate(112%);
+    box-shadow:
+      inset -1px -1px 0 rgba(255,255,255,.42),
+      inset 1px 1px 0 rgba(255,255,255,.10),
+      inset 0 1px 0 rgba(255,255,255,.26),
+      inset 0 -1px 0 rgba(255,255,255,.22),
+      inset 0 0 24px rgba(255,255,255,.05),
+      0 18px 50px -30px rgba(0,0,0,.9);
+    transition:transform .2s,border-color .2s,box-shadow .2s,background .25s;}
+  .page-btcfi .btcg-coral{--ba:#E0524A;}
+  .page-btcfi .btcg-violet{--ba:#c53400;}
+  /* top light over the upper 42 percent. ::after, because the risk cards'
+     coral rail already owns ::before and must stay untouched. */
+  .page-btcfi .btcg-card::after{content:"";position:absolute;top:0;left:0;right:0;height:42%;
+    border-radius:inherit;pointer-events:none;
+    background:linear-gradient(180deg,rgba(255,255,255,.062),transparent);}
+  /* hover: lift, accent border at 30 percent, accent inner bloom, outer
+     accent glow. No specular sweep. */
+  .page-btcfi .btcg-card:hover{transform:translateY(-3px);
+    border-color:color-mix(in srgb,var(--ba) 30%,transparent);
+    box-shadow:
+      inset -1px -1px 0 rgba(255,255,255,.42),
+      inset 1px 1px 0 rgba(255,255,255,.10),
+      inset 0 1px 0 rgba(255,255,255,.26),
+      inset 0 -1px 0 rgba(255,255,255,.22),
+      inset 0 0 30px color-mix(in srgb,var(--ba) 12%,transparent),
+      0 18px 50px -30px rgba(0,0,0,.9),
+      0 22px 60px -30px color-mix(in srgb,var(--ba) 50%,transparent);}
+  /* the deeper-risk panel's 3px coral rail is a real border edge: it stays
+     crisp, full height and coral in every state, hover included */
+  .page-btcfi .risk-quote.btcg-card,
+  .page-btcfi .risk-quote.btcg-card:hover{border-left:3px solid #E0524A;}
+  /* the <1% band: the deeper-risk rules verbatim with coral swapped for the
+     accent. Padding is the risk-quote's shipped 36/44 rhythm (the shared
+     .big-stat's 48px loses at specificity); the rail is the same 3px solid,
+     crisp in every state; the bloom mirrors .btcg-bloom-quote's geometry. */
+  .page-btcfi .big-stat.btcg-card{padding:36px 44px 38px;}
+  .page-btcfi .big-stat.btcg-card,
+  .page-btcfi .big-stat.btcg-card:hover{border-left:3px solid var(--accent);}
+  .page-btcfi .btcg-bloom-stat i{--bc:var(--accent);left:8%;top:12%;width:45%;height:76%;}
+  /* fallback for engines without backdrop-filter: a slightly more opaque
+     deliberate solid surface */
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))){
+    .page-btcfi .btcg-card{background:#141414;}
   }
-  @media (max-width:640px){
-    .page-btcfi .bfed-grid{ grid-template-columns:1fr; row-gap:44px; padding:20px 12px; }
-    .page-btcfi .bfed-title{ font-size:clamp(26px,7.4vw,34px); }
-    /* the long title keeps its two lines at 390: at the base mobile size
-       "security before Q-day" wrapped and split Q-day across lines */
-    .page-btcfi .bfed-title--long{ font-size:clamp(19px,5.4vw,24px); }
-    .page-btcfi .bfed-caption{ font-size:10.5px; letter-spacing:.04em; }
+
+  /* ===== Narrative blooms: one bloom per card, behind that card only,
+     never extending under a neighbour. Static: no animation, no
+     transition. blur lives on the bloom layer itself, never on an
+     ancestor. Blob footprints are inset well inside each grid cell so the
+     58px blur spill dies out before the next card: an orange bloom
+     bleeding under a violet card produced brown mud on the landing, and
+     the strkBTC row mixes both hues. In-grid layers are absolutely
+     positioned, so they occupy no grid cell. */
+  .page-btcfi .modes{position:relative;} /* the risk band carries no bloom; this stays for the modes row itself */
+  .page-btcfi .btcg-bloom{position:absolute;inset:0;z-index:0;pointer-events:none;filter:blur(58px);}
+  .page-btcfi .btcg-bloom i{position:absolute;border-radius:50%;background:radial-gradient(closest-side,var(--bc),transparent 70%);opacity:.05;}
+  /* the two single panels carry their bloom inside the card, so it can
+     never reach a neighbour; their content lifts above it */
+  .page-btcfi .btcg-card>:not(.btcg-bloom){position:relative;z-index:1;}
+  /* coral behind the three risk cards. Was five blobs over two rows; the
+     merge into 01 cut the grid to a single row of three, so rows two's blobs
+     went with the cards they sat behind and the remaining three grew to fill
+     the row's full height instead of its top third. */
+  /* coral inside the deeper-risk panel */
+  .page-btcfi .btcg-bloom-quote i{--bc:#E0524A;left:8%;top:12%;width:45%;height:76%;}
+  /* strkBTC row: orange, violet, violet: the three cards read as equals,
+     so all three blobs share the same intensity */
+  .page-btcfi .btcg-bloom-modes i:nth-child(1){--bc:#c53400;left:6%;top:16%;width:20%;height:68%;}
+  .page-btcfi .btcg-bloom-modes i:nth-child(2){--bc:#c53400;left:39.5%;top:16%;width:20%;height:68%;}
+  .page-btcfi .btcg-bloom-modes i:nth-child(3){--bc:#c53400;left:73%;top:16%;width:20%;height:68%;}
+  /* orange inside the STRK20 timeline detail card */
+  /* ===== Mobile, decided up front: below 981px no backdrop-filter on
+     this page: a solid surface plus a barely perceptible accent tint on
+     the card itself, consistent with the other pages. The blooms are
+     removed outright (the privacy page's approach): measured at 390px,
+     keeping them as dimmed blur layers cost MORE paint and composite
+     time than the backdrop-filter they replace, and hiding them also
+     removes any mixed-hue risk when the grids collapse to one column. */
+  @media (max-width:980px){
+    .page-btcfi .btcg-card{-webkit-backdrop-filter:none;backdrop-filter:none;
+      background:color-mix(in srgb,var(--ba) 2.5%,#141414);}
+    .page-btcfi .btcg-bloom{display:none;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .page-btcfi .btcg-card,.page-btcfi .btcg-card:hover{transform:none;transition:none;}
   }
 
   /* ===== Staking column (bsk- prefix). One shared column split 25/75 —
@@ -2530,39 +2647,38 @@
         <p class="scale-label">strkBTC · privacy</p>
         <h3 id="public-by-default-private-by-choice" class="scale-title">Public by default. <span>Private by choice.</span> <span class="st-quantum">Quantum-secure before Q-day.</span></h3>
         <p class="scale-intro">strkBTC is the first Bitcoin-backed asset with optional privacy, built on STRK20s, Starknet's protocol-level privacy primitive. Same asset, two modes: access the full Starknet DeFi stack (lend, borrow, trade, stake) without broadcasting your positions, strategies and net worth to the entire world. Both modes sit on a stack with a published roadmap to end-to-end quantum security.</p>
-        <!-- the three plates are decorative texture, not evidence: full
-             grayscale plus an accent colour blend leaves no subject a
-             reader could act on, and the caption below each one carries
-             the whole meaning. Hence alt="", deliberately, not as an
-             oversight. -->
-        <div class="bfed-grid">
-          <article id="public-strkbtc" class="bfed-cell">
-            <p class="bfed-eyebrow">#1 <span>Public</span></p>
-            <h4 class="bfed-title"><span>Public</span> <span>strkBTC</span></h4>
-            <div class="bfed-shot"><img src="/assets/stride/images/3rd/technology.jpg" alt="" loading="lazy" decoding="async" width="735" height="976"><span class="bfed-tint" aria-hidden="true"></span></div>
-            <p class="bfed-caption">Behaves like a standard ERC-20. Fully composable across all of Starknet DeFi: swaps, lending, LPing, staking, and everything built next.</p>
-          </article>
-          <article id="shielded-strkbtc" class="bfed-cell">
-            <p class="bfed-eyebrow">#2 <span>Shielded</span></p>
-            <h4 class="bfed-title"><span>Shielded</span> <span>strkBTC</span></h4>
-            <div class="bfed-shot"><img src="/assets/stride/images/3rd/security.jpg" alt="" loading="lazy" decoding="async" width="736" height="1104"><span class="bfed-tint" aria-hidden="true"></span></div>
-            <p class="bfed-caption">Balances and transfers are hidden from public view, with DeFi still accessible from inside the shielded state. Users prove validity without revealing sensitive financial information. Powered by STARK proofs.</p>
-          </article>
+        <div class="modes">
+          <div class="btcg-bloom btcg-bloom-modes" aria-hidden="true"><i></i><i></i><i></i></div>
+          <div id="public-strkbtc" class="mode-item btcg-card">
+            <div class="mode-dot public"></div>
+            <div>
+              <div class="mode-item-title">Public strkBTC</div>
+              <div class="mode-item-desc">Behaves like a standard ERC-20. Fully composable across all of Starknet DeFi: swaps, lending, LPing, staking, and everything built next.</div>
+            </div>
+          </div>
+          <div id="shielded-strkbtc" class="mode-item btcg-card btcg-violet">
+            <div class="mode-dot private"></div>
+            <div>
+              <div class="mode-item-title">Shielded strkBTC</div>
+              <div class="mode-item-desc">Balances and transfers are hidden from public view, with DeFi still accessible from inside the shielded state. Users prove validity without revealing sensitive financial information. Powered by STARK proofs.</div>
+            </div>
+          </div>
           <!-- CONTAINMENT: this card (and the section title/intro above) said
-             "end-to-end quantum security by 2027". The cited roadmap
-             (StarkWare, 2026-06-30) never states a completion year: its own
-             words are "before Q-day", its phase estimates are relative
-             ("~two months", "~one month after Phase 1"), and Phase 3 is
-             "1 month post-Ethereum migration": undated. The "2027" came
-             from quantum.html's own hedged target ("Target ~2027"), not
-             from the source. Do not reintroduce a year here without a
-             source that states a completion date. -->
-          <article id="end-to-end-quantum-security-by" class="bfed-cell">
-            <p class="bfed-eyebrow">#3 <span>Quantum</span></p>
-            <h4 class="bfed-title bfed-title--long"><span>End-to-end quantum</span> <span>security before Q-day</span></h4>
-            <div class="bfed-shot"><img src="/assets/stride/images/3rd/team.jpg" alt="" loading="lazy" decoding="async" width="1536" height="2752"><span class="bfed-tint" aria-hidden="true"></span></div>
-            <p class="bfed-caption">Starknet has <a href="https://x.com/StarkWareLtd/status/2071935303963861074" target="_blank" rel="noopener noreferrer" class="inline-accent-link">published a roadmap</a> to end-to-end quantum security. When migration is needed, native account abstraction upgrades any wallet to quantum-safe signatures in a single transaction, while the push on Bitcoin's own quantum security continues through <a href="https://x.com/avihu28/status/2042287457530478720" target="_blank" rel="noopener noreferrer" class="inline-accent-link">QSB</a> and strkBTC.</p>
-          </article>
+               "end-to-end quantum security by 2027". The cited roadmap
+               (StarkWare, 2026-06-30) never states a completion year: its own
+               words are "before Q-day", its phase estimates are relative
+               ("~two months", "~one month after Phase 1"), and Phase 3 is
+               "1 month post-Ethereum migration" — undated. The "2027" came
+               from quantum.html's own hedged target ("Target ~2027"), not
+               from the source. Do not reintroduce a year here without a
+               source that states a completion date. -->
+          <div id="end-to-end-quantum-security-by" class="mode-item btcg-card btcg-violet">
+            <div class="mode-dot" style="background:#C4B5FD;"></div>
+            <div>
+              <div class="mode-item-title">End-to-end quantum security before Q-day</div>
+              <div class="mode-item-desc">Starknet has <a href="https://x.com/StarkWareLtd/status/2071935303963861074" target="_blank" rel="noopener noreferrer" class="inline-accent-link">published a roadmap</a> to end-to-end quantum security. When migration is needed, native account abstraction upgrades any wallet to quantum-safe signatures in a single transaction, while the push on Bitcoin's own quantum security continues through <a href="https://x.com/avihu28/status/2042287457530478720" target="_blank" rel="noopener noreferrer" class="inline-accent-link">QSB</a> and strkBTC.</div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -2584,7 +2700,6 @@
           <div class="tl-detail-title" id="tlDTitle"></div>
           <div class="tl-detail-desc" id="tlDDesc"></div>
         </div>
-        </section>
       </div>
     </div>
 
