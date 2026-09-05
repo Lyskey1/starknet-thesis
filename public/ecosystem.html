@@ -229,6 +229,9 @@
   .eco-voices-jump:hover { color: var(--white); }
   /* hash targets land clear of the two stacked bars */
   #ecoRing, #ecoIndex { scroll-margin-top: 132px; }
+  /* edit mode (admin gate only): the drag/edit surface replaces the reader
+     views, so the two never show the same accounts twice on one page */
+  body.eco-editing #ecoIndex, body.eco-editing #ecoRing { display: none; }
   @media (max-width: 768px) {
     body > .eco-subnav { padding: 10px 16px; }
     .eco-subnav .ix-tabs { flex: 1 1 auto; flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; }
@@ -2133,7 +2136,10 @@ document.documentElement.className += ' eco-live';
   }
 
   function renderSections(){
-    var html = GROUPS.filter(function(g){ return g.id !== 'people'; })   // the ring is the voices now
+    /* for READERS the voices live in the ring, so their sections stay out of
+       this surface; in EDIT mode every group renders here, which is where
+       the owner adds, edits, reorders and moves people as well as projects */
+    var html = GROUPS.filter(function(g){ return editing || g.id !== 'people'; })
       .map(function(g, gi){
       var cats = data.filter(function(c){ return (c.group || 'projects') === g.id; });
       if (!cats.length) return '';
@@ -2202,6 +2208,13 @@ document.documentElement.className += ' eco-live';
         '<button class="eco-edit-only" id="ecoReset"><i class="ti ti-refresh" aria-hidden="true"></i> Reset</button>' +
       '</div>');
   }
+  /* visitors get NO edit affordance in the rendered DOM: the modal shell
+     ships in the markup for the admin path, so it is removed outright when
+     the gate is off (the buttons above were never inserted at all) */
+  if (!window.ADMIN_GATE) {
+    var visitorModal = document.getElementById('ecoModal');
+    if (visitorModal) visitorModal.remove();
+  }
   var editBtn = document.getElementById('ecoEditBtn');
   var editLabel = document.getElementById('ecoEditLabel');
   if (editBtn) editBtn.addEventListener('click', function(){
@@ -2209,7 +2222,12 @@ document.documentElement.className += ' eco-live';
     document.body.classList.toggle('eco-editing', editing);
     editBtn.classList.toggle('active', editing);
     editLabel.textContent = editing ? 'Done' : 'Edit';
+    /* the edit surface replaces the reader views while editing: the visitor
+       grid and the ring hide (body.eco-editing, CSS below the DEFAULTS), and
+       the drag/edit sections show in their place */
+    sectionsEl.hidden = !editing;
     renderSections();
+    if (editing) sectionsEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
 
   // ----- delegated interactions on the sections container -----
