@@ -161,7 +161,11 @@ if (MOUNT) {
       }
       labelsEl.appendChild(el); labels.push({ el, card: g });
     });
-    spin = 0; spinVel = 0; front = 0; dock();
+    /* card i sits at angle i/n * 2pi and the lens faces angle pi, so
+       spin = pi puts INDEX 0 front and centre on load and on every tab
+       switch (spin = 0 faced index n/2, which is why the ring used to
+       open on card 10 of 18). */
+    spin = Math.PI; spinVel = 0; front = 0; dock();
   }
 
   /* ---------- water ---------- */
