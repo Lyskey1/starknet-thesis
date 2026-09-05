@@ -1260,6 +1260,24 @@ footer.site-footer .foot-bottom a:hover{color:var(--accent)}
   .snum-lede{padding-bottom:28px}
 }
 
+/* ===== CONCLUSION (restored 2026-09-05) ======================================
+   Main's closing CTA, back per the pass spec (it had been removed on owner
+   request with its anchor moved to the footer banner; the reversal is
+   flagged in the pass report). One accent: the three highlight spans and
+   the three pillar glyphs all read var(--acc-2), no per-pillar hues. */
+.conclude{text-align:center;padding:80px 0 110px}
+.conclude .eyebrow{display:block;margin-bottom:18px}
+.conclude h2{font-family:var(--display);font-weight:300;font-size:clamp(28px,4vw,46px);line-height:1.08;letter-spacing:-.02em;color:var(--white);max-width:18ch;margin:0 auto 14px}
+.conclude h2 .hl{color:var(--acc-2);font-weight:400}
+.conclude .lead{margin:0 auto;text-align:center}
+.pillar-links{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin-top:30px}
+.pillar-links a{display:inline-flex;align-items:center;gap:9px;border:1px solid var(--line);border-radius:10px;padding:13px 20px;
+  font-family:var(--mono),monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted-2);text-decoration:none;transition:.2s}
+.pillar-links a:hover{border-color:var(--acc-2);color:var(--white)}
+.pillar-links a svg{color:var(--acc-2);flex:none}
+.pillar-links .pg-braces{display:inline-flex;align-items:center;font:400 11px var(--mono),monospace;line-height:1;color:var(--acc-2)}
+.pillar-links .pg-dot{display:block;width:2.4px;height:2.4px;border-radius:50%;background:currentColor;margin:0 1.5px}
+
 /* ===== 02 UTILITIES, THE TABBED DEVICE (2026-09-05) ==========================
    Main's explorer restored: a four-tab rail on the left, one swapping panel
    on the right in the sg-glass stage. Every older utility layer (the V7
@@ -2279,19 +2297,29 @@ window.ADMIN_GATE=on;})();
      the product: the form pins for a viewport while the footer scrolls up over
      it. The heading and the subscribe form move into the pin; the footer keeps
      its rule and link columns. -->
+<!-- CONCLUSION. Main's closing CTA restored (2026-09-05 STRK pass; it had
+     been removed on owner request, with #strk-is-a-bet-on-privacy moved to
+     the footer banner: that anchor now moves back here, and the banner
+     returns to the standard site-wide headline). The pillar glyphs are
+     main's hand-drawn 24-grid set; on this page all three read the one
+     accent. -->
+<section class="conclude"><div class="wrap">
+  <p class="eyebrow">The whole bet, one ticker</p>
+  <h2 id="strk-is-a-bet-on-privacy">STRK is a bet on <span class="hl">privacy</span>, <span class="hl">quantum resistance</span> &amp; <span class="hl">BTCFi</span>.</h2>
+  <p class="lead">Read the three pillars it's built on.</p>
+  <div class="pillar-links">
+    <a class="l-privacy" href="/privacy"><span class="pg-braces" aria-hidden="true">{<i class="pg-dot"></i>}</span> Privacy</a>
+    <a class="l-quantum" href="/quantum"><svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5v13"/><path d="M5 6.5h14"/><path d="M6.75 10.5h10.5"/><path d="M8.5 14.5h7"/><rect x="9.75" y="16.5" width="4.5" height="4.5" rx="0.8"/></svg> Quantum</a>
+    <a class="l-btcfi" href="/btcfi"><svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6h7.5a3 3 0 0 1 0 6a3 3 0 0 1 0 6H6.5"/><path d="M8.5 6v12"/><path d="M8.5 12h5.5"/><path d="M10 3.5V6"/><path d="M13 3.5V6"/><path d="M10 18v2.5"/><path d="M13 18v2.5"/></svg> BTCFi</a>
+  </div>
+</div></section>
+
 <footer class="vc-footer">
 <div class="vc-cta-band">
   <div class="vc-cta-in">
     <div class="vc-cta-say">
       <p class="vc-kicker">Starknet Thesis</p>
-      <!-- the tagline is now the thesis sentence itself. The "whole bet, one
-           ticker" section that carried it was removed on request, so its id
-           moves here, onto the element that repeats the sentence:
-           #strk-is-a-bet-on-privacy is a committed search-index anchor. Same
-           move as quantum.html's #and-to-get-this-roadmap-right. Note the
-           index builder skips <footer>, so the anchor resolves but no longer
-           produces a search entry, exactly as in the quantum case. -->
-      <h2 id="strk-is-a-bet-on-privacy" class="vc-title">STRK is a bet on privacy,<br>quantum resistance<br>&amp; BTCFi</h2>
+      <h2 class="vc-title">Three forces,<br>one chain,<br>one ticker.</h2>
     </div>
     <form class="vc-sub" action="https://starknetresearch.substack.com/subscribe" method="get" target="_blank" rel="noopener" data-umami-event="footer-subscribe">
       <label class="vc-sub-field">
