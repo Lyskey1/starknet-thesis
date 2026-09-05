@@ -1783,25 +1783,21 @@
    height the section has left after its head, and the type scales with
    them, so the block reads filled rather than floated. */
 .bm-bleed{display:flex;flex-direction:column;min-height:0;}
-.bm-bleed .metrics-row{gap:20px;flex:1 1 auto;min-height:0;}
-.bm-bleed .metrics-row .metric-box{min-height:0;height:100%;padding:clamp(20px,2vh,34px) clamp(24px,2.2vw,44px);}
-.bm-bleed .metrics-row .metric-val{font-size:clamp(48px,5.6vw,104px);line-height:.94;}
-.bm-bleed .metrics-row .metric-label{font-size:clamp(17px,1.6vw,26px);padding-top:clamp(18px,2.4vh,34px);}
-.bm-bleed .metrics-row .metric-sub{font-size:clamp(14px,1.15vw,18px);}
-/* THE CARDS GO LANDSCAPE (2026-09-02). Four in a row on a 1440 viewport is
-   328 wide by 394 tall, which reads tall-and-narrow with an empty middle.
-   Two by two makes each card twice as wide, the pair of rows still takes the
-   whole height the section has left, and the number grows into the room.
-   Bounded by min-width:769px on purpose: styles.css drops to two columns at
-   768 and one at 480, and .bm-bleed .metrics-row outranks both of those
-   selectors, so an unguarded rule here would freeze the phone layout too.
-   Rows are explicit minmax(0,1fr) so the flex height actually splits in two
-   and a long value cannot blow a row out. */
+.bm-bleed .metrics-row{gap:16px;flex:none;min-height:0;}
+.bm-bleed .metrics-row .metric-box{min-height:220px;height:auto;padding:24px 24px 22px;}
+.bm-bleed .metrics-row .metric-val{font-size:clamp(30px,2.6vw,40px);line-height:.98;color:#fafafa;}
+.bm-bleed .metrics-row .metric-label{font-size:16px;padding-top:16px;}
+.bm-bleed .metrics-row .metric-sub{font-size:13.5px;}
+/* FOUR PER ROW at 1440 (2026-09-05 simplification pass), ~220px cards;
+   two per row at 1024, one at 375. The figure is INK, not accent: these are
+   unsigned values under the data-palette rule; the dollar equivalents on
+   the sub-line keep the muted tier. */
 @media (min-width:769px){
-  .bm-bleed .metrics-row{grid-template-columns:repeat(2,minmax(0,1fr));
-    grid-template-rows:repeat(2,minmax(0,1fr));}
-  .bm-bleed .metrics-row .metric-val{font-size:clamp(52px,7.2vw,116px);}
-  .bm-bleed .metrics-row .metric-label{padding-top:clamp(12px,1.6vh,22px);}
+  .bm-bleed .metrics-row{grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:none;}
+}
+@media (min-width:769px) and (max-width:1100px){
+  .bm-bleed .metrics-row{grid-template-columns:repeat(2,minmax(0,1fr));}
+}
 }
 @media (max-width:1240px){
   /* min-height is a floor, not a target: at 250px it beat the 1fr rows above
@@ -1914,7 +1910,7 @@
 .bmsec .news-admin-bar:hover{opacity:1;}
 
 /* the section distributes: head at natural height, cards take the rest */
-.bmsec .bm-bleed{flex:1 1 auto;}
+.bmsec .bm-bleed{flex:none;}
 .bmsec .tl-section{flex:none;}
 </style>
 <script src="js/admin-gate.js"></script>
