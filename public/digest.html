@@ -256,18 +256,15 @@
      not the viewport. The min-height is what gives the band its air. */
   .dgh-scene { position: relative; display: flex; align-items: center;
     flex: 1 1 auto; min-height: 54svh; }
-  /* THE STAGE IS A CENTRE-RIGHT BOX, NOT A FULL-BLEED LAYER (2026-09-04
-     correction). js/digest-hero-mark.js centres its ring in the mount and
-     fits it to 58% of the mount height, and POINT STROKE WEIGHT SCALES
-     WITH MOUNT HEIGHT (the uH/900 term in the point shader): the previous
-     full-band mount was short enough to thin the dense dust into a dashed
-     outline. This box gives the renderer the height that keeps the
-     original stroke weight, lands the ring at about 380px at 1440x900
-     (against the 333px column, the balance the spec asks for), and parks
-     it centre right (box centre 70vw), clear of the 47vw column. Top 50%
-     on the band = vertically centred against the column. */
-  .dgh-stage { position: absolute; top: 50%; right: 0; transform: translateY(-50%);
-    width: calc(60 * var(--dgh-u)); height: min(72svh, 660px); z-index: 0; pointer-events: none; }
+  /* THE STAGE IS THE RIGHT COLUMN (2026-09-05 mark size rule, shared with
+     strk/btcfi/quantum): everything from the editorial column's right edge
+     (47u) to the container edge, full scene height. js/digest-hero-mark.js
+     centres its ring in the mount and fits it to 80% of the mount height,
+     so the ring diameter is 80% of the column between the nav and the
+     baseline strip, centred in the free column, clear of the 47u column
+     and never touching the nav or the strip. */
+  .dgh-stage { position: absolute; top: 0; bottom: 0; left: calc(47 * var(--dgh-u)); right: 0;
+    z-index: 0; pointer-events: none; }
   .dgh-stage canvas { display: block; width: 100%; height: 100%; }
 
   /* zone one: the editorial column, one reading order top to bottom */

@@ -92,7 +92,7 @@ if (MOUNT) {
     const VERT = `
       attribute float aSize; attribute float aPhase; attribute float aAlpha; attribute float aTint;
       varying vec3 vC; varying float vA;
-      uniform float uPix, uH, uFade, uTime, uDrift, uSpan;
+      uniform float uPix, uH, uFade, uTime, uDrift, uSpan, uSz;
       uniform vec3 uAcc, uWarm, uChalk;
       void main(){
         vec3 p = position;
@@ -107,7 +107,7 @@ if (MOUNT) {
         vec4 mv = modelViewMatrix * vec4(p, 1.0);
         float d = -mv.z;
         gl_Position = projectionMatrix * mv;
-        gl_PointSize = max(1.0, aSize * uPix * (uH / 900.0) * (10.0 / max(d, 0.5)));
+        gl_PointSize = max(1.0, aSize * uSz * uPix * (uH / 900.0) * (10.0 / max(d, 0.5)));
         vA = aAlpha * uFade;
       }`;
 
@@ -128,7 +128,7 @@ if (MOUNT) {
         blending: THREE.AdditiveBlending,
         vertexShader: VERT, fragmentShader: FRAG,
         uniforms: {
-          uPix: { value: 1 }, uH: { value: 900 }, uFade: { value: 0 },
+          uPix: { value: 1 }, uH: { value: 900 }, uFade: { value: 0 }, uSz: { value: 1 },
           uTime: { value: 0 }, uDrift: { value: drift }, uSpan: { value: span },
           uAcc: { value: new THREE.Color('#c53400') },
           uWarm: { value: new THREE.Color('#e07a4a') },
@@ -155,8 +155,8 @@ if (MOUNT) {
        makes rotation about Z legible at all: a ring of uniform density
        turning in its own plane reads as a still image. */
     const small = smallMQ.matches;
-    const RING_N = small ? 6400 : 17000;
-    const HALO_N = small ? 1800 : 5000;
+    const RING_N = small ? 6400 : 25000;
+    const HALO_N = small ? 1800 : 7400;
 
     {
       const N = RING_N + HALO_N;
@@ -194,7 +194,7 @@ if (MOUNT) {
     }
 
     /* ================= the mark ================= */
-    const MARK_N = small ? 11000 : 30000;
+    const MARK_N = small ? 11000 : 44000;
     fetch('/assets/img/digest-glyph.svg')
       .then((r) => r.text())
       .then((src) => {
@@ -317,8 +317,13 @@ if (MOUNT) {
       renderer.setSize(w, h, false);
       camera.aspect = w / h;
       const sm = smallMQ.matches;
-      const byH = R_FIT / ((sm ? 0.40 : 0.58) * HALF_FOV);
-      const byW = R_FIT / ((sm ? 0.80 : 0.42) * HALF_FOV * camera.aspect);
+      /* the mark size rule (2026-09-05, shared with strk/btcfi/quantum):
+         the annulus' outer edge spans 80% of the mount height, and the mount
+         is the full scene band, so the ring diameter is 80% of the column
+         between the nav and the baseline strip. byW guards the stage box on
+         a narrow desktop. */
+      const byH = R_FIT / ((sm ? 0.40 : 0.80) * HALF_FOV);
+      const byW = R_FIT / ((sm ? 0.80 : 0.91) * HALF_FOV * camera.aspect);
       camera.position.z = Math.max(byH, byW);
       /* CENTRED, unlike the quantum twin. That hero runs a three-line display
          down the left gutter and pushes its object right to clear it; this
@@ -327,7 +332,8 @@ if (MOUNT) {
       world.position.x = 0;
       camera.updateProjectionMatrix();
       const pix = Math.min(devicePixelRatio || 1, 2);
-      mats.forEach((m) => { m.uniforms.uH.value = h; m.uniforms.uPix.value = pix; });
+      const trim = sm ? 1 : 0.82;
+      mats.forEach((m) => { m.uniforms.uH.value = h; m.uniforms.uPix.value = pix; m.uniforms.uSz.value = trim; });
     }
 
     const target = () => (smallMQ.matches ? 0.62 : 1);
