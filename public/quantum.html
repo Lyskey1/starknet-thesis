@@ -85,10 +85,17 @@
      because the eco-stage rule would otherwise win) puts the hero back UNDER
      the pill so the pill reads over it. The flame canvas is z-index 0 too and
      earlier in the DOM, so it stays behind. */
-  body.page-quantum { --qh-chrome: 51px; }
-  .hero { position: relative; display: block; height: 100vh; min-height: 100vh;
-    max-width: none; margin: calc(-1 * var(--qh-chrome)) 0 0; padding: 0;
+  /* --qh-chrome is 0 since the 2026-09-05 baseline rule: the nav is truly
+     fixed with a body offset, so the old pull-up double-counted 51px and
+     the hero overshot the fold by 13. Height, not min-height: exactly one
+     viewport under the nav; below 700px viewport height it grows to fit. */
+  body.page-quantum { --qh-chrome: 0px; }
+  .hero { position: relative; display: block; height: calc(100svh - var(--vcnav-h, 64px)); min-height: 0;
+    max-width: none; margin: 0; padding: 0;
     overflow: hidden; text-align: left; background: transparent; }
+  @media (max-height: 700px) {
+    .hero { height: auto; min-height: calc(100svh - var(--vcnav-h, 64px)); }
+  }
   body.page-quantum .hero { z-index: 0; }
   /* styles.css hangs a centred radial glow off .hero::before. That glow is
      gone (this hero is left-aligned and carries its own light in the WebGL

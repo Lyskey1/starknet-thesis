@@ -1373,10 +1373,17 @@
      because the eco-stage rule would otherwise win) puts the hero back UNDER
      the pill so the pill still reads over it. The flame canvas is z-index 0
      too and earlier in the DOM, so it stays behind. */
-  body.page-btcfi { --bfh-chrome: 51px; }
-  .hero { position: relative; display: block; height: 100vh; min-height: 100vh;
-    max-width: none; margin: calc(-1 * var(--bfh-chrome)) 0 0; padding: 0;
+  /* --bfh-chrome is 0 since the 2026-09-05 baseline rule: the nav is truly
+     fixed with a body offset, so the old pull-up double-counted 51px and
+     the hero overshot the fold by 13. Height, not min-height: exactly one
+     viewport under the nav; below 700px viewport height it grows to fit. */
+  body.page-btcfi { --bfh-chrome: 0px; }
+  .hero { position: relative; display: block; height: calc(100svh - var(--vcnav-h, 64px)); min-height: 0;
+    max-width: none; margin: 0; padding: 0;
     overflow: hidden; text-align: left; background: transparent; }
+  @media (max-height: 700px) {
+    .hero { height: auto; min-height: calc(100svh - var(--vcnav-h, 64px)); }
+  }
   body.page-btcfi .hero { z-index: 0; }
   /* styles.css hangs a centred radial glow off .hero::before for the centred
      heroes. This hero is not centred and carries its own light, so it goes. */
@@ -1410,7 +1417,6 @@
      phone is 203px), so the frame becomes a plain top-to-bottom stack sized
      in rem, exactly as the landing's max-lg: rules do. The centrepiece stays
      behind it, dimmed by the renderer, so the copy keeps its contrast. */
-  @media (max-width: 1023px) { body.page-btcfi { --bfh-chrome: 56px; } }
   @media (max-width: 980px) {
     /* align-items and text-align are reset off styles.css's centred .hero:
        this stack is left aligned, the way the landing's max-lg: layout is.

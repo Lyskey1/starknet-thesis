@@ -1241,11 +1241,24 @@ footer.site-footer .foot-bottom a:hover{color:var(--accent)}
    margin, the 100svh pin) is obsolete: the hero sizes to its content and
    lands near 82svh at 1440x900. The wrap is the site's 1392px container, so
    the strip's hairline sits on the same lines as the nav and the footer. */
-body > .hero{position:relative;display:block;height:auto;min-height:0;
-  max-width:none;margin:0;padding:calc(4.5 * var(--skh-u)) 0 calc(2.153 * var(--skh-u));
+/* HERO = EXACTLY ONE VIEWPORT (2026-09-05 baseline rule): height, not
+   min-height, so it can neither undershoot (the next section peeking in)
+   nor overshoot the fold. The scene band takes the flex slack, so the
+   column and the mark center between the nav and the strip; the strip pins
+   to the bottom edge under a fixed 32px pad (24px at 375), and the next
+   section starts at the fold with the strip's own hairline as the boundary.
+   Below 700px viewport HEIGHT the hero grows to its content instead. */
+body > .hero{position:relative;display:flex;flex-direction:column;
+  height:calc(100svh - var(--vcnav-h, 64px));min-height:0;
+  max-width:none;margin:0;padding:0 0 32px;
   overflow:hidden;text-align:left;background:transparent;z-index:0}
-.skh-wrap{width:calc(100% - 48px);max-width:1392px;margin:0 auto}
-.skh-scene{position:relative;display:flex;align-items:center;min-height:54svh}
+.skh-wrap{width:calc(100% - 48px);max-width:1392px;margin:0 auto;
+  display:flex;flex-direction:column;flex:1 1 auto;min-height:0}
+.skh-scene{position:relative;display:flex;align-items:center;flex:1 1 auto;min-height:0}
+@media (max-height:700px){
+  body > .hero{height:auto;min-height:calc(100svh - var(--vcnav-h, 64px));padding-top:calc(2 * var(--skh-u))}
+  .skh-scene{min-height:54svh}
+}
 /* the stage is a centre-right box: the renderer centres its ring in the
    mount and scales stroke weight with mount height, so the box keeps the
    mark's density while parking it clear of the column */
@@ -1289,7 +1302,7 @@ body > .hero{position:relative;display:block;height:auto;min-height:0;
   text-transform:uppercase;white-space:nowrap;color:#fafafa}
 /* below the artboard: a rem-sized stack; the strip holds one row to 700px */
 @media (max-width:980px){
-  body > .hero{padding:2.5rem 1.5rem 2rem;overflow:visible}
+  body > .hero{height:auto;min-height:calc(100svh - var(--vcnav-h, 64px));padding:2.5rem 1.5rem 32px;overflow:visible}
   .skh-wrap{width:100%;max-width:none}
   .skh-scene{min-height:0}
   .skh-stage{display:none}
@@ -1308,7 +1321,7 @@ body > .hero{position:relative;display:block;height:auto;min-height:0;
   .skh-turn{text-align:left;font-size:1.25rem;white-space:normal}
 }
 @media (max-width:380px){
-  body > .hero{padding:2rem 1.25rem 2rem}
+  body > .hero{padding:2rem 1.25rem 24px}
   .hero .hero-title{font-size:2.375rem}
 }
 }

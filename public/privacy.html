@@ -101,7 +101,12 @@
      against 728px. Fatten the padding or a gap and the margin erodes
      until the hero outgrows min-height on short laptop windows, pushing
      the band below the fold. */
-  .hero { min-height: 0; height: calc(100vh - 72px); display: flex; flex-direction: column; justify-content: center; align-items: stretch; overflow: visible; padding: 72px 0 28px; max-width: none; margin: 0 auto; text-align: left; position: relative; }
+  /* exactly one viewport under the fixed nav (2026-09-05 baseline rule);
+     content stays centered; below 700px viewport height it grows to fit */
+  .hero { min-height: 0; height: calc(100svh - var(--vcnav-h, 64px)); display: flex; flex-direction: column; justify-content: center; align-items: stretch; overflow: visible; padding: 40px 0 28px; max-width: none; margin: 0 auto; text-align: left; position: relative; }
+  @media (max-height: 700px) {
+    .hero { height: auto; min-height: calc(100svh - var(--vcnav-h, 64px)); }
+  }
   /* same gutters as the landing hero (1.667vw, 24px at 1440): the copy runs to the edges, not a 1160px column */
   .pv-hero-inner { width: 100%; max-width: none; margin: 0 auto; padding: 0 1.667vw; position: relative; z-index: 1; }
   /* the CSS glow only paints when WebGL2 is missing (.hero-curtain-on
