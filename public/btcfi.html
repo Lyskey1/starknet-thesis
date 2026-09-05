@@ -66,27 +66,27 @@
   .bfc-glab { fill: rgba(250, 250, 250,.45); font-size: 10.5px; }
   .bfc-axis { fill: rgba(250, 250, 250,.5); font-size: 10.5px; }
   .bfc-tick { stroke: rgba(250, 250, 250,.3); }
-  .bfc-projzone { fill: rgba(197, 52, 0,.035); }
-  .bfc-projdiv { stroke: rgba(197, 52, 0,.35); stroke-width: 1; stroke-dasharray: 4 5; }
+  .bfc-projzone { fill: rgba(110,181,255,.04); }
+  .bfc-projdiv { stroke: rgba(110,181,255,.35); stroke-width: 1; stroke-dasharray: 4 5; }
   .bfc-todaylab { fill: rgba(250, 250, 250,.55); font-size: 10px; }
-  .bfc-projlab { fill: rgba(197, 52, 0,.6); font-size: 10px; }
+  .bfc-projlab { fill: rgba(110,181,255,.6); font-size: 10px; }
   /* bounds: the forbidden band (hatch + solid accent lid) and the desirable
      floor (clean line, no hatch) */
-  .bfc-bound { stroke: var(--accent); stroke-width: 2; }
-  .bfc-bound-lab { fill: rgba(var(--accent-rgb),.9); font-size: 11.5px; letter-spacing: .14em; }
-  .bfc-floor { stroke: #c53400; stroke-width: 2; }
+  .bfc-bound { stroke: #E8567C; stroke-width: 2; }
+  .bfc-bound-lab { fill: rgba(232,86,124,.9); font-size: 11.5px; letter-spacing: .14em; }
+  .bfc-floor { stroke: #8B5CF6; stroke-width: 2; }
   .bfc-floor-lab { fill: rgba(196,181,253,.95); font-size: 11.5px; letter-spacing: .14em; }
   /* trajectories: crisp line over a wide soft underglow */
-  .bfc-traj { stroke: #c53400; stroke-width: 2.4; fill: none; stroke-linecap: round; stroke-linejoin: round; }
-  .bfc-glow { stroke: rgba(197, 52, 0,.12); stroke-width: 9; fill: none; stroke-linecap: round; stroke-linejoin: round; }
-  .bfc-traj-btc { stroke: var(--accent); stroke-width: 2.2; }
-  .bfc-glow-btc { stroke: rgba(var(--accent-rgb),.10); }
-  .bfc-projline { stroke: #c53400; stroke-width: 2; fill: none; stroke-dasharray: 3 7; opacity: .8; stroke-linecap: round; }
-  .bfc-projline-btc { stroke: var(--accent); opacity: .65; }
-  .bfc-pt { fill: #0d0d0d; stroke: #c53400; stroke-width: 1.8; }
+  .bfc-traj { stroke: #6EB5FF; stroke-width: 2.4; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .bfc-glow { stroke: rgba(110,181,255,.12); stroke-width: 9; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .bfc-traj-btc { stroke: #6EB5FF; stroke-width: 2.2; }
+  .bfc-glow-btc { stroke: rgba(110,181,255,.10); }
+  .bfc-projline { stroke: #6EB5FF; stroke-width: 2; fill: none; stroke-dasharray: 3 7; opacity: .8; stroke-linecap: round; }
+  .bfc-projline-btc { stroke: #6EB5FF; opacity: .65; }
+  .bfc-pt { fill: #0d0d0d; stroke: #6EB5FF; stroke-width: 1.8; }
   .bfc-pt-proj { opacity: .55; }
-  .bfc-pt-today { fill: #c53400; }
-  .bfc-dot { fill: var(--accent); stroke: none; opacity: .8; }
+  .bfc-pt-today { fill: #6EB5FF; }
+  .bfc-dot { fill: #6EB5FF; stroke: none; opacity: .8; }
   .bfc-vlab { fill: rgba(196,181,253,.95); font-size: 11px; }
   .bfc-vlab-proj { fill: rgba(197, 52, 0,.6); }
   .bfc-schip rect { fill: rgba(197, 52, 0,.1); stroke: rgba(var(--accent-rgb),.45); }
@@ -3760,11 +3760,11 @@
 
     var defs = el('defs', {});
     var pat = el('pattern', { id: 'bfcHatch', width: 7, height: 7, patternUnits: 'userSpaceOnUse', patternTransform: 'rotate(45)' });
-    pat.appendChild(el('line', { x1: 0, y1: 0, x2: 0, y2: 7, stroke: 'rgba(197, 52, 0,0.16)', 'stroke-width': 1 }));
+    pat.appendChild(el('line', { x1: 0, y1: 0, x2: 0, y2: 7, stroke: 'rgba(232,86,124,0.16)', 'stroke-width': 1 }));
     defs.appendChild(pat);
     var grad = el('linearGradient', { id: 'bfcArea', x1: 0, y1: 0, x2: 0, y2: 1 });
-    grad.appendChild(el('stop', { offset: '0', 'stop-color': '#c53400', 'stop-opacity': '0.20' }));
-    grad.appendChild(el('stop', { offset: '1', 'stop-color': '#c53400', 'stop-opacity': '0' }));
+    grad.appendChild(el('stop', { offset: '0', 'stop-color': '#6EB5FF', 'stop-opacity': '0.20' }));
+    grad.appendChild(el('stop', { offset: '1', 'stop-color': '#6EB5FF', 'stop-opacity': '0' }));
     defs.appendChild(grad);
     svg.appendChild(defs);
 

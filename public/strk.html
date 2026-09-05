@@ -577,14 +577,14 @@ a.chip:hover{background:var(--acc);border-color:var(--acc);color:#0d0d0d}
 #numbers .cdelta.flat{color:var(--muted);background:rgba(250, 250, 250,.06)}
 #numbers .cspark-wrap{position:relative;height:34px;margin-top:auto}
 #numbers .cspark{width:100%;height:34px;display:block}
-#numbers .cspark-wrap .cdot{position:absolute;right:0;width:5px;height:5px;border-radius:50%;background:#f0b8a0;transform:translate(50%,-50%)}
-#numbers .cspark-wrap .cdot::after{content:"";position:absolute;inset:0;border-radius:50%;border:1px solid #f0b8a0;animation:sparkPulse 2.4s ease-out infinite}
+#numbers .cspark-wrap .cdot{position:absolute;right:0;width:5px;height:5px;border-radius:50%;background:#6EB5FF;transform:translate(50%,-50%)}
+#numbers .cspark-wrap .cdot::after{content:"";position:absolute;inset:0;border-radius:50%;border:1px solid #6EB5FF;animation:sparkPulse 2.4s ease-out infinite}
 @keyframes sparkPulse{0%{transform:scale(1);opacity:.8}100%{transform:scale(3.2);opacity:0}}
 #numbers .cview{position:absolute;right:12px;bottom:10px;font-family:var(--mono),monospace;font-size:10px;letter-spacing:.12em;color:var(--acc-2);background:rgba(197, 52, 0,.14);border:1px solid rgba(197, 52, 0,.30);border-radius:6px;padding:3px 8px;opacity:0;transform:translateY(4px);transition:opacity .2s,transform .2s;pointer-events:none}
 #numbers .cell.click:hover .cview,#numbers .cell.click:focus-visible .cview{opacity:1;transform:translateY(0)}
 #numbers .cell.click:hover,#numbers .cell.click:focus-visible{transform:translateY(-1px);border-color:rgba(197, 52, 0,.45);background:linear-gradient(180deg,rgba(250, 250, 250,.06),rgba(250, 250, 250,.02));box-shadow:none}
 #numbers .cbar{height:6px;border-radius:3px;background:rgba(255,255,255,.06);overflow:hidden;margin-top:auto}
-#numbers .cbar i{display:block;height:100%;border-radius:3px;background:linear-gradient(90deg,#a02a00,#c53400);transition:width .6s ease}
+#numbers .cbar i{display:block;height:100%;border-radius:3px;background:linear-gradient(90deg,rgba(110,181,255,.55),#6EB5FF);transition:width .6s ease}
 #numbers .cbar-leg{display:flex;justify-content:space-between;gap:10px;margin-top:7px;font-family:var(--mono),monospace;font-size:10px;letter-spacing:.08em;color:var(--muted)}
 @media(prefers-reduced-motion:reduce){#numbers .cspark-wrap .cdot::after{animation:none}#numbers .cell.click:hover,#numbers .cell.click:focus-visible{transform:none;transition:none}#numbers .cview{transition:none}#numbers .cbar i{transition:none}}
 .venn-side h3{font-size:24px;margin-bottom:12px}
@@ -612,7 +612,11 @@ a.chip:hover{background:var(--acc);border-color:var(--acc);color:#0d0d0d}
 /* pillar flow strip */
 
 /* ===== 04 numbers dashboard: namespaced under #numbers (ported from reference/strk-section04.html) ===== */
-#numbers{--up:#c53400;--down:#c53400;--acc-3:#f0b8a0}
+/* DATA PALETTE (2026-09-05): chart data never draws in the UI accent. One
+   instrument blue for every unsigned series, green/red only for signed
+   series and deltas; the categorical set lives in STACK_COLORS in the
+   script below. Grid, axes and labels stay muted ink. */
+#numbers{--series:#6EB5FF;--up:#1FCB94;--down:#E8567C;--acc-3:#6EB5FF}
 #numbers .nhead{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:8px}
 #numbers .pill{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono),monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
 #numbers .pill .d{width:7px;height:7px;border-radius:50%;background:var(--acc-2);animation:numPulse 2.4s infinite}
@@ -639,6 +643,11 @@ a.chip:hover{background:var(--acc);border-color:var(--acc);color:#0d0d0d}
 #numbers .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
 #numbers .chip{font-family:var(--mono),monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--line);background:var(--card);color:var(--muted-2);border-radius:999px;padding:8px 14px;cursor:pointer;transition:.15s}
 #numbers .chip:hover{border-color:rgba(197, 52, 0,.4);color:var(--white)}#numbers .chip.on{background:rgba(197, 52, 0,.16);border-color:var(--acc);color:var(--white)}
+/* the pill had NO :focus rule, so the browser's default focus ring stacked
+   on the accent border after a click; active is the accent border alone,
+   and the ring appears only for keyboard navigation */
+#numbers .chip:focus{outline:none}
+#numbers .chip:focus-visible{outline:2px solid rgba(250,250,250,.5);outline-offset:2px}
 
 /* zoom modal / lightbox (reuses .elabel/.chgs/.ranges/.src/.up/.down/.tip above) */
 #numbers .nmodal{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;padding:24px}
@@ -672,7 +681,7 @@ a.chip:hover{background:var(--acc);border-color:var(--acc);color:#0d0d0d}
 #numbers .cell .cs{font-family:var(--mono),monospace;font-size:11px;color:var(--muted);margin-top:5px}
 #numbers .cell .spark{margin-top:auto;width:100%;height:32px;display:block;opacity:.65;transition:opacity .2s}
 #numbers .cell.click:hover .spark{opacity:1}
-#numbers .cell .spark path.l{fill:none;stroke:var(--acc-2);stroke-width:2;stroke-linejoin:round;stroke-linecap:round;stroke-dasharray:var(--len);stroke-dashoffset:var(--len);transition:stroke-dashoffset 1.1s cubic-bezier(.22,1,.36,1)}
+#numbers .cell .spark path.l{fill:none;stroke:#6EB5FF;stroke-width:2;stroke-linejoin:round;stroke-linecap:round;stroke-dasharray:var(--len);stroke-dashoffset:var(--len);transition:stroke-dashoffset 1.1s cubic-bezier(.22,1,.36,1)}
 #numbers .cell.shown .spark path.l{stroke-dashoffset:0}
 #numbers .cell.bd{min-height:auto;cursor:default}
 #numbers .bd-list{margin-top:16px;display:flex;flex-direction:column;gap:11px}
@@ -1143,59 +1152,6 @@ footer.site-footer .foot-bottom a:hover{color:var(--accent)}
 }
 
 
-/* ===== 04 NUMBERS: the flat column band =====================================
-   Ported from btcfi's bridge-phases strip (.bcore-strip / .bcol): four equal
-   columns edge to edge with no outer gutter and no card gaps, square corners
-   everywhere, columns separated by 1px vertical hairlines that run the full
-   column height, flat #0d0d0d panels with no gradient wash and no accent
-   tint, and the content anchored to the bottom of each column.
-   The strip is a direct child of the section rather than of .wrap, which is
-   how it reaches full width: .block sets no horizontal padding, so there is
-   no need for btcfi's width:100vw + negative margin, and no 100vw-versus-
-   scrollbar overflow for body{overflow-x:hidden} to mask.
-   Appended last so these rules win the cascade inside this <style>. The dead
-   .sb-grid / .sb-tall rules further up and every .sb-* rule in the SHARED
-   css/stride.css are left exactly as they are. */
-.sb-block > .snum-strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
-  grid-template-rows:1fr auto auto auto;width:100%;background:#0d0d0d;
-  min-height:clamp(300px,34vh,420px);
-  border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-/* the band's own top and bottom hairlines are what make four flat #0d0d0d
-   panels on a #0d0d0d backdrop read as one band rather than as loose text */
-.snum-col{grid-row:1 / -1;display:grid;grid-template-rows:subgrid;
-  background:#0d0d0d;border-radius:0;border-left:1px solid var(--line);
-  padding:30px 22px 26px}
-.snum-col:first-child{border-left:0}
-/* row 1 is the empty space, so the label, the value and the sentence sit in
-   rows 2 to 4: subgrid keeps those three lines on a shared baseline across
-   all four columns, which a per-column margin-top:auto cannot do once one
-   column carries no sentence. The @supports fallback below bottom-anchors
-   the same three slots with flex wherever subgrid is missing. */
-.snum-l{grid-row:2}
-.snum-v{grid-row:3}
-.snum-d{grid-row:4}
-@supports not (grid-template-rows: subgrid){
-  .sb-block > .snum-strip{display:flex}
-  .snum-col{display:flex;flex:1 1 0%;min-width:0;flex-direction:column;justify-content:flex-end}
-}
-.snum-l{margin:0;font-family:var(--mono),monospace;font-weight:400;font-size:11px;
-  letter-spacing:.16em;text-transform:uppercase;color:var(--muted-2)}
-.snum-v{margin-top:12px;font-family:var(--display),sans-serif;font-weight:300;
-  font-size:clamp(24px,2.4vw,38px);line-height:1.04;letter-spacing:-.02em;
-  color:var(--white)}
-.snum-d{margin:14px 0 0;font-size:14px;line-height:1.55;color:var(--muted)}
-/* the standing statement, btcfi's .bhead--lede role. A new class, not
-   stride.css's .sb-q, whose rule is shaped for sitting inside a card. */
-.snum-lede{max-width:62ch;margin:0;font-family:var(--display),sans-serif;
-  font-weight:300;font-size:clamp(18px,1.8vw,22px);line-height:1.35;
-  letter-spacing:-.015em;color:var(--white);padding-bottom:34px}
-@media(max-width:880px){
-  .sb-block > .snum-strip{display:flex;flex-direction:column}
-  .snum-col{display:block;border-left:0;border-top:1px solid var(--line);
-    min-height:0;padding:24px 16px}
-  .snum-col:first-child{border-top:0}
-  .snum-lede{padding-bottom:28px}
-}
 
 /* ===== CONCLUSION (restored 2026-09-05) ======================================
    Main's closing CTA, back per the pass spec (it had been removed on owner
@@ -1315,6 +1271,7 @@ body > .hero{position:relative;display:block;height:auto;min-height:0;
   line-height:1;letter-spacing:-.01em;color:var(--white);font-variant-numeric:tabular-nums}
 .skh-stats span{font-family:var(--mono),monospace;font-size:max(calc(0.68 * var(--skh-u)),10px);
   letter-spacing:.14em;text-transform:uppercase;color:rgba(250,250,250,.72);max-width:16ch}
+.skh-stats .skh-note{color:rgba(250,250,250,.45);letter-spacing:.1em;max-width:none}
 /* half the 4.6 display: a signature, not a rival headline */
 .skh-turn{margin:0;text-align:right;font-family:var(--display);font-weight:700;
   font-size:calc(2.3 * var(--skh-u));line-height:.95;letter-spacing:-.01em;
@@ -1452,7 +1409,7 @@ window.ADMIN_GATE=on;})();
       <div class="skh-col">
         <p class="hero-eyebrow">One token. Three engines.</p>
         <h1 id="the-thesis-in-a-single-asset" class="hero-title">The thesis, in a <em>single asset</em>.</h1>
-        <p class="hero-subtitle">It pays for execution and privacy fees, secures the network through staking, governs the protocol, and serves as base collateral across its DeFi.</p>
+        <p class="hero-subtitle">Privacy, quantum resistance, and Bitcoin all run on Starknet. STRK is the asset that secures the network and captures the demand the thesis creates.</p>
         <div class="skh-ctas">
           <a class="skh-cta" href="#what-strk-is"><span>What STRK is</span><i aria-hidden="true"><svg viewBox="0 0 51 51" fill="none"><path d="M26.293 23.583L34.4834 15.3926L35.6064 16.5156L27.416 24.7061H39V26.2939H27.418L35.6084 34.4844L34.4854 35.6074L26.293 27.415V39H24.7051V27.417L16.5146 35.6074L15.3916 34.4844L23.582 26.2939H12V24.7061H23.584L15.3936 16.5156L16.5166 15.3926L24.7051 23.5811V12H26.293V23.583Z"/></svg></i></a>
           <a class="skh-cta skh-cta--muted" href="#the-convergence"><span>The convergence</span><i aria-hidden="true"><svg viewBox="0 0 51 51" fill="none"><path d="M26.293 23.583L34.4834 15.3926L35.6064 16.5156L27.416 24.7061H39V26.2939H27.418L35.6084 34.4844L34.4854 35.6074L26.293 27.415V39H24.7051V27.417L16.5146 35.6074L15.3916 34.4844L23.582 26.2939H12V24.7061H23.584L15.3936 16.5156L16.5166 15.3926L24.7051 23.5811V12H26.293V23.583Z"/></svg></i></a>
@@ -1460,10 +1417,14 @@ window.ADMIN_GATE=on;})();
       </div>
     </div>
     <div class="skh-strip">
+      <!-- three live stats, one snapshot: circulating share of the 10B total
+           (CoinGecko, the price block's source), the staked ratio (onchain /
+           CoinGecko), and chain revenue annualized from the trailing 30 days
+           (DefiLlama), labeled as the multiple it is, never a forecast. -->
       <ul class="skh-stats">
-        <li><b data-metric="strk_staked_pct">21.2%</b><span>Of circulating supply staked</span></li>
-        <li><b>75%</b><span>Of all staking power</span></li>
-        <li><b data-metric="gov_votes">10</b><span>Onchain governance votes</span></li>
+        <li><b data-metric="circ_supply_pct">71.8%</b><span>% circulating supply</span></li>
+        <li><b data-metric="strk_staked_pct">21.2%</b><span>% circulating supply staked</span></li>
+        <li><b data-metric="chainrev_annualized">$1.6M</b><span>Chain revenue (annualized)</span><span class="skh-note">trailing 30d x 12.2</span></li>
       </ul>
       <p class="skh-turn">STRK is where that demand lands</p>
     </div>
@@ -1527,7 +1488,7 @@ window.ADMIN_GATE=on;})();
           <text class="snum" x="330" y="205">02</text>
           <text class="slabel" x="330" y="234">Utility</text>
         </g>
-        <g class="stage" data-i="03" data-t="STRK demand rises" data-d="Fees, staking, governance, and collateral all consume and lock up STRK as the chain is used.">
+        <g class="stage" data-i="03" data-t="STRK demand rises" data-d="Gas and privacy fees, staking, governance, and collateral all consume and lock up STRK as the chain is used.">
           <circle class="dot" cx="200" cy="330" r="13"/>
           <text class="snum" x="200" y="335">03</text>
           <text class="slabel" x="200" y="360">Demand</text>
@@ -1604,7 +1565,7 @@ window.ADMIN_GATE=on;})();
           <div class="barrow">
             <div class="bl">Private transaction</div>
             <div class="bartrack"><div class="barfill gas" data-w="10%"></div><div class="barfill priv" data-w="80%"></div></div>
-            <div class="seglbl"><i><span class="dotc gas"></span>Gas <span style="color:var(--white)">~$0.01</span></i><i><span class="dotc priv"></span>Privacy fee &middot; paid in STRK <span style="color:var(--white)"><span data-fee-usd>$0.15</span> today</span></i></div>
+            <div class="seglbl"><i><span class="dotc gas"></span>Gas <span style="color:var(--white)">~$0.01</span></i><i><span class="dotc priv"></span>Privacy fee &middot; paid in STRK <span style="color:var(--white)">~$0.12</span></i></div>
           </div>
         </div>
       </div>
@@ -1781,34 +1742,6 @@ window.ADMIN_GATE=on;})();
      mono label slot, its value the large slot, its supporting sentence sits
      under that, and the standing statement leads the band the way btcfi's
      lede paragraph leads its columns. -->
-<section class="block sb-block" aria-label="STRK by the numbers">
-  <div class="wrap">
-    <p class="sb-label">By the numbers</p>
-    <p class="snum-lede">Every transaction on Starknet is paid in STRK, and every private one carries a protocol fee on top of it.</p>
-  </div>
-  <div class="snum-strip">
-    <div class="snum-col">
-      <p class="snum-l">STRK</p>
-      <div class="snum-v" data-metric="strk_staked_total">1.43B STRK</div>
-      <p class="snum-d">Staked to secure the network, carrying 75% of all staking power.</p>
-    </div>
-    <div class="snum-col">
-      <p class="snum-l">Share of circulating supply staked</p>
-      <div class="snum-v" data-metric="strk_staked_pct">21.2%</div>
-    </div>
-    <div class="snum-col">
-      <p class="snum-l">Onchain governance votes</p>
-      <div class="snum-v" data-metric="gov_votes">10</div>
-      <p class="snum-d">Only staked or delegated STRK carries a vote.</p>
-    </div>
-    <div class="snum-col">
-      <p class="snum-l">Privacy fee, per private action</p>
-      <div class="snum-v">~$0.12</div>
-      <p class="snum-d">Settled in STRK, adjusted by the protocol as the price moves.</p>
-    </div>
-  </div>
-</section>
-
 <section class="block"><div class="wrap"><div id="numbers">
   <div class="nhead">
     <div class="th-pm-head" style="margin-bottom:0"><span class="th-pm-marker"></span><span class="th-pm-num">04</span><h2 class="th-pm-title">The numbers</h2></div>
@@ -1833,22 +1766,22 @@ window.ADMIN_GATE=on;})();
     <div class="chartbox" id="chartbox">
       <svg id="chart" viewBox="0 0 1000 280" preserveAspectRatio="none">
         <defs><linearGradient id="fill" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stop-color="#c53400" stop-opacity="0.34"/><stop offset="1" stop-color="#c53400" stop-opacity="0"/>
+          <stop offset="0" stop-color="#6EB5FF" stop-opacity="0.22"/><stop offset="1" stop-color="#6EB5FF" stop-opacity="0"/>
         </linearGradient>
         <linearGradient id="fillPos" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stop-color="#c53400" stop-opacity="0.26"/><stop offset="1" stop-color="#c53400" stop-opacity="0"/>
+          <stop offset="0" stop-color="#1FCB94" stop-opacity="0.26"/><stop offset="1" stop-color="#1FCB94" stop-opacity="0"/>
         </linearGradient>
         <linearGradient id="fillNeg" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stop-color="#c53400" stop-opacity="0"/><stop offset="1" stop-color="#c53400" stop-opacity="0.26"/>
+          <stop offset="0" stop-color="#E8567C" stop-opacity="0"/><stop offset="1" stop-color="#E8567C" stop-opacity="0.26"/>
         </linearGradient></defs>
         <g id="gridV"></g>
         <path id="area" fill="url(#fill)"></path>
         <g id="dbars"></g>
         <g id="signG"></g>
         <g id="stackG"></g>
-        <path id="line" fill="none" stroke="#c53400" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"></path>
+        <path id="line" fill="none" stroke="#6EB5FF" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"></path>
         <line id="cross" stroke="rgba(250, 250, 250,.25)" stroke-width="1" style="display:none"></line>
-        <circle id="cdot" r="4.5" fill="#f0b8a0" style="display:none"></circle>
+        <circle id="cdot" r="4.5" fill="#6EB5FF" style="display:none"></circle>
         <g id="peakG"></g>
         <g id="annG" pointer-events="none"></g>
       </svg>
@@ -2585,9 +2518,13 @@ const M=[
 const map={};
 M.forEach(m=>{map[m.k]=m;});
 
-/* stacked-by-asset config for the STRK20 pool chart (site-family palette) */
+/* DATA PALETTE tokens (2026-09-05, one place): the UI accent stays on
+   chrome (pills, eyebrows, buttons, active states) and never enters a plot.
+   Instrument = every unsigned series; positive/negative = signed series and
+   deltas only; the categorical set = stacked series and their legends. */
+const C_SERIES='#6EB5FF', C_POS='#1FCB94', C_NEG='#E8567C';
 const STACK_BANDS=['strkBTC','STRK','USDC','WBTC','ETH'];
-const STACK_COLORS={strkBTC:'#c53400',STRK:'#c53400',USDC:'#c53400',WBTC:'#c53400',ETH:'#c53400',OTHER:'#6B7480'};
+const STACK_COLORS={strkBTC:'#F7931A',STRK:'#8B5CF6',USDC:'#3DA9FC',WBTC:'#E8567C',ETH:'#1FCB94',OTHER:'#8A8A93'};
 
 /* ---------- REAL history: per-source fetchers + TTL cache ----------
    Cache entries live in localStorage (strkSeriesCache_v1:*) as compact
@@ -3069,7 +3006,7 @@ function draw(){
         const nz=sg.find(p=>p.v!==0),pos=nz?nz.v>0:true;
         const sl=sg.map((p,i)=>(i?'L':'M')+p.x.toFixed(1)+','+p.y.toFixed(1)).join(' ');
         s+='<path d="'+sl+' L'+sg[sg.length-1].x.toFixed(1)+','+zy.toFixed(1)+' L'+sg[0].x.toFixed(1)+','+zy.toFixed(1)+' Z" fill="url(#fill'+(pos?'Pos':'Neg')+')"/>';
-        s+='<path d="'+sl+'" fill="none" stroke="'+(pos?'#c53400':'#c53400')+'" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>';
+        s+='<path d="'+sl+'" fill="none" stroke="'+(pos?C_POS:C_NEG)+'" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>';
       });
       signG.innerHTML=s;
     }else if(h.weeklyBars){
@@ -3122,7 +3059,7 @@ function draw(){
       const bw=Math.max(1.5,Math.min(26,W/PTS.length*0.66));
       let bs='';
       PTS.forEach(p=>{const bh=H-pB-p.y;
-        if(bh>0.2)bs+=`<rect x="${(p.x-bw/2).toFixed(1)}" y="${p.y.toFixed(1)}" width="${bw.toFixed(1)}" height="${bh.toFixed(1)}" fill="#c53400" fill-opacity="0.82" rx="1.5"/>`;});
+        if(bh>0.2)bs+=`<rect x="${(p.x-bw/2).toFixed(1)}" y="${p.y.toFixed(1)}" width="${bw.toFixed(1)}" height="${bh.toFixed(1)}" fill="${C_SERIES}" fill-opacity="0.82" rx="1.5"/>`;});
       dbars.innerHTML=bs;
     }
     if(h.dailyBars&&pts.length>2){
@@ -3132,16 +3069,16 @@ function draw(){
       const bw=Math.max(0.5,W/pts.length*0.55),BH=(H-pB)*0.30;
       let bs='';
       for(let i=1;i<PTS.length;i++){const bh=mxd?dl[i]/mxd*BH:0;
-        if(bh>0.2)bs+=`<rect x="${(PTS[i].x-bw/2).toFixed(1)}" y="${(H-pB-bh).toFixed(1)}" width="${bw.toFixed(1)}" height="${bh.toFixed(1)}" fill="#a02a00" fill-opacity="0.55" rx="0.5"/>`;}
+        if(bh>0.2)bs+=`<rect x="${(PTS[i].x-bw/2).toFixed(1)}" y="${(H-pB-bh).toFixed(1)}" width="${bw.toFixed(1)}" height="${bh.toFixed(1)}" fill="${C_SERIES}" fill-opacity="0.38" rx="0.5"/>`;}
       dbars.innerHTML=bs;
       const dn=h.dailyNames||{};
-      legEl.innerHTML='<span style="color:#c53400">─</span> '+(dn.line||'TOTAL')+'&ensp;<span style="color:#a02a00">▮</span> '+(dn.bars||'PER DAY');
+      legEl.innerHTML='<span style="color:'+C_SERIES+'">─</span> '+(dn.line||'TOTAL')+'&ensp;<span style="color:'+C_SERIES+';opacity:.55">▮</span> '+(dn.bars||'PER DAY');
       /* peak DAILY bar marker (revenue-style charts) */
       if(h.peakDaily&&mxd>0){
         let di=1;for(let i=2;i<dl.length;i++)if(dl[i]>dl[di])di=i;
         const px=PTS[di].x,py=H-pB-dl[di]/mxd*BH;
         const right=px>W-260,tx=right?px-10:px+10,anch=right?'end':'start';
-        peakG.innerHTML=`<circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="4" fill="#f0b8a0"/>`+
+        peakG.innerHTML=`<circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="4" fill="${C_SERIES}"/>`+
           `<text x="${tx.toFixed(1)}" y="${(py-12).toFixed(1)}" text-anchor="${anch}" font-family="IBM Plex Mono,monospace" font-size="11" letter-spacing="1" fill="rgba(250, 250, 250,.75)">PEAK: ${(h.dailyUsd?'$':'')+abbr(dl[di])}/DAY · ${tsLabel(PTS[di].ts,500*DAY).toUpperCase()}</text>`;
       }
     }
@@ -3163,7 +3100,7 @@ function draw(){
         const ap=(ev.t-PTS[alo].ts<=PTS[ahi].ts-ev.t)?PTS[alo]:PTS[ahi];
         ANN.push({x:ax,ev:ev});
         annHtml+=`<line x1="${ax.toFixed(1)}" y1="${pT}" x2="${ax.toFixed(1)}" y2="${H-pB}" stroke="rgba(196,181,253,.32)" stroke-width="1" stroke-dasharray="3 3"/>`+
-          `<circle cx="${ax.toFixed(1)}" cy="${ap.y.toFixed(1)}" r="3.5" fill="#f0b8a0"/>`;
+          `<circle cx="${ax.toFixed(1)}" cy="${ap.y.toFixed(1)}" r="3.5" fill="${C_SERIES}"/>`;
         if(wideA){
           const lw=ev.label.length*7.2+8; /* mono 11px + letter-spacing, viewBox units */
           const flip=ax+lw>W,tx=flip?ax-6:ax+6,anch=flip?'end':'start';
@@ -3180,7 +3117,7 @@ function draw(){
       let pi=0;PTS.forEach((p,i)=>{if(p.v>PTS[pi].v)pi=i;});
       const pk=PTS[pi],right=pk.x>W-260,below=pk.y<38;
       const tx=right?pk.x-10:pk.x+10,anch=right?'end':'start',ty=below?pk.y+22:pk.y-12;
-      peakG.innerHTML=`<circle cx="${pk.x.toFixed(1)}" cy="${pk.y.toFixed(1)}" r="4" fill="#f0b8a0"/>`+
+      peakG.innerHTML=`<circle cx="${pk.x.toFixed(1)}" cy="${pk.y.toFixed(1)}" r="4" fill="${C_SERIES}"/>`+
         `<text x="${tx.toFixed(1)}" y="${ty.toFixed(1)}" text-anchor="${anch}" font-family="IBM Plex Mono,monospace" font-size="11" letter-spacing="1" fill="rgba(250, 250, 250,.75)">PEAK: ${fmt(m,pk.v)} · ${tsLabel(pk.ts,500*DAY).toUpperCase()}</text>`;
     }
     const first=pts[0][1],last=pts[pts.length-1][1];
@@ -3198,6 +3135,10 @@ function draw(){
     }else{
       fv.textContent=fmt(m,last);
       windowBadge(m,h,first,last,curR);
+      /* STRK STAKED carries its circulating share on the sub-line, the same
+         value and source as the staked-ratio stat (live circstaked) */
+      if(m.k==='strkstaked'&&map.circstaked&&isFinite(map.circstaked.value))
+        document.getElementById('fSub').textContent='· '+map.circstaked.value.toFixed(1)+'% of circulating supply';
       if(h.sub30){ // rolling 30D figure stays available under the cumulative header
         const cutoff=Date.now()-30*DAY;
         let base=0;all.forEach(p=>{if(p[0]<=cutoff)base=p[1];});
@@ -3360,7 +3301,7 @@ root.querySelectorAll('.cell').forEach(c=>io.observe(c));
   const BREAKS={dailyusers:'2026-08-06',weeklyusers:'2026-08-06'};
   const acc=document.getElementById('statsAcc');if(!acc)return;
   const gd=document.createElement('div');
-  gd.innerHTML='<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="sparkFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c53400" stop-opacity="0.22"/><stop offset="1" stop-color="#c53400" stop-opacity="0"/></linearGradient></defs></svg>';
+  gd.innerHTML='<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="sparkFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6EB5FF" stop-opacity="0.22"/><stop offset="1" stop-color="#6EB5FF" stop-opacity="0"/></linearGradient></defs></svg>';
   acc.appendChild(gd.firstChild);
   function scaffold(cell){
     if(cell.querySelector('.cspark-wrap'))return;
@@ -3396,7 +3337,7 @@ root.querySelectorAll('.cell').forEach(c=>io.observe(c));
       const X=q=>(q[0]-t0)/span*W,Y=q=>SH-pad-(q[1]-mn)/rng*(SH-2*pad);
       const ln=pts.map((q,i)=>(i?'L':'M')+X(q).toFixed(1)+','+Y(q).toFixed(1)).join(' ');
       svg.innerHTML='<path d="'+ln+' L'+W+','+SH+' L0,'+SH+' Z" fill="url(#sparkFill)"/>'+
-        '<path d="'+ln+'" fill="none" stroke="#c53400" stroke-width="1.6" stroke-opacity="0.85" stroke-linecap="round" stroke-linejoin="round"/>';
+        '<path d="'+ln+'" fill="none" stroke="#6EB5FF" stroke-width="1.6" stroke-opacity="0.85" stroke-linecap="round" stroke-linejoin="round"/>';
       /* terminal dot as an HTML overlay: immune to preserveAspectRatio
          stretching; the pulse ring is pure CSS (disabled under reduced motion) */
       let dot=wrap.querySelector('.cdot');
@@ -3510,7 +3451,7 @@ window.__numbersLive={
   if(ANN.length){
     let best=null;
     ANN.forEach(a=>{const d=Math.abs(a.x-vx);if(d<=14&&(!best||d<Math.abs(best.x-vx)))best=a;});
-    if(best)tipD.innerHTML+='<br><span style="color:#f0b8a0">'+best.ev.label+'</span>'+
+    if(best)tipD.innerHTML+='<br><span style="color:#6EB5FF">'+best.ev.label+'</span>'+
       '<span style="display:block;white-space:normal;max-width:min(420px,64vw)">'+best.ev.detail+'</span>';
   }}));
 ['mouseleave','pointerleave','pointercancel'].forEach(ev=>chart.addEventListener(ev,()=>{cross.style.display='none';cdot.style.display='none';tip.style.display='none';}));
@@ -3546,12 +3487,12 @@ function fracAt(an,i){if(i<=an[0][0])return an[0][1];for(let k=1;k<an.length;k++
 const CATS=[
  {n:'StarkWare',p:10.76,c:'#1E2A6B',an:[[0,.10],[12,.35],[24,.60],[36,.80],[48,.95],[60,1]]},
  {n:'Investors',p:18.17,c:'#4C3A98',vest:true},
- {n:'Early Contributors',p:20.04,c:'#a02a00',vest:true},
- {n:'Foundation Treasury',p:8.10,c:'#c53400',an:[[0,.05],[12,.16],[24,.32],[36,.48],[48,.62],[72,.86],[84,1]]},
- {n:'Strategic Reserves',p:10.00,c:'#c53400',an:[[0,.05],[12,.16],[24,.32],[36,.48],[48,.62],[60,.76],[72,.90],[84,1]]},
+ {n:'Early Contributors',p:20.04,c:'#F7931A',vest:true},
+ {n:'Foundation Treasury',p:8.10,c:'#3DA9FC',an:[[0,.05],[12,.16],[24,.32],[36,.48],[48,.62],[72,.86],[84,1]]},
+ {n:'Strategic Reserves',p:10.00,c:'#1FCB94',an:[[0,.05],[12,.16],[24,.32],[36,.48],[48,.62],[60,.76],[72,.90],[84,1]]},
  {n:'Donations',p:2.00,c:'#C4A0E8',an:[[0,0],[12,.10],[24,.26],[36,.42],[48,.56],[72,.82],[84,1]]},
  {n:'Grants',p:12.93,c:'#E0719F',an:[[0,.05],[12,.20],[24,.40],[36,.62],[48,.78],[60,.88],[72,.96],[84,1]]},
- {n:'Rebates',p:9.00,c:'#c53400',an:[[0,.10],[12,.32],[24,.52],[36,.68],[48,.82],[72,.95],[84,1]]},
+ {n:'Rebates',p:9.00,c:'#6EB5FF',an:[[0,.10],[12,.32],[24,.52],[36,.68],[48,.82],[72,.95],[84,1]]},
  {n:'Provisions',p:9.00,c:'#F9A8C8',an:[[0,.55],[6,.80],[12,.90],[24,.97],[36,1]]},
 ];
 const now=new Date();const TODAY_I=Math.max(0,Math.min(MONTHS-1,(now.getFullYear()-2024)*12+now.getMonth()));
@@ -3592,7 +3533,7 @@ function drawChart(){let s='';
   let ln='M'+X(0)+','+Y(TOTAL[0]);for(let i=1;i<MONTHS;i++)ln+=' L'+X(i).toFixed(1)+','+Y(TOTAL[i]).toFixed(1);
   s+=`<path d="${ln}" fill="none" stroke="#fafafa" stroke-opacity=".5" stroke-width="1.5"/>`;
   const tx=X(TODAY_I);
-  s+=`<line x1="${tx}" y1="${PT-6}" x2="${tx}" y2="${PB}" stroke="#c53400" stroke-width="1.5" stroke-dasharray="3 3"/><text x="${tx}" y="${PT-12}" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" letter-spacing="1.5" fill="#c53400">TODAY</text><circle cx="${tx}" cy="${Y(TOTAL[TODAY_I])}" r="4.5" fill="#c53400"/>`;
+  s+=`<line x1="${tx}" y1="${PT-6}" x2="${tx}" y2="${PB}" stroke="#6EB5FF" stroke-width="1.5" stroke-dasharray="3 3"/><text x="${tx}" y="${PT-12}" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" letter-spacing="1.5" fill="#6EB5FF">TODAY</text><circle cx="${tx}" cy="${Y(TOTAL[TODAY_I])}" r="4.5" fill="#6EB5FF"/>`;
   s+=`<line id="ux" stroke="rgba(250, 250, 250,.3)" stroke-width="1" style="display:none"/><circle id="ud" r="4" fill="#fff" style="display:none"/>`;
   s+=`<rect id="uover" x="${PL}" y="${PT}" width="${PR-PL}" height="${PB-PT}" fill="transparent"/>`;
   uchart.innerHTML=s;
@@ -3698,8 +3639,8 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
     const lbl=d.getMonth()===0?d.toLocaleString('en',{month:'short'})+' '+String(d.getFullYear()).slice(2):d.toLocaleString('en',{month:'short'});
     s+=`<text x="${bx(k).toFixed(1)}" y="${aB+22}" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="10" fill="rgba(250, 250, 250,.4)">${lbl}</text>`;});
   rows.forEach((r,k)=>{const x=(bx(k)-bw/2).toFixed(1);const yT=byB(r.totD),yV=byB(r.vD);
-    if(r.totD-r.vD>0.001)s+=`<rect x="${x}" y="${yT.toFixed(1)}" width="${bw.toFixed(1)}" height="${(yV-yT).toFixed(1)}" fill="#a02a00" fill-opacity="0.6" rx="1"/>`;
-    if(r.vD>0.001)s+=`<rect x="${x}" y="${yV.toFixed(1)}" width="${bw.toFixed(1)}" height="${(aB-yV).toFixed(1)}" fill="#c53400" rx="1"/>`;});
+    if(r.totD-r.vD>0.001)s+=`<rect x="${x}" y="${yT.toFixed(1)}" width="${bw.toFixed(1)}" height="${(yV-yT).toFixed(1)}" fill="#6EB5FF" fill-opacity="0.35" rx="1"/>`;
+    if(r.vD>0.001)s+=`<rect x="${x}" y="${yV.toFixed(1)}" width="${bw.toFixed(1)}" height="${(aB-yV).toFixed(1)}" fill="#6EB5FF" rx="1"/>`;});
   let ln='';rows.forEach((r,k)=>{ln+=(k?'L':'M')+bx(k).toFixed(1)+','+byC(r.cum).toFixed(1)+' ';});
   s+=`<path d="${ln}" fill="none" stroke="#fafafa" stroke-opacity=".55" stroke-width="1.5"/>`;
   s+=`<line id="muhl" x1="0" y1="${aT}" x2="0" y2="${aB}" stroke="rgba(250, 250, 250,.25)" stroke-width="1" style="display:none"/>`;
@@ -3722,8 +3663,8 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
     if(px<r.width*0.6){mtip.style.left=(px+14)+'px';mtip.style.transform='translateX(0)';}
     else{mtip.style.left=(px-14)+'px';mtip.style.transform='translateX(-100%)';}
     mtip.innerHTML=`<div class="td">${d.toLocaleString('en',{month:'short',year:'numeric'})}</div>
-      <div class="r"><span style="color:#c53400">Scheduled vesting</span><b>${row.vD>0.001?tok(row.vD):'·'}</b></div>
-      <div class="r"><span style="color:#c53400;opacity:.8">Estimated release</span><b>${row.estD>0.001?tok(row.estD):'·'}</b></div>
+      <div class="r"><span style="color:#6EB5FF">Scheduled vesting</span><b>${row.vD>0.001?tok(row.vD):'·'}</b></div>
+      <div class="r"><span style="color:#6EB5FF;opacity:.8">Estimated release</span><b>${row.estD>0.001?tok(row.estD):'·'}</b></div>
       <div class="r"><span style="color:var(--muted)">This month</span><b>${tok(row.totD)}</b></div>
       <div class="r"><span style="color:var(--acc-2)">Cumulative</span><b>${row.cum.toFixed(1)}%</b></div>`;}));
   ['mouseleave','pointerleave','pointercancel'].forEach(ev=>muchart.addEventListener(ev,()=>{mtip.style.display='none';hl.style.display='none';}));
@@ -3900,6 +3841,8 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
   var spPct = document.querySelectorAll('[data-metric="strk_staked_pct"]');
   var spTot = document.querySelectorAll('[data-metric="strk_staked_total"]');
   var spGov = document.querySelectorAll('[data-metric="gov_votes"]');
+  var spCirc = document.querySelectorAll('[data-metric="circ_supply_pct"]');
+  var spRev = document.querySelectorAll('[data-metric="chainrev_annualized"]');
   var spBar = stakePanel && stakePanel.querySelector('.barfill.meter');
   var spUp = document.getElementById('stakingUpdated');
   var updPill = document.getElementById('upd');
@@ -3981,6 +3924,11 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
     // (21.2% is 21.2% in the hero, the panel and the tile)
     spTot.forEach(function(el){ tween(el, state.strkStaked, function(v){ return (v / 1e9).toFixed(2) + 'B STRK'; }); });
     spPct.forEach(function(el){ tween(el, state.stakePct, function(v){ return v.toFixed(1) + '%'; }); });
+    /* circulating share of the fixed 10B total (CoinGecko circ), and chain
+       revenue annualized from DefiLlama's trailing-30d aggregate: 365/30 =
+       x12.17, labeled "trailing 30d x 12.2" in the markup, never a forecast */
+    if (isFinite(state.circ)) spCirc.forEach(function(el){ tween(el, state.circ / 1e10 * 100, function(v){ return v.toFixed(1) + '%'; }); });
+    if (isFinite(state.chainrev)) spRev.forEach(function(el){ tween(el, state.chainrev * 365 / 30, function(v){ return '$' + abbr(v); }); });
     if (isFinite(state.govVotes)) spGov.forEach(function(el){ el.textContent = String(state.govVotes); });
     if (spBar && isFinite(state.stakePct)) {
       spBar.dataset.w = state.stakePct.toFixed(1) + '%';
@@ -4323,9 +4271,9 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
         // which drifts from the ~$0.12 target between re-peggings (~$0.14
         // today); a reader cross-checking the dashboard may see that gap.
         // That is the mechanism, not an error.
-        if (isFinite(s20rev.feeUsd) && s20rev.feeUsd > 0) {
-          document.querySelectorAll('[data-fee-usd]').forEach(function(el){ el.textContent = '$' + s20rev.feeUsd.toFixed(2); });
-        }
+        /* the fee legend is the static ~\$0.12 protocol target everywhere on
+           the site now (2026-09-05): the live spot fill this block used to
+           run painted one page-local outlier against it. */
       }
 
       if (stamped) saveCache(state);
