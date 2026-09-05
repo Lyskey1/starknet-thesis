@@ -372,29 +372,6 @@ a.nav-logo{text-decoration:none}
 }
 
 /* utilities explorer (section 02): selectable rail + animated micro-viz panels */
-/* Utilities as a card grid (after V7's workflow grid): four cards on a
-   dotted rule, each with its visualization on top and the title and copy
-   below, then a three-cell stats row. No tabs: every panel is always shown. */
-.util{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:1px dotted rgba(250,250,250,.28);margin-top:34px}
-.util-panel{position:relative;display:flex;flex-direction:column;padding:58px 24px 30px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);background:linear-gradient(180deg,rgba(250,250,250,.025),rgba(250,250,250,0))}
-.util-panel:last-child{border-right:0}
-.util-panel .ucard-idx{position:absolute;top:22px;right:22px;font-family:var(--mono),monospace;font-size:12px;color:var(--muted)}
-.util-panel .ucard-ico{display:grid;place-items:center;width:38px;height:38px;border-radius:10px;border:1px solid rgba(250,250,250,.14);background:linear-gradient(160deg,rgba(250,250,250,.10),rgba(250,250,250,.02));margin-bottom:22px}
-.util-panel .ucard-ico svg{width:20px;height:20px}
-.util-panel .eyebrow{font-family:var(--mono),monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--acc-2)}
-.util-panel h3{font-family:var(--sans);font-weight:500;font-size:22px;letter-spacing:-.01em;margin:10px 0 10px;text-transform:none}
-.util-panel p{color:var(--muted-2);font-size:14px;line-height:1.6;max-width:none}
-.util-panel .viz{order:-1;margin:0 0 26px;padding:0 0 24px;border-top:0;border-bottom:1px solid var(--line);height:344px;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-start}
-.util-panel .seglbl{flex-direction:column;align-items:flex-start;gap:6px}
-.util-panel .vrow{flex-direction:column}
-.util-panel .vrow{gap:14px;margin-top:18px}
-.util-panel .bignum{font-size:22px}
-.util-panel #stakingUpdated{display:none}
-.util-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
-.util-stats .us{padding:44px 28px 40px;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
-.util-stats .us:last-child{border-right:0}
-.util-stats .us b{display:block;font-family:var(--display);font-weight:400;font-size:clamp(44px,4.6vw,66px);line-height:1;letter-spacing:-.02em;color:var(--white)}
-.util-stats .us span{display:block;margin-top:26px;font-family:var(--sans);font-size:16px;color:var(--muted-2)}
 .viz{margin-top:28px;padding-top:26px;border-top:1px solid var(--line)}
 .barrow{margin-bottom:18px}
 .barrow .bl{font-family:var(--mono),monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
@@ -490,16 +467,6 @@ a.chip:hover{background:var(--acc);border-color:var(--acc);color:#0d0d0d}
 .figlink .bignum,.figlink .subt{transition:color .2s}
 .figlink:hover .bignum,.figlink:hover .subt{color:var(--acc-2)}
 .figlink .subt .arr{margin-left:5px;font-size:11px;opacity:.7}
-@media(max-width:1100px){
-  .util{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .util-panel:nth-child(2){border-right:0}
-}
-@media(max-width:640px){
-  .util{grid-template-columns:1fr}
-  .util-panel{border-right:0}
-  .util-stats{grid-template-columns:1fr}
-  .util-stats .us{border-right:0;padding:32px 20px}
-}
 
 /* ===== convergence Venn (section 03) ===== */
 .venn-wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center}
@@ -1084,14 +1051,8 @@ footer.site-footer .foot-bottom a:hover{color:var(--accent)}
 .block{padding:104px 0}
 
 /* bento cards: one soft-cornered surface for every panel on the page */
-.util-panel,.util-stats .us,#numbers .chartbox,.venn-side,.buy-cat,.s01 .fan-wrap{
+#numbers .chartbox,.venn-side,.buy-cat{
   border-radius:24px;background:#141414;border:1px solid var(--line)}
-.util{grid-gap:14px;gap:14px;border-top:0;margin-top:0}
-.util-panel{border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:34px 28px 34px}
-.util-panel .viz{padding-bottom:26px}
-.util-stats{gap:14px;margin-top:14px}
-.util-stats .us{border-right:1px solid var(--line);padding:38px 30px 34px}
-.util-panel h3{font-size:24px;font-weight:400;letter-spacing:-.015em}
 
 /* section 01 reads as one wide card with the copy set large */
 .s01{gap:40px}
@@ -1127,15 +1088,8 @@ footer.site-footer .foot-bottom a:hover{color:var(--accent)}
   .sc-head{margin-left:0;padding-left:0;max-width:34rem}
   .sc-title{max-width:18ch}
 }
-/* the columns lose their card fill here: edge to edge, split by hairlines */
-.util{gap:0;grid-gap:0}
-.util-panel{border-radius:0;background:transparent;border:0;border-left:1px solid var(--line);padding:30px 24px 34px}
-.util-panel:first-child{border-left:0}
-.util-panel:hover{background:rgba(250,250,250,.03)}
 @media(max-width:880px){
   .sc-head{margin-bottom:26px}
-  .util-panel{border-left:0;border-top:1px solid var(--line);padding:24px 20px 28px}
-  .util-panel:first-child{border-top:0}
 }
 
 
@@ -1224,64 +1178,6 @@ footer.site-footer .foot-bottom a:hover{color:var(--accent)}
 .sc-col.is-on::after{opacity:1}
 @media(prefers-reduced-motion:reduce){.sc-art{transition:none}}
 
-/* --- utilities in the digest column-band idiom: dotted rule, four columns,
-   compact mono headers and framed line-art panels. This intentionally wins
-   over the older stride hover-photo and bento utility rules above. --- */
-.util-rule{--util-pad:clamp(16px,1.5vw,28px);position:relative;width:100vw;max-width:none;height:8px;
-  margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw);padding-inline:var(--util-pad);box-sizing:border-box}
-.util-rule::before{content:"";position:absolute;left:var(--util-pad);right:var(--util-pad);top:3px;height:2px;
-  background-image:repeating-linear-gradient(90deg,rgba(250,250,250,.35) 0 3px,transparent 3px 9px)}
-.util-rule::after{content:"";position:absolute;top:0;left:var(--util-pad);width:8px;height:8px;background:var(--acc);
-  box-shadow:calc(100vw - (var(--util-pad) * 2) - 8px) 0 0 var(--acc)}
-.util.util-grid{--util-pad:clamp(16px,1.5vw,28px);width:100vw;max-width:none;margin-left:calc(50% - 50vw);
-  margin-right:calc(50% - 50vw);padding-inline:var(--util-pad);display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
-  grid-template-rows:auto auto auto;gap:0;border-top:0;box-sizing:border-box}
-.util-grid .util-panel{display:grid;grid-template-rows:subgrid;grid-row:span 3;align-items:stretch;min-width:0;
-  padding:40px 24px 0;border:0;border-left:1px solid var(--line);border-radius:0;background:transparent;color:inherit}
-.util-grid .util-panel:first-child{border-left:0}
-.util-grid .util-panel:hover{background:transparent}
-.util-grid .util-panel .sc-art{display:none}
-.util-grid .util-panel::after{display:none}
-.util-top{display:flex;align-items:center;gap:10px;min-width:0}
-.util-grid .ucard-ico{display:grid;place-items:center;flex:none;width:30px;height:30px;margin:0;border-radius:0;
-  border:1px solid var(--line);background:transparent;color:var(--acc)}
-.util-grid .ucard-ico i{font-size:16px;line-height:1}
-.util-name{min-width:0;font-family:var(--mono),monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
-  white-space:nowrap;color:var(--white)}
-.util-arrow{display:grid;place-items:center;flex:none;margin-left:auto;width:30px;height:30px;border:1px solid var(--line);
-  color:var(--muted-2);transition:color .2s ease,border-color .2s ease}
-.util-arrow svg{width:16px;height:16px}
-.util-arrow:hover,.util-arrow:focus-visible{color:var(--acc);border-color:rgba(197,52,0,.5)}
-.util-arrow:focus-visible{outline:2px solid var(--acc);outline-offset:3px}
-.util-body{display:block;min-width:0}
-.util-grid .eyebrow{display:block;margin-top:22px;font-family:var(--display),sans-serif;font-weight:600;
-  font-size:17px;line-height:1.25;letter-spacing:-.01em;text-transform:none;color:var(--white)}
-.util-grid .util-panel h3{display:block;margin:10px 0 0;font-family:var(--mono),monospace;font-weight:500;
-  font-size:11px;letter-spacing:.16em;line-height:1.35;text-transform:uppercase;color:var(--acc)}
-.util-grid .util-panel p{display:block;margin-top:10px;font-size:13.5px;line-height:1.62;color:var(--muted-2);max-width:none}
-.util-grid .util-panel .viz{display:block;order:initial;height:auto;margin:28px 0 0;padding:0;border:1px solid var(--line);
-  background:#141414;color:rgba(250,250,250,.34);overflow:hidden}
-.util-fig{display:block;width:100%;aspect-ratio:260/200}
-.util-fig svg{display:block;width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.1;
-  stroke-linecap:round;stroke-linejoin:round}
-.util-fig .uacc{stroke:var(--acc);stroke-width:1.5}
-.util-grid .ticks,.util-grid .chips,.util-grid .basebar,.util-grid .barrow,.util-grid .vrow{display:none}
-.util-stats{display:none}
-@media(max-width:1080px){
-  .util.util-grid{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,auto auto auto)}
-  .util-grid .util-panel:nth-child(odd){border-left:0}
-  .util-grid .util-panel:nth-child(n+3){margin-top:40px;padding-top:40px;border-top:1px solid var(--line)}
-}
-@media(max-width:820px){
-  .util-rule,.util.util-grid{--util-pad:16px}
-}
-@media(max-width:640px){
-  .util.util-grid{grid-template-columns:minmax(0,1fr);grid-template-rows:repeat(4,auto auto auto)}
-  .util-grid .util-panel,.util-grid .util-panel:nth-child(odd){padding:40px 0 0;border-left:0}
-  .util-grid .util-panel,.util-grid .util-panel:nth-child(n+3){margin-top:40px;padding-top:40px;border-top:1px solid var(--line)}
-  .util-grid .util-panel:first-child{margin-top:0;border-top:0}
-}
-@media(prefers-reduced-motion:reduce){.util-arrow{transition:none}}
 
 /* the footer is a plain static section at the end of the document; nothing pins it. */
 
@@ -1423,6 +1319,55 @@ footer.site-footer .foot-bottom a:hover{color:var(--accent)}
     min-height:0;padding:24px 16px}
   .snum-col:first-child{border-top:0}
   .snum-lede{padding-bottom:28px}
+}
+
+/* ===== 02 UTILITIES, THE TABBED DEVICE (2026-09-05) ==========================
+   Main's explorer restored: a four-tab rail on the left, one swapping panel
+   on the right in the sg-glass stage. Every older utility layer (the V7
+   card grid, the bento pass, the edge-to-edge pass, the digest column band)
+   is deleted, so this block is the only device styling .util; the shared
+   micro-viz plumbing (barrow, ticks, chips, basebar, vrow) is unchanged
+   above. The four isometric drawings survive as quiet panel motifs. */
+.util{display:grid;grid-template-columns:340px 1fr;gap:24px;align-items:stretch;margin-top:34px;border-top:0}
+.util-list{display:flex;flex-direction:column;gap:10px}
+.util-tab{position:relative;display:flex;align-items:center;gap:16px;text-align:left;cursor:pointer;
+  border:1px solid var(--line);border-radius:16px;background:rgba(250,250,250,.02);color:var(--white);padding:16px 18px;
+  font:inherit;transition:border-color .2s,background .2s}
+.util-tab:hover{border-color:rgba(197,52,0,.35);background:rgba(250,250,250,.04)}
+.util-tab.on{border-color:var(--acc);background:rgba(197,52,0,.10)}
+.util-tab:focus-visible{outline:2px solid var(--acc);outline-offset:3px}
+.util-tab .ico{flex:0 0 auto;width:42px;height:42px;border-radius:12px;display:grid;place-items:center;position:relative;overflow:hidden;
+  border:1px solid var(--line);background:rgba(250,250,250,.03)}
+.util-tab .ico::before{content:"";position:absolute;inset:0;border-radius:12px;background:linear-gradient(160deg,rgba(255,255,255,.18),transparent 45%);pointer-events:none}
+.util-tab.on .ico{border-color:rgba(197,52,0,.45)}
+.util-tab .ico svg{width:22px;height:22px;position:relative;z-index:1}
+.util-tab .tx{display:flex;flex-direction:column;gap:4px;min-width:0;line-height:1.2}
+.util-tab .tx .nm{font-family:var(--sans);font-weight:600;font-size:16px}
+.util-tab .tx .te{font-family:var(--mono),monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.util-tab.on .tx .te{color:var(--acc-2)}
+.util-tab .idx{margin-left:auto;align-self:flex-start;font-family:var(--mono),monospace;font-size:12px;color:var(--muted)}
+.util-stage{position:relative;border:1px solid var(--line);border-radius:18px;overflow:hidden}
+.util-panel{position:relative;display:none;padding:34px 36px;border:0;border-radius:0;background:transparent}
+.util-panel.show{display:block}
+.util-panel .eyebrow{font-family:var(--mono),monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--acc-2)}
+.util-panel h3{font-family:var(--display);font-weight:400;font-size:30px;letter-spacing:-.015em;margin:12px 0 14px;text-transform:none}
+.util-panel p{color:var(--muted-2);font-size:16px;line-height:1.6;max-width:60ch}
+/* the isometric drawings, kept as quiet motifs in the panel's top corner */
+.pmotif{position:absolute;top:24px;right:28px;width:128px;pointer-events:none;color:rgba(250,250,250,.30)}
+.pmotif svg{display:block;width:100%;height:auto;fill:none;stroke:currentColor;stroke-width:1.1;stroke-linecap:round;stroke-linejoin:round}
+.pmotif .uacc{stroke:var(--acc-2);stroke-width:1.5}
+@media(max-width:880px){
+  .util{grid-template-columns:1fr;gap:16px}
+  .util-list{flex-direction:row;flex-wrap:wrap}
+  .util-tab{flex:1 1 45%}
+  .util-tab .te,.util-tab .idx{display:none}
+  .util-panel{padding:26px 20px}
+  .pmotif{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  .barfill{transition:none}
+  .ticks a{transition:transform .15s ease,filter .15s ease}
+  .util-tab,.util-tab .ico{transition:none}
 }
 
 /* ===== HERO, THREE ZONES (2026-09-05) =======================================
@@ -1702,45 +1647,142 @@ window.ADMIN_GATE=on;})();
   </div>
 </div></section>
 
-<!-- 02 UTILITIES -->
+<!-- 02 UTILITIES. Main's tabbed explorer restored (2026-09-05 STRK pass):
+     a four-tab rail on the left, one swapping panel on the right in the
+     sg-glass stage, main's copy and data blocks verbatim (the governance
+     sentence's count is the one live substitution: the dated "10 as of 20
+     July 2026" became a data-metric span, since the count now renders from
+     the Snapshot X API). The four isometric line drawings from the vesper
+     card grid stay as quiet panel motifs (.pmotif). Tabs are keyboard
+     operable (roving tabindex, arrows, Home/End) and hash deep-linkable
+     through the panel ids (#fees, #staking-2, #governance,
+     #defi-collateral). -->
 <section class="block"><div class="wrap">
-  <div class="sc-head">
-    <p class="sc-eyebrow">02</p>
-    <h2 id="the-utilities" class="sc-title">Every part of the network, paid for in one token</h2>
-    <a class="sc-cta" href="#the-numbers">See the numbers</a>
-  </div>
+  <div class="th-pm-head"><span class="th-pm-marker"></span><span class="th-pm-num">02</span><h2 id="the-utilities" class="th-pm-title">The utilities</h2></div>
 
   <svg width="0" height="0" style="position:absolute"><defs>
     <linearGradient id="gv" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#c53400"/><stop offset="1" stop-color="#f0b8a0"/></linearGradient>
   </defs></svg>
 
-  <div class="util-rule" aria-hidden="true"></div>
-  <div class="util util-grid">
-      <div id="fees" class="util-panel show" data-k="fees">
-        <div class="util-top"><span class="ucard-ico" aria-hidden="true"><i class="ti ti-bolt"></i></span><span class="util-name">01 &middot; THE FEES</span><a class="util-arrow" href="#the-numbers" aria-label="See fee numbers"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></a></div>
-        <div class="util-body"><span class="eyebrow">The cost of using Starknet</span><h3>Execution</h3><p>Every transaction is paid in STRK. Private actions add a protocol privacy fee, also settled in STRK and adjusted as the token price moves.</p></div>
-        <div class="viz"><span class="util-fig" aria-hidden="true"><svg viewBox="0 0 260 200"><path d="M42 52h176v96H42z"/><path d="M42 84h176M42 116h176"/><path d="M78 52v96M130 52v96M182 52v96"/><path class="uacc" d="M94 100h48l-12 34 42-54h-48l12-34z"/><path d="M62 164h136"/></svg></span></div>
+  <div class="util">
+    <!-- LEFT RAIL -->
+    <div class="util-list" id="utilRail" role="tablist" aria-label="STRK utilities">
+      <button class="util-tab on" data-k="fees" role="tab" id="tab-fees" aria-controls="fees" aria-selected="true">
+        <span class="ico"><svg viewBox="0 0 24 24"><path fill="url(#gv)" d="M13 2 4 13h6l-1 9 9-12h-6l1-8z"/></svg></span>
+        <span class="tx"><span class="nm">Fees</span><span class="te">Gas + privacy</span></span>
+        <span class="idx">01</span>
+      </button>
+      <button class="util-tab" data-k="staking" role="tab" id="tab-staking" aria-controls="staking-2" aria-selected="false" tabindex="-1">
+        <span class="ico"><svg viewBox="0 0 24 24"><path fill="url(#gv)" d="M12 2 20 5v6c0 5-3.4 7.7-8 9-4.6-1.3-8-4-8-9V5z"/><path fill="none" stroke="#0d0d0d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M9 12l2.2 2.2L15 10.2"/></svg></span>
+        <span class="tx"><span class="nm">Staking</span><span class="te">Secures the network</span></span>
+        <span class="idx">02</span>
+      </button>
+      <button class="util-tab" data-k="gov" role="tab" id="tab-gov" aria-controls="governance" aria-selected="false" tabindex="-1">
+        <span class="ico"><svg viewBox="0 0 24 24"><path fill="url(#gv)" d="M12 3 21.5 8.2H2.5z"/><rect x="5.4" y="9.3" width="2.4" height="7.6" fill="url(#gv)"/><rect x="10.8" y="9.3" width="2.4" height="7.6" fill="url(#gv)"/><rect x="16.2" y="9.3" width="2.4" height="7.6" fill="url(#gv)"/><rect x="3.2" y="17.6" width="17.6" height="2.4" rx="1" fill="url(#gv)"/></svg></span>
+        <span class="tx"><span class="nm">Governance</span><span class="te">Protocol control</span></span>
+        <span class="idx">03</span>
+      </button>
+      <button class="util-tab" data-k="coll" role="tab" id="tab-coll" aria-controls="defi-collateral" aria-selected="false" tabindex="-1">
+        <span class="ico"><svg viewBox="0 0 24 24"><path fill="url(#gv)" d="M12 2.6 21.5 8 12 13.4 2.5 8z"/><path fill="none" stroke="url(#gv)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" opacity=".6" d="M3 12l9 5.4L21 12M3 16l9 5.4L21 16"/></svg></span>
+        <span class="tx"><span class="nm">DeFi collateral</span><span class="te">Base layer</span></span>
+        <span class="idx">04</span>
+      </button>
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div class="util-stage sg-holder">
+      <div class="sg-bloom" aria-hidden="true"><i></i></div>
+      <div class="sg-glass" aria-hidden="true"></div>
+      <!-- FEES -->
+      <div id="fees" class="util-panel show" data-k="fees" role="tabpanel" aria-labelledby="tab-fees" tabindex="0">
+        <span class="pmotif" aria-hidden="true"><svg viewBox="0 0 260 200"><path d="M42 52h176v96H42z"/><path d="M42 84h176M42 116h176"/><path d="M78 52v96M130 52v96M182 52v96"/><path class="uacc" d="M94 100h48l-12 34 42-54h-48l12-34z"/><path d="M62 164h136"/></svg></span>
+        <div class="eyebrow">Execution</div>
+        <h3>Fees</h3>
+        <p>Every transaction on Starknet is paid in STRK. Beyond standard gas, each private transaction also carries a protocol privacy fee: a target of about $0.12 per action, settled in STRK, with the STRK amount adjusted by the protocol as the price moves.</p>
+        <div class="viz">
+          <div class="barrow">
+            <div class="bl" style="display:flex;justify-content:space-between"><span>Standard transaction</span><span style="color:var(--white)">~$0.01</span></div>
+            <div class="bartrack"><div class="barfill gas" data-w="10%"></div></div>
+          </div>
+          <div class="barrow">
+            <div class="bl">Private transaction</div>
+            <div class="bartrack"><div class="barfill gas" data-w="10%"></div><div class="barfill priv" data-w="80%"></div></div>
+            <div class="seglbl"><i><span class="dotc gas"></span>Gas <span style="color:var(--white)">~$0.01</span></i><i><span class="dotc priv"></span>Privacy fee &middot; paid in STRK <span style="color:var(--white)"><span data-fee-usd>$0.15</span> today</span></i></div>
+          </div>
+        </div>
       </div>
-      <div id="staking-2" class="util-panel show" data-k="staking">
-        <div class="util-top"><span class="ucard-ico" aria-hidden="true"><i class="ti ti-shield-check"></i></span><span class="util-name">02 &middot; THE STAKING</span><a class="util-arrow" href="https://dashboard.endur.fi/" target="_blank" rel="noopener noreferrer" aria-label="Open staking dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></a></div>
-        <div class="util-body"><span class="eyebrow">The security flywheel</span><h3>Security</h3><p>Staked STRK anchors decentralization and carries 75% of staking power, with Bitcoin staking tied into the reward loop beside it.</p></div>
-        <div class="viz"><span class="util-fig" aria-hidden="true"><svg viewBox="0 0 260 200"><path d="M130 28 210 62v46c0 50-34 78-80 94-46-16-80-44-80-94V62z"/><path d="M130 58v112"/><path d="M76 84h108"/><path d="M72 116h116"/><path class="uacc" d="M130 58 210 92M130 170 50 136"/><path class="uacc" d="M96 112l22 22 48-58"/></svg></span></div>
+
+      <!-- STAKING -->
+      <div id="staking-2" class="util-panel" data-k="staking" role="tabpanel" aria-labelledby="tab-staking" tabindex="0">
+        <span class="pmotif" aria-hidden="true"><svg viewBox="0 0 260 200"><path d="M130 28 210 62v46c0 50-34 78-80 94-46-16-80-44-80-94V62z"/><path d="M130 58v112"/><path d="M76 84h108"/><path d="M72 116h116"/><path class="uacc" d="M130 58 210 92M130 170 50 136"/><path class="uacc" d="M96 112l22 22 48-58"/></svg></span>
+        <div class="eyebrow">Security</div>
+        <h3>Staking</h3>
+        <p>Staking STRK is the core of Starknet's decentralization, carrying 75% of all staking power. Bitcoin staking was added on top to tie STRK and BTC value in a flywheel: BTC stakers take a fixed 25% share of staking rewards, so the more STRK is staked, the higher their rewards and APR, pulling even more Bitcoin into consensus. All of it runs on less than 1% annual STRK inflation.</p>
+        <div class="viz">
+          <div class="barrow">
+            <div class="bl">Staking power</div>
+            <div class="bartrack"><div class="barfill strk" data-w="75%"></div><div class="barfill btc" data-w="25%"></div></div>
+            <div class="seglbl"><i><span class="dotc strk"></span>STRK 75%</i><i><span class="dotc btc"></span>BTC 25%</i></div>
+          </div>
+          <div class="barrow">
+            <div class="bl">Circulating supply staked</div>
+            <div class="bartrack"><div class="barfill meter" data-w="21.2%"></div></div>
+          </div>
+          <div class="vrow">
+            <a class="figlink" href="https://dashboard.endur.fi/" target="_blank" rel="noopener noreferrer"><div class="bignum" data-metric="strk_staked_pct">21.2%</div><div class="subt">Of circulating STRK supply staked <span class="arr">&#8599;</span></div></a>
+            <a class="figlink" href="https://dashboard.endur.fi/" target="_blank" rel="noopener noreferrer"><div class="bignum" data-metric="strk_staked_total">1.43B STRK</div><div class="subt">STRK staked <span class="arr">&#8599;</span></div></a>
+            <div><div class="bignum">75 / 25</div><div class="subt">STRK / BTC power</div></div>
+          </div>
+          <div id="stakingUpdated" style="font-family:var(--mono),monospace;font-size:10px;letter-spacing:.12em;color:var(--muted);text-align:right;margin-top:10px;min-height:13px"></div>
+        </div>
       </div>
-      <div id="governance" class="util-panel show" data-k="gov">
-        <div class="util-top"><span class="ucard-ico" aria-hidden="true"><i class="ti ti-building-bank"></i></span><span class="util-name">03 &middot; THE VOTES</span><a class="util-arrow" href="https://governance.starknet.io/" target="_blank" rel="noopener noreferrer" aria-label="Open Starknet governance"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></a></div>
-        <div class="util-body"><span class="eyebrow">The protocol control layer</span><h3>Governance</h3><p>Only staked or delegated STRK carries a vote, setting upgrades, economics, and the operating direction of the protocol.</p></div>
-        <div class="viz"><span class="util-fig" aria-hidden="true"><svg viewBox="0 0 260 200"><path d="M130 36 218 78H42z"/><path d="M62 88v58M98 88v58M134 88v58M170 88v58M206 88v58"/><path d="M50 154h160M38 174h184"/><path class="uacc" d="M70 66h120"/><path class="uacc" d="M72 122h20M108 106h20M144 132h20M180 96h20"/></svg></span></div>
+
+      <!-- GOVERNANCE -->
+      <div id="governance" class="util-panel" data-k="gov" role="tabpanel" aria-labelledby="tab-gov" tabindex="0">
+        <span class="pmotif" aria-hidden="true"><svg viewBox="0 0 260 200"><path d="M130 36 218 78H42z"/><path d="M62 88v58M98 88v58M134 88v58M170 88v58M206 88v58"/><path d="M50 154h160M38 174h184"/><path class="uacc" d="M70 66h120"/><path class="uacc" d="M72 122h20M108 106h20M144 132h20M180 96h20"/></svg></span>
+        <div class="eyebrow">Control</div>
+        <h3>Governance</h3>
+        <p>Governance is powered by STRK, and only staked or delegated STRK carries a vote. Stakers and delegators set the direction of the protocol, from upgrades to economic parameters and everything in between. It is already live, with <span data-metric="gov_votes">10</span> votes held to date.</p>
+        <div class="viz">
+          <div class="bl" style="font-family:var(--mono),monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:12px">On-chain votes</div>
+          <div class="gov-votes" id="govVotes" style="position:relative">
+            <div class="ticks">
+              <a href="https://governance.starknet.io/#/sn:0x009fedaf0d7a480d21a27683b0965c0f8ded35b3f1cac39827a25a06a8a682a4/proposal/5" target="_blank" rel="noopener noreferrer" data-title="Staking on Starknet"></a>
+              <a href="https://governance.starknet.io/#/sn:0x009fedaf0d7a480d21a27683b0965c0f8ded35b3f1cac39827a25a06a8a682a4/proposal/6" target="_blank" rel="noopener noreferrer" data-title="Termination of Transaction Versions 0, 1, 2"></a>
+              <a href="https://governance.starknet.io/#/sn:0x009fedaf0d7a480d21a27683b0965c0f8ded35b3f1cac39827a25a06a8a682a4/proposal/8" target="_blank" rel="noopener noreferrer" data-title="Staking on Starknet V2"></a>
+              <a href="https://governance.starknet.io/#/sn:0x009fedaf0d7a480d21a27683b0965c0f8ded35b3f1cac39827a25a06a8a682a4/proposal/9" target="_blank" rel="noopener noreferrer" data-title="Starknet v0.14.0"></a>
+              <a href="https://governance.starknet.io/#/sn:0x009fedaf0d7a480d21a27683b0965c0f8ded35b3f1cac39827a25a06a8a682a4/proposal/10" target="_blank" rel="noopener noreferrer" data-title="Bitcoin Staking on Starknet"></a>
+              <a href="https://governance.starknet.io/#/sn:0x009fedaf0d7a480d21a27683b0965c0f8ded35b3f1cac39827a25a06a8a682a4/proposal/11" target="_blank" rel="noopener noreferrer" data-title="Starknet v0.14.2"></a>
+              <a href="https://governance.starknet.io/#/sn:0x009fedaf0d7a480d21a27683b0965c0f8ded35b3f1cac39827a25a06a8a682a4/proposal/12" target="_blank" rel="noopener noreferrer" data-title="strkBTC - Bitcoin on Starknet (SNIP-38)"></a>
+              <a href="https://governance.starknet.io/#/sn:0x009fedaf0d7a480d21a27683b0965c0f8ded35b3f1cac39827a25a06a8a682a4/proposal/13" target="_blank" rel="noopener noreferrer" data-title="strkBTC as a Stakable Token on Starknet (SNIP-39)"></a>
+              <a href="https://governance.starknet.io/#/sn:0x009fedaf0d7a480d21a27683b0965c0f8ded35b3f1cac39827a25a06a8a682a4/proposal/14" target="_blank" rel="noopener noreferrer" data-title="Starknet v0.14.3"></a>
+              <a href="https://governance.starknet.io/#/sn:0x009fedaf0d7a480d21a27683b0965c0f8ded35b3f1cac39827a25a06a8a682a4/proposal/15" target="_blank" rel="noopener noreferrer" data-title="Starknet v0.14.3 (Updated)"></a>
+            </div>
+            <div class="tip" id="govTip"><div class="tt"><span id="govTipT"></span> <span style="opacity:.7">&#8599;</span></div></div>
+          </div>
+          <div class="vrow"><div><div class="bignum" data-metric="gov_votes">10</div><div class="subt">Votes to date</div></div></div>
+        </div>
       </div>
-      <div id="defi-collateral" class="util-panel show" data-k="coll">
-        <div class="util-top"><span class="ucard-ico" aria-hidden="true"><i class="ti ti-layers-intersect"></i></span><span class="util-name">04 &middot; THE COLLATERAL</span><a class="util-arrow" href="#where-strk-is-put-to-work" aria-label="See where STRK is put to work"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></a></div>
-        <div class="util-body"><span class="eyebrow">The asset used across DeFi</span><h3>Capital</h3><p>From lending and trading to leverage, liquid staking, and stablecoins, STRK plugs into Starknet's major venues as working collateral.</p></div>
-        <div class="viz"><span class="util-fig" aria-hidden="true"><svg viewBox="0 0 260 200"><path d="M58 68 130 36l72 32-72 32z"/><path d="M58 68v34l72 32 72-32V68"/><path d="M40 118 112 86l72 32-72 32z"/><path d="M40 118v34l72 32 72-32v-34"/><path class="uacc" d="M94 62 130 78l36-16"/><path class="uacc" d="M76 112l36 16 36-16"/></svg></span></div>
+
+      <!-- COLLATERAL -->
+      <div id="defi-collateral" class="util-panel" data-k="coll" role="tabpanel" aria-labelledby="tab-coll" tabindex="0">
+        <span class="pmotif" aria-hidden="true"><svg viewBox="0 0 260 200"><path d="M58 68 130 36l72 32-72 32z"/><path d="M58 68v34l72 32 72-32V68"/><path d="M40 118 112 86l72 32-72 32z"/><path d="M40 118v34l72 32 72-32v-34"/><path class="uacc" d="M94 62 130 78l36-16"/><path class="uacc" d="M76 112l36 16 36-16"/></svg></span>
+        <div class="eyebrow">Capital</div>
+        <h3>DeFi collateral</h3>
+        <p>Across Starknet DeFi, STRK is a core collateral asset. From lending and trading to leverage, liquid staking, and stablecoins, the native token plugs into every major venue, put to work instead of sitting idle.</p>
+        <div class="viz">
+          <div class="bl" style="font-family:var(--mono),monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:12px">Used across</div>
+          <div class="chips">
+            <a class="chip" href="https://vesu.xyz/lite/markets" target="_blank" rel="noopener noreferrer">Lending <span class="arr">&#8599;</span></a>
+            <a class="chip" href="https://ekubo.org/positions?chainId=23448594291968334" target="_blank" rel="noopener noreferrer">LP <span class="arr">&#8599;</span></a>
+            <a class="chip" href="https://www.troves.fi/" target="_blank" rel="noopener noreferrer">Leverage yield <span class="arr">&#8599;</span></a>
+            <a class="chip" href="https://app.endur.fi/strk" target="_blank" rel="noopener noreferrer">Liquid stake <span class="arr">&#8599;</span></a>
+            <a class="chip" href="https://www.opus.money/" target="_blank" rel="noopener noreferrer">Mint stablecoin <span class="arr">&#8599;</span></a>
+          </div>
+          <div class="basebar">STRK &middot; base collateral</div>
+        </div>
       </div>
-  </div>
-  <div class="util-stats">
-    <div class="us"><b>~$0.12</b><span>Privacy fee per private action, paid in STRK</span></div>
-    <div class="us"><b>75 / 25</b><span>STRK / BTC share of staking power</span></div>
-    <div class="us"><b>10</b><span>Onchain governance votes to date</span></div>
+    </div>
   </div>
 </div></section>
 
@@ -2561,42 +2603,86 @@ if(fly){
   });
 }
 
-/* ---------- section 02 governance vote bars: hover tooltip ---------- */
+/* ---------- section 02 governance vote bars: hover tooltip. Delegated on
+   #govVotes, since the live gov fetch re-renders the tick anchors and a
+   per-anchor binding would die with the old nodes. ---------- */
 const govVotes=document.getElementById("govVotes");
 if(govVotes){
   const gtip=document.getElementById("govTip"), gtipT=document.getElementById("govTipT");
-  [...govVotes.querySelectorAll(".ticks a")].forEach(b=>{
-    b.addEventListener("mouseenter",()=>{
-      gtipT.textContent=b.dataset.title;
-      gtip.style.display="block";
-      const fr=govVotes.getBoundingClientRect(), dr=b.getBoundingClientRect();
-      const cx=dr.left+dr.width/2-fr.left, cy=dr.top-fr.top;
-      const tw=gtip.offsetWidth, th=gtip.offsetHeight;
-      let left=Math.max(4,Math.min(cx-tw/2, fr.width-tw-4));
-      let top=cy-th-10;
-      if(dr.top-th-10<4) top=(dr.bottom-fr.top)+10; /* only place below if near top of viewport */
-      gtip.style.left=left+"px"; gtip.style.top=top+"px";
-    });
-    b.addEventListener("mouseleave",()=>{ gtip.style.display="none"; });
+  govVotes.addEventListener("mouseover",e=>{
+    const b=e.target.closest(".ticks a");
+    if(!b) return;
+    gtipT.textContent=b.dataset.title;
+    gtip.style.display="block";
+    const fr=govVotes.getBoundingClientRect(), dr=b.getBoundingClientRect();
+    const cx=dr.left+dr.width/2-fr.left, cy=dr.top-fr.top;
+    const tw=gtip.offsetWidth, th=gtip.offsetHeight;
+    let left=Math.max(4,Math.min(cx-tw/2, fr.width-tw-4));
+    let top=cy-th-10;
+    if(dr.top-th-10<4) top=(dr.bottom-fr.top)+10; /* only place below if near top of viewport */
+    gtip.style.left=left+"px"; gtip.style.top=top+"px";
+  });
+  govVotes.addEventListener("mouseout",e=>{
+    if(e.target.closest(".ticks a")) gtip.style.display="none";
   });
 }
 
-/* ---------- section 02 utilities explorer ---------- */
+/* ---------- section 02 utilities explorer: tab rail + swapping panel.
+   Keyboard: roving tabindex, arrows in both axes, Home/End. Hash: each
+   panel id deep-links (select on load and on hashchange; selecting writes
+   the hash via replaceState so history stays clean). Reduced motion: bars
+   paint at full width with no sweep. ---------- */
 (function(){
+  const tabs=[...document.querySelectorAll(".util-tab")];
   const panels=[...document.querySelectorAll(".util-panel")];
-  if(!panels.length) return;
+  if(!tabs.length) return;
+  const REDUCED=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   function animateBars(p){
     if(!p) return;
     p.querySelectorAll(".barfill").forEach(b=>{
+      if(REDUCED){ b.style.width=b.dataset.w; return; }
       b.style.width="0";
       requestAnimationFrame(()=>requestAnimationFrame(()=>{ b.style.width=b.dataset.w; }));
     });
   }
-  const grid=document.querySelector(".util-grid");
-  if("IntersectionObserver" in window && grid){
-    const io=new IntersectionObserver(es=>{ if(es.some(e=>e.isIntersecting)){ panels.forEach(animateBars); io.disconnect(); } },{threshold:.2});
-    io.observe(grid);
-  } else panels.forEach(animateBars);
+  const HASH={fees:"fees",staking:"staking-2",gov:"governance",coll:"defi-collateral"};
+  function select(k,setHash){
+    tabs.forEach(t=>{
+      const on=t.dataset.k===k;
+      t.classList.toggle("on",on);
+      t.setAttribute("aria-selected",on?"true":"false");
+      t.tabIndex=on?0:-1;
+    });
+    panels.forEach(p=>{
+      const on=p.dataset.k===k;
+      p.classList.toggle("show",on);
+      if(on) animateBars(p);
+    });
+    if(setHash&&HASH[k]&&history.replaceState) history.replaceState(null,"","#"+HASH[k]);
+  }
+  tabs.forEach((t,i)=>{
+    t.addEventListener("click",()=>select(t.dataset.k,true));
+    t.addEventListener("keydown",e=>{
+      let j=null;
+      if(e.key==="ArrowDown"||e.key==="ArrowRight") j=(i+1)%tabs.length;
+      else if(e.key==="ArrowUp"||e.key==="ArrowLeft") j=(i-1+tabs.length)%tabs.length;
+      else if(e.key==="Home") j=0;
+      else if(e.key==="End") j=tabs.length-1;
+      if(j===null) return;
+      e.preventDefault();
+      tabs[j].focus(); select(tabs[j].dataset.k,true);
+    });
+  });
+  function fromHash(){
+    const id=location.hash.slice(1);
+    const k=Object.keys(HASH).find(k=>HASH[k]===id);
+    if(k) select(k,false);
+    return k||null;
+  }
+  window.addEventListener("hashchange",fromHash);
+  const initial=fromHash();
+  if(initial){ setTimeout(()=>{ const el=document.getElementById(HASH[initial]); if(el) el.scrollIntoView(); },0); }
+  else select("fees",false);
 })();
 
 /* =========================================================================
