@@ -145,8 +145,20 @@ if (MOUNT) {
       mesh.userData = { i, acc, swell: 0 };
       g.add(mesh); carousel.add(g); cards.push({ group: g, mesh, mat, acc, angle: a });
 
+      /* the card's own band: handle AND role, on every card, so the
+         information never requires focusing a card. The dock caption below
+         stays as the focused card's larger readout. */
       const el = document.createElement('span');
-      el.className = 'es-label'; el.textContent = acc.name || '';
+      el.className = 'es-label';
+      const nm = document.createElement('b');
+      nm.textContent = acc.name || ('@' + (acc.handle || ''));
+      el.appendChild(nm);
+      if (acc.description) {
+        const role = document.createElement('i');
+        role.className = 'es-label-role';
+        role.textContent = acc.description;
+        el.appendChild(role);
+      }
       labelsEl.appendChild(el); labels.push({ el, card: g });
     });
     spin = 0; spinVel = 0; front = 0; dock();
@@ -271,7 +283,12 @@ if (MOUNT) {
   function release(e) {
     if (!dragging) return;
     dragging = false; stage.classList.remove('dragging');
-    if (moved <= 6 && hovered) { const i = hovered.userData.i; spin = Math.PI - cards[i].angle; spinVel = 0; }
+    /* under ~6px of travel this was a click, not a drag: open the person's
+       X profile in a new tab (the roadmap fan's threshold) */
+    if (moved <= 6 && hovered) {
+      const acc = hovered.userData.acc;
+      if (acc && acc.url) window.open(acc.url, '_blank', 'noopener');
+    }
   }
   cv.addEventListener('pointerup', release);
   cv.addEventListener('pointercancel', release);
@@ -328,6 +345,7 @@ if (MOUNT) {
 
     /* which card faces the lens, and the hover swell */
     if (fine && !dragging) { ray.setFromCamera(ndc, camera); const hit = ray.intersectObjects(cards.map(c => c.mesh), false)[0]; hovered = hit ? hit.object : null; }
+    cv.style.cursor = dragging ? 'grabbing' : (hovered ? 'pointer' : 'grab');
     let best = 0, bestZ = Infinity;
     cards.forEach((c, i) => {
       c.group.getWorldPosition(_v);
@@ -351,13 +369,18 @@ if (MOUNT) {
     const tabs = tabsEl.getBoundingClientRect();
     const guard = tabs.bottom - rect.top + 14;
     labels.forEach((l, i) => {
-      l.card.getWorldPosition(_v); _v.y += CARD_H * 0.55;
+      /* BOTTOM band, not top: anchored above the card's lower edge so the
+         handle + role plate can never climb into the gang tab row */
+      l.card.getWorldPosition(_v); _v.y -= CARD_H * 0.34;
       const p = _v.clone().project(camera);
       const facing = _v.clone().sub(camera.position).normalize();
       const near = p.z < 1 && Math.abs(p.x) < 0.62;
       const falloff = Math.max(0, 1 - Math.abs(p.x) / 0.62);
       const y = (-p.y * 0.5 + 0.5) * rect.height;
-      const clear = y > guard;
+      /* the label anchors by its BOTTOM edge (translate -100%), so the
+         two-line handle + role band must clear the tab row by its own
+         height, not just its baseline */
+      const clear = y - l.el.offsetHeight > guard;
       l.el.style.opacity = (near && clear) ? String(falloff * (i === front ? 1 : 0.55)) : '0';
       l.el.style.transform = 'translate(-50%,-100%) translate(' + ((p.x * 0.5 + 0.5) * rect.width) + 'px,' + y + 'px)';
       l.el.classList.toggle('is-front', i === front);
