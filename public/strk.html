@@ -4534,42 +4534,6 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
     });
     tickUpdated();
   }
-  /* live governance votes: proposals from the Snapshot X API (the engine
-     behind governance.starknet.io). Counted = not cancelled and not titled
-     as a test vote (\btest\b, word-bounded so a future "attestation"
-     proposal can never be excluded); today that reproduces the curated 10
-     exactly (real votes are proposals 5, 6, 8..15; 1-4 and 7 are titled
-     [Test]/[test]/[TEST]/Test Vote) and a new vote raises the count with
-     no edit. The ticks re-render from the same list, so the bar and the
-     number can never disagree; titles are rendered with ASCII hyphens
-     (source titles carry typographic dashes; our copy carries none). */
-  var GOV_SPACE = '0x009fedaf0d7a480d21a27683b0965c0f8ded35b3f1cac39827a25a06a8a682a4';
-  function fetchGov(){
-    return fetch('https://api.snapshot.box/graphql', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ query: '{ proposals(first: 100, where: { space: "' + GOV_SPACE + '" }) { proposal_id cancelled vote_count metadata { title } } }' })
-    }).then(function(r){ if (!r.ok) throw new Error('gov'); return r.json(); }).then(function(d){
-      var ps = (d.data && d.data.proposals) || [];
-      var real = ps.filter(function(pp){
-        var t = (pp.metadata && pp.metadata.title) || '';
-        return !pp.cancelled && pp.vote_count > 0 && !/\btest\b/i.test(t);
-      }).sort(function(a, b){ return +a.proposal_id - +b.proposal_id; });
-      if (!real.length) throw new Error('gov empty');
-      return real;
-    });
-  }
-  function renderGov(real){
-    state.govVotes = real.length;
-    spGov.forEach(function(el){ el.textContent = String(real.length); });
-    var ticks = document.querySelector('#govVotes .ticks');
-    if (ticks) ticks.innerHTML = real.map(function(pp){
-      var t = ((pp.metadata && pp.metadata.title) || ('Proposal ' + pp.proposal_id)).replace(/[\u2013\u2014]/g, '-');
-      return '<a href="https://governance.starknet.io/#/sn:' + GOV_SPACE + '/proposal/' + pp.proposal_id +
-        '" target="_blank" rel="noopener noreferrer" data-title="' + t.replace(/"/g, '&quot;') + '"></a>';
-    }).join('');
-  }
-  fetchGov().then(renderGov).catch(function(){}); // the baked ten stay on failure
-
   renderAll(); // paint last-known (cache or seed) immediately
 
   function getJson(url){
