@@ -647,12 +647,17 @@ a.chip:hover{background:var(--acc);border-color:var(--acc);color:#0d0d0d}
    and their click is untouched */
 .venn-legend a.on{border-color:var(--lc);background:rgba(250, 250, 250,.06)}
 .venn-legend a.dim{opacity:.45}
-.venn-legend .swatch{width:11px;height:11px;border-radius:50%;background:var(--lc);box-shadow:0 0 10px var(--lc);flex:0 0 auto}
+/* markers mirror the venn geometry: one accent, three stroke grammars
+   (BTCFi solid, Quantum dashed, Privacy dotted) and a filled core dot */
+.venn-legend .swatch{width:12px;height:12px;border-radius:50%;background:transparent;border:2px solid var(--lc);flex:0 0 auto}
+.venn-legend .l-quantum .swatch{border-style:dashed}
+.venn-legend .l-privacy .swatch{border-style:dotted}
+.venn-legend .l-strk .swatch{background:var(--lc);box-shadow:0 0 10px var(--lc)}
 .venn-legend .ln{font-family:var(--display);font-weight:700;font-size:15px;flex:1;color:var(--white)}
 .venn-legend .lmc{font-family:var(--mono),monospace;font-size:14px;color:var(--muted-2)}
 .venn-legend .lext{font-family:var(--mono),monospace;font-size:12px;color:var(--muted);margin-left:8px;transition:color .2s}
 .venn-legend a:hover .lext{color:var(--acc-2)}
-.venn-legend .l-btcfi{--lc:var(--p-btcfi)}.venn-legend .l-quantum{--lc:var(--p-quantum)}.venn-legend .l-privacy{--lc:var(--p-privacy)}.venn-legend .l-strk{--lc:var(--acc-2)}
+.venn-legend .l-btcfi,.venn-legend .l-quantum,.venn-legend .l-privacy,.venn-legend .l-strk{--lc:var(--acc-2)}
 
 /* pillar flow strip */
 
@@ -1764,7 +1769,7 @@ window.ADMIN_GATE=on;})();
           <a href="https://www.coingecko.com/en/categories/quantum-resistant" target="_blank" rel="noopener noreferrer" aria-label="Quantum: Quantum-Resistant category on CoinGecko">
             <circle class="fill" cx="231" cy="310" r="155" fill="url(#g-quantum)"/>
             <circle class="halo" cx="231" cy="310" r="155" fill="none" stroke="#c53400" stroke-width="6" opacity="0.26" filter="url(#vennGlow)"/>
-            <circle class="ring" cx="231" cy="310" r="155" stroke="#c53400"/>
+            <circle class="ring" cx="231" cy="310" r="155" stroke="#c53400" stroke-dasharray="14 10"/>
             <text x="150" y="350" text-anchor="middle" fill="#c53400" font-family="Archivo" font-weight="800" font-size="20">Quantum</text>
             <text x="150" y="373" text-anchor="middle" fill="#c53400" font-family="Archivo" font-weight="700" font-size="17" data-metric="venn.quantum">$10.11B</text>
           </a>
@@ -1774,7 +1779,7 @@ window.ADMIN_GATE=on;})();
           <a href="https://www.coingecko.com/en/categories/privacy-infrastructure" target="_blank" rel="noopener noreferrer" aria-label="Privacy: Privacy Infrastructure category on CoinGecko">
             <circle class="fill" cx="369" cy="310" r="155" fill="url(#g-privacy)"/>
             <circle class="halo" cx="369" cy="310" r="155" fill="none" stroke="#c53400" stroke-width="6" opacity="0.26" filter="url(#vennGlow)"/>
-            <circle class="ring" cx="369" cy="310" r="155" stroke="#c53400"/>
+            <circle class="ring" cx="369" cy="310" r="155" stroke="#c53400" stroke-dasharray="2.5 8" stroke-linecap="round"/>
             <text x="450" y="350" text-anchor="middle" fill="#c53400" font-family="Archivo" font-weight="800" font-size="20">Privacy</text>
             <text x="450" y="373" text-anchor="middle" fill="#c53400" font-family="Archivo" font-weight="700" font-size="17" data-metric="venn.privacy">$10.43B</text>
           </a>
