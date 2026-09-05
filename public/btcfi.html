@@ -969,141 +969,6 @@
     .bsk-pre:not(.bsk-on) .bsk-fill { transform: scaleX(0); }
   }
 
-  /* ===== The bridge roadmap, as a column accordion (bcore- / bcol- / bhead
-     / bscene). This is the privacy page's proving-properties instrument
-     (css/privacy-fx.css, .pcore) rebuilt on btcfi's own prefixes so the two
-     pages can never collide: privacy does not load this sheet and btcfi does
-     not load privacy-fx.css, so every token it needs is redeclared locally.
-     Four columns edge to edge. Hover, tap or focus one and its mesh-gradient
-     panel slides UP into the column while the previously shown one slides up
-     and out: one continuous upward conveyor, one in and one out. The reading
-     area above swaps in the same motion, carrying the section's standing
-     statement at rest and the hovered phase's detail on top of it. The art is
-     layered CSS mesh gradient, no images. Timing and easing are the whole
-     effect: keep --bc-slide and --bc-ease in step across the three layers. */
-  .bcore {
-    --bc-slide: 900ms; --bc-ease: cubic-bezier(.76, 0, .18, 1);
-    --bc-ink: #fafafa; --bc-dim: rgba(250, 250, 250,.68); --bc-line: #262626;
-    /* the accent role is #c53400 everywhere it is a FIELD (the gradients
-       below). As 11px and 12px mono TEXT on #0d0d0d it measures 3.6:1, under
-       AA, so the type takes the palette's lighter ember instead, at 8.3:1. */
-    --bc-acc: #ff8a4a;
-    position: relative; width: 100vw; max-width: none; margin: 56px 0 0 calc(50% - 50vw);
-    min-height: 100vh; display: flex; flex-direction: column;
-  }
-
-  /* the reading area: one .bhead per state, only the active one shown. Its
-     height is pinned by js/bridge-columns.js to the tallest state (OP_CAT),
-     because these bodies are longer than privacy's and a fixed vh band clips
-     them on short viewports. The clamp is the pre-measurement fallback. */
-  .bcore-heads { position: relative; flex: none; height: var(--bc-heads-h, clamp(200px, 30vh, 320px));
-    transition: height .55s cubic-bezier(.2,.7,.2,1);
-    overflow: hidden; padding: 0 16px 26px; }
-  .bhead { position: absolute; inset: 0 16px auto; transform: translateY(112%); opacity: 0;
-    transition: transform var(--bc-slide) var(--bc-ease), opacity calc(var(--bc-slide) * .7) ease; }
-  .bhead.-in { transform: translateY(0); opacity: 1; }
-  .bhead.-out { transform: translateY(-112%); opacity: 0; }
-  .bhead__rn, .bhead__elim { font-family: var(--mono); font-size: 12px; letter-spacing: .14em;
-    text-transform: uppercase; color: var(--bc-acc); }
-  .bhead__elim { margin-top: 14px; }
-  .bhead h4 { margin: 10px 0 12px; font-family: var(--display);
-    font-weight: 500; font-size: clamp(26px, 3.2vw, 44px); line-height: 1.04; letter-spacing: -.02em; color: var(--bc-ink); }
-  .bhead p { margin: 0; max-width: 82ch; font-family: var(--display);
-    font-size: clamp(15px, 1.2vw, 17px); line-height: 1.6; color: var(--bc-dim); }
-  .bhead p a { color: var(--bc-ink); text-decoration: underline; text-underline-offset: 3px;
-    text-decoration-color: rgba(255, 138, 74,.6); transition: text-decoration-color .25s ease; }
-  .bhead p a:hover { text-decoration-color: var(--bc-acc); }
-  .bhead--lede p { max-width: 62ch; font-size: clamp(19px, 2vw, 28px); line-height: 1.3; letter-spacing: -.01em; }
-  .bhead--lede b { font-weight: 500; color: var(--bc-ink); }
-
-  /* the strip */
-  .bcore-strip { display: flex; flex: 1 1 auto; min-height: 0; background: #0d0d0d;
-    border-top: 1px solid var(--bc-line); border-bottom: 1px solid var(--bc-line); }
-  .bcol { position: relative; flex: 1 1 0%; min-width: 0; overflow: hidden; cursor: pointer; outline: none;
-    border-left: 1px solid var(--bc-line); transition: flex-grow var(--bc-slide) var(--bc-ease); }
-  .bcol:first-child { border-left: 0; }
-  .bcol.-active { flex-grow: 2.5; }
-  .bcol::after { content: ""; position: absolute; inset: 0; z-index: 3; pointer-events: none;
-    box-shadow: inset 0 0 0 1.5px transparent; transition: box-shadow .4s ease; }
-  .bcol:focus-visible::after { box-shadow: inset 0 0 0 2px var(--bc-acc); }
-
-  /* the sliding art layer: clipped by the column, starts below, exits up */
-  .bcol__media { position: absolute; inset: 0; z-index: 1; transform: translateY(101%);
-    transition: transform var(--bc-slide) var(--bc-ease); will-change: transform; }
-  .bcol__media.-in { transform: translateY(0); }
-  .bcol__media.-out { transform: translateY(-101%); }
-  /* scrims, so the caption and name read over any panel */
-  .bcol__media::before { content: ""; position: absolute; inset: 0; pointer-events: none;
-    background: linear-gradient(to bottom, rgba(13,13,13,.72) 0%, rgba(13,13,13,.15) 26%, rgba(13,13,13,.2) 62%, rgba(13,13,13,.86) 100%); }
-
-  /* column chrome, always above the art */
-  .bcol__cap { position: absolute; top: 20px; left: 20px; right: 16px; z-index: 2; display: flex; align-items: baseline; gap: 10px;
-    font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--bc-dim);
-    opacity: 0; transform: translateY(-6px); transition: opacity .5s ease .1s, transform .5s var(--bc-ease) .1s; }
-  .bcol.-active .bcol__cap { opacity: 1; transform: none; }
-  .bcol__cap b { color: var(--bc-acc); font-weight: 500; font-variant-numeric: tabular-nums; }
-  .bcol__name { position: absolute; left: 20px; right: 16px; bottom: 24px; z-index: 2; margin: 0;
-    font-family: var(--mono); font-weight: 400; font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--bc-dim); }
-  .bcol__name span { display: block; margin-top: 8px; font-family: var(--display);
-    font-size: clamp(16px, 1.5vw, 21px); font-weight: 500; letter-spacing: -.01em; text-transform: none;
-    color: rgba(250, 250, 250,.72); transition: color .4s ease; }
-  .bcol.-active .bcol__name span { color: var(--bc-ink); }
-
-  /* the panels: layered mesh gradient, the btcfi ember palette, no images.
-     One per phase, warming from the deep rust of the federation to the flare
-     of the endgame, so the four columns read as an ordered run. */
-  .bscene { position: absolute; inset: 0; overflow: hidden; background: var(--bs-bg); }
-  .bscene::after { content: ""; position: absolute; inset: 0; pointer-events: none;
-    background: radial-gradient(120% 62% at 28% -12%, rgba(255,255,255,.14), rgba(255,255,255,0) 58%); mix-blend-mode: soft-light; }
-  .bscene--ember { --bs-bg:
-      radial-gradient(120% 95% at 16% 10%, #7a2400 0%, rgba(122,36,0,0) 54%),
-      radial-gradient(95% 85% at 90% 20%, #c53400 0%, rgba(197,52,0,0) 58%),
-      radial-gradient(130% 120% at 74% 104%, #ff8a4a 0%, rgba(255,138,74,0) 60%),
-      linear-gradient(148deg, #1a0600 0%, #3a0e00 54%, #0d0d0d 100%); }
-  .bscene--rust { --bs-bg:
-      radial-gradient(115% 95% at 84% 12%, #8a2400 0%, rgba(138,36,0,0) 54%),
-      radial-gradient(100% 90% at 10% 30%, #c53400 0%, rgba(197,52,0,0) 58%),
-      radial-gradient(130% 120% at 60% 108%, #e07a4a 0%, rgba(224,122,74,0) 60%),
-      linear-gradient(158deg, #240800 0%, #4a1200 54%, #0d0d0d 100%); }
-  .bscene--copper { --bs-bg:
-      radial-gradient(115% 92% at 22% 14%, #b03000 0%, rgba(176,48,0,0) 54%),
-      radial-gradient(100% 95% at 88% 28%, #e86a30 0%, rgba(232,106,48,0) 58%),
-      radial-gradient(130% 125% at 70% 104%, #7a2400 0%, rgba(122,36,0,0) 60%),
-      linear-gradient(153deg, #120400 0%, #3a0e00 54%, #0d0d0d 100%); }
-  .bscene--flare { --bs-bg:
-      radial-gradient(115% 92% at 80% 12%, #ff8a4a 0%, rgba(255,138,74,0) 52%),
-      radial-gradient(110% 100% at 14% 34%, #c53400 0%, rgba(197,52,0,0) 58%),
-      radial-gradient(135% 130% at 62% 106%, #8a2400 0%, rgba(138,36,0,0) 60%),
-      linear-gradient(153deg, #2a0a00 0%, #4a1200 54%, #0d0d0d 100%); }
-
-  @media (prefers-reduced-motion: reduce) {
-    .bcol__media, .bhead, .bcol { transition-duration: .01ms; }
-  }
-  /* below 860 the strip stacks: the columns become a vertical accordion and
-     the reading area sizes to its content instead of being clipped to a band,
-     which is also why the measured height is dropped here */
-  @media (max-width: 860px) {
-    .bcore { margin-top: 40px; min-height: 0; display: block; }
-    .bcore-heads { height: auto; min-height: 0; padding: 0 20px 22px; }
-    .bhead { position: relative; inset: auto; transform: translateY(16px); }
-    .bhead:not(.-in) { display: none; }
-    .bhead--lede p { font-size: 20px; }
-    .bcore-strip { flex-direction: column; height: auto; }
-    .bcol { border-left: 0; border-top: 1px solid var(--bc-line); min-height: 76px; }
-    .bcol:first-child { border-top: 0; }
-    .bcol.-active { flex-grow: 3.4; min-height: 260px; }
-    .bcol__cap { top: 16px; }
-    .bcol__name { bottom: 16px; }
-  }
-
-  /* ============ TRACK RECORD: the lineage stack (#lg) ============
-     A twin of privacy.html's lineage, so the CSS below is a copy of the
-     block in css/privacy-fx.css commented "the lineage, after sui.io's
-     stack", and the behaviour is the same js/lineage.js. It sits inline
-     rather than in a shared sheet because btcfi loads neither
-     privacy-fx.css nor stride.css, and because this inline <style> is the
-     last thing the page loads, so nothing can override it. Keep the two
-     copies in sync. */
 /* ---------- the track record timeline (main's horizontal device) ----------
    12 nodes on one axis, years and labels alternating above and below the
    rail, one detail card below for the active node (first node active on
@@ -2724,109 +2589,68 @@
     </div>
 
     <!-- Bridge Roadmap -->
-    <!-- The four bridge phases as a column accordion, the same instrument the
-         privacy page uses for its four proving properties (#pcore): four
-         columns edge to edge, each a mesh-gradient panel that slides UP into
-         its column while the previously shown panel slides up and out (one in,
-         one out). The reading area above swaps in the same upward motion: it
-         carries the section's standing statement at rest, and the hovered
-         phase's detail on top of it. Hover, tap, focus and arrow keys all
-         drive it (js/bridge-columns.js). The h4 per phase keeps the old
-         card's id, so every deep link into the roadmap still lands. -->
-    <!-- The kicker + h3 heading pair was removed: the accordion's own
-         standing statement (the .bhead--lede below) already introduces the
-         roadmap, so the pair read as a duplicate title. The old heading's id
-         moves onto this wrapper so existing deep links and the committed
-         search index still land on the roadmap. -->
-    <div class="roadmap" id="btcfi-ready-today-fully-trustless-tomorrow">
-      <div class="bcore" id="bcore">
-        <div class="bcore-heads" id="bcore-heads" role="tabpanel" aria-live="polite">
-          <div class="bhead bhead--lede"><p>Bitcoiners can already use the full DeFi stack on Starknet through a transparent, community-vetted federation. From there, <b>every phase strips away trust assumptions</b>, all the way to a fully trustless bridge once Bitcoin can verify STARK proofs natively.</p></div>
-          <div class="bhead">
-            <div class="bhead__rn">Phase 1, now</div>
-            <h4 id="federation">Federation</h4>
-            <p>strkBTC backed by a transparent federation: Near Intents, Xverse, Luganodes, Twinstakes, UTXO. Trust assumptions are explicit and public.</p>
-            <div class="bhead__elim">Status: Live</div>
-          </div>
-          <div class="bhead">
-            <div class="bhead__rn">Phase 2, next</div>
-            <h4 id="bitvm">BitVM</h4>
-            <p>Trust-minimized verification without fraud proofs. Only one honest party needed. Working with Alpen Labs on a BitVM-based bridge for Starknet.</p>
-            <div class="bhead__elim">Status: In progress</div>
-          </div>
-          <div class="bhead">
-            <div class="bhead__rn">Phase 3, research</div>
-            <h4 id="collidervm">ColliderVM</h4>
-            <p>Bitcoin-native stateful computation without fraud proofs. Same trust model as BitVM2 but capital-efficient: operators reimbursed immediately.</p>
-            <div class="bhead__elim">Status: Research</div>
-          </div>
-          <!-- THE DEMO CANNOT BE CHECKED, THE CODE CAN, and the sentence is
-               written to that split. This read "a proof-of-concept ... is
-               already live and working": present tense, no date, no owner, no
-               link. Researched 2026-08-23.
-               THE PROJECT'S ENTIRE WEB PRESENCE IS GONE. btcwild.life has no A
-               record at all, not just the subdomain but the apex, so
-               catnet-mempool.btcwild.life (the explorer StarkWare's post sends
-               readers to) and docs.btcwild.life (still the repo's listed
-               homepage) both fail to resolve. Verified against github.com and
-               twitter.com resolving normally from the same machine, so it is
-               not a local DNS fault. CatNet, the custom OP_CAT signet the demo
-               ran on, last saw a commit on 2024-06-25.
-               DO NOT RESTORE THE PRESENT TENSE ON THE STRENGTH OF THE REPO
-               BEING ACTIVE. bitcoin-circle-stark is genuinely alive, 160 stars
-               and a push on 2026-08-11, which is why "still actively developed"
-               is claimable. That is the code. The demo is a different thing and
-               there is no longer any explorer, network or project site on which
-               a reader could confirm it ran. Those two facts are separate and
-               the sentence keeps them separate.
-               ON THE SPELLING: StarkWare's own post contradicts itself, "led by
-               Weikeng Chen and Pinghzou Yuan" in the body and "Weikeng Chen,
-               Pingzhou Yuan" in the acknowledgements. Pingzhou is the standard
-               pinyin and the acknowledgements form; that is why data-says
-               quotes one spelling and the prose uses the other, and why
-               Pingzhou sits in data-noun-ok.
-               The OP_CAT specification status was considered for this paragraph
-               and left out: see the commit message.
-               THE CLAIM ATTRIBUTES TRAVEL WITH THE SENTENCE. They moved here
-               verbatim when the roadmap became a column accordion on
-               2026-08-31; th-claim, data-perishable, data-src, data-checked,
-               data-says and data-noun-ok all still belong to this paragraph. -->
-          <div class="bhead">
-            <div class="bhead__rn">Endgame</div>
-            <h4 id="op-cat">OP_CAT</h4>
-            <p class="th-claim" data-perishable="third-party"
-               data-src="https://starkware.co/blog/general-computation-on-bitcoin/"
-               data-checked="2026-08-23"
-               data-says="In an open-source effort, led by Weikeng Chen and Pinghzou Yuan, we&#39;re working on building the Bitcoin Wildlife Sanctuary. | A Circle-STARK verifier with a working demo that verifies a STARK proof of a simple statement (related to Fibonacci numbers) on Bitcoin signet"
-               data-noun-ok="July Pingzhou">The endgame. If activated, Bitcoin could verify STARK proofs natively, enabling a fully trustless bridge. And this isn't theory: a Circle-STARK verifier was <a href="https://starkware.co/blog/general-computation-on-bitcoin/" target="_blank" rel="noopener noreferrer">demonstrated on an OP_CAT-enabled Bitcoin signet in July 2024</a> by Weikeng Chen and Pingzhou Yuan's Bitcoin Wildlife Sanctuary project, with StarkWare collaborating, and the <a href="https://github.com/Bitcoin-Wildlife-Sanctuary/bitcoin-circle-stark" target="_blank" rel="noopener noreferrer">implementation is still actively developed</a>.</p>
-            <div class="bhead__elim">Status: Endgame</div>
-          </div>
+    <div class="roadmap">
+      <p class="scale-label">The bridge roadmap</p>
+      <h3 id="btcfi-ready-today-fully-trustless-tomorrow" class="scale-title">BTCFi-ready today. <span>Fully trustless tomorrow.</span></h3>
+      <p class="scale-intro">Bitcoiners can already use the full DeFi stack on Starknet through a transparent, community-vetted federation. From there, every phase strips away trust assumptions, all the way to a fully trustless bridge once Bitcoin can verify STARK proofs natively.</p>
+      <div class="roadmap-steps">
+        <div id="federation" class="roadmap-step active">
+          <p class="step-phase">Phase 1 — Now</p>
+          <p class="step-name">Federation</p>
+          <p class="step-desc">strkBTC backed by a transparent federation: Near Intents, Xverse, Luganodes, Twinstakes, UTXO. Trust assumptions are explicit and public.</p>
+          <span class="step-status status-live">Live</span>
         </div>
-        <div class="bcore-strip" role="tablist" aria-label="The four bridge phases">
-          <div class="bcol" tabindex="0" role="tab" aria-selected="false" aria-controls="bcore-heads" data-b="0" aria-label="Phase 1, Federation">
-            <div class="bcol__media"><div class="bscene bscene--ember"></div></div>
-            <div class="bcol__cap"><b>01</b><span>Status: Live</span></div>
-            <h3 class="bcol__name">Phase<span>Federation</span></h3>
-          </div>
-          <div class="bcol" tabindex="0" role="tab" aria-selected="false" aria-controls="bcore-heads" data-b="1" aria-label="Phase 2, BitVM">
-            <div class="bcol__media"><div class="bscene bscene--rust"></div></div>
-            <div class="bcol__cap"><b>02</b><span>Status: In progress</span></div>
-            <h3 class="bcol__name">Phase<span>BitVM</span></h3>
-          </div>
-          <div class="bcol" tabindex="0" role="tab" aria-selected="false" aria-controls="bcore-heads" data-b="2" aria-label="Phase 3, ColliderVM">
-            <div class="bcol__media"><div class="bscene bscene--copper"></div></div>
-            <div class="bcol__cap"><b>03</b><span>Status: Research</span></div>
-            <h3 class="bcol__name">Phase<span>ColliderVM</span></h3>
-          </div>
-          <div class="bcol" tabindex="0" role="tab" aria-selected="false" aria-controls="bcore-heads" data-b="3" aria-label="Endgame, OP_CAT">
-            <div class="bcol__media"><div class="bscene bscene--flare"></div></div>
-            <div class="bcol__cap"><b>04</b><span>Status: Endgame</span></div>
-            <h3 class="bcol__name">Phase<span>OP_CAT</span></h3>
-          </div>
+        <div id="bitvm" class="roadmap-step">
+          <p class="step-phase">Phase 2 — Next</p>
+          <p class="step-name">BitVM</p>
+          <p class="step-desc">Trust-minimized verification without fraud proofs. Only one honest party needed. Working with Alpen Labs on a BitVM-based bridge for Starknet.</p>
+          <span class="step-status status-next">In progress</span>
+        </div>
+        <div id="collidervm" class="roadmap-step">
+          <p class="step-phase">Phase 3 — Research</p>
+          <p class="step-name">ColliderVM</p>
+          <p class="step-desc">Bitcoin-native stateful computation without fraud proofs. Same trust model as BitVM2 but capital-efficient: operators reimbursed immediately.</p>
+          <span class="step-status status-research">Research</span>
+        </div>
+        <!-- THE DEMO CANNOT BE CHECKED, THE CODE CAN, and the sentence is
+             written to that split. This read "a proof-of-concept ... is
+             already live and working": present tense, no date, no owner, no
+             link. Researched 2026-08-23.
+             THE PROJECT'S ENTIRE WEB PRESENCE IS GONE. btcwild.life has no A
+             record at all, not just the subdomain but the apex, so
+             catnet-mempool.btcwild.life (the explorer StarkWare's post sends
+             readers to) and docs.btcwild.life (still the repo's listed
+             homepage) both fail to resolve. Verified against github.com and
+             twitter.com resolving normally from the same machine, so it is
+             not a local DNS fault. CatNet, the custom OP_CAT signet the demo
+             ran on, last saw a commit on 2024-06-25.
+             DO NOT RESTORE THE PRESENT TENSE ON THE STRENGTH OF THE REPO
+             BEING ACTIVE. bitcoin-circle-stark is genuinely alive, 160 stars
+             and a push on 2026-08-11, which is why "still actively developed"
+             is claimable. That is the code. The demo is a different thing and
+             there is no longer any explorer, network or project site on which
+             a reader could confirm it ran. Those two facts are separate and
+             the sentence keeps them separate.
+             ON THE SPELLING: StarkWare's own post contradicts itself, "led by
+             Weikeng Chen and Pinghzou Yuan" in the body and "Weikeng Chen,
+             Pingzhou Yuan" in the acknowledgements. Pingzhou is the standard
+             pinyin and the acknowledgements form; that is why data-says
+             quotes one spelling and the prose uses the other, and why
+             Pingzhou sits in data-noun-ok.
+             The OP_CAT specification status was considered for this paragraph
+             and left out: see the commit message. -->
+        <div id="op-cat" class="roadmap-step">
+          <p class="step-phase">Endgame</p>
+          <p class="step-name">OP_CAT</p>
+          <p class="step-desc th-claim" data-perishable="third-party"
+             data-src="https://starkware.co/blog/general-computation-on-bitcoin/"
+             data-checked="2026-08-23"
+             data-says="In an open-source effort, led by Weikeng Chen and Pinghzou Yuan, we&#39;re working on building the Bitcoin Wildlife Sanctuary. | A Circle-STARK verifier with a working demo that verifies a STARK proof of a simple statement (related to Fibonacci numbers) on Bitcoin signet"
+             data-noun-ok="July Pingzhou">The endgame. If activated, Bitcoin could verify STARK proofs natively, enabling a fully trustless bridge. And this isn't theory: a Circle-STARK verifier was <a href="https://starkware.co/blog/general-computation-on-bitcoin/" target="_blank" rel="noopener noreferrer">demonstrated on an OP_CAT-enabled Bitcoin signet in July 2024</a> by Weikeng Chen and Pingzhou Yuan's Bitcoin Wildlife Sanctuary project, with StarkWare collaborating, and the <a href="https://github.com/Bitcoin-Wildlife-Sanctuary/bitcoin-circle-stark" target="_blank" rel="noopener noreferrer">implementation is still actively developed</a>.</p>
+          <span class="step-status status-endgame">Endgame</span>
         </div>
       </div>
     </div>
-    <script src="js/bridge-columns.js" defer></script>
 
     <!-- ============================================================ -->
     <!-- ECOSYSTEM: DeFi for Bitcoin -->
