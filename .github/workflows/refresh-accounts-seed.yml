@@ -1,3 +1,4 @@
+# TODO: remove the vesper target after merge
 # Daily refresh of the ACCOUNT CONTRACTS seed (strk.html).
 #
 # Why Actions: Voyager is Cloudflare-challenge-gated for container and
@@ -41,3 +42,30 @@ jobs:
           git add public/assets/data/voyager-accounts-seed.json
           git commit -m "data: account contracts seed refresh, head $head, source Voyager"
           git push
+      # the deploy branch lags main between merges, so the same refreshed seed
+      # lands on vesper too (same content, same message, vesper second); a
+      # rejected push rebases once and retries. Runs even when the current
+      # branch's copy was already fresh, so a lagging vesper still catches up.
+      - name: mirror the refreshed seed to vesper
+        run: |
+          set -e
+          src=assets/data/voyager-accounts-seed.json
+          [ -f public/assets/data/voyager-accounts-seed.json ] && src=public/assets/data/voyager-accounts-seed.json
+          cp "$src" /tmp/voyager-seed.json
+          head=$(node -e "console.log(require('/tmp/voyager-seed.json').head)")
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin vesper
+          git checkout -B vesper origin/vesper
+          cp /tmp/voyager-seed.json public/assets/data/voyager-accounts-seed.json
+          if git diff --quiet public/assets/data/voyager-accounts-seed.json; then
+            echo "vesper seed already current"; exit 0
+          fi
+          git add public/assets/data/voyager-accounts-seed.json
+          git commit -m "data: account contracts seed refresh, head $head, source Voyager"
+          if ! git push origin vesper; then
+            echo "vesper push rejected; rebasing once and retrying"
+            git fetch origin vesper
+            git rebase origin/vesper
+            git push origin vesper
+          fi
