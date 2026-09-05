@@ -866,97 +866,107 @@
     .page-btcfi .bfed-caption{ font-size:10.5px; letter-spacing:.04em; }
   }
 
-  /* ===== BTCFi ecosystem field (bg- prefix, mount #btcGlobe) ==========
-     The ecosystem page's scroll-driven flight, re-skinned for this page.
-     APPENDED AT THE END OF THIS INLINE BLOCK ON PURPOSE: css/eco-stage.css
-     is linked on this page too and carries the eg- twins of these rules, so
-     anything defined earlier than here can lose to a linked sheet. The
-     prefix is bg-, never eg-, so the two engines can never read each other's
-     DOM or each other's styles.
-     Colors are the page's own: ground #0d0d0d, accent #c53400, warm #e07a4a,
-     ink #fafafa. Fonts are the page's own vars, because 'General Sans' is
-     only a fallback stack here.
-     The no-JS list (.bgf-list) is the base state and the engine's data
-     source; it is what the section renders when the module never runs. */
-
-  /* the heading the globe repaints: hidden from sight, kept for the anchor,
-     the outline and assistive tech */
-  .bg-sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
-    overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; border: 0; }
-
-  /* ---- no-JS / pre-boot: a flat wrapped list of labelled links ---- */
-  .bgf-list { list-style: none; margin: 40px auto 8px; padding: 0;
-    width: min(560px, 100%); display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
-  .bgf-item { display: inline-flex; align-items: center; gap: 8px;
-    padding: 6px 12px 6px 7px; border-radius: 999px;
-    border: 1px solid rgba(250, 250, 250, 0.18);
-    background: rgba(20, 20, 20, 0.9);
-    color: rgba(250, 250, 250, 0.8); text-decoration: none; font-size: 12px; }
-  .bgf-item img { width: 22px; height: 22px; border-radius: 50%; object-fit: cover; display: block; }
-  .bgf-mono { width: 22px; height: 22px; border-radius: 50%; align-items: center;
-    justify-content: center; font-family: var(--mono); font-size: 10px;
-    background: rgba(250, 250, 250, 0.08); color: rgba(250, 250, 250, 0.7); }
-
-  /* HEIGHT RESERVATION, and it is load bearing. Unlike the ecosystem page,
-     whose mount ships empty, this one ships ~175px of link list and the
-     engine replaces it with a 240vh track: measured at 1440, everything
-     below the section jumped 1918px once the module booted. The classic
-     inline script just under this stylesheet stamps html.bg-flight on the
-     one path where the flight will actually run, which reserves the exact
-     height the track will take and hides the list the engine is about to
-     wipe. No JS, reduced motion, or a module that never arrives: the class
-     is absent or removed again, and the list renders as the section. */
-  html.bg-flight #btcGlobe { min-height: 240vh; }
-  html.bg-flight #btcGlobe .bgf-list { display: none; }
-
-  /* ---- the flight: a tall track, a sticky full-bleed stage ---- */
-  #btcGlobe { width: 100vw; max-width: none; margin: 0 0 0 calc(50% - 50vw);
-    padding: 0; background: transparent; }
-  .bg-track { position: relative; height: 240vh; }
-  .bg-stick { position: sticky; top: 0; height: 100vh; overflow: hidden; background: transparent; }
-  /* the flight's last frame dissolves into the page instead of being cut off
-     mid-logo where the sticky stage ends */
-  .bg-stick::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 26vh;
-    pointer-events: none; z-index: 4;
-    background: linear-gradient(to bottom, rgba(13, 13, 13, 0) 0%, rgba(13, 13, 13, 0.7) 55%, rgba(13, 13, 13, 1) 100%); }
-  .bg-stick canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
-
-  /* the copy holds the centre for the whole flight; the logo scatter and the
-     Bitcoin mark are both placed to keep out of this box */
-  .bg-copy { position: absolute; left: 50%; top: 13vh; transform: translate(-50%, 0);
-    width: min(760px, calc(100% - 48px)); text-align: center; pointer-events: none;
-    z-index: 3; opacity: 0; transition: opacity .4s ease; }
-  .bg-copy h2 { font-family: var(--display); font-weight: 300;
-    font-size: clamp(30px, 4.2vw, 62px); line-height: 1.08; letter-spacing: -0.03em;
-    color: #fafafa; margin: 0 0 14px; }
-  .bg-copy p { font-family: var(--display); font-weight: 300;
-    font-size: clamp(20px, 2.4vw, 34px); line-height: 1.2; letter-spacing: -0.02em;
-    color: #e07a4a; margin: 0; }
-
-  .bg-stats { position: absolute; left: 48px; bottom: 7vh; z-index: 5; display: flex; gap: 44px; pointer-events: none; }
-  .bg-stats span { display: block; font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em;
-    text-transform: uppercase; color: rgba(250, 250, 250, 0.75); margin-bottom: 8px; }
-  .bg-stats b { font-family: var(--display); font-weight: 300; font-size: clamp(30px, 3.2vw, 46px);
-    letter-spacing: -0.02em; color: #fafafa; }
-  .bg-hint { position: absolute; right: 48px; bottom: 7vh; z-index: 5; font-family: var(--mono);
-    font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
-    color: rgba(250, 250, 250, 0.72); pointer-events: none; }
-
-  .bg-chip { position: absolute; top: 0; left: 0; z-index: 6; display: flex; align-items: center; gap: 11px;
-    padding: 9px 15px; border-radius: 999px; background: #fafafa; color: #0d0d0d;
-    font-family: var(--mono); font-size: 12px; pointer-events: none; opacity: 0;
-    transition: opacity 0.16s; white-space: nowrap; will-change: transform; }
-  .bg-chip.on { opacity: 1; }
-  .bg-chip span + span { color: #616161; padding-left: 11px; border-left: 1px solid rgba(13, 13, 13, 0.18); }
-
-  @media (max-width: 860px) {
-    html.bg-flight #btcGlobe { min-height: 210vh; }   /* keep in step with .bg-track */
-    .bg-track { height: 210vh; }
-    .bg-stats { left: 20px; bottom: 5vh; gap: 28px; }
-    .bg-hint { display: none; }
+  /* ===== Staking column (bsk- prefix). One shared column split 25/75 —
+     replaces the two disconnected consensus bars. Base state (no classes)
+     is the END state so no-JS renders finished; the engine adds .bsk-pre
+     (initial state) then .bsk-on (reveal) once, via IntersectionObserver,
+     and never adds .bsk-pre under prefers-reduced-motion. All animation is
+     transform/opacity transitions — compositor-only, nothing runs after
+     the reveal completes. */
+  .bsk-visual { flex-shrink: 0; width: 348px; }
+  .bsk-cap, .bsk-sig, .bsk-pct {
+    font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.16em;
   }
-  @media (prefers-reduced-motion: reduce) {
-    .bg-copy { transition: none; }
+  .bsk-cap { font-size: 10px; color: rgba(245,242,236,0.45); margin-bottom: 12px; }
+  .bsk-col {
+    position: relative; width: 72px; height: 224px;
+    border: 1px solid rgba(245,242,236,0.16); border-radius: 6px;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.01)),
+      rgba(14,15,19,0.6);
+  }
+  .bsk-seg { position: relative; }
+  .bsk-seg-btc  { height: 25%; }
+  .bsk-seg-strk { height: 75%; }
+  .bsk-fill { position: absolute; inset: 0; display: block; }
+  .bsk-seg-btc .bsk-fill {
+    background: rgba(var(--accent-rgb), 0.16);
+    border-radius: 5px 5px 0 0;
+    transform-origin: top;
+    transition: transform 0.9s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+  .bsk-seg-strk .bsk-fill {
+    background: rgba(139, 92, 246, 0.14);
+    border-radius: 0 0 5px 5px;
+    transform-origin: bottom;
+    transition: transform 1.2s cubic-bezier(0.22, 0.61, 0.36, 1) 0.15s;
+  }
+  /* the 25/75 boundary: one solid accent line, the join of the composition */
+  .bsk-line {
+    position: absolute; left: 0; right: 0; top: 25%; height: 1.5px;
+    margin-top: -0.75px; background: var(--accent); display: block;
+  }
+  .bsk-pct {
+    position: absolute; left: 0; width: 100%; top: 50%; transform: translateY(-50%);
+    text-align: center; font-size: 12px; font-weight: 600;
+  }
+  .bsk-seg-btc  .bsk-pct { color: var(--orange); }
+  .bsk-seg-strk .bsk-pct { color: #C4B5FD; }
+  /* role labels: leader tick to the segment's vertical center. These carry
+     the consolidated middle-paragraph copy (see the panel comment). */
+  .bsk-role {
+    position: absolute; left: calc(100% + 34px); top: 50%; transform: translateY(-50%);
+    width: 232px; font-size: 12.5px; line-height: 1.55; color: rgba(245,242,236,0.55);
+  }
+  .bsk-role b { display: block; font-family: var(--mono); font-size: 11px;
+    letter-spacing: 0.14em; font-weight: 600; margin-bottom: 3px; }
+  .bsk-seg-btc  .bsk-role b { color: var(--orange); }
+  .bsk-seg-strk .bsk-role b { color: #C4B5FD; }
+  .bsk-role::before {
+    content: ''; position: absolute; right: 100%; margin-right: 10px; top: 50%;
+    width: 16px; height: 1px; background: rgba(245,242,236,0.3);
+  }
+  .bsk-sig { font-size: 10px; color: rgba(245,242,236,0.5); margin-top: 16px; }
+  /* fade cascade: line and percents just after the growth, roles next, the
+     signature last */
+  .bsk-fade { opacity: 1; }
+  .bsk-cap  { transition: opacity 0.5s ease 0.1s; }
+  .bsk-line { transition: opacity 0.5s ease 1.0s; }
+  .bsk-pct  { transition: opacity 0.5s ease 1.1s; }
+  .bsk-seg-btc  .bsk-role { transition: opacity 0.5s ease 1.25s; }
+  .bsk-seg-strk .bsk-role { transition: opacity 0.5s ease 1.4s; }
+  .bsk-sig  { transition: opacity 0.5s ease 1.55s; }
+  /* pre-reveal state, applied by JS only, released by .bsk-on */
+  .bsk-pre:not(.bsk-on) .bsk-fill { transform: scaleY(0); }
+  .bsk-pre:not(.bsk-on) .bsk-fade { opacity: 0; }
+  @media (max-width: 860px) {
+    .bsk-visual { width: 100%; max-width: 348px; }
+  }
+  /* 375: the vertical column wastes ~150px of height under stacked text, so
+     the composition goes HORIZONTAL — one split band, 25 left / 75 right,
+     same exact proportions, roles as legend rows beneath. The pre-reveal
+     override swaps the growth axis to match. */
+  @media (max-width: 560px) {
+    .staking-band { padding: 32px 24px; }
+    .bsk-visual { max-width: none; }
+    .bsk-col { width: 100%; height: 64px; display: flex; }
+    .bsk-seg-btc  { width: 25%; height: 100%; }
+    .bsk-seg-strk { width: 75%; height: 100%; }
+    .bsk-seg-btc .bsk-fill  { border-radius: 5px 0 0 5px; transform-origin: left; }
+    .bsk-seg-strk .bsk-fill { border-radius: 0 5px 5px 0; transform-origin: right; }
+    .bsk-line { left: 25%; top: 0; bottom: 0; width: 1.5px; height: auto;
+      margin: 0 0 0 -0.75px; }
+    /* legend rows span the full band; each role's % width resolves against
+       its own segment (25% and 75% wide), hence 400% and 133.34% */
+    .bsk-role { top: calc(100% + 14px); left: 0; transform: none; width: 400%; }
+    .bsk-seg-strk .bsk-role { top: calc(100% + 64px); left: -33.34%; width: 133.34%; }
+    .bsk-role b { display: inline; margin-right: 7px; }
+    .bsk-role::before { position: static; display: inline-block; width: 8px; height: 8px;
+      border-radius: 2px; margin: 0 8px 0 0; vertical-align: baseline; }
+    .bsk-seg-btc  .bsk-role::before { background: rgba(var(--accent-rgb), 0.7); }
+    .bsk-seg-strk .bsk-role::before { background: rgba(139, 92, 246, 0.7); }
+    .bsk-sig { margin-top: 126px; }
+    .bsk-pre:not(.bsk-on) .bsk-fill { transform: scaleX(0); }
   }
 
   /* ===== The bridge roadmap, as a column accordion (bcore- / bcol- / bhead
@@ -1524,7 +1534,7 @@
     flex-direction: column;
     position: relative;
     min-width: 0;
-    padding: 30px 32px 26px;
+    padding: 20px 22px 18px;
     border-right: 1px solid #262626;
     border-bottom: 1px solid #262626;
     border-radius: 0;
@@ -1535,9 +1545,9 @@
   .mstc-soon { background: transparent; opacity: 0.55; }
   .mstc-soon:hover { background: transparent; }
 
-  .mstc-top { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 20px; }
+  .mstc-top { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 14px; }
   .mstc-logo {
-    width: 52px; height: 52px;
+    width: 42px; height: 42px;
     flex: none;
     border: 1px solid #262626;
     border-radius: 0;
@@ -1547,15 +1557,19 @@
     font-size: 16px;
   }
   .mstc-logo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .eco-count-row { display: flex; gap: 34px; margin: 26px 0 8px; font-family: var(--mono);
+    font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(245,242,236,0.45); }
+  .eco-count-row b { font-family: var(--display); font-weight: 700; font-size: 22px; letter-spacing: 0;
+    color: var(--white); margin-right: 8px; font-variant-numeric: tabular-nums; }
   .mstc-kind {
     margin-left: auto;
     flex: none;
-    font-family: var(--mono);
-    font-size: 10.5px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: rgba(250,250,250,0.5);
-    padding: 6px 11px;
+    font-family: var(--sans, 'Inter', sans-serif);
+    font-size: 12px;
+    letter-spacing: 0;
+    text-transform: none;
+    color: rgba(250,250,250,0.6);
+    padding: 5px 10px;
     border: 1px solid #262626;
     border-radius: 0;
   }
@@ -1564,62 +1578,41 @@
     align-items: center;
     gap: 10px;
     font-family: var(--display);
-    font-size: 23px;
+    font-size: 19px;
     font-weight: 600;
     line-height: 1.2;
     letter-spacing: -0.01em;
     color: #fafafa;
     text-decoration: none;
-    margin-bottom: 12px;
+    margin-bottom: 8px;
   }
   a.mstc-name:hover { color: #c53400; }
   a.mstc-name:focus-visible { outline: 1px solid #c53400; outline-offset: 3px; }
   .mstc-ext { font-size: 16px; color: rgba(250,250,250,0.35); transition: color 0.18s; }
   a.mstc-name:hover .mstc-ext { color: #c53400; }
+  /* one line, per the card spec: the tags carry the categorization */
   .mstc-desc {
-    font-size: 15px;
-    line-height: 1.6;
+    font-size: 13.5px;
+    line-height: 1.55;
     color: rgba(250,250,250,0.62);
-    margin: 0 0 18px;
+    margin: 0 0 12px;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
   }
-  .mstc-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+  .mstc-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 2px; }
   .mstc-tag {
-    font-family: var(--mono);
-    font-size: 10.5px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
+    font-family: var(--sans, 'Inter', sans-serif);
+    font-size: 12px;
+    letter-spacing: 0;
+    text-transform: none;
     color: rgba(250,250,250,0.62);
-    padding: 6px 11px;
+    padding: 5px 10px;
     border: 1px solid #262626;
     border-radius: 0;
   }
 
-  /* --- the copy field: a bordered strip, full width, pinned to the foot --- */
-  .mstc-copy {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    width: 100%;
-    margin-top: auto;
-    padding: 13px 14px;
-    border: 1px solid #262626;
-    border-radius: 0;
-    background: #141414;
-    font-family: var(--mono);
-    font-size: 12.5px;
-    letter-spacing: 0.03em;
-    color: rgba(250,250,250,0.62);
-    text-align: left;
-    cursor: pointer;
-    transition: border-color 0.18s, color 0.18s;
-  }
-  .mstc-copy:hover { border-color: rgba(197,52,0,0.5); color: #fafafa; }
-  .mstc-copy:focus-visible { outline: 1px solid #c53400; outline-offset: 2px; }
-  .mstc-copy-val { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .mstc-copy-ic { flex: none; font-size: 16px; color: rgba(250,250,250,0.4); }
-  .mstc-copy:hover .mstc-copy-ic { color: #c53400; }
-  .mstc-copy.is-copied { border-color: #c53400; color: #c53400; }
-  .mstc-copy.is-copied .mstc-copy-ic { color: #c53400; }
 
   /* --- headings ---------------------------------------------------------- */
   .mst-title {
@@ -2019,24 +2012,6 @@
 .bmsec .bm-bleed{flex:1 1 auto;}
 .bmsec .tl-section{flex:none;}
 </style>
-<script>
-/* BTCFi ecosystem field: reserve the flight's height before layout. Classic
-   and inline on purpose, because a module is deferred and would run after the
-   section has already been laid out at the link list's height. The flag goes
-   on only where js/btcfi-globe.js will really take over, and the safety timer
-   takes it off again if the module never arrives (a blocked CDN, an import
-   failure), so the section falls back to the link list instead of holding
-   open an empty 240vh void. The module removes it too on its own bail-outs. */
-(function () {
-  var html = document.documentElement;
-  if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  html.classList.add('bg-flight');
-  setTimeout(function () {
-    var m = document.getElementById('btcGlobe');
-    if (!m || !m.querySelector('.bg-track')) html.classList.remove('bg-flight');
-  }, 6000);
-})();
-</script>
 <script src="js/admin-gate.js"></script>
 </head>
 <body class="page-btcfi">
@@ -2857,114 +2832,17 @@
     <!-- ECOSYSTEM: DeFi for Bitcoin -->
     <!-- ============================================================ -->
     <div class="scale-section">
-      <!-- SHIPS VISIBLE, HIDDEN BY THE ENGINE. js/btcfi-globe.js adds .bg-sr
-           to this heading once the flight is actually running, because the
-           flight paints "A complete DeFi stack" / "Built for Bitcoin." over
-           the particle field and printing the same words twice reads as a
-           mistake. Do NOT move .bg-sr into this markup: with JS off, or under
-           prefers-reduced-motion, or on a machine with no WebGL, the engine
-           bails out early and the section would be left with no visible title
-           at all. The element itself is never removed, because it carries the
-           anchor id the search-index build links to and its place in the
-           heading outline. -->
+      <p class="scale-label">The BTCFi ecosystem</p>
       <h3 id="a-complete-defi-stack-built-for" class="scale-title">A complete DeFi stack. <span>Built for Bitcoin.</span></h3>
-
-      <!-- BTCFI ECOSYSTEM FIELD (bg- prefix, mount #btcGlobe). Replaced the
-           static orbital diagram (eho- prefix, removed 2026-08-31) with the
-           ecosystem page's WebGL flight, re-skinned: a dense particle shell
-           with the BITCOIN mark at its core, which the scroll flies through
-           into a starfield where every wallet, bridge and DeFi protocol hangs
-           as a logo sprite. Engine: js/btcfi-globe.js, loaded as a module off
-           the importmap at the foot of the page. CSS: the bg- block at the end
-           of this page's inline <style>, which is where it has to live because
-           the linked sheets (eco-stage.css among them) load first and would
-           otherwise win.
-           THE LIST BELOW IS THE SOURCE OF TRUTH, not a duplicate of one. The
-           engine reads these anchors (name, category, in-page href, logo file)
-           out of the DOM and only then wipes the mount, so with JS off the
-           section renders exactly what the hub used to: a flat wrapped list of
-           labelled in-page links to each protocol's entry further down. Add or
-           remove a protocol here and the field follows it. -->
-      <section id="btcGlobe">
-        <ul class="bgf-list">
-          <li><a class="bgf-item" href="#eco-ready" data-cat="Wallets" data-name="Ready"
-             aria-label="Ready, Wallets (jump to its entry below)">
-            <img alt="" loading="lazy" decoding="async" src="assets/logos/ready.png" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" width="48" height="48"><span class="bgf-mono" style="display:none">R</span><span>Ready</span>
-          </a></li>
-          <li><a class="bgf-item" href="#eco-xverse" data-cat="Wallets" data-name="Xverse"
-             aria-label="Xverse, Wallets (jump to its entry below)">
-            <img alt="" loading="lazy" decoding="async" src="assets/logos/xverse.png" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" width="48" height="48"><span class="bgf-mono" style="display:none">X</span><span>Xverse</span>
-          </a></li>
-          <li><a class="bgf-item" href="#eco-braavos" data-cat="Wallets" data-name="Braavos"
-             aria-label="Braavos, Wallets (jump to its entry below)">
-            <img alt="" loading="lazy" decoding="async" src="assets/logos/braavos.png" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" width="48" height="48"><span class="bgf-mono" style="display:none">B</span><span>Braavos</span>
-          </a></li>
-          <li><a class="bgf-item" href="#eco-starkgate" data-cat="Bridges" data-name="StarkGate"
-             aria-label="StarkGate, Bridges (jump to its entry below)">
-            <img alt="" loading="lazy" decoding="async" src="assets/logos/starkgate.png" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" width="48" height="48"><span class="bgf-mono" style="display:none">S</span><span>StarkGate</span>
-          </a></li>
-          <li><a class="bgf-item" href="#eco-atomiq-labs" data-cat="Bridges" data-name="Atomiq Labs"
-             aria-label="Atomiq Labs, Bridges (jump to its entry below)">
-            <img alt="" loading="lazy" decoding="async" src="assets/logos/atomiq-labs.png" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" width="48" height="48"><span class="bgf-mono" style="display:none">A</span><span>Atomiq Labs</span>
-          </a></li>
-          <li><a class="bgf-item" href="#eco-layerswap" data-cat="Bridges" data-name="Layerswap"
-             aria-label="Layerswap, Bridges (jump to its entry below)">
-            <img alt="" loading="lazy" decoding="async" src="assets/logos/layerswap.png" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" width="48" height="48"><span class="bgf-mono" style="display:none">L</span><span>Layerswap</span>
-          </a></li>
-          <li><a class="bgf-item" href="#eco-near-intents" data-cat="Bridges" data-name="Near Intents"
-             aria-label="Near Intents, Bridges (jump to its entry below)">
-            <img alt="" loading="lazy" decoding="async" src="assets/logos/near-intents.png" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" width="48" height="48"><span class="bgf-mono" style="display:none">N</span><span>Near Intents</span>
-          </a></li>
-          <li><a class="bgf-item" href="#eco-rhino-fi" data-cat="Bridges" data-name="Rhino.fi"
-             aria-label="Rhino.fi, Bridges (jump to its entry below)">
-            <img alt="" loading="lazy" decoding="async" src="assets/logos/rhino-fi.png" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" width="48" height="48"><span class="bgf-mono" style="display:none">R</span><span>Rhino.fi</span>
-          </a></li>
-          <li><a class="bgf-item" href="#eco-rocketx" data-cat="Bridges" data-name="RocketX"
-             aria-label="RocketX, Bridges (jump to its entry below)">
-            <img alt="" loading="lazy" decoding="async" src="assets/logos/rocketx.png" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" width="64" height="64"><span class="bgf-mono" style="display:none">R</span><span>RocketX</span>
-          </a></li>
-          <li><a class="bgf-item" href="#eco-stargate-finance" data-cat="Bridges" data-name="Stargate Finance"
-             aria-label="Stargate Finance, Bridges (jump to its entry below)">
-            <img alt="" loading="lazy" decoding="async" src="assets/logos/stargate-finance.png" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" width="64" height="64"><span class="bgf-mono" style="display:none">S</span><span>Stargate Finance</span>
-          </a></li>
-          <li><a class="bgf-item" href="#eco-layerzero" data-cat="Bridges" data-name="LayerZero"
-             aria-label="LayerZero, Bridges (jump to its entry below)">
-            <img alt="" loading="lazy" decoding="async" src="assets/logos/layerzero.png" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" width="64" height="64"><span class="bgf-mono" style="display:none">L</span><span>LayerZero</span>
-          </a></li>
-          <li><a class="bgf-item" href="#eco-hyperlane" data-cat="Bridges" data-name="Hyperlane"
-             aria-label="Hyperlane, Bridges (jump to its entry below)">
-            <img alt="" loading="lazy" decoding="async" src="assets/logos/hyperlane.png" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" width="64" height="64"><span class="bgf-mono" style="display:none">H</span><span>Hyperlane</span>
-          </a></li>
-          <li><a class="bgf-item" href="#eco-ekubo" data-cat="DeFi" data-name="Ekubo"
-             aria-label="Ekubo, DeFi (jump to its entry below)">
-            <img alt="" loading="lazy" decoding="async" src="assets/logos/ek.png" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" width="64" height="64"><span class="bgf-mono" style="display:none">Ek</span><span>Ekubo</span>
-          </a></li>
-          <li><a class="bgf-item" href="#eco-vesu" data-cat="DeFi" data-name="Vesu"
-             aria-label="Vesu, DeFi (jump to its entry below)">
-            <img alt="" loading="lazy" decoding="async" src="assets/logos/ve.png" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" width="64" height="64"><span class="bgf-mono" style="display:none">Ve</span><span>Vesu</span>
-          </a></li>
-          <li><a class="bgf-item" href="#eco-avnu" data-cat="DeFi" data-name="avnu"
-             aria-label="avnu, DeFi (jump to its entry below)">
-            <img alt="" loading="lazy" decoding="async" src="assets/logos/av.png" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" width="64" height="64"><span class="bgf-mono" style="display:none">av</span><span>avnu</span>
-          </a></li>
-          <li><a class="bgf-item" href="#eco-endur-finance" data-cat="DeFi" data-name="Endur Finance"
-             aria-label="Endur Finance, DeFi (jump to its entry below)">
-            <img alt="" loading="lazy" decoding="async" src="assets/logos/en.png" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" width="64" height="64"><span class="bgf-mono" style="display:none">En</span><span>Endur Finance</span>
-          </a></li>
-          <li><a class="bgf-item" href="#eco-extended" data-cat="DeFi" data-name="Extended"
-             aria-label="Extended, DeFi (jump to its entry below)">
-            <img alt="" loading="lazy" decoding="async" src="assets/logos/ex.png" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" width="64" height="64"><span class="bgf-mono" style="display:none">Ex</span><span>Extended</span>
-          </a></li>
-          <li><a class="bgf-item" href="#eco-troves" data-cat="DeFi" data-name="Troves"
-             aria-label="Troves, DeFi (jump to its entry below)">
-            <img alt="" loading="lazy" decoding="async" src="assets/logos/tr.png" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" width="64" height="64"><span class="bgf-mono" style="display:none">Tr</span><span>Troves</span>
-          </a></li>
-          <li><a class="bgf-item" href="#eco-forge-yields" data-cat="DeFi" data-name="Forge Yields"
-             aria-label="Forge Yields, DeFi (jump to its entry below)">
-            <img alt="" loading="lazy" decoding="async" src="assets/logos/fo.png" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" width="64" height="64"><span class="bgf-mono" style="display:none">Fo</span><span>Forge Yields</span>
-          </a></li>
-        </ul>
-      </section>
+      <p class="scale-intro">Onboard from Bitcoin, Lightning or any EVM chain, then put BTC to work across a Bitcoin-focused DeFi stack: staking, lending, trading, liquidity, perps, yield.</p>
+      <!-- the baseline counters: PROTOCOLS is recomputed from the rendered
+           grid on every render (the counts() hook below), never hardcoded;
+           the static figures here are only the no-JS fallback of the same
+           committed data. -->
+      <div class="eco-count-row" aria-label="Ecosystem counters">
+        <span><b id="ecoCountProtocols">19</b> protocols</span>
+        <span><b id="ecoCountCats">3</b> categories</span>
+      </div>
 
 
       <!-- BTCFI ECOSYSTEM LISTING (mst- prefix). Rebuilt 2026-09-01 in the
@@ -2981,11 +2859,11 @@
       <div class="eco-section-wrap mst-bleed">
         <div class="mst-eco" id="btcfiEco" data-cat="all">
           <div class="mst-rail" role="group" aria-label="Filter the ecosystem by category">
-            <button type="button" class="mst-rail-row is-active" aria-pressed="true" data-cat="all">All<span class="mst-rail-n" data-count="all">20</span></button>
+            <button type="button" class="mst-rail-row is-active" aria-pressed="true" data-cat="all">All<span class="mst-rail-n" data-count="all">19</span></button>
             <p class="mst-rail-cap">Onboarding</p>
             <button type="button" class="mst-rail-row" aria-pressed="false" data-cat="wallets">Wallets<span class="mst-rail-n" data-count="wallets">3</span></button>
             <button type="button" class="mst-rail-row" aria-pressed="false" data-cat="bridges">Bridges<span class="mst-rail-n" data-count="bridges">9</span></button>
-            <button type="button" class="mst-rail-row" aria-pressed="false" data-cat="defi">DeFi protocols<span class="mst-rail-n" data-count="defi">8</span></button>
+            <button type="button" class="mst-rail-row" aria-pressed="false" data-cat="defi">DeFi protocols<span class="mst-rail-n" data-count="defi">7</span></button>
           </div>
           <div class="mst-main">
             <h4 class="mst-title" id="btcfiEcoTitle">All wallets, bridges and protocols</h4>
@@ -2999,10 +2877,6 @@
                     <span class="mstc-kind">Wallet</span>
                   </div>
                   <a class="mstc-name" href="https://x.com/ready_co" target="_blank" rel="noopener">Ready<i class="ti ti-brand-x mstc-ext" aria-hidden="true"></i></a>
-                  <button type="button" class="mstc-copy" data-copy="https://x.com/ready_co" aria-label="Copy link to Ready">
-                    <span class="mstc-copy-val">x.com/ready_co</span>
-                    <i class="ti ti-copy mstc-copy-ic" aria-hidden="true"></i>
-                  </button>
                 </div>
                 <div class="mstc" id="eco-xverse">
                   <div class="mstc-top">
@@ -3010,10 +2884,6 @@
                     <span class="mstc-kind">Wallet</span>
                   </div>
                   <a class="mstc-name" href="https://x.com/xverse" target="_blank" rel="noopener">Xverse<i class="ti ti-brand-x mstc-ext" aria-hidden="true"></i></a>
-                  <button type="button" class="mstc-copy" data-copy="https://x.com/xverse" aria-label="Copy link to Xverse">
-                    <span class="mstc-copy-val">x.com/xverse</span>
-                    <i class="ti ti-copy mstc-copy-ic" aria-hidden="true"></i>
-                  </button>
                 </div>
                 <div class="mstc" id="eco-braavos">
                   <div class="mstc-top">
@@ -3021,10 +2891,6 @@
                     <span class="mstc-kind">Wallet</span>
                   </div>
                   <a class="mstc-name" href="https://x.com/myBraavos" target="_blank" rel="noopener">Braavos<i class="ti ti-brand-x mstc-ext" aria-hidden="true"></i></a>
-                  <button type="button" class="mstc-copy" data-copy="https://x.com/myBraavos" aria-label="Copy link to Braavos">
-                    <span class="mstc-copy-val">x.com/myBraavos</span>
-                    <i class="ti ti-copy mstc-copy-ic" aria-hidden="true"></i>
-                  </button>
                 </div>
               </div>
             </div>
@@ -3037,10 +2903,6 @@
                     <span class="mstc-kind">Bridge</span>
                   </div>
                   <a class="mstc-name" href="https://x.com/StarkWareLtd" target="_blank" rel="noopener">StarkGate<i class="ti ti-brand-x mstc-ext" aria-hidden="true"></i></a>
-                  <button type="button" class="mstc-copy" data-copy="https://x.com/StarkWareLtd" aria-label="Copy link to StarkGate">
-                    <span class="mstc-copy-val">x.com/StarkWareLtd</span>
-                    <i class="ti ti-copy mstc-copy-ic" aria-hidden="true"></i>
-                  </button>
                 </div>
                 <div class="mstc" id="eco-atomiq-labs">
                   <div class="mstc-top">
@@ -3048,10 +2910,6 @@
                     <span class="mstc-kind">Bridge</span>
                   </div>
                   <a class="mstc-name" href="https://x.com/atomiqlabs" target="_blank" rel="noopener">Atomiq Labs<i class="ti ti-brand-x mstc-ext" aria-hidden="true"></i></a>
-                  <button type="button" class="mstc-copy" data-copy="https://x.com/atomiqlabs" aria-label="Copy link to Atomiq Labs">
-                    <span class="mstc-copy-val">x.com/atomiqlabs</span>
-                    <i class="ti ti-copy mstc-copy-ic" aria-hidden="true"></i>
-                  </button>
                 </div>
                 <div class="mstc" id="eco-layerswap">
                   <div class="mstc-top">
@@ -3059,10 +2917,6 @@
                     <span class="mstc-kind">Bridge</span>
                   </div>
                   <a class="mstc-name" href="https://x.com/layerswap" target="_blank" rel="noopener">Layerswap<i class="ti ti-brand-x mstc-ext" aria-hidden="true"></i></a>
-                  <button type="button" class="mstc-copy" data-copy="https://x.com/layerswap" aria-label="Copy link to Layerswap">
-                    <span class="mstc-copy-val">x.com/layerswap</span>
-                    <i class="ti ti-copy mstc-copy-ic" aria-hidden="true"></i>
-                  </button>
                 </div>
                 <div class="mstc" id="eco-near-intents">
                   <div class="mstc-top">
@@ -3070,10 +2924,6 @@
                     <span class="mstc-kind">Bridge</span>
                   </div>
                   <a class="mstc-name" href="https://x.com/near_intents" target="_blank" rel="noopener">Near Intents<i class="ti ti-brand-x mstc-ext" aria-hidden="true"></i></a>
-                  <button type="button" class="mstc-copy" data-copy="https://x.com/near_intents" aria-label="Copy link to Near Intents">
-                    <span class="mstc-copy-val">x.com/near_intents</span>
-                    <i class="ti ti-copy mstc-copy-ic" aria-hidden="true"></i>
-                  </button>
                 </div>
                 <div class="mstc" id="eco-rhino-fi">
                   <div class="mstc-top">
@@ -3081,10 +2931,6 @@
                     <span class="mstc-kind">Bridge</span>
                   </div>
                   <a class="mstc-name" href="https://x.com/rhinofi" target="_blank" rel="noopener">Rhino.fi<i class="ti ti-brand-x mstc-ext" aria-hidden="true"></i></a>
-                  <button type="button" class="mstc-copy" data-copy="https://x.com/rhinofi" aria-label="Copy link to Rhino.fi">
-                    <span class="mstc-copy-val">x.com/rhinofi</span>
-                    <i class="ti ti-copy mstc-copy-ic" aria-hidden="true"></i>
-                  </button>
                 </div>
                 <div class="mstc" id="eco-rocketx">
                   <div class="mstc-top">
@@ -3092,10 +2938,6 @@
                     <span class="mstc-kind">Bridge</span>
                   </div>
                   <a class="mstc-name" href="https://x.com/RocketXexchange" target="_blank" rel="noopener">RocketX<i class="ti ti-brand-x mstc-ext" aria-hidden="true"></i></a>
-                  <button type="button" class="mstc-copy" data-copy="https://x.com/RocketXexchange" aria-label="Copy link to RocketX">
-                    <span class="mstc-copy-val">x.com/RocketXexchange</span>
-                    <i class="ti ti-copy mstc-copy-ic" aria-hidden="true"></i>
-                  </button>
                 </div>
                 <div class="mstc" id="eco-stargate-finance">
                   <div class="mstc-top">
@@ -3103,10 +2945,6 @@
                     <span class="mstc-kind">Bridge</span>
                   </div>
                   <a class="mstc-name" href="https://x.com/StargateFinance" target="_blank" rel="noopener">Stargate Finance<i class="ti ti-brand-x mstc-ext" aria-hidden="true"></i></a>
-                  <button type="button" class="mstc-copy" data-copy="https://x.com/StargateFinance" aria-label="Copy link to Stargate Finance">
-                    <span class="mstc-copy-val">x.com/StargateFinance</span>
-                    <i class="ti ti-copy mstc-copy-ic" aria-hidden="true"></i>
-                  </button>
                 </div>
                 <div class="mstc" id="eco-layerzero">
                   <div class="mstc-top">
@@ -3114,10 +2952,6 @@
                     <span class="mstc-kind">Bridge</span>
                   </div>
                   <a class="mstc-name" href="https://x.com/LayerZero_Core" target="_blank" rel="noopener">LayerZero<i class="ti ti-brand-x mstc-ext" aria-hidden="true"></i></a>
-                  <button type="button" class="mstc-copy" data-copy="https://x.com/LayerZero_Core" aria-label="Copy link to LayerZero">
-                    <span class="mstc-copy-val">x.com/LayerZero_Core</span>
-                    <i class="ti ti-copy mstc-copy-ic" aria-hidden="true"></i>
-                  </button>
                 </div>
                 <div class="mstc" id="eco-hyperlane">
                   <div class="mstc-top">
@@ -3125,10 +2959,6 @@
                     <span class="mstc-kind">Bridge</span>
                   </div>
                   <a class="mstc-name" href="https://x.com/hyperlane" target="_blank" rel="noopener">Hyperlane<i class="ti ti-brand-x mstc-ext" aria-hidden="true"></i></a>
-                  <button type="button" class="mstc-copy" data-copy="https://x.com/hyperlane" aria-label="Copy link to Hyperlane">
-                    <span class="mstc-copy-val">x.com/hyperlane</span>
-                    <i class="ti ti-copy mstc-copy-ic" aria-hidden="true"></i>
-                  </button>
                 </div>
               </div>
             </div>
@@ -3143,10 +2973,6 @@
                   <a class="mstc-name" href="https://x.com/EkuboProtocol" target="_blank" rel="noopener">Ekubo<i class="ti ti-brand-x mstc-ext" aria-hidden="true"></i></a>
                   <p class="mstc-desc">Most capital-efficient AMM on the market.</p>
                   <div class="mstc-tags"><span class="mstc-tag">Swap</span><span class="mstc-tag">Liquidity provision</span></div>
-                  <button type="button" class="mstc-copy" data-copy="https://x.com/EkuboProtocol" aria-label="Copy link to Ekubo">
-                    <span class="mstc-copy-val">x.com/EkuboProtocol</span>
-                    <i class="ti ti-copy mstc-copy-ic" aria-hidden="true"></i>
-                  </button>
                 </div>
                 <div class="mstc" id="eco-vesu">
                   <div class="mstc-top">
@@ -3156,10 +2982,6 @@
                   <a class="mstc-name" href="https://x.com/vesuxyz" target="_blank" rel="noopener">Vesu<i class="ti ti-brand-x mstc-ext" aria-hidden="true"></i></a>
                   <p class="mstc-desc">Lend BTC, borrow stablecoins, one-click loop strategies.</p>
                   <div class="mstc-tags"><span class="mstc-tag">Lending</span><span class="mstc-tag">Borrowing</span></div>
-                  <button type="button" class="mstc-copy" data-copy="https://x.com/vesuxyz" aria-label="Copy link to Vesu">
-                    <span class="mstc-copy-val">x.com/vesuxyz</span>
-                    <i class="ti ti-copy mstc-copy-ic" aria-hidden="true"></i>
-                  </button>
                 </div>
                 <div class="mstc" id="eco-avnu">
                   <div class="mstc-top">
@@ -3169,10 +2991,6 @@
                   <a class="mstc-name" href="https://x.com/avnu_fi" target="_blank" rel="noopener">avnu<i class="ti ti-brand-x mstc-ext" aria-hidden="true"></i></a>
                   <p class="mstc-desc">Best trading execution across Starknet. Private fee payments via Paymaster for strkBTC swaps.</p>
                   <div class="mstc-tags"><span class="mstc-tag">Swap</span><span class="mstc-tag">DCA</span></div>
-                  <button type="button" class="mstc-copy" data-copy="https://x.com/avnu_fi" aria-label="Copy link to avnu">
-                    <span class="mstc-copy-val">x.com/avnu_fi</span>
-                    <i class="ti ti-copy mstc-copy-ic" aria-hidden="true"></i>
-                  </button>
                 </div>
                 <div class="mstc" id="eco-endur-finance">
                   <div class="mstc-top">
@@ -3182,10 +3000,6 @@
                   <a class="mstc-name" href="https://x.com/endurfi" target="_blank" rel="noopener">Endur Finance<i class="ti ti-brand-x mstc-ext" aria-hidden="true"></i></a>
                   <p class="mstc-desc">Liquid BTC staking. Earn staking yield while staying liquid for DeFi.</p>
                   <div class="mstc-tags"><span class="mstc-tag">Stake</span><span class="mstc-tag">Liquid stake</span></div>
-                  <button type="button" class="mstc-copy" data-copy="https://x.com/endurfi" aria-label="Copy link to Endur Finance">
-                    <span class="mstc-copy-val">x.com/endurfi</span>
-                    <i class="ti ti-copy mstc-copy-ic" aria-hidden="true"></i>
-                  </button>
                 </div>
                 <div class="mstc" id="eco-extended">
                   <div class="mstc-top">
@@ -3195,10 +3009,6 @@
                   <a class="mstc-name" href="https://x.com/extendedapp" target="_blank" rel="noopener">Extended<i class="ti ti-brand-x mstc-ext" aria-hidden="true"></i></a>
                   <p class="mstc-desc">Trade perps with WBTC as collateral, or use stablecoins borrowed against BTC to generate yield.</p>
                   <div class="mstc-tags"><span class="mstc-tag">Perp trading</span><span class="mstc-tag">Liquidity provision</span></div>
-                  <button type="button" class="mstc-copy" data-copy="https://x.com/extendedapp" aria-label="Copy link to Extended">
-                    <span class="mstc-copy-val">x.com/extendedapp</span>
-                    <i class="ti ti-copy mstc-copy-ic" aria-hidden="true"></i>
-                  </button>
                 </div>
                 <div class="mstc" id="eco-troves">
                   <div class="mstc-top">
@@ -3208,10 +3018,6 @@
                   <a class="mstc-name" href="https://x.com/trovesfi" target="_blank" rel="noopener">Troves<i class="ti ti-brand-x mstc-ext" aria-hidden="true"></i></a>
                   <p class="mstc-desc">Advanced one-click DeFi strategies for Bitcoiners. Private vaults are live.</p>
                   <div class="mstc-tags"><span class="mstc-tag">Yield farming</span></div>
-                  <button type="button" class="mstc-copy" data-copy="https://x.com/trovesfi" aria-label="Copy link to Troves">
-                    <span class="mstc-copy-val">x.com/trovesfi</span>
-                    <i class="ti ti-copy mstc-copy-ic" aria-hidden="true"></i>
-                  </button>
                 </div>
                 <div class="mstc" id="eco-forge-yields">
                   <div class="mstc-top">
@@ -3221,23 +3027,6 @@
                   <a class="mstc-name" href="https://x.com/ForgeYields" target="_blank" rel="noopener">Forge Yields<i class="ti ti-brand-x mstc-ext" aria-hidden="true"></i></a>
                   <p class="mstc-desc">Cross-chain yield strategies from Starknet, powered by Hyperlane.</p>
                   <div class="mstc-tags"><span class="mstc-tag">Yield farming</span></div>
-                  <button type="button" class="mstc-copy" data-copy="https://x.com/ForgeYields" aria-label="Copy link to Forge Yields">
-                    <span class="mstc-copy-val">x.com/ForgeYields</span>
-                    <i class="ti ti-copy mstc-copy-ic" aria-hidden="true"></i>
-                  </button>
-                </div>
-                <div class="mstc" id="eco-yieldstark">
-                  <div class="mstc-top">
-                    <span class="mstc-logo"><img alt="" loading="lazy" decoding="async" src="assets/logos/yieldstark.jpg" onerror="this.style.display='none';this.parentNode.querySelector('.eco-mono').style.display='flex'"><span class="eco-mono" style="display:none">Yi</span></span>
-                    <span class="mstc-kind">DeFi protocol</span>
-                  </div>
-                  <a class="mstc-name" href="https://app.yieldstark.xyz" target="_blank" rel="noopener">YieldStark<i class="ti ti-brand-x mstc-ext" aria-hidden="true"></i></a>
-                  <p class="mstc-desc">Starknet yield app for discovering and managing DeFi opportunities.</p>
-                  <div class="mstc-tags"><span class="mstc-tag">Yield</span><span class="mstc-tag">DeFi app</span></div>
-                  <button type="button" class="mstc-copy" data-copy="https://app.yieldstark.xyz" aria-label="Copy link to YieldStark">
-                    <span class="mstc-copy-val">app.yieldstark.xyz</span>
-                    <i class="ti ti-copy mstc-copy-ic" aria-hidden="true"></i>
-                  </button>
                 </div>
                 <div class="mstc mstc-soon" aria-hidden="true">
                   <div class="mstc-top"><span class="mstc-logo"><span class="eco-mono" style="display:flex">+</span></span><span class="mstc-kind">Soon</span></div>
@@ -3250,6 +3039,81 @@
         </div>
       </div>
     </div>
+
+
+      <!-- BTC Staking Band -->
+      <div id="native-btc-staking-a-first-for" class="staking-band">
+        <div>
+          <h3>Native BTC staking: a first for Bitcoin</h3>
+          <!-- C2 + C4. Two problems in one paragraph, fixed together.
+               THE MONTH IS DISPUTED, so the page no longer names one. It read
+               "Since September 2025". Contemporaneous coverage put the mainnet
+               launch at 30 September 2025, but STARKNET'S OWN year in review
+               says BTC staking launched "at the end of October". A month apart,
+               and the tweet their retrospective links to is on X, which is
+               auth-walled and cannot be read to settle it. "Late 2025" is what
+               both sources support. Do not restore a specific month without a
+               primary source that states one.
+               "SINCE" SURVIVES BECAUSE IT IS CHECKABLE HERE, which is unusual
+               for that word. It failed on quantum's S2morrow line because
+               nothing showed the claim still held. Here the page itself proves
+               continuity: the metrics block below fetches Endur live and
+               renders BTC currently staked, so a reader watching a number move
+               is watching the claim hold.
+               THE SUPERLATIVE IS SOFTENED, not deleted. "The only network
+               secured by a dual-token Proof-of-Stake consensus" is not
+               supported anywhere: Starknet's own staking page claims only
+               "the first Major L2 with a staking mechanism". What IS sourced
+               verbatim is "the first Rollup to tether its security directly to
+               Bitcoin", so that is what the page says, and the 25/75 split is
+               added because it is quoted verbatim too and makes the weaker
+               sentence carry more than the stronger one did. -->
+          <p class="th-claim" data-perishable="third-party"
+             data-src="https://www.starknet.io/blog/starknet-2025-year-in-review/"
+             data-checked="2026-08-23"
+             data-says="the Starknet ecosystem launched BTC staking, making Starknet the first Rollup to tether its security directly to Bitcoin | Bitcoin holders can now stake their BTC to secure Starknet and earn STRK rewards, launching a dual-token consensus model where STRK represents 75% and BTC 25% of the network&#39;s total security weight"
+             data-noun-ok="Starknet BTC STRK">Since late 2025, Bitcoin can be staked natively on Starknet to help secure the network and earn rewards. Not custodial lending. Not a yield farm. Starknet is the first rollup to tether its security directly to Bitcoin: BTC and STRK stake together, at 25% and 75% of total staking power.</p>
+          <!-- COPY CONSOLIDATION (owner-approved, 2026-08-24). The middle
+               paragraph — "BTC carries 25% of consensus weight (monetary
+               security), STRK carries 75% (network economics)." — moved into
+               the column's role labels to the right: the same information
+               reads as BTC "Consensus weight, monetary security" / STRK
+               "Network economics, reward engine" beside the 25/75 segments.
+               The information moved, it did not vanish; do not re-add the
+               paragraph here without removing it there. The first paragraph's
+               "BTC and STRK stake together, at 25% and 75% of total staking
+               power" is now the visual's source of truth.
+               THE SIGNATURE "ONE SECURITY BUDGET, STAKED TOGETHER" IS
+               OWNER-APPROVED EDITORIAL COPY (2026-08-24), NOT SOURCE-
+               CONTAINED: "security budget" is standard PoS vocabulary used
+               as a signature; the factual load is carried by the contained
+               first paragraph above. If this panel ever gains data-perishable
+               / data-says attributes, the signature must not be cited as a
+               sourced claim. -->
+          <p style="margin-top:12px;">Because rewards come from protocol economics, this yield is <strong>sustainable</strong> and tied directly to STRK's economy: as more STRK is staked, and as STRK appreciates, BTC staking rewards grow with it.</p>
+        </div>
+        <!-- One shared column, not two bars: 25 + 75 = 100% of ONE staking
+             power, and the copy says "stake together" — two separate bars
+             read as rivals, one split column reads as a composition. The
+             segment heights are the device's only job: exactly 25% / 75%. -->
+        <div class="bsk-visual">
+          <p class="bsk-cap bsk-fade">Total staking power</p>
+          <div class="bsk-col">
+            <div class="bsk-seg bsk-seg-btc">
+              <i class="bsk-fill" aria-hidden="true"></i>
+              <span class="bsk-pct bsk-fade">25%</span>
+              <span class="bsk-role bsk-fade"><b>BTC</b> Consensus weight, monetary security</span>
+            </div>
+            <div class="bsk-seg bsk-seg-strk">
+              <i class="bsk-fill" aria-hidden="true"></i>
+              <span class="bsk-pct bsk-fade">75%</span>
+              <span class="bsk-role bsk-fade"><b>STRK</b> Network economics, reward engine</span>
+            </div>
+            <i class="bsk-line bsk-fade" aria-hidden="true"></i>
+          </div>
+          <p class="bsk-sig bsk-fade">One security budget, staked together</p>
+        </div>
+      </div>
 
     <!-- ONE SECTION (2026-09-01): the figures and the news toggle were two
          blocks with a gap between them; they are one full-height section now,
@@ -3718,6 +3582,23 @@
   });
 
   select(0); /* first node active on load */
+})();
+</script>
+<script>
+/* STAKING COLUMN REVEAL. One-shot: IO adds .bsk-on, the CSS transitions do
+   the rest, and nothing runs afterwards: no rAF, no listeners left behind.
+   Reduced motion (or no JS): .bsk-pre is never added, so the base end state
+   renders immediately. */
+(function() {
+  var band = document.getElementById('native-btc-staking-a-first-for');
+  if (!band || !('IntersectionObserver' in window)) return;
+  if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  band.classList.add('bsk-pre');
+  new IntersectionObserver(function(es, io) {
+    if (!es[0].isIntersecting) return;
+    band.classList.add('bsk-on');
+    io.disconnect();
+  }, { threshold: 0.35 }).observe(band);
 })();
 </script>
 <script src="js/selector-rove.js"></script>
@@ -4892,16 +4773,6 @@
       ],
       "description": "Cross-chain yield strategies from Starknet, powered by Hyperlane.",
       "url": "https://x.com/ForgeYields"
-    },
-    {
-      "name": "YieldStark",
-      "logo": "assets/logos/yieldstark.jpg",
-      "tags": [
-        "Yield",
-        "DeFi app"
-      ],
-      "description": "Starknet yield app for discovering and managing DeFi opportunities.",
-      "url": "https://app.yieldstark.xyz"
     }
   ]
 };
@@ -4944,10 +4815,8 @@
       '<a class="mstc-name" href="' + escA(url) + '" target="_blank" rel="noopener">' + esc(it.name) + '<i class="ti ti-brand-x mstc-ext" aria-hidden="true"></i></a>' +
       (it.description ? '<p class="mstc-desc">' + esc(it.description) + '</p>' : '') +
       (tags.length ? '<div class="mstc-tags">' + tags.map(function(tg){ return '<span class="mstc-tag">' + esc(tg) + '</span>'; }).join('') + '</div>' : '') +
-      '<button type="button" class="mstc-copy" data-copy="' + escA(url) + '" aria-label="Copy link to ' + escA(it.name) + '">' +
-        '<span class="mstc-copy-val">' + esc(prettyUrl(url)) + '</span>' +
-        '<i class="ti ti-copy mstc-copy-ic" aria-hidden="true"></i>' +
-      '</button>' +
+      /* the URL field and its copy button left the card (2026-09-05):
+         the X glyph on the name is the link */
     '</div>';
   }
 
@@ -5306,6 +5175,9 @@
     });
     var a = root.querySelector('[data-count="all"]');
     if (a) a.textContent = String(total);
+    /* the section's baseline counter is the same rendered total */
+    var pc = document.getElementById('ecoCountProtocols');
+    if (pc) pc.textContent = String(total);
   }
   document.addEventListener('btcfi:eco-rendered', counts);
 
@@ -5324,51 +5196,6 @@
     catch (e) { el.scrollIntoView(); }
   }
   window.addEventListener('hashchange', openHash);
-  // the field's links can re-set a hash that is already current, which fires
-  // no hashchange at all, so the click is caught too
-  document.addEventListener('click', function(e){
-    var t = e.target;
-    if (t && t.closest && t.closest('.bgf-item')) setTimeout(openHash, 0);
-  }, true);
-
-  // one delegated copy handler for every strip, present and future
-  var timer = null;
-  function feedback(btn){
-    var val = btn.querySelector('.mstc-copy-val');
-    if (!val) return;
-    if (btn.dataset.prev == null) btn.dataset.prev = val.textContent;
-    val.textContent = 'Copied';
-    btn.classList.add('is-copied');
-    clearTimeout(timer);
-    timer = setTimeout(function(){
-      val.textContent = btn.dataset.prev;
-      delete btn.dataset.prev;
-      btn.classList.remove('is-copied');
-    }, 1400);
-  }
-  root.addEventListener('click', function(e){
-    var btn = e.target && e.target.closest ? e.target.closest('.mstc-copy') : null;
-    if (!btn) return;
-    var text = btn.getAttribute('data-copy') || '';
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(text).then(function(){ feedback(btn); }, function(){ legacy(text, btn); });
-    } else { legacy(text, btn); }
-  });
-  // http:// origins and older Safari have no async clipboard
-  function legacy(text, btn){
-    try {
-      var ta = document.createElement('textarea');
-      ta.value = text;
-      ta.setAttribute('readonly', '');
-      ta.style.cssText = 'position:fixed;top:-1000px;opacity:0';
-      document.body.appendChild(ta);
-      ta.select();
-      document.execCommand('copy');
-      document.body.removeChild(ta);
-      feedback(btn);
-    } catch (err) {}
-  }
-
   // js/search.js lands an "ecosystem item" result on one of the three grid
   // containers by id. Those live inside a panel the rail may be filtering
   // out, so expose the same re-open hook the bridge-roadmap accordion does.
@@ -5590,6 +5417,5 @@
 <script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.185.0/build/three.module.js"}}</script>
 <script type="module" src="js/btcfi-hero-mark.js"></script>
 <script type="module" src="js/eco-backdrop.js"></script>
-<script type="module" src="js/btcfi-globe.js"></script>
 </body>
 </html>
