@@ -1415,15 +1415,27 @@
      baseline under a container-wide hairline. The stats mirror the Live
      on-chain block's snapshot (data-bm-hero, filled by the same setStat that
      paints the metric boxes: one snapshot, one fetch, one vintage). */
+  /* FIXED GEOMETRY (2026-09-05, shared with strk and digest): constant-height
+     bar, constant hairline / value baseline / label-block top per breakpoint.
+     A baseline strut (1.85u) in every baseline-group item pins the shared
+     baseline, a top-aligned box strut (2.3u) fixes the value line box, and
+     the label slot reserves three 15px mono lines (the tallest case, strk's
+     staked label); shorter labels leave empty space below.
+     Height = 1px hairline + 1.25u pad + 2.3u value box + 5px gap + 45px. */
   .bfh-strip { position: relative; z-index: 2; margin-top: 0;
     display: flex; align-items: baseline; justify-content: space-between; gap: calc(2 * var(--bfh-u));
-    border-top: 1px solid rgba(250, 250, 250, .16); padding-top: calc(1.25 * var(--bfh-u)); }
+    border-top: 1px solid rgba(250, 250, 250, .16); padding-top: calc(1.25 * var(--bfh-u));
+    box-sizing: border-box; height: calc(1px + 3.55 * var(--bfh-u) + 50px); }
   .bfh-stats { display: flex; flex-wrap: wrap; gap: calc(2 * var(--bfh-u)); margin: 0; padding: 0; list-style: none; }
   .bfh-stats li { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
   .bfh-stats b { font-family: var(--display); font-weight: 300; font-size: max(calc(1.7 * var(--bfh-u)), 22px);
     line-height: 1; letter-spacing: -.01em; color: var(--white); font-variant-numeric: tabular-nums; }
+  .bfh-stats b::before, .bfh-turn::before { content: ""; display: inline-block; width: 0;
+    height: calc(1.85 * var(--bfh-u)); }
+  .bfh-stats b::after { content: ""; display: inline-block; width: 0; vertical-align: top;
+    height: calc(2.3 * var(--bfh-u)); }
   .bfh-stats span { font-family: var(--mono), monospace; font-size: max(calc(0.68 * var(--bfh-u)), 10px);
-    letter-spacing: .14em; text-transform: uppercase; color: rgba(250, 250, 250, .72); max-width: 16ch; }
+    line-height: 1.5; letter-spacing: .14em; text-transform: uppercase; color: rgba(250, 250, 250, .72); max-width: 17ch; }
   /* half the 4.6 display: a signature, not a rival headline */
   .bfh-turn { margin: 0; text-align: right; font-family: var(--display); font-weight: 700;
     font-size: calc(2.3 * var(--bfh-u)); line-height: .95; letter-spacing: -.01em;
@@ -1441,14 +1453,21 @@
     .hero .hero-eyebrow { font-size: .75rem; }
     .hero .hero-title { margin-top: .75rem; font-size: 2.75rem; }
     .hero .hero-subtitle { margin-top: 1rem; max-width: 40rem; font-size: 1rem; }
-    .bfh-strip { margin-top: 2rem; padding-top: 1.25rem; }
+    /* fixed geometry, rem tier: 1 + 20 pad + 26 value box + 5 + 45 = 97px */
+    .bfh-strip { margin-top: 2rem; padding-top: 1.25rem; height: 97px; }
     .bfh-stats { gap: 1.5rem; }
     .bfh-stats b { font-size: 1.5rem; }
+    .bfh-stats b::before, .bfh-turn::before { height: 21px; }
+    .bfh-stats b::after { height: 26px; }
     .bfh-stats span { font-size: 10px; }
     .bfh-turn { font-size: 1.375rem; }
   }
   @media (max-width: 700px) {
-    .bfh-strip { flex-direction: column; align-items: flex-start; gap: 1rem; }
+    /* stacked: 1 + 20 pad + 76 stats block + 16 gap + 38 claim slot = 151px */
+    .bfh-strip { flex-direction: column; align-items: flex-start; gap: 1rem; height: 151px; }
+    /* three 17ch (102px) label columns + two .75rem gaps = 330px, fits the
+       335px content box on one line */
+    .bfh-stats { gap: .75rem; }
     .bfh-turn { text-align: left; font-size: 1.25rem; white-space: normal; }
   }
   @media (max-width: 380px) {

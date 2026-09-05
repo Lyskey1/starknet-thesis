@@ -245,7 +245,7 @@
     display: flex; flex-direction: column; align-items: stretch;
     height: auto; min-height: calc(100svh - var(--vcnav-h, 64px)); max-width: none;
     margin: calc(-1 * var(--dgh-chrome)) 0 0;
-    padding: calc(var(--dgh-chrome) + max(4.5 * var(--dgh-u), 56px)) 0 calc(2.153 * var(--dgh-u));
+    padding: calc(var(--dgh-chrome) + max(4.5 * var(--dgh-u), 56px)) 0 32px;
     overflow: hidden; text-align: left; background: transparent; z-index: 0; }
   /* styles.css hangs a centred radial glow off .hero::before for the centred
      heroes. This hero is not centred and carries its own light, so it goes. */
@@ -292,9 +292,20 @@
   /* zone three: the baseline strip, full hero width, one shared baseline.
      No margin-top auto: the hero fits its content now, and the balanced air
      around the column comes from the scene band's own centring. */
+  /* FIXED GEOMETRY (2026-09-05, shared with strk and btcfi): constant-height
+     bar, constant hairline / value baseline per breakpoint. This page's
+     counters sit ON the shared value baseline (a 1.85u baseline strut in the
+     counter line and the signature pins it, exactly as the stat values on
+     strk and btcfi are pinned), and the label slot those pages reserve stays
+     EMPTY here: the space is reserved, not collapsed, so the hairline sits
+     at the same offset from the fold on all three pages.
+     Height = 1px hairline + 1.25u pad + 2.3u value box + 5px gap + 45px. */
   .dgh-strip { position: relative; z-index: 2; margin-top: 0;
     display: flex; align-items: baseline; justify-content: space-between; gap: calc(2 * var(--dgh-u));
-    border-top: 1px solid rgba(250, 250, 250, .16); padding-top: calc(1.25 * var(--dgh-u)); }
+    border-top: 1px solid rgba(250, 250, 250, .16); padding-top: calc(1.25 * var(--dgh-u));
+    box-sizing: border-box; height: calc(1px + 3.55 * var(--dgh-u) + 50px); }
+  .dgh-stat::before, .dgh-turn::before { content: ""; display: inline-block; width: 0;
+    height: calc(1.85 * var(--dgh-u)); }
   /* one step up from the old 11px whisper, so the strip reads as one bar */
   .dgh-stat { margin: 0; text-align: left; font-family: var(--vc-tag); font-weight: 400;
     font-size: max(0.87 * var(--dgh-u), 12px); line-height: 1.5; letter-spacing: .12em;
@@ -392,19 +403,22 @@
     /* THE STRIP STAYS ONE ROW down to 700px: counters left, signature
        right, one baseline. The signature holds near half the 2.75rem
        display; the counters may wrap before the strip does. */
-    .dgh-strip { margin-top: 2rem; padding-top: 1.25rem; }
+    /* fixed geometry, rem tier: 1 + 20 pad + 26 value box + 5 + 45 = 97px */
+    .dgh-strip { margin-top: 2rem; padding-top: 1.25rem; height: 97px; }
+    .dgh-stat::before, .dgh-turn::before { height: 21px; }
     .dgh-stat { font-size: .75rem; }
     .dgh-turn { font-size: 1.375rem; }
   }
   /* below 700px the row cannot hold both: stack, counters above, signature
      below, both left-aligned */
   @media (max-width: 700px) {
-    .dgh-strip { flex-direction: column; align-items: flex-start; gap: .9rem; }
+    /* stacked: the strk/btcfi constant, 1 + 20 + 76 + 16 + 38 = 151px */
+    .dgh-strip { flex-direction: column; align-items: flex-start; gap: 1rem; height: 151px; }
     .dgh-stat { text-align: left; white-space: normal; }
     .dgh-turn { text-align: left; font-size: 1.25rem; }
   }
   @media (max-width: 380px) {
-    body.page-recap .hero.dgh-hero { padding: 5.5rem 1.25rem 2rem; }
+    body.page-recap .hero.dgh-hero { padding: 5.5rem 1.25rem 24px; }
     .dgh-title { font-size: 2.375rem; }
     .dgh-turn { font-size: 1.125rem; }
   }

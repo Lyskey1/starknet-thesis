@@ -1289,16 +1289,32 @@ body > .hero{position:relative;display:flex;flex-direction:column;
 }
 
 /* the baseline strip: three live stats left, the signature right, one
-   shared baseline under a container-wide hairline */
+   shared baseline under a container-wide hairline.
+   FIXED GEOMETRY (2026-09-05, shared with btcfi and digest): the strip is a
+   constant-height bar whose hairline, value baseline and label-block top are
+   constants at each breakpoint, independent of content. Two zero-width
+   struts do it without touching font metrics: a BASELINE strut (1.85u) in
+   every baseline-group item pins the shared baseline exactly 1.85u under the
+   padding (it out-ascends every glyph, so align-items:baseline snaps the
+   whole line to it), and a TOP-ALIGNED box strut (2.3u) fixes the value line
+   box, so the label block always starts at pad + 2.3u + 5px. The label slot
+   reserves THREE 15px mono lines (the tallest case, strk's staked label);
+   shorter labels leave empty space below and can never pull the hairline.
+   Height = 1px hairline + 1.25u pad + 2.3u value box + 5px gap + 45px slot. */
 .skh-strip{position:relative;z-index:2;margin-top:0;
   display:flex;align-items:baseline;justify-content:space-between;gap:calc(2 * var(--skh-u));
-  border-top:1px solid rgba(250,250,250,.16);padding-top:calc(1.25 * var(--skh-u))}
+  border-top:1px solid rgba(250,250,250,.16);padding-top:calc(1.25 * var(--skh-u));
+  box-sizing:border-box;height:calc(1px + 3.55 * var(--skh-u) + 50px)}
 .skh-stats{display:flex;flex-wrap:wrap;gap:calc(2 * var(--skh-u));margin:0;padding:0;list-style:none}
 .skh-stats li{display:flex;flex-direction:column;gap:5px;min-width:0}
 .skh-stats b{font-family:var(--display);font-weight:300;font-size:max(calc(1.7 * var(--skh-u)),22px);
   line-height:1;letter-spacing:-.01em;color:var(--white);font-variant-numeric:tabular-nums}
+.skh-stats b::before,.skh-turn::before{content:"";display:inline-block;width:0;
+  height:calc(1.85 * var(--skh-u))}
+.skh-stats b::after{content:"";display:inline-block;width:0;vertical-align:top;
+  height:calc(2.3 * var(--skh-u))}
 .skh-stats span{font-family:var(--mono),monospace;font-size:max(calc(0.68 * var(--skh-u)),10px);
-  letter-spacing:.14em;text-transform:uppercase;color:rgba(250,250,250,.72);max-width:16ch}
+  line-height:1.5;letter-spacing:.14em;text-transform:uppercase;color:rgba(250,250,250,.72);max-width:17ch}
 /* half the 4.6 display: a signature, not a rival headline */
 .skh-turn{margin:0;text-align:right;font-family:var(--display);font-weight:700;
   font-size:calc(2.3 * var(--skh-u));line-height:.95;letter-spacing:-.01em;
@@ -1313,14 +1329,23 @@ body > .hero{position:relative;display:flex;flex-direction:column;
   .hero .hero-eyebrow{font-size:.75rem}
   .hero .hero-title{margin-top:.75rem;font-size:2.75rem}
   .hero .hero-subtitle{margin-top:1rem;max-width:40rem;font-size:1rem}
-  .skh-strip{margin-top:2rem;padding-top:1.25rem}
+  /* fixed geometry, rem tier: baseline strut 20px, value box 26px, label
+     slot 45px -> height 1 + 20 + 26 + 5 + 45 = 97px in the one-row layout */
+  .skh-strip{margin-top:2rem;padding-top:1.25rem;height:97px}
   .skh-stats{gap:1.5rem}
   .skh-stats b{font-size:1.5rem}
+  .skh-stats b::before,.skh-turn::before{height:21px}
+  .skh-stats b::after{height:26px}
   .skh-stats span{font-size:10px}
   .skh-turn{font-size:1.375rem}
 }
 @media (max-width:700px){
-  .skh-strip{flex-direction:column;align-items:flex-start;gap:1rem}
+  /* stacked: stats block (76px) + 16px gap + a reserved two-line claim slot
+     (38px at 1.25rem/.95) -> height 1 + 20 + 76 + 16 + 38 = 151px */
+  .skh-strip{flex-direction:column;align-items:flex-start;gap:1rem;height:151px}
+  /* three label columns capped at 17ch (102px) + two gaps must fit the
+     335px content box: .75rem gaps land the row at 330px, one line */
+  .skh-stats{gap:.75rem}
   .skh-turn{text-align:left;font-size:1.25rem;white-space:normal}
 }
 @media (max-width:380px){
