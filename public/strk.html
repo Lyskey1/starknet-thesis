@@ -1495,88 +1495,67 @@ footer.site-footer .foot-bottom a:hover{color:var(--accent)}
   .snum-lede{padding-bottom:28px}
 }
 
-/* ===== HERO, THE /quantum AND /btcfi FRAME ==================================
-   The page's own copy on the frame the two sibling pages already run: full
-   viewport, nothing in a card, everything transparent over the page backdrop.
-   Kicker top left, display under it, the particle centrepiece filling the
-   middle, the stat rail plus the note and the CTA pair bottom left, and a
-   mono readout over the big uppercase turn line bottom right.
-
-   THE HERO CLAIMS THE HEADER STRIP BACK, /quantum's mechanism exactly. The
-   header pill is NOT fixed on these pages: css/eco-stage.css declares
-   `body > *:not(.eco-bd){position:relative;z-index:1}`, which out-specifies
-   vesper-chrome's `position:fixed`, so the pill occupies --skh-chrome pixels
-   of FLOW above the hero and the hero would otherwise start below the nav
-   with a band behind it. The negative top margin gives that strip back so the
-   hero is a true 100vh, and z-index 0 puts the hero back UNDER the pill so
-   the pill reads over it. `body > .hero` is used rather than a body class:
-   it matches eco-stage's specificity and this sheet loads after it, so it
-   wins on source order without touching <body>.
-
-   THIS BLOCK IS LAST IN THE SHEET ON PURPOSE. The page declares .hero in
-   THREE earlier layers (the base rule, the stride skin, and the viewport
-   pass), and only the last declaration wins. Every property those three set
-   on .hero is restated here rather than assumed away. The sheet is in <head>
-   already, so there is no CLS hoist to do, unlike /quantum.
-   Straight corners everywhere, no radius, no glass, no glow. */
-:root{--skh-chrome:51px;--skh-hover-dur:.28s;--skh-hover-ease:cubic-bezier(.22,.61,.36,1)}
-/* 51px is the measured FLOW contribution of the pill at every width above the
-   980 breakpoint, checked on fresh loads from 981 to 1920: the hero comes out
-   at exactly 100vh at all of them. The pill's own painted box is 56px tall
-   below ~1024, offset further down, which is why the kicker floor below is
-   set against the pill's BOTTOM EDGE rather than against this number. */
-body > .hero{position:relative;display:block;height:calc(100svh + var(--skh-chrome));min-height:calc(100svh + var(--skh-chrome));
-  max-width:none;margin:calc(-1 * var(--skh-chrome)) 0 0;padding:0;
-  overflow:hidden;text-align:left;background:transparent;z-index:0;
-  align-items:stretch;justify-content:flex-start}
-/* the centrepiece stage: behind the copy, clipped, inert to the pointer, and
-   deliberately unmasked. The scene is a ring fitted inside the frame, so an
-   edge fade would clip the bright annulus rather than the nothing around it. */
-.hero > .skh-stage{position:absolute;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
-.hero > .skh-stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
-/* the landing scale, in the landing's own vw units, as /quantum carries them */
-/* THE FLOORS ARE 132 AND 158, NOT /quantum's 88 AND 114. The hero claims the
-   header strip back, so `top` is measured from --skh-chrome pixels ABOVE the
-   viewport: an 88px floor puts the kicker 37px down the screen, straight
-   under the header pill, which is what it does on a 1024 frame where 7.2vw is
-   only 74px and the floor is what applies. MEASURED in Chrome across 981 to
-   1920: the pill's bottom edge is 72px below 1040 (a 56px pill offset 16) and
-   61px above it (51 offset 10), so 132 clears the worst of the two with room
-   at every width where the vw term loses. The 26px gap to the display is
-   /quantum's. Asserted: the kicker's top never sits above the header's
-   bottom edge at 981, 1024, 1180, 1280, 1440 or 1920. */
-.hero > .hero-eyebrow{position:absolute;top:max(7.2vw,132px);left:1.667vw;z-index:2;margin:0;
-  font-family:var(--sans);font-weight:400;font-size:max(0.9vw,11px);line-height:1.5;
-  letter-spacing:.2em;text-transform:uppercase;color:var(--accent);opacity:1}
-.hero > .hero-title{position:absolute;top:max(9.028vw,158px);left:1.667vw;z-index:2;margin:0;
-  font-family:var(--display);font-weight:300;font-size:4.6vw;line-height:.9;
-  letter-spacing:normal;text-transform:none;color:var(--white);width:52vw;max-width:none;text-align:left}
-.hero > .hero-title em{font-style:normal;color:var(--accent)}
-.hero > .skh-left{position:absolute;left:1.667vw;bottom:2.153vw;z-index:2;width:26vw;
-  display:flex;flex-direction:column;gap:1.25vw;align-items:flex-start;margin:0}
-.hero > .skh-right{position:absolute;right:1.667vw;bottom:2.153vw;z-index:2;
-  display:flex;flex-direction:column;align-items:flex-end;gap:1.25vw;margin:0;text-align:right}
-/* the three stats, kept from the old hero foot. A mono rail, not a card. */
-.skh-stats{display:flex;flex-wrap:wrap;gap:1.6vw;margin:0;padding:0;list-style:none}
+/* ===== HERO, THREE ZONES (2026-09-05) =======================================
+   The digest hero's frame: editorial column, centre-right particle stage,
+   baseline strip on the 1392px site container. The header is truly fixed
+   site-wide since the nav pass, so the old strip-claiming mechanism
+   (--skh-chrome plus a negative margin) is gone with the corner scatter.
+   THIS BLOCK IS LAST IN THE SHEET ON PURPOSE: the page declares .hero in
+   earlier layers and only the last declaration wins. Straight corners, no
+   radius, no glass, no glow. */
+:root{--skh-hover-dur:.28s;--skh-hover-ease:cubic-bezier(.22,.61,.36,1);
+  /* 1vw frozen at its 1440 value, the digest hero's capped unit */
+  --skh-u:min(1vw,14.4px)}
+/* THREE ZONES (2026-09-05). The nav pass made the header truly fixed with a
+   body offset, so the old under-header dance (--skh-chrome, the negative
+   margin, the 100svh pin) is obsolete: the hero sizes to its content and
+   lands near 82svh at 1440x900. The wrap is the site's 1392px container, so
+   the strip's hairline sits on the same lines as the nav and the footer. */
+body > .hero{position:relative;display:block;height:auto;min-height:0;
+  max-width:none;margin:0;padding:calc(4.5 * var(--skh-u)) 0 calc(2.153 * var(--skh-u));
+  overflow:hidden;text-align:left;background:transparent;z-index:0}
+.skh-wrap{width:calc(100% - 48px);max-width:1392px;margin:0 auto}
+.skh-scene{position:relative;display:flex;align-items:center;min-height:54svh}
+/* the stage is a centre-right box: the renderer centres its ring in the
+   mount and scales stroke weight with mount height, so the box keeps the
+   mark's density while parking it clear of the column */
+.skh-stage{position:absolute;top:50%;right:0;transform:translateY(-50%);
+  width:calc(58 * var(--skh-u));height:min(74svh,680px);z-index:0;pointer-events:none;overflow:hidden}
+.skh-stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.skh-col{position:relative;z-index:2;width:calc(47 * var(--skh-u));
+  display:flex;flex-direction:column;align-items:flex-start}
+.hero .hero-eyebrow{margin:0;font-family:var(--sans);font-weight:400;
+  font-size:max(calc(0.9 * var(--skh-u)),11px);line-height:1.5;
+  letter-spacing:.2em;text-transform:uppercase;color:var(--accent)}
+.hero .hero-title{margin:var(--skh-u) 0 0;font-family:var(--display);font-weight:300;
+  font-size:calc(4.6 * var(--skh-u));line-height:.9;letter-spacing:normal;
+  text-transform:none;color:var(--white);max-width:none;text-align:left}
+.hero .hero-title em{font-style:normal;color:var(--accent)}
+.hero .hero-subtitle{margin:calc(1.6 * var(--skh-u)) 0 0;max-width:calc(32 * var(--skh-u));
+  font-family:var(--sans);font-weight:300;font-size:max(calc(1.06 * var(--skh-u)),15px);
+  line-height:1.7;color:rgba(250,250,250,.72);text-align:left}
+.skh-ctas{display:flex;gap:14px;margin:calc(2.2 * var(--skh-u)) 0 0;flex-wrap:wrap}
+/* the baseline strip: three live stats left, the signature right, one
+   shared baseline under a container-wide hairline */
+.skh-strip{position:relative;z-index:2;margin-top:0;
+  display:flex;align-items:baseline;justify-content:space-between;gap:calc(2 * var(--skh-u));
+  border-top:1px solid rgba(250,250,250,.16);padding-top:calc(1.25 * var(--skh-u))}
+.skh-stats{display:flex;flex-wrap:wrap;gap:calc(2 * var(--skh-u));margin:0;padding:0;list-style:none}
 .skh-stats li{display:flex;flex-direction:column;gap:5px;min-width:0}
-.skh-stats b{font-family:var(--display);font-weight:300;font-size:max(1.7vw,22px);
+.skh-stats b{font-family:var(--display);font-weight:300;font-size:max(calc(1.7 * var(--skh-u)),22px);
   line-height:1;letter-spacing:-.01em;color:var(--white);font-variant-numeric:tabular-nums}
-.skh-stats span{font-family:var(--mono),monospace;font-size:max(0.68vw,10px);
-  letter-spacing:.14em;text-transform:uppercase;color:rgba(250,250,250,.72);max-width:15ch}
-/* the note. Sentence case, not uppercase: /quantum keeps its lede in sentence
-   case for the same reason, a paragraph this long is unreadable in caps. */
-.hero > .skh-left .hero-subtitle{font-family:var(--sans);font-weight:300;
-  font-size:max(1.06vw,15px);line-height:1.7;color:rgba(250,250,250,.72);
-  width:auto;max-width:none;margin:0;text-align:left}
-/* the CTA pair: /quantum's .qh-cta, element for element. A chalk block with a
-   dark sentence-case label beside a separate square tile of the same height
-   carrying the asterisk. The ghost variant is a hairline box in chalk. */
-.skh-ctas{display:flex;gap:14px;margin:0;flex-wrap:wrap}
+.skh-stats span{font-family:var(--mono),monospace;font-size:max(calc(0.68 * var(--skh-u)),10px);
+  letter-spacing:.14em;text-transform:uppercase;color:rgba(250,250,250,.72);max-width:16ch}
+/* half the 4.6 display: a signature, not a rival headline */
+.skh-turn{margin:0;text-align:right;font-family:var(--display);font-weight:700;
+  font-size:calc(2.3 * var(--skh-u));line-height:.95;letter-spacing:-.01em;
+  text-transform:uppercase;white-space:nowrap;color:#fafafa}
+.skh-ctas .skh-cta{margin:0}
 .skh-cta{display:inline-flex;align-items:stretch;gap:.278vw;text-decoration:none;color:#000;
   outline:none;border:0;border-radius:0;padding:0;background:none;box-shadow:none;
   font-family:var(--sans);letter-spacing:normal;text-transform:none}
 .skh-cta > span{display:flex;align-items:center;justify-content:center;height:max(3.542vw,44px);
-  padding:0 max(4.167vw,28px);background:#fafafa;color:#000;border:1px solid transparent;
+  padding:0 max(1.8vw,20px);background:#fafafa;color:#000;border:1px solid transparent;
   border-radius:0;box-sizing:border-box;font-family:var(--sans);font-weight:500;
   font-size:max(1.111vw,14px);line-height:1.2;white-space:nowrap;
   transition:background var(--skh-hover-dur) var(--skh-hover-ease),color var(--skh-hover-dur) var(--skh-hover-ease),border-color var(--skh-hover-dur)}
@@ -1594,44 +1573,37 @@ body > .hero{position:relative;display:block;height:calc(100svh + var(--skh-chro
 .skh-cta--muted:hover > span{background:rgba(255,255,255,.12);border-color:#fff;color:#fafafa}
 .skh-cta--muted:hover > i{background:rgba(255,255,255,.12);border-color:#fff}
 .skh-cta--muted:active > span{background:rgba(255,255,255,.22)}
-/* bottom right, /btcfi's .bfh-stat and .bfh-turn by way of /quantum's port */
-.skh-stat{margin:0;width:22vw;text-align:right;font-family:var(--sans);font-weight:400;
-  font-size:max(0.8vw,11px);line-height:1.5;letter-spacing:.12em;text-transform:uppercase;
-  color:rgba(250,250,250,.72)}
-.skh-turn{margin:0;width:38vw;text-align:right;font-family:var(--display);font-weight:700;
-  font-size:4.2vw;line-height:.95;letter-spacing:-.01em;text-transform:uppercase;color:#fafafa}
 @media (prefers-reduced-motion: reduce){
   .skh-cta > span,.skh-cta > i,.skh-cta > i svg path{transition:none}
 }
-/* BELOW THE ARTBOARD. The vw scale is the landing's and stops meaning
-   anything on a phone (4.6vw of 390px is 18px), so at 980 and under the hero
-   becomes the same rem-sized stack /btcfi and /quantum fall back to, in normal
-   flow, with the CTA pair full width. The header strip is NOT claimed back
-   here: the pill is taller relative to the viewport and the hero no longer
-   needs to be exactly 100vh once it is a stack. */
+/* below the artboard: a rem-sized stack; the strip holds one row to 700px */
 @media (max-width:980px){
-  body > .hero{height:auto;min-height:calc(100svh + 12rem);margin:0;padding:5.5rem 1.5rem 2rem;overflow:visible}
-  .hero > .skh-stage{display:none}
-  .hero > .hero-eyebrow,.hero > .hero-title,.hero > .skh-left,.hero > .skh-right{
-    position:static;width:auto;max-width:none;z-index:auto}
-  .hero > .hero-eyebrow{font-size:.75rem;margin-bottom:.75rem}
-  .hero > .hero-title{font-size:2.75rem;margin-bottom:1.5rem}
-  .hero > .skh-left{gap:1.5rem;margin-bottom:2rem}
-  .hero > .skh-right{align-items:flex-start;text-align:left;gap:1rem}
-  .skh-stat,.skh-turn{width:auto;text-align:left}
-  .skh-turn{font-size:2rem}
-  .skh-stats{gap:1.5rem}
-  .skh-stats b{font-size:1.5rem}
-  .skh-stats span{font-size:10px}
-  .hero > .skh-left .hero-subtitle{font-size:1rem;max-width:40rem}
-  .skh-ctas{width:100%;gap:10px}
+  body > .hero{padding:2.5rem 1.5rem 2rem;overflow:visible}
+  .skh-wrap{width:100%;max-width:none}
+  .skh-scene{min-height:0}
+  .skh-stage{display:none}
+  .skh-col{width:auto}
+  .hero .hero-eyebrow{font-size:.75rem}
+  .hero .hero-title{margin-top:.75rem;font-size:2.75rem}
+  .hero .hero-subtitle{margin-top:1rem;max-width:40rem;font-size:1rem}
+  .skh-ctas{width:100%;gap:10px;margin-top:1.5rem}
   .skh-cta{width:100%;gap:.25rem}
   .skh-cta > span{flex:1 1 auto;height:3.125rem;padding:0 1.5rem;font-size:1rem}
   .skh-cta > i{width:3.125rem;height:3.125rem}
+  .skh-strip{margin-top:2rem;padding-top:1.25rem}
+  .skh-stats{gap:1.5rem}
+  .skh-stats b{font-size:1.5rem}
+  .skh-stats span{font-size:10px}
+  .skh-turn{font-size:1.375rem}
+}
+@media (max-width:700px){
+  .skh-strip{flex-direction:column;align-items:flex-start;gap:1rem}
+  .skh-turn{text-align:left;font-size:1.25rem;white-space:normal}
 }
 @media (max-width:380px){
-  body > .hero{padding:5rem 1.25rem 2rem}
-  .hero > .hero-title{font-size:2.375rem}
+  body > .hero{padding:2rem 1.25rem 2rem}
+  .hero .hero-title{font-size:2.375rem}
+}
 }
 
 /* ===== STRK ACROSS THE ECOSYSTEM: THE TICKER ================================
@@ -1723,37 +1695,38 @@ window.ADMIN_GATE=on;})();
      split the way /btcfi splits its own: the mono readout carries the first
      half, the turn line the second. -->
 <header class="hero">
-  <!-- CENTREPIECE: a glowing particle Starknet mark inside a particle ring
-       (js/strk-hero-mark.js), the same instrument /quantum and /btcfi run.
-       It samples assets/img/starknet-mark.svg, the official mark WITH its
-       disc, where /quantum samples the disc-less starknet-glyph.svg, so the
-       two pages do not render the same centrepiece. Decorative and inert:
-       aria-hidden, pointer-events none, z-index -1. Gated by
-       IntersectionObserver and visibilitychange, and under reduced motion it
-       paints one settled frame and never starts a loop. -->
-  <div class="skh-stage" id="skhStage" aria-hidden="true"></div>
-  <p class="hero-eyebrow">One token. Three engines.</p>
-  <h1 id="the-thesis-in-a-single-asset" class="hero-title">The thesis, in a <em>single asset</em>.</h1>
-
-  <div class="skh-left">
-    <!-- the three stats the old hero foot carried, kept. The target frame has
-         no slot of its own for them, so they sit above the note as one mono
-         rail. data-metric is preserved so the live fetch still fills it. -->
-    <ul class="skh-stats">
-      <li><b data-metric="strk_staked_pct">21%</b><span>Of circulating supply staked</span></li>
-      <li><b>75%</b><span>Of all staking power</span></li>
-      <li><b>10</b><span>Onchain governance votes</span></li>
-    </ul>
-    <p class="hero-subtitle">It pays for execution and privacy fees, secures the network through staking, governs the protocol, and serves as base collateral across its DeFi.</p>
-    <div class="skh-ctas">
-      <a class="skh-cta" href="#what-strk-is"><span>What STRK is</span><i aria-hidden="true"><svg viewBox="0 0 51 51" fill="none"><path d="M26.293 23.583L34.4834 15.3926L35.6064 16.5156L27.416 24.7061H39V26.2939H27.418L35.6084 34.4844L34.4854 35.6074L26.293 27.415V39H24.7051V27.417L16.5146 35.6074L15.3916 34.4844L23.582 26.2939H12V24.7061H23.584L15.3936 16.5156L16.5166 15.3926L24.7051 23.5811V12H26.293V23.583Z"/></svg></i></a>
-      <a class="skh-cta skh-cta--muted" href="#the-convergence"><span>The convergence</span><i aria-hidden="true"><svg viewBox="0 0 51 51" fill="none"><path d="M26.293 23.583L34.4834 15.3926L35.6064 16.5156L27.416 24.7061H39V26.2939H27.418L35.6084 34.4844L34.4854 35.6074L26.293 27.415V39H24.7051V27.417L16.5146 35.6074L15.3916 34.4844L23.582 26.2939H12V24.7061H23.584L15.3936 16.5156L16.5166 15.3926L24.7051 23.5811V12H26.293V23.583Z"/></svg></i></a>
+  <!-- THREE ZONES (2026-09-05, the digest hero's fix applied here): the
+       editorial column top left in reading order (kicker, display, one
+       paragraph, the CTA pair), the particle Starknet mark on its stage
+       centre right (js/strk-hero-mark.js, unchanged), and a baseline strip
+       across the container: the three live stats left, the signature right
+       at half the display size. The old corner-scatter (stats + note bottom
+       left, readout + 4.2vw turn line bottom right) is gone, and the mono
+       readout sentence went with it: its content lives in the kicker and
+       the closing block. Stats fill live from the numbers engine
+       (data-metric hooks); 75% is the protocol's fixed reward split, a
+       constant, not a metric. -->
+  <div class="skh-wrap">
+    <div class="skh-scene">
+      <div class="skh-stage" id="skhStage" aria-hidden="true"></div>
+      <div class="skh-col">
+        <p class="hero-eyebrow">One token. Three engines.</p>
+        <h1 id="the-thesis-in-a-single-asset" class="hero-title">The thesis, in a <em>single asset</em>.</h1>
+        <p class="hero-subtitle">It pays for execution and privacy fees, secures the network through staking, governs the protocol, and serves as base collateral across its DeFi.</p>
+        <div class="skh-ctas">
+          <a class="skh-cta" href="#what-strk-is"><span>What STRK is</span><i aria-hidden="true"><svg viewBox="0 0 51 51" fill="none"><path d="M26.293 23.583L34.4834 15.3926L35.6064 16.5156L27.416 24.7061H39V26.2939H27.418L35.6084 34.4844L34.4854 35.6074L26.293 27.415V39H24.7051V27.417L16.5146 35.6074L15.3916 34.4844L23.582 26.2939H12V24.7061H23.584L15.3936 16.5156L16.5166 15.3926L24.7051 23.5811V12H26.293V23.583Z"/></svg></i></a>
+          <a class="skh-cta skh-cta--muted" href="#the-convergence"><span>The convergence</span><i aria-hidden="true"><svg viewBox="0 0 51 51" fill="none"><path d="M26.293 23.583L34.4834 15.3926L35.6064 16.5156L27.416 24.7061H39V26.2939H27.418L35.6084 34.4844L34.4854 35.6074L26.293 27.415V39H24.7051V27.417L16.5146 35.6074L15.3916 34.4844L23.582 26.2939H12V24.7061H23.584L15.3936 16.5156L16.5166 15.3926L24.7051 23.5811V12H26.293V23.583Z"/></svg></i></a>
+        </div>
+      </div>
     </div>
-  </div>
-
-  <div class="skh-right">
-    <p class="skh-stat">Privacy, quantum resistance and Bitcoin all run on Starknet.</p>
-    <p class="skh-turn">STRK is where that demand lands</p>
+    <div class="skh-strip">
+      <ul class="skh-stats">
+        <li><b data-metric="strk_staked_pct">21.2%</b><span>Of circulating supply staked</span></li>
+        <li><b>75%</b><span>Of all staking power</span></li>
+        <li><b data-metric="gov_votes">10</b><span>Onchain governance votes</span></li>
+      </ul>
+      <p class="skh-turn">STRK is where that demand lands</p>
+    </div>
   </div>
 </header>
 
