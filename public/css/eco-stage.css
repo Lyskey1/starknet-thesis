@@ -242,3 +242,20 @@ body::before { opacity: .35; }
   .ix-card { min-height: 210px; padding: 24px 22px 22px; }
   .ix-card-name { font-size: 24px; }
 }
+
+/* ---------- four gang stages (2026-09-05 direction change) ----------
+   The intro (kicker, h2, lede) renders once, in flow, above the first
+   stage; each stage is its own header row on the container's left axis
+   plus the ring screen at the unchanged one-viewport rule, so a stage is
+   at least a viewport minus the two bars tall by construction. */
+.es-intro { margin: 0 0 6px; }
+/* .es-gang is a <section>, which css/styles.css caps at 1100px: lift the
+   cap the way .ix-panel does, so the screen is the full bleed the single
+   ring had */
+.es-gang { position: relative; margin: 0 0 26px; max-width: none; padding: 0; }
+.es-gbar { display: flex; align-items: baseline; gap: 12px; width: calc(100% - 48px); max-width: 1392px; margin: 0 auto;
+  padding: 18px 0 10px; border-bottom: 1px solid rgba(245,242,236,.12); position: relative; z-index: 3; }
+.es-gname { font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--es-ink); }
+.es-gcount { font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: .04em; color: var(--es-acc); }
+/* per-stage UI has no top block: the dock alone rides the bottom */
+.es-ui-stage { justify-content: flex-end; }
