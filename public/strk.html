@@ -1040,16 +1040,6 @@ footer.site-footer .foot-bottom a:hover{color:var(--accent)}
   transform:translateY(-50%);opacity:.92;z-index:1}
 .hero .sk-inner{position:relative;z-index:2}
 
-/* --- stride's logo marquee: two rows, opposite directions, scroll-driven --- */
-.lm{position:relative;padding:56px 0 64px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);overflow:hidden}
-.lm-label{margin:0 0 30px;text-align:center;font-family:var(--mono),monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--acc-2)}
-.lm-row{display:flex;overflow:hidden;
-  -webkit-mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);
-          mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent)}
-.lm-row + .lm-row{margin-top:22px}
-.lm-track{display:flex;width:max-content;flex:none;align-items:center;will-change:transform}
-.lm-i{display:inline-flex;align-items:center;gap:12px;padding:0 34px;font-family:var(--display);font-size:26px;font-weight:400;letter-spacing:-.01em;color:rgba(250,250,250,.34);white-space:nowrap}
-.lm-m{width:26px;height:26px;flex:none;border-radius:50%;border:1px solid rgba(250,250,250,.24)}
 @media(max-width:880px){
   .hero .sk-inner{padding:104px 24px 44px}
   .hero .sk-foot{flex-wrap:wrap;gap:26px}
@@ -1059,8 +1049,6 @@ footer.site-footer .foot-bottom a:hover{color:var(--accent)}
   .sk-stats{gap:22px}
   .sk-stats li{padding-left:14px}
   .fan{display:none}
-  .lm-i{font-size:19px;padding:0 22px}
-  .lm-m{width:20px;height:20px}
 }
 
 
@@ -1126,16 +1114,6 @@ footer.site-footer .foot-bottom a:hover{color:var(--accent)}
   .s01 .copy p{font-size:18px}
 }
 
-/* --- About, on stride's: an eyebrow over one long statement set large, the
-   opening clause in full white and the rest muted, round icon chips inline in
-   the type. No card, no columns: the section is the sentence. --- */
-.ab-block{padding-top:120px}
-.ab-eyebrow{margin:0 0 26px;font-family:var(--mono),monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--acc-2)}
-.ab-lead{margin:0;font-family:var(--display);font-weight:300;font-size:clamp(30px,4.6vw,68px);line-height:1.04;letter-spacing:-.03em;color:var(--white);max-width:22ch}
-.ab-muted{color:var(--muted)}
-.ab-chip{display:inline-flex;align-items:center;justify-content:center;width:.82em;height:.82em;margin:0 .1em;transform:translateY(.08em);border-radius:50%;background:var(--acc);color:#fff}
-.ab-chip svg{width:.46em;height:.46em}
-.ab-block .fly{margin-top:64px}
 
 /* --- utilities on stride's showcase: the heading sits over the right half and
    the four columns run edge to edge, divided by hairlines rather than gaps --- */
@@ -1155,8 +1133,6 @@ footer.site-footer .foot-bottom a:hover{color:var(--accent)}
 .util-panel:first-child{border-left:0}
 .util-panel:hover{background:rgba(250,250,250,.03)}
 @media(max-width:880px){
-  .ab-block{padding-top:64px}
-  .ab-block .fly{margin-top:36px}
   .sc-head{margin-bottom:26px}
   .util-panel{border-left:0;border-top:1px solid var(--line);padding:24px 20px 28px}
   .util-panel:first-child{border-top:0}
@@ -1317,17 +1293,6 @@ footer.site-footer .foot-bottom a:hover{color:var(--accent)}
    eco-backdrop canvas at z-index 0 still reads through.
    ============================================================ */
 
-/* --- 01 About STRK: the statement now lives in its own full-bleed band
-   (.sxq), rebuilt as an exact copy of the privacy page's Satoshi treatment.
-   Its rules are appended at the end of this <style> so they win the cascade.
-   Only the flywheel's rhythm inside .ab-block stays here. --- */
-.ab-block{min-height:100svh;display:flex;align-items:center}
-.ab-block .wrap{width:100%}
-.ab-block .fly{width:100%;max-width:min(860px,calc(100svh - 11rem));margin:0 auto}
-@media(max-width:880px){
-  .ab-block{min-height:auto}
-  .ab-block .fly{max-width:min(520px,calc(100svh - 8rem));margin:0 auto}
-}
 
 /* --- 05 Where to get STRK: the four categories stop being floating cards and
    become one mega-menu band. Each column group is headed by its icon, name and
@@ -1405,41 +1370,6 @@ footer.site-footer .foot-bottom a:hover{color:var(--accent)}
   .buy-head .bh-chev{right:0}
 }
 
-/* ============================================================
-   ABOUT STRK STATEMENT (sxq-): the exact treatment the privacy page
-   gives Satoshi's line. Source: public/privacy.html #sq-band and the
-   ".sq" block in public/css/privacy-fx.css, plus privacy.html's inline
-   full-viewport override. Full-bleed band under a dotted rule with an
-   accent square at each end, owning one viewport with the statement
-   vertically centred, a mono chip kicker, one huge tight statement, and
-   inverted highlight blocks each led by a light square icon tile.
-   Prefixed sxq- so it can never collide with privacy's sq-.
-   Appended last so it wins the cascade inside this <style>.
-   ============================================================ */
-.sxq{position:relative;width:100vw;max-width:none;margin:120px 0 0 calc(50% - 50vw);
-  display:flex;flex-direction:column;justify-content:center;align-items:flex-start;
-  min-height:100vh;min-height:100svh;padding:clamp(96px,12vh,168px) 16px}
-/* the dotted rule across the top with a square at each end */
-.sxq::before{content:"";position:absolute;left:0;right:0;top:0;border-top:2px dotted rgba(250,250,250,.35)}
-.sxq::after{content:"";position:absolute;left:0;top:-3px;width:8px;height:8px;
-  background:var(--acc);box-shadow:calc(100vw - 8px) 0 0 var(--acc)}
-.sxq-kicker{display:inline-block;margin:0 0 22px;padding:6px 10px;background:rgba(250,250,250,.08);
-  font-family:var(--mono),monospace;font-size:12px;letter-spacing:.02em;line-height:1.2;
-  text-transform:none;color:rgba(255,255,255,.85)}
-.sxq-quote{align-self:stretch;margin:0;max-width:none;text-align:left;
-  font-family:var(--display),'Helvetica Neue',Arial,sans-serif;font-weight:600;color:#fff;
-  font-size:clamp(34px,6.4vw,92px);line-height:1.02;letter-spacing:-.04em}
-.sxq-hl{display:inline-block;vertical-align:baseline;line-height:1;white-space:nowrap;
-  padding:0 .1em 0 0;background:var(--acc);color:#fff;
-  -webkit-box-decoration-break:clone;box-decoration-break:clone}
-.sxq-ic{display:inline-grid;place-items:center;width:.8em;height:.8em;margin-right:.1em;
-  vertical-align:-.08em;background:#fafafa;color:var(--acc)}
-.sxq-ic svg{width:62%;height:62%}
-@media(max-width:860px){
-  .sxq{margin-top:72px;padding:72px 12px}
-  .sxq-quote{font-size:clamp(30px,9vw,48px)}
-  .sxq-hl{white-space:normal}
-}
 
 /* ===== 04 NUMBERS: the flat column band =====================================
    Ported from btcfi's bridge-phases strip (.bcore-strip / .bcol): four equal
@@ -1606,38 +1536,6 @@ body > .hero{position:relative;display:block;height:auto;min-height:0;
 }
 }
 
-/* ===== STRK ACROSS THE ECOSYSTEM: THE TICKER ================================
-   Mistral-style logo strip: one tall dark row, vertical cell dividers, centred
-   white wordmarks, and a seamless duplicated track that pauses on hover. */
-.lm{padding:0;background:#111114;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-.lm-label{display:none}
-.lm-row{display:flex;overflow:hidden}
-.lm-row + .lm-row{margin-top:0}
-.lm-track{display:flex;width:max-content;flex:none;align-items:center;
-  will-change:transform;transform:translate3d(0,0,0)}
-.lm-set{display:flex;flex:none;align-items:center}
-.lm.run .lm-track{animation:lmRun 72s linear infinite}
-.lm-row:hover .lm-track,.lm-row:focus-within .lm-track{animation-play-state:paused}
-@keyframes lmRun{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
-.lm-i{display:grid;place-items:center;width:18vw;min-width:230px;height:360px;padding:0 32px;
-  border-left:1px solid var(--line);font-family:var(--display),sans-serif;font-size:30px;font-weight:700;
-  letter-spacing:-.01em;color:#fafafa;white-space:nowrap;text-transform:none;background:#111114}
-.lm-i:nth-child(2n){background:#18181b}
-.lm-logo{display:block;max-width:min(150px,72%);max-height:78px;object-fit:contain;
-  filter:grayscale(1) brightness(0) invert(1);opacity:.92}
-.lm-word{display:block;font-family:var(--display),sans-serif;font-size:clamp(24px,2vw,38px);
-  font-weight:700;line-height:1;letter-spacing:-.02em;color:#fafafa}
-@media (prefers-reduced-motion: reduce){
-  /* HOLDS STILL, and holds still at the START of the cycle so copy one is
-     the one on screen. No animation is declared at all, rather than a paused
-     one, so nothing is scheduled. */
-  .lm.run .lm-track{animation:none;transform:translate3d(0,0,0)}
-}
-@media(max-width:880px){
-  .lm-i{width:44vw;min-width:170px;height:230px;padding:0 22px}
-  .lm-logo{max-width:min(120px,76%);max-height:58px}
-  .lm.run .lm-track{animation-duration:54s}
-}
 </style>
 <script>
 /* Inline copy of js/admin-gate.js (this page stays self-contained; keep in
@@ -1740,51 +1638,21 @@ window.ADMIN_GATE=on;})();
      and taken out of the tab order. Labels only, never links. No live figure
      appears here: this page's staking, supply, revenue and netflow numbers are
      fetched hourly, so a static pill would drift out of step with them. -->
-<!-- STRK ACROSS THE ECOSYSTEM: ONE ticker, not two rows.
-     WHAT WAS WRONG. Two stacked rows carried the SAME twelve names in the
-     same order, so the band read as duplicated content rather than as a loop;
-     the items sat at rgba(250,250,250,.34), under the APCA Lc 60 floor on
-     this ground; and the offset was tied to scroll position by
-     js/strk-marquee.js, which is neither steady nor verifiable from the
-     markup.
-     WHAT IT IS NOW. One row. The twelve-name set appears EXACTLY TWICE, each
-     copy in its own .lm-set, so the two are guaranteed identical in width and
-     the track is exactly twice one set. The animation translates the track by
-     exactly -50%, which lands copy two where copy one started: the wrap is
-     invisible by construction rather than by tuning. Steady 64s cycle, no
-     scroll coupling. The second copy is aria-hidden so a screen reader hears
-     the twelve names once.
-     ROUTE: every rule is overridden from this page's own later-loading style
-     block and js/strk-marquee.js is simply no longer loaded here. Neither
-     css/stride.css nor that script is edited, because both are shared files;
-     this page is their only remaining consumer, but the shared copies stay
-     untouched on principle. The names are unchanged and none was a link. -->
-<section class="lm" id="lmBand" aria-label="Where STRK is used across the ecosystem">
-  <p class="lm-label">STRK across the ecosystem</p>
-  <div class="lm-row">
-    <div class="lm-track">
-      <span class="lm-set"><span class="lm-i"><span class="lm-word">AVNU</span></span><span class="lm-i"><span class="lm-word">Ekubo</span></span><span class="lm-i"><span class="lm-word">Vesu</span></span><span class="lm-i"><span class="lm-word">Troves</span></span><span class="lm-i"><span class="lm-word">Endur</span></span><span class="lm-i"><span class="lm-word">Opus</span></span><span class="lm-i"><span class="lm-word">Braavos</span></span><span class="lm-i"><span class="lm-word">Ready</span></span><span class="lm-i"><span class="lm-word">Xverse</span></span><span class="lm-i"><span class="lm-word">Nostra</span></span><span class="lm-i"><span class="lm-word">Extended</span></span><span class="lm-i"><span class="lm-word">Meteora</span></span></span>
-      <span class="lm-set" aria-hidden="true"><span class="lm-i"><span class="lm-word">AVNU</span></span><span class="lm-i"><span class="lm-word">Ekubo</span></span><span class="lm-i"><span class="lm-word">Vesu</span></span><span class="lm-i"><span class="lm-word">Troves</span></span><span class="lm-i"><span class="lm-word">Endur</span></span><span class="lm-i"><span class="lm-word">Opus</span></span><span class="lm-i"><span class="lm-word">Braavos</span></span><span class="lm-i"><span class="lm-word">Ready</span></span><span class="lm-i"><span class="lm-word">Xverse</span></span><span class="lm-i"><span class="lm-word">Nostra</span></span><span class="lm-i"><span class="lm-word">Extended</span></span><span class="lm-i"><span class="lm-word">Meteora</span></span></span>
+<!-- 01 WHAT STRK IS. Main's layout restored (2026-09-05 STRK pass): the full
+     paragraph on the left, the flywheel dial on the right, side by side. The
+     twelve-name marquee band (lmBand) and the full-bleed statement screen
+     (sxq) that stood here on vesper are deleted per the pass spec; their
+     content is carried by this paragraph and the utilities section. The
+     flywheel svg, its stage data and the #tip hover card are unchanged. -->
+<section class="block"><div class="wrap">
+  <div class="th-pm-head"><span class="th-pm-marker"></span><span class="th-pm-num">01</span><h2 id="what-strk-is" class="th-pm-title">What STRK is</h2></div>
+
+  <div class="s01">
+    <div class="copy">
+      <p><strong>STRK is the native asset powering Starknet.</strong> It pays for execution (both gas and privacy fees), secures the network through staking, governs the protocol, and serves as the base collateral across its DeFi. Every part of the thesis playing out, more private flows, a quantum-safe chain, more Bitcoin, routes that activity back to one token.</p>
     </div>
-  </div>
-</section>
 
-<!-- 01 ROLE. The About statement takes the exact treatment the privacy page
-     gives Satoshi's line (privacy.html #sq-band, privacy-fx.css .sq): a
-     full-bleed band under a dotted rule with an accent square at each end,
-     owning a whole viewport, a mono chip kicker, then one huge tight
-     statement whose key phrases are inverted highlight blocks, each led by a
-     light square icon tile. Prefix sxq- so privacy's sq- rules and these can
-     never collide. The flywheel keeps its place below, since it carries a
-     real part of the STRK story. -->
-<section class="sxq" id="sxq-band" aria-labelledby="what-strk-is">
-  <p class="sxq-kicker">About STRK</p>
-  <h2 id="what-strk-is" class="sxq-quote">STRK is the asset that pays for <mark class="sxq-hl"><i class="sxq-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 4 14h6l-1 8 9-12h-6z"/></svg></i>every transaction</mark>, secures the network through <mark class="sxq-hl"><i class="sxq-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 20 5v6c0 5-3.4 7.7-8 9-4.6-1.3-8-4-8-9V5z"/></svg></i>staking</mark> and <mark class="sxq-hl"><i class="sxq-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 20h4v-8H3zM10 20h4V4h-4zM17 20h4v-12h-4z"/></svg></i>captures the demand</mark> the thesis creates.</h2>
-</section>
-
-<section class="block ab-block"><div class="wrap">
-
-  <div class="fly" id="fly">
+    <div class="fly" id="fly">
       <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" aria-label="STRK flywheel">
         <defs><clipPath id="hubLogoClip"><circle cx="200" cy="200" r="24"/></clipPath></defs>
         <circle class="track" cx="200" cy="200" r="130"/>
@@ -1830,6 +1698,7 @@ window.ADMIN_GATE=on;})();
       </svg>
 
       <div class="tip" id="tip"><div class="tt" id="tipT"></div><div class="td" id="tipD"></div></div>
+  </div>
   </div>
 </div></section>
 
@@ -4762,16 +4631,6 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
       new IntersectionObserver(function(es){ band.classList.toggle('run', es[0].isIntersecting); }, { threshold: 0 }).observe(band);
     } else { band.classList.add('run'); }
     [].forEach.call(band.querySelectorAll('[data-dup] span'), function(el){ el.setAttribute('tabindex','-1'); });
-  }
-  /* the ecosystem ticker: the CSS only declares its animation under .run, so
-     off screen the band is not animating at all, the same gate the claim band
-     above uses. Under prefers-reduced-motion the CSS declares no animation at
-     any point, so this class is inert. */
-  var lm = document.getElementById('lmBand');
-  if (lm) {
-    if ('IntersectionObserver' in window) {
-      new IntersectionObserver(function(es){ lm.classList.toggle('run', es[0].isIntersecting); }, { threshold: 0 }).observe(lm);
-    } else { lm.classList.add('run'); }
   }
   var fan = document.getElementById('fan');
   if (!fan) return;
