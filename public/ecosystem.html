@@ -201,8 +201,14 @@
      shared dg-glass tier (css/vesper-chrome.css); the rules here carry only
      the bar and the pill geometry. Below 981px, the site glass rule: no
      backdrop-filter, solid surface. */
-  body > .eco-subnav {
-    position: sticky; top: 71px; z-index: 90;
+  /* FLUSH: on this page the main nav is NOT fixed (css/eco-stage.css's
+     body > * rule keeps the header in flow, so it scrolls away with the
+     hero). With no nav on screen mid-scroll the bar sits at top: 0, the
+     spec's stated alternative: zero gap above it at any scroll depth. The
+     selector is scoped to the wrapper (two classes, so the stale mobile
+     .eco-subnav rules further down can never win top back). */
+  .eco-scope > .eco-subnav {
+    position: sticky; top: 0; z-index: 90;
     display: flex; align-items: center; justify-content: space-between; gap: 12px;
     padding: 10px clamp(24px, 4.4vw, 72px);
     background: rgba(8, 9, 12, 0.82);
@@ -212,10 +218,10 @@
     box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
   }
   @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-    body > .eco-subnav { background: var(--black); }
+    .eco-scope > .eco-subnav { background: var(--black); }
   }
   @media (max-width: 980px) {
-    body > .eco-subnav { -webkit-backdrop-filter: none; backdrop-filter: none; background: var(--black); }
+    .eco-scope > .eco-subnav { -webkit-backdrop-filter: none; backdrop-filter: none; background: var(--black); }
   }
   .eco-subnav .ix-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; border: 0; }
   .eco-subnav .ix-tabs button { min-height: 0; padding: 8px 15px; border: 0; border-radius: 40px;
@@ -227,13 +233,14 @@
     font-family: var(--mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase;
     color: #9a9a9a; transition: color var(--hover-dur, .25s) var(--hover-ease, ease); }
   .eco-voices-jump:hover { color: var(--white); }
+  .eco-voices-jump.active { color: var(--accent); }
   /* hash targets land clear of the two stacked bars */
-  #ecoRing, #ecoIndex { scroll-margin-top: 132px; }
+  #ecoRing, #ecoIndex { scroll-margin-top: 84px; }
   /* edit mode (admin gate only): the drag/edit surface replaces the reader
      views, so the two never show the same accounts twice on one page */
   body.eco-editing #ecoIndex, body.eco-editing #ecoRing { display: none; }
   @media (max-width: 768px) {
-    body > .eco-subnav { padding: 10px 16px; }
+    .eco-scope > .eco-subnav { padding: 10px 16px; }
     .eco-subnav .ix-tabs { flex: 1 1 auto; flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; }
     .eco-subnav .ix-tabs button { flex: none; }
   }
@@ -771,6 +778,12 @@ document.documentElement.className += ' eco-live';
      into .ix-tabs here (glass pills, the digest treatment); THE VOICES jumps
      to the ring. When the admin gate is on, the edit controls mount at the
      end of this bar. -->
+<!-- The scope wrapper (2026-09-05): the sticky bar is a SECTION nav, so it
+     lives in a wrapper that ends at the bottom of Meet the gang; position
+     sticky unpins naturally when the wrapper's bottom edge reaches it, so
+     the CTA and the footer scroll bar-free. The edit surface lives inside
+     the scope too: the admin controls ride the same bar. -->
+<div class="eco-scope">
 <div class="eco-subnav" id="ecoSubnav" aria-label="Directory sections">
   <div class="ix-tabs" role="tablist"></div>
   <a class="eco-voices-jump dg-glass" href="#ecoRing">The voices</a>
@@ -787,6 +800,7 @@ document.documentElement.className += ' eco-live';
 </div>
 <div class="es-block" id="ecoRing"></div>
 <div id="ecoSections" hidden></div>
+</div><!-- /eco-scope -->
 
 <!-- CLOSING CTA -->
 <!-- closing sequence spacing: 176px above the panel matches the page's

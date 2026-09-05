@@ -103,6 +103,48 @@
       '</section>';
     }).join('');
     requestAnimationFrame(function () { mount.style.minHeight = live.offsetHeight + 'px'; });
+    setupSpy();
+  }
+
+  /* ---- scroll spy (IntersectionObserver, no scroll listeners) ----
+     The reading band is the viewport strip from 90px (just under the sticky bar at top 0) down to 45% of the viewport (rootMargin -90px 0 -55%,
+     threshold 0). Every category panel and the ring intersecting that band
+     is a candidate; the CURRENT section is the topmost candidate in
+     document order, so a section keeps its pill while it still covers the
+     band top and hands over the moment its bottom scrolls past 90px,
+     which is exactly when the next section's header reaches the bar. The
+     panels are observed rather than the bare header lines because a
+     header-only observer loses the active state on upward scroll. */
+  var spyIO = null;
+  var voicesEl = document.querySelector('.eco-voices-jump');
+  function setActivePill(catId) {
+    tabsEl.querySelectorAll('button').forEach(function (b) {
+      var on = b.getAttribute('data-cat') === catId;
+      b.classList.toggle('on', on); b.classList.toggle('active', on);
+    });
+    if (voicesEl) voicesEl.classList.toggle('active', catId === 'voices');
+  }
+  function setupSpy() {
+    if (!('IntersectionObserver' in window)) return;
+    if (spyIO) spyIO.disconnect();
+    var inView = [];
+    spyIO = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        var i = inView.indexOf(e.target);
+        if (e.isIntersecting && i === -1) inView.push(e.target);
+        if (!e.isIntersecting && i !== -1) inView.splice(i, 1);
+      });
+      if (!inView.length) return;
+      var best = null, bestTop = Infinity;
+      inView.forEach(function (el) {
+        var t = el.getBoundingClientRect().top;
+        if (t < bestTop) { bestTop = t; best = el; }
+      });
+      setActivePill(best.id === 'ecoRing' ? 'voices' : best.getAttribute('data-cat'));
+    }, { rootMargin: '-90px 0px -55% 0px', threshold: 0 });
+    gridEl.querySelectorAll('.ix-panel').forEach(function (p) { spyIO.observe(p); });
+    var ring = document.getElementById('ecoRing');
+    if (ring) spyIO.observe(ring);
   }
 
   /* copy the handle without following the card link */
@@ -134,6 +176,7 @@
       if (c.id !== 'all' && !(data[c.id] || []).length) return;
       var b = document.createElement('button');
       b.type = 'button'; b.textContent = c.label;
+      b.setAttribute('data-cat', c.id);
       /* in the sticky bar the pills ride the shared dg-glass tier, whose
          active state keys on .active; .on stays for this file's own logic */
       if (subnavTabs) b.classList.add('dg-glass');
