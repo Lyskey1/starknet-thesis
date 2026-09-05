@@ -1768,65 +1768,10 @@
   .metrics-row .metric-sub{font-size:13.5px;}
 }
 
-/* ============================================================
-   SCALE, as the reference token-supply section (2026-09-01).
-   Reference anatomy: two columns. The words on the LEFT, with the
-   heading against the top of the column and the running copy
-   against the bottom of it, so a large gap opens between them.
-   The visual on the RIGHT, beside the words rather than under them.
-   THE GAP IS space-between, NOT A MARGIN. That is the whole trick
-   of the reference: the distance between the heading and the copy
-   is whatever is left over once the visual has set the row height,
-   so the two columns always end level.
-   The chart keeps its natural aspect and centres in its column.
-   Stretching it to the row height would distort a 900x480 viewBox,
-   and the chart's overlays (#bfcToday, #bfcChip) are positioned
-   from the svg's measured box, so a squashed svg would misplace
-   both.
-   Collapses to one column under 1000px, words first.
-   ============================================================ */
-.scale-sui{
-  display:grid;grid-template-columns:minmax(0,0.86fr) minmax(0,1.14fr);
-  gap:clamp(32px,4.4vw,72px);align-items:stretch;
-}
-.scale-sui-copy{
-  display:flex;flex-direction:column;justify-content:space-between;min-width:0;
-}
-/* the heading group hugs the top, the copy group hugs the bottom */
-.scale-sui-copy > .scale-label{margin-top:0;}
-.scale-sui-copy > .scale-intro{margin-top:auto;padding-top:48px;}
-.scale-sui-copy > .chart-toggle{margin-top:26px;align-self:flex-start;}
-.scale-sui-viz{
-  display:flex;flex-direction:column;justify-content:center;min-width:0;
-}
-.scale-sui-viz > .chart-wrap{width:100%;margin-top:0;}
-
-@media (max-width:1000px){
-  .scale-sui{grid-template-columns:minmax(0,1fr);gap:34px;}
-  .scale-sui-copy > .scale-intro{margin-top:0;padding-top:18px;}
-  .scale-sui-copy > .chart-toggle{margin-top:22px;}
-}
-
-/* THE CHART'S TEXT, now that it renders at about half scale.
-   The svg is a 900x480 viewBox letterboxed into its column. In one
-   column it drew ~1300px wide (scale ~1.45); beside the copy it
-   draws ~500px (scale ~0.56), which renders the desktop-sized svg
-   lettering at about 7.5px. There is already a fix for exactly this
-   regime, the max-width:560px tier, which re-sizes the lettering in
-   viewBox units. It cannot fire here: it keys on the VIEWPORT, and
-   the viewport is 1440 while the chart is 500.
-   So the same sizing is re-applied as a CONTAINER query on the
-   chart's own column, which is the thing whose width actually sets
-   the scale. Same values, same reasoning, different trigger. */
-.scale-sui-viz{container-type:inline-size;}
-@container (max-width: 660px){
-  .bfc-minor,.bfc-vlab{display:none;}
-  .bfc-glab,.bfc-axis{font-size:24px;}
-  .bfc-todaylab,.bfc-projlab{font-size:22px;}
-  .bfc-bound-lab,.bfc-floor-lab{font-size:26px;letter-spacing:.06em;}
-  .bfc-vol,.bfc-schip-t{font-size:24px;letter-spacing:.06em;}
-  #scaleChart text{letter-spacing:.05em;}
-}
+/* the view toggle sits inside the instrument panel, top-left above the
+   plot (2026-09-05); the panel is the positioning context (.chart-wrap is
+   already relative for the TODAY overlay). */
+.bfc-wrap > .chart-toggle{position:absolute;top:14px;left:16px;z-index:3;margin:0;}
 
 /* the figures run to the edges, and the cards spread into the room that
    buys them. .mst-bleed resolves its 50% against .solution-inner's content
@@ -2557,9 +2502,6 @@
            Nothing inside either half is re-ordered: the chart keeps its own
            toggle, its overlays and the visually-hidden data table that is the
            real content behind the picture. -->
-      <div class="scale-sui">
-        <div class="scale-sui-copy">
-      <p class="scale-label">Scalability over time</p>
       <h3 id="bitcoin-settles-starknet-scales" class="scale-title">Bitcoin settles. <span>Starknet scales.</span></h3>
       <p class="scale-intro">Bitcoin's base layer is capped at around 7 transactions per second, by design, and that's a feature, not a bug: it keeps Bitcoin decentralized and secure as the settlement layer. But it means Bitcoin can't be the execution layer. Its fees are also unpredictable, spiking as high as ~$128 during the April 2024 halving. Starknet absorbs the execution: throughput climbing toward 10,000+ TPS while fees stay locked under $0.01, permanently.</p>
 
@@ -2584,18 +2526,15 @@
            inside an svg repaint the svg). Data lives in the visually-hidden
            table below the panel, searchable and readable; the svg is a
            labeled image. -->
-      <div class="chart-toggle" role="tablist" aria-label="Chart view">
+      <div class="chart-wrap bfc-wrap" id="bfcWrap">
+        <!-- the view toggle lives INSIDE the panel now, top-left above the plot -->
+        <div class="chart-toggle" role="tablist" aria-label="Chart view">
         <button class="toggle-btn active" data-view="tps" role="tab" aria-selected="true">Throughput (TPS)</button>
         <button class="toggle-btn" data-view="cost" role="tab" aria-selected="false">Cost per transfer</button>
       </div>
 
-        </div>
-        <div class="scale-sui-viz">
-      <div class="chart-wrap bfc-wrap" id="bfcWrap">
         <svg id="scaleChart" viewBox="0 0 900 480" role="img" aria-label="Throughput over time, log scale: Starknet's trajectory from 1 TPS in September 2022 to about 1,000 TPS today, projected toward 4,000 and 10,000+; Bitcoin's base layer holds a ceiling of about 7 TPS"></svg>
-        <div class="bfc-today" id="bfcToday" aria-hidden="true"><i></i></div>
-        <span class="bfc-chip" id="bfcChip" aria-hidden="true">~140X THE FLOOR</span>
-      </div>
+        <div class="bfc-today" id="bfcToday" aria-hidden="true"><i></i>      </div>
       <!-- the chart's data, readable and searchable; the panel is decoration
            over these numbers -->
       <!-- the clip wrapper is a DIV, not the table itself: a table refuses
@@ -2616,8 +2555,8 @@
         </tbody>
       </table></div>
 
-        </div>
-      </div>
+        
+      
 
       <!-- strkBTC / Privacy -->
       <div class="tl-section">
