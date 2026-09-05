@@ -273,10 +273,12 @@ if (MOUNT) {
   const cv = renderer.domElement;
 
   cv.addEventListener('pointerdown', e => {
+    killIdle(); /* a hands-on reader keeps the wheel: rotation is done for the session */
     dragging = true; lastX = e.clientX; moved = 0; spinVel = 0; pointerId = e.pointerId;
     stage.classList.add('dragging'); cv.setPointerCapture(e.pointerId); hintEl.classList.remove('on');
   });
   cv.addEventListener('pointermove', e => {
+    armIdle(); /* pointer traffic on the ring resets the idle clock */
     const r = cv.getBoundingClientRect();
     ndc.x = ((e.clientX - r.left) / r.width) * 2 - 1;
     ndc.y = -((e.clientY - r.top) / r.height) * 2 + 1;
@@ -305,7 +307,9 @@ if (MOUNT) {
   cv.addEventListener('pointercancel', release);
   cv.addEventListener('pointerleave', () => { hintEl.classList.remove('on'); hovered = null; });
   stage.setAttribute('tabindex', '0');
+  stage.addEventListener('wheel', () => armIdle(), { passive: true });
   stage.addEventListener('keydown', e => {
+    armIdle(); /* keyboard steering resets the idle clock too */
     const step = (Math.PI * 2) / Math.max(cards.length, 1);
     if (e.key === 'ArrowLeft') { spin += step; e.preventDefault(); }
     if (e.key === 'ArrowRight') { spin -= step; e.preventDefault(); }
@@ -408,23 +412,173 @@ if (MOUNT) {
     requestAnimationFrame(frame);
   }
 
+  /* ---------- idle rotation ----------
+     After IDLE_ROTATE_MS with no pointer, wheel or keyboard interaction on
+     the ring, advance to the next gang with the same swap the pills run, so
+     the four gangs announce themselves without a click. There is no shared
+     timing config with btcfi's 15s chronometer (that constant lives inline
+     in btcfi's own engine), so the constant is defined once here, named.
+     Any pointerdown on the ring, any pill click, or any roster
+     "View on the ring" kills the rotation for the rest of the page session;
+     it never runs while the ring is out of view (the observer below, the
+     page's spy pattern) and never under prefers-reduced-motion. */
+  const IDLE_ROTATE_MS = 12000;
+  let idleKilled = reduced, idleTimer = 0, ringInView = false;
+  function killIdle() { idleKilled = true; clearTimeout(idleTimer); }
+  function armIdle() {
+    clearTimeout(idleTimer);
+    if (idleKilled || !ringInView) return;
+    idleTimer = setTimeout(() => {
+      if (idleKilled || !ringInView) return;
+      const i = GANGS.findIndex(g => g.id === gang);
+      selectGang(GANGS[(i + 1) % GANGS.length].id, false);
+      armIdle();
+    }, IDLE_ROTATE_MS);
+  }
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(es => {
+      ringInView = es[0].isIntersecting;
+      if (ringInView) armIdle(); else clearTimeout(idleTimer);
+    }, { threshold: 0.25 }).observe(MOUNT);
+  }
+
+  /* one gang-selection path for the pills, the idle rotation and the roster:
+     the pill state and the ring can never disagree */
+  let dataRef = null;
+  function setPillActive(id) {
+    tabsEl.querySelectorAll('button').forEach(x => {
+      const on = x.getAttribute('data-gang') === id;
+      x.classList.toggle('on', on); x.classList.toggle('active', on);
+    });
+  }
+  function selectGang(id, scroll) {
+    gang = id; setPillActive(id);
+    buildRing((dataRef && dataRef[id]) || []); resize();
+    if (scroll) {
+      /* land the ring EXACTLY under the two bars: the ring's own height is
+         100svh - 152px, so nav (64) + the measured sub-bar is the only top
+         offset that leaves it fully visible. scrollIntoView would stack the
+         page's scroll-padding on the ring's scroll-margin and land 200px
+         low, cutting the dock off the bottom. */
+      const bar = document.querySelector('.eco-subnav');
+      const y = MOUNT.getBoundingClientRect().top + scrollY - 64 - (bar ? bar.offsetHeight : 88);
+      window.scrollTo({ top: Math.max(0, y), behavior: reduced ? 'auto' : 'smooth' });
+    }
+  }
+
   fetch('/data/ecosystem.json').then(r => r.json()).then(data => {
+    dataRef = data;
     GANGS.forEach((g, i) => {
       const b = document.createElement('button');
       b.type = 'button'; b.textContent = g.label + ' (' + (data[g.id] || []).length + ')';
+      b.setAttribute('data-gang', g.id);
       if (tabsEl.closest('.eco-subnav')) b.classList.add('dg-glass');
       if (i === 0) { b.classList.add('on'); b.classList.add('active'); }
       b.addEventListener('click', () => {
-        tabsEl.querySelectorAll('button').forEach(x => { x.classList.remove('on'); x.classList.remove('active'); });
-        b.classList.add('on'); b.classList.add('active'); gang = g.id; buildRing(data[g.id] || []); resize();
+        killIdle(); /* an explicit choice ends the rotation for the session */
         /* from the sticky bar the reader may be anywhere: land at the ring */
-        if (tabsEl.closest('.eco-subnav')) MOUNT.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        selectGang(g.id, !!tabsEl.closest('.eco-subnav'));
       });
       tabsEl.appendChild(b);
     });
+    buildRoster(data);
     buildRing(data[gang] || []);
     resize();
     if (reduced) { carousel.rotation.y = 0; updateReflection(); renderer.render(scene, camera); }
     else requestAnimationFrame(frame);
   }).catch(err => { console.error('[eco-ring]', err); MOUNT.style.display = 'none'; });
+
+  /* ---------- the roster: every voice below the ring ----------
+     One block per gang in the pill order, each card on the project grid's
+     surface, so scrolling reveals all 69 without touching a pill. The counts
+     and the order come from the same arrays the pills count and the ring
+     builds from; the avatar walks the exact candidate chain texFor() uses. */
+  const GANG_NAMES = { starkware: 'StarkWare', snf: 'Starknet Foundation', builders: 'Builders', shitposter: 'Shitposter' };
+  function avatarInto(box, acc) {
+    const cands = [];
+    if (acc.avatar && !acc.avatar.startsWith('data:')) cands.push('/' + acc.avatar.replace(/^\//, ''));
+    if (acc.avatar && acc.avatar.startsWith('data:')) cands.push(acc.avatar);
+    if (acc.handle) cands.push('/assets/avatars/' + acc.handle + '.jpg', '/assets/avatars/' + acc.handle + '.webp', '/assets/avatars/' + acc.handle + '.png');
+    if (!cands.length) return;
+    const img = document.createElement('img');
+    img.alt = ''; img.loading = 'lazy'; img.decoding = 'async';
+    let i = 0;
+    img.onerror = () => { i++; if (i < cands.length) img.src = cands[i]; else img.remove(); };
+    img.src = cands[0];
+    box.appendChild(img);
+  }
+  function buildRoster(data) {
+    const host = document.getElementById('ecoRoster');
+    if (!host) return;
+    host.innerHTML = '';
+    const head = document.createElement('div');
+    head.className = 'vr-head';
+    head.innerHTML = '<p class="es-kicker">The roster</p>';
+    host.appendChild(head);
+    GANGS.forEach(g => {
+      const list = data[g.id] || [];
+      const block = document.createElement('section');
+      block.className = 'vr-block';
+      block.setAttribute('data-gang', g.id);
+      const bar = document.createElement('div');
+      bar.className = 'vr-bar';
+      const nameEl2 = document.createElement('span');
+      nameEl2.className = 'vr-gname'; nameEl2.textContent = GANG_NAMES[g.id] || g.label;
+      const countEl2 = document.createElement('span');
+      countEl2.className = 'vr-count'; countEl2.textContent = String(list.length);
+      const view = document.createElement('button');
+      view.type = 'button'; view.className = 'vr-view';
+      view.innerHTML = 'View on the ring <i class="ti ti-arrow-up-right" aria-hidden="true"></i>';
+      view.setAttribute('aria-label', 'View the ' + (GANG_NAMES[g.id] || g.label) + ' gang on the ring');
+      view.addEventListener('click', () => { killIdle(); selectGang(g.id, true); });
+      bar.appendChild(nameEl2); bar.appendChild(countEl2); bar.appendChild(view);
+      const grid = document.createElement('div');
+      grid.className = 'ix-card-grid vr-grid';
+      list.forEach(acc => {
+        const a = document.createElement('a');
+        a.className = 'ix-card vr-card';
+        a.href = acc.url || '#'; a.target = '_blank'; a.rel = 'noopener';
+        const handle = '@' + String(acc.handle || '').replace(/^@/, '');
+        a.setAttribute('aria-label', handle + ', ' + (acc.description || 'Starknet voice') + ', ' + (GANG_NAMES[g.id] || g.label));
+        const ava = document.createElement('span');
+        ava.className = 'vr-ava';
+        const mono = document.createElement('i');
+        mono.textContent = String(acc.handle || acc.name || '?').replace(/^[@_]+/, '').slice(0, 2).toUpperCase();
+        ava.appendChild(mono);
+        avatarInto(ava, acc);
+        const h = document.createElement('span');
+        h.className = 'vr-handle'; h.textContent = handle;
+        const role = document.createElement('span');
+        role.className = 'vr-role'; role.textContent = acc.description || 'Starknet voice';
+        a.appendChild(ava); a.appendChild(h); a.appendChild(role);
+        grid.appendChild(a);
+      });
+      block.appendChild(bar); block.appendChild(grid);
+      host.appendChild(block);
+    });
+    /* the voices spy: while a gang's roster block dominates the reading band
+       (same band the projects spy uses: nav + measured bar + 24), its pill
+       reads active; back on the ring, the ring's own gang holds the pill. */
+    if ('IntersectionObserver' in window) {
+      const bar2 = document.querySelector('.eco-subnav');
+      const top = 64 + (bar2 ? bar2.offsetHeight : 88) + 24;
+      const inView = [];
+      const vio = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+          const i = inView.indexOf(e.target);
+          if (e.isIntersecting && i === -1) inView.push(e.target);
+          if (!e.isIntersecting && i !== -1) inView.splice(i, 1);
+        });
+        if (!inView.length) return;
+        let best = null, bestTop = Infinity;
+        inView.forEach(el => {
+          const t = el.getBoundingClientRect().top;
+          if (t < bestTop) { bestTop = t; best = el; }
+        });
+        setPillActive(best === MOUNT ? gang : best.getAttribute('data-gang'));
+      }, { rootMargin: '-' + top + 'px 0px -55% 0px', threshold: 0 });
+      vio.observe(MOUNT);
+      host.querySelectorAll('.vr-block').forEach(b => vio.observe(b));
+    }
+  }
 }
