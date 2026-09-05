@@ -9,11 +9,19 @@
   --vc-sans: "General Sans", "Helvetica Neue", Arial, sans-serif; --vc-tag: "Mulish", "Helvetica Neue", Arial, sans-serif; --vc-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
   --vcnav-h: 64px; }
 
-/* ===== HEADER: a full-width fixed bar on the site container (2026-09-05,
-   replacing the centered pill). Logo at the container's left edge (the same
-   line the footer's identity block sits on), page links following the logo,
-   socials + Subscribe at the container's right edge. Glass over content,
-   one hairline bottom border, ALWAYS THERE: no hide-on-scroll, no shrink.
+/* ===== HEADER: a full-width fixed bar on the site container (2026-09-05
+   typography pass over the nav pass). The inner row is the FOOTER'S OWN
+   12-column grid (repeat(12) + 24px gaps on the 1392 container), so the
+   three clusters sit on the footer's axes: the brand cluster starts on
+   col 1, the link row starts on the col 4 line, and the right cluster ends
+   on the col 13 line (the container's right edge). Hierarchy: the three-bar
+   mark at 22px over an Archivo Expanded 500 wordmark at 15px; the page
+   links drop to the site's mono uppercase eyebrow grammar (IBM Plex Mono
+   11.5px, .14em, muted at .62 ink) instead of 16px sentence-case sans.
+   There is no shared cross-page eyebrow token (every page declares its own
+   .eyebrow class inline), so the grammar is declared once here on the
+   --vc-mono family token. Glass over content, one hairline bottom border at
+   .10 ink, ALWAYS THERE: no hide-on-scroll, no shrink.
    THE DOUBLED SELECTOR IS LOAD-BEARING: css/eco-stage.css forces
    position: relative on body > * at (0,1,1) on every static page, which is
    what used to unfix this bar; body > header.vc-header (0,1,2) beats it.
@@ -24,43 +32,60 @@ body { padding-top: var(--vcnav-h); }
 html { scroll-padding-top: calc(var(--vcnav-h) + 16px); }
 body > header.vc-header, header.vc-header { position: fixed; top: 0; left: 0; right: 0; transform: none; z-index: 100;
   width: 100%; height: var(--vcnav-h);
-  border: 0; border-bottom: 1px solid rgba(255,255,255,.1);
+  border: 0; border-bottom: 1px solid rgba(245,242,236,.10);
   background: rgba(13,13,13,.82); backdrop-filter: blur(12px) saturate(115%); -webkit-backdrop-filter: blur(12px) saturate(115%);
   font-family: var(--vc-sans); color: var(--vc-text); }
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   body > header.vc-header, header.vc-header { background: rgba(13,13,13,.96); }
 }
-header.vc-header .vc-in { display: flex; align-items: center; height: 100%;
-  width: calc(100% - 48px); max-width: 1392px; margin: 0 auto; padding: 12px 0; gap: 28px; }
-header.vc-header .vc-logo { display: block; height: 26px; width: 150px; flex: none; }
-header.vc-header .vc-logo img { display: block; height: 100%; width: 100%; }
-header.vc-header nav.vc-nav { display: flex; align-items: center; gap: 28px; margin-left: 12px; font-size: 16px; line-height: 1.2; white-space: nowrap; }
-/* socials: monochrome ink glyphs, hover to accent, 34px touch plates */
-header.vc-header .vc-social { display: flex; align-items: center; gap: 4px; margin-left: auto; }
-header.vc-header .vc-social a { display: grid; place-items: center; width: 34px; height: 34px; color: rgba(250,250,250,.75); transition: color .25s; }
+header.vc-header .vc-in { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; align-items: center; height: 100%;
+  width: calc(100% - 48px); max-width: 1392px; margin: 0 auto; }
+/* brand cluster on col 1: 22px mark, 10px gap, 15px expanded wordmark,
+   vertically centered on the mark's optical center by the flex row */
+header.vc-header .vc-logo { grid-column: 1 / 4; display: flex; align-items: center; gap: 10px; text-decoration: none; justify-self: start; }
+header.vc-header .vc-mark { display: block; width: 22px; height: auto; flex: none; }
+header.vc-header .vc-word { font-family: "Archivo", var(--vc-sans); font-stretch: 125%; font-weight: 500; font-size: 15px; line-height: 1; letter-spacing: -.01em; color: #F5F2EC; white-space: nowrap; }
+/* page links on the footer's col 4 axis, the mono uppercase eyebrow grammar */
+header.vc-header nav.vc-nav { grid-column: 4 / 10; display: flex; align-items: center; gap: 22px; white-space: nowrap; }
+header.vc-header nav.vc-nav a { font-family: var(--vc-mono); font-weight: 400; font-size: 11.5px; line-height: 1.2; letter-spacing: .14em; text-transform: uppercase; color: rgba(245,242,236,.62); text-decoration: none; transition: color .28s ease; }
+header.vc-header nav.vc-nav a:hover { color: #F5F2EC; }
+header.vc-header nav.vc-nav a.active { color: var(--vc-orange); }
+/* right cluster ends on the col 13 line (container right edge) */
+header.vc-header .vc-right { grid-column: 10 / 13; display: flex; align-items: center; justify-content: flex-end; gap: 12px; min-width: 0; }
+header.vc-header .vc-social { display: flex; align-items: center; gap: 4px; }
+header.vc-header .vc-social a { display: grid; place-items: center; width: 34px; height: 34px; color: rgba(245,242,236,.70); transition: color .28s ease; }
 header.vc-header .vc-social a:hover { color: var(--vc-orange); }
-header.vc-header .vc-social svg { width: 18px; height: 18px; display: block; }
-header.vc-header nav.vc-nav a { color: var(--vc-text); text-decoration: none; transition: color .25s; }
-header.vc-header nav.vc-nav a:hover, header.vc-header nav.vc-nav a.active { color: var(--vc-orange); }
-header.vc-header .vc-cta { display: inline-flex; align-items: center; gap: 10px; align-self: stretch; padding: 0 16px; border: 1px solid rgba(255,255,255,.5); color: var(--vc-text); text-decoration: none; font-size: 16px; line-height: 1.2; white-space: nowrap; transition: border-color .25s, background-color .25s; }
-header.vc-header .vc-cta:hover { border-color: #fff; background: rgba(255,255,255,.12); }
-header.vc-header .vc-cta i { display: block; width: 2px; height: 2px; background: currentColor; }
+header.vc-header .vc-social svg { width: 17px; height: 17px; display: block; }
+/* Subscribe: the links' mono grammar at 11px on the glass surface. The
+   trailing 2x2 dot the old bar drew via `.vc-cta i` is gone: markup and rule. */
+header.vc-header .vc-cta { display: inline-flex; align-items: center; padding: 8px 14px; border: 1px solid rgba(245,242,236,.22); border-radius: 6px; color: var(--vc-text); text-decoration: none;
+  font-family: var(--vc-mono); font-weight: 400; font-size: 11px; line-height: 1.2; letter-spacing: .14em; text-transform: uppercase; white-space: nowrap;
+  transition: border-color .28s ease, background-color .28s ease; }
+header.vc-header .vc-cta:hover { border-color: rgba(245,242,236,.5); background: rgba(255,255,255,.10); }
 header.vc-header .vc-burger { display: none; width: 40px; height: 40px; background: none; border: 0; position: relative; cursor: pointer; }
 header.vc-header .vc-burger span { position: absolute; left: 10px; width: 20px; height: 1px; background: #fff; transition: transform .25s; }
 header.vc-header .vc-burger span:first-child { top: calc(50% - 5px); } header.vc-header .vc-burger span:last-child { top: calc(50% + 5px); }
 header.vc-header.open .vc-burger span:first-child { transform: translateY(5px) rotate(45deg); } header.vc-header.open .vc-burger span:last-child { transform: translateY(-5px) rotate(-45deg); }
-header.vc-header .vc-mobile { display: none; position: absolute; top: 100%; left: 0; right: 0; flex-direction: column; border: 0; border-bottom: 1px solid rgba(255,255,255,.1); background: rgba(13,13,13,.96); padding: 20px; }
+header.vc-header .vc-mobile { display: none; position: absolute; top: 100%; left: 0; right: 0; flex-direction: column; border: 0; border-bottom: 1px solid rgba(245,242,236,.10); background: rgba(13,13,13,.96); padding: 20px; }
 header.vc-header .vc-mobile .vc-social { display: flex; margin: 8px 0 0; }
 header.vc-header.open .vc-mobile { display: flex; }
-header.vc-header .vc-mobile a { color: var(--vc-text); text-decoration: none; padding: 12px 0; font-size: 16px; }
-header.vc-header .vc-mobile a.vc-cta { margin-top: 12px; justify-content: center; padding: 12px 18px; }
-@media (max-width: 1023px) {
-  header.vc-header .vc-in { width: calc(100% - 32px); gap: 14px; }
-  header.vc-header nav.vc-nav, header.vc-header .vc-social { display: none; }
-  header.vc-header .vc-burger { display: block; margin-left: auto; }
-  header.vc-header > .vc-in > .vc-cta { font-size: 14px; padding: 0 12px; }
-  /* site glass rule below 981px: solid surface, no backdrop blur */
+/* the folded links inherit the same mono uppercase grammar */
+header.vc-header .vc-mobile a { font-family: var(--vc-mono); font-weight: 400; font-size: 11.5px; line-height: 1.2; letter-spacing: .14em; text-transform: uppercase; color: rgba(245,242,236,.62); text-decoration: none; padding: 12px 0; transition: color .28s ease; }
+header.vc-header .vc-mobile a:hover { color: #F5F2EC; }
+header.vc-header .vc-mobile a.active { color: var(--vc-orange); }
+header.vc-header .vc-mobile a.vc-cta { margin-top: 12px; justify-content: center; padding: 10px 14px; color: var(--vc-text); }
+/* between 1024 and 1280 the tracking drops first; nothing else moves and
+   the row never wraps (nowrap above). At 1280 itself the .14em base holds. */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  header.vc-header nav.vc-nav a { letter-spacing: .10em; }
 }
+@media (max-width: 1023px) {
+  header.vc-header .vc-in { display: flex; align-items: center; width: calc(100% - 32px); gap: 14px; }
+  header.vc-header nav.vc-nav, header.vc-header .vc-right .vc-social { display: none; }
+  header.vc-header .vc-right { margin-left: auto; }
+  header.vc-header .vc-burger { display: block; }
+}
+/* site glass rule below 981px: solid surface, no backdrop blur */
 @media (max-width: 980px) {
   body > header.vc-header, header.vc-header { -webkit-backdrop-filter: none; backdrop-filter: none; background: rgba(13,13,13,.96); }
 }
@@ -203,9 +228,9 @@ footer.vc-footer .dgf-bar .status { font-size: 12px; }
 /* the nav CTA: its 1px border goes (padding +1px holds the width), and it
    takes NO blur of its own: it sits inside the header bar, which is
    already a glass surface, and the site rule is no nested glass. */
-header.vc-header .vc-cta.dg-glass.dg-glass { border: 0; padding: 0 17px;
-  -webkit-backdrop-filter: none; backdrop-filter: none; }
-header.vc-header .vc-cta.dg-glass.dg-glass:hover { background: rgba(48, 48, 48, .8); }
+header.vc-header .vc-cta.dg-glass.dg-glass { border: 1px solid rgba(245,242,236,.22); border-radius: 6px; padding: 8px 14px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .22); }
+header.vc-header .vc-cta.dg-glass.dg-glass:hover { border-color: rgba(245,242,236,.5); background: rgba(48, 48, 48, .8); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .22); }
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .dg-glass.dg-glass.dg-glass { background: #161616; }
   .dg-glass.dg-glass.dg-glass:hover { background: #202020; }
@@ -231,4 +256,4 @@ header.vc-header .vc-cta.dg-glass.dg-glass:hover { background: rgba(48, 48, 48, 
 
 /* styles.css styles the bare <nav> element as the old fixed bar; neutralise it for the chrome's navs */
 header.vc-header nav, footer.vc-footer nav { position: static; top: auto; left: auto; right: auto; z-index: auto; height: auto; min-height: 0; padding: 0; background: none; border: 0; backdrop-filter: none; -webkit-backdrop-filter: none; justify-content: flex-start; }
-header.vc-header nav.vc-mobile { position: absolute; }
+header.vc-header nav.vc-mobile { position: absolute; align-items: stretch; padding: 20px; }

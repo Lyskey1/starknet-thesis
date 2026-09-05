@@ -104,7 +104,7 @@ export const MobileNav = ({ items }: MobileNavProps) => {
               href={item.href}
               onClick={() => setOpen(false)}
               interaction={NAV_LINK}
-              className="py-[0.75rem] font-general text-[1rem] leading-[1.2]"
+              className="py-[0.75rem] font-[family-name:var(--font-plex-mono)] text-[11.5px] leading-[1.2] font-normal tracking-[0.14em] uppercase text-[rgba(245,242,236,0.62)] transition-colors duration-[280ms] hover:text-[#F5F2EC]"
             >
               {item.label}
             </PressableLink>
@@ -114,10 +114,9 @@ export const MobileNav = ({ items }: MobileNavProps) => {
             href="https://starknetresearch.substack.com"
             onClick={() => setOpen(false)}
             interaction={GHOST}
-            className="mt-[0.75rem] flex items-center justify-center gap-[0.5rem] border px-[1.111rem] py-[0.75rem] font-general text-[1rem] leading-[1.2]"
+            className="mt-[0.75rem] flex items-center justify-center rounded-[6px] border border-[rgba(245,242,236,0.22)] px-[14px] py-[10px] font-[family-name:var(--font-plex-mono)] text-[11px] leading-[1.2] font-normal tracking-[0.14em] uppercase"
           >
             Subscribe
-            <span aria-hidden className="block size-[0.1875rem] bg-current" />
           </PressableLink>
         </animated.nav>
       )}

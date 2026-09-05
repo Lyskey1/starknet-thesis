@@ -33,16 +33,6 @@
 <link rel="stylesheet" href="css/styles.css?v=20260817a">
 <link rel="stylesheet" href="css/glass-chips.css">
 <style>
-  /* Sub-380px nav fit: at 320px the nav row (205px logo + 44px search
-     + 44px burger + two 24px gaps + 32px padding = 373px) leaves the
-     burger a 7px sliver, clipped by html overflow-x. Page-scoped
-     because the root cause lives in css/styles.css; candidate to move
-     there later. Mirrored on every page that loads styles.css and in
-     strk.html's inline nav styles. */
-  @media (max-width: 380px) {
-    nav { gap: 10px; padding-left: 12px; padding-right: 12px; }
-    .nav-logo { font-size: 15px; }
-  }
 
   /* live idle-capital slots: tabular digits so $1.4T/$1.5T/$1.6T occupy the
      same width and a live commit can never shift a line; nowrap so the
@@ -2208,21 +2198,24 @@
 <!-- NAV -->
 <header class="vc-header" id="vc-header">
   <div class="vc-in">
-    <a href="/" class="vc-logo" aria-label="Starknet Thesis, home"><img src="/assets/hero/logo.svg" alt="Starknet Thesis" width="200" height="26"></a>
-    <nav class="vc-nav" aria-label="Main"><a href="/privacy">Privacy</a><a href="/quantum">Quantum</a><a href="/btcfi" class="active">BTCFi</a><a href="/strk">STRK</a><a href="/ecosystem">Ecosystem</a><a href="/digest">Digest</a></nav>
-    <div class="vc-social">
+    <a href="/" class="vc-logo" aria-label="Starknet Thesis, home"><svg class="vc-mark" viewBox="2.4 5.4 21.2 15.2" aria-hidden="true" focusable="false"><path d="M4 7 H22" stroke="#8b7bff" stroke-width="3.2" stroke-linecap="round"/><path d="M4 13 H17" stroke="#8b7bff" stroke-opacity="0.55" stroke-width="3.2" stroke-linecap="round"/><path d="M4 19 H12" stroke="#8b7bff" stroke-opacity="0.3" stroke-width="3.2" stroke-linecap="round"/></svg><span class="vc-word">Starknet Thesis</span></a>
+    <nav class="vc-nav" aria-label="Main"><a href="/privacy">Privacy</a><a href="/quantum">Quantum</a><a href="/btcfi">BTCFi</a><a href="/strk">STRK</a><a href="/ecosystem">Ecosystem</a><a href="/digest">Digest</a></nav>
+    <div class="vc-right">
+      <div class="vc-social">
       <a href="https://discord.gg/starknet-community" target="_blank" rel="noopener" aria-label="Starknet Discord"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.32 4.37a19.8 19.8 0 0 0-4.93-1.51 13.8 13.8 0 0 0-.64 1.28 18.3 18.3 0 0 0-5.5 0 12.6 12.6 0 0 0-.64-1.28c-1.71.29-3.37.8-4.93 1.51A20.3 20.3 0 0 0 .1 18.06a19.9 19.9 0 0 0 6.07 3.06c.49-.66.93-1.37 1.3-2.11a12.9 12.9 0 0 1-2.05-.98c.17-.12.34-.25.5-.38a14.2 14.2 0 0 0 12.16 0c.16.13.33.26.5.38-.65.39-1.34.72-2.05.98.37.74.81 1.45 1.3 2.11a19.8 19.8 0 0 0 6.07-3.06A20.2 20.2 0 0 0 20.32 4.37ZM8.02 15.33c-1.18 0-2.16-1.08-2.16-2.42s.95-2.42 2.16-2.42 2.19 1.09 2.16 2.42c0 1.34-.95 2.42-2.16 2.42Zm7.96 0c-1.18 0-2.16-1.08-2.16-2.42s.95-2.42 2.16-2.42 2.19 1.09 2.16 2.42c0 1.34-.95 2.42-2.16 2.42Z"/></svg></a>
       <a href="https://x.com/Lyskey" target="_blank" rel="noopener" aria-label="Lyskey on X"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.24 2.25h3.31l-7.23 8.26 8.5 11.24h-6.66l-5.21-6.82-5.97 6.82H1.67l7.73-8.84L1.25 2.25h6.83l4.71 6.23 5.45-6.23Zm-1.16 17.52h1.83L7.08 4.13H5.12l11.96 15.64Z"/></svg></a>
       <a href="https://t.me/starknet_ecosystem" target="_blank" rel="noopener" aria-label="Starknet ecosystem Telegram"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21.94 3.6a1.5 1.5 0 0 0-1.53-.26L2.7 10.34c-.9.35-.88 1.63.03 1.95l4.63 1.63 1.79 5.63c.27.86 1.37 1.1 1.98.44l2.58-2.83 4.66 3.42c.72.53 1.75.13 1.93-.75l2.16-14.6a1.5 1.5 0 0 0-.52-1.63ZM9.16 13.94l9.28-6.86c.31-.23.66.19.39.46l-7.5 7.42c-.24.24-.4.55-.45.89l-.35 2.42-1.37-4.33Z"/></svg></a>
+      </div>
+      <a href="https://starknetresearch.substack.com" target="_blank" rel="noopener" class="vc-cta dg-glass dg-glass--primary" data-umami-event="cta-subscribe">Subscribe</a>
+      <button type="button" class="vc-burger" aria-label="Open menu" aria-expanded="false" aria-controls="vc-mobile" onclick="var h=this.closest('header');var o=h.classList.toggle('open');this.setAttribute('aria-expanded',o);this.setAttribute('aria-label',o?'Close menu':'Open menu')"><span></span><span></span></button>
     </div>
-    <a href="https://starknetresearch.substack.com" target="_blank" rel="noopener" class="vc-cta dg-glass dg-glass--primary" data-umami-event="cta-subscribe">Subscribe <i aria-hidden="true"></i></a>
-    <button type="button" class="vc-burger" aria-label="Open menu" aria-expanded="false" aria-controls="vc-mobile" onclick="var h=this.closest('header');var o=h.classList.toggle('open');this.setAttribute('aria-expanded',o);this.setAttribute('aria-label',o?'Close menu':'Open menu')"><span></span><span></span></button>
     <nav class="vc-mobile" id="vc-mobile" aria-label="Main"><a href="/privacy">Privacy</a><a href="/quantum">Quantum</a><a href="/btcfi">BTCFi</a><a href="/strk">STRK</a><a href="/ecosystem">Ecosystem</a><a href="/digest">Digest</a><div class="vc-social">
       <a href="https://discord.gg/starknet-community" target="_blank" rel="noopener" aria-label="Starknet Discord"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.32 4.37a19.8 19.8 0 0 0-4.93-1.51 13.8 13.8 0 0 0-.64 1.28 18.3 18.3 0 0 0-5.5 0 12.6 12.6 0 0 0-.64-1.28c-1.71.29-3.37.8-4.93 1.51A20.3 20.3 0 0 0 .1 18.06a19.9 19.9 0 0 0 6.07 3.06c.49-.66.93-1.37 1.3-2.11a12.9 12.9 0 0 1-2.05-.98c.17-.12.34-.25.5-.38a14.2 14.2 0 0 0 12.16 0c.16.13.33.26.5.38-.65.39-1.34.72-2.05.98.37.74.81 1.45 1.3 2.11a19.8 19.8 0 0 0 6.07-3.06A20.2 20.2 0 0 0 20.32 4.37ZM8.02 15.33c-1.18 0-2.16-1.08-2.16-2.42s.95-2.42 2.16-2.42 2.19 1.09 2.16 2.42c0 1.34-.95 2.42-2.16 2.42Zm7.96 0c-1.18 0-2.16-1.08-2.16-2.42s.95-2.42 2.16-2.42 2.19 1.09 2.16 2.42c0 1.34-.95 2.42-2.16 2.42Z"/></svg></a>
       <a href="https://x.com/Lyskey" target="_blank" rel="noopener" aria-label="Lyskey on X"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.24 2.25h3.31l-7.23 8.26 8.5 11.24h-6.66l-5.21-6.82-5.97 6.82H1.67l7.73-8.84L1.25 2.25h6.83l4.71 6.23 5.45-6.23Zm-1.16 17.52h1.83L7.08 4.13H5.12l11.96 15.64Z"/></svg></a>
       <a href="https://t.me/starknet_ecosystem" target="_blank" rel="noopener" aria-label="Starknet ecosystem Telegram"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21.94 3.6a1.5 1.5 0 0 0-1.53-.26L2.7 10.34c-.9.35-.88 1.63.03 1.95l4.63 1.63 1.79 5.63c.27.86 1.37 1.1 1.98.44l2.58-2.83 4.66 3.42c.72.53 1.75.13 1.93-.75l2.16-14.6a1.5 1.5 0 0 0-.52-1.63ZM9.16 13.94l9.28-6.86c.31-.23.66.19.39.46l-7.5 7.42c-.24.24-.4.55-.45.89l-.35 2.42-1.37-4.33Z"/></svg></a>
-    </div><a href="https://starknetresearch.substack.com" target="_blank" rel="noopener" class="vc-cta">Subscribe <i aria-hidden="true"></i></a></nav>
+    </div><a href="https://starknetresearch.substack.com" target="_blank" rel="noopener" class="vc-cta">Subscribe</a></nav>
   </div>
+  <script>(function(){var p=location.pathname.replace(/\.html$/,'').replace(/\/$/,'')||'/';document.querySelectorAll('#vc-header .vc-nav a, #vc-header .vc-mobile a:not(.vc-cta)').forEach(function(a){if(a.getAttribute('href')===p){a.classList.add('active');a.setAttribute('aria-current','page');}});})();</script>
 </header>
 
 <!-- ============================================================ -->

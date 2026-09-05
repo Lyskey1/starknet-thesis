@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Mulish, Onest } from "next/font/google";
+import { Archivo, IBM_Plex_Mono, Mulish, Onest } from "next/font/google";
 import localFont from "next/font/local";
 
 import {
@@ -32,6 +32,25 @@ const generalSans = localFont({
   ],
 });
 
+/** Nav wordmark face (2026-09-05 nav typography pass): Archivo with the
+ * width axis, so the header can set it Expanded 500 like the static pages,
+ * which load the same axis range from Google Fonts. */
+const archivo = Archivo({
+  variable: "--font-archivo",
+  subsets: ["latin"],
+  axes: ["wdth"],
+  display: "swap",
+});
+
+/** Nav link + Subscribe face: the mono uppercase eyebrow grammar the static
+ * pages already run (IBM Plex Mono). */
+const plexMono = IBM_Plex_Mono({
+  variable: "--font-plex-mono",
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  display: "swap",
+});
+
 /** Hero eyebrow / tag + stat face, per the Figma. */
 const mulish = Mulish({
   variable: "--font-mulish",
@@ -51,7 +70,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${onest.variable} ${generalSans.variable} ${mulish.variable}`}
+        className={`${onest.variable} ${generalSans.variable} ${mulish.variable} ${archivo.variable} ${plexMono.variable}`}
       >
         <script defer src="https://cloud.umami.is/script.js" data-website-id="45f11859-9fc2-49ae-a59e-4826e0f1e174" />
         <script

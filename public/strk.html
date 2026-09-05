@@ -74,37 +74,6 @@ h1,h2,h3{font-family:var(--display),sans-serif;font-weight:800;line-height:1.04;
 .lead{color:var(--muted-2);font-size:18px;max-width:46ch}
 .label{font-family:var(--mono),monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
 
-/* nav */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;gap:24px;padding:16px 40px;background:rgba(13, 13, 13,0.78);backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
-/* mobile nav system: mirrored from css/styles.css (this page is self-styled
-   and does not load the shared stylesheet); keep in sync with styles.css */
-/* ---------- mobile navigation (burger + full-screen overlay; js/nav.js) ---------- */
-.nav-burger { display: none; width: 44px; height: 44px; flex: 0 0 auto; flex-direction: column; align-items: center; justify-content: center; gap: 5px; background: none; border: 0; padding: 0; cursor: pointer; }
-.nav-burger span { display: block; width: 22px; height: 2px; border-radius: 1px; background: var(--white); }
-.nav-overlay { position: fixed; inset: 0; z-index: 300; background: rgba(10,10,11,0.97); backdrop-filter: blur(12px); display: flex; flex-direction: column; padding: 12px 20px calc(24px + env(safe-area-inset-bottom)); overflow-y: auto; }
-.nav-overlay[hidden] { display: none; }
-.nav-ov-top { display: flex; align-items: center; justify-content: flex-end; min-height: 64px; }
-.nav-ov-close { width: 44px; height: 44px; background: none; border: 1px solid var(--border); border-radius: 10px; color: var(--white); font-size: 22px; line-height: 1; cursor: pointer; }
-/* strk carries a local copy of the overlay styles; kept in step with
-   css/styles.css: the list owns the geometry it used to inherit from
-   the chrome's bare-nav rule (see the note there). */
-.nav-ov-links { display: flex; flex-direction: column; align-items: center; margin-top: 20px;
-  position: fixed; top: 0; left: 0; right: 0; padding: 0 16px; }
-.nav-ov-links a { display: flex; align-items: center; gap: 14px; min-height: 48px; padding: 4px 6px; font-family: var(--mono); font-size: 15px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--white); text-decoration: none; border-bottom: 1px solid rgba(250, 250, 250,0.08); }
-.nav-ov-links a::before { content: ""; width: 7px; height: 7px; border-radius: 50%; flex: 0 0 auto; background: transparent; }
-.nav-ov-links a.active::before { background: var(--accent, #c53400); box-shadow: 0 0 10px rgba(139,123,255,0.6); }
-.nav-ov-cta { margin-top: auto; display: flex; justify-content: center; width: 100%; padding-top: 28px; }
-.nav-ov-cta .btn { width: 100%; justify-content: center; text-align: center; display: inline-flex; align-items: center; gap: 8px; }
-html.nav-locked, html.nav-locked body { overflow: hidden; }
-/* shared wordmark: copied verbatim from css/styles.css so it matches every other page */
-.nav-logo{font-family:var(--display);font-weight:800;font-size:18px;letter-spacing:0.02em;text-transform:uppercase;color:var(--white);white-space:nowrap}
-.nav-logo b{color:var(--accent);font-weight:800}
-a.nav-logo{text-decoration:none}
-.nav-links{display:flex;gap:26px;align-items:center}
-.nav-links a{font-family:var(--mono),monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);transition:color .2s}
-.nav-links a:hover{color:var(--white)} .nav-links a.active{color:var(--acc-2)}
-/* CTA uses the shared .btn style (solid accent fill); see .btn rules below */
-.nav-cta{white-space:nowrap;padding:11px 20px}
 /* Specular glass coating on the nav CTA: verbatim mirror of the
    .btn.nav-cta rules in css/styles.css (this page never loads that file):
    keep the two in sync. Opaque accent fill, shading layered on top only. */
@@ -149,25 +118,6 @@ a.nav-logo{text-decoration:none}
   .btn.nav-cta::after { transition: none; opacity: 0; }
   .btn.nav-cta:active { transform: none; }
 }
-  /* Nav search trigger (the only other rules in this file the search
-   feature is allowed to own). Visible label + shortcut hint on desktop,
-   icon-only below 860px; the palette itself is styled by js/search.js.
-   Mirrored in strk.html's inline styles: keep in sync. */
-.nav-search {
-  display: inline-flex; align-items: center; gap: 8px;
-  font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase;
-  color: rgba(250, 250, 250,.62); background: rgba(250, 250, 250,.04);
-  border: 1px solid var(--border); border-radius: 8px; padding: 9px 12px; cursor: pointer;
-  transition: color .2s, border-color .2s, background .2s;
-  }
-.nav-search:hover { color: var(--white); border-color: rgba(250, 250, 250,.28); background: rgba(250, 250, 250,.07); }
-.nav-search:focus-visible { outline: 2px solid rgba(var(--accent-rgb), .8); outline-offset: 2px; }
-.nav-search svg { flex: none; }
-.nav-search .ns-kbd { font-family: var(--mono); font-size: 9px; color: rgba(250, 250, 250,.4); border: 1px solid rgba(250, 250, 250,.16); border-radius: 4px; padding: 2px 5px; }
-@media (max-width: 860px) {
-  .nav-search .ns-label, .nav-search .ns-kbd { display: none; }
-  nav .nav-search { min-width: 44px; min-height: 44px; justify-content: center; padding: 0; }
-  }
 
 
 /* hero */
@@ -885,21 +835,8 @@ footer.site-footer .foot-bottom a:hover{color:var(--accent)}
 
 
 @media(max-width:860px){
-  nav{height:64px;padding:0 16px}
-  .nav-links{display:none}
-  nav > .nav-cta{display:none}
-  .nav-burger{display:flex}
   .venn-wrap{grid-template-columns:1fr}
   .util.wide{grid-column:span 1}
-}
-/* Sub-380px nav fit: at 320px the nav row (logo + search + burger + gaps
-   + padding = 373px) overflows the viewport and widens the document.
-   Mirrored from the override carried by every styles.css page; keep in
-   sync. The footer .foot-brand .nav-logo rule out-specifies this and
-   keeps its own size. */
-@media(max-width:380px){
-  nav{gap:10px;padding-left:12px;padding-right:12px}
-  .nav-logo{font-size:15px}
 }
 @media(max-width:560px){.wrap{padding:0 16px}#numbers .feat .val{font-size:clamp(26px,7.5vw,36px)}}
 @media(max-width:520px){#numbers .cells,#numbers .cells.c3,#numbers .cells.c5{grid-template-columns:1fr}}
@@ -1458,21 +1395,24 @@ window.ADMIN_GATE=on;})();
 <!-- NAV -->
 <header class="vc-header" id="vc-header">
   <div class="vc-in">
-    <a href="/" class="vc-logo" aria-label="Starknet Thesis, home"><img src="/assets/hero/logo.svg" alt="Starknet Thesis" width="200" height="26"></a>
-    <nav class="vc-nav" aria-label="Main"><a href="/privacy">Privacy</a><a href="/quantum">Quantum</a><a href="/btcfi">BTCFi</a><a href="/strk" class="active">STRK</a><a href="/ecosystem">Ecosystem</a><a href="/digest">Digest</a></nav>
-    <div class="vc-social">
+    <a href="/" class="vc-logo" aria-label="Starknet Thesis, home"><svg class="vc-mark" viewBox="2.4 5.4 21.2 15.2" aria-hidden="true" focusable="false"><path d="M4 7 H22" stroke="#8b7bff" stroke-width="3.2" stroke-linecap="round"/><path d="M4 13 H17" stroke="#8b7bff" stroke-opacity="0.55" stroke-width="3.2" stroke-linecap="round"/><path d="M4 19 H12" stroke="#8b7bff" stroke-opacity="0.3" stroke-width="3.2" stroke-linecap="round"/></svg><span class="vc-word">Starknet Thesis</span></a>
+    <nav class="vc-nav" aria-label="Main"><a href="/privacy">Privacy</a><a href="/quantum">Quantum</a><a href="/btcfi">BTCFi</a><a href="/strk">STRK</a><a href="/ecosystem">Ecosystem</a><a href="/digest">Digest</a></nav>
+    <div class="vc-right">
+      <div class="vc-social">
       <a href="https://discord.gg/starknet-community" target="_blank" rel="noopener" aria-label="Starknet Discord"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.32 4.37a19.8 19.8 0 0 0-4.93-1.51 13.8 13.8 0 0 0-.64 1.28 18.3 18.3 0 0 0-5.5 0 12.6 12.6 0 0 0-.64-1.28c-1.71.29-3.37.8-4.93 1.51A20.3 20.3 0 0 0 .1 18.06a19.9 19.9 0 0 0 6.07 3.06c.49-.66.93-1.37 1.3-2.11a12.9 12.9 0 0 1-2.05-.98c.17-.12.34-.25.5-.38a14.2 14.2 0 0 0 12.16 0c.16.13.33.26.5.38-.65.39-1.34.72-2.05.98.37.74.81 1.45 1.3 2.11a19.8 19.8 0 0 0 6.07-3.06A20.2 20.2 0 0 0 20.32 4.37ZM8.02 15.33c-1.18 0-2.16-1.08-2.16-2.42s.95-2.42 2.16-2.42 2.19 1.09 2.16 2.42c0 1.34-.95 2.42-2.16 2.42Zm7.96 0c-1.18 0-2.16-1.08-2.16-2.42s.95-2.42 2.16-2.42 2.19 1.09 2.16 2.42c0 1.34-.95 2.42-2.16 2.42Z"/></svg></a>
       <a href="https://x.com/Lyskey" target="_blank" rel="noopener" aria-label="Lyskey on X"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.24 2.25h3.31l-7.23 8.26 8.5 11.24h-6.66l-5.21-6.82-5.97 6.82H1.67l7.73-8.84L1.25 2.25h6.83l4.71 6.23 5.45-6.23Zm-1.16 17.52h1.83L7.08 4.13H5.12l11.96 15.64Z"/></svg></a>
       <a href="https://t.me/starknet_ecosystem" target="_blank" rel="noopener" aria-label="Starknet ecosystem Telegram"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21.94 3.6a1.5 1.5 0 0 0-1.53-.26L2.7 10.34c-.9.35-.88 1.63.03 1.95l4.63 1.63 1.79 5.63c.27.86 1.37 1.1 1.98.44l2.58-2.83 4.66 3.42c.72.53 1.75.13 1.93-.75l2.16-14.6a1.5 1.5 0 0 0-.52-1.63ZM9.16 13.94l9.28-6.86c.31-.23.66.19.39.46l-7.5 7.42c-.24.24-.4.55-.45.89l-.35 2.42-1.37-4.33Z"/></svg></a>
+      </div>
+      <a href="https://starknetresearch.substack.com" target="_blank" rel="noopener" class="vc-cta dg-glass dg-glass--primary" data-umami-event="cta-subscribe">Subscribe</a>
+      <button type="button" class="vc-burger" aria-label="Open menu" aria-expanded="false" aria-controls="vc-mobile" onclick="var h=this.closest('header');var o=h.classList.toggle('open');this.setAttribute('aria-expanded',o);this.setAttribute('aria-label',o?'Close menu':'Open menu')"><span></span><span></span></button>
     </div>
-    <a href="https://starknetresearch.substack.com" target="_blank" rel="noopener" class="vc-cta dg-glass dg-glass--primary" data-umami-event="cta-subscribe">Subscribe <i aria-hidden="true"></i></a>
-    <button type="button" class="vc-burger" aria-label="Open menu" aria-expanded="false" aria-controls="vc-mobile" onclick="var h=this.closest('header');var o=h.classList.toggle('open');this.setAttribute('aria-expanded',o);this.setAttribute('aria-label',o?'Close menu':'Open menu')"><span></span><span></span></button>
     <nav class="vc-mobile" id="vc-mobile" aria-label="Main"><a href="/privacy">Privacy</a><a href="/quantum">Quantum</a><a href="/btcfi">BTCFi</a><a href="/strk">STRK</a><a href="/ecosystem">Ecosystem</a><a href="/digest">Digest</a><div class="vc-social">
       <a href="https://discord.gg/starknet-community" target="_blank" rel="noopener" aria-label="Starknet Discord"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.32 4.37a19.8 19.8 0 0 0-4.93-1.51 13.8 13.8 0 0 0-.64 1.28 18.3 18.3 0 0 0-5.5 0 12.6 12.6 0 0 0-.64-1.28c-1.71.29-3.37.8-4.93 1.51A20.3 20.3 0 0 0 .1 18.06a19.9 19.9 0 0 0 6.07 3.06c.49-.66.93-1.37 1.3-2.11a12.9 12.9 0 0 1-2.05-.98c.17-.12.34-.25.5-.38a14.2 14.2 0 0 0 12.16 0c.16.13.33.26.5.38-.65.39-1.34.72-2.05.98.37.74.81 1.45 1.3 2.11a19.8 19.8 0 0 0 6.07-3.06A20.2 20.2 0 0 0 20.32 4.37ZM8.02 15.33c-1.18 0-2.16-1.08-2.16-2.42s.95-2.42 2.16-2.42 2.19 1.09 2.16 2.42c0 1.34-.95 2.42-2.16 2.42Zm7.96 0c-1.18 0-2.16-1.08-2.16-2.42s.95-2.42 2.16-2.42 2.19 1.09 2.16 2.42c0 1.34-.95 2.42-2.16 2.42Z"/></svg></a>
       <a href="https://x.com/Lyskey" target="_blank" rel="noopener" aria-label="Lyskey on X"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.24 2.25h3.31l-7.23 8.26 8.5 11.24h-6.66l-5.21-6.82-5.97 6.82H1.67l7.73-8.84L1.25 2.25h6.83l4.71 6.23 5.45-6.23Zm-1.16 17.52h1.83L7.08 4.13H5.12l11.96 15.64Z"/></svg></a>
       <a href="https://t.me/starknet_ecosystem" target="_blank" rel="noopener" aria-label="Starknet ecosystem Telegram"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21.94 3.6a1.5 1.5 0 0 0-1.53-.26L2.7 10.34c-.9.35-.88 1.63.03 1.95l4.63 1.63 1.79 5.63c.27.86 1.37 1.1 1.98.44l2.58-2.83 4.66 3.42c.72.53 1.75.13 1.93-.75l2.16-14.6a1.5 1.5 0 0 0-.52-1.63ZM9.16 13.94l9.28-6.86c.31-.23.66.19.39.46l-7.5 7.42c-.24.24-.4.55-.45.89l-.35 2.42-1.37-4.33Z"/></svg></a>
-    </div><a href="https://starknetresearch.substack.com" target="_blank" rel="noopener" class="vc-cta">Subscribe <i aria-hidden="true"></i></a></nav>
+    </div><a href="https://starknetresearch.substack.com" target="_blank" rel="noopener" class="vc-cta">Subscribe</a></nav>
   </div>
+  <script>(function(){var p=location.pathname.replace(/\.html$/,'').replace(/\/$/,'')||'/';document.querySelectorAll('#vc-header .vc-nav a, #vc-header .vc-mobile a:not(.vc-cta)').forEach(function(a){if(a.getAttribute('href')===p){a.classList.add('active');a.setAttribute('aria-current','page');}});})();</script>
 </header>
 
 <!-- HERO -->
@@ -3377,8 +3317,8 @@ root.querySelectorAll('.cell').forEach(c=>io.observe(c));
       /* measured at click time so the offset tracks the CURRENT nav height
          (mobile vs desktop): scroll-margin-top then does the offsetting;
          the static rule in the page styles is the no-JS fallback */
-      const nav=document.querySelector('nav');
-      if(nav&&nav.offsetHeight)feat.style.scrollMarginTop=(nav.offsetHeight+24)+'px';
+      const bar=document.querySelector('.vc-header');
+      if(bar&&bar.offsetHeight)feat.style.scrollMarginTop=(bar.offsetHeight+24)+'px';
       feat.scrollIntoView({behavior:'smooth',block:'start'});
     }
     return true;
