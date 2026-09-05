@@ -134,10 +134,13 @@
       if (c.id !== 'all' && !(data[c.id] || []).length) return;
       var b = document.createElement('button');
       b.type = 'button'; b.textContent = c.label;
-      if (i === 0) b.className = 'on';
+      /* in the sticky bar the pills ride the shared dg-glass tier, whose
+         active state keys on .active; .on stays for this file's own logic */
+      if (subnavTabs) b.classList.add('dg-glass');
+      if (i === 0) { b.classList.add('on'); b.classList.add('active'); }
       b.addEventListener('click', function () {
-        tabsEl.querySelectorAll('button').forEach(function (x) { x.classList.remove('on'); });
-        b.classList.add('on'); filter = c.id; render();
+        tabsEl.querySelectorAll('button').forEach(function (x) { x.classList.remove('on'); x.classList.remove('active'); });
+        b.classList.add('on'); b.classList.add('active'); filter = c.id; render();
         /* from the sticky bar the reader may be anywhere: land them at the
            top of the filtered grid, under the sticky offset */
         if (subnavTabs) {

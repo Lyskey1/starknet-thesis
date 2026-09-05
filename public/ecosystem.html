@@ -193,37 +193,46 @@
     .eco-ctas { flex-direction: column; gap: 20px; align-items: flex-start; }
   }
 
-  /* Category sub-nav: in normal flow until scrolled, then sticks FLUSH below
-     the fixed 86px main nav (top = actual nav height, not 0/58: otherwise the
-     top "THE PROJECTS" row clips behind the nav). Solid --black bg + z-index
-     under the nav so the grid scrolls under it, never through it. */
-  .eco-subnav {
-    position: static; top: 86px; z-index: 90;
-    /* liquid glass, sticky-bar variant: a real backdrop blur (the 127
-       colored avatar cards scroll beneath this bar) over a deliberately
-       heavy scrim. The scrim is not optional: pill text is the muted
-       grey (#9a9a9a), and holding 4.5:1 over a pure-white avatar passing beneath
-       needs the blended backdrop at or under roughly rgb(40): measured,
-       not estimated (see the commit). Blur sits below the fixed nav's
-       14px so the two bars read as a hierarchy. The bar itself is static:
-       no lift, no sweep, no hover glow; pill hovers are unchanged. */
-    background: rgba(8, 9, 12, 0.9);
+  /* Sticky section nav (restored 2026-09-05). The bar sticks 71px down:
+     the floating main nav is a 51px pill at top 10px, so 71 leaves 10px of
+     clear air and the two never overlap; z-index 90 sits under the nav's
+     100. css/eco-stage.css forces position:relative on body > * at (0,1,1),
+     so the sticky selector matches that specificity. Pill SURFACES are the
+     shared dg-glass tier (css/vesper-chrome.css); the rules here carry only
+     the bar and the pill geometry. Below 981px, the site glass rule: no
+     backdrop-filter, solid surface. */
+  body > .eco-subnav {
+    position: sticky; top: 71px; z-index: 90;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 10px clamp(24px, 4.4vw, 72px);
+    background: rgba(8, 9, 12, 0.82);
     -webkit-backdrop-filter: blur(12px) saturate(115%);
     backdrop-filter: blur(12px) saturate(115%);
     border-bottom: 1px solid var(--border);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
-    padding: 10px 32px;
-    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
   }
-  /* fallback and mobile: the previous opaque surface, unchanged. Below
-     981px no backdrop-filter anywhere on this site, and a fixed blurred
-     bar recomposites for the entire scroll, the most expensive case in
-     this design system. */
   @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-    .eco-subnav { background: var(--black); }
+    body > .eco-subnav { background: var(--black); }
   }
   @media (max-width: 980px) {
-    .eco-subnav { -webkit-backdrop-filter: none; backdrop-filter: none; background: var(--black); }
+    body > .eco-subnav { -webkit-backdrop-filter: none; backdrop-filter: none; background: var(--black); }
+  }
+  .eco-subnav .ix-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; border: 0; }
+  .eco-subnav .ix-tabs button { min-height: 0; padding: 8px 15px; border: 0; border-radius: 40px;
+    font-family: var(--mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase;
+    color: #9a9a9a; cursor: pointer; }
+  .eco-subnav .ix-tabs button:hover { color: var(--white); }
+  .eco-subnav .ix-tabs button.on { color: var(--accent); }
+  .eco-voices-jump { flex: none; padding: 8px 15px; border-radius: 40px; text-decoration: none;
+    font-family: var(--mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase;
+    color: #9a9a9a; transition: color var(--hover-dur, .25s) var(--hover-ease, ease); }
+  .eco-voices-jump:hover { color: var(--white); }
+  /* hash targets land clear of the two stacked bars */
+  #ecoRing, #ecoIndex { scroll-margin-top: 132px; }
+  @media (max-width: 768px) {
+    body > .eco-subnav { padding: 10px 16px; }
+    .eco-subnav .ix-tabs { flex: 1 1 auto; flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .eco-subnav .ix-tabs button { flex: none; }
   }
   .eco-pills { display: flex; flex-direction: column; gap: 7px; }
   .eco-pill-row { display: flex; align-items: center; gap: 12px; }
@@ -752,6 +761,17 @@ document.documentElement.className += ' eco-live';
      (body::after) dithers it for free. The scene is per-page; the shell
      around it is a twin of digest.html's. -->
 <section id="ecoGlobe"></section>
+
+<!-- STICKY SECTION NAV (restored 2026-09-05): the category filter bar sticks
+     under the floating main nav, so the reader can switch category from
+     anywhere on the page. js/eco-index.js renders the project filter pills
+     into .ix-tabs here (glass pills, the digest treatment); THE VOICES jumps
+     to the ring. When the admin gate is on, the edit controls mount at the
+     end of this bar. -->
+<div class="eco-subnav" id="ecoSubnav" aria-label="Directory sections">
+  <div class="ix-tabs" role="tablist"></div>
+  <a class="eco-voices-jump dg-glass" href="#ecoRing">The voices</a>
+</div>
 
 
 <!-- SECTIONS (rendered from data) -->
