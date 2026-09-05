@@ -1392,37 +1392,22 @@
     font-family: var(--vc-tag); font-weight: 400; font-size: max(0.9vw, 11px); line-height: 1.5;
     letter-spacing: .2em; text-transform: uppercase; color: var(--accent); }
   .bfh-title { position: absolute; top: max(9.028vw, 114px); left: 1.667vw; z-index: 2; margin: 0;
-    width: 52vw; max-width: none; font-family: var(--vc-sans); font-weight: 300; font-size: 4.6vw;
-    line-height: .9; letter-spacing: normal; text-transform: none; color: var(--white); }
+    width: 88vw; max-width: none; font-family: var(--vc-sans); font-weight: 300; font-size: 3.9vw;
+    line-height: 1.02; letter-spacing: normal; text-transform: none; color: var(--white); }
 
-  .bfh-left { position: absolute; left: 1.667vw; bottom: 2.153vw; z-index: 2; width: 22vw;
+  .bfh-left { position: absolute; left: 1.667vw; bottom: 2.153vw; z-index: 2; width: 30vw;
     display: flex; flex-direction: column; align-items: flex-start; gap: 1.25vw; }
-  .bfh-note { margin: 0; max-width: none; font-family: var(--vc-tag); font-weight: 400;
-    font-size: max(0.85vw, 11px); line-height: 1.7; letter-spacing: .06em;
-    text-transform: uppercase; color: rgba(250, 250, 250, .7); }
+  .bfh-note { margin: 0; max-width: none; font-family: var(--vc-sans); font-weight: 400;
+    font-size: max(1vw, 14px); line-height: 1.65; letter-spacing: 0;
+    text-transform: none; color: rgba(250, 250, 250, .7); }
 
-  /* the pill and the tile are two separate links, one per existing
-     destination, which is why the tile carries its own aria-label */
-  .bfh-cta { display: flex; align-items: center; gap: .278vw; }
-  .bfh-pill { display: inline-flex; align-items: center; justify-content: center;
-    padding: 1.111vw 4.167vw; font-family: var(--vc-sans); font-weight: 500; font-size: 1.111vw;
-    line-height: 1.2; white-space: nowrap; text-decoration: none; border: 0; border-radius: 0;
-    background: #fafafa; color: #000;
-    transition: background-color var(--hover-dur, .25s) var(--hover-ease, ease), color var(--hover-dur, .25s) var(--hover-ease, ease); }
-  .bfh-pill:hover { background: var(--accent); color: #fafafa; }
-  .bfh-pill:active { background: var(--accent-dim); color: #fafafa; }
-  .bfh-tile { display: block; flex: none; width: 3.542vw; height: 3.542vw; line-height: 0; }
-  .bfh-tile img { display: block; width: 100%; height: 100%; }
-  .bfh-pill:focus-visible, .bfh-tile:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
-
-  .bfh-right { position: absolute; right: 1.667vw; bottom: 2.153vw; z-index: 2;
-    display: flex; flex-direction: column; align-items: flex-end; gap: 1.25vw; }
-  .bfh-stat { margin: 0; width: 22vw; text-align: right; font-family: var(--vc-tag); font-weight: 400;
-    font-size: max(0.8vw, 11px); line-height: 1.5; letter-spacing: .12em;
-    text-transform: uppercase; color: rgba(250, 250, 250, .7); }
-  .bfh-turn { margin: 0; width: 38vw; text-align: right; font-family: var(--vc-sans); font-weight: 700;
-    font-size: 4.2vw; line-height: .95; letter-spacing: -.01em; text-transform: uppercase;
-    color: #fafafa; }
+  /* main's two anchors on the site's glass tier (dg-glass, the chrome's
+     control surface); both land with the nav offset via scroll-padding */
+  .bfh-cta { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .bfh-glass { display: inline-flex; align-items: center; padding: 12px 20px;
+    font-family: var(--vc-sans); font-weight: 500; font-size: max(1vw, 14px); line-height: 1.2;
+    white-space: nowrap; text-decoration: none; color: var(--white); }
+  .bfh-glass:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
   /* Below the artboard the vw offsets stop meaning anything (52vw of a 390px
      phone is 203px), so the frame becomes a plain top-to-bottom stack sized
@@ -1438,22 +1423,18 @@
     .hero { height: auto; min-height: 100vh; display: flex; flex-direction: column;
       justify-content: flex-start; align-items: stretch; text-align: left;
       padding: 6.5rem 1.5rem 2rem; }
-    .bfh-kicker, .bfh-title, .bfh-left, .bfh-right { position: static; width: auto; }
+    .bfh-kicker, .bfh-title, .bfh-left { position: static; width: auto; }
     .bfh-kicker { font-size: .75rem; }
     .bfh-title { margin-top: .75rem; font-size: 2.75rem; }
     .bfh-left { margin-top: auto; padding-top: 1.5rem; }
-    .bfh-right { margin-top: 1.5rem; }
-    .bfh-left, .bfh-right { align-items: flex-start; gap: 1rem; }
-    .bfh-note, .bfh-stat { width: auto; text-align: left; font-size: .75rem; }
-    .bfh-turn { width: auto; text-align: left; font-size: 2rem; }
-    .bfh-cta { width: 100%; gap: .25rem; }
-    .bfh-pill { flex: 1 1 auto; padding: .9375rem 1.5rem; font-size: 1rem; }
-    .bfh-tile { width: 3.125rem; height: 3.125rem; }
+    .bfh-left { align-items: flex-start; gap: 1rem; }
+    .bfh-note { width: auto; text-align: left; font-size: .875rem; }
+    .bfh-cta { width: 100%; gap: .5rem; }
+    .bfh-glass { padding: .8rem 1.25rem; font-size: .9375rem; }
   }
   @media (max-width: 380px) {
     .hero { padding: 5.5rem 1.25rem 2rem; }
     .bfh-title { font-size: 2.375rem; }
-    .bfh-turn { font-size: 1.75rem; }
   }
 
   /* ==========================================================================
@@ -2042,22 +2023,18 @@
   <p class="bfh-kicker">Bitcoin's next chapter</p>
   <!-- the id is the search index's anchor for this page's opening claim
        (public/data/search-index.json); it stays on the display heading. -->
-  <h1 id="bitcoin-is-the-best-asset-to" class="bfh-title">Bitcoin is the best asset to hold</h1>
+  <h1 id="bitcoin-is-the-best-asset-to" class="bfh-title">Bitcoin is the best asset to hold.<br>It's time to make it the best to use.</h1>
 
   <div class="bfh-left">
-    <!-- SENTENCE CASE IN THE SOURCE, CAPS ON SCREEN, exactly as the landing
-         carries its own mono blocks: text-transform does the shouting, so a
-         screen reader and the search index still get real words. -->
-    <p class="bfh-note">Idle BTC turned into productive, programmable capital on Starknet: lending, yield and settlement without leaving Bitcoin's security behind.</p>
+    <!-- main's hero subline verbatim; the figure is the SAME live slot as
+         the <1% band's (one number, one story, one fetch). -->
+    <p class="bfh-note">More than <span class="idle-cap" data-idle-cap data-perishable="live"
+       data-src="https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&amp;vs_currencies=usd&amp;include_market_cap=true"
+       data-checked="2026-08-23" data-as-of="2026-08-23">$1.5T</span> in capital sitting idle. Starknet is building the execution layer Bitcoin has always needed: private, scalable, and built to last.</p>
     <div class="bfh-cta">
-      <a class="bfh-pill" href="#bitcoins-unfinished-mission">Read the thesis</a>
-      <a class="bfh-tile" href="#defi-scale-privacy-resilience-all-four" aria-label="See the stack"><img src="assets/hero/send-icon.svg" alt="" width="51" height="51"></a>
+      <a class="bfh-glass dg-glass" href="#bitcoins-unfinished-mission">The unfinished mission</a>
+      <a class="bfh-glass dg-glass" href="#defi-scale-privacy-resilience-all-four">See the stack</a>
     </div>
-  </div>
-
-  <div class="bfh-right">
-    <p class="bfh-stat">DeFi. Scale. Privacy. Resilience. All four, one stack.</p>
-    <p class="bfh-turn">Time to make it the best to use</p>
   </div>
 </div>
 
