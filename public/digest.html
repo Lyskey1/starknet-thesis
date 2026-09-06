@@ -276,19 +276,10 @@
     letter-spacing: .2em; text-transform: uppercase; color: var(--accent); }
   /* the display headline rides the SHARED token set in css/vesper-chrome.css
      (.vch-title, 2026-09-06): one source of truth for strk, btcfi, digest. */
-  /* the one argument paragraph: the retired mono kicker note and the body
-     sentence, folded. Sentence case: it is a sentence, not a readout. The
-     30vw cap keeps the measure near 60ch over the 47vw column. */
-  .dgh-body { margin: calc(1.6 * var(--dgh-u)) 0 0; max-width: calc(30 * var(--dgh-u)); font-family: var(--vc-sans); font-weight: 400;
-    font-size: max(0.9 * var(--dgh-u), 13px); line-height: 1.55; color: rgba(250, 250, 250, .6); }
-  .dgh-cta { display: flex; align-items: center; gap: calc(.833 * var(--dgh-u)); margin-top: calc(2.2 * var(--dgh-u)); }
-  /* CTAs size to content: no fixed width, horizontal padding near 26px at
-     1440 (the old 4.167vw slab read as fixed-width plates). The surface is
-     the dg-glass tier below. */
-  .dgh-pill { display: inline-flex; align-items: center; justify-content: center;
-    padding: calc(.9 * var(--dgh-u)) calc(1.8 * var(--dgh-u)); font-family: var(--vc-sans); font-weight: 500; font-size: calc(1.111 * var(--dgh-u));
-    line-height: 1.2; white-space: nowrap; text-decoration: none; border-radius: 0;
-    color: var(--white); }
+  /* the one argument paragraph rides the SHARED spec (css/vesper-chrome.css
+     .vch-sub, 2026-09-06): strk's family, size, line-height and color tier,
+     byte for byte. The two hero CTAs and their .dgh-cta/.dgh-pill rules are
+     gone, the same decision as strk and btcfi. */
 
   /* zone three: the baseline strip, full hero width, one shared baseline.
      No margin-top auto: the hero fits its content now, and the balanced air
@@ -305,14 +296,20 @@
     display: flex; align-items: baseline; justify-content: space-between; gap: calc(2 * var(--dgh-u));
     border-top: 1px solid rgba(250, 250, 250, .16); padding-top: calc(1.25 * var(--dgh-u));
     box-sizing: border-box; height: calc(1px + 3.55 * var(--dgh-u) + 50px); }
-  .dgh-stat::before, .dgh-turn::before { content: ""; display: inline-block; width: 0;
+  /* the shared strip component (2026-09-06), strk's stats byte for byte:
+     values large in ink, labels below in muted mono at the shared 17ch
+     measure, the same baseline and box struts pinning the fixed geometry.
+     The single-line counter row (.dgh-stat/.dgh-n/.dgh-slash) is gone. */
+  .dgh-stats { display: flex; flex-wrap: wrap; gap: calc(2 * var(--dgh-u)); margin: 0; padding: 0; list-style: none; }
+  .dgh-stats li { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+  .dgh-stats b { font-family: var(--display); font-weight: 300; font-size: max(calc(1.7 * var(--dgh-u)), 22px);
+    line-height: 1; letter-spacing: -.01em; color: var(--white); font-variant-numeric: tabular-nums; }
+  .dgh-stats b::before, .dgh-turn::before { content: ""; display: inline-block; width: 0;
     height: calc(1.85 * var(--dgh-u)); }
-  /* one step up from the old 11px whisper, so the strip reads as one bar */
-  .dgh-stat { margin: 0; text-align: left; font-family: var(--vc-tag); font-weight: 400;
-    font-size: max(0.87 * var(--dgh-u), 12px); line-height: 1.5; letter-spacing: .12em;
-    text-transform: uppercase; color: rgba(250, 250, 250, .7); white-space: nowrap; }
-  .dgh-n { color: #fafafa; }
-  .dgh-slash { color: rgba(var(--accent-rgb), .85); margin: 0 .25em; }
+  .dgh-stats b::after { content: ""; display: inline-block; width: 0; vertical-align: top;
+    height: calc(2.3 * var(--dgh-u)); }
+  .dgh-stats span { font-family: var(--mono), monospace; font-size: max(calc(0.68 * var(--dgh-u)), 10px);
+    line-height: 1.5; letter-spacing: .14em; text-transform: uppercase; color: rgba(250, 250, 250, .72); max-width: 17ch; }
   /* SENTENCE CASE IN THE SOURCE, CAPS ON SCREEN: text-transform does the
      shouting, so a screen reader and the search index still get real words.
      2.3vw = half the 4.6vw display, measured 33.1px against 66.2px at 1440;
@@ -397,24 +394,28 @@
     .dgh-stage { inset: 0; width: auto; height: auto; transform: none; opacity: .3; }
     .dgh-col { width: auto; }
     .dgh-kicker { font-size: .75rem; }
-    .dgh-body { margin-top: 1rem; max-width: 40ch; font-size: .875rem; }
-    .dgh-cta { gap: .5rem; margin-top: 1.5rem; }
-    .dgh-pill { padding: .8125rem 1.5rem; font-size: 1rem; }
     /* THE STRIP STAYS ONE ROW down to 700px: counters left, signature
        right, one baseline. The signature holds near half the 2.75rem
        display; the counters may wrap before the strip does. */
     /* fixed geometry, rem tier: 1 + 20 pad + 26 value box + 5 + 45 = 97px */
     .dgh-strip { margin-top: 2rem; padding-top: 1.25rem; height: 97px; }
-    .dgh-stat::before, .dgh-turn::before { height: 21px; }
-    .dgh-stat { font-size: .75rem; }
+    .dgh-stats { gap: 1.5rem; }
+    .dgh-stats b { font-size: 1.5rem; }
+    .dgh-stats b::before, .dgh-turn::before { height: 21px; }
+    .dgh-stats b::after { height: 26px; }
+    .dgh-stats span { font-size: 10px; }
     .dgh-turn { font-size: 1.375rem; }
   }
   /* below 700px the row cannot hold both: stack, counters above, signature
      below, both left-aligned */
   @media (max-width: 700px) {
     /* stacked: the strk/btcfi constant, 1 + 20 + 76 + 16 + 38 = 151px */
-    .dgh-strip { flex-direction: column; align-items: flex-start; gap: 1rem; height: 151px; }
-    .dgh-stat { text-align: left; white-space: normal; }
+    .dgh-strip { flex-direction: column; align-items: flex-start; justify-content: flex-start; gap: 1rem; height: 151px; }
+    /* three 17ch (102px) label columns + two .75rem gaps = 330px, fits the
+       335px content box on one line */
+    .dgh-stats { gap: .75rem; }
+    /* full label slot held, so the stacked claim starts at one shared y */
+    .dgh-stats li { min-height: 76px; }
     .dgh-turn { text-align: left; font-size: 1.25rem; }
   }
   @media (max-width: 380px) {
@@ -489,12 +490,11 @@
       <p class="dgh-kicker">Digest</p>
       <!-- the id is the search index's anchor for this page's opening claim
            (public/data/search-index.json); it stays on the display heading. -->
-      <h1 id="never-miss-whatsshipping-on-starknet" class="dgh-title vch-title">Never miss what's shipping on Starknet.</h1>
-      <p class="dgh-body">A thesis only holds if the ecosystem actually ships behind it. Starknet is among the very few ecosystems shipping this much, this consistently, and the digest is the record of it: weekly roundups, monthly recaps, and original research.</p>
-      <div class="dgh-cta">
-        <a class="dgh-pill dg-glass dg-glass--primary" href="https://starknetresearch.substack.com/subscribe" target="_blank" rel="noopener">Subscribe</a>
-        <a class="dgh-pill dg-glass" href="#latest-from-the-starknet-ecosystem">Read the latest</a>
-      </div>
+      <h1 id="never-miss-whatsshipping-on-starknet" class="dgh-title vch-title">Never miss what's <em>shipping on Starknet.</em></h1>
+      <!-- the paragraph rides the shared spec (.vch-sub); the two glass CTAs
+           are gone, the same decision as strk and btcfi, and the archive
+           section keeps its id. -->
+      <p class="dgh-body vch-sub">A thesis only holds if the ecosystem actually ships behind it. Starknet is among the very few ecosystems shipping this much, this consistently, and the digest is the record of it: weekly roundups, monthly recaps, and original research.</p>
     </div>
   </div>
 
@@ -510,7 +510,11 @@
          (a title with neither "monthly recap" nor "roundup": the same
          taxonomy the filter pills run). The values in the source are only
          the last stamp; never edit them by hand. -->
-    <p class="dgh-stat"><span class="dgh-n" data-count="weekly-roundups">233</span> weekly roundups published<span class="dgh-slash" aria-hidden="true">/</span><span class="dgh-n" data-count="monthly-recaps">36</span> monthly recaps<span class="dgh-slash" aria-hidden="true">/</span><span class="dgh-n" data-count="research-articles">34</span> research articles</p>
+    <ul class="dgh-stats">
+      <li><b data-count="weekly-roundups">233</b><span>Weekly roundups published</span></li>
+      <li><b data-count="monthly-recaps">36</b><span>Monthly recaps</span></li>
+      <li><b data-count="research-articles">34</b><span>Research articles</span></li>
+    </ul>
     <p class="dgh-turn">Every week accounted for</p>
   </div>
   </div>

@@ -1347,10 +1347,13 @@ body > .hero{position:relative;display:flex;flex-direction:column;
 @media (max-width:700px){
   /* stacked: stats block (76px) + 16px gap + a reserved two-line claim slot
      (38px at 1.25rem/.95) -> height 1 + 20 + 76 + 16 + 38 = 151px */
-  .skh-strip{flex-direction:column;align-items:flex-start;gap:1rem;height:151px}
+  .skh-strip{flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:1rem;height:151px}
   /* three label columns capped at 17ch (102px) + two gaps must fit the
      335px content box: .75rem gaps land the row at 330px, one line */
   .skh-stats{gap:.75rem}
+  /* the stats block holds the full three-line label slot even when labels
+     are shorter, so the stacked claim starts at the same y on every page */
+  .skh-stats li{min-height:76px}
   .skh-turn{text-align:left;font-size:1.25rem;white-space:normal}
 }
 @media (max-width:380px){

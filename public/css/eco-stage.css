@@ -100,6 +100,13 @@
 .eg-copy-b { top: 50%; transform: translate(-50%,-50%); width: min(760px, calc(100% - 48px)); }
 .eg-copy h2, .eg-copy .eg-h { font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-weight: 300; font-size: clamp(26px, 3.3vw, 47px); line-height: 1.12; letter-spacing: -.02em; color: var(--es-ink); margin: 0 0 16px; }
 .eg-copy p { font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-size: clamp(14px, 1.3vw, 18px); line-height: 1.5; color: var(--es-dim); margin: 0; }
+/* the hero copy rides the SHARED classes (css/vesper-chrome.css .vch-title /
+   .vch-sub, 2026-09-06); these two keep only the LAYOUT this stage owns:
+   the copy stays centred and the absolutely positioned block keeps no top
+   margin. Typography comes from the shared rules (the #ecoGlobe arm
+   out-ranks .eg-copy's own type on specificity). */
+#ecoGlobe .vch-title { margin: 0; text-align: center; }
+#ecoGlobe .vch-sub { margin-left: auto; margin-right: auto; text-align: center; }
 
 .eg-stats { position: absolute; left: 48px; bottom: 7vh; z-index: 5; display: flex; gap: 44px; pointer-events: none; }
 .eg-stats span { display: block; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: rgba(250,250,250,.75); margin-bottom: 8px; }

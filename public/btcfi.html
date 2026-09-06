@@ -1464,10 +1464,12 @@
   }
   @media (max-width: 700px) {
     /* stacked: 1 + 20 pad + 76 stats block + 16 gap + 38 claim slot = 151px */
-    .bfh-strip { flex-direction: column; align-items: flex-start; gap: 1rem; height: 151px; }
+    .bfh-strip { flex-direction: column; align-items: flex-start; justify-content: flex-start; gap: 1rem; height: 151px; }
     /* three 17ch (102px) label columns + two .75rem gaps = 330px, fits the
        335px content box on one line */
     .bfh-stats { gap: .75rem; }
+    /* full label slot held, so the stacked claim starts at one shared y */
+    .bfh-stats li { min-height: 76px; }
     .bfh-turn { text-align: left; font-size: 1.25rem; white-space: normal; }
   }
   @media (max-width: 380px) {

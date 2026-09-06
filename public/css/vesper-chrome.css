@@ -276,7 +276,7 @@ header.vc-header nav.vc-mobile { position: absolute; align-items: stretch; paddi
    --hero-title-tracking: normal, consumed by this class only. The u token
    is the same min(1vw, 14.4px) unit the three heroes already scale by. */
 :root { --vch-u: min(1vw, 14.4px); --hero-title-tracking: normal; }
-.hero .vch-title { margin: var(--vch-u) 0 0;
+.hero .vch-title, #ecoGlobe .vch-title { margin: var(--vch-u) 0 0;
   font-family: "General Sans", sans-serif;
   font-weight: 300;
   font-size: calc(4.6 * var(--vch-u));
@@ -286,10 +286,17 @@ header.vc-header nav.vc-mobile { position: absolute; align-items: stretch; paddi
   color: var(--white, #fafafa);
   max-width: none;
   text-align: left; }
-.hero .vch-title em { font-style: normal; color: var(--accent); }
+.hero .vch-title em, #ecoGlobe .vch-title em { font-style: normal; color: var(--accent); }
+/* the shared hero paragraph: strk's subtitle values, dumped computed and
+   promoted to the token set (2026-09-06); ecosystem and digest consume it */
+.hero .vch-sub, #ecoGlobe .vch-sub { margin: calc(1.6 * var(--vch-u)) 0 0; max-width: calc(32 * var(--vch-u));
+  font-family: "General Sans", sans-serif; font-weight: 300;
+  font-size: max(calc(1.06 * var(--vch-u)), 15px); line-height: 1.7;
+  color: rgba(250, 250, 250, .72); text-align: left; }
 @media (max-width: 980px) {
-  .hero .vch-title { margin-top: .75rem; font-size: 2.75rem; }
+  .hero .vch-title, #ecoGlobe .vch-title { margin-top: .75rem; font-size: 2.75rem; }
+  .hero .vch-sub, #ecoGlobe .vch-sub { margin-top: 1rem; max-width: 40rem; font-size: 1rem; }
 }
 @media (max-width: 380px) {
-  .hero .vch-title { font-size: 2.375rem; }
+  .hero .vch-title, #ecoGlobe .vch-title { font-size: 2.375rem; }
 }

@@ -19,8 +19,8 @@ const SHELL_Y = -0.55;   // near-centred, just clear of the copy
         /* not a heading: the page's real h1 carries this wording, pre-rendered
            into #ecoIndex by scripts/build-ecosystem.js. .eg-h is styled exactly
            like .eg-copy h2 (css/eco-stage.css), so nothing moves. */
-        '<p class="eg-h">The people building &amp; shaping Starknet</p>' +
-        '<p>Every project, every voice, on one chain.</p>' +
+        '<p class="eg-h vch-title">The people building &amp; <em>shaping Starknet</em></p>' +
+        '<p class="vch-sub">Every project, every voice, on one chain.</p>' +
       '</div>' +
       '<div class="eg-copy eg-copy-b"><h2>Powered by Starknet</h2>' +
         '<p>Every project shipping on the network, in one place.</p></div>' +
