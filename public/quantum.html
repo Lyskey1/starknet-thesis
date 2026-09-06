@@ -2682,7 +2682,7 @@ if (window.thStickyRail) {
 
 <!-- TH-PQ: roadmap surface by surface (chapter of section 03) -->
 <style>
-.th-pq{--th-q:#c53400;--th-done:#c53400;--th-dev:#e07a4a;--th-ext:#9a9a9a;--th-ink:#fafafa;--th-muted:#9a9a9a;--th-panel:#101010;--th-hair:rgba(250, 250, 250,.10);--th-hair-soft:rgba(250, 250, 250,.06);width:100vw;max-width:none;margin:28px 0 0 calc(50% - 50vw);padding:0 clamp(20px,3vw,44px);}
+.th-pq{--th-q:#c53400;--th-done:#36C692;--th-dev:#E5A552;--th-ext:#9a9a9a;--th-ink:#fafafa;--th-muted:#9a9a9a;--th-panel:#101010;--th-hair:rgba(250, 250, 250,.10);--th-hair-soft:rgba(250, 250, 250,.06);width:100vw;max-width:none;margin:28px 0 0 calc(50% - 50vw);padding:0 clamp(20px,3vw,44px);}
 .th-pq *{box-sizing:border-box;}
 .th-pq-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:var(--th-q);margin-bottom:14px;}
 .th-pq-title{font-family:'General Sans',sans-serif;font-weight:300;font-size:32px;line-height:1.05;letter-spacing:-.01em;color:var(--th-ink);margin-bottom:12px;}
@@ -2753,8 +2753,9 @@ if (window.thStickyRail) {
 body.page-quantum{overflow-x:clip;}
 .th-pq-layout{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(320px,.9fr);gap:24px;align-items:start;margin-top:18px;}
 .th-pq-left{min-width:0;}
-.th-fl{position:sticky;top:100px;--th-q:#c53400;--th-done:#c53400;--th-dev:#e07a4a;--th-ext:#9a9a9a;--th-ink:#fafafa;--th-muted:#9a9a9a;--th-hair:rgba(250, 250, 250,.08);--th-hair-soft:rgba(250, 250, 250,.05);}
+.th-fl{position:sticky;top:100px;--th-q:#c53400;--th-done:#36C692;--th-dev:#E5A552;--th-ext:#9a9a9a;--th-ink:#fafafa;--th-muted:#9a9a9a;--th-hair:rgba(250, 250, 250,.08);--th-hair-soft:rgba(250, 250, 250,.05);}
 .th-fl-head{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--th-q);margin-bottom:16px;}
+.th-fl-asof{display:block;font-style:normal;font-size:8.5px;letter-spacing:.08em;color:var(--th-muted);margin-top:3px;}
 .th-fl-node{position:relative;border:1px solid var(--th-hair);border-left:3px solid var(--ac);border-radius:0;overflow:hidden;cursor:pointer;background:linear-gradient(180deg,color-mix(in srgb,var(--ac) 7%,transparent),rgba(255,255,255,.006));transition:border-color .25s,box-shadow .25s,background .25s;}
 .th-fl-node:hover{box-shadow:0 18px 44px -26px var(--ac);background:linear-gradient(180deg,color-mix(in srgb,var(--ac) 12%,transparent),rgba(255,255,255,.01));}
 .th-fl-node.th-open{box-shadow:0 18px 44px -24px var(--ac);}
@@ -2864,13 +2865,13 @@ body.page-quantum{overflow-x:clip;}
     <div class="th-fl-head">The path to end-to-end</div>
 
     <div class="th-fl-node th-open" style="--ac:var(--th-q)">
-      <div class="th-fl-headrow"><div class="th-fl-txt"><div class="th-fl-phase">Phase 1</div><div class="th-fl-title">Secure the future</div></div><span class="th-fl-time">&asymp; 2 months</span><span class="th-fl-chev">&#9656;</span></div>
+      <div class="th-fl-headrow"><div class="th-fl-txt"><div class="th-fl-phase">Phase 1</div><div class="th-fl-title">Secure the future</div></div><span class="th-fl-time">&asymp; 2 months <i class="th-fl-asof" data-perish="roadmap-phase1">as of Jun 30, 2026</i></span><span class="th-fl-chev">&#9656;</span></div>
       <div class="th-fl-detail"><p>Every new deployment, transaction, and state update becomes quantum-safe by default. Pedersen moves to BLAKE2 across state commitment, address derivation, and the chain environment, and consensus signing moves to Falcon-512.</p><div class="th-fl-sfcs"><span class="th-fl-sfc">State trie hashing</span><span class="th-fl-sfc">Address derivation</span><span class="th-fl-sfc" style="--ac:var(--th-done)">OS config hash</span><span class="th-fl-sfc">Consensus signing</span></div></div>
     </div>
     <div class="th-fl-conn"><span class="th-fl-line"></span><span class="th-fl-tip">&#9662;</span></div>
 
     <div class="th-fl-node" style="--ac:var(--th-dev)">
-      <div class="th-fl-headrow"><div class="th-fl-txt"><div class="th-fl-phase">Phase 2</div><div class="th-fl-title">Migrate what exists</div></div><span class="th-fl-time">&asymp; 1 month</span><span class="th-fl-chev">&#9656;</span></div>
+      <div class="th-fl-headrow"><div class="th-fl-txt"><div class="th-fl-phase">Phase 2</div><div class="th-fl-title">Migrate what exists</div></div><span class="th-fl-time">&asymp; 1 month <i class="th-fl-asof" data-perish="roadmap-phase2">as of Jun 30, 2026</i></span><span class="th-fl-chev">&#9656;</span></div>
       <div class="th-fl-detail"><p>Existing contracts keep working after Phase 1, then a migration toolkit brings their storage key derivation into BLAKE2 alignment, with no manual data migration and no breaking changes to their interfaces.</p><div class="th-fl-sfcs"><span class="th-fl-sfc">Legacy storage</span></div></div>
     </div>
     <div class="th-fl-conn"><span class="th-fl-line"></span><span class="th-fl-tip">&#9662;</span></div>
@@ -2882,7 +2883,7 @@ body.page-quantum{overflow-x:clip;}
     <div class="th-fl-conn"><span class="th-fl-line"></span><span class="th-fl-tip">&#9662;</span></div>
 
     <div class="th-fl-node th-dest" style="--ac:var(--th-done)">
-      <div class="th-fl-headrow"><div class="th-fl-txt"><div class="th-fl-phase">Destination</div><div class="th-fl-title">Full post-quantum security</div></div><span class="th-fl-time">Target ~2027</span><span class="th-fl-chev">&#9656;</span></div>
+      <div class="th-fl-headrow"><div class="th-fl-txt"><div class="th-fl-phase">Destination</div><div class="th-fl-title">Full post-quantum security</div></div><span class="th-fl-time">Target ~2027 <i class="th-fl-asof" data-perish="roadmap-destination">as of Jun 30, 2026</i></span><span class="th-fl-chev">&#9656;</span></div>
       <div class="th-fl-detail"><p>No elliptic-curve assumptions anywhere in the proving, consensus, or state commitment layers. Starknet's side is targeted around 2027, ahead of the industry's 2029 horizon.</p></div>
     </div>
   </aside>
@@ -3405,7 +3406,7 @@ body.page-quantum{overflow-x:clip;}
    each end, owning one viewport with the statement vertically
    centered, a mono chip kicker, one huge tight statement, and
    inverted highlight blocks each led by a light square icon tile.
-   LITERAL COLOURS, NOT TOKENS. strk's copy reads var(--acc),
+   LITERAL COLORS, NOT TOKENS. strk's copy reads var(--acc),
    var(--mono) and var(--display); this page defines none of the
    three, so every value here is written out. Checked, not assumed.
    Prefixed qxq- so it can collide with neither sq- nor sxq-.
@@ -3416,9 +3417,9 @@ body.page-quantum{overflow-x:clip;}
    is the part that was wanted: same face, weight, size and tracking as
    the Satoshi band.
    ============================================================ */
-.qxq{position:relative;width:100vw;max-width:none;margin:120px 0 0 calc(50% - 50vw);
+.qxq{position:relative;width:auto;max-width:1160px;margin:120px auto 0;
   display:flex;flex-direction:column;justify-content:center;align-items:flex-start;
-  min-height:100vh;min-height:100svh;padding:clamp(96px,12vh,168px) 16px;}
+  min-height:0;padding:clamp(72px,10vh,140px) 32px;}
 /* no rule across the top: the band opens on the statement itself */
 .qxq-kicker{display:inline-block;margin:0 0 22px;padding:6px 10px;background:rgba(250,250,250,.08);
   font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.02em;line-height:1.2;
@@ -3429,10 +3430,15 @@ body.page-quantum{overflow-x:clip;}
    h2. privacy's Satoshi band escapes that lock only because its statement
    is a <p> inside a <blockquote>, which is why the two looked like
    different typefaces when they are in fact the same one at two weights. */
+/* the counter-!importants left with the bundle pass: styles.css's branding
+   rule is no longer important, so plain specificity carries the weight */
 .qxq-quote{align-self:stretch;margin:0;max-width:none;text-align:left;
   font-family:'General Sans','Helvetica Neue',Arial,sans-serif;
-  font-weight:600 !important;color:#fff;
-  font-size:clamp(34px,7vw,124px);line-height:1.02;letter-spacing:-.04em !important;}
+  font-weight:600;color:#fff;
+  font-size:clamp(34px,4.5vw,64px);line-height:1.06;letter-spacing:-.03em;}
+.qxq-sub{margin:26px 0 0;max-width:70ch;font-family:'General Sans','Helvetica Neue',Arial,sans-serif;
+  font-weight:300;font-size:17px;line-height:1.7;color:rgba(250,250,250,.66);}
+.qxq-sub b{color:#fafafa;font-weight:500;}
 @media(max-width:860px){
   .qxq{margin-top:72px;padding:72px 12px;}
   .qxq-quote{font-size:clamp(30px,9vw,48px);}
@@ -3834,16 +3840,28 @@ body.page-quantum{overflow-x:clip;}
    No `color: inherit` on the label: that span IS the block element, so
    inherit would resolve against .qh-cta and paint it black on a dark fill,
    which is exactly the bug the btcfi toggle hit. */
-.news-toggle.qh-cta{width:auto;justify-content:center;cursor:pointer;
-  border:0;background:none;box-shadow:none;border-radius:0;padding:0;margin-inline:auto;}
-.news-toggle.qh-cta .news-toggle-title{font-family:inherit;font-size:inherit;
-  letter-spacing:normal;text-transform:none;
-  display:flex;align-items:center;justify-content:center;}
-.news-toggle.qh-cta > i{transition:transform .3s ease,background var(--hover-dur) var(--hover-ease);}
-.news-toggle.qh-cta[aria-expanded="true"] > i{transform:rotate(90deg);}
-.news-section:has(.news-toggle.qh-cta){border:0;background:none;padding:0;
-  display:flex;flex-direction:column;align-items:center;}
-.news-section:has(.news-toggle.qh-cta) .news-grid{width:100%;margin-top:26px;}
+/* main's full-width news bar on the vesper glass tier (PART 6): gradient
+   border accent to --strk-hi, the LATEST pill's own dot, headline-weight
+   title, in-place expansion; the styles.css .news-flashy skin is overridden
+   the same way btcfi does it. */
+.page-quantum .news-flashy .news-toggle{border:0;border-radius:0;overflow:visible;width:100%;
+  background:rgba(250,250,250,.04);
+  -webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);
+  box-shadow:none;transition:transform .28s ease,box-shadow .28s ease;}
+.page-quantum .news-flashy .news-toggle::before{content:'';position:absolute;inset:0;padding:1px;
+  background:linear-gradient(90deg,var(--accent),var(--strk-hi,#A78BFA));
+  -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
+  -webkit-mask-composite:xor;mask-composite:exclude;
+  pointer-events:none;opacity:1;border-radius:0;}
+.page-quantum .news-flashy .news-toggle:hover{transform:translateY(-2px);
+  box-shadow:0 0 22px rgba(var(--accent-rgb),.16);}
+.page-quantum .news-flashy .news-toggle-title{font-family:var(--display);font-weight:300;
+  font-size:26px;letter-spacing:normal;color:var(--white);}
+.page-quantum .news-flashy .news-eyebrow{background:linear-gradient(90deg,rgba(var(--accent-rgb),.16),rgba(167,139,250,.14));
+  border-color:rgba(var(--accent-rgb),.4);color:var(--accent);}
+.page-quantum .news-chevron{font-size:22px;color:rgba(250,250,250,.55);}
+.page-quantum .news-section{border:0;background:none;padding:0;}
+.page-quantum .news-grid{width:100%;margin-top:26px;}
 
 /* ===== QHX: the three-zone hero frame (2026-09-06), strk's geometry name
    for name: wrap = the 1392 container, scene takes the flex slack, stage =
@@ -3924,15 +3942,33 @@ body.page-quantum{--qhx-u:min(1vw,14.4px)}
 @media (max-width:380px){
   body.page-quantum .hero{padding:2rem 1.25rem 24px}
 }
+
+/* ADVISOR, two columns (PART 6, 2026-09-06): words left, photo right in a
+   glass frame; overrides the centered giant-quote layer above. */
+.qadv.qadv2{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:52px;align-items:center;
+  text-align:left;padding:clamp(56px,8vh,110px) 0;}
+.qadv.qadv2 .qadv-txt{max-width:none;}
+.qadv.qadv2 .qadv-quote{margin:0;max-width:64ch;font-size:19px;line-height:1.7;text-align:left;}
+.qadv.qadv2 .qadv-role{margin:22px 0 0;max-width:none;text-align:left;}
+.qadv-photo{margin:0;padding:12px;border:1px solid rgba(250,250,250,.14);border-radius:12px;
+  background:rgba(250,250,250,.03);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);}
+.qadv-photo img{display:block;width:100%;height:auto;border-radius:6px;}
+@media(max-width:880px){.qadv.qadv2{grid-template-columns:1fr;gap:28px;}.qadv-photo{max-width:340px;}}
 </style>
 
   <!-- chapter: the referee. The heading was removed on request; its id moves
        onto the section itself because #and-to-get-this-roadmap-right is a
        committed search-index anchor and the hero has no other target for it. -->
-  <div class="qadv" id="and-to-get-this-roadmap-right">
-    <div class="qadv-guides" aria-hidden="true"></div>
-    <p class="qadv-quote"><img class="qadv-avatar" src="assets/scott-aaronson.jpg" alt="Prof. Scott Aaronson" width="776" height="714" loading="lazy" decoding="async">In February 2026, <b>Prof. Scott Aaronson</b> joined <a href="https://starkware.co/blog/quantum-computing-expert-scott-aaronson-joins-starkware/" target="_blank" rel="noopener noreferrer">StarkWare's Scientific Advisory Board</a> with a clear mandate: pressure-test this roadmap. Every assumption about what quantum computers can and cannot do, every cryptographic choice on the path to end-to-end resistance, now gets challenged by one of the foremost authorities in the field.</p>
-    <p class="qadv-role"><b>Scott Aaronson</b> &middot; Schlumberger Chair of Computer Science, UT Austin &middot; Founding Director, Quantum Information Center</p>
+  <!-- PART 6 (2026-09-06): the advisor block back on main's two-column
+       anatomy, in vesper's surfaces: the words left with the name and title
+       line, the photo right in a glass frame. The centered giant-quote
+       treatment and the inline avatar are gone. -->
+  <div class="qadv qadv2" id="and-to-get-this-roadmap-right">
+    <div class="qadv-txt">
+      <p class="qadv-quote">In February 2026, <b>Prof. Scott Aaronson</b> joined <a href="https://starkware.co/blog/quantum-computing-expert-scott-aaronson-joins-starkware/" target="_blank" rel="noopener noreferrer">StarkWare's Scientific Advisory Board</a> with a clear mandate: pressure-test this roadmap. Every assumption about what quantum computers can and cannot do, every cryptographic choice on the path to end-to-end resistance, now gets challenged by one of the foremost authorities in the field.</p>
+      <p class="qadv-role"><b>Scott Aaronson</b> &middot; Schlumberger Chair of Computer Science, UT Austin &middot; Founding Director, Quantum Information Center</p>
+    </div>
+    <figure class="qadv-photo"><img src="assets/scott-aaronson.jpg" alt="Prof. Scott Aaronson" width="776" height="714" loading="lazy" decoding="async"></figure>
   </div>
   </div>
 </section>
@@ -4195,6 +4231,8 @@ var qvFilmChrome = thVideoChrome({
 <section class="qxq th-pm-reveal" id="qxq-band" aria-labelledby="on-the-day-the-line-is">
   <p class="qxq-kicker">Q-day</p>
   <h2 id="on-the-day-the-line-is" class="qxq-quote">On the day the line is drawn for everyone, most chains will discover which side they were born on. Starknet already knows.</h2>
+  <!-- main's subtitle, verbatim -->
+  <p class="qxq-sub">The thesis needs only two recognitions: that the quantum-security premium is <b>not yet priced in</b>, and that Starknet holds the <b>structural moat</b> to capture it.</p>
 </section>
 
 <!-- NEWS -->
@@ -4205,9 +4243,12 @@ var qvFilmChrome = thVideoChrome({
            with a hairline border plus a matching square tile carrying the
            asterisk. Still a real button with aria-expanded, and #newsToggle is
            unchanged, so the news JS and the chevron rotation keep working. -->
-      <button class="news-toggle qh-cta qh-cta--muted" id="newsToggle" aria-expanded="false">
-        <span class="news-toggle-title">Quantum × Starknet news</span>
-        <i class="news-chevron" aria-hidden="true"><svg viewBox="0 0 51 51" fill="none"><path d="M26.293 23.583L34.4834 15.3926L35.6064 16.5156L27.416 24.7061H39V26.2939H27.418L35.6084 34.4844L34.4854 35.6074L26.293 27.415V39H24.7051V27.417L16.5146 35.6074L15.3916 34.4844L23.582 26.2939H12V24.7061H23.584L15.3936 16.5156L16.5166 15.3926L24.7051 23.5811V12H26.293V23.583Z"/></svg></i>
+      <!-- PART 6 (2026-09-06): main's full-width accordion bar, LATEST badge
+           left, the title at the section headline weight, chevron right; the
+           asterisk-tile ghost CTA is gone. Same #newsToggle contract. -->
+      <button class="news-toggle" id="newsToggle" aria-expanded="false">
+        <span class="news-toggle-title"><span class="news-eyebrow">Latest</span> Quantum × Starknet news</span>
+        <i class="ti ti-chevron-down news-chevron" aria-hidden="true"></i>
       </button>
       <div class="news-grid" id="newsGrid"></div>
     </div>
@@ -4278,7 +4319,12 @@ var qvFilmChrome = thVideoChrome({
 // ============================================================
 var Q_PERISHABLE = {
   'israel-call-close': { breaks: '2026-10-08',
-    after: 'Applications closed October 8, 2026.' }
+    after: 'Applications closed October 8, 2026.' },
+  /* the roadmap's relative estimates are dated readings of the published
+     roadmap (StarkWare, 2026-06-30): the phase cards render the as-of */
+  'roadmap-phase1': { asof: '2026-06-30' },
+  'roadmap-phase2': { asof: '2026-06-30' },
+  'roadmap-destination': { asof: '2026-06-30' }
 };
 (function(){
   var now = Date.now();
