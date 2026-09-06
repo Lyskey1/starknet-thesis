@@ -1182,15 +1182,15 @@
      main Bitcoin wrappers, sourced through the same assets/logos pipeline the
      ecosystem grid uses. Grayscale at .7 with WBTC in full color as the
      dominant one. Decoration: aria-hidden, empty alts. */
-  .brkl-art-logos { position: relative; width: 100%; max-width: 300px; margin-left: auto; margin-right: auto; }
-  .wlr { position: absolute; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .brkl-art-logos { display: flex; flex-direction: column; align-items: center;
+    justify-content: center; gap: 16px; width: 100%; }
+  .wlrow { display: flex; justify-content: center; gap: 24px; }
+  .wlr { display: flex; flex-direction: column; align-items: center; gap: 8px; }
   .wlr i { display: flex; align-items: center; justify-content: center;
     width: 56px; height: 56px; border: 1px solid rgba(250, 250, 250, .18); border-radius: 50%; }
-  .wlr img { width: 44px; height: 44px; border-radius: 50%; filter: grayscale(1); opacity: .6; }
+  .wlr img { width: 44px; height: 44px; border-radius: 50%; }
   .wlr b { font-family: var(--mono); font-weight: 400; font-size: 10px; letter-spacing: .08em;
     color: rgba(250, 250, 250, .55); }
-  .wlr-wbtc i { width: 72px; height: 72px; }
-  .wlr-wbtc img { width: 56px; height: 56px; filter: none; opacity: 1; }
   .brkl-t { font-family: var(--sans); font-size: 17px; font-weight: 600; line-height: 1.3;
     letter-spacing: -0.01em; color: var(--white); margin: 0 0 11px; }
   .brkl-col .brk-panel p { font-family: var(--sans); font-size: 14.5px; line-height: 1.7;
@@ -2372,16 +2372,22 @@
   <div class="brkl">
     <div class="brkl-col">
       <div class="brkl-art brkl-art-logos" aria-hidden="true">
-        <!-- the six main Bitcoin wrappers as a loose 3x2 constellation
-             (2026-09-06 redo): 44px logos inside 56px hairline rings, mono
-             ticker under each, WBTC dominant at 56/72 in full color, the
-             rest grayscale at .6. Same assets/logos pipeline as the grid. -->
-        <span class="wlr" style="left:4%;top:8%"><i><img src="assets/logos/cbbtc.png" alt="" width="44" height="44"></i><b>cbBTC</b></span>
-        <span class="wlr wlr-wbtc" style="left:36%;top:0"><i><img src="assets/logos/wbtc.png" alt="" width="56" height="56"></i><b>WBTC</b></span>
-        <span class="wlr" style="left:74%;top:10%"><i><img src="assets/logos/tbtc.png" alt="" width="44" height="44"></i><b>tBTC</b></span>
-        <span class="wlr" style="left:8%;top:56%"><i><img src="assets/logos/fbtc.png" alt="" width="44" height="44"></i><b>FBTC</b></span>
-        <span class="wlr" style="left:41%;top:60%"><i><img src="assets/logos/btcb.png" alt="" width="44" height="44"></i><b>BTCB</b></span>
-        <span class="wlr" style="left:72%;top:54%"><i><img src="assets/logos/lbtc.png" alt="" width="44" height="44"></i><b>LBTC</b></span>
+        <!-- the five main Bitcoin wrappers (2026-09-06 redo): real logos in
+             full color, one size for all five, 44px in a 56px hairline ring,
+             mono tickers below. 3 + 2 centered rows (one row of five needs
+             344px against the ~313px column at both 1440 and 1280, so the
+             brief's fallback applies); WBTC holds the middle of the top row.
+             Assets: the coins' CoinGecko images, optimized to 96px PNGs in
+             assets/logos. -->
+        <div class="wlrow">
+          <span class="wlr"><i><img src="assets/logos/cbbtc.png" alt="" width="44" height="44"></i><b>cbBTC</b></span>
+          <span class="wlr"><i><img src="assets/logos/wbtc.png" alt="" width="44" height="44"></i><b>WBTC</b></span>
+          <span class="wlr"><i><img src="assets/logos/tbtc.png" alt="" width="44" height="44"></i><b>tBTC</b></span>
+        </div>
+        <div class="wlrow">
+          <span class="wlr"><i><img src="assets/logos/fbtc.png" alt="" width="44" height="44"></i><b>FBTC</b></span>
+          <span class="wlr"><i><img src="assets/logos/lbtc.png" alt="" width="44" height="44"></i><b>LBTC</b></span>
+        </div>
       </div>
       <div class="brk-panel" id="centralized-wrappers-dominate">
         <h4 class="brkl-t">Centralized wrappers dominate</h4>
