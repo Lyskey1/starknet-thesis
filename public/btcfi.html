@@ -556,6 +556,9 @@
     text-decoration-thickness: 1px; text-underline-offset: 3px; }
   .inline-accent-link[target="_blank"]::after { content: "\ea24"; font-family: "tabler-icons";
     font-size: .8em; line-height: 1; margin-left: .18em; vertical-align: 0; display: inline-block; text-decoration: none; }
+  /* keyboard focus only, the pills' rule: no blue box after a mouse click */
+  .inline-accent-link:focus:not(:focus-visible) { outline: none; }
+  .inline-accent-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
   /* strkBTC header triad: the third clause sits in the secondary ink, not a
      third accent: three accent colors in one headline would read as a flag.
@@ -1179,9 +1182,15 @@
      main Bitcoin wrappers, sourced through the same assets/logos pipeline the
      ecosystem grid uses. Grayscale at .7 with WBTC in full color as the
      dominant one. Decoration: aria-hidden, empty alts. */
-  .brkl-art-logos { position: relative; max-width: 280px; margin-left: auto; margin-right: auto; }
-  .brkl-art-logos img { position: absolute; border-radius: 50%; filter: grayscale(1); opacity: .7; }
-  .brkl-art-logos .wl-wbtc { filter: none; opacity: 1; }
+  .brkl-art-logos { position: relative; width: 100%; max-width: 300px; margin-left: auto; margin-right: auto; }
+  .wlr { position: absolute; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .wlr i { display: flex; align-items: center; justify-content: center;
+    width: 56px; height: 56px; border: 1px solid rgba(250, 250, 250, .18); border-radius: 50%; }
+  .wlr img { width: 44px; height: 44px; border-radius: 50%; filter: grayscale(1); opacity: .6; }
+  .wlr b { font-family: var(--mono); font-weight: 400; font-size: 10px; letter-spacing: .08em;
+    color: rgba(250, 250, 250, .55); }
+  .wlr-wbtc i { width: 72px; height: 72px; }
+  .wlr-wbtc img { width: 56px; height: 56px; filter: none; opacity: 1; }
   .brkl-t { font-family: var(--sans); font-size: 17px; font-weight: 600; line-height: 1.3;
     letter-spacing: -0.01em; color: var(--white); margin: 0 0 11px; }
   .brkl-col .brk-panel p { font-family: var(--sans); font-size: 14.5px; line-height: 1.7;
@@ -2363,15 +2372,16 @@
   <div class="brkl">
     <div class="brkl-col">
       <div class="brkl-art brkl-art-logos" aria-hidden="true">
-        <!-- the six main Bitcoin wrappers, same asset pipeline as the
-             ecosystem grid (assets/logos, fetched 2026-09-06 from the tokens'
-             canonical listings). WBTC dominant in full color. -->
-        <img class="wl-wbtc" src="assets/logos/wbtc.png" alt="" width="76" height="76" style="left:37%;top:31%">
-        <img src="assets/logos/cbbtc.png" alt="" width="46" height="46" style="left:12%;top:12%">
-        <img src="assets/logos/tbtc.png" alt="" width="40" height="40" style="left:72%;top:9%">
-        <img src="assets/logos/btcb.png" alt="" width="48" height="48" style="left:76%;top:56%">
-        <img src="assets/logos/fbtc.png" alt="" width="38" height="38" style="left:6%;top:58%">
-        <img src="assets/logos/lbtc.png" alt="" width="44" height="44" style="left:47%;top:72%">
+        <!-- the six main Bitcoin wrappers as a loose 3x2 constellation
+             (2026-09-06 redo): 44px logos inside 56px hairline rings, mono
+             ticker under each, WBTC dominant at 56/72 in full color, the
+             rest grayscale at .6. Same assets/logos pipeline as the grid. -->
+        <span class="wlr" style="left:4%;top:8%"><i><img src="assets/logos/cbbtc.png" alt="" width="44" height="44"></i><b>cbBTC</b></span>
+        <span class="wlr wlr-wbtc" style="left:36%;top:0"><i><img src="assets/logos/wbtc.png" alt="" width="56" height="56"></i><b>WBTC</b></span>
+        <span class="wlr" style="left:74%;top:10%"><i><img src="assets/logos/tbtc.png" alt="" width="44" height="44"></i><b>tBTC</b></span>
+        <span class="wlr" style="left:8%;top:56%"><i><img src="assets/logos/fbtc.png" alt="" width="44" height="44"></i><b>FBTC</b></span>
+        <span class="wlr" style="left:41%;top:60%"><i><img src="assets/logos/btcb.png" alt="" width="44" height="44"></i><b>BTCB</b></span>
+        <span class="wlr" style="left:72%;top:54%"><i><img src="assets/logos/lbtc.png" alt="" width="44" height="44"></i><b>LBTC</b></span>
       </div>
       <div class="brk-panel" id="centralized-wrappers-dominate">
         <h4 class="brkl-t">Centralized wrappers dominate</h4>
@@ -2413,7 +2423,7 @@
     </div>
     <div class="brkl-col">
       <div class="brkl-art">
-        <svg class="brkl-svg" viewBox="0 0 320 260" fill="none" stroke="#4a4a4a" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+        <svg class="brkl-svg" viewBox="0 0 320 260" fill="none" stroke="rgba(250,250,250,.6)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
           <!-- ONE OPTICAL BOX FOR ALL THREE. The raw ink boxes differ
                (tall-and-narrow vault, long chain, wide-and-flat pool),
                and at one rendered width that reads as three unrelated
@@ -2421,41 +2431,17 @@
                the three carry the same visual mass across the band.
                Rescaling one figure means re-checking the other two. -->
           <g>
-            <!-- SEVEN SHALLOW BASINS (2026-09-06), scattered, no connecting
-                 lines, deliberately more elements than the four slabs this
-                 replaces. Each basin: an open rim diamond, short walls, and a
-                 liquid-surface diamond at its own fill level. One basin in
-                 the accent. -->
-            <!-- basin: rim high, level low -->
-            <path d="M64 52 L104 74 L64 96 L24 74 Z"/>
-            <path d="M24 74 l0 10 L64 106 l0 -10 M104 74 l0 10 L64 106"/>
-            <path d="M40 81 L64 94 L88 81" opacity=".5"/>
-            <!-- basin: mid, fuller -->
-            <path d="M186 40 L222 60 L186 80 L150 60 Z"/>
-            <path d="M150 60 l0 9 L186 89 l0 -9 M222 60 l0 9 L186 89"/>
-            <path d="M158 62 L186 78 L214 62" opacity=".5"/>
-            <!-- basin: small, nearly empty -->
-            <path d="M282 78 L310 94 L282 110 L254 94 Z"/>
-            <path d="M254 94 l0 8 L282 118 l0 -8 M310 94 l0 8 L282 118"/>
-            <path d="M266 105 L282 114 L298 105" opacity=".5"/>
-            <!-- THE ACCENT BASIN: the one that filled -->
-            <g stroke="var(--accent)">
-              <path d="M140 118 L184 142 L140 166 L96 142 Z"/>
-              <path d="M96 142 l0 11 L140 177 l0 -11 M184 142 l0 11 L140 177"/>
-              <path d="M100 144 L140 166 L180 144" opacity=".75"/>
-            </g>
-            <!-- basin: wide, half -->
-            <path d="M256 138 L298 162 L256 186 L214 162 Z"/>
-            <path d="M214 162 l0 10 L256 196 l0 -10 M298 162 l0 10 L256 196"/>
-            <path d="M228 165 L256 181 L284 165" opacity=".5"/>
-            <!-- basin: low left, shallow -->
-            <path d="M66 176 L102 196 L66 216 L30 196 Z"/>
-            <path d="M30 196 l0 9 L66 225 l0 -9 M102 196 l0 9 L66 225"/>
-            <path d="M48 202 L66 212 L84 202" opacity=".5"/>
-            <!-- basin: bottom middle, mid -->
-            <path d="M172 196 L204 214 L172 232 L140 214 Z"/>
-            <path d="M140 214 l0 8 L172 240 l0 -8 M204 214 l0 8 L172 240"/>
-            <path d="M150 216 L172 228 L194 216" opacity=".5"/>
+            <!-- SIX SHALLOW CYLINDERS (2026-09-06 redo): pools are basins,
+                 not tiles. Each: a rim ellipse, two short sides, the base
+                 arc, an inner liquid ellipse at its own level, and a wavy
+                 line across the liquid. 1.5px strokes at ink .6; one basin
+                 in the accent. Scattered, unconnected, 44 to 90px wide. -->
+            <g><ellipse cx="62" cy="52" rx="42" ry="13.4"/><path d="M20 52 v16 M104 52 v16"/><path d="M20 68 A42 13.4 0 0 0 104 68"/><ellipse cx="62" cy="62.4" rx="39" ry="12.5" opacity=".75"/><path d="M27.0 62.4 q5.8 -2.2 11.7 0 q5.8 2.2 11.7 0 q5.8 -2.2 11.7 0 q5.8 2.2 11.7 0 q5.8 -2.2 11.7 0 q5.8 2.2 11.7 0" opacity=".75"/></g>
+            <g><ellipse cx="202" cy="42" rx="30" ry="9.6"/><path d="M172 42 v13 M232 42 v13"/><path d="M172 55 A30 9.6 0 0 0 232 55"/><ellipse cx="202" cy="45.9" rx="27" ry="8.6" opacity=".75"/><path d="M179.0 45.9 q3.8 -2.2 7.7 0 q3.8 2.2 7.7 0 q3.8 -2.2 7.7 0 q3.8 2.2 7.7 0 q3.8 -2.2 7.7 0 q3.8 2.2 7.7 0" opacity=".75"/></g>
+            <g><ellipse cx="288" cy="96" rx="22" ry="7.0"/><path d="M266 96 v10 M310 96 v10"/><path d="M266 106 A22 7.0 0 0 0 310 106"/><ellipse cx="288" cy="101.0" rx="19" ry="6.1" opacity=".75"/><path d="M273.0 101.0 q2.5 -2.2 5.0 0 q2.5 2.2 5.0 0 q2.5 -2.2 5.0 0 q2.5 2.2 5.0 0 q2.5 -2.2 5.0 0 q2.5 2.2 5.0 0" opacity=".75"/></g>
+            <g stroke="var(--accent)"><ellipse cx="132" cy="132" rx="45" ry="14.4"/><path d="M87 132 v18 M177 132 v18"/><path d="M87 150 A45 14.4 0 0 0 177 150"/><ellipse cx="132" cy="135.6" rx="42" ry="13.4" opacity=".75"/><path d="M94.0 135.6 q6.3 -2.2 12.7 0 q6.3 2.2 12.7 0 q6.3 -2.2 12.7 0 q6.3 2.2 12.7 0 q6.3 -2.2 12.7 0 q6.3 2.2 12.7 0" opacity=".75"/></g>
+            <g><ellipse cx="252" cy="172" rx="33" ry="10.6"/><path d="M219 172 v14 M285 172 v14"/><path d="M219 186 A33 10.6 0 0 0 285 186"/><ellipse cx="252" cy="182.5" rx="30" ry="9.6" opacity=".75"/><path d="M226.0 182.5 q4.3 -2.2 8.7 0 q4.3 2.2 8.7 0 q4.3 -2.2 8.7 0 q4.3 2.2 8.7 0 q4.3 -2.2 8.7 0 q4.3 2.2 8.7 0" opacity=".75"/></g>
+            <g><ellipse cx="74" cy="210" rx="25" ry="8.0"/><path d="M49 210 v11 M99 210 v11"/><path d="M49 221 A25 8.0 0 0 0 99 221"/><ellipse cx="74" cy="214.4" rx="22" ry="7.0" opacity=".75"/><path d="M56.0 214.4 q3.0 -2.2 6.0 0 q3.0 2.2 6.0 0 q3.0 -2.2 6.0 0 q3.0 2.2 6.0 0 q3.0 -2.2 6.0 0 q3.0 2.2 6.0 0" opacity=".75"/></g>
           </g>
         </svg>
       </div>
@@ -2806,8 +2792,9 @@
           <div id="first-quantum-safe-transaction" class="mode-item btcg-card btcg-violet">
             <div class="mode-dot" style="background:#C4B5FD;"></div>
             <div>
-              <div class="mode-item-title">First quantum-safe transaction</div>
-              <div class="mode-item-desc">A Falcon-512 account executed a real STARK-proven, post-quantum-secure transfer on Starknet mainnet on 22 July 2026. <a href="https://x.com/StarkWareLtd/status/2079955780019864015" target="_blank" rel="noopener noreferrer" class="inline-accent-link">The mainnet transfer</a></div>
+              <div class="mode-item-title">First quantum-safe Bitcoin transaction</div>
+              <!-- owner-validated copy (2026-09-06), verbatim, undated -->
+              <div class="mode-item-desc">StarkWare executed the first quantum-safe transaction on Bitcoin mainnet, proving a post-quantum path for Bitcoin itself. <a href="https://x.com/StarkWareLtd/status/2092742830170968205" target="_blank" rel="noopener noreferrer" class="inline-accent-link">The transaction</a></div>
             </div>
           </div>
           <div id="roadmap-to-quantum-security" class="mode-item btcg-card btcg-violet">
@@ -2955,7 +2942,6 @@
         <div class="mst-eco" id="btcfiEco" data-cat="all">
           <div class="mst-rail" role="group" aria-label="Filter the ecosystem by category">
             <button type="button" class="mst-rail-row is-active" aria-pressed="true" data-cat="all">All<span class="mst-rail-n" data-count="all">19</span></button>
-            <p class="mst-rail-cap">Onboarding</p>
             <button type="button" class="mst-rail-row" aria-pressed="false" data-cat="wallets">Wallets<span class="mst-rail-n" data-count="wallets">3</span></button>
             <button type="button" class="mst-rail-row" aria-pressed="false" data-cat="bridges">Bridges<span class="mst-rail-n" data-count="bridges">9</span></button>
             <button type="button" class="mst-rail-row" aria-pressed="false" data-cat="defi">DeFi protocols<span class="mst-rail-n" data-count="defi">7</span></button>
