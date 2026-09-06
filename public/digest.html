@@ -273,8 +273,8 @@
   .dgh-kicker { margin: 0; font-family: var(--vc-tag); font-weight: 400;
     font-size: max(0.9 * var(--dgh-u), 11px); line-height: 1.5;
     letter-spacing: .2em; text-transform: uppercase; color: var(--accent); }
-  .dgh-title { margin: var(--dgh-u) 0 0; font-family: var(--vc-sans); font-weight: 300; font-size: calc(4.6 * var(--dgh-u));
-    line-height: .9; letter-spacing: normal; text-transform: none; color: var(--white); max-width: none; }
+  /* the display headline rides the SHARED token set in css/vesper-chrome.css
+     (.vch-title, 2026-09-06): one source of truth for strk, btcfi, digest. */
   /* the one argument paragraph: the retired mono kicker note and the body
      sentence, folded. Sentence case: it is a sentence, not a readout. The
      30vw cap keeps the measure near 60ch over the 47vw column. */
@@ -396,7 +396,6 @@
     .dgh-stage { inset: 0; width: auto; height: auto; transform: none; opacity: .3; }
     .dgh-col { width: auto; }
     .dgh-kicker { font-size: .75rem; }
-    .dgh-title { margin-top: .75rem; font-size: 2.75rem; }
     .dgh-body { margin-top: 1rem; max-width: 40ch; font-size: .875rem; }
     .dgh-cta { gap: .5rem; margin-top: 1.5rem; }
     .dgh-pill { padding: .8125rem 1.5rem; font-size: 1rem; }
@@ -419,7 +418,6 @@
   }
   @media (max-width: 380px) {
     body.page-recap .hero.dgh-hero { padding: 5.5rem 1.25rem 24px; }
-    .dgh-title { font-size: 2.375rem; }
     .dgh-turn { font-size: 1.125rem; }
   }
 
@@ -490,7 +488,7 @@
       <p class="dgh-kicker">Digest</p>
       <!-- the id is the search index's anchor for this page's opening claim
            (public/data/search-index.json); it stays on the display heading. -->
-      <h1 id="never-miss-whatsshipping-on-starknet" class="dgh-title">Never miss what's shipping on Starknet.</h1>
+      <h1 id="never-miss-whatsshipping-on-starknet" class="dgh-title vch-title">Never miss what's shipping on Starknet.</h1>
       <p class="dgh-body">A thesis only holds if the ecosystem actually ships behind it. Starknet is among the very few ecosystems shipping this much, this consistently, and the digest is the record of it: weekly roundups, monthly recaps, and original research.</p>
       <div class="dgh-cta">
         <a class="dgh-pill dg-glass dg-glass--primary" href="https://starknetresearch.substack.com/subscribe" target="_blank" rel="noopener">Subscribe</a>

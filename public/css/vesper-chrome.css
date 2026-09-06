@@ -265,3 +265,34 @@ header.vc-header .vc-cta.dg-glass.dg-glass:hover { border-color: rgba(245,242,23
 /* styles.css styles the bare <nav> element as the old fixed bar; neutralise it for the chrome's navs */
 header.vc-header nav, footer.vc-footer nav { position: static; top: auto; left: auto; right: auto; z-index: auto; height: auto; min-height: 0; padding: 0; background: none; border: 0; backdrop-filter: none; -webkit-backdrop-filter: none; justify-content: flex-start; }
 header.vc-header nav.vc-mobile { position: absolute; align-items: stretch; padding: 20px; }
+
+/* ============================================================
+   SHARED HERO HEADLINE (2026-09-06): one token set for the display
+   headline of the three-zone heroes (strk, btcfi, digest). The values are
+   strk's computed set at 1440, dumped before unification.
+   !important is load-bearing on exactly the four properties that
+   css/styles.css's strk20 branding rule (`h1, h2, .hero h1, ... { ... 
+   !important }`) also marks important: that rule held btcfi and digest at
+   letter-spacing -0.022em while strk (which does not load styles.css)
+   rendered normal. Matching importance at higher specificity (0,2,0 over
+   its .hero h1 at 0,1,1) ends the fork; every other property wins on
+   specificity alone and stays unimportant. The u token is the same
+   min(1vw, 14.4px) unit the three heroes already scale by. */
+:root { --vch-u: min(1vw, 14.4px); }
+.hero .vch-title { margin: var(--vch-u) 0 0;
+  font-family: "General Sans", sans-serif !important;
+  font-weight: 300 !important;
+  font-size: calc(4.6 * var(--vch-u));
+  line-height: .9;
+  letter-spacing: normal !important;
+  text-transform: none !important;
+  color: var(--white, #fafafa);
+  max-width: none;
+  text-align: left; }
+.hero .vch-title em { font-style: normal; color: var(--accent); }
+@media (max-width: 980px) {
+  .hero .vch-title { margin-top: .75rem; font-size: 2.75rem; }
+}
+@media (max-width: 380px) {
+  .hero .vch-title { font-size: 2.375rem; }
+}
