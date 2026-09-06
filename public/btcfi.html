@@ -354,7 +354,8 @@
      progress bar) or a once-per-15s class flip. */
   .cat { margin-top: 12px; }
   .cat-grid { display: grid; grid-template-columns: minmax(0, 460px) minmax(0, 1fr); gap: 58px; align-items: center; }
-  .cat-dial-wrap { position: relative; width: 100%; max-width: 460px; aspect-ratio: 1 / 1; }
+  /* one-viewport fit (2026-09-06), measure 1: dial diameter down 25% */
+  .cat-dial-wrap { position: relative; width: 100%; max-width: 345px; aspect-ratio: 1 / 1; }
   .page-btcfi .btcg-bloom-cat i { --bc: var(--accent); left: 12%; top: 12%; width: 76%; height: 76%; opacity: .16; }
   /* the halo breathes on the same 5.2s pulse the orbit device's bloom uses */
   .cat.run .btcg-bloom-cat i { animation: bgapHalo 5.2s ease-in-out infinite; }
@@ -527,7 +528,8 @@
      to the dead zone in practice. The rail and the glass tint keep their
      shipped values (the rail lives on .page-btcfi .risk-quote.btcg-card
      below); this block is geometry and type only. Nothing here animates. */
-  .risk-quote { margin: 36px auto 0; border-left: 3px solid #E0524A; padding: 36px 44px 38px; max-width: 960px; }
+  /* measure 2: padding halved; measure 3: the 36px gap above tightened */
+  .risk-quote { margin: 24px auto 0; border-left: 3px solid #E0524A; padding: 18px 22px 19px; max-width: 960px; }
   .risk-quote .tag { display: block; font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: #E0524A; margin-bottom: 18px; }
   .risk-quote p { font-family: var(--sans); font-size: 14px; font-weight: 400; line-height: 1.75; color: rgba(250, 250, 250,0.85); max-width: 78ch; }
   .risk-quote .em { color: var(--accent); font-weight: 600; }
@@ -2575,7 +2577,10 @@
   <div id="the-deeper-risk" class="risk-quote btcg-card btcg-coral">
     <div class="btcg-bloom btcg-bloom-quote" aria-hidden="true"><i></i></div>
     <span class="tag">The deeper risk</span>
-    <p>The deeper risk is that Satoshi's original vision never gets fulfilled. Bitcoin was never meant to be only digital gold. The whitepaper described a <span class="em">peer-to-peer electronic cash system</span>, a decentralized currency. And the people who need that most, by sheer numbers, are the unbanked and those in emerging economies: precisely those most sensitive to gas fees, speed, and friction.</p>
+    <!-- one-viewport fit (2026-09-06): the paragraph holds the intro only;
+         the whitepaper and unbanked sentences are cut, the closing bold
+         sentence below carries the turn. -->
+    <p>The deeper risk is that Satoshi's original vision never gets fulfilled. Bitcoin was never meant to be only digital gold.</p>
     <div class="rq-rule" aria-hidden="true"></div>
     <p class="rq-close">If Bitcoin's execution layer stays unsolved or gets captured by opaque intermediaries, the asset survives, but its founding promise to billions of people quietly dies.</p>
   </div>
