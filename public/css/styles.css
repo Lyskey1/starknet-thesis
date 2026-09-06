@@ -1695,9 +1695,16 @@ html { overflow-x: clip; }
    Display type moves from Archivo 800 uppercase (wdth 125) to General Sans 300,
    sentence case, tight tracking, matching the landing. Mono labels stay. */
 body { font-stretch: normal; }
+/* NO !important (2026-09-06): the flags dated from when this rule had to
+   out-rank legacy display layers wherever they sat. The rule stays scoped to
+   the strk20 branding surfaces it was written for and wins by cascade order
+   instead: it sits at the end of this sheet, after every legacy layer above,
+   and the sheet loads after css/vesper-chrome.css's tokens. The shared hero
+   headline (.hero .vch-title in vesper-chrome.css) now out-ranks it on plain
+   specificity, which is the intended order of authority. */
 h1, h2, .lh-h1, .hero h1, .th-pm-title, .lc-h2, .conv-mark, .foot-mark {
-  font-family: var(--display) !important; font-weight: 300 !important; font-stretch: normal !important;
-  text-transform: none !important; letter-spacing: -0.022em !important;
+  font-family: var(--display); font-weight: 300; font-stretch: normal;
+  text-transform: none; letter-spacing: -0.022em;
 }
 h3 { font-family: var(--display); font-weight: 400; font-stretch: normal; text-transform: none; letter-spacing: -0.01em; }
 h1 b, h2 b, h1 strong, h2 strong { font-weight: 400; }

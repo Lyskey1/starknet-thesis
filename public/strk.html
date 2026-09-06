@@ -24,18 +24,20 @@
 
 <script defer src="https://cloud.umami.is/script.js" data-website-id="45f11859-9fc2-49ae-a59e-4826e0f1e174"></script>
 <script defer src="js/search.js"></script>
-<link rel="stylesheet" href="css/glass-chips.css">
-<link href="https://fonts.googleapis.com/css2?family=Mulish:wght@300;400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/eco-stage.css">
-<link rel="stylesheet" href="css/vesper-chrome.css">
-<link rel="stylesheet" href="css/stride.css">
-<script defer src="js/curtain.js"></script>
-<script defer src="js/fee-config.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<!-- shared type system (matches css/styles.css / the rest of the site) -->
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.3.0/dist/tabler-icons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/dist/tabler-icons.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Mulish:wght@300;400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/vesper-chrome.css">
+<link rel="stylesheet" href="css/eco-stage.css">
+<link rel="stylesheet" href="css/privacy-fx.css">
+<link rel="stylesheet" href="css/stride.css">
+<link rel="stylesheet" href="css/styles.css?v=20260817a">
+<link rel="stylesheet" href="css/glass-cards.css">
+<link rel="stylesheet" href="css/glass-chips.css">
+<script defer src="js/curtain.js"></script>
+<script defer src="js/fee-config.js"></script>
 
 <style>
 :root{
@@ -71,7 +73,10 @@ a{color:inherit;text-decoration:none}
 .wrap{max-width:1180px;margin:0 auto;padding:0 32px}
 .eyebrow{font-family:var(--mono),monospace;font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:var(--accent)}
 h1,h2,h3{font-family:var(--display),sans-serif;font-weight:800;line-height:1.04;letter-spacing:-.01em}
-.lead{color:var(--muted-2);font-size:18px;max-width:46ch}
+/* margin, weight and line-height pinned (2026-09-06): css/styles.css's own
+   .lead (26px 0 0 40px, weight 300, lh 1.75) loads now and would restyle
+   this page's leads; these are the values the page rendered before. */
+.lead{color:var(--muted-2);font-size:18px;max-width:46ch;margin:0;font-weight:400;line-height:1.55}
 .label{font-family:var(--mono),monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
 
 /* Specular glass coating on the nav CTA: verbatim mirror of the
@@ -403,7 +408,8 @@ h1,h2,h3{font-family:var(--display),sans-serif;font-weight:800;line-height:1.04;
 .util-panel.show .ticks a:nth-child(7){transition-delay:.20s}
 .util-panel.show .ticks a:nth-child(8){transition-delay:.23s}
 .util-panel.show .ticks a:nth-child(9){transition-delay:.26s}
-.chips{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px}
+/* justify and margin-top pinned against css/styles.css's centred .chips */
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:0;margin-bottom:18px;justify-content:flex-start}
 .chip{font-family:var(--mono),monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase;
   border:1px solid rgba(197, 52, 0,.4);color:var(--acc-2);border-radius:999px;padding:8px 14px;background:rgba(197, 52, 0,.06);
   display:inline-flex;align-items:center;gap:6px;text-decoration:none;cursor:pointer;transition:background .2s,border-color .2s,color .2s}
@@ -623,7 +629,9 @@ a.chip:hover{background:var(--acc);border-color:var(--acc);color:#0d0d0d}
    script below. Grid, axes and labels stay muted ink. */
 #numbers{--series:#6EB5FF;--up:#1FCB94;--down:#E8567C;--acc-3:#6EB5FF}
 #numbers .nhead{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:8px}
-#numbers .pill{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono),monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+/* box pinned open (2026-09-06): css/styles.css's own .pill draws a bordered
+   999px pill; this readout was born borderless and stays so. */
+#numbers .pill{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono),monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);border:0;border-radius:0;padding:0;background:transparent}
 #numbers .pill .d{width:7px;height:7px;border-radius:50%;background:var(--acc-2);animation:numPulse 2.4s infinite}
 @keyframes numPulse{0%{box-shadow:0 0 0 0 rgba(197, 52, 0,.5)}70%{box-shadow:0 0 0 7px rgba(197, 52, 0,0)}100%{box-shadow:0 0 0 0 rgba(197, 52, 0,0)}}
 
@@ -645,7 +653,7 @@ a.chip:hover{background:var(--acc);border-color:var(--acc);color:#0d0d0d}
 #numbers .chartbox{position:relative;margin-top:20px}#numbers .chartbox svg{width:100%;height:auto;display:block}
 #numbers .tip{position:absolute;pointer-events:none;display:none;background:#0d0d0d;border:1px solid rgba(197, 52, 0,.4);border-radius:10px;padding:8px 11px;transform:translate(-50%,-100%);z-index:4;white-space:nowrap}
 #numbers .tip .tv{font-family:var(--display);font-weight:700;font-size:14px}#numbers .tip .tdt{font-family:var(--mono),monospace;font-size:10px;color:var(--muted);margin-top:2px}
-#numbers .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+#numbers .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px;justify-content:flex-start}
 #numbers .chip{font-family:var(--mono),monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--line);background:var(--card);color:var(--muted-2);border-radius:999px;padding:8px 14px;cursor:pointer;transition:.15s}
 #numbers .chip:hover{border-color:rgba(197, 52, 0,.4);color:var(--white)}#numbers .chip.on{background:rgba(197, 52, 0,.16);border-color:var(--acc);color:var(--white)}
 /* the pill had NO :focus rule, so the browser's default focus ring stacked
@@ -1348,7 +1356,16 @@ body > .hero{position:relative;display:flex;flex-direction:column;
 @media (max-width:380px){
   body > .hero{padding:2rem 1.25rem 24px}
 }
-}
+
+/* css/styles.css loads on this page since the 2026-09-06 bundle
+   unification. Two of its globals need a page release, exactly as the
+   other pages carry: the bare <section> rule (120px padding, 1100px cap,
+   centred) would squeeze this page's full-bleed .block/.conclude bands
+   (their measure is the 1180px .wrap inside), and the centred .hero::before
+   top glow does not belong on a left-aligned hero that carries its own
+   light (btcfi and digest kill it the same way). */
+section{max-width:none;margin:0;padding:0}
+.hero::before{display:none}
 
 </style>
 <script>

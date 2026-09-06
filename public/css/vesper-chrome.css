@@ -270,22 +270,19 @@ header.vc-header nav.vc-mobile { position: absolute; align-items: stretch; paddi
    SHARED HERO HEADLINE (2026-09-06): one token set for the display
    headline of the three-zone heroes (strk, btcfi, digest). The values are
    strk's computed set at 1440, dumped before unification.
-   !important is load-bearing on exactly the four properties that
-   css/styles.css's strk20 branding rule (`h1, h2, .hero h1, ... { ... 
-   !important }`) also marks important: that rule held btcfi and digest at
-   letter-spacing -0.022em while strk (which does not load styles.css)
-   rendered normal. Matching importance at higher specificity (0,2,0 over
-   its .hero h1 at 0,1,1) ends the fork; every other property wins on
-   specificity alone and stays unimportant. The u token is the same
-   min(1vw, 14.4px) unit the three heroes already scale by. */
-:root { --vch-u: min(1vw, 14.4px); }
+   No !important anywhere (2026-09-06): css/styles.css's strk20 branding
+   rule dropped its own flags, so this rule wins on plain specificity
+   (0,2,0 over its .hero h1 at 0,1,1). The tracking is the owner's token,
+   --hero-title-tracking: normal, consumed by this class only. The u token
+   is the same min(1vw, 14.4px) unit the three heroes already scale by. */
+:root { --vch-u: min(1vw, 14.4px); --hero-title-tracking: normal; }
 .hero .vch-title { margin: var(--vch-u) 0 0;
-  font-family: "General Sans", sans-serif !important;
-  font-weight: 300 !important;
+  font-family: "General Sans", sans-serif;
+  font-weight: 300;
   font-size: calc(4.6 * var(--vch-u));
   line-height: .9;
-  letter-spacing: normal !important;
-  text-transform: none !important;
+  letter-spacing: var(--hero-title-tracking);
+  text-transform: none;
   color: var(--white, #fafafa);
   max-width: none;
   text-align: left; }
