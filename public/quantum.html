@@ -68,9 +68,9 @@
      box, contained 1160/32 content grid, left-aligned eyebrow, display and
      lede, glass CTA pair. Duplicated per page by convention, not factored,
      so keep the four copies in sync. The BACKDROP is per-page: quantum
-     carries the particle mark centrepiece (js/quantum-hero-mark.js) and
+     carries the particle mark centerpiece (js/quantum-hero-mark.js) and
      nothing else behind the copy. */
-  /* FRAME: the landing hero's, and /btcfi's, rather than the old centred
+  /* FRAME: the landing hero's, and /btcfi's, rather than the old centered
      1160 content box. Full-bleed box, copy stacked top-left against the
      landing's 1.667vw gutter, so quantum, btcfi and the landing all read as
      one artboard. It stays a FLOW stack rather than the landing's absolute
@@ -99,7 +99,7 @@
     .hero { height: auto; min-height: calc(100svh - var(--vcnav-h, 64px)); }
   }
   body.page-quantum .hero { z-index: 0; }
-  /* styles.css hangs a centred radial glow off .hero::before. That glow is
+  /* styles.css hangs a centered radial glow off .hero::before. That glow is
      gone (this hero is left-aligned and carries its own light in the WebGL
      field), and the slot is re-used for the STARKNET MARK as a background
      watermark. assets/img/starknet-mark.svg is the official mark, disc and
@@ -523,33 +523,10 @@
 
 
 
-<!-- THE DEADLINE, its own section (2026-09-01). It used to sit bottom right
-     inside the hero, which made it hero furniture; it is the page's first
-     argument, so it gets a section of its own directly after the hero. The
-     head takes the same treatment as the other section heads on this page and
-     on /privacy: a mono accent kicker over one big solid heading. Every id is
-     unchanged (#cd-year, #cd-days, #cd-hours, #cd-mins, #cd-secs and the
-     block's own id), so the timer JS is untouched. -->
-<section class="qcd-sec">
-  <div class="qcd-ascii" data-ascii-text="Q-DAY" data-ascii-font-size="7" data-text-font-size="420" data-plane-base-height="12" aria-hidden="true"></div>
-  <p class="qprop-rn">The industry's converging deadline</p>
-  <h2 id="q-day-is-a-date-not-a-rumour" class="qprop-name" data-glitch="Q-day is a date, not a rumour">Q-day is a date, not a rumour</h2>
-  <p class="qprop-body">Governments, standards bodies and researchers keep landing on the same window. This is the clock the whole industry is now working against.</p>
-    <div class="qh-cd" id="the-industrys-converging-deadline">
-      <!-- the phrase moved to the section kicker above, so this label keeps
-           only the year. #cd-year stays: the timer JS writes into it. -->
-      <div class="qh-cd-label">Target <b class="qh-cd-yr" id="cd-year"></b></div>
-      <div class="qh-cd-row">
-        <span class="qh-cd-g"><b class="qh-cd-n" id="cd-days">876</b><i>Days</i></span>
-        <span class="qh-cd-s" aria-hidden="true">/</span>
-        <span class="qh-cd-g"><b class="qh-cd-n" id="cd-hours">10</b><i>Hrs</i></span>
-        <span class="qh-cd-s" aria-hidden="true">/</span>
-        <span class="qh-cd-g"><b class="qh-cd-n" id="cd-mins">45</b><i>Min</i></span>
-        <span class="qh-cd-s" aria-hidden="true">/</span>
-        <span class="qh-cd-g"><b class="qh-cd-n qh-cd-sec" id="cd-secs">38</b><i>Sec</i></span>
-      </div>
-    </div>
-</section>
+<!-- THE Q-DAY SCREEN IS GONE (PART 2, 2026-09-06): the full-viewport
+     "Q-day is a date, not a rumor" glitch section duplicated the hero (same
+     countdown, same argument); the hero strip carries the page's ONLY
+     countdown now and its paragraph already carries the copy. -->
 
 
 <!-- TH-PM: shared premium design system (installed once) -->
@@ -866,7 +843,7 @@
    component rather than two takes on it. The values are privacy's
    .pvv-chips / .pvv-chip verbatim, restated in this page's token names:
    mono 11px at .12em tracking, a 99px hairline pill, 9px/15px padding,
-   10px gaps, centred, wrapping. The icons and the 01-04 numbering are
+   10px gaps, centered, wrapping. The icons and the 01-04 numbering are
    gone from the markup because privacy's tabs carry neither.
    SCOPED TO #qvVideos ON PURPOSE: .qw-ped, .qw-obj, .qw-plinth and
    .qw-label are shared with the catalyst, threat-index and readiness
@@ -884,7 +861,7 @@
   text-transform:uppercase;color:var(--th-muted);}
 /* EDIT VIDEOS sits beside the heading rather than alone above it, which is
    where privacy puts it (.vg-head .pv-vadmin). Absolute so it cannot pull the
-   centred heading off centre; static and centred beneath it once the column is
+   centered heading off center; static and centered beneath it once the column is
    too narrow to hold both on one line. */
 #qvVideos .qv-head .th-pm-vid-admin{position:absolute;right:0;top:50%;
   transform:translateY(-50%);margin:0;}
@@ -1036,7 +1013,7 @@
   font-family:'IBM Plex Mono',monospace;font-size:12px;line-height:1.75;color:rgba(250, 250, 250,.66);}
 .th-stark-pull cite{display:block;margin-top:10px;font-style:normal;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:rgba(250, 250, 250,.38);}
 .th-stark-doc{justify-self:center;align-self:center;width:min(320px,100%);}
-/* .th-duo-mid centres the TEXT column against a tall visual instead of
+/* .th-duo-mid centers the TEXT column against a tall visual instead of
    top-aligning it. Opt-in by class because .th-stark-duo is shared by three
    chapters and the other two want their default: the paper chapter's copy is
    long enough to fill its side, and the vault chapter's is too. Only the
@@ -1120,8 +1097,8 @@
 .vtStrkSw{fill:rgba(250, 250, 250,.34);}
 .vtNote{fill:rgba(250, 250, 250,.42);font-size:7.5px;letter-spacing:.14em;text-anchor:middle;}
 .vtNoteL{text-anchor:start;}
-/* the drawing's title: the largest type in the visual, centred above the
-   object. Neutral ink on purpose, because the shell recolours on send
+/* the drawing's title: the largest type in the visual, centered above the
+   object. Neutral ink on purpose, because the shell recolors on send
    and a blue or emerald title would join an argument it is not part of. */
 /* the drawing's heading. HTML, not SVG: the labels inside the drawing
    scale with it because they annotate it, but a heading sits above it
@@ -1336,7 +1313,7 @@ a.qg-card:focus-visible,.qg-linkcard:has(.th-eo-main:focus-visible){outline:2px 
    this page's own rules for it, which is the whole reason the engine takes
    its DOM names as configuration. The accent is not hardcoded in either page. Privacy defines --em as var(--accent), so the
    bar takes the PAGE accent by construction: emerald there, quantum's blue
-   here, with no per-page colour edits. Privacy-local variables it relied on
+   here, with no per-page color edits. Privacy-local variables it relied on
    (--line, --hover-dur, --hover-ease) are not defined on this page, so their
    values are inlined rather than inherited from nothing.
    HOSTING, checked 2026-08-21 before any of this was written, because custom
@@ -2194,7 +2171,7 @@ if (window.thStickyRail) {
   <!-- The head, set as the privacy page's property block (.phead in
        css/privacy-fx.css): a small mono accent kicker, one big solid heading,
        then the paragraph. The "03" numeral and its marker triangle are gone,
-       and the heading is one weight in one colour rather than a white half
+       and the heading is one weight in one color rather than a white half
        and an accent half.
        THE ID STAYS ON THE HEADING. #starknet-will-be-ready-before-q is both a
        committed search-index anchor and the target of this page's own hero CTA
@@ -3011,7 +2988,7 @@ body.page-quantum{overflow-x:clip;}
   </div>
 
   <style>
-  /* THE ADVISOR AS A TESTIMONIAL (2026-09-02, owner): one large centred quote
+  /* THE ADVISOR AS A TESTIMONIAL (2026-09-02, owner): one large centered quote
      owning roughly a viewport, the headshot reduced to a small round avatar
      riding the start of the first line, attribution in mono beneath, faint
      grid lines behind. The float-right portrait and its 760px reflow are
@@ -3022,7 +2999,7 @@ body.page-quantum{overflow-x:clip;}
      The avatar is assets/scott-aaronson.jpg, which is a WebP behind a .jpg
      name (RIFF/WEBP magic). Browsers sniff the bytes, so the extension is
      harmless; anything that PROCESSES the file must not assume JPEG.
-     object-position sits above centre so the circular crop keeps the head. */
+     object-position sits above center so the circular crop keeps the head. */
   .qadv{position:relative;display:flex;flex-direction:column;align-items:center;
     justify-content:center;text-align:center;
     min-height:min(78svh,760px);margin-top:44px;padding:clamp(44px,6vh,88px) 0;}
@@ -3088,7 +3065,7 @@ body.page-quantum{overflow-x:clip;}
 
 /* NO COPY SCRIM. It used to seal the hero's edges to near-opaque ground,
    and its TOP seal is what painted a dark band under the floating header
-   pill. /btcfi runs this same centrepiece under this same display type
+   pill. /btcfi runs this same centerpiece under this same display type
    with no scrim at all, so this hero does too: every layer stays
    transparent over the page-wide flame canvas. */
 
@@ -3174,7 +3151,7 @@ body.page-quantum{overflow-x:clip;}
    the panel, with a floor of 74vh so the panel owns a real share of
    the screen the way the reference sections do.
    Corners are square throughout this section, per the brand.
-   Scroll behaviour: nothing pops. Every piece of a band starts 26px
+   Scroll behavior: nothing pops. Every piece of a band starts 26px
    low and transparent and settles up on a long ease-out, staggered
    80ms apart, armed by an IntersectionObserver and re-armed when the
    rail switches beats. The arming class is added by script, so with
@@ -3342,7 +3319,7 @@ body.page-quantum{overflow-x:clip;}
 /* the visuals fill their track rather than floating in the middle of
    a panel that is now most of a screen tall */
 .rxa .rxa-fviz > *{height:100%;}
-/* two exceptions keep their natural height and centre instead: the maze
+/* two exceptions keep their natural height and center instead: the maze
    pair, whose canvases are square and width-driven, and the breaks/holds
    pair, whose lists are short. Stretching either only opens a gap under
    the content. */
@@ -3397,7 +3374,7 @@ body.page-quantum{overflow-x:clip;}
 
 /* .rxa-feat stops being the panel and becomes a plain stack.
    background and border are both cleared explicitly: the shorthand
-   `background` in the earlier rule sets a colour, so clearing only
+   `background` in the earlier rule sets a color, so clearing only
    the image would leave #141414 painting a second box behind the
    one .rxa-fviz now draws. */
 .rxa .rxa-feat{display:block;margin-top:0;padding:0;border:0;
@@ -3525,7 +3502,7 @@ body.page-quantum{overflow-x:clip;}
    strk.html's #sxq-band port of the same thing.
    Full-bleed band under a dotted rule with an accent square at
    each end, owning one viewport with the statement vertically
-   centred, a mono chip kicker, one huge tight statement, and
+   centered, a mono chip kicker, one huge tight statement, and
    inverted highlight blocks each led by a light square icon tile.
    LITERAL COLOURS, NOT TOKENS. strk's copy reads var(--acc),
    var(--mono) and var(--display); this page defines none of the
@@ -3563,7 +3540,7 @@ body.page-quantum{overflow-x:clip;}
 /* ============================================================
    THE HEAD START (rxs-): the reference exploded-stack section.
    Three columns over faint vertical guides: the layer list left,
-   the isometric stack centre, the active layer's note right.
+   the isometric stack center, the active layer's note right.
    NOT ONE LINE OF JS. The lit plate and the visible note are
    both chosen with :has() off the aria-selected that thRove
    already writes onto the .qw-ped buttons. That is deliberate:
@@ -3605,7 +3582,7 @@ body.page-quantum{overflow-x:clip;}
 .rxs-name b{font-family:'IBM Plex Mono',monospace;font-weight:500;font-size:.58em;
   letter-spacing:.16em;margin-right:.6em;vertical-align:.12em;opacity:.7;}
 
-/* centre: the stack */
+/* center: the stack */
 .rxs-stage{display:flex;align-items:center;justify-content:center;min-width:0;}
 .rxs-iso{width:100%;max-width:400px;height:auto;}
 .rxs-iso path{stroke-linejoin:round;}
@@ -3737,7 +3714,7 @@ body.page-quantum{overflow-x:clip;}
    .phead in css/privacy-fx.css: mono accent kicker at 12px/.14em,
    one big General Sans 600 heading at 1.02 leading and -.04em
    tracking, then the paragraph at 1.6 leading.
-   Colours are written out, not tokens: this page defines none of
+   Colors are written out, not tokens: this page defines none of
    privacy's --pf-* set.
    font-weight carries !important because styles.css locks the whole
    heading family with `h1, h2, ... { font-weight: 300 !important }`
@@ -3808,35 +3785,8 @@ body.page-quantum{overflow-x:clip;}
 /* the deadline's own section: the page's section-head treatment over the
    countdown, which keeps its own .qh-cd styling. The row is scaled up now
    that it is not competing with a hero. */
-/* THE DEADLINE OWNS A WHOLE SECTION. It is the page's clock, so it gets a
-   full viewport and the digits get to be the biggest thing on it. The
-   content is centred vertically, and the row scales with the viewport
-   rather than sitting at a fixed size. */
-.qcd-sec{position:relative;isolation:isolate;display:flex;flex-direction:column;justify-content:center;
-  width:100%;min-height:100svh;max-width:min(1480px,100%);margin:0 auto;
-  padding:clamp(48px,8vh,110px) 32px;overflow:hidden;}
-.qcd-sec>*:not(.qcd-ascii){position:relative;z-index:1;}
-.qcd-sec .qprop-name{display:inline-block;text-shadow:0 0 22px rgba(197,52,0,.16);}
-.qcd-sec .qprop-name::before,.qcd-sec .qprop-name::after{content:attr(data-glitch);
-  position:absolute;inset:0;pointer-events:none;mix-blend-mode:screen;opacity:.62;}
-.qcd-sec .qprop-name::before{color:#c53400;transform:translate(2px,-1px);
-  clip-path:inset(0 0 58% 0);animation:qcdGlitchA 3.4s steps(1,end) infinite;}
-.qcd-sec .qprop-name::after{color:#f0b8a0;transform:translate(-2px,1px);
-  clip-path:inset(56% 0 0 0);animation:qcdGlitchB 4.1s steps(1,end) infinite;}
-@keyframes qcdGlitchA{0%,86%,100%{transform:translate(0,0);opacity:0}87%{transform:translate(3px,-1px);opacity:.7}88%{transform:translate(-2px,1px);opacity:.35}89%{transform:translate(0,0);opacity:0}}
-@keyframes qcdGlitchB{0%,72%,100%{transform:translate(0,0);opacity:0}73%{transform:translate(-3px,1px);opacity:.58}74%{transform:translate(2px,0);opacity:.28}75%{transform:translate(0,0);opacity:0}}
-.qcd-ascii{position:absolute;z-index:0;left:50%;top:clamp(22px,5vh,70px);
-  width:min(1280px,94vw);height:clamp(170px,24vh,260px);transform:translateX(-50%);
-  opacity:.54;pointer-events:none;overflow:hidden;mix-blend-mode:screen;filter:saturate(1.35) contrast(1.08);
-  -webkit-mask-image:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent);
-          mask-image:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent);}
-.ascii-text-container{position:absolute;inset:0;width:100%;height:100%;}
-.ascii-text-container canvas{position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated;}
-.ascii-text-container pre{position:absolute;inset:0;margin:0;padding:0;line-height:1em;text-align:left;
-  user-select:none;white-space:pre;overflow:hidden;mix-blend-mode:difference;
-  background-image:radial-gradient(circle at 50% 50%,#fafafa 0%,#f0b8a0 34%,#c53400 76%,#7b1b00 100%);
-  background-attachment:fixed;-webkit-text-fill-color:transparent;-webkit-background-clip:text;background-clip:text;}
-.qcd-sec .qprop-body{margin-bottom:clamp(36px,6vh,80px);}
+/* the qcd-sec / ascii-text rules left with the deleted Q-day screen (PART 2) */
+
 .qcd-sec .qh-cd{margin:0;width:100%;border:0;padding:0;}
 .qcd-sec .qh-cd-label{margin-bottom:clamp(14px,2vh,26px);font-size:13px;letter-spacing:.16em;}
 .qcd-sec .qh-cd-row{display:flex;gap:clamp(10px,1.45vw,24px);align-items:baseline;flex-wrap:nowrap;white-space:nowrap;}
@@ -4370,7 +4320,7 @@ var qvFilmChrome = thVideoChrome({
      (2026-09-01). Source: public/privacy.html #sq-band and the ".sq" block
      in public/css/privacy-fx.css, by way of strk.html's #sxq-band port.
      Full-bleed band under a dotted rule with an accent square at each end,
-     owning one viewport with the statement vertically centred: a mono chip
+     owning one viewport with the statement vertically centered: a mono chip
      kicker, one huge tight left-aligned statement, and inverted highlight
      blocks each led by a light square icon tile.
      Prefixed qxq- so it can collide with neither privacy's sq- nor strk's
@@ -4467,30 +4417,18 @@ var qvFilmChrome = thVideoChrome({
         h = Math.floor(d%86400000/3600000),
         m = Math.floor(d%3600000/60000),
         s = Math.floor(d%60000/1000);
-    var elD = document.getElementById('cd-days'); if (!elD) return;
-    elD.textContent = days.toLocaleString();
-    // the hero strip's countdown rides the same tick: one clock, and under
-    // reduced motion the strip's seconds freeze at :00 (minutes still move)
-    var qd = document.querySelector('[data-qd-days]');
-    if (qd) {
-      qd.textContent = days.toLocaleString();
-      document.querySelector('[data-qd-hrs]').textContent = String(h).padStart(2,'0');
-      document.querySelector('[data-qd-min]').textContent = String(m).padStart(2,'0');
-      var rm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
-      document.querySelector('[data-qd-sec]').textContent = rm ? '00' : String(s).padStart(2,'0');
-      var qy = document.querySelector('[data-qd-year]');
-      if (qy) qy.textContent = new Date(target).getUTCFullYear();
-    }
-    document.getElementById('cd-hours').textContent = String(h).padStart(2,'0');
-    document.getElementById('cd-mins').textContent = String(m).padStart(2,'0');
-    document.getElementById('cd-secs').textContent = String(s).padStart(2,'0');
-    var pct = Math.max(0, Math.min(100, (now - start) / (target - start) * 100));
-    var fill = document.getElementById('cd-fill'); if (fill) fill.style.width = pct + '%';
-    var mark = document.getElementById('cd-mark'); if (mark) mark.style.left = pct + '%';
-    // the label's year comes from the same target constant as the digits, so
-    // the two can never drift apart
-    var yr = document.getElementById('cd-year');
-    if (yr && !yr.textContent) yr.textContent = new Date(target).getUTCFullYear();
+    // the hero strip is the page's ONLY countdown (the Q-day screen is
+    // gone); under reduced motion the seconds freeze at :00, the minutes
+    // still move once a minute
+    var qd = document.querySelector('[data-qd-days]'); if (!qd) return;
+    qd.textContent = days.toLocaleString();
+    document.querySelector('[data-qd-hrs]').textContent = String(h).padStart(2,'0');
+    document.querySelector('[data-qd-min]').textContent = String(m).padStart(2,'0');
+    var rm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    document.querySelector('[data-qd-sec]').textContent = rm ? '00' : String(s).padStart(2,'0');
+    // the label's year comes from the same target constant as the digits
+    var qy = document.querySelector('[data-qd-year]');
+    if (qy && qy.textContent !== String(new Date(target).getUTCFullYear())) qy.textContent = new Date(target).getUTCFullYear();
   }
   // The interval used to run forever, including for readers who could not
   // see the panel and in hidden tabs. Same discipline as the hero field and
@@ -4504,8 +4442,8 @@ var qvFilmChrome = thVideoChrome({
     if (want && !timer) { tick(); timer = setInterval(tick, 1000); }
     else if (!want && timer) { clearInterval(timer); timer = 0; }
   }
-  var elD0 = document.getElementById('cd-days');
-  var host = elD0 && elD0.closest ? elD0.closest('.countdown') : null;
+  var qd0 = document.querySelector('[data-qd-days]');
+  var host = qd0 && qd0.closest ? qd0.closest('.qhx-strip') : null;
   if (host && 'IntersectionObserver' in window) {
     visible = false;
     new IntersectionObserver(function(en){ visible = en[en.length-1].isIntersecting; sync(); }).observe(host);
@@ -5662,7 +5600,6 @@ var VIDEOS = [
 
 <script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.185.0/build/three.module.js"}}</script>
 <script type="module" src="js/eco-backdrop.js"></script>
-<script type="module" src="js/ascii-text.js"></script>
 <script type="module" src="js/quantum-hero-mark.js"></script>
 <script src="js/quantum-vgrid.js" defer></script>
 </body>
