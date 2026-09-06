@@ -1209,18 +1209,22 @@
                   which only reached 5.16:1 and needed selection to lift it)
        note       #fafafa .55                 [5.6:1]
        icon glyph #e07a4a 1.0 in a .22 accent box
-     THE BAND IS WIDER THAN THE SECTION. Sections are max-width 1100 with 48px
-     padding; the band breaks out to min(1520px, 100vw - 96px), which keeps the
-     page's own 48px gutter on both sides while the centre visual gets to be
-     the dominant object. The gutter is not decoration: 100vw counts the
-     scrollbar, and the page must never scroll sideways. */
-  .bum { position: relative; margin-top: 46px;
-         width: min(1520px, calc(100vw - 96px)); margin-left: 50%;
-         transform: translateX(-50%); }
+     THE BAND SITS ON THE SECTION CONTAINER (2026-09-06): the old breakout to
+     min(1520px, 100vw - 96px) parked the four blocks at the viewport edges
+     while every other section lives on the container grid. The band now
+     fills the section content box and places its children on a 12-column
+     grid: left blocks on columns 1-4, the orbit in 5-8, right blocks on
+     9-12, with the 32px column gap as the orbit's clearance. */
+  /* one-viewport fit at 1440x900: the 01 argument (head through band)
+     measured 902px against the 836 budget, so the section's top padding
+     (88 vs the shared 120), the band's top margin and the row gap give
+     back 66px between them. */
+  section.problem { padding-top: 88px; }
+  .bum { position: relative; margin-top: 28px; width: 100%; }
   .problem .th-pm-head { justify-content: center; }
   .problem .th-pm-eyebrow { text-align: center; margin-top: 0; margin-bottom: 14px; }
   .problem .th-pm-title { text-align: center; }
-  .bum-sub { max-width: 740px; margin: 20px auto 0; text-align: center;
+  .bum-sub { max-width: 740px; margin: 12px auto 0; text-align: center;
              font-family: var(--sans); font-size: 16px; line-height: 1.62;
              color: rgba(250, 250, 250,0.60); }
 
@@ -1232,13 +1236,13 @@
      rows line up whatever the copy does and no fixed height is involved. The
      placement is the old device's quadrant map: 01 and 04 in column 1, 02 and
      03 in column 3, the visual spanning both rows between them. */
-  .bum-grid { display: grid; grid-template-columns: 1fr 1.42fr 1fr;
-              column-gap: 54px; row-gap: 56px; align-items: start; }
-  .bum-i1 { grid-area: 1 / 1; }
-  .bum-i4 { grid-area: 2 / 1; }
-  .bum-i2 { grid-area: 1 / 3; }
-  .bum-i3 { grid-area: 2 / 3; }
-  .bum-vis { grid-area: 1 / 2 / 3 / 3; align-self: center; }
+  .bum-grid { display: grid; grid-template-columns: repeat(12, 1fr);
+              column-gap: 32px; row-gap: 40px; align-items: start; }
+  .bum-i1 { grid-area: 1 / 1 / 2 / 5; }
+  .bum-i4 { grid-area: 2 / 1 / 3 / 5; }
+  .bum-i2 { grid-area: 1 / 9 / 2 / 13; }
+  .bum-i3 { grid-area: 2 / 9 / 3 / 13; }
+  .bum-vis { grid-area: 1 / 5 / 3 / 9; align-self: center; }
 
   /* the four blocks. Icon, title, paragraph, cost line: no card, no border,
      no hover state, because nothing here is a control any more. */
@@ -1247,12 +1251,12 @@
                           transition: none; text-align: left; }
   .page-btcfi .bum-item:hover { background: none; border: 0; box-shadow: none;
                                 transform: none; }
-  .bum-ico { display: flex; align-items: center; justify-content: center;
-             width: 40px; height: 40px; border-radius: 11px;
-             border: 1px solid rgba(var(--accent-rgb),0.34);
-             background: rgba(var(--accent-rgb),0.06);
-             color: #e07a4a; margin-bottom: 16px; }
-  .bum-ico svg { width: 21px; height: 21px; display: block; }
+  /* custom line glyphs from the shared sprite (#bum-glyph-sprite): 32px,
+     1.5px strokes, ink at .7 via currentColor, one accent detail per glyph
+     through var(--accent), no container box, no fill (2026-09-06). */
+  .bum-ico { display: block; width: 32px; height: 32px;
+             color: rgba(250, 250, 250, .7); margin-bottom: 16px; }
+  .bum-ico svg { width: 32px; height: 32px; display: block; }
   .page-btcfi .bum-item .bum-title { font-family: var(--display); font-size: 20px;
               font-weight: 600; text-transform: none; letter-spacing: -0.01em;
               line-height: 1.2; color: var(--white); margin: 0 0 10px; }
@@ -1280,7 +1284,10 @@
      THE MARK DOES NOT MOVE. An orrery faces its sun, and the mark is the
      subject: the accent disc with the white B is the brightest thing in the
      composition and the one object the eye should be able to fix on. */
-  .bum-vis { width: 100%; max-width: 620px; margin: 0 auto; aspect-ratio: 1 / 1; }
+  /* the orbit shrinks into its 4-column cell (about 313px on the 1004px
+     container); the rings stay inside the viewBox so nothing crosses the
+     32px clearance into the text columns */
+  .bum-vis { width: 100%; margin: 0 auto; aspect-ratio: 1 / 1; }
   .bum-svg { width: 100%; height: 100%; display: block; overflow: visible; }
   .bum-orb, .bum-collar { fill: none; vector-effect: non-scaling-stroke; }
   .bum-collar { stroke: #262626; stroke-width: 1; stroke-dasharray: 3 8; }
@@ -1290,11 +1297,10 @@
   .bum-r4 .bum-orb { stroke: rgba(var(--accent-rgb),0.24); stroke-width: 1.1; }
   .bum-dot { stroke: none; }
   .bum-halo { stroke: none; opacity: .16; }
-  .bum-n1 .bum-dot, .bum-n1 .bum-halo { fill: var(--accent); }
-  .bum-n2 .bum-dot, .bum-n2 .bum-halo { fill: #e07a4a; }
-  .bum-n3 .bum-dot, .bum-n3 .bum-halo { fill: #fafafa; }
-  .bum-n4 .bum-dot, .bum-n4 .bum-halo { fill: var(--accent); }
-  .bum-n3 .bum-dot { r: 2.8; }
+  /* all four travelling markers on the SAME accent token (2026-09-06): n2
+     carried the stale warm #e07a4a and n3 was ink #fafafa at a smaller
+     radius, remnants of the pre-vesper palette, not states. */
+  .bum-node .bum-dot, .bum-node .bum-halo { fill: var(--accent); }
   .bum-mark-disc { fill: var(--accent); stroke: none; }
   .bum-mark-b { fill: var(--white); }
   .bum-ring { transform-box: view-box; transform-origin: 300px 300px;
@@ -1320,10 +1326,10 @@
   @media (max-width: 1080px) {
     .bum-grid { grid-template-columns: 1fr 1fr; column-gap: 40px; row-gap: 40px; }
     .bum-vis { grid-area: 1 / 1 / 2 / 3; max-width: 460px; justify-self: center; }
-    .bum-i1 { grid-area: 2 / 1; }
-    .bum-i2 { grid-area: 2 / 2; }
-    .bum-i3 { grid-area: 3 / 1; }
-    .bum-i4 { grid-area: 3 / 2; }
+    .bum-i1 { grid-area: 2 / 1 / 3 / 2; }
+    .bum-i2 { grid-area: 2 / 2 / 3 / 3; }
+    .bum-i3 { grid-area: 3 / 1 / 4 / 2; }
+    .bum-i4 { grid-area: 3 / 2 / 4 / 3; }
   }
   @media (max-width: 760px) {
     /* the marker, the 01 and a three-line heading cannot share one flex line
@@ -1334,11 +1340,11 @@
     .problem .th-pm-title { flex: 1 0 100%; }
     .bum { width: 100%; margin-left: 0; transform: none; }
     .bum-grid { grid-template-columns: 1fr; row-gap: 34px; }
-    .bum-vis { grid-area: 1 / 1; max-width: 330px; }
-    .bum-i1 { grid-area: 2 / 1; }
-    .bum-i2 { grid-area: 3 / 1; }
-    .bum-i3 { grid-area: 4 / 1; }
-    .bum-i4 { grid-area: 5 / 1; }
+    .bum-vis { grid-area: 1 / 1 / 2 / 2; max-width: 330px; }
+    .bum-i1 { grid-area: 2 / 1 / 3 / 2; }
+    .bum-i2 { grid-area: 3 / 1 / 4 / 2; }
+    .bum-i3 { grid-area: 4 / 1 / 5 / 2; }
+    .bum-i4 { grid-area: 5 / 1 / 6 / 2; }
     .bum-sub { font-size: 15px; }
     .bum-sub br { display: none; }
   }
@@ -1961,6 +1967,40 @@
 <script src="js/admin-gate.js"></script>
 </head>
 <body class="page-btcfi">
+<!-- BUM GLYPH SPRITE (2026-09-06): the four problem glyphs, hand drawn in the
+     market-risk illustration grammar: 32px box, 1.5px strokes, ink via
+     currentColor (the mount sets .7), ONE accent detail per glyph through
+     var(--accent) (custom properties reach <use> shadow content; classes do
+     not), no container box, no fill anywhere. Symbols: #g-express (a script
+     bracket opening onto an empty slot), #g-privacy (an open ledger line
+     with one redacted bar), #g-quantum (a lock with a fractured shackle),
+     #g-scale (a single narrow channel with queued blocks). -->
+<svg id="bum-glyph-sprite" width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <symbol id="g-express" viewBox="0 0 32 32" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="currentColor" d="M12.5 4.5c-3.1 0-4.1 1.5-4.1 4v3.4c0 2.1-.9 3.3-2.9 3.7v.8c2 .4 2.9 1.6 2.9 3.7v3.4c0 2.5 1 4 4.1 4"/>
+      <rect x="17.5" y="11.5" width="10" height="9" rx="1.5" stroke="var(--accent, #c53400)" stroke-dasharray="3 3.2"/>
+    </symbol>
+    <symbol id="g-privacy" viewBox="0 0 32 32" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="currentColor" d="M5.5 9.5h21M5.5 22.5h21M5.5 16h7"/>
+      <path stroke="var(--accent, #c53400)" stroke-width="4.5" d="M16.5 16h9.5"/>
+    </symbol>
+    <symbol id="g-quantum" viewBox="0 0 32 32" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="8.5" y="14.5" width="15" height="11.5" rx="1.5" stroke="currentColor"/>
+      <path stroke="currentColor" d="M11.5 14.5V10a4.5 4.5 0 0 1 6.4-4.1"/>
+      <path stroke="var(--accent, #c53400)" d="M20.1 7.3a4.5 4.5 0 0 1 1.4 3.2v1.6"/>
+      <path stroke="currentColor" d="M16 19.5v2.5"/>
+    </symbol>
+    <symbol id="g-scale" viewBox="0 0 32 32" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="currentColor" d="M10.5 3.5v8.2l3.2 3.4v13.4M21.5 3.5v8.2l-3.2 3.4v13.4"/>
+      <rect x="5" y="4.5" width="4" height="4" stroke="currentColor"/>
+      <rect x="23" y="4.5" width="4" height="4" stroke="currentColor"/>
+      <rect x="14" y="4.5" width="4" height="4" stroke="currentColor"/>
+      <rect x="14.4" y="20.5" width="3.2" height="3.2" stroke="var(--accent, #c53400)"/>
+    </symbol>
+  </defs>
+</svg>
+
 
 <!-- NAV -->
 <header class="vc-header" id="vc-header">
@@ -2109,15 +2149,15 @@
   <div class="bum">
     <div class="bum-grid">
       <article class="bum-item problem-item bum-i1" id="not-expressive">
-        <span class="bum-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M9.6 4.3c-2 0-2.7 1-2.7 2.6v2.3c0 1.4-.6 2.2-1.9 2.5v.6c1.3.3 1.9 1.1 1.9 2.5v2.3c0 1.6.7 2.6 2.7 2.6"/><path d="M14.4 4.3c2 0 2.7 1 2.7 2.6v2.3c0 1.4.6 2.2 1.9 2.5v.6c-1.3.3-1.9 1.1-1.9 2.5v2.3c0 1.6-.7 2.6-2.7 2.6"/><path d="M10.4 12h.01M12 12h.01M13.6 12h.01" stroke-width="1.7" opacity=".55"/></svg></span>
+        <span class="bum-ico" aria-hidden="true"><svg viewBox="0 0 32 32" focusable="false"><use href="#g-express"/></svg></span>
         <h3 class="bum-title">Not expressive</h3>
         <p class="bum-body">Bitcoin's scripting layer was intentionally limited: no smart contracts, no lending markets, no automated strategies</p>
         <p class="bum-cost">everything advanced is built elsewhere</p>
       </article>
       <article class="bum-item problem-item bum-i4" id="not-quantum-resistant">
-        <span class="bum-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M12 3.3 4.9 6v5.1c0 4.3 2.9 7.6 7.1 9.5 4.2-1.9 7.1-5.2 7.1-9.5V6Z"/><path d="M12.7 7.6 10.6 11.7h3L11.3 16.3" stroke-width="1.7" opacity=".55"/></svg></span>
+        <span class="bum-ico" aria-hidden="true"><svg viewBox="0 0 32 32" focusable="false"><use href="#g-quantum"/></svg></span>
         <h3 class="bum-title">Not quantum-resistant</h3>
-        <p class="bum-body">Google researchers warn the cryptographic risk could be relevant as early as 2029</p>
+        <p class="bum-body">Researchers at Google, IBM, and Microsoft warn the cryptographic risk could be relevant as early as 2029</p>
         <p class="bum-cost">urgent for an asset built to last centuries</p>
       </article>
       <div class="bum-vis">
@@ -2156,14 +2196,14 @@
         </svg>
       </div>
       <article class="bum-item problem-item bum-i2" id="not-private">
-        <span class="bum-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M2.9 12S6.1 6.4 12 6.4 21.1 12 21.1 12 17.9 17.6 12 17.6 2.9 12 2.9 12Z"/><circle cx="12" cy="12" r="2.7"/><path d="M4.6 19.4 19.4 4.6" stroke-width="1.7" opacity=".55"/></svg></span>
+        <span class="bum-ico" aria-hidden="true"><svg viewBox="0 0 32 32" focusable="false"><use href="#g-privacy"/></svg></span>
         <h3 class="bum-title">Not private</h3>
         <p class="bum-body">public by default: every balance, counterparty and transaction is permanently traceable, and one address linked to an identity exposes the whole history</p>
         <p class="bum-cost">spending, payroll and DeFi positions cannot stay private</p>
         <p class="bum-note">Satoshi noted in 2010 that ZK proofs could make Bitcoin "much better."</p>
       </article>
       <article class="bum-item problem-item bum-i3" id="not-scalable-enough">
-        <span class="bum-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M3.8 19.6h16.4"/><path d="M7.4 19.6v-3.9M12 19.6v-6.4M16.6 19.6v-8.6"/><path d="M3.8 6.4h16.4" stroke-width="1.7" opacity=".55"/></svg></span>
+        <span class="bum-ico" aria-hidden="true"><svg viewBox="0 0 32 32" focusable="false"><use href="#g-scale"/></svg></span>
         <h3 class="bum-title">Not scalable enough</h3>
         <p class="bum-body">slow blocks, fee spikes, a handful of transactions per second</p>
         <p class="bum-cost">Bitcoin's base layer was never designed for global financial activity at scale</p>
