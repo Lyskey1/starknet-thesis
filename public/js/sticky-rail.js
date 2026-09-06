@@ -44,7 +44,9 @@ function thStickyRail(cfg){
   root.insertBefore(spacer, row.nextSibling);
   var navH = 0, ticking = false;
   function navHeight(){
-    var n = document.querySelector('nav');
+    /* the fixed chrome bar, not the first <nav> landmark (which is the
+       absolute link row INSIDE the header and measures ~18px) */
+    var n = document.getElementById('vc-header') || document.querySelector('nav');
     return n ? Math.round(n.getBoundingClientRect().height) : 0;
   }
   // How much height the row gives up when it condenses. Measured by

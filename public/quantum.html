@@ -910,26 +910,22 @@
    inherits z-index 1 from .th-pm-sec>* as its stacking context, so it
    can never paint over the nav (z 100) or the search palette (z 400). */
 @media(min-width:981px){
-  #catalyst-chapters.stick-on .qw-rail{position:sticky;top:var(--qw-stick-top,86px);z-index:6;}
+  #catalyst-chapters.stick-on .qw-rail{position:sticky;top:var(--qw-stick-top,64px);z-index:6;}
   #catalyst-chapters .qw-spacer{height:0;pointer-events:none;}
   #catalyst-chapters.is-stuck .qw-spacer{height:var(--qw-spacer,0px);}
   #catalyst-chapters.qw-measuring .qw-rail,#catalyst-chapters.qw-measuring .qw-rail *{transition:none!important;}
-  #catalyst-chapters.is-stuck .qw-rail{gap:8px;padding:10px;margin:0 -10px;max-width:none;border-radius:0 0 12px 12px;
-    /* fully opaque: the strip sits over cards and headings, and a partly
-       transparent fill lets text read through even where the blur applies */
+  /* condensed: the pills flatten to icon-beside-label rows on one opaque
+     strip flush under the fixed nav, no gap, released at the section end */
+  #catalyst-chapters.is-stuck .qw-rail{gap:8px;padding:10px clamp(20px,3vw,44px);
+    margin:0 calc(50% - 50vw);max-width:none;border-radius:0;
     background:#080A0B;
-    -webkit-backdrop-filter:blur(14px) saturate(115%);backdrop-filter:blur(14px) saturate(115%);
     box-shadow:0 10px 26px rgba(0,0,0,.42),inset 0 -1px 0 var(--th-hair);}
-  #catalyst-chapters.is-stuck .qw-ped{display:flex;align-items:center;justify-content:center;gap:9px;
-    padding:8px;border:1px solid transparent;border-radius:9px;}
+  #catalyst-chapters.is-stuck .qw-ped{flex-direction:row;gap:9px;padding:9px 14px;border-radius:8px;
+    background:none;-webkit-backdrop-filter:none;backdrop-filter:none;border-color:transparent;}
   #catalyst-chapters.is-stuck .qw-ped[aria-selected="true"]{border-color:var(--th-q);
-    background:color-mix(in srgb,var(--th-q) 8%,transparent);}
-  #catalyst-chapters.is-stuck .qw-ped::before{opacity:0;}
-  #catalyst-chapters.is-stuck .qw-obj{width:20px;height:20px;margin-bottom:0;align-self:center;}
-  #catalyst-chapters.is-stuck .qw-ped[aria-selected="true"] .qw-obj{transform:none;filter:none;}
-  #catalyst-chapters.is-stuck .qw-plinth{height:auto;width:auto;max-width:none;background:none;border:0;box-shadow:none;}
-  #catalyst-chapters.is-stuck .qw-plinth::after{content:none;}
-  #catalyst-chapters.is-stuck .qw-label{overflow:hidden;text-overflow:ellipsis;}
+    background:color-mix(in srgb,var(--th-q) 8%,transparent);box-shadow:none;}
+  #catalyst-chapters.is-stuck .qw-obj{width:20px;height:18px;}
+  #catalyst-chapters.is-stuck .qw-label{font-size:10.5px;}
 }
 /* four 8px labels edge-to-edge read as one strip at phone widths
    (measured 2px of plinth margin at 375), so the rail folds two-by-two */
@@ -1438,68 +1434,41 @@ a.qg-card:focus-visible,.qg-linkcard:has(.th-eo-main:focus-visible){outline:2px 
 .qv-btn.primary{background:var(--th-q);border-color:var(--th-q);color:#06121f;font-weight:600;}
 @media(max-width:880px){.th-pm-compare,.th-pm-video{grid-template-columns:1fr;}.th-pm-stathero .big{font-size:60px;}}
 
-/* Catalyst rail restyled as the STRK/Digest column band. The tabs stay real
-   tabs, but the plinths become flat columns with square icons and arrow
-   affordances, then the active chapter opens below the band. */
-#catalyst-chapters{position:relative;width:100vw;max-width:none;margin:56px 0 0 calc(50% - 50vw);}
-#catalyst-chapters::before{content:"";position:absolute;left:clamp(20px,1.55vw,30px);right:clamp(20px,1.55vw,30px);top:0;border-top:1px dotted rgba(250,250,250,.34);}
-#catalyst-chapters::after{content:"";position:absolute;left:clamp(20px,1.55vw,30px);top:-4px;width:8px;height:8px;background:var(--th-q);box-shadow:calc(100vw - clamp(40px,3.1vw,60px) - 8px) 0 0 var(--th-q);}
-#catalyst-chapters .qw-rail{
-  grid-template-columns:repeat(4,minmax(0,1fr));gap:0;max-width:none;
-  padding:56px clamp(20px,1.55vw,30px) 0;
-}
+/* MAIN'S COMPACT CHAPTER RAIL (PART 3, 2026-09-06): four glass pills in a
+   row, line icon above the label, active clearly lit; replaces the
+   min-height:260px full-bleed column band. The sticky machinery
+   (js/sticky-rail.js, stick-on / is-stuck / qw-spacer) is untouched; the
+   condensed state flattens the pills to icon-beside-label rows on an
+   opaque strip flush under the fixed nav. */
+#catalyst-chapters{position:relative;width:auto;max-width:none;margin:40px 0 0;}
+#catalyst-chapters::before,#catalyst-chapters::after{content:none;}
+#catalyst-chapters .qw-rail{display:flex;flex-wrap:wrap;gap:10px;max-width:none;padding:0;}
 #catalyst-chapters .qw-ped{
-  min-height:260px;display:grid;grid-template-columns:auto minmax(0,1fr) auto;
-  grid-template-rows:auto auto 1fr;align-items:start;justify-items:start;gap:24px 18px;
-  padding:34px clamp(18px,2vw,34px) 30px;border-left:1px solid var(--th-hair);
-  border-radius:0;opacity:1;background:transparent;
-}
-#catalyst-chapters .qw-ped:first-child{border-left:0;}
-#catalyst-chapters .qw-ped::before{content:none;}
-#catalyst-chapters .qw-ped::after{
-  content:"\2192";grid-column:3;grid-row:1;display:grid;place-items:center;
-  width:44px;height:44px;border:1px solid var(--th-hair);font-family:'IBM Plex Mono',monospace;
-  font-size:20px;color:rgba(250,250,250,.58);transition:border-color .22s,color .22s,background .22s;
-}
-#catalyst-chapters .qw-ped[aria-selected="true"]::after,
-#catalyst-chapters .qw-ped:hover::after{
-  color:var(--th-q);border-color:color-mix(in srgb,var(--th-q) 70%,transparent);
-  background:color-mix(in srgb,var(--th-q) 7%,transparent);
-}
-#catalyst-chapters .qw-obj{
-  grid-column:1;grid-row:1;width:44px;height:44px;margin:0;padding:10px;
-  color:var(--th-q);border:1px solid var(--th-hair);align-self:start;justify-self:start;
-  transform:none;filter:none;
-}
+  display:flex;flex-direction:column;align-items:center;gap:9px;
+  min-height:0;padding:16px 22px 13px;border:1px solid rgba(250,250,250,.14);border-radius:10px;
+  background:rgba(250,250,250,.03);
+  -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+  opacity:1;transition:border-color .22s,background .22s,opacity .22s;}
+#catalyst-chapters .qw-ped::before,#catalyst-chapters .qw-ped::after{content:none;}
+#catalyst-chapters .qw-ped[aria-selected="false"]{opacity:.6;}
+#catalyst-chapters .qw-ped[aria-selected="false"]:hover{opacity:.85;}
+#catalyst-chapters .qw-ped[aria-selected="true"]{border-color:var(--th-q);
+  background:color-mix(in srgb,var(--th-q) 9%,transparent);
+  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--th-q) 24%,transparent);}
+#catalyst-chapters .qw-obj{width:26px;height:23px;margin:0;padding:0;border:0;color:var(--th-q);
+  transform:none;filter:none;align-self:center;}
 #catalyst-chapters .qw-ped[aria-selected="true"] .qw-obj{transform:none;filter:none;}
-#catalyst-chapters .qw-plinth{grid-column:1 / -1;grid-row:2;width:auto;height:auto;display:block;border:0;border-radius:0;background:none;box-shadow:none;}
+#catalyst-chapters .qw-plinth{width:auto;height:auto;display:block;border:0;border-radius:0;background:none;box-shadow:none;padding:0;}
 #catalyst-chapters .qw-plinth::after{content:none;}
-#catalyst-chapters .qw-label{
-  display:block;font-size:13px;line-height:1.2;letter-spacing:.2em;color:var(--th-ink);
-}
-#catalyst-chapters .qw-label b{color:var(--th-q);margin-right:10px;}
+#catalyst-chapters .qw-label{display:block;font-size:11px;line-height:1.2;letter-spacing:.16em;color:var(--th-ink);}
+#catalyst-chapters .qw-label b{color:var(--th-q);margin-right:8px;}
 #catalyst-chapters .qw-ped[aria-selected="false"] .qw-label{color:rgba(250,250,250,.68);}
-#catalyst-chapters .qw-ped:focus-visible{outline:2px solid var(--th-q);outline-offset:-2px;}
-#catalyst-chapters .qw-shell{
-  margin:0;padding:44px clamp(20px,1.55vw,30px) 0;border:0;border-top:1px solid var(--th-hair);
-  border-radius:0;background:transparent;overflow:hidden;
-}
+#catalyst-chapters .qw-ped:focus-visible{outline:2px solid var(--th-q);outline-offset:2px;}
+#catalyst-chapters .qw-shell{margin:0;padding:34px 0 0;border:0;border-radius:0;background:transparent;overflow:hidden;}
 #catalyst-chapters .qw-panel{padding:0;}
 #catalyst-chapters .th-q-chapter{margin-top:0;padding-top:0;}
-@media(max-width:980px){
-  #catalyst-chapters{margin-top:42px;}
-  #catalyst-chapters .qw-rail{grid-template-columns:repeat(2,minmax(0,1fr));padding-top:42px;}
-  #catalyst-chapters .qw-ped{min-height:190px;border-top:1px solid var(--th-hair);}
-  #catalyst-chapters .qw-ped:nth-child(-n+2){border-top:0;}
-  #catalyst-chapters .qw-ped:nth-child(odd){border-left:0;}
-}
-@media(max-width:560px){
-  #catalyst-chapters .qw-rail{grid-template-columns:1fr;}
-  #catalyst-chapters .qw-ped{min-height:0;border-left:0;border-top:1px solid var(--th-hair);padding:24px 20px;}
-  #catalyst-chapters .qw-ped:first-child{border-top:0;}
-  #catalyst-chapters .qw-ped:nth-child(2){border-top:1px solid var(--th-hair);}
-  #catalyst-chapters .qw-shell{padding-top:34px;}
-}
+@media(max-width:980px){#catalyst-chapters{margin-top:36px;}}
+@media(max-width:560px){#catalyst-chapters .qw-ped{flex:1 1 44%;padding:12px 12px 10px;}}
 
 
 </style>
@@ -1557,7 +1526,7 @@ a.qg-card:focus-visible,.qg-linkcard:has(.th-eo-main:focus-visible){outline:2px 
     <a id="france-responds" class="th-pm-card qg-card th-pm-reveal" href="https://thequantuminsider.com/2026/05/25/emmanuel-macron-announces-1-55-billion-euros-more-for-quantum-and-semiconductors/" target="_blank" rel="noopener noreferrer"><span class="th-pm-toprow"><span class="th-pm-date">May 22, 2026</span><span class="th-flag-seat" aria-hidden="true"><img class="th-flag" src="assets/flags/france.svg" alt="" loading="lazy" width="900" height="600"></span></span><h3>France responds</h3><span class="th-pm-stat">EUR 1B</span><p>Announced by Macron from the CEA for the national quantum plan, citing the acceleration of the US and China.</p></a>
     <a id="france-stops-certifying-classical-crypto" class="th-pm-card qg-card th-pm-reveal" href="https://thequantuminsider.com/2026/06/18/france-says-it-will-wont-certify-security-products-that-arent-quantum-resistent-starting-in-2027/" target="_blank" rel="noopener noreferrer"><span class="th-pm-toprow"><span class="th-pm-date">June 16, 2026</span><span class="th-flag-seat" aria-hidden="true"><img class="th-flag" src="assets/flags/france.svg" alt="" loading="lazy" width="900" height="600"></span></span><h3>France sets a certification deadline</h3><span class="th-pm-stat">2027</span><p>ANSSI, France's cybersecurity agency, announces it will stop certifying security products without quantum-resistant cryptography from 2027, and that businesses should buy only quantum-safe products by 2030. Its certification is a de facto requirement for French government agencies and critical infrastructure operators.</p></a>
     <a id="finma-expects-a-pqc-roadmap" class="th-pm-card qg-card th-pm-reveal" href="https://www.finma.ch/en/news/2026/07/20260709-mm-am-05-26/" target="_blank" rel="noopener noreferrer"><span class="th-pm-toprow"><span class="th-pm-date">July 9, 2026</span><span class="th-flag-seat" aria-hidden="true"><img class="th-flag" src="assets/flags/switzerland.svg" alt="" loading="lazy" width="512" height="512"></span></span><h3>Switzerland's regulator sets a date</h3><span class="th-pm-stat">8%</span><p>FINMA Guidance 05/2026 expects supervised institutions to have a post-quantum cryptography roadmap in place by mid-2027 at the latest. Its survey of 60 Swiss financial institutions found that only 8 percent have one today.</p></a>
-    <a id="israel-opens-a-national-quantum-call" class="th-pm-card qg-card th-pm-reveal" href="https://www.timesofisrael.com/israel-earmarks-nis-100-million-for-national-quantum-computing-rd-infrastructure/" target="_blank" rel="noopener noreferrer"><span class="th-pm-toprow"><span class="th-pm-date">July 20, 2026</span><span class="th-flag-seat" aria-hidden="true"><img class="th-flag" src="assets/flags/israel.svg" alt="" loading="lazy" width="1100" height="800"></span></span><h3>Israel opens a national quantum call</h3><span class="th-pm-stat">NIS 100M</span><p>The Israel Innovation Authority opens a call for proposals, worth 100 million shekels (roughly $33 million), to establish a national quantum computing R&amp;D infrastructure integrating at least three different quantum processing technologies. Applications close October 8, 2026.</p></a>
+    <a id="israel-opens-a-national-quantum-call" class="th-pm-card qg-card th-pm-reveal" href="https://www.timesofisrael.com/israel-earmarks-nis-100-million-for-national-quantum-computing-rd-infrastructure/" target="_blank" rel="noopener noreferrer"><span class="th-pm-toprow"><span class="th-pm-date">July 20, 2026</span><span class="th-flag-seat" aria-hidden="true"><img class="th-flag" src="assets/flags/israel.svg" alt="" loading="lazy" width="1100" height="800"></span></span><h3>Israel opens a national quantum call</h3><span class="th-pm-stat">NIS 100M</span><p>The Israel Innovation Authority opens a call for proposals, worth 100 million shekels (roughly $33 million), to establish a national quantum computing R&amp;D infrastructure integrating at least three different quantum processing technologies. <span data-perish="israel-call-close">Applications close October 8, 2026.</span></p></a>
   </div>
     </article>
 
@@ -4404,6 +4373,28 @@ var qvFilmChrome = thVideoChrome({
 
 <script src="js/news-lazy.js"></script>
 <script src="js/news-loading.js"></script>
+<script>
+// ============================================================
+// PERISHABLE CLAIMS REGISTRY (the strk/btcfi BREAKS contract): each entry
+// names a claim, its break date, and the truthful after-text; past the
+// break the DOM swaps once, so the page can never assert a closed window
+// is still open. 'asof' entries stamp a dated reading instead of swapping.
+// ============================================================
+var Q_PERISHABLE = {
+  'israel-call-close': { breaks: '2026-10-08',
+    after: 'Applications closed October 8, 2026.' }
+};
+(function(){
+  var now = Date.now();
+  Object.keys(Q_PERISHABLE).forEach(function(k){
+    var e = Q_PERISHABLE[k];
+    var el = document.querySelector('[data-perish="' + k + '"]');
+    if (!el) return;
+    if (e.breaks && now >= Date.parse(e.breaks + 'T00:00:00Z') && e.after) el.textContent = e.after;
+    if (e.asof) el.setAttribute('data-as-of', e.asof);
+  });
+})();
+</script>
 <script>
 // ============================================================
 // COUNTDOWN to Jan 1, 2029
