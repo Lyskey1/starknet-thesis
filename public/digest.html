@@ -300,7 +300,9 @@
      values large in ink, labels below in muted mono at the shared 17ch
      measure, the same baseline and box struts pinning the fixed geometry.
      The single-line counter row (.dgh-stat/.dgh-n/.dgh-slash) is gone. */
-  .dgh-stats { display: flex; flex-wrap: wrap; gap: calc(2 * var(--dgh-u)); margin: 0; padding: 0; list-style: none; }
+  /* three FIXED tracks (2026-09-06): strk's measured pitch (102px + 2u =
+     130.8px at 1440) on every strip page; labels wrap inside their track. */
+  .dgh-stats { display: grid; grid-template-columns: repeat(3, calc(102px + 2 * var(--dgh-u))); margin: 0; padding: 0; list-style: none; }
   .dgh-stats li { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
   .dgh-stats b { font-family: var(--display); font-weight: 300; font-size: max(calc(1.7 * var(--dgh-u)), 22px);
     line-height: 1; letter-spacing: -.01em; color: var(--white); font-variant-numeric: tabular-nums; }
@@ -399,7 +401,7 @@
        display; the counters may wrap before the strip does. */
     /* fixed geometry, rem tier: 1 + 20 pad + 26 value box + 5 + 45 = 97px */
     .dgh-strip { margin-top: 2rem; padding-top: 1.25rem; height: 97px; }
-    .dgh-stats { gap: 1.5rem; }
+    .dgh-stats { grid-template-columns: repeat(3, 126px); }
     .dgh-stats b { font-size: 1.5rem; }
     .dgh-stats b::before, .dgh-turn::before { height: 21px; }
     .dgh-stats b::after { height: 26px; }
@@ -411,9 +413,8 @@
   @media (max-width: 700px) {
     /* stacked: the strk/btcfi constant, 1 + 20 + 76 + 16 + 38 = 151px */
     .dgh-strip { flex-direction: column; align-items: flex-start; justify-content: flex-start; gap: 1rem; height: 151px; }
-    /* three 17ch (102px) label columns + two .75rem gaps = 330px, fits the
-       335px content box on one line */
-    .dgh-stats { gap: .75rem; }
+    /* three equal tracks across the container */
+    .dgh-stats { width: 100%; grid-template-columns: repeat(3, 1fr); }
     /* full label slot held, so the stacked claim starts at one shared y */
     .dgh-stats li { min-height: 76px; }
     .dgh-turn { text-align: left; font-size: 1.25rem; }

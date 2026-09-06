@@ -1427,7 +1427,9 @@
     display: flex; align-items: baseline; justify-content: space-between; gap: calc(2 * var(--bfh-u));
     border-top: 1px solid rgba(250, 250, 250, .16); padding-top: calc(1.25 * var(--bfh-u));
     box-sizing: border-box; height: calc(1px + 3.55 * var(--bfh-u) + 50px); }
-  .bfh-stats { display: flex; flex-wrap: wrap; gap: calc(2 * var(--bfh-u)); margin: 0; padding: 0; list-style: none; }
+  /* three FIXED tracks (2026-09-06): strk's measured pitch (102px + 2u =
+     130.8px at 1440) on every strip page; labels wrap inside their track. */
+  .bfh-stats { display: grid; grid-template-columns: repeat(3, calc(102px + 2 * var(--bfh-u))); margin: 0; padding: 0; list-style: none; }
   .bfh-stats li { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
   .bfh-stats b { font-family: var(--display); font-weight: 300; font-size: max(calc(1.7 * var(--bfh-u)), 22px);
     line-height: 1; letter-spacing: -.01em; color: var(--white); font-variant-numeric: tabular-nums; }
@@ -1455,7 +1457,7 @@
     .hero .hero-subtitle { margin-top: 1rem; max-width: 40rem; font-size: 1rem; }
     /* fixed geometry, rem tier: 1 + 20 pad + 26 value box + 5 + 45 = 97px */
     .bfh-strip { margin-top: 2rem; padding-top: 1.25rem; height: 97px; }
-    .bfh-stats { gap: 1.5rem; }
+    .bfh-stats { grid-template-columns: repeat(3, 126px); }
     .bfh-stats b { font-size: 1.5rem; }
     .bfh-stats b::before, .bfh-turn::before { height: 21px; }
     .bfh-stats b::after { height: 26px; }
@@ -1465,9 +1467,8 @@
   @media (max-width: 700px) {
     /* stacked: 1 + 20 pad + 76 stats block + 16 gap + 38 claim slot = 151px */
     .bfh-strip { flex-direction: column; align-items: flex-start; justify-content: flex-start; gap: 1rem; height: 151px; }
-    /* three 17ch (102px) label columns + two .75rem gaps = 330px, fits the
-       335px content box on one line */
-    .bfh-stats { gap: .75rem; }
+    /* three equal tracks across the container */
+    .bfh-stats { width: 100%; grid-template-columns: repeat(3, 1fr); }
     /* full label slot held, so the stacked claim starts at one shared y */
     .bfh-stats li { min-height: 76px; }
     .bfh-turn { text-align: left; font-size: 1.25rem; white-space: normal; }
