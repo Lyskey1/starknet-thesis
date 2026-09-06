@@ -1,49 +1,36 @@
-/* QUANTUM hero centrepiece: a glowing particle Starknet mark inside a particle
-   ring, chalk at the top fading to the page accent at the bottom.
+/* QUANTUM hero centrepiece: main's funnel wireframe, rebuilt in dust.
 
-   This is the twin of js/btcfi-hero-mark.js, which is the static-page port of
-   the landing hero's WebGL orb (src/views/home/hero/hero.tsx over
-   src/views/home/scene). One object filling the middle of the frame, with the
-   copy placed around its edges. It replaces the red particle wave field
-   (js/quantum-solaris.js, retired) that used to run here.
+   THIS IS THE SAME ENGINE as js/strk-hero-mark.js / js/btcfi-hero-mark.js /
+   js/digest-hero-mark.js (the static-page ports of the landing hero's WebGL
+   orb): the same THREE.Points pipeline, the same additive point material and
+   fragment disc, the same world-y gradient computed in the vertex shader
+   (accent at the bottom through warm to chalk at the top, pinned to the
+   frame however the object moves), the same SPEED-scaled clock, drift sines,
+   density/size discipline (uSz trim, uPix cap, uH scaling), IO visibility
+   gating, document.hidden pause and reduced-motion single frame.
 
-   THE GLYPH IS THE STARKNET MARK, which is the headline's payoff: quantum
-   breaks most chains, and this one has been waiting for it. Sampled from
-   assets/img/starknet-glyph.svg, the disc-less variant, so the point cloud is
-   the sparkle, the two swooshes and the dot rather than a solid blob.
+   WHAT CHANGED IS ONLY THE GEOMETRY SOURCE. The other marks sample a raster
+   glyph mask; this one is PARAMETRIC: main's quantum hero funnel (stacked
+   horizontal ellipses narrowing downward into a single bright point; see
+   main's .qh-chandelier svg) sampled straight from its equations:
+     - 9 rings, top ring diameter 2*R_TOP, bottom ring 0.133x the top
+       (the brief's 0.12-of-column against the 0.9-of-column top ring),
+       radius profile r(s) = R_TOP * 0.133^s, rings on the top 82% of the
+       height, apex at the bottom; height = 1.6x the top ring width.
+     - 10 meridians of FLOWING dust: each particle carries (theta, s0) and
+       the VERTEX SHADER moves it down the funnel surface, s = fract(s0 +
+       t/T_FALL), converging to r=0 at the apex and respawning at the top:
+       a slow collapse, ~40s per full cycle in real time.
+     - the whole funnel turns about its vertical axis at the same angular
+       speed as the strk mark's outer ring (0.055 rad per SPEED-scaled
+       second); nodes are translated by the group transform, never rotated.
+     - the APEX is one bright particle cluster pulsing at the halo cadence
+       the other devices use (5.2s), the most saturated point by gradient.
+   THE OUTER RING ORBIT IS DROPPED on purpose: the annulus reads as a rival
+   to the funnel's own top ring and flattens the taper. Reported.
 
-   Mount is #qhStage, an absolutely positioned box inside .hero. The renderer
-   is alpha with a fully transparent clear colour, because js/eco-backdrop.js
-   is a FIXED canvas underneath the whole page and everything above it has to
-   read through it. No opaque fill, no isolation, anywhere.
-
-   HOW THE MARK BECOMES PARTICLES
-   assets/img/starknet-glyph.svg ships with a viewBox and NO width/height, so
-   an <img> of it measures 0x0 in Chrome and anything built from it comes back
-   blank. The source is fetched and an explicit width/height is stamped on the
-   ROOT element before it is rasterised into a 2D canvas. The file already
-   carries its fill on the ROOT, so nothing is ever injected into a <path>:
-   a fill on a <path> yields an SVG Chrome silently refuses to decode. Both
-   traps are documented in js/btcfi-globe.js and js/pv-eco-orb.js and have
-   bitten more than once; do not improvise a variant.
-
-   The raster is read back with getImageData and every pixel above an alpha
-   threshold becomes a candidate particle, subsampled down to the target
-   count. Because the fetch is async the geometry is built INSIDE the callback:
-   no empty buffer is created up front and filled later.
-
-   THE GRADIENT IS COMPUTED IN THE SHADER, NOT BAKED. The ring turns, so a
-   colour baked per particle at build time would carry the accent round to the
-   top within a few seconds. The vertex shader reads the particle's WORLD y and
-   mixes accent, warm and chalk from it, which pins the gradient to the frame
-   however the object is rotating.
-
-   SPEED. Everything reads off one clock scaled by SPEED, so the drift in the
-   shader and the rotations in the loop can never fall out of step. SPEED is
-   0.34 of the btcfi twin's on purpose: the owner's note on the old field was
-   that the motion was too fast, so the ring turns at ~1.07 deg/s (btcfi:
-   ~3.15 deg/s) and reads as a slow drift rather than a spin.
-
+   Mount is #qhStage, the hero's right-column box (the strk stage geometry).
+   The renderer stays alpha/transparent over js/eco-backdrop.js.
    strk20 palette only: accent #c53400, warm #e07a4a, chalk #fafafa. */
 import * as THREE from 'three';
 
@@ -52,14 +39,22 @@ if (MOUNT) {
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const smallMQ = matchMedia('(max-width: 980px)');
 
-  /* the ring the fit is measured against: the outer dust halo is allowed to
-     bleed past the frame edge, the bright annulus never is */
-  const R_RING = 2.14;        // mid radius of the bright annulus
-  const R_FIT = 2.34;         // its outer edge
-  const GLYPH_H = 2.62;       // mark height in world units, comfortably inside the ring
+  /* the funnel the fit is measured against: full height 2*R_FIT, top ring
+     width = height / 1.6 (main's proportions) */
+  const FUN_H = 4.0;                 // world height of the funnel
+  const R_FIT = FUN_H / 2;           // fit semantics: half-height, like a radius
+  const R_TOP = FUN_H / 1.6 / 2;     // top ring radius (width = H / 1.6)
+  const TAPER = 0.133;               // bottom ring / top ring (0.12 / 0.9)
+  const RING_BAND = 0.82;            // rings live on the top 82% of the height
+  const N_RINGS = 9, N_MER = 10;
+  const TOP_Y = FUN_H / 2;
 
   /* the single slowdown lever: one clock, everything scaled off it */
   const SPEED = 0.34;
+  /* flow: ~40 real seconds per full top-to-apex cycle, in clock units */
+  const FLOW_R = 1 / (40 * SPEED);
+  /* apex pulse at the halo cadence used elsewhere (5.2s real) */
+  const PULSE_W = (2 * Math.PI) / (5.2 * SPEED);
 
   let renderer = null;
   try { renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'low-power' }); }
@@ -75,23 +70,32 @@ if (MOUNT) {
     const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 90);
     const HALF_FOV = Math.tan((40 / 2) * Math.PI / 180);
 
-    /* one group per moving part: the ring sweeps, the mark only breathes */
     const world = new THREE.Group();
-    const ringGrp = new THREE.Group();
-    const markGrp = new THREE.Group();
-    world.add(ringGrp); world.add(markGrp); scene.add(world);
+    scene.add(world);
 
-    /* deterministic hash noise, the idiom js/btcfi-globe.js uses: no
-       Math.random, so a reload never reshuffles the field */
+    /* deterministic hash noise, the twins' idiom: no Math.random */
     const rnd = (i, s) => Math.abs(Math.sin((i + 1) * s) * 43758.5453 % 1);
+
+    /* the funnel profile, shared by the CPU sampler and the shader */
+    const profR = (s) => R_TOP * Math.pow(TAPER, s) * Math.min(1, (1 - s) / 0.12);
 
     const VERT = `
       attribute float aSize; attribute float aPhase; attribute float aAlpha; attribute float aTint;
+      attribute float aMode; attribute float aTheta; attribute float aS;
       varying vec3 vC; varying float vA;
       uniform float uPix, uH, uFade, uTime, uDrift, uSpan, uSz;
+      uniform float uRTop, uTopY, uFunH, uFlowR, uPulseW;
       uniform vec3 uAcc, uWarm, uChalk;
       void main(){
         vec3 p = position;
+        float fadeFlow = 1.0;
+        if (aMode > 0.5 && aMode < 1.5) {
+          /* the collapse: this particle rides its meridian down the funnel */
+          float s = fract(aS + uTime * uFlowR);
+          float r = uRTop * pow(0.133, s) * clamp((1.0 - s) / 0.12, 0.0, 1.0);
+          p = vec3(r * cos(aTheta), uTopY - s * uFunH, r * sin(aTheta));
+          fadeFlow = smoothstep(0.0, 0.05, s);
+        }
         p.z += sin(uTime * 0.75 + aPhase * 6.2831) * 0.055 * uDrift;
         p.x += sin(uTime * 0.51 + aPhase * 12.566) * 0.014 * uDrift;
         p.y += cos(uTime * 0.63 + aPhase * 9.4248) * 0.014 * uDrift;
@@ -103,8 +107,9 @@ if (MOUNT) {
         vec4 mv = modelViewMatrix * vec4(p, 1.0);
         float d = -mv.z;
         gl_Position = projectionMatrix * mv;
-        gl_PointSize = max(1.0, aSize * uSz * uPix * (uH / 900.0) * (10.0 / max(d, 0.5)));
-        vA = aAlpha * uFade;
+        float pulse = aMode > 1.5 ? (0.85 + 0.35 * sin(uTime * uPulseW)) : 1.0;
+        gl_PointSize = max(1.0, aSize * pulse * uSz * uPix * (uH / 900.0) * (10.0 / max(d, 0.5)));
+        vA = aAlpha * uFade * fadeFlow * (aMode > 1.5 ? (0.8 + 0.2 * sin(uTime * uPulseW)) : 1.0);
       }`;
 
     const FRAG = `
@@ -126,6 +131,8 @@ if (MOUNT) {
         uniforms: {
           uPix: { value: 1 }, uH: { value: 900 }, uFade: { value: 0 }, uSz: { value: 1 },
           uTime: { value: 0 }, uDrift: { value: drift }, uSpan: { value: span },
+          uRTop: { value: R_TOP }, uTopY: { value: TOP_Y }, uFunH: { value: FUN_H },
+          uFlowR: { value: FLOW_R }, uPulseW: { value: PULSE_W },
           uAcc: { value: new THREE.Color('#c53400') },
           uWarm: { value: new THREE.Color('#e07a4a') },
           uChalk: { value: new THREE.Color('#fafafa') }
@@ -135,198 +142,105 @@ if (MOUNT) {
       return m;
     }
 
-    function points(pos, siz, pha, alp, tin, mat) {
+    function points(N, fill, mat) {
+      const pos = new Float32Array(N * 3);
+      const siz = new Float32Array(N), pha = new Float32Array(N);
+      const alp = new Float32Array(N), tin = new Float32Array(N);
+      const mod_ = new Float32Array(N), th = new Float32Array(N), ss = new Float32Array(N);
+      for (let i = 0; i < N; i++) fill(i, pos, siz, pha, alp, tin, mod_, th, ss);
       const g = new THREE.BufferGeometry();
       g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
       g.setAttribute('aSize', new THREE.BufferAttribute(siz, 1));
       g.setAttribute('aPhase', new THREE.BufferAttribute(pha, 1));
       g.setAttribute('aAlpha', new THREE.BufferAttribute(alp, 1));
       g.setAttribute('aTint', new THREE.BufferAttribute(tin, 1));
+      g.setAttribute('aMode', new THREE.BufferAttribute(mod_, 1));
+      g.setAttribute('aTheta', new THREE.BufferAttribute(th, 1));
+      g.setAttribute('aS', new THREE.BufferAttribute(ss, 1));
+      /* the flow cloud recomputes its position from (theta, s) per frame in
+         the shader, so its bounding sphere is set by hand: culling must
+         never clip a particle mid-collapse */
+      g.boundingSphere = new THREE.Sphere(new THREE.Vector3(0, 0, 0), FUN_H);
       return new THREE.Points(g, mat);
     }
 
-    /* ================= the ring =================
-       A bright thin annulus plus a sparse dust halo outside it. The annulus
-       carries three brighter arcs baked into the point sizes, which is what
-       makes rotation about Z legible at all: a ring of uniform density
-       turning in its own plane reads as a still image. */
+    /* density at the strk discipline, desktop / sub-980 */
     const small = smallMQ.matches;
-    const RING_N = small ? 6400 : 21000;
-    const HALO_N = small ? 1800 : 6300;
+    const RINGS_N = small ? 9000 : 26000;
+    const FLOW_N = small ? 5000 : 14000;
+    const APEX_N = 48;
 
+    /* ---- the 9 rings: static dust on the ellipse stack; the group's own
+       Y-rotation is the spin, exactly as the strk ring turns in its plane */
     {
-      const N = RING_N + HALO_N;
-      const pos = new Float32Array(N * 3);
-      const siz = new Float32Array(N), pha = new Float32Array(N);
-      const alp = new Float32Array(N), tin = new Float32Array(N);
-      for (let i = 0; i < N; i++) {
-        const halo = i >= RING_N;
+      const N = RINGS_N;
+      world.add(points(N, function (i, pos, siz, pha, alp, tin, mod_, th, ss) {
+        /* rings weighted by circumference so density reads even */
+        const w = rnd(i, 91.7);
+        const ring = Math.floor(Math.pow(w, 1.35) * N_RINGS);
+        const sRing = ring / (N_RINGS - 1) * RING_BAND;
+        const r0 = R_TOP * Math.pow(TAPER, sRing);
         const a = rnd(i, 127.1) * Math.PI * 2;
-        let r, z, base, aa, tt;
-        if (!halo) {
-          // gaussian-ish thickness: two uniforms summed, centred on R_RING
-          r = R_RING + (rnd(i, 311.7) + rnd(i, 74.7) - 1) * 0.19;
-          z = (rnd(i, 39.42) - 0.5) * 0.34;
-          base = 1.15 + rnd(i, 12.9898) * 0.95;
-          aa = 0.40 + rnd(i, 91.3) * 0.50;
-          tt = 0.80 + rnd(i, 5.331) * 0.45;
-        } else {
-          r = R_FIT + Math.pow(rnd(i, 311.7), 0.6) * 1.20;
-          z = (rnd(i, 39.42) - 0.5) * 0.9;
-          base = 0.80 + rnd(i, 12.9898) * 0.75;
-          aa = 0.10 + rnd(i, 91.3) * 0.20;
-          tt = 0.7 + rnd(i, 5.331) * 0.4;
-        }
-        const sweep = 0.62 + 0.68 * Math.pow(0.5 + 0.5 * Math.sin(a * 3 + 0.7), 1.5);
-        pos[i * 3] = Math.cos(a) * r;
-        pos[i * 3 + 1] = Math.sin(a) * r;
-        pos[i * 3 + 2] = z;
-        siz[i] = base * (halo ? 1 : sweep);
+        /* gaussian-ish thickness, the strk annulus idiom */
+        const rr = r0 * (1 + (rnd(i, 311.7) + rnd(i, 74.7) - 1) * 0.05);
+        const y = TOP_Y - sRing * FUN_H + (rnd(i, 39.42) - 0.5) * 0.05;
+        pos[i * 3] = Math.cos(a) * rr;
+        pos[i * 3 + 1] = y;
+        pos[i * 3 + 2] = Math.sin(a) * rr;
+        siz[i] = 0.95 + rnd(i, 12.9898) * 0.85;
         pha[i] = rnd(i, 78.233);
-        alp[i] = aa * (halo ? 1 : (0.55 + 0.6 * sweep));
-        tin[i] = tt;
-      }
-      ringGrp.add(points(pos, siz, pha, alp, tin, makeMaterial(0.6, R_RING * 2)));
+        alp[i] = 0.32 + rnd(i, 91.3) * 0.42;
+        tin[i] = 0.85 + rnd(i, 5.331) * 0.4;
+        mod_[i] = 0; th[i] = 0; ss[i] = 0;
+      }, makeMaterial(0.6, FUN_H)));
     }
 
-    /* ================= the mark ================= */
-    const MARK_N = small ? 11000 : 38000;
-    fetch('/assets/img/starknet-glyph.svg')
-      .then((r) => r.text())
-      .then((src) => {
-        /* width/height stamped on the ROOT; the file already carries its fill
-           on the root too, so nothing is injected into a <path>. See the
-           header note. */
-        const sized = src.replace('<svg ', '<svg width="512" height="512" ');
-        return new Promise((resolve, reject) => {
-          const img = new Image();
-          img.onload = () => resolve(img);
-          img.onerror = () => reject(new Error('the rasterised mark would not decode'));
-          img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(sized);
-        });
-      })
-      .then((img) => {
-        const S = 512;
-        const cv = document.createElement('canvas');
-        cv.width = cv.height = S;
-        const cx = cv.getContext('2d', { willReadFrequently: true });
-        cx.clearRect(0, 0, S, S);
-        cx.drawImage(img, 0, 0, S, S);
-        const data = cx.getImageData(0, 0, S, S).data;
+    /* ---- the meridian flow: dust riding 10 curves down to the apex ---- */
+    {
+      const N = FLOW_N;
+      world.add(points(N, function (i, pos, siz, pha, alp, tin, mod_, th, ss) {
+        const mer = i % N_MER;
+        const theta = mer / N_MER * Math.PI * 2 + (rnd(i, 45.164) - 0.5) * 0.22;
+        mod_[i] = 1; th[i] = theta; ss[i] = rnd(i, 17.23);
+        pos[i * 3] = 0; pos[i * 3 + 1] = 0; pos[i * 3 + 2] = 0; /* shader-driven */
+        siz[i] = 0.8 + rnd(i, 12.9898) * 0.7;
+        pha[i] = rnd(i, 78.233);
+        alp[i] = 0.30 + rnd(i, 91.3) * 0.38;
+        tin[i] = 0.9 + rnd(i, 5.331) * 0.4;
+      }, makeMaterial(0.5, FUN_H)));
+    }
 
-        /* EVERY LIT PIXEL IS A CANDIDATE, BUT NOT EQUALLY. The bitcoin symbol
-           the btcfi twin samples is thin-stroked with counters in it, so a
-           flat fill reads as a letter. The Starknet mark is two broad tapered
-           swooshes, and filling them evenly reads as a blob. So each lit
-           pixel is classified: a pixel with an unlit 4-neighbour is an EDGE
-           pixel and is always kept at full weight, and the interior is kept
-           at INTERIOR_KEEP, dimmer and smaller. The mark then reads as a lit
-           outline with a glow inside it, which is the mark's own drawing.
-           The mask's OWN bounding box sets the scale, so the glyph is centred
-           on itself rather than on whatever padding its viewBox carries. */
-        const A = (x, y) => (x < 0 || y < 0 || x >= S || y >= S ? 0 : data[(y * S + x) * 4 + 3]);
-        const TH = 110;
-        const hits = [], edge = [];
-        let x0 = S, y0 = S, x1 = 0, y1 = 0;
-        for (let y = 0; y < S; y++) {
-          for (let x = 0; x < S; x++) {
-            if (A(x, y) > TH) {
-              const isEdge = A(x - 1, y) <= TH || A(x + 1, y) <= TH || A(x, y - 1) <= TH || A(x, y + 1) <= TH;
-              hits.push(x, y); edge.push(isEdge ? 1 : 0);
-              if (x < x0) x0 = x;
-              if (x > x1) x1 = x;
-              if (y < y0) y0 = y;
-              if (y > y1) y1 = y;
-            }
-          }
-        }
-        const total = hits.length / 2;
-        if (!total) { console.error('[quantum-hero-mark] the mark rasterised blank'); return; }
+    /* ---- the apex: one bright particle (a tight pulsing cluster) ---- */
+    {
+      world.add(points(APEX_N, function (i, pos, siz, pha, alp, tin, mod_, th, ss) {
+        const a = rnd(i, 127.1) * Math.PI * 2, r = Math.pow(rnd(i, 311.7), 1.6) * 0.06;
+        pos[i * 3] = Math.cos(a) * r;
+        pos[i * 3 + 1] = TOP_Y - FUN_H + (rnd(i, 39.42) - 0.5) * 0.05;
+        pos[i * 3 + 2] = Math.sin(a) * r;
+        siz[i] = i === 0 ? 4.6 : 1.3 + rnd(i, 12.9898) * 1.1;
+        pha[i] = rnd(i, 78.233);
+        alp[i] = i === 0 ? 1 : 0.5 + rnd(i, 91.3) * 0.4;
+        tin[i] = 1.35;
+        mod_[i] = 2; th[i] = 0; ss[i] = 0;
+      }, makeMaterial(0.25, FUN_H)));
+    }
 
-        const bw = (x1 - x0) || 1, bh = (y1 - y0) || 1;
-        /* fit by the LONGER side: the Starknet glyph is wider than it is tall
-           (unlike the bitcoin symbol), so fitting by height alone would push
-           it out through the ring left and right. SCALE still comes from the
-           whole mark, so the sparkle and the dot cannot be pushed outside the
-           ring by the recentring below. */
-        const scale = GLYPH_H / Math.max(bw, bh);
-
-        /* OPTICALLY CENTRED, NOT BOX CENTRED.
-           The mark is geometrically centred already: measured on the rendered
-           canvas, its bounding box sat within 2.5px of the ring's centre. It
-           still read as sitting right of centre, and the components explain
-           why. The glyph is three pieces at 512px: the swoosh (55,999px, box
-           46,114 to 452,392), a dot (2,681px) and a 4-point sparkle
-           (1,992px). The swoosh's own box IS the whole mark's box, so
-           centring on the largest piece changes nothing, which was checked
-           and thrown away. The swoosh is a TAPERED comma, thick at the top
-           right with a long thin tail to the bottom left, so its box centre
-           is not where its weight is.
-           So the mark is centred on its CENTRE OF MASS over lit pixels, which
-           is what the eye reads as the middle of a shape. SCALE still comes
-           from the full bounding box above, so nothing can be pushed out
-           through the ring by the shift. */
-        let sx = 0, sy = 0;
-        for (let j = 0; j < total; j++) { sx += hits[j * 2]; sy += hits[j * 2 + 1]; }
-        const mx = sx / total, my = sy / total;
-
-        /* the edge list is walked whole and the interior is decimated, so the
-           budget goes where the drawing is */
-        const INTERIOR_KEEP = 0.34;
-        const keep = [];
-        for (let j = 0; j < total; j++) {
-          if (edge[j]) keep.push(j);
-          else if (rnd(j, 45.164) < INTERIOR_KEEP) keep.push(j);
-        }
-        const N = Math.min(MARK_N, keep.length);
-        const step = keep.length / N;
-        const pos = new Float32Array(N * 3);
-        const siz = new Float32Array(N), pha = new Float32Array(N);
-        const alp = new Float32Array(N), tin = new Float32Array(N);
-        for (let i = 0; i < N; i++) {
-          const j = keep[Math.floor(i * step)];
-          const k = j * 2, isEdge = edge[j];
-          const jx = (rnd(i, 127.1) - 0.5) * 1.5, jy = (rnd(i, 311.7) - 0.5) * 1.5;
-          pos[i * 3] = (hits[k] + jx - mx) * scale;
-          pos[i * 3 + 1] = (my - (hits[k + 1] + jy)) * scale;
-          pos[i * 3 + 2] = (rnd(i, 39.42) - 0.5) * 0.16;
-          siz[i] = (isEdge ? 1.30 : 0.85) + rnd(i, 12.9898) * 0.80;
-          pha[i] = rnd(i, 78.233);
-          alp[i] = (isEdge ? 0.84 : 0.38) + rnd(i, 91.3) * 0.40;
-          tin[i] = (isEdge ? 1.05 : 0.80) + rnd(i, 5.331) * 0.35;
-        }
-        markGrp.add(points(pos, siz, pha, alp, tin, makeMaterial(1, GLYPH_H)));
-        fit();
-        if (reduced) draw(0);
-      })
-      .catch((e) => console.error('[quantum-hero-mark] the mark failed to load', e));
+    /* the verification hook the report reads, the twins' idiom */
+    window.__qh = { particles: RINGS_N + FLOW_N + APEX_N, rings: RINGS_N, flow: FLOW_N, apex: APEX_N, world, SPEED };
 
     /* ================= fit, loop, gating ================= */
-    /* The camera is moved rather than the group scaled: distance is what the
-       point-size formula reads, so the dots shrink with the composition
-       instead of clumping into a solid blob on a phone. */
     function fit() {
       const w = MOUNT.clientWidth || 1, h = MOUNT.clientHeight || 1;
       renderer.setSize(w, h, false);
       camera.aspect = w / h;
       const sm = smallMQ.matches;
-      /* the mark size rule (2026-09-05, shared with strk/btcfi/digest): the
-         annulus' outer edge spans 80% of the mount height. This page has no
-         baseline strip, so the column is the whole nav-to-fold hero, which
-         the mount already fills. uSz trims the per-dot size to sqrt of the
-         scale-up and the counts above carry the density. */
+      /* the mark size rule: the funnel's full height spans 80% of the mount
+         (the nav-to-strip column); byW guards the top ring against the
+         stage box on a narrow desktop, 0.91 like the twins */
       const byH = R_FIT / ((sm ? 0.40 : 0.80) * HALF_FOV);
-      const byW = R_FIT / ((sm ? 0.80 : 0.50) * HALF_FOV * camera.aspect);
+      const byW = R_TOP / ((sm ? 0.40 : 0.455) * HALF_FOV * camera.aspect);
       camera.position.z = Math.max(byH, byW);
-      /* OFF CENTRE ON PURPOSE, on the artboard only. The btcfi twin centres
-         its mark because that hero's display is two short lines. This one
-         carries a three-line display and a four-line lede down the left
-         gutter, so the whole object is pushed right by 0.75 world units,
-         which clears the reading column without letting the annulus reach
-         the right edge (the fit keeps it at 0.50 of the half width, so the
-         far side lands near 0.66). On the sub-980 stack the copy owns the
-         full width and the object goes back to centre. */
-      world.position.x = smallMQ.matches ? 0 : 0.75;
+      world.position.x = 0;
       camera.updateProjectionMatrix();
       const pix = Math.min(devicePixelRatio || 1, 2);
       const trim = sm ? 1 : 0.89;
@@ -343,15 +257,13 @@ if (MOUNT) {
         m.uniforms.uTime.value = t;
         m.uniforms.uFade.value = reduced ? want : lit;
       });
-      ringGrp.rotation.z = t * 0.055;
-      ringGrp.rotation.x = -0.10 + Math.sin(t * 0.21) * 0.07;
-      markGrp.rotation.y = Math.sin(t * 0.17) * 0.10;
-      markGrp.rotation.x = Math.sin(t * 0.13) * 0.05;
+      /* the whole funnel turns about its vertical axis at the strk outer
+         ring's angular speed; a gentle breath, the twins' cadence */
+      world.rotation.y = t * 0.055;
       world.scale.setScalar(1 + Math.sin(t * 0.34) * 0.012);
       renderer.render(scene, camera);
     }
 
-    /* the clock the whole scene reads, in SPEED-scaled seconds */
     function tick(now) { draw(((now - t0) / 1000) * SPEED); raf = requestAnimationFrame(tick); }
     function start() { if (running || reduced) return; running = true; raf = requestAnimationFrame(tick); }
     function stop() { if (!running) return; running = false; cancelAnimationFrame(raf); }
@@ -371,10 +283,5 @@ if (MOUNT) {
     } else { visible = true; update(); }
 
     if (reduced) draw(0);
-
-    /* verification hook, off unless asked for: /quantum?qhprobe lets a
-       headful browser sample ringGrp.rotation.z a second apart and read the
-       drift rate straight off the scene rather than off these constants */
-    if (location.search.includes('qhprobe')) window.__qh = { world, ringGrp, markGrp, SPEED };
   }
 }

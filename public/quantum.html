@@ -477,30 +477,37 @@
        decorative and inert: aria-hidden, pointer-events none, z-index -1. If
        WebGL is missing or the reader prefers reduced motion the module either
        skips or paints one settled frame, and the hero copy is unaffected. -->
-  <div class="qh-stage" id="qhStage" aria-hidden="true"></div>
-  <p class="hero-eyebrow">The quantum reckoning</p>
-  <h1 id="quantum-will-break-most-chains-starknet" class="hero-title">Quantum will break most chains</h1>
-  <div class="qh-left">
-  <p class="hero-subtitle">Governments, Big Tech, and researchers are increasingly converging on the same timeline for when quantum breaks today's cryptography. When it arrives, nearly every onchain wallet is exposed. For most of crypto, this is a threat. For Starknet, it highlights the strength of its architecture.</p>
-  <!-- CTA PAIR: the landing's SendRequest, copied. A chalk block carrying a
-       sentence-case label, and beside it a separate square tile of the same
-       height holding the asterisk from assets/hero/send-icon.svg. The glyph
-       is inlined rather than an <img> so the ghost variant can recolour its
-       path to chalk, which is the same reason /privacy inlines it. Both
-       labels and both destinations are unchanged. -->
-  <div class="qh-ctas">
-    <a class="qh-cta" href="#q-day-and-the-fault-line"><span>See the fault line</span><i aria-hidden="true"><svg viewBox="0 0 51 51" fill="none"><path d="M26.293 23.583L34.4834 15.3926L35.6064 16.5156L27.416 24.7061H39V26.2939H27.418L35.6084 34.4844L34.4854 35.6074L26.293 27.415V39H24.7051V27.417L16.5146 35.6074L15.3916 34.4844L23.582 26.2939H12V24.7061H23.584L15.3936 16.5156L16.5166 15.3926L24.7051 23.5811V12H26.293V23.583Z"/></svg></i></a>
-    <a class="qh-cta qh-cta--muted" href="#starknet-will-be-ready-before-q"><span>How Starknet is ready</span><i aria-hidden="true"><svg viewBox="0 0 51 51" fill="none"><path d="M26.293 23.583L34.4834 15.3926L35.6064 16.5156L27.416 24.7061H39V26.2939H27.418L35.6084 34.4844L34.4854 35.6074L26.293 27.415V39H24.7051V27.417L16.5146 35.6074L15.3916 34.4844L23.582 26.2939H12V24.7061H23.584L15.3936 16.5156L16.5166 15.3926L24.7051 23.5811V12H26.293V23.583Z"/></svg></i></a>
-  </div>
-  </div>
-
-  <!-- BOTTOM RIGHT, the /btcfi slot: a mono readout over the big turn line,
-       both right aligned. The turn is the second half of the page's own
-       statement, moved out of the h1 so this hero reads exactly as /btcfi's
-       does, the claim top left and the answer bottom right. -->
-  <div class="qh-right">
-    <p class="qh-stat">Hash-based proofs. Account abstraction. Live on mainnet.</p>
-    <p class="qh-turn">Starknet has been waiting for it</p>
+  <!-- THREE ZONES (2026-09-06), strk's frame name for name: the editorial
+       column on the container (eyebrow, the shared display headline with the
+       accent on "waiting for it.", the shared paragraph), the particle
+       funnel on the right-column stage (js/quantum-hero-mark.js, main's
+       funnel rebuilt in dust), and the baseline strip on the shared fixed
+       geometry. The two CTAs, their asterisk tiles, the bottom-right turn
+       and the mono readout are gone; #q-day-and-the-fault-line and
+       #starknet-will-be-ready-before-q stay on their sections. -->
+  <div class="qhx-wrap">
+    <div class="qhx-scene">
+      <div class="qh-stage" id="qhStage" aria-hidden="true"></div>
+      <div class="qhx-col">
+        <p class="hero-eyebrow">The quantum reckoning</p>
+        <h1 id="quantum-will-break-most-chains-starknet" class="hero-title vch-title">Quantum will break most chains. Starknet has been <em>waiting for it.</em></h1>
+        <p class="hero-subtitle vch-sub">Governments, Big Tech, and researchers are increasingly converging on the same timeline for when quantum breaks today's cryptography. When it arrives, nearly every onchain wallet is exposed. For most of crypto, this is a threat. For Starknet, it highlights the strength of its architecture.</p>
+      </div>
+    </div>
+    <div class="qhx-strip">
+      <!-- three stats, the shared component: the 2029 countdown's day count
+           (the same timer that drives the Q-day section writes this hook),
+           and two figures the page already shows: 6.9M vulnerable BTC (the
+           fault-line exposure paragraph) and the 1.93 STRK Falcon-512
+           transfer fee (the mainnet proof). The claim is the page's own
+           section heading, verbatim. -->
+      <ul class="qhx-stats">
+        <li><b data-qd-days>847</b><span>Days to 2029</span></li>
+        <li><b>6.9M</b><span>BTC vulnerable</span></li>
+        <li><b>1.93 STRK</b><span>Falcon-512 transfer fee</span></li>
+      </ul>
+      <p class="qhx-turn">Starknet will be ready before Q-day</p>
+    </div>
   </div>
 </div>
 
@@ -4012,6 +4019,74 @@ body.page-quantum{overflow-x:clip;}
 .news-section:has(.news-toggle.qh-cta){border:0;background:none;padding:0;
   display:flex;flex-direction:column;align-items:center;}
 .news-section:has(.news-toggle.qh-cta) .news-grid{width:100%;margin-top:26px;}
+
+/* ===== QHX: the three-zone hero frame (2026-09-06), strk's geometry name
+   for name: wrap = the 1392 container, scene takes the flex slack, stage =
+   the right column (the funnel mount, 80% mark size rule in the engine),
+   strip = the shared fixed geometry (102.11px at 1440, struts, grid
+   tracks). Sits at the end of the last sheet so it wins its ties. */
+body.page-quantum .hero{display:flex;flex-direction:column;align-items:stretch;
+  padding:0 0 32px;overflow:hidden;text-align:left}
+.qhx-wrap{width:calc(100% - 48px);max-width:1392px;margin:0 auto;
+  display:flex;flex-direction:column;flex:1 1 auto;min-height:0}
+.qhx-scene{position:relative;display:flex;align-items:center;flex:1 1 auto;min-height:0}
+body.page-quantum .qh-stage{position:absolute;top:0;bottom:0;left:calc(47 * var(--qhx-u));right:0;
+  inset:auto;z-index:0;pointer-events:none;overflow:hidden}
+body.page-quantum .qh-stage{top:0;bottom:0;left:calc(47 * var(--qhx-u));right:0}
+.qhx-col{position:relative;z-index:2;width:calc(47 * var(--qhx-u));
+  display:flex;flex-direction:column;align-items:flex-start}
+body.page-quantum{--qhx-u:min(1vw,14.4px)}
+/* the old flow rules gave the title a 52vw width and the lede 38vw; the
+   shared classes own the type, these own the measure */
+.qhx-col .hero-title{width:auto;position:relative}
+.qhx-col .hero-subtitle{width:auto;position:relative}
+.qhx-col .hero-eyebrow{margin:0;position:relative}
+@media (max-height:700px){
+  body.page-quantum .hero{height:auto;min-height:calc(100svh - var(--vcnav-h, 64px));padding-top:calc(2 * var(--qhx-u))}
+  .qhx-scene{min-height:54svh}
+}
+
+/* the baseline strip: the shared fixed geometry, byte for byte */
+.qhx-strip{position:relative;z-index:2;margin-top:0;
+  display:flex;align-items:baseline;justify-content:space-between;gap:calc(2 * var(--qhx-u));
+  border-top:1px solid rgba(250,250,250,.16);padding-top:calc(1.25 * var(--qhx-u));
+  box-sizing:border-box;height:calc(1px + 3.55 * var(--qhx-u) + 50px)}
+.qhx-stats{display:grid;grid-template-columns:repeat(3, calc(102px + 2 * var(--qhx-u)));margin:0;padding:0;list-style:none}
+.qhx-stats li{display:flex;flex-direction:column;gap:5px;min-width:0}
+.qhx-stats b{font-family:var(--display);font-weight:300;font-size:max(calc(1.7 * var(--qhx-u)),22px);
+  line-height:1;letter-spacing:-.01em;color:var(--white);font-variant-numeric:tabular-nums;white-space:nowrap}
+.qhx-stats b::before,.qhx-turn::before{content:"";display:inline-block;width:0;
+  height:calc(1.85 * var(--qhx-u))}
+.qhx-stats b::after{content:"";display:inline-block;width:0;vertical-align:top;
+  height:calc(2.3 * var(--qhx-u))}
+.qhx-stats span{font-family:var(--mono),monospace;font-size:max(calc(0.68 * var(--qhx-u)),10px);
+  line-height:1.5;letter-spacing:.14em;text-transform:uppercase;color:rgba(250,250,250,.72);max-width:17ch}
+.qhx-turn{margin:0;text-align:right;font-family:var(--display);font-weight:700;
+  font-size:calc(2.3 * var(--qhx-u));line-height:.95;letter-spacing:-.01em;
+  text-transform:uppercase;white-space:nowrap;color:#fafafa}
+@media (max-width:980px){
+  body.page-quantum .hero{height:auto;min-height:calc(100svh - var(--vcnav-h, 64px));padding:2.5rem 1.5rem 32px;overflow:visible}
+  .qhx-wrap{width:100%;max-width:none}
+  .qhx-scene{min-height:0;position:static}
+  body.page-quantum .qh-stage{left:0}
+  .qhx-col{width:auto}
+  .qhx-strip{margin-top:2rem;padding-top:1.25rem;height:97px}
+  .qhx-stats{grid-template-columns:repeat(3, 126px)}
+  .qhx-stats b{font-size:1.5rem}
+  .qhx-stats b::before,.qhx-turn::before{height:21px}
+  .qhx-stats b::after{height:26px}
+  .qhx-stats span{font-size:10px}
+  .qhx-turn{font-size:1.375rem}
+}
+@media (max-width:700px){
+  .qhx-strip{flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:1rem;height:151px}
+  .qhx-stats{width:100%;grid-template-columns:repeat(3, 1fr)}
+  .qhx-stats li{min-height:76px}
+  .qhx-turn{text-align:left;font-size:1.25rem;white-space:normal}
+}
+@media (max-width:380px){
+  body.page-quantum .hero{padding:2rem 1.25rem 24px}
+}
 </style>
 
   <!-- chapter: the referee. The heading was removed on request; its id moves
@@ -4372,6 +4447,9 @@ var qvFilmChrome = thVideoChrome({
         s = Math.floor(d%60000/1000);
     var elD = document.getElementById('cd-days'); if (!elD) return;
     elD.textContent = days.toLocaleString();
+    // the hero strip's DAYS TO 2029 stat rides the same tick: one clock
+    var qd = document.querySelector('[data-qd-days]');
+    if (qd) qd.textContent = days.toLocaleString();
     document.getElementById('cd-hours').textContent = String(h).padStart(2,'0');
     document.getElementById('cd-mins').textContent = String(m).padStart(2,'0');
     document.getElementById('cd-secs').textContent = String(s).padStart(2,'0');
