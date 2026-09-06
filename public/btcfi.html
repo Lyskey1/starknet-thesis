@@ -1386,6 +1386,47 @@
     .bum-ring, .bum-node, .bum-glow { animation: none !important; }
   }
 
+  /* ===== ORBITAL ECOSYSTEM HUB (eho-, PART G 2026-09-06): main's hub on the
+     vesper palette. Rings are hairlines at .12 ink; the center ring and the
+     strkBTC label ride the accent; logo halos are muted ink at .16 (not the
+     per-brand colors main used); the tooltip sits on the shared glass tier.
+     Height cap 620px at 1440; hidden below 760px (the grid alone serves). */
+  .eho { position: relative; margin: 40px auto 56px; max-height: 620px; }
+  .eho-stage { position: relative; width: min(520px, 100%); aspect-ratio: 1; margin: 0 auto; }
+  .eho-ring { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+    border: 1px solid rgba(250, 250, 250, .12); border-radius: 50%; aspect-ratio: 1; }
+  .eho-ring0 { width: 34%; }
+  .eho-ring1 { width: 60%; }
+  .eho-ring2 { width: 86%; }
+  .eho-core { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+    width: 92px; height: 92px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: radial-gradient(circle at 50% 30%, rgba(var(--accent-rgb), .12), transparent 70%), #101010;
+    border: 1px solid var(--accent);
+    box-shadow: 0 0 26px rgba(var(--accent-rgb), .16);
+    font-family: var(--mono); font-size: 12px; letter-spacing: .08em;
+    color: var(--accent); }
+  .eho-node { position: absolute; left: 50%; top: 50%;
+    width: 44px; height: 44px; margin: -22px 0 0 -22px;
+    display: inline-flex; align-items: center; justify-content: center;
+    border-radius: 50%; border: 1px solid rgba(250, 250, 250, .16);
+    background: rgba(13, 13, 13, .92); text-decoration: none;
+    will-change: transform; transition: border-color .25s ease, box-shadow .25s ease; }
+  .eho-node img { width: 25px; height: 25px; border-radius: 50%; object-fit: cover; display: block; }
+  .eho-node .eho-mono { display: flex; width: 25px; height: 25px; border-radius: 50%;
+    align-items: center; justify-content: center; font-family: var(--mono); font-size: 10px;
+    background: rgba(250, 250, 250, .08); color: rgba(250, 250, 250, .7); }
+  .eho-node:hover, .eho-node:focus-visible { border-color: rgba(250, 250, 250, .5);
+    box-shadow: 0 0 0 1px rgba(250, 250, 250, .25), 0 0 18px rgba(250, 250, 250, .12);
+    z-index: 5; outline: none; }
+  .eho-tip { position: absolute; z-index: 6; padding: 8px 12px; pointer-events: none;
+    transform: translate(-50%, -130%); white-space: nowrap; }
+  .eho-tip b { display: block; font-family: var(--display); font-size: 13px; font-weight: 600;
+    color: var(--white); line-height: 1.3; }
+  .eho-tip span { display: block; font-family: var(--mono); font-size: 9.5px; letter-spacing: .14em;
+    text-transform: uppercase; color: rgba(250, 250, 250, .55); margin-top: 2px; }
+  @media (max-width: 760px) { .eho { display: none; } }
+
   /* ============================================================
      HERO (bfh-): the strk hero's three-zone frame, ported name for name
      (2026-09-05): the editorial column top left (eyebrow, display, one
@@ -2870,6 +2911,24 @@
            The rail is only a filter: the "All" row is the default so those
            anchors always resolve, and the rail JS also re-opens the right
            category when a hash arrives for a card that is filtered out. -->
+      <!-- ORBITAL ECOSYSTEM HUB (PART G, 2026-09-06). Main's eho- hub
+           reinstated on the vesper palette, DATA-DRIVEN: the engine below
+           builds every node from the grid's own rendered cards
+           (#btcfiWallets / #btcfiBridges / #btcfiDefi), so hub and grid can
+           never disagree. Lazy: nodes mount on first intersection; the rAF
+           pauses off-screen and on hover. Click goes to the protocol's X
+           profile in a new tab. Hidden below 760px: the grid alone serves
+           there. -->
+      <div class="eho" id="ecoHub">
+        <div class="eho-stage" id="ehoStage" aria-label="Protocol hub: every entry also appears in the grid below">
+          <i class="eho-ring eho-ring0" aria-hidden="true"></i>
+          <i class="eho-ring eho-ring1" aria-hidden="true"></i>
+          <i class="eho-ring eho-ring2" aria-hidden="true"></i>
+          <span class="eho-core" aria-hidden="true">strkBTC</span>
+        </div>
+        <div class="eho-tip dg-glass" id="ehoTip" hidden><b id="ehoTipName"></b><span id="ehoTipCat"></span></div>
+      </div>
+
       <div class="eco-section-wrap mst-bleed">
         <div class="mst-eco" id="btcfiEco" data-cat="all">
           <div class="mst-rail" role="group" aria-label="Filter the ecosystem by category">
@@ -5434,6 +5493,148 @@
 })();
 </script>
 <script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.185.0/build/three.module.js"}}</script>
+<script>
+/* ORBITAL ECOSYSTEM HUB ENGINE (PART G, 2026-09-06). Main's engine, rebuilt
+   DATA-DRIVEN: nodes are built from the grid's own rendered cards on first
+   intersection (lazy mount), so hub and grid can never disagree, whatever
+   the JSON or a local admin draft renders. Nodes are TRANSLATED, never
+   rotated (logos stay upright); one transform write per node per frame;
+   geometry measured at init and on debounced resize. The rAF stops
+   off-screen and on hover/focus (a paused scene needs no writes). Reduced
+   motion: a static map, hover/click/keyboard intact, no rAF ever.
+   Click goes to the protocol's X profile (new tab, noopener). */
+(function() {
+  var hub = document.getElementById('ecoHub');
+  var stage = document.getElementById('ehoStage');
+  var tip = document.getElementById('ehoTip');
+  if (!hub || !stage || !('IntersectionObserver' in window)) return;
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var PANELS = [['btcfiWallets', 'Wallets'], ['btcfiBridges', 'Bridges'], ['btcfiDefi', 'DeFi']];
+  var RADII = [0.17, 0.30, 0.43];
+  var SPEED = [360 / 90, -360 / 140, 360 / 190]; /* deg/s, middle counter-rotates */
+  var OFFSET = [0, 20, 10];
+  var meta = [], nodes = [], built = false;
+  var S = 0, radii = [0, 0, 0], elapsed = 0, last = 0, raf = null, inView = false, paused = false, frames = 0;
+
+  function build() {
+    if (built) return; built = true;
+    PANELS.forEach(function(p, r) {
+      var panel = document.getElementById(p[0]);
+      if (!panel) return;
+      /* only real protocol cards ride the rings: the "Much more to come"
+         placeholder has no external profile and is excluded, exactly as the
+         rail's own counts() excludes it (19 today) */
+      var cards = [].slice.call(panel.querySelectorAll('.mstc')).filter(function(card) {
+        var a = card.querySelector('.mstc-name');
+        return a && /^https?:/.test(a.href);
+      });
+      cards.forEach(function(card, k, list) {
+        var nameA = card.querySelector('.mstc-name');
+        var img = card.querySelector('.mstc-logo img');
+        var name = nameA ? nameA.textContent.trim() : '';
+        var a = document.createElement('a');
+        a.className = 'eho-node';
+        a.href = nameA ? nameA.href : '#';
+        a.target = '_blank'; a.rel = 'noopener';
+        a.setAttribute('data-name', name);
+        a.setAttribute('data-cat', p[1]);
+        a.setAttribute('aria-label', name + ' (' + p[1] + '), opens X in a new tab');
+        if (img && img.getAttribute('src') && img.style.display !== 'none') {
+          var im = document.createElement('img');
+          im.alt = ''; im.loading = 'lazy'; im.decoding = 'async';
+          im.src = img.getAttribute('src');
+          im.onerror = function() { im.remove(); a.insertAdjacentHTML('beforeend', mono(name)); };
+          a.appendChild(im);
+        } else { a.insertAdjacentHTML('beforeend', mono(name)); }
+        stage.appendChild(a);
+        nodes.push(a);
+        meta.push({ el: a, r: r, i: k, n: list.length });
+      });
+    });
+    meta.forEach(function(m) { m.base = -90 + OFFSET[m.r] + m.i * 360 / m.n; });
+    mirror(0);
+    measure(); place();
+  }
+  function mono(name) {
+    var t = (name || '?').replace(/[^A-Za-z0-9]/g, '').slice(0, 2);
+    return '<span class="eho-mono">' + t + '</span>';
+  }
+  function measure() { S = stage.clientWidth; radii = RADII.map(function(f) { return f * S; }); }
+  function place() {
+    for (var i = 0; i < meta.length; i++) {
+      var m = meta[i];
+      var a = (m.base + SPEED[m.r] * elapsed) * Math.PI / 180;
+      m.el.style.transform = 'translate(' + (radii[m.r] * Math.cos(a)).toFixed(2) + 'px,' +
+        (radii[m.r] * Math.sin(a)).toFixed(2) + 'px)';
+    }
+  }
+  function loop(ts) {
+    raf = null;
+    if (!inView || paused) return;
+    frames++;
+    if (last) elapsed += Math.min(0.1, (ts - last) / 1000);
+    last = ts;
+    place();
+    raf = requestAnimationFrame(loop);
+  }
+  function kick() { if (reduce || raf || !inView || paused) return; last = 0; raf = requestAnimationFrame(loop); }
+  function stop() { if (raf) { cancelAnimationFrame(raf); raf = null; } }
+  function setPaused(p) { if (paused === p) return; paused = p; if (p) stop(); else kick(); }
+
+  /* tooltip (name + category) on the glass tier, above the hovered node */
+  function showTip(n) {
+    document.getElementById('ehoTipName').textContent = n.getAttribute('data-name');
+    document.getElementById('ehoTipCat').textContent = n.getAttribute('data-cat');
+    var sr = stage.getBoundingClientRect(), nr = n.getBoundingClientRect();
+    tip.style.left = (nr.left - sr.left + nr.width / 2 + stage.offsetLeft) + 'px';
+    tip.style.top = (nr.top - sr.top + stage.offsetTop) + 'px';
+    tip.hidden = false;
+  }
+  function hideTip() { tip.hidden = true; }
+  stage.addEventListener('mouseover', function(e) {
+    var n = e.target.closest && e.target.closest('.eho-node');
+    if (n) { showTip(n); setPaused(true); }
+  });
+  stage.addEventListener('mouseout', function(e) {
+    var n = e.target.closest && e.target.closest('.eho-node');
+    if (n && !stage.querySelector('.eho-node:focus')) { hideTip(); setPaused(false); }
+  });
+  stage.addEventListener('focusin', function(e) {
+    var n = e.target.closest && e.target.closest('.eho-node');
+    if (n) { showTip(n); setPaused(true); }
+  });
+  stage.addEventListener('focusout', function() {
+    setTimeout(function() {
+      if (!stage.querySelector('.eho-node:focus') && !stage.querySelector('.eho-node:hover')) { hideTip(); setPaused(false); }
+    }, 0);
+  });
+
+  /* roving tabindex, arrows walk the rings in DOM order */
+  var cur = 0;
+  function mirror(i) { nodes.forEach(function(n, k) { n.setAttribute('tabindex', k === i ? '0' : '-1'); }); cur = i; }
+  stage.addEventListener('keydown', function(e) {
+    if (nodes.indexOf(e.target) === -1) return;
+    var to = null;
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') to = (cur + 1) % nodes.length;
+    else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') to = (cur - 1 + nodes.length) % nodes.length;
+    else if (e.key === 'Home') to = 0;
+    else if (e.key === 'End') to = nodes.length - 1;
+    if (to === null) return;
+    e.preventDefault(); mirror(to); nodes[to].focus();
+  });
+
+  new IntersectionObserver(function(es) {
+    inView = es[0].isIntersecting;
+    if (inView) { build(); measure(); place(); kick(); } else stop();
+  }, { rootMargin: '25% 0px 25% 0px', threshold: 0 }).observe(stage);
+
+  window.__ehoInfo = function() { return { frames: frames, running: !!raf, paused: paused, inView: inView, nodes: nodes.length }; };
+
+  var rt; window.addEventListener('resize', function() {
+    clearTimeout(rt); rt = setTimeout(function() { if (built) { measure(); place(); } }, 120);
+  });
+})();
+</script>
 <script type="module" src="js/btcfi-hero-mark.js"></script>
 <script type="module" src="js/eco-backdrop.js"></script>
 </body>
