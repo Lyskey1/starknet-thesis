@@ -495,16 +495,19 @@
       </div>
     </div>
     <div class="qhx-strip">
-      <!-- three stats, the shared component: the 2029 countdown's day count
-           (the same timer that drives the Q-day section writes this hook),
-           and two figures the page already shows: 6.9M vulnerable BTC (the
-           fault-line exposure paragraph) and the 1.93 STRK Falcon-512
-           transfer fee (the mainnet proof). The claim is the page's own
-           section heading, verbatim. -->
+      <!-- main's live countdown to 2029 on the strip's fixed geometry
+           (2026-09-06): four tracks, DAYS / HRS / MIN / SEC, written by the
+           same tick that drives the Q-day section (target 2029-01-01T00:00Z,
+           one clock, readouts that cannot disagree). The eyebrow line is
+           main's own label, absolutely positioned inside the strip's top
+           padding band so the value baseline stays untouched; the year is
+           written by the timer from the same target constant. -->
+      <p class="qhx-cdlab">The industry's converging deadline <span aria-hidden="true">/</span> <b data-qd-year>2029</b></p>
       <ul class="qhx-stats">
-        <li><b data-qd-days>847</b><span>Days to 2029</span></li>
-        <li><b>6.9M</b><span>BTC vulnerable</span></li>
-        <li><b>1.93 STRK</b><span>Falcon-512 transfer fee</span></li>
+        <li><b data-qd-days>847</b><span>Days</span></li>
+        <li><b data-qd-hrs>00</b><span>Hrs</span></li>
+        <li><b data-qd-min>00</b><span>Min</span></li>
+        <li><b data-qd-sec>00</b><span>Sec</span></li>
       </ul>
       <p class="qhx-turn">Starknet will be ready before Q-day</p>
     </div>
@@ -4051,7 +4054,14 @@ body.page-quantum{--qhx-u:min(1vw,14.4px)}
   display:flex;align-items:baseline;justify-content:space-between;gap:calc(2 * var(--qhx-u));
   border-top:1px solid rgba(250,250,250,.16);padding-top:calc(1.25 * var(--qhx-u));
   box-sizing:border-box;height:calc(1px + 3.55 * var(--qhx-u) + 50px)}
-.qhx-stats{display:grid;grid-template-columns:repeat(3, calc(102px + 2 * var(--qhx-u)));margin:0;padding:0;list-style:none}
+.qhx-stats{display:grid;grid-template-columns:repeat(4, calc(102px + 2 * var(--qhx-u)));margin:0;padding:0;list-style:none}
+/* the deadline eyebrow: absolutely positioned in the strip's top padding
+   band (hairline at 0, digits start ~28px down), so it can never move the
+   shared value baseline */
+.qhx-cdlab{position:absolute;left:0;top:6px;margin:0;font-family:var(--mono),monospace;
+  font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:rgba(250,250,250,.45)}
+.qhx-cdlab span{color:rgba(250,250,250,.25);margin:0 2px}
+.qhx-cdlab b{font-weight:400;color:rgba(250,250,250,.6)}
 .qhx-stats li{display:flex;flex-direction:column;gap:5px;min-width:0}
 .qhx-stats b{font-family:var(--display);font-weight:300;font-size:max(calc(1.7 * var(--qhx-u)),22px);
   line-height:1;letter-spacing:-.01em;color:var(--white);font-variant-numeric:tabular-nums;white-space:nowrap}
@@ -4071,7 +4081,7 @@ body.page-quantum{--qhx-u:min(1vw,14.4px)}
   body.page-quantum .qh-stage{left:0}
   .qhx-col{width:auto}
   .qhx-strip{margin-top:2rem;padding-top:1.25rem;height:97px}
-  .qhx-stats{grid-template-columns:repeat(3, 126px)}
+  .qhx-stats{grid-template-columns:repeat(4, 126px)}
   .qhx-stats b{font-size:1.5rem}
   .qhx-stats b::before,.qhx-turn::before{height:21px}
   .qhx-stats b::after{height:26px}
@@ -4080,7 +4090,7 @@ body.page-quantum{--qhx-u:min(1vw,14.4px)}
 }
 @media (max-width:700px){
   .qhx-strip{flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:1rem;height:151px}
-  .qhx-stats{width:100%;grid-template-columns:repeat(3, 1fr)}
+  .qhx-stats{width:100%;grid-template-columns:repeat(4, 1fr)}
   .qhx-stats li{min-height:76px}
   .qhx-turn{text-align:left;font-size:1.25rem;white-space:normal}
 }
@@ -4447,9 +4457,18 @@ var qvFilmChrome = thVideoChrome({
         s = Math.floor(d%60000/1000);
     var elD = document.getElementById('cd-days'); if (!elD) return;
     elD.textContent = days.toLocaleString();
-    // the hero strip's DAYS TO 2029 stat rides the same tick: one clock
+    // the hero strip's countdown rides the same tick: one clock, and under
+    // reduced motion the strip's seconds freeze at :00 (minutes still move)
     var qd = document.querySelector('[data-qd-days]');
-    if (qd) qd.textContent = days.toLocaleString();
+    if (qd) {
+      qd.textContent = days.toLocaleString();
+      document.querySelector('[data-qd-hrs]').textContent = String(h).padStart(2,'0');
+      document.querySelector('[data-qd-min]').textContent = String(m).padStart(2,'0');
+      var rm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+      document.querySelector('[data-qd-sec]').textContent = rm ? '00' : String(s).padStart(2,'0');
+      var qy = document.querySelector('[data-qd-year]');
+      if (qy) qy.textContent = new Date(target).getUTCFullYear();
+    }
     document.getElementById('cd-hours').textContent = String(h).padStart(2,'0');
     document.getElementById('cd-mins').textContent = String(m).padStart(2,'0');
     document.getElementById('cd-secs').textContent = String(s).padStart(2,'0');
