@@ -69,32 +69,35 @@
   .bfc-glab { fill: rgba(250, 250, 250,.45); font-size: 10.5px; }
   .bfc-axis { fill: rgba(250, 250, 250,.5); font-size: 10.5px; }
   .bfc-tick { stroke: rgba(250, 250, 250,.3); }
-  .bfc-projzone { fill: rgba(110,181,255,.04); }
-  .bfc-projdiv { stroke: rgba(110,181,255,.35); stroke-width: 1; stroke-dasharray: 4 5; }
+  .bfc-projzone { fill: rgba(250,250,250,.03); }
+  .bfc-projdiv { stroke: rgba(250,250,250,.30); stroke-width: 1; stroke-dasharray: 4 5; }
   .bfc-todaylab { fill: rgba(250, 250, 250,.55); font-size: 10px; }
-  .bfc-projlab { fill: rgba(110,181,255,.6); font-size: 10px; }
+  .bfc-projlab { fill: rgba(250,250,250,.55); font-size: 10px; }
   /* bounds: the forbidden band (hatch + solid accent lid) and the desirable
      floor (clean line, no hatch) */
-  .bfc-bound { stroke: #E8567C; stroke-width: 2; }
-  .bfc-bound-lab { fill: rgba(232,86,124,.9); font-size: 11.5px; letter-spacing: .14em; }
-  .bfc-floor { stroke: #8B5CF6; stroke-width: 2; }
-  .bfc-floor-lab { fill: rgba(196,181,253,.95); font-size: 11.5px; letter-spacing: .14em; }
+  /* D2 (2026-09-06): Bitcoin elements ride the categorical BTC orange
+     #F7931A in both views; Starknet series and floor ride the instrument
+     blue #6EB5FF; the TODAY / PROJECTION divider is muted ink. */
+  .bfc-bound { stroke: #F7931A; stroke-width: 2; }
+  .bfc-bound-lab { fill: rgba(247,147,26,.9); font-size: 11.5px; letter-spacing: .14em; }
+  .bfc-floor { stroke: #6EB5FF; stroke-width: 2; }
+  .bfc-floor-lab { fill: rgba(110,181,255,.95); font-size: 11.5px; letter-spacing: .14em; }
   /* trajectories: crisp line over a wide soft underglow */
   .bfc-traj { stroke: #6EB5FF; stroke-width: 2.4; fill: none; stroke-linecap: round; stroke-linejoin: round; }
   .bfc-glow { stroke: rgba(110,181,255,.12); stroke-width: 9; fill: none; stroke-linecap: round; stroke-linejoin: round; }
-  .bfc-traj-btc { stroke: #6EB5FF; stroke-width: 2.2; }
-  .bfc-glow-btc { stroke: rgba(110,181,255,.10); }
+  .bfc-traj-btc { stroke: #F7931A; stroke-width: 2.2; }
+  .bfc-glow-btc { stroke: rgba(247,147,26,.10); }
   .bfc-projline { stroke: #6EB5FF; stroke-width: 2; fill: none; stroke-dasharray: 3 7; opacity: .8; stroke-linecap: round; }
-  .bfc-projline-btc { stroke: #6EB5FF; opacity: .65; }
+  .bfc-projline-btc { stroke: #F7931A; opacity: .65; }
   .bfc-pt { fill: #0d0d0d; stroke: #6EB5FF; stroke-width: 1.8; }
   .bfc-pt-proj { opacity: .55; }
   .bfc-pt-today { fill: #6EB5FF; }
-  .bfc-dot { fill: #6EB5FF; stroke: none; opacity: .8; }
-  .bfc-vlab { fill: rgba(196,181,253,.95); font-size: 11px; }
-  .bfc-vlab-proj { fill: rgba(197, 52, 0,.6); }
-  .bfc-schip rect { fill: rgba(197, 52, 0,.1); stroke: rgba(var(--accent-rgb),.45); }
-  .bfc-schip-t { fill: var(--accent); font-size: 10.5px; letter-spacing: .1em; }
-  .bfc-vol { fill: rgba(var(--accent-rgb),.7); font-size: 10.5px; letter-spacing: .12em; }
+  .bfc-dot { fill: #F7931A; stroke: none; opacity: .8; }
+  .bfc-vlab { fill: rgba(110,181,255,.95); font-size: 11px; }
+  .bfc-vlab-proj { fill: rgba(110,181,255,.55); }
+  .bfc-schip rect { fill: rgba(247,147,26,.10); stroke: rgba(247,147,26,.45); }
+  .bfc-schip-t { fill: #F7931A; font-size: 10.5px; letter-spacing: .1em; }
+  .bfc-vol { fill: rgba(247,147,26,.75); font-size: 10.5px; letter-spacing: .12em; }
   /* reveal */
   .bfc-run .bfc-traj, .bfc-run .bfc-glow { stroke-dasharray: 1000; stroke-dashoffset: 1000;
     animation: bfcDraw 1.7s cubic-bezier(.35,.4,.25,1) forwards; }
@@ -111,19 +114,19 @@
   .bfc-fast .bfc-schip, .bfc-fast .bfc-vol { animation-delay: .75s; }
   /* the HTML today dot + chip; the chip fades in with the reveal */
   .bfc-today { position: absolute; width: 12px; height: 12px; margin: -6px 0 0 -6px; pointer-events: none; }
-  .bfc-today i { position: absolute; inset: 2px; border-radius: 50%; background: #c53400;
-    box-shadow: 0 0 10px rgba(197, 52, 0,.8); }
+  .bfc-today i { position: absolute; inset: 2px; border-radius: 50%; background: #6EB5FF;
+    box-shadow: 0 0 10px rgba(110,181,255,.8); }
   .bfc-today::after { content: ''; position: absolute; inset: 0; border-radius: 50%;
-    border: 1.5px solid rgba(197, 52, 0,.75); opacity: 0; }
+    border: 1.5px solid rgba(110,181,255,.75); opacity: 0; }
   /* in the cost view the today marker rides the BITCOIN trajectory, so it
      wears the accent, not violet */
-  .bfc-view-cost .bfc-today i { background: var(--accent); box-shadow: 0 0 10px rgba(var(--accent-rgb),.8); }
-  .bfc-view-cost .bfc-today::after { border-color: rgba(var(--accent-rgb),.75); }
+  .bfc-view-cost .bfc-today i { background: #F7931A; box-shadow: 0 0 10px rgba(247,147,26,.8); }
+  .bfc-view-cost .bfc-today::after { border-color: rgba(247,147,26,.75); }
   .bfc-on .bfc-today::after { animation: bfcPulse 2.8s ease-out infinite; }
   @keyframes bfcPulse { 0% { transform: scale(.7); opacity: .9; } 70% { transform: scale(2.5); opacity: 0; } 100% { opacity: 0; } }
   .bfc-chip { position: absolute; transform: translate(-108%, -155%); white-space: nowrap; pointer-events: none;
-    font-family: var(--mono); font-size: 10px; letter-spacing: .14em; color: #f0b8a0;
-    background: rgba(197, 52, 0,.12); border: 1px solid rgba(197, 52, 0,.45); border-radius: 4px; padding: 5px 9px; }
+    font-family: var(--mono); font-size: 10px; letter-spacing: .14em; color: #a8d2ff;
+    background: rgba(110,181,255,.10); border: 1px solid rgba(110,181,255,.4); border-radius: 4px; padding: 5px 9px; }
   .bfc-run .bfc-chip { opacity: 0; animation: bfcIn .5s ease 2.3s forwards; }
   .bfc-fast .bfc-chip { animation-delay: .8s; }
   @media (max-width: 560px) {
@@ -1839,7 +1842,13 @@
 /* the view toggle sits inside the instrument panel, top-left above the
    plot (2026-09-05); the panel is the positioning context (.chart-wrap is
    already relative for the TODAY overlay). */
-.bfc-wrap > .chart-toggle{position:absolute;top:14px;left:16px;z-index:3;margin:0;}
+.bfc-hud{position:absolute;top:14px;right:16px;z-index:3;display:flex;align-items:center;gap:18px;}
+.bfc-hud .chart-toggle{margin:0;}
+.bfc-legend{display:flex;align-items:center;gap:14px;font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:rgba(250,250,250,.75);}
+.bfc-leg{display:inline-flex;align-items:center;gap:7px;}
+.bfc-sw{display:inline-block;width:14px;height:2px;border-radius:1px;}
+.bfc-sw-btc{background:#F7931A;}
+.bfc-sw-stk{background:#6EB5FF;}
 
 /* the figures run to the edges, and the cards spread into the room that
    buys them. .mst-bleed resolves its 50% against .solution-inner's content
@@ -2612,7 +2621,7 @@
            toggle, its overlays and the visually-hidden data table that is the
            real content behind the picture. -->
       <h3 id="bitcoin-settles-starknet-scales" class="scale-title">Bitcoin settles. <span>Starknet scales.</span></h3>
-      <p class="scale-intro">Bitcoin's base layer is capped at around 7 transactions per second, by design, and that's a feature, not a bug: it keeps Bitcoin decentralized and secure as the settlement layer. But it means Bitcoin can't be the execution layer. Its fees are also unpredictable, spiking as high as ~$128 during the April 2024 halving. Starknet absorbs the execution: throughput climbing toward 10,000+ TPS while fees stay locked under $0.01, permanently.</p>
+      <p class="scale-intro">Bitcoin's base layer is capped at around 7 transactions per second, by design, and that's a feature, not a bug: it keeps Bitcoin decentralized and secure as the settlement layer. But it means Bitcoin can't be the execution layer. Its fees are also unpredictable, spiking as high as ~$128 during the April 2024 halving. Starknet absorbs the execution: throughput climbing toward 10,000+ TPS while fees hold at ~$0.01.</p>
 
       <!-- THE INSTRUMENT PANEL. Not two rival lines: in each view one series
            is a BOUND and the other a TRAJECTORY, and they speak different
@@ -2636,11 +2645,20 @@
            table below the panel, searchable and readable; the svg is a
            labeled image. -->
       <div class="chart-wrap bfc-wrap" id="bfcWrap">
-        <!-- the view toggle lives INSIDE the panel now, top-left above the plot -->
-        <div class="chart-toggle" role="tablist" aria-label="Chart view">
-        <button class="toggle-btn active" data-view="tps" role="tab" aria-selected="true">Throughput (TPS)</button>
-        <button class="toggle-btn" data-view="cost" role="tab" aria-selected="false">Cost per transfer</button>
-      </div>
+        <!-- the HUD row, top-right (D1/D3, 2026-09-06): the toggle left of the
+             legend, so the halving callout can never sit under either. The
+             legend swatches carry the series colors: Bitcoin in the
+             categorical BTC orange, Starknet in the instrument blue. -->
+        <div class="bfc-hud">
+          <div class="chart-toggle" role="tablist" aria-label="Chart view">
+            <button class="toggle-btn active" data-view="tps" role="tab" aria-selected="true">Throughput (TPS)</button>
+            <button class="toggle-btn" data-view="cost" role="tab" aria-selected="false">Cost per transfer</button>
+          </div>
+          <div class="bfc-legend" aria-hidden="true">
+            <span class="bfc-leg"><i class="bfc-sw bfc-sw-btc"></i>Bitcoin</span>
+            <span class="bfc-leg"><i class="bfc-sw bfc-sw-stk"></i>Starknet</span>
+          </div>
+        </div>
 
         <svg id="scaleChart" viewBox="0 0 900 480" role="img" aria-label="Throughput over time, log scale: Starknet's trajectory from 1 TPS in September 2022 to about 1,000 TPS today, projected toward 4,000 and 10,000+; Bitcoin's base layer holds a ceiling of about 7 TPS"></svg>
         <div class="bfc-today" id="bfcToday" aria-hidden="true"><i></i>      </div>
@@ -3259,7 +3277,7 @@
             aria: "Throughput over time, log scale: Starknet's trajectory from 1 TPS in September 2022 to about 1,000 TPS today, projected toward 4,000 and 10,000 plus; Bitcoin's base layer holds a ceiling of about 7 TPS" },
     cost: { logMin: -3, logMax: 2.45,
             grid: [[0.001,'$0.001'],[0.01,'$0.01'],[0.1,'$0.10'],[1,'$1'],[10,'$10'],[100,'$100']],
-            aria: "Cost per transfer over time, log scale: Bitcoin's fee is volatile, spiking to about 128 dollars average at the April 2024 halving and unpredictable ahead; Starknet holds a floor locked under one cent" }
+            aria: "Cost per transfer over time, log scale: Bitcoin's fee is volatile, spiking to about 128 dollars average at the April 2024 halving and unpredictable ahead; Starknet holds near one cent" }
   };
 
   function xT(t) { return L + (R - L) * (t - T0) / (T1 - T0); }
@@ -3374,7 +3392,7 @@
       /* THE BOUND, inverted: the desirable floor, NO hatch */
       var yf = yV(0.01, cfg);
       g.appendChild(el('line', { x1: L, y1: yf, x2: R, y2: yf }, 'bfc-floor'));
-      g.appendChild(txt(L + 14, yf + 20, 'STARKNET · LOCKED UNDER $0.01', 'bfc-floor-lab'));
+      g.appendChild(txt(L + 14, yf + 20, 'STARKNET · ~$0.01', 'bfc-floor-lab'));
 
       /* THE TRAJECTORY: volatile orange */
       var sPts = [], pPts = [];
@@ -3392,11 +3410,13 @@
         g.appendChild(el('circle', { cx: xT(t), cy: yV(p.v, cfg), r: 2.4, style: '--i:' + (i % 8) },
           'bfc-dot bfc-late' + (t > TODAY ? ' bfc-pt-proj' : '')));
       });
-      /* spike chip, inside bounds */
+      /* spike chip, inside bounds; CLAMPED so it can never render above the
+         plot's top edge (D3, 2026-09-06) */
       var sx = xT(tOf(3.0)), sy = yV(128, cfg);
+      var chipTop = Math.max(T + 6, sy - 34);
       var chip = el('g', {}, 'bfc-schip bfc-late');
-      chip.appendChild(el('rect', { x: sx - 62, y: sy - 34, width: 124, height: 21, rx: 4 }));
-      chip.appendChild(txt(sx, sy - 19.5, '~$128 · APR 24 HALVING', 'bfc-schip-t', 'middle'));
+      chip.appendChild(el('rect', { x: sx - 62, y: chipTop, width: 124, height: 21, rx: 4 }));
+      chip.appendChild(txt(sx, chipTop + 14.5, '~$128 · APR 24 HALVING', 'bfc-schip-t', 'middle'));
       g.appendChild(chip);
       /* the annotation that used to clip at the right edge: one line,
          end-anchored inside the plot at every width by construction */
