@@ -1427,6 +1427,54 @@
     text-transform: uppercase; color: rgba(250, 250, 250, .55); margin-top: 2px; }
   @media (max-width: 760px) { .eho { display: none; } }
 
+  /* ===== LIQUID GLASS SURFACE (.btcg-liquid, PART H2 2026-09-06): blur 18,
+     ink .04 fill, a 1px gradient border (ink .22 top-left to .06 bottom-
+     right, drawn by a masked ::before so it costs no layout), an inner top
+     highlight at ink .10 (::after), and a 2px lift with the ring turning
+     accent .6 on hover, all at .28s. Reused by the live cards and the news
+     bar; available to the stat band. */
+  .btcg-liquid { position: relative; display: block; color: inherit; text-decoration: none;
+    background: rgba(250, 250, 250, .04);
+    -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px);
+    border: 0; border-radius: 0;
+    transition: transform .28s ease, box-shadow .28s ease; }
+  .btcg-liquid::before { content: ''; position: absolute; inset: 0; padding: 1px;
+    background: linear-gradient(135deg, rgba(250, 250, 250, .22), rgba(250, 250, 250, .06));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; }
+  .btcg-liquid::after { content: ''; position: absolute; left: 10%; right: 10%; top: 0; height: 1px;
+    background: rgba(250, 250, 250, .10); pointer-events: none; }
+  .btcg-liquid:hover { transform: translateY(-2px);
+    box-shadow: inset 0 0 0 1px rgba(var(--accent-rgb), .6); }
+  /* the SOURCE reveal, bottom-right on hover */
+  .mlk-src { position: absolute; right: 12px; bottom: 10px;
+    display: inline-flex; align-items: center; gap: 4px;
+    font-family: var(--mono); font-size: 10px; letter-spacing: .12em;
+    color: rgba(250, 250, 250, .6); opacity: 0; transition: opacity .28s ease; }
+  .btcg-liquid:hover .mlk-src { opacity: 1; }
+  .metric-box.btcg-liquid { padding-bottom: 30px; }
+
+  /* the news bar on the same surface, with the gradient border swapped to
+     accent -> --strk-hi (the shared highlight token, #A78BFA) */
+  .page-btcfi .news-flashy .news-toggle { border: 0; border-radius: 0; overflow: visible;
+    background: rgba(250, 250, 250, .04);
+    -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px);
+    box-shadow: none; transition: transform .28s ease, box-shadow .28s ease; }
+  .page-btcfi .news-flashy .news-toggle::before { content: ''; position: absolute; inset: 0; padding: 1px;
+    background: linear-gradient(90deg, var(--accent), var(--strk-hi, #A78BFA));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude;
+    pointer-events: none; opacity: 1; border-radius: 0; }
+  .page-btcfi .news-flashy .news-toggle:hover { transform: translateY(-2px);
+    box-shadow: 0 0 22px rgba(var(--accent-rgb), .16); }
+  .page-btcfi .news-flashy .news-toggle-title { font-family: var(--display); font-weight: 300;
+    font-size: 26px; letter-spacing: normal; color: var(--white); }
+  /* the LATEST pill: styles.css's news-flashy pill (its ::before is the
+     dot); only the violet half of its gradient moves to --strk-hi */
+  .page-btcfi .news-flashy .news-eyebrow { background: linear-gradient(90deg, rgba(var(--accent-rgb), .16), rgba(167, 139, 250, .14));
+    border-color: rgba(var(--accent-rgb), .4); color: var(--accent); }
+  .page-btcfi .news-chevron { font-size: 22px; color: rgba(250, 250, 250, .55); }
+
   /* ============================================================
      HERO (bfh-): the strk hero's three-zone frame, ported name for name
      (2026-09-05): the editorial column top left (eyebrow, display, one
@@ -1977,37 +2025,11 @@
 .bmsec .bm-bleed{margin-bottom:0;}
 .bmsec .metrics-row{margin-bottom:0 !important;}
 
-/* the section's head, centred with the rest of it */
-.bmsec .news-section{margin:clamp(20px,2.4vh,36px) auto 0;max-width:none;
-  border:0;background:none;padding:0;display:flex;flex-direction:column;align-items:center;}
-
-/* THE TOGGLE, as the CTA shape in its dark variant. .bf-cta gives the
-   geometry (block plus square tile, straight corners); these rules only
-   invert the colours and undo the wide-bar layout the old skin had. */
-.news-toggle.bf-cta{width:auto;justify-content:center;cursor:pointer;
-  border:0;background:none;box-shadow:none;border-radius:0;padding:0;}
-.news-toggle.bf-cta > span,
-.news-toggle.bf-cta > i{border:1px solid rgba(250,250,250,.22);}
-.bf-cta--dark > span{background:#0d0d0d;color:#fafafa;}
-.bf-cta--dark > i{background:#0d0d0d;}
-.bf-cta--dark > i svg path{fill:#fafafa;}
-.news-toggle.bf-cta:hover > span{background:var(--accent);color:#fafafa;border-color:var(--accent);}
-.news-toggle.bf-cta:hover > i{background:var(--accent);border-color:var(--accent);}
-.news-toggle.bf-cta:hover > i svg path{fill:#fafafa;}
-/* NO `color: inherit` HERE. The label span IS the CTA's block element, so
-   inherit resolves against .bf-cta, which sets color:#000 for the light
-   variant, and the label came out black on the dark fill. Colour is left to
-   .bf-cta--dark > span. */
-/* display stays FLEX. Setting display:block here overrode `.bf-cta > span
-   { display:flex; align-items:center }`, and the label sat against the top of
-   the block instead of centred in it. This span IS the CTA's block element,
-   so it has to keep the block's own display. */
-.news-toggle.bf-cta .news-toggle-title{font-family:inherit;font-size:inherit;
-  letter-spacing:normal;text-transform:none;
-  display:flex;align-items:center;justify-content:center;}
-/* the chevron slot is the tile: it turns when the panel opens */
-.news-toggle.bf-cta > i{transition:transform .3s ease,background var(--hover-dur) var(--hover-ease);}
-.news-toggle.bf-cta[aria-expanded="true"] > i{transform:rotate(90deg);}
+/* the section's head: the bar restored to main's full-width shape (PART H3,
+   2026-09-06); the CTA-shape variant and its asterisk tile are gone */
+.bmsec .news-section{margin:clamp(20px,2.4vh,36px) auto 0;max-width:none;width:100%;
+  border:0;background:none;padding:0;display:flex;flex-direction:column;align-items:stretch;}
+.bmsec .news-toggle{width:100%;}
 .bmsec .news-grid{width:100%;margin-top:26px;}
 
 /* ============================================================
@@ -3202,27 +3224,36 @@
       <h3 id="bitcoin-on-starknet-by-the-numbers" class="scale-title">Bitcoin on Starknet, <span>by the numbers.</span></h3>
       <p class="scale-intro">BTC already at work on Starknet today. These figures are live and growing.</p>
     </div>
+    <!-- PART H1 (2026-09-06): each card IS the link to its source (new tab,
+         noopener); the value is a span now and every data-bm/data-fmt hook is
+         untouched, so the engine and the per-token tooltips keep working.
+         Hover reveals SOURCE bottom-right. The surface is the liquid glass
+         tier (.btcg-liquid), shared with the news bar below. -->
     <div class="metrics-row" style="margin-top:24px;" id="btcMetrics">
-      <div class="metric-box">
-        <a class="metric-val metric-link" data-bm="network" data-fmt="dec1" href="https://www.bitcoinlayers.org/layers/starknet" target="_blank" rel="noopener">1,102.4</a>
+      <a class="metric-box btcg-liquid" href="https://www.bitcoinlayers.org/layers/starknet" target="_blank" rel="noopener">
+        <span class="metric-val" data-bm="network" data-fmt="dec1">1,102.4</span>
         <div class="metric-label">BTC on Starknet network</div>
         <div class="metric-sub" data-bm-sub="network">≈ $69.9M</div>
-      </div>
-      <div class="metric-box">
-        <a class="metric-val metric-link" data-bm="staked" data-fmt="dec1" href="https://dashboard.endur.fi/" target="_blank" rel="noopener">686.8</a>
+        <span class="mlk-src" aria-hidden="true">SOURCE <i class="ti ti-arrow-up-right"></i></span>
+      </a>
+      <a class="metric-box btcg-liquid" href="https://dashboard.endur.fi/" target="_blank" rel="noopener">
+        <span class="metric-val" data-bm="staked" data-fmt="dec1">686.8</span>
         <div class="metric-label">BTC staked</div>
         <div class="metric-sub" data-bm-sub="staked">≈ $43.6M</div>
-      </div>
-      <div class="metric-box">
-        <a class="metric-val metric-link" data-bm="supply" data-fmt="dec1" href="https://voyager.online/contract/0x0787150e306e6eae6e3f79dea881770e8bbff2c1b8eb490f969669ee945b3135" target="_blank" rel="noopener">102.6</a>
+        <span class="mlk-src" aria-hidden="true">SOURCE <i class="ti ti-arrow-up-right"></i></span>
+      </a>
+      <a class="metric-box btcg-liquid" href="https://voyager.online/contract/0x0787150e306e6eae6e3f79dea881770e8bbff2c1b8eb490f969669ee945b3135" target="_blank" rel="noopener">
+        <span class="metric-val" data-bm="supply" data-fmt="dec1">102.6</span>
         <div class="metric-label">strkBTC supply</div>
         <div class="metric-sub" data-bm-sub="supply">≈ $6.5M</div>
-      </div>
-      <div class="metric-box">
-        <a class="metric-val metric-link" data-bm="shielded" data-fmt="dec2" href="https://starkscan.co/privacy-pool" target="_blank" rel="noopener">2.48</a>
+        <span class="mlk-src" aria-hidden="true">SOURCE <i class="ti ti-arrow-up-right"></i></span>
+      </a>
+      <a class="metric-box btcg-liquid" href="https://starkscan.co/privacy-pool" target="_blank" rel="noopener">
+        <span class="metric-val" data-bm="shielded" data-fmt="dec2">2.48</span>
         <div class="metric-label">Encrypted strkBTC</div>
         <div class="metric-sub" data-bm-sub="shielded">≈ $157K</div>
-      </div>
+        <span class="mlk-src" aria-hidden="true">SOURCE <i class="ti ti-arrow-up-right"></i></span>
+      </a>
     </div>
     <div class="bm-updated" id="bmUpdated"></div>
     </div>
@@ -3233,9 +3264,14 @@
            button) in its dark variant, centred. Still a real <button> with
            aria-expanded, and #newsToggle is unchanged, so the news JS and the
            chevron rotation keep working. -->
-      <button class="news-toggle bf-cta bf-cta--dark" id="newsToggle" aria-expanded="false">
-        <span class="news-toggle-title">Bitcoin × Starknet news</span>
-        <i class="news-chevron" aria-hidden="true"><svg viewBox="0 0 51 51" fill="none"><path d="M26.293 23.583L34.4834 15.3926L35.6064 16.5156L27.416 24.7061H39V26.2939H27.418L35.6084 34.4844L34.4854 35.6074L26.293 27.415V39H24.7051V27.417L16.5146 35.6074L15.3916 34.4844L23.582 26.2939H12V24.7061H23.584L15.3936 16.5156L16.5166 15.3926L24.7051 23.5811V12H26.293V23.583Z"/></svg></i>
+      <!-- PART H3 (2026-09-06): main's full-width bar restored on the liquid
+           glass tier with a gradient border accent -> --strk-hi; LATEST pill
+           (dot + mono) left, the title at the section headline weight,
+           chevron right, expands in place (same #newsToggle contract). The
+           asterisk twin button is gone. -->
+      <button class="news-toggle" id="newsToggle" aria-expanded="false">
+        <span class="news-toggle-title"><span class="news-eyebrow">Latest</span> Bitcoin × Starknet news</span>
+        <i class="ti ti-chevron-down news-chevron" aria-hidden="true"></i>
       </button>
       <div class="news-grid" id="newsGrid"></div>
     </div>
