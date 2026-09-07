@@ -74,91 +74,6 @@
   }
   body.page-privacy ::selection { background: var(--em); color: #0d0d0d; }
 
-  /* ============ HERO (pvh-): the site's three-zone frame ============
-     The strk/btcfi/quantum geometry name for name: wrap = the 1392
-     container, scene takes the flex slack, stage = the right column (the
-     bust mount), strip = the shared fixed geometry (1px hairline + 1.25u
-     pad + 2.3u value box + 5px + 45px = 102.11px at 1440). The headline
-     rides the shared .vch-title token set in css/vesper-chrome.css; the
-     payoff em is its own line because it is the page's accent line, not
-     an inline highlight. Hero = ~85svh (owner spec), min 620px, growing
-     to its content below 700px viewport height. */
-  body.page-privacy { --pvh-u: min(1vw, 14.4px); }
-  .hero { position: relative; z-index: 0; display: flex; flex-direction: column;
-    height: 85svh; min-height: 620px; max-width: none; margin: 0; padding: 0 0 28px;
-    overflow: hidden; text-align: left; background: transparent; }
-  @media (max-height: 700px) {
-    .hero { height: auto; min-height: 85svh; padding-top: calc(2 * var(--pvh-u)); }
-    .pvh-scene { min-height: 54svh; }
-  }
-  /* styles.css hangs a centred radial glow off .hero::before; this hero is
-     not centred and the wash paints its own light */
-  .hero::before { display: none; }
-  .pvh-wrap { width: calc(100% - 48px); max-width: 1392px; margin: 0 auto;
-    display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; }
-  .pvh-scene { position: relative; display: flex; align-items: center; flex: 1 1 auto; min-height: 0; }
-  /* the stage is the RIGHT COLUMN, from the editorial column's edge (47u)
-     to the container edge, full scene height; the keyed bust fills it */
-  .pvh-stage { position: absolute; top: 0; bottom: 0; left: calc(44 * var(--pvh-u)); right: 0;
-    z-index: 0; pointer-events: none; overflow: hidden; }
-  .pvh-stage .pv-human { position: absolute; inset: 0; overflow: hidden; }
-  .pvh-stage .pv-figure { position: absolute; inset: 0; height: auto; --focus: 52% 34%; }
-  .pvh-col { position: relative; z-index: 2; width: calc(47 * var(--pvh-u));
-    display: flex; flex-direction: column; align-items: flex-start; }
-  .hero .hero-eyebrow { margin: 0; font-family: var(--sans); font-weight: 400;
-    font-size: max(calc(0.9 * var(--pvh-u)), 11px); line-height: 1.5;
-    letter-spacing: .2em; text-transform: uppercase; color: var(--accent); opacity: 1; }
-  .hero .vch-title em { display: block; }
-  .hero .hero-subtitle { margin: calc(1.6 * var(--pvh-u)) 0 0; max-width: calc(32 * var(--pvh-u));
-    font-family: var(--sans); font-weight: 300; font-size: max(calc(1.06 * var(--pvh-u)), 15px);
-    line-height: 1.7; color: rgba(250, 250, 250, .72); text-align: left; }
-  .hero .hero-subtitle b { color: var(--white); font-weight: 600; }
-  /* the CTA pair on the site's glass tier (css/vesper-chrome.css .dg-glass),
-     quantum's hero pair name for name */
-  .pvh-ctas { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: calc(2 * var(--pvh-u)); }
-  .pvh-cta { display: inline-flex; align-items: center; padding: 12px 20px;
-    font-family: var(--mono); font-size: 12px; letter-spacing: .12em; text-transform: uppercase;
-    text-decoration: none; color: var(--white); border-radius: 6px; white-space: nowrap; }
-  .pvh-cta:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
-
-  /* the baseline strip: two derived stats left on the twins' fixed tracks
-     (102px + 2u pitch), main's claim marquee filling the right */
-  .pvh-strip { position: relative; z-index: 2; margin-top: 0;
-    display: flex; align-items: center; gap: calc(2 * var(--pvh-u));
-    border-top: 1px solid rgba(250, 250, 250, .16); padding-top: calc(1.25 * var(--pvh-u));
-    box-sizing: border-box; height: calc(1px + 3.55 * var(--pvh-u) + 50px); }
-  .pvh-stats { flex: none; display: grid; grid-template-columns: repeat(2, calc(118px + 2 * var(--pvh-u)));
-    margin: 0; padding: 0; list-style: none; }
-  .pvh-stats li { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
-  .pvh-stats b { font-family: var(--display); font-weight: 300; font-size: max(calc(1.7 * var(--pvh-u)), 22px);
-    line-height: 1; letter-spacing: -.01em; color: var(--white); font-variant-numeric: tabular-nums; white-space: nowrap; }
-  .pvh-stats span { font-family: var(--mono), monospace; font-size: max(calc(0.68 * var(--pvh-u)), 10px);
-    line-height: 1.5; letter-spacing: .14em; text-transform: uppercase; color: rgba(250, 250, 250, .72); max-width: 21ch; }
-  .pvh-strip .pv-marquee { flex: 1 1 auto; min-width: 0; border: 0; padding: 0;
-    -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 92%, transparent);
-            mask-image: linear-gradient(90deg, transparent, #000 12%, #000 92%, transparent); }
-
-  /* below the artboard: a rem-sized stack, the bust on its own band above
-     the copy (the column would otherwise sit on the figure) */
-  @media (max-width: 980px) {
-    .hero { height: auto; min-height: 0; padding: 2rem 1.5rem 28px; overflow: visible; }
-    .pvh-wrap { width: 100%; max-width: none; }
-    .pvh-scene { min-height: 0; position: static; display: block; }
-    .pvh-stage { position: relative; left: 0; height: 46svh; min-height: 260px; margin: 0 -1.5rem 1.5rem; }
-    .pvh-col { width: auto; }
-    .hero .hero-eyebrow { font-size: .75rem; }
-    .hero .hero-subtitle { margin-top: 1rem; max-width: 40rem; font-size: 1rem; }
-    .pvh-strip { margin-top: 2rem; padding-top: 1.25rem; height: auto; flex-direction: column; align-items: flex-start; gap: 1rem; }
-    .pvh-stats { grid-template-columns: repeat(2, 126px); }
-    .pvh-stats b { font-size: 1.5rem; }
-    .pvh-stats span { font-size: 10px; }
-    .pvh-strip .pv-marquee { width: 100%; }
-  }
-  @media (max-width: 380px) {
-    .hero { padding: 1.5rem 1.25rem 24px; }
-    .pvh-stats { width: 100%; grid-template-columns: repeat(2, 1fr); }
-  }
-
   /* CLAIM BAND: twin of .eco-marquee / .dg-marquee. Seamless loop over
      repeated sets (three here, see the markup for why), edge fade masks,
      hover pause, IO gated, same 70s duration as the other bands. The items are plain labels, never
@@ -1832,6 +1747,106 @@ h3.pmv-title { margin: 0 0 22px; font-weight: 300; letter-spacing: -.01em; color
 .page-privacy .news-section { border: 0; background: none; padding: 0; }
 .page-privacy .news-grid { width: 100%; margin-top: 26px; }
 @media (prefers-reduced-motion: reduce) { .page-privacy .news-flashy .news-toggle { transition: none; } }
+/* ============================================================
+   HERO = THE QUANTUM HERO COMPONENT (2026-09-07). The QHX block below is
+   quantum.html's, copied byte for byte with only the page class renamed,
+   so the two heroes share one grid, one type scale and one strip. The
+   rules above it are this page's stage content (the keyed bust) and the
+   base .hero box quantum defines earlier in its own sheet.
+   ============================================================ */
+body.page-privacy .hero { position: relative; z-index: 0; height: calc(100svh - var(--vcnav-h, 64px)); min-height: 0;
+  max-width: none; margin: 0; background: transparent; }
+body.page-privacy .hero::before { display: none; }
+.qh-stage { position: absolute; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
+.qh-stage .pv-human { position: absolute; inset: 0; overflow: hidden; }
+.qh-stage .pv-figure { position: absolute; inset: 0; height: auto; --focus: 52% 34%; }
+@media (max-width: 980px) {
+  body.page-privacy .qh-stage { position: relative; height: 46svh; min-height: 260px; margin: 0 -1.5rem 1.5rem; z-index: 0; }
+  .qhx-scene { display: block; }
+}
+/* ===== QHX: the three-zone hero frame (2026-09-06), strk's geometry name
+   for name: wrap = the 1392 container, scene takes the flex slack, stage =
+   the right column (the funnel mount, 80% mark size rule in the engine),
+   strip = the shared fixed geometry (102.11px at 1440, struts, grid
+   tracks). Sits at the end of the last sheet so it wins its ties. */
+body.page-privacy .hero{display:flex;flex-direction:column;align-items:stretch;
+  padding:0 0 32px;overflow:hidden;text-align:left}
+.qhx-wrap{width:calc(100% - 48px);max-width:1392px;margin:0 auto;
+  display:flex;flex-direction:column;flex:1 1 auto;min-height:0}
+.qhx-scene{position:relative;display:flex;align-items:center;flex:1 1 auto;min-height:0}
+body.page-privacy .qh-stage{position:absolute;top:0;bottom:0;left:calc(47 * var(--qhx-u));right:0;
+  inset:auto;z-index:0;pointer-events:none;overflow:hidden}
+body.page-privacy .qh-stage{top:0;bottom:0;left:calc(47 * var(--qhx-u));right:0}
+.qhx-col{position:relative;z-index:2;width:calc(47 * var(--qhx-u));
+  display:flex;flex-direction:column;align-items:flex-start}
+body.page-privacy{--qhx-u:min(1vw,14.4px)}
+/* the old flow rules gave the title a 52vw width and the lede 38vw; the
+   shared classes own the type, these own the measure */
+.qhx-col .hero-title{width:auto;position:relative}
+.qhx-col .hero-subtitle{width:auto;position:relative}
+.qhx-col .hero-eyebrow{margin:0;position:relative}
+.qhx-ctas{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:calc(2 * var(--qhx-u))}
+.qhx-cta{display:inline-flex;align-items:center;padding:12px 20px;
+  font-family:var(--sans);font-weight:500;font-size:max(1 * var(--qhx-u),14px);line-height:1.2;
+  white-space:nowrap;text-decoration:none;color:var(--white)}
+.qhx-cta:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+@media (max-height:700px){
+  body.page-privacy .hero{height:auto;min-height:calc(100svh - var(--vcnav-h, 64px));padding-top:calc(2 * var(--qhx-u))}
+  .qhx-scene{min-height:54svh}
+}
+
+/* the baseline strip: the shared fixed geometry, byte for byte */
+.qhx-strip{position:relative;z-index:2;margin-top:0;
+  display:flex;align-items:baseline;justify-content:space-between;gap:calc(2 * var(--qhx-u));
+  border-top:1px solid rgba(250,250,250,.16);padding-top:calc(1.25 * var(--qhx-u));
+  box-sizing:border-box;height:calc(1px + 3.55 * var(--qhx-u) + 50px)}
+.qhx-stats{display:grid;grid-template-columns:repeat(4, calc(102px + 2 * var(--qhx-u)));margin:0;padding:0;list-style:none}
+/* the deadline eyebrow: absolutely positioned in the strip's top padding
+   band (hairline at 0, digits start ~28px down), so it can never move the
+   shared value baseline */
+.qhx-cdlab{position:absolute;left:0;top:6px;margin:0;font-family:var(--mono),monospace;
+  font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:rgba(250,250,250,.45)}
+.qhx-cdlab span{color:rgba(250,250,250,.25);margin:0 2px}
+.qhx-cdlab b{font-weight:400;color:rgba(250,250,250,.6)}
+.qhx-stats li{display:flex;flex-direction:column;gap:5px;min-width:0}
+.qhx-stats b{font-family:var(--display);font-weight:300;font-size:max(calc(1.7 * var(--qhx-u)),22px);
+  line-height:1;letter-spacing:-.01em;color:var(--white);font-variant-numeric:tabular-nums;white-space:nowrap}
+.qhx-stats b::before,.qhx-turn::before{content:"";display:inline-block;width:0;
+  height:calc(1.85 * var(--qhx-u))}
+.qhx-stats b::after{content:"";display:inline-block;width:0;vertical-align:top;
+  height:calc(2.3 * var(--qhx-u))}
+.qhx-stats span{font-family:var(--mono),monospace;font-size:max(calc(0.68 * var(--qhx-u)),10px);
+  line-height:1.5;letter-spacing:.14em;text-transform:uppercase;color:rgba(250,250,250,.72);max-width:17ch}
+.qhx-turn{margin:0;text-align:right;font-family:var(--display);font-weight:700;
+  font-size:calc(2.3 * var(--qhx-u));line-height:.95;letter-spacing:-.01em;
+  text-transform:uppercase;white-space:nowrap;color:#fafafa}
+@media (max-width:980px){
+  body.page-privacy .hero{height:auto;min-height:calc(100svh - var(--vcnav-h, 64px));padding:2.5rem 1.5rem 32px;overflow:visible}
+  .qhx-wrap{width:100%;max-width:none}
+  .qhx-scene{min-height:0;position:static}
+  body.page-privacy .qh-stage{left:0}
+  .qhx-col{width:auto}
+  .qhx-strip{margin-top:2rem;padding-top:1.25rem;height:97px}
+  .qhx-stats{grid-template-columns:repeat(4, 126px)}
+  .qhx-stats b{font-size:1.5rem}
+  .qhx-stats b::before,.qhx-turn::before{height:21px}
+  .qhx-stats b::after{height:26px}
+  .qhx-stats span{font-size:10px}
+  .qhx-turn{font-size:1.375rem}
+}
+@media (max-width:700px){
+  .qhx-strip{flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:1rem;height:151px}
+  .qhx-stats{width:100%;grid-template-columns:repeat(4, 1fr)}
+  .qhx-stats li{min-height:76px}
+  .qhx-turn{text-align:left;font-size:1.25rem;white-space:normal}
+}
+@media (max-width:380px){
+  body.page-privacy .hero{padding:2rem 1.25rem 24px}
+}
+
+/* the claim band under the hero: main's thin divider (its rules are the
+   CLAIM BAND block above); the strip no longer hosts it */
+.pv-marquee { margin: 0; }
 </style>
 <script src="js/admin-gate.js"></script>
 </head>
@@ -1861,26 +1876,20 @@ h3.pmv-title { margin: 0 0 22px; font-weight: 300; letter-spacing: -.01em; color
 </header>
 
 <!-- ================= HERO ================= -->
-<!-- HERO (pvh-): the site's three-zone frame, the strk/btcfi/quantum
-     geometry name for name (2026-09-07). Left, the editorial column: the
-     kicker, main's two-line display (premise white, payoff in the page
-     accent through the shared .vch-title em), main's paragraph and the CTA
-     pair on the glass tier. Right, the chrome bust on the column stage
-     (js/pv-human-key.js keys the clip onto the page wash). Across the
-     container, the baseline strip: the two stats left and main's claim
-     marquee right. THE TWO STATS ARE DERIVED, NEVER TYPED: the completeness
-     score is stamped at build from the matrix cells (the same
-     scripts/build-privacy-matrix.js pass that writes every column score)
-     and re-derived from the table in the DOM at runtime; the fee is
-     STRK20_TARGET_FEE_USD from js/fee-config.js, the one place the fee
-     model lives, stamped at build and refreshed at runtime. The hero holds
-     ~85svh so the strip and the first hairline land inside the first
-     viewport. Nothing here paints a ground: js/eco-backdrop.js runs the
-     wash on a fixed canvas underneath. -->
+<!-- HERO: the quantum hero component, name for name (2026-09-07): the same
+     qhx- frame (wrap = the 1392 container, scene takes the flex slack,
+     stage = the right column, strip = the shared fixed geometry), the same
+     shared .vch-title tokens with the last clause in the accent, the same
+     glass CTA pair, exactly one viewport under the nav. What differs is
+     content only: the chrome bust on the stage (js/pv-human-key.js keys
+     the clip onto the page wash), two derived stats on the strip's tracks
+     (the 7/7 stamped from the matrix cells, the fee from js/fee-config.js)
+     and the signature "Starknet made that optional" as the turn. Main's
+     claim marquee is the thin band under the hero, a section divider. -->
 <div class="hero">
-  <div class="pvh-wrap">
-    <div class="pvh-scene">
-      <div class="pvh-stage" aria-hidden="true">
+  <div class="qhx-wrap">
+    <div class="qhx-scene">
+      <div class="qh-stage" id="qhStage" aria-hidden="true">
         <div class="pv-human">
           <div class="pv-figure">
             <video autoplay muted loop playsinline preload="metadata" poster="assets/video/metal-human.jpg">
@@ -1889,35 +1898,36 @@ h3.pmv-title { margin: 0 0 22px; font-weight: 300; letter-spacing: -.01em; color
           </div>
         </div>
       </div>
-      <div class="pvh-col">
+      <div class="qhx-col">
         <p class="hero-eyebrow">The privacy flip</p>
-        <!-- the id is the search index's anchor for the opening claim; it
-             stays on the display heading -->
-        <h1 id="your-savings-your-strategy-your-next" class="hero-title vch-title">Onchain, everything is public. <em>Starknet made that optional.</em></h1>
-        <p class="hero-subtitle">Crypto built the most surveilled financial system in history, <b>by accident</b>. Starknet shipped the layer that ends it: private to the market, answerable to the law, <b>and live today</b>.</p>
-        <div class="pvh-ctas">
-          <a class="pvh-cta dg-glass dg-glass--primary" href="#why-starknet-structurally">How it works</a>
-          <a class="pvh-cta dg-glass" href="#the-most-complete-privacy-ecosystem">See what is live</a>
+        <!-- the id is the search index's anchor for the opening claim -->
+        <h1 id="your-savings-your-strategy-your-next" class="hero-title vch-title">Onchain, <em>everything is public.</em></h1>
+        <p class="hero-subtitle vch-sub">Crypto built the most surveilled financial system in history, <b>by accident</b>. Starknet shipped the layer that ends it: private to the market, answerable to the law, <b>and live today</b>.</p>
+        <div class="qhx-ctas">
+          <a class="qhx-cta dg-glass dg-glass--primary" href="#why-starknet-structurally">See how it works</a>
+          <a class="qhx-cta dg-glass" href="#the-most-complete-privacy-ecosystem">See what is live</a>
         </div>
       </div>
     </div>
-    <div class="pvh-strip">
-      <ul class="pvh-stats">
+    <div class="qhx-strip">
+      <ul class="qhx-stats">
         <li><b data-matrix-score>7/7</b><span>Completeness score</span></li>
         <li><b data-fee-target>~$0.12</b><span>Lowest privacy fee in DeFi</span></li>
       </ul>
-      <!-- claim band, main's twelve labels on the sibling pages' marquee
-           mechanics, now the strip's right zone. The first set is the
-           readable one; the duplicates exist so the loop is gapless and are
-           aria-hidden. Labels only, never links. -->
-      <div class="pv-marquee" id="pvMarquee"><div class="pv-mq-track">
+      <p class="qhx-turn">Starknet made that optional</p>
+    </div>
+  </div>
+</div>
+
+<!-- claim band: main's twelve labels on the sibling pages' marquee
+     mechanics, a thin full-width divider directly under the hero. The
+     first set is the readable one; the duplicates exist so the loop is
+     gapless and are aria-hidden. Labels only, never links. -->
+<div class="pv-marquee" id="pvMarquee"><div class="pv-mq-track">
   <div class="pv-mq-set"><span class="chip-glass">ZK-STARK</span><span class="chip-glass">PROTOCOL-LEVEL PRIVACY</span><span class="chip-glass">PRIVACY FOR EVERY ASSET</span><span class="chip-glass">LOWEST PRIVACY FEES IN DEFI</span><span class="chip-glass">DEEP DEFI INTEGRATION</span><span class="chip-glass">WALLET-NATIVE</span><span class="chip-glass">ONE POOL FOR ALL ASSETS</span><span class="chip-glass">FEE: <span data-fee-target>~$0.12</span> &middot; PAID IN STRK</span><span class="chip-glass">SHIELDED IN SECONDS</span><span class="chip-glass">AUDITED AND FORMALLY VERIFIED</span><span class="chip-glass">OPEN SOURCE, APACHE 2.0</span><span class="chip-glass">STRK20S</span></div>
   <div class="pv-mq-set" data-dup aria-hidden="true"><span class="chip-glass">ZK-STARK</span><span class="chip-glass">PROTOCOL-LEVEL PRIVACY</span><span class="chip-glass">PRIVACY FOR EVERY ASSET</span><span class="chip-glass">LOWEST PRIVACY FEES IN DEFI</span><span class="chip-glass">DEEP DEFI INTEGRATION</span><span class="chip-glass">WALLET-NATIVE</span><span class="chip-glass">ONE POOL FOR ALL ASSETS</span><span class="chip-glass">FEE: <span data-fee-target>~$0.12</span> &middot; PAID IN STRK</span><span class="chip-glass">SHIELDED IN SECONDS</span><span class="chip-glass">AUDITED AND FORMALLY VERIFIED</span><span class="chip-glass">OPEN SOURCE, APACHE 2.0</span><span class="chip-glass">STRK20S</span></div>
   <div class="pv-mq-set" data-dup aria-hidden="true"><span class="chip-glass">ZK-STARK</span><span class="chip-glass">PROTOCOL-LEVEL PRIVACY</span><span class="chip-glass">PRIVACY FOR EVERY ASSET</span><span class="chip-glass">LOWEST PRIVACY FEES IN DEFI</span><span class="chip-glass">DEEP DEFI INTEGRATION</span><span class="chip-glass">WALLET-NATIVE</span><span class="chip-glass">ONE POOL FOR ALL ASSETS</span><span class="chip-glass">FEE: <span data-fee-target>~$0.12</span> &middot; PAID IN STRK</span><span class="chip-glass">SHIELDED IN SECONDS</span><span class="chip-glass">AUDITED AND FORMALLY VERIFIED</span><span class="chip-glass">OPEN SOURCE, APACHE 2.0</span><span class="chip-glass">STRK20S</span></div>
 </div></div>
-    </div>
-  </div>
-</div>
 
 <!-- ================= SECTION 01 ================= -->
 <div class="th-pm-div"></div>
