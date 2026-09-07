@@ -1610,32 +1610,6 @@
      2026-09-07 for main's four movements in vesper's skin */
 
 /* ============================================================
-   SECTION 05, THE LAW, at the reference section's proportions.
-   The reference runs its rule and its four columns almost to the
-   viewport edge: measured off it, the band sits 28px in on a 1920
-   frame, which is 1.46 percent, so the padding here is expressed
-   in vw and lands at about 21px at 1440. Ours was capped at the
-   site's 1096px column, which is why the same four columns read as
-   a narrow block rather than a full-width stack.
-   The centred headline keeps the column; only the band widens.
-   .pl carries margin:56px -24px 0, negative side margins that let
-   the column borders bleed, so the margin is restated here rather
-   than left to fight the full-bleed rule.
-   ============================================================ */
-.th-pm-sec--law .pl-prose,
-.th-pm-sec--law .pl{
-  width:100vw;max-width:none;
-  margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw);
-  padding-inline:clamp(16px,1.5vw,28px);
-}
-.th-pm-sec--law .pl{margin-top:56px;margin-bottom:0;}
-.th-pm-sec--law .pl-prose{margin-top:44px;gap:clamp(24px,3vw,64px);}
-@media(max-width:820px){
-  .th-pm-sec--law .pl-prose,
-  .th-pm-sec--law .pl{padding-inline:16px;}
-}
-
-/* ============================================================
    SECTION 01, ONE VIEWPORT (2026-09-07). Main's device in vesper's skin:
    numbered head, 17px intro, then the stage (three glass plates over the
    01/02/03 pill rail) left and the bill panel right. Budget from the
@@ -1883,6 +1857,24 @@ h3.pmv-title { margin: 0 0 22px; font-weight: 300; letter-spacing: -.01em; color
 #pmvPanel03 .builders { margin-top: 34px; }
 #pmvPanel04 .pmx { margin-top: 0; }
 @media (max-width: 860px) { .pmv-stage { padding: 20px 16px 22px; } }
+/* ============================================================
+   SECTION 05, ONE VIEWPORT (2026-09-07). The four-column band with the
+   isometric figures stays, back inside the container (the full-bleed
+   version went with its class); the head is the standard numbered one.
+   The accent block on "not invisible" is pv-hl, the retired sq-hl's
+   values. Budget from the deep-linked h2: head 64, eyebrow, the two
+   prose measures at 15px, the four columns, the Apache line.
+   ============================================================ */
+.pv-hl { display: inline-block; vertical-align: baseline; line-height: 1; white-space: nowrap; padding: 0 .12em 0 .1em;
+  background: var(--accent); color: #fff; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+.pl-prose { margin-top: 22px; gap: 20px 48px; }
+.pl-prose > .th-pm-intro, .pl-prose > .lead { font-size: 15px; line-height: 1.55; }
+.pl { margin: 30px -24px 0; }
+.pl-title { margin-top: 16px; font-size: 16px; }
+.pl-sum { margin-top: 8px; font-size: 13px; line-height: 1.55; }
+.pl-fig { margin-top: 16px; }
+.th-pm-sec > .lead:last-child { margin-top: 24px; padding-bottom: 24px; font-size: 15px; }
+@media (max-width: 860px) { .pv-hl { white-space: normal; } }
 </style>
 <script src="js/admin-gate.js"></script>
 </head>
@@ -2747,8 +2739,11 @@ h3.pmv-title { margin: 0 0 22px; font-weight: 300; letter-spacing: -.01em; color
 
 <!-- ================= SECTION 05 ================= -->
 <div class="th-pm-div"></div>
-<section class="th-pm-sec th-pm-sec--law">
-  <div class="th-pm-head th-pm-head--band th-pm-reveal"><h2 id="private-not-invisible" class="th-pm-title">Private, <mark class="sq-hl">not invisible</mark></h2></div>
+<section class="th-pm-sec">
+  <!-- the standard head (marker, 05, kicker), left in the container like
+       every other section; the accent block on "not invisible" is main's
+       grammar and stays -->
+  <div class="th-pm-head th-pm-reveal"><span class="th-pm-marker"></span><span class="th-pm-num">05</span><h2 id="private-not-invisible" class="th-pm-title">Private, <mark class="pv-hl">not invisible</mark></h2></div>
   <p class="th-pm-eyebrow th-pm-reveal">The law</p>
 
     <!-- The law, as a four-column feature band. The fanned deck was replaced on

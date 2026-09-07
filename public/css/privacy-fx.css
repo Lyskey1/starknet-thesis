@@ -69,9 +69,7 @@ body.page-privacy .hero::before { display: none; }
 
 /* the Satoshi quote screen (sq-) and the vertical lineage (lg-) left on
    2026-09-07 for main's forum card and a horizontal timeline (privacy.html,
-   tl-). Only the accent block survives, for section 05's heading. */
-.sq-hl { display: inline-block; vertical-align: baseline; line-height: 1; white-space: nowrap; padding: 0 .1em 0 0; background: var(--pf-acc); color: #fff; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
-
+   tl-). Section 05's accent block is pv-hl, inline in privacy.html. */
 /* the scattered hero copy grid (pv-hero-grid, pv-tl, pv-br, pv-note, pv-stat)
    left with the three-zone hero of 2026-09-07; its rules live inline as pvh- */
 
@@ -142,10 +140,6 @@ body.page-privacy header.vc-header { z-index: 100; }
    inline single-class rules (.th-pm-title at 52px, and its 880px override)
    regardless of source order. Verified with getComputedStyle, not by
    reading the cascade. */
-.th-pm-head--band { justify-content: center; flex-wrap: wrap; gap: 16px; text-align: center; }
-.th-pm-head--band .th-pm-title { font-size: clamp(34px, 5.6vw, 76px); font-weight: 300;
-  line-height: 1.02; letter-spacing: -.03em; }
-.th-pm-head--band + .th-pm-eyebrow { text-align: center; }
 
 /* the prose, folded above the columns as two measures */
 .pl-prose { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr);
@@ -199,8 +193,6 @@ body.page-privacy header.vc-header { z-index: 100; }
      silently cropped instead of raising a scrollbar. Keep the inline-block
      (plain inline left stray slabs at line ends) and relax only the wrap, so
      the tile shrinks to the container instead of running past it. */
-  .th-pm-head--band .sq-hl { white-space: normal; }
-  .th-pm-head--band { gap: 12px; }
   .pl-prose { grid-template-columns: minmax(0,1fr); gap: 20px; }
 }
 @media (max-width: 640px) {
