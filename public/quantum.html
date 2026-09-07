@@ -3411,6 +3411,14 @@ body.page-quantum{overflow-x:clip;}
    the height pinned, thMorph's height leg is a no-op and the swap
    is a pure crossfade (instant under reduced motion).
    The lit tile is CSS off the aria-selected thRove writes.
+   INACTIVE LIVES ON THE CHROME ONLY (2026-09-07 fix): the base
+   .qw-ped rule fades an unselected pedestal to .5 and the first cut
+   stacked a .55 + desaturate on the thumb, a product of ~.27 that made
+   the vault and the record card invisible on the dark tile. Now the
+   object never dims (opacity 1, no filter); the unselected state is a
+   dimmed border, a muted label and no accent glow; hover brightens the
+   border only. The vault line art gets a faint glass plate behind it,
+   the way the paper carries its own white sheet.
    ============================================================ */
 .qsec3{scroll-margin-top:var(--vcnav-h,64px);padding-top:40px;}
 .qsec3 [id]{scroll-margin-top:var(--vcnav-h,64px);}
@@ -3427,9 +3435,12 @@ body.page-quantum{overflow-x:clip;}
   cursor:pointer;text-align:left;border-radius:14px;
   border:1px solid rgba(250,250,250,.10);background:rgba(250,250,250,.03);
   -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
-  color:rgba(250,250,250,.5);
+  color:var(--th-muted,#9a9a9a);
   transition:border-color .25s ease,background .25s ease,color .25s ease;}
-.hst-tile:hover{border-color:rgba(250,250,250,.28);color:rgba(250,250,250,.85);}
+/* the base .qw-ped rule fades an unselected pedestal to .5; the tile is
+   its own chrome and never fades as a whole */
+.hst-tile[aria-selected="false"]{opacity:1;}
+.hst-tile:hover{border-color:rgba(250,250,250,.32);}
 .hst-tile[aria-selected="true"]{border-color:var(--th-q);
   background:color-mix(in srgb,var(--th-q) 9%,rgba(250,250,250,.02));color:#fafafa;}
 .hst-tile:focus-visible{outline:2px solid var(--th-q);outline-offset:3px;}
@@ -3439,11 +3450,15 @@ body.page-quantum{overflow-x:clip;}
    section in frame with the title at the nav line */
 .qsec3 .hst-rail .hst-tile[id]{scroll-margin-top:157px;}
 .hst-thumb{flex:0 0 96px;height:117px;display:flex;align-items:center;justify-content:center;
-  overflow:hidden;border-radius:6px;background:rgba(250,250,250,.02);
-  opacity:.55;filter:saturate(.4);transition:opacity .25s ease,filter .25s ease;}
-.hst-tile[aria-selected="true"] .hst-thumb{opacity:1;filter:none;}
+  overflow:hidden;border-radius:6px;background:rgba(250,250,250,.02);}
 .hst-thumb img{width:100%;height:100%;object-fit:contain;display:block;}
 .hst-thumb svg{width:100%;height:100%;}
+/* the vault is bare line art; a faint glass plate gives its strokes a
+   ground on the dark tile (the record card draws its own panel) */
+.hst-thumb[data-hst-clone="vtSvg"]{padding:8px 6px;box-sizing:border-box;
+  background:linear-gradient(180deg,rgba(250,250,250,.085),rgba(250,250,250,.05));
+  border:1px solid rgba(250,250,250,.14);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.10);}
 .hst-name{min-width:0;font-family:'General Sans',sans-serif;
   font-size:clamp(16px,1.35vw,19px);font-weight:500;letter-spacing:-.01em;line-height:1.25;}
 .hst-name b{display:block;font-family:'IBM Plex Mono',monospace;font-weight:500;
@@ -3475,7 +3490,7 @@ body.page-quantum{overflow-x:clip;}
   .qsec3 .th-vt{margin:26px auto 0;}
 }
 @media (prefers-reduced-motion: reduce){
-  .hst-tile,.hst-thumb{transition:none;}
+  .hst-tile{transition:none;}
 }
 
 /* ============================================================
