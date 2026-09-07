@@ -1942,6 +1942,113 @@ body.page-privacy{--qhx-u:min(1vw,14.4px)}
   .pcore-node:hover { transform: none; }
   .pcore-beams g.ping .pc-rail { animation: none; }
 }
+/* ============================================================
+   SECTION 04, ONE VIEWPORT (2026-09-07). Title block 130, platters 130,
+   the panel a FIXED 512px glass card with no internal scroll (content
+   height 464 after padding). Each movement is cut to that height:
+   Foundations = the logo card and a two-line intro left, the seven
+   properties as a 48px-row accordion right (one open; the others drop to
+   38px so the open row's paragraph fits inside the same height);
+   What users get = the wallet as a 2x2 grid; Ecosystem = the bento with
+   the filter pills on one row, the DeFi marquee window capped at two
+   rows and the builders as one compact row; Metrics = the pill row and
+   the ESTIMATED chart. Sticky sub-bar rules unchanged.
+   ============================================================ */
+.pmv { margin-top: 16px; }
+.pmv-obj { width: 56px; height: 56px; margin-bottom: 4px; }
+.pmv-plinth { height: 40px; }
+.pmv-plinth i { height: 22px; }
+.pmv-plinth u { top: 11px; }
+.pmv-label { margin-top: 10px; }
+.pmv-stage { margin-top: 14px; height: 512px; box-sizing: border-box; padding: 22px 26px 24px; overflow: hidden; }
+.pmv-panel { padding: 0; }
+h3.pmv-title { margin: 0 0 14px; font-size: clamp(22px, 2vw, 26px); line-height: 1.2; }
+/* Foundations */
+.stamp-wrap { grid-template-columns: 300px minmax(0, 1fr); grid-template-rows: auto; align-items: start; gap: 22px; border: 0; background: none; border-radius: 0; overflow: visible; }
+.stamp-side { display: flex; flex-direction: column; gap: 12px; }
+.stamp-stage { min-height: 0; height: 200px; padding: 12px 14px 12px; border: 1px solid var(--line); border-radius: 12px;
+  background: linear-gradient(180deg, var(--bg-raise, #0d0d0d), #0d0d0d); border-right: 1px solid var(--line); justify-content: flex-start; }
+.stamp-stage::after { bottom: -160px; width: 320px; height: 200px; }
+.ss-scene { height: 118px; margin-top: 0; }
+.ss-stamp { top: 0; transform: translate(-50%, -170px); }
+.ss-handle { width: 30px; height: 12px; }
+.ss-head { width: 92px; height: 34px; font-size: 16px; border-radius: 7px; }
+.ss-coin { width: 100px; height: 100px; }
+.ss-logo { width: 56px; height: 56px; }
+.ss-fallback { font-size: 38px; }
+.ss-tick.tl, .ss-tick.bl { left: 16px; } .ss-tick.tr, .ss-tick.br { right: 16px; }
+.ss-tick.tl, .ss-tick.tr { top: 16px; } .ss-tick.bl, .ss-tick.br { bottom: 16px; }
+.ss-amount { margin-top: 8px; font-size: 11.5px; height: 18px; line-height: 18px; }
+.ss-chips { margin-top: 6px; padding-top: 0; gap: 8px; min-height: 26px; }
+.ss-chip { font-size: 10px; padding: 7px 10px; }
+.stamp-intro { margin: 0; font-size: 13.5px; line-height: 1.55; color: rgba(250, 250, 250, .72); }
+.stamp-props { padding: 0; gap: 5px; }
+.sp-head { margin-bottom: 0; }
+.sp-card { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 12px; align-items: center; height: 44px; padding: 0 14px;
+  box-sizing: border-box; overflow: hidden; transition: height .3s var(--hover-ease), border-color .25s, background .25s; }
+.sp-card .n { font-size: 10px; }
+.sp-card h5 { margin: 0; font-size: 14px; line-height: 1.2; }
+.sp-card p { grid-column: 2; margin: 0; max-height: 0; font-size: 12.5px; line-height: 1.5; transition: none; }
+.stamp-props:has(.sp-card.on) .sp-card:not(.on) { height: 34px; }
+.sp-card.on { height: auto; align-items: start; padding-top: 8px; padding-bottom: 9px; }
+.sp-card.on .n { padding-top: 2px; }
+.sp-card.on p, .sp-card.on:hover p { max-height: none; margin-top: 4px; }
+.sp-card:hover p { max-height: 0; margin-top: 0; }
+/* What users get: 2x2 */
+#pmvPanel02 .wlt { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+#pmvPanel02 .wlt-bar { grid-column: 1 / -1; padding: 12px 22px; }
+#pmvPanel02 .wlt-band { padding: 14px 22px; border-right: 1px solid var(--line); }
+#pmvPanel02 .wlt-band:nth-child(3), #pmvPanel02 .wlt-foot { border-right: 0; }
+#pmvPanel02 .wlt-band.is-wide .wlt-row { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, .7fr); }
+#pmvPanel02 .wlt-band:nth-child(4) { border-bottom: 0; }
+#pmvPanel02 .wlt-foot { padding: 14px 22px; flex-direction: column; align-items: flex-start; justify-content: center; gap: 8px; border: 0; }
+#pmvPanel02 .wlt-row { font-size: 12.5px; padding: 4px 0; }
+#pmvPanel02 .wlt-gl { margin-bottom: 8px; }
+/* Ecosystem */
+#pmvPanel03 .pv-bento { gap: 12px; }
+#pmvPanel03 .bnt { padding: 14px 16px 14px; }
+#pmvPanel03 .bnt-win { height: 88px; margin-top: 0; }
+#pmvPanel03 .bnt-sum { margin-top: 8px; }
+#pmvPanel03 .bnt h5 { font-size: 14px; line-height: 1.25; margin: 4px 0 6px; }
+#pmvPanel03 .bnt-eco .wp-card { padding: 8px 12px; margin-top: 6px; }
+#pmvPanel03 .bnt-pos { padding-top: 8px; line-height: 1.4; font-size: 9.5px; }
+#pmvPanel03 .bnt-posline { margin-top: 6px; }
+#pmvPanel03 .bnt-pipe-head { align-items: center; }
+#pmvPanel03 .bnt-pipe-head h5 { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#pmvPanel03 .bnt-chipwin { margin-top: 8px; }
+#pmvPanel03 .bnt-chip { padding: 6px 12px; font-size: 12px; }
+#pmvPanel03 .bnt-eco .wp-card:hover p, #pmvPanel03 .bnt-eco .wp-card.tap-open p { max-height: 40px; }
+#pmvPanel03 .builders { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 14px; margin-top: 12px; padding: 0; border: 0; background: none; box-shadow: none; }
+#pmvPanel03 .builders .bt { margin: 0; font-size: 13px; line-height: 1.2; white-space: nowrap; }
+#pmvPanel03 .build-tiles { display: flex; gap: 8px; min-width: 0; margin: 0; }
+#pmvPanel03 .build-tiles .gx-bloom { display: none; }
+#pmvPanel03 .btile { flex: 1 1 0; min-width: 0; min-height: 0; height: auto; padding: 7px 12px; display: flex; align-items: baseline; gap: 10px; }
+#pmvPanel03 .btile > * { margin: 0; position: static; }
+#pmvPanel03 .btile .be { font-size: 9px; }
+#pmvPanel03 .btile h5 { font-size: 12.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#pmvPanel03 .btile p { display: none; }
+#pmvPanel03 .btile .ba { margin-left: auto; }
+/* Metrics */
+#pmvPanel04 #poolMetrics .pmx-stats { margin-top: 0; gap: 10px; }
+#pmvPanel04 #poolMetrics .pmx-stat { padding: 10px 14px 10px; }
+#pmvPanel04 #poolMetrics .pmx-stat .v { font-size: clamp(20px, 1.7vw, 24px); margin-top: 5px; }
+#pmvPanel04 #poolMetrics .pmx-stat .s { margin-top: 5px; font-size: 9px; }
+#pmvPanel04 #poolMetrics .pmx-updated { margin-top: 6px; }
+#pmvPanel04 #poolMetrics .pmx-grid { margin-top: 8px; }
+#pmvPanel04 #poolMetrics .pmx-head { flex-direction: row; align-items: baseline; flex-wrap: wrap; gap: 4px 12px; padding: 10px 18px 9px; }
+#pmvPanel04 #poolMetrics .pmx-t { font-size: 16px; }
+#pmvPanel04 #poolMetrics .pmx-body { padding: 8px 18px 0; min-height: 0; }
+#pmvPanel04 #poolMetrics .pmx-legend { margin: 0 0 8px; }
+#pmvPanel04 #poolMetrics .pmx-live { min-height: 130px; }
+#pmvPanel04 #poolMetrics .pmx-src { padding: 6px 18px 10px; }
+@media (max-width: 980px) {
+  .pmv-stage { height: auto; overflow: visible; }
+  .stamp-wrap { grid-template-columns: 1fr; }
+  #pmvPanel02 .wlt { grid-template-columns: 1fr; }
+  #pmvPanel02 .wlt-band { border-right: 0; }
+  #pmvPanel03 .builders { flex-direction: column; align-items: flex-start; }
+  #pmvPanel03 .build-tiles { flex-direction: column; width: 100%; }
+}
 </style>
 <script src="js/admin-gate.js"></script>
 </head>
@@ -2429,14 +2536,14 @@ body.page-privacy{--qhx-u:min(1vw,14.4px)}
 <section class="th-pm-sec">
   <div class="th-pm-head th-pm-reveal"><span class="th-pm-marker"></span><span class="th-pm-num">04</span><h2 id="the-most-complete-privacy-ecosystem" class="th-pm-title">The most complete privacy ecosystem</h2></div>
   <p class="th-pm-eyebrow th-pm-reveal">The ecosystem</p>
-  <p class="th-pm-intro th-pm-reveal">From first announcement to a live, multi-asset, wallet-native privacy system: in under a year. Here is what is live today, and the foundation it stands on.</p>
+  <p class="th-pm-intro th-pm-intro--wide th-pm-reveal">From first announcement to a live, multi-asset, wallet-native privacy system: in under a year. Here is what is live today, and the foundation it stands on.</p>
 
   <!-- Movement selector: four volumetric plinths, one panel. The four blocks
        below are the page's existing movements moved intact, not rewritten;
        each carries its own settled height and the stage animates between
        them. Glass, timing, hairlines and title type are the page's own
        constants by reference. -->
-  <div class="pmv th-pm-reveal" id="pmv">
+  <div class="pmv pmv-fixed th-pm-reveal" id="pmv">
     <div class="pmv-row" role="tablist" aria-label="The four movements">
       <button class="pmv-ped" type="button" role="tab" id="pmvTab01" data-m="0"
               aria-selected="true" aria-controls="pmvPanel01" tabindex="0">
@@ -2471,6 +2578,7 @@ body.page-privacy{--qhx-u:min(1vw,14.4px)}
        seven base-layer properties. The properties expand on click, one open
        at a time; the loop's own cycling stops once a reader pins one. -->
   <div class="stamp-wrap th-pm-reveal" id="shieldStamp">
+    <div class="stamp-side">
     <div class="stamp-stage">
       <div class="ss-scene">
         <div class="ss-stamp" id="ssStamp" aria-hidden="true"><div class="ss-handle"></div><div class="ss-head">[ ]</div></div>
@@ -2486,6 +2594,8 @@ body.page-privacy{--qhx-u:min(1vw,14.4px)}
         <span class="ss-chip" id="ssChip1">FEE: <span data-fee-target>~$0.12</span> &middot; PAID IN STRK</span>
         <span class="ss-chip" id="ssChip2">SHIELDED IN SECONDS</span>
       </div>
+    </div>
+    <p class="stamp-intro">Seven properties the base layer holds before any app is built on it, from one pool for every asset to a compliance path built in.</p>
     </div>
     <div class="stamp-props" id="stampProps">
       <div class="sp-head">SEVEN PROPERTIES OF THE BASE LAYER</div>
@@ -2719,44 +2829,17 @@ body.page-privacy{--qhx-u:min(1vw,14.4px)}
   <div class="pmx th-pm-reveal" id="poolMetrics">
     <div class="pmx-stats" id="pmxStats"></div>
     <div class="pmx-updated" id="pmxUpdated"></div>
+    <!-- ONE CHART (2026-09-07): estimated revenue = the protocol's flat fee
+         target (STRK20_TARGET_FEE_USD in js/fee-config.js, the same hook the
+         hero reads) times the backend's daily transaction count, labeled
+         ESTIMATED throughout; the measured cumulative fees stay in the
+         REVENUE pill above. The pill row and this card share one fetch
+         cycle, so they cannot disagree in vintage. -->
     <div class="pmx-grid">
-      <!-- card order IS the grid order, and the single-column order below
-           981px: shielded + composition, then the three mid charts, then the
-           bottom pair -->
-      <div class="pmx-card" data-pmx="shielded">
-        <div class="pmx-head"><span class="pmx-t">Shielded value over time</span><span class="pmx-sub">USD, STACKED BY ASSET, DAILY</span></div>
-        <div class="pmx-body"><a class="pmx-live" href="https://starkscan.co/privacy-pool" target="_blank" rel="noopener">VIEW LIVE →</a></div>
-        <a class="pmx-src" href="https://starkscan.co/privacy-pool" target="_blank" rel="noopener">SOURCE: STARKSCAN ↗</a>
-      </div>
-      <div class="pmx-card" data-pmx="comp">
-        <div class="pmx-head"><span class="pmx-t">Pool composition</span><span class="pmx-sub">USD BY ASSET, LATEST</span></div>
-        <div class="pmx-body"><a class="pmx-live" href="https://starkscan.co/privacy-pool" target="_blank" rel="noopener">VIEW LIVE →</a></div>
-        <a class="pmx-src" href="https://starkscan.co/privacy-pool" target="_blank" rel="noopener">SOURCE: STARKSCAN ↗</a>
-      </div>
-      <div class="pmx-card" data-pmx="txs">
-        <div class="pmx-head"><span class="pmx-t">Transactions</span><span class="pmx-sub">COUNT, DAILY</span></div>
-        <div class="pmx-body"><a class="pmx-live" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">VIEW LIVE →</a></div>
-        <a class="pmx-src" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">SOURCE: STRK20 DASHBOARD ↗</a>
-      </div>
-      <div class="pmx-card" data-pmx="users">
-        <div class="pmx-head"><span class="pmx-t">New users</span><span class="pmx-sub">VIEWING-KEY REGISTRATIONS, DAILY + CUMULATIVE</span></div>
-        <div class="pmx-body"><a class="pmx-live" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">VIEW LIVE →</a></div>
-        <a class="pmx-src" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">SOURCE: STRK20 DASHBOARD ↗</a>
-      </div>
-      <div class="pmx-card" data-pmx="swaps">
-        <div class="pmx-head"><span class="pmx-t">Private swap volume</span><span class="pmx-sub">USD BY TOKEN, DAILY</span></div>
-        <div class="pmx-body"><a class="pmx-live" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">VIEW LIVE →</a></div>
-        <a class="pmx-src" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">SOURCE: STRK20 DASHBOARD ↗</a>
-      </div>
-      <div class="pmx-card" data-pmx="defi">
-        <div class="pmx-head"><span class="pmx-t">DeFi volume privately routed</span><span class="pmx-sub">USD BY PROTOCOL, DAILY</span></div>
-        <div class="pmx-body"><a class="pmx-live" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">VIEW LIVE →</a></div>
-        <a class="pmx-src" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">SOURCE: STRK20 DASHBOARD ↗</a>
-      </div>
-      <div class="pmx-card" data-pmx="revenue">
-        <div class="pmx-head"><span class="pmx-t">Revenue</span><span class="pmx-sub">PROTOCOL FEES, DAILY + CUMULATIVE</span></div>
-        <div class="pmx-body"><a class="pmx-live" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">VIEW LIVE →</a></div>
-        <a class="pmx-src" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">SOURCE: STRK20 DASHBOARD ↗</a>
+      <div class="pmx-card pmx-wide" data-pmx="estimated">
+        <div class="pmx-head"><span class="pmx-t">Estimated revenue</span><span class="pmx-sub">ESTIMATED: FLAT FEE <span data-fee-target>~$0.12</span> &times; DAILY TRANSACTIONS, USD</span></div>
+        <div class="pmx-body"><a class="pmx-live" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">VIEW LIVE &rarr;</a></div>
+        <a class="pmx-src" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">SOURCE: STRK20 DASHBOARD, DAILY TRANSACTIONS &#8599;</a>
       </div>
     </div>
   </div>
@@ -3639,7 +3722,9 @@ var pvVideoChrome = thVideoChrome({
       p.setAttribute('aria-selected', k === i ? 'true' : 'false');
       p.setAttribute('tabindex', k === i ? '0' : '-1');
     });
-    if (reduce.matches) {
+    if (reduce.matches || root.classList.contains('pmv-fixed')) {
+      /* pmv-fixed (2026-09-07): the panel holds one fixed height, so there
+         is no height to animate and nothing below can move */
       panels.forEach(function(p, k){ p.hidden = k !== i; });
       stage.style.height = '';
       return;
@@ -3805,6 +3890,9 @@ var pvVideoChrome = thVideoChrome({
   function reserveProps(){
     props.style.minHeight = '';
     if (narrow.matches) return;
+    // inside the fixed-height panel (2026-09-07) the accordion keeps its own
+    // height constant (closed rows shrink as one opens), so nothing to reserve
+    if (props.closest('.pmv-fixed')) return;
     // measure with every card collapsed and transitions off (a card may be mid-cycle),
     // and with alignSelf:start so we get content height, not the grid-stretched height
     var ps = [];
@@ -4198,7 +4286,7 @@ var pvVideoChrome = thVideoChrome({
   // real 9px in a third-width cell exactly as in a full-width one. Height is
   // the card's base, pulled down on narrow cells so the plot never becomes
   // taller than it is wide.
-  var PLOT_H = { shielded: 240, comp: 0, swaps: 190, defi: 210, txs: 190, users: 190, revenue: 210 };
+  var PLOT_H = { shielded: 240, comp: 0, swaps: 190, defi: 210, txs: 190, users: 190, revenue: 210, estimated: 150 };
   function plotW(k){
     var w = bodies[k] && bodies[k].el ? bodies[k].el.clientWidth : 0;
     return Math.max(240, Math.round(w || 520));
@@ -4216,7 +4304,7 @@ var pvVideoChrome = thVideoChrome({
   // (0 = the card shows no fetched data, e.g. the VIEW LIVE fallback). The
   // label reports the OLDEST data on screen, so a partially failed silent
   // refresh can never claim "just now" over a chart it did not update.
-  var prov = { stats: 0, shielded: 0, comp: 0, swaps: 0, defi: 0, txs: 0, users: 0, revenue: 0 };
+  var prov = { stats: 0, shielded: 0, comp: 0, swaps: 0, defi: 0, txs: 0, users: 0, revenue: 0, estimated: 0 };
   function tickUpdated(){
     if (!upEl) return;
     var oldest = Infinity;
@@ -4269,7 +4357,7 @@ var pvVideoChrome = thVideoChrome({
 
   function load(silent){
     if (!silent) Object.keys(bodies).forEach(skel);
-    var next = { stats: null, shielded: null, comp: null, swaps: null, defi: null, txs: null, users: null, revenue: null };
+    var next = { stats: null, shielded: null, comp: null, swaps: null, defi: null, txs: null, users: null, revenue: null, estimated: null };
     // every card stages a DRAW closure, called once here at the current cell
     // width and again on resize; the payload it closes over is the one this
     // cycle fetched, so the snapshot stays whole
@@ -4327,6 +4415,25 @@ var pvVideoChrome = thVideoChrome({
           return { chart: stackedBars(d.days, split, W, H, fmtN), legend: '',
                    meta: { days: d.days, W: W, P: PAD_STD, rows: function(day){ return [{ label: 'TRANSACTIONS', value: fmtN(day.count || 0), color: '#6EB5FF' }]; } } };
         });
+        // ESTIMATED REVENUE (2026-09-07): the flat fee target times the day's
+        // transaction count, cumulated; derived here from the same payload,
+        // labeled ESTIMATED on the card, its legend and its tooltip. The fee
+        // is js/fee-config.js's STRK20_TARGET_FEE_USD, never a literal.
+        var fee = window.STRK20_TARGET_FEE_USD;
+        if (typeof fee === 'number') {
+          var cumE = 0;
+          var edays = d.days.map(function(day){ var v = (day.count || 0) * fee; cumE += v; return { date: day.date, feesUsd: v, cumUsd: cumE }; });
+          var feeTxt = '$' + fee.toFixed(2);
+          stage('estimated', function(W){
+            var H = plotH('estimated', W);
+            return { chart: feeBarsLine(edays, W, H),
+                     legend: '<div class="pmx-legend"><span><i style="background:rgba(110,181,255,.5)"></i>ESTIMATED DAILY (TX &times; ' + feeTxt + ')</span><span><i style="background:#6EB5FF"></i>ESTIMATED CUMULATIVE (RIGHT AXIS)</span></div>',
+                     meta: { days: edays, W: W, P: PAD_DUAL, rows: function(day){
+                       return [{ label: 'ESTIMATED DAILY', value: fmtUsd(day.feesUsd), color: 'rgba(110,181,255,.5)' },
+                               { label: 'ESTIMATED CUMULATIVE', value: fmtUsd(day.cumUsd), color: '#6EB5FF' }];
+                     } } };
+          });
+        }
       }).catch(function(){}),
 
       // REVENUE, measured: the backend's own protocol-fees series
