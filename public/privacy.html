@@ -2196,6 +2196,11 @@ h3.pmv-title { margin: 0 0 14px; font-size: clamp(22px, 2vw, 26px); line-height:
 #poolMetrics .pmx-t { font-size: 18px; }
 #poolMetrics .pmx-legend { margin: 0 0 10px; }
 #poolMetrics .pmx-src { padding: 8px 18px 12px; }
+/* the note tile and the shared COMING placeholder (2026-09-07) */
+.eco-tile--note { width: auto; min-height: 56px; justify-content: center; padding: 8px 12px; border: 1px dashed rgba(250, 250, 250, .22); border-radius: 10px; color: var(--muted); }
+.eco-note { font-family: var(--mono); font-size: 9.5px; letter-spacing: .12em; color: rgba(250, 250, 250, .5); white-space: nowrap; }
+.eco-soon { width: 56px; height: 56px; fill: none; stroke: var(--st-coming); stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+.eco-tile--soon .eco-logo { background: none; border: 0; opacity: .6; }
 </style>
 <script src="js/admin-gate.js"></script>
 </head>
@@ -2824,9 +2829,11 @@ h3.pmv-title { margin: 0 0 14px; font-size: clamp(22px, 2vw, 26px); line-height:
        coming, accent cohort). Tiles wrap, never scroll, never truncate;
        filtering dims non-matching tiles. Logos come from the ecosystem
        page's avatar pipeline (public/data/ecosystem.json paths) plus the
-       repo's token art for USDC; projects without an avatar carry a
-       monogram tile (PriPay, DashX, More integrations, Beam, Solana & EVM
-       wallets, Spindle). The old wp-card ids and descriptions survive on
+       repo's token art for USDC and the DashX avatar mirrored from
+       x.com/DashXHQ. First-party projects without a logo share one COMING
+       placeholder (dashed ring, clock); PriPay, live and without an
+       avatar in the data, keeps a monogram. "More integrations" is a note,
+       not a project: a dashed text tile outside the counts. Ids survive on
        the tiles for deep links, assistive tech and the search index. -->
   <div class="eco th-pm-reveal" id="ecoLanes">
     <div class="eco-filter" role="group" aria-label="Filter projects by status" id="ecoFilter"></div>
@@ -2834,23 +2841,23 @@ h3.pmv-title { margin: 0 0 14px; font-size: clamp(22px, 2vw, 26px); line-height:
       <div class="eco-lab"><span class="wn">STARKNET DEFI</span><span class="eco-n" data-eco-count="integrations"></span></div>
       <div class="eco-tiles">
         <div class="eco-tile wp-card" id="wallet-native-shielding-ready-xverse" data-status="LIVE"><span class="eco-logo"><img src="assets/avatars/ready__x.png" alt="" loading="lazy" decoding="async" width="56" height="56"></span><span class="wp-t">Ready &amp; Xverse</span><span class="eco-chip">LIVE</span><p class="pvc-vh">Wallet-native shielding: the privacy pool built directly into the Ready and Xverse wallet UI, one toggle away.</p></div>
-        <a class="eco-tile wp-card" id="private-swaps-avnu-ekubo" data-status="LIVE" href="https://www.avnu.fi" target="_blank" rel="noopener"><span class="eco-logo"><img src="assets/avatars/avnu_fi.jpg" alt="" loading="lazy" decoding="async" width="56" height="56"></span><span class="wp-t">avnu &amp; Ekubo</span><span class="eco-chip">LIVE</span><p class="pvc-vh">Private swaps against Starknet's existing public liquidity through avnu and Ekubo.</p></a>
+        <a class="eco-tile wp-card" id="private-swaps-avnu-ekubo" data-status="LIVE" href="https://x.com/avnu_fi/status/2079480453002608979?s=20" target="_blank" rel="noopener"><span class="eco-logo"><img src="assets/avatars/avnu_fi.jpg" alt="" loading="lazy" decoding="async" width="56" height="56"></span><span class="wp-t">avnu &amp; Ekubo</span><span class="eco-chip">LIVE</span><p class="pvc-vh">Private swaps against Starknet's existing public liquidity through avnu and Ekubo.</p></a>
         <a class="eco-tile wp-card" id="private-usdc-w-circle" data-status="LIVE" href="https://x.com/USDC/status/2070175190831833264" target="_blank" rel="noopener"><span class="eco-logo"><img src="assets/tokens/usdc.png" alt="" loading="lazy" decoding="async" width="56" height="56"></span><span class="wp-t">Circle USDC</span><span class="eco-chip">LIVE</span><p class="pvc-vh">Private USDC: shielded USDC live on Starknet, highlighted by Circle itself.</p></a>
         <a class="eco-tile wp-card eco-tile--mono" id="private-payroll-pripay" data-status="LIVE" href="https://x.com/StarkWareLtd/status/2066857395528036643" target="_blank" rel="noopener"><span class="eco-logo"><span class="eco-mono" aria-hidden="true">PR</span></span><span class="wp-t">PriPay</span><span class="eco-chip">LIVE</span><p class="pvc-vh">Private payroll: onchain salary payments with amounts and counterparties shielded.</p></a>
         <a class="eco-tile wp-card" id="private-kyc" data-status="LIVE" href="https://x.com/StarkWareLtd/status/2069369750942093745" target="_blank" rel="noopener"><span class="eco-logo"><img src="assets/avatars/StarkWareLtd.jpg" alt="" loading="lazy" decoding="async" width="56" height="56"></span><span class="wp-t">Private KYC</span><span class="eco-chip">LIVE</span><p class="pvc-vh">Prove who you are without revealing more than the check requires.</p></a>
-        <a class="eco-tile wp-card" id="liquid-staking-endur" data-status="LIVE" href="https://endur.fi" target="_blank" rel="noopener"><span class="eco-logo"><img src="assets/avatars/endurfi.jpg" alt="" loading="lazy" decoding="async" width="56" height="56"></span><span class="wp-t">Endur</span><span class="eco-chip">LIVE</span><p class="pvc-vh">Liquid staking: private liquid staking positions on Starknet.</p></a>
+        <a class="eco-tile wp-card" id="liquid-staking-endur" data-status="LIVE" href="https://x.com/endurfi/status/2082443538055499931?s=20" target="_blank" rel="noopener"><span class="eco-logo"><img src="assets/avatars/endurfi.jpg" alt="" loading="lazy" decoding="async" width="56" height="56"></span><span class="wp-t">Endur</span><span class="eco-chip">LIVE</span><p class="pvc-vh">Liquid staking: private liquid staking positions on Starknet.</p></a>
         <a class="eco-tile wp-card" id="dark-pool-zylith" data-status="TESTNET" href="https://x.com/ZylithFi/status/2064583548133339479" target="_blank" rel="noopener"><span class="eco-logo"><img src="assets/avatars/ZylithFi.jpg" alt="" loading="lazy" decoding="async" width="56" height="56"></span><span class="wp-t">Zylith</span><span class="eco-chip">TESTNET</span><p class="pvc-vh">Dark pool: a call-auction dark pool on Starknet, order sizes and identities sealed until execution.</p></a>
         <a class="eco-tile wp-card" id="lending-borrowing-vesu" data-status="COMING" href="https://vesu.xyz" target="_blank" rel="noopener"><span class="eco-logo"><img src="assets/avatars/vesuxyz.jpg" alt="" loading="lazy" decoding="async" width="56" height="56"></span><span class="wp-t">Vesu</span><span class="eco-chip">COMING</span><p class="pvc-vh">Lending and borrowing without publishing your positions and liquidation levels.</p></a>
         <a class="eco-tile wp-card" id="yield-troves-arcx-forgeyields" data-status="COMING" href="https://x.com/trovesfi" target="_blank" rel="noopener"><span class="eco-logo"><img src="assets/avatars/trovesfi.jpg" alt="" loading="lazy" decoding="async" width="56" height="56"></span><span class="wp-t">Troves, ArcX, ForgeYields</span><span class="eco-chip">COMING</span><p class="pvc-vh">Yield strategies without broadcasting your allocations.</p></a>
         <a class="eco-tile wp-card" id="private-cash-stablecoin-minting-opus" data-status="COMING" href="https://x.com/OpusMoney" target="_blank" rel="noopener"><span class="eco-logo"><img src="assets/avatars/OpusMoney.jpg" alt="" loading="lazy" decoding="async" width="56" height="56"></span><span class="wp-t">Opus</span><span class="eco-chip">COMING</span><p class="pvc-vh">Private CASH stablecoin minting, straight from the pool.</p></a>
-        <a class="eco-tile wp-card eco-tile--mono" id="private-payments-dashx" data-status="COMING" href="https://x.com/DashXHQ" target="_blank" rel="noopener"><span class="eco-logo"><span class="eco-mono" aria-hidden="true">DA</span></span><span class="wp-t">DashX</span><span class="eco-chip">COMING</span><p class="pvc-vh">Private payments on Starknet.</p></a>
+        <a class="eco-tile wp-card" id="private-payments-dashx" data-status="LIVE" href="https://x.com/DashXHQ/status/2095874895779635617?s=20" target="_blank" rel="noopener"><span class="eco-logo"><img src="assets/avatars/DashXHQ.jpg" alt="" loading="lazy" decoding="async" width="56" height="56"></span><span class="wp-t">DashX</span><span class="eco-chip">LIVE</span><p class="pvc-vh">Private payments on Starknet.</p></a>
       </div>
     </div>
     <div class="eco-lane">
       <div class="eco-lab"><span class="wn">OTHER ECOSYSTEMS</span><span class="eco-n" data-eco-count="integrations"></span></div>
       <div class="eco-tiles">
-        <a class="eco-tile wp-card" id="offmarket-on-polymarket" data-status="LIVE" href="https://x.com/StarkWareLtd/status/2076613440873939355" target="_blank" rel="noopener"><span class="eco-logo"><img src="assets/avatars/OffMarketcx.jpg" alt="" loading="lazy" decoding="async" width="56" height="56"></span><span class="wp-t">OffMarket</span><span class="eco-chip">LIVE</span><p class="pvc-vh">OffMarket on Polymarket: anonymous trading on Polymarket's liquidity, straight from an EVM wallet.</p></a>
-        <div class="eco-tile wp-card eco-tile--mono" id="more-integrations" data-status="COMING"><span class="eco-logo"><span class="eco-mono" aria-hidden="true">MI</span></span><span class="wp-t">More integrations</span><span class="eco-chip">COMING</span><p class="pvc-vh">Additional ecosystems and apps connecting to the pool over the coming months. STRK20 as a service: privacy for chains that cannot build it.</p></div>
+        <a class="eco-tile wp-card" id="offmarket-on-polymarket" data-status="LIVE" href="https://x.com/OffMarketcx/status/2092235796313235523" target="_blank" rel="noopener"><span class="eco-logo"><img src="assets/avatars/OffMarketcx.jpg" alt="" loading="lazy" decoding="async" width="56" height="56"></span><span class="wp-t">OffMarket</span><span class="eco-chip">LIVE</span><p class="pvc-vh">OffMarket on Polymarket: anonymous trading on Polymarket's liquidity, straight from an EVM wallet.</p></a>
+                <div class="eco-tile eco-tile--note" id="more-integrations" data-status="COMING" data-note><span class="eco-note">MORE INTEGRATIONS &middot; COMING</span><p class="pvc-vh">Additional ecosystems and apps connecting to the pool over the coming months. STRK20 as a service: privacy for chains that cannot build it.</p></div>
       </div>
     </div>
     <div class="eco-lane">
@@ -2858,13 +2865,12 @@ h3.pmv-title { margin: 0 0 14px; font-size: clamp(22px, 2vw, 26px); line-height:
       <div class="eco-tiles">
         <a class="eco-tile wp-card" id="private-payroll" data-status="LIVE" href="https://x.com/StarkWareLtd/status/2066857395528036643" target="_blank" rel="noopener"><span class="eco-logo"><img src="assets/avatars/StarkWareLtd.jpg" alt="" loading="lazy" decoding="async" width="56" height="56"></span><span class="wp-t">Private Payroll</span><span class="eco-chip">LIVE</span><p class="pvc-vh">StarkWare's own payroll product on the pool.</p></a>
         <a class="eco-tile wp-card" id="private-kyc-2" data-status="LIVE" href="https://x.com/StarkWareLtd/status/2069369750942093745" target="_blank" rel="noopener"><span class="eco-logo"><img src="assets/avatars/StarkWareLtd.jpg" alt="" loading="lazy" decoding="async" width="56" height="56"></span><span class="wp-t">Private KYC</span><span class="eco-chip">LIVE</span><p class="pvc-vh">The KYC proof of concept hardened into a product.</p></a>
-        <a class="eco-tile wp-card" id="offmarket-on-polymarket-2" data-status="LIVE" href="https://x.com/StarkWareLtd/status/2076613440873939355" target="_blank" rel="noopener"><span class="eco-logo"><img src="assets/avatars/OffMarketcx.jpg" alt="" loading="lazy" decoding="async" width="56" height="56"></span><span class="wp-t">OffMarket</span><span class="eco-chip">LIVE</span><p class="pvc-vh">Anonymous trading on Polymarket's liquidity from an EVM wallet; the model expands to more venues next.</p></a>
-        <a class="eco-tile wp-card" id="proof-of-privacy-incubator" data-status="COHORT" href="https://x.com/StarknetFndn/status/2074783906264727682" target="_blank" rel="noopener"><span class="eco-logo"><img src="assets/avatars/StarknetFndn.jpg" alt="" loading="lazy" decoding="async" width="56" height="56"></span><span class="wp-t">Proof of Privacy</span><span class="eco-chip">COHORT 01</span><p class="pvc-vh">The Starknet Foundation's incubator for teams building on the pool, cohort 01.</p></a>
-        <div class="eco-tile wp-card" id="starknet-enclave" data-status="COMING"><span class="eco-logo"><img src="assets/avatars/StarkWareLtd.jpg" alt="" loading="lazy" decoding="async" width="56" height="56"></span><span class="wp-t">Starknet Enclave</span><span class="eco-chip">COMING</span><p class="pvc-vh">Allowing smart contracts to work with encrypted or hidden information without exposing it publicly onchain.</p></div>
-        <div class="eco-tile wp-card eco-tile--mono" id="beam-pay-by-phone-number" data-status="COMING"><span class="eco-logo"><span class="eco-mono" aria-hidden="true">BE</span></span><span class="wp-t">Beam</span><span class="eco-chip">COMING</span><p class="pvc-vh">Pay by phone number: private payments addressed to a phone number, not an 0x address.</p></div>
-        <div class="eco-tile wp-card eco-tile--mono" id="solana-evm-wallet-integrations" data-status="COMING"><span class="eco-logo"><span class="eco-mono" aria-hidden="true">SE</span></span><span class="wp-t">Solana &amp; EVM wallets</span><span class="eco-chip">COMING</span><p class="pvc-vh">Allowing Phantom, MetaMask, Rabby, and other wallets to use Starknet's privacy pool.</p></div>
-        <div class="eco-tile wp-card eco-tile--mono" id="spindle-solana-one-click-shielding" data-status="COMING"><span class="eco-logo"><span class="eco-mono" aria-hidden="true">SP</span></span><span class="wp-t">Spindle</span><span class="eco-chip">COMING</span><p class="pvc-vh">Solana one-click shielding: one interface for Solana users to shield their assets on Starknet in a few clicks, with bridging, wallet setup, and everything else abstracted away.</p></div>
-        <div class="eco-tile wp-card" id="sub-accounts" data-status="COMING"><span class="eco-logo"><img src="assets/avatars/Starknet.jpg" alt="" loading="lazy" decoding="async" width="56" height="56"></span><span class="wp-t">Sub-accounts</span><span class="eco-chip">COMING</span><p class="pvc-vh">Fresh Starknet accounts for DeFi created directly from the privacy pool, with no public link to the main account or other sub-accounts.</p></div>
+                <a class="eco-tile wp-card" id="proof-of-privacy-incubator" data-status="COHORT" href="https://x.com/StarknetFndn/status/2074783906264727682" target="_blank" rel="noopener"><span class="eco-logo"><img src="assets/avatars/StarknetFndn.jpg" alt="" loading="lazy" decoding="async" width="56" height="56"></span><span class="wp-t">Proof of Privacy</span><span class="eco-chip">COHORT 01</span><p class="pvc-vh">The Starknet Foundation's incubator for teams building on the pool, cohort 01.</p></a>
+        <div class="eco-tile wp-card eco-tile--soon" id="starknet-enclave" data-status="COMING"><span class="eco-logo"><svg class="eco-soon" viewBox="0 0 56 56" aria-hidden="true"><circle cx="28" cy="28" r="24" stroke-dasharray="4 4"/><circle cx="28" cy="28" r="10"/><path d="M28 21v7l4.5 3"/></svg></span><span class="wp-t">Starknet Enclave</span><span class="eco-chip">COMING</span><p class="pvc-vh">Allowing smart contracts to work with encrypted or hidden information without exposing it publicly onchain.</p></div>
+        <div class="eco-tile wp-card eco-tile--soon" id="beam-pay-by-phone-number" data-status="COMING"><span class="eco-logo"><svg class="eco-soon" viewBox="0 0 56 56" aria-hidden="true"><circle cx="28" cy="28" r="24" stroke-dasharray="4 4"/><circle cx="28" cy="28" r="10"/><path d="M28 21v7l4.5 3"/></svg></span><span class="wp-t">Beam</span><span class="eco-chip">COMING</span><p class="pvc-vh">Pay by phone number: private payments addressed to a phone number, not an 0x address.</p></div>
+        <div class="eco-tile wp-card eco-tile--soon" id="solana-evm-wallet-integrations" data-status="COMING"><span class="eco-logo"><svg class="eco-soon" viewBox="0 0 56 56" aria-hidden="true"><circle cx="28" cy="28" r="24" stroke-dasharray="4 4"/><circle cx="28" cy="28" r="10"/><path d="M28 21v7l4.5 3"/></svg></span><span class="wp-t">Solana &amp; EVM wallets</span><span class="eco-chip">COMING</span><p class="pvc-vh">Allowing Phantom, MetaMask, Rabby, and other wallets to use Starknet's privacy pool.</p></div>
+        <div class="eco-tile wp-card eco-tile--soon" id="spindle-solana-one-click-shielding" data-status="COMING"><span class="eco-logo"><svg class="eco-soon" viewBox="0 0 56 56" aria-hidden="true"><circle cx="28" cy="28" r="24" stroke-dasharray="4 4"/><circle cx="28" cy="28" r="10"/><path d="M28 21v7l4.5 3"/></svg></span><span class="wp-t">Spindle</span><span class="eco-chip">COMING</span><p class="pvc-vh">Solana one-click shielding: one interface for Solana users to shield their assets on Starknet in a few clicks, with bridging, wallet setup, and everything else abstracted away.</p></div>
+        <div class="eco-tile wp-card eco-tile--soon" id="sub-accounts" data-status="COMING"><span class="eco-logo"><svg class="eco-soon" viewBox="0 0 56 56" aria-hidden="true"><circle cx="28" cy="28" r="24" stroke-dasharray="4 4"/><circle cx="28" cy="28" r="10"/><path d="M28 21v7l4.5 3"/></svg></span><span class="wp-t">Sub-accounts</span><span class="eco-chip">COMING</span><p class="pvc-vh">Fresh Starknet accounts for DeFi created directly from the privacy pool, with no public link to the main account or other sub-accounts.</p></div>
       </div>
     </div>
   </div>
@@ -3514,12 +3520,13 @@ var pvVideoChrome = thVideoChrome({
 (function(){
   var root = document.getElementById('ecoLanes');
   if (!root) return;
-  var tiles = [].slice.call(root.querySelectorAll('.eco-tile'));
+  /* notes (data-note) are neither projects nor counted */
+  var tiles = [].slice.call(root.querySelectorAll('.eco-tile:not([data-note])'));
   var ORDER = ['LIVE', 'TESTNET', 'COMING', 'COHORT'];
   var counts = {};
   tiles.forEach(function(t){ var k = t.getAttribute('data-status'); counts[k] = (counts[k] || 0) + 1; });
   root.querySelectorAll('.eco-lane').forEach(function(l){
-    var n = l.querySelectorAll('.eco-tile').length, el = l.querySelector('[data-eco-count]');
+    var n = l.querySelectorAll('.eco-tile:not([data-note])').length, el = l.querySelector('[data-eco-count]');
     if (el) el.textContent = n + ' ' + el.getAttribute('data-eco-count');
   });
   var bar = document.getElementById('ecoFilter');
@@ -3543,6 +3550,7 @@ var pvVideoChrome = thVideoChrome({
     root.classList.toggle('filtered', !!f);
     var shown = 0;
     tiles.forEach(function(t){ var on = !f || t.getAttribute('data-status') === f; t.classList.toggle('f-on', on); if (on) shown++; });
+    root.querySelectorAll('.eco-tile[data-note]').forEach(function(t){ t.classList.toggle('f-on', !f || t.getAttribute('data-status') === f); });
     status.textContent = f ? shown + ' ' + f.toLowerCase() + ' of ' + tiles.length + ' shown' : 'all ' + tiles.length + ' shown';
   });
   tiles.forEach(function(t){
