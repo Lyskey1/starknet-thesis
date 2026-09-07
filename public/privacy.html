@@ -1692,7 +1692,6 @@ h3.pmv-title { margin: 0 0 22px; font-weight: 300; letter-spacing: -.01em; color
 .sp-card[aria-expanded="true"] { border-color: var(--em); }
 #pmvPanel03 .pv-bento { margin-top: 0; }
 #pmvPanel03 .builders { margin-top: 34px; }
-#pmvPanel04 .pmx { margin-top: 0; }
 @media (max-width: 860px) { .pmv-stage { padding: 20px 16px 22px; } }
 /* ============================================================
    SECTION 05, ONE VIEWPORT (2026-09-07). The four-column band with the
@@ -1953,6 +1952,7 @@ body.page-privacy{--qhx-u:min(1vw,14.4px)}
    the ESTIMATED chart. Sticky sub-bar rules unchanged.
    ============================================================ */
 .pmv { margin-top: 16px; }
+.pmv-row { grid-template-columns: repeat(3, minmax(0, 1fr)); max-width: 840px; margin: 0 auto; }
 .pmv-obj { width: 56px; height: 56px; margin-bottom: 4px; }
 .pmv-plinth { height: 40px; }
 .pmv-plinth i { height: 22px; }
@@ -2024,19 +2024,6 @@ h3.pmv-title { margin: 0 0 14px; font-size: clamp(22px, 2vw, 26px); line-height:
 #pmvPanel03 .btile h5 { font-size: 12.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 #pmvPanel03 .btile p { display: none; }
 #pmvPanel03 .btile .ba { margin-left: auto; }
-/* Metrics */
-#pmvPanel04 #poolMetrics .pmx-stats { margin-top: 0; gap: 10px; }
-#pmvPanel04 #poolMetrics .pmx-stat { padding: 10px 14px 10px; }
-#pmvPanel04 #poolMetrics .pmx-stat .v { font-size: clamp(20px, 1.7vw, 24px); margin-top: 5px; }
-#pmvPanel04 #poolMetrics .pmx-stat .s { margin-top: 5px; font-size: 9px; }
-#pmvPanel04 #poolMetrics .pmx-updated { margin-top: 6px; }
-#pmvPanel04 #poolMetrics .pmx-grid { margin-top: 8px; }
-#pmvPanel04 #poolMetrics .pmx-head { flex-direction: row; align-items: baseline; flex-wrap: wrap; gap: 4px 12px; padding: 10px 18px 9px; }
-#pmvPanel04 #poolMetrics .pmx-t { font-size: 16px; }
-#pmvPanel04 #poolMetrics .pmx-body { padding: 8px 18px 0; min-height: 0; }
-#pmvPanel04 #poolMetrics .pmx-legend { margin: 0 0 8px; }
-#pmvPanel04 #poolMetrics .pmx-live { min-height: 130px; }
-#pmvPanel04 #poolMetrics .pmx-src { padding: 6px 18px 10px; }
 @media (max-width: 980px) {
   .pmv-stage { height: auto; overflow: visible; }
   .stamp-wrap { grid-template-columns: 1fr; }
@@ -2125,6 +2112,26 @@ h3.pmv-title { margin: 0 0 14px; font-size: clamp(22px, 2vw, 26px); line-height:
 #pmvPanel03 .builders { margin-top: 4px; }
 @media (max-width: 980px) { .eco-lane { grid-template-columns: 1fr; gap: 8px; } }
 @media (prefers-reduced-motion: reduce) { .eco-tile, .eco-fbtn { transition: none; } }
+/* ============================================================
+   SECTION 05, THE POOL (2026-09-07): main's dashboard grid. KPI row,
+   then shielded (8) + composition (4), then transactions / new users /
+   swaps (4 each), then DeFi routed / revenue / estimated (4 each); every
+   plot at least 220px. The UPDATED stamp rides the kicker line.
+   ============================================================ */
+.th-pm-sec--pool .pmx { margin-top: 26px; }
+.th-pm-eyebrow .pmx-updated { margin-left: 14px; font-family: var(--mono); font-size: 10px; letter-spacing: .12em; color: var(--muted); }
+#poolMetrics .pmx-stats { margin-top: 0; gap: 12px; }
+#poolMetrics .pmx-stat { padding: 14px 18px 14px; }
+#poolMetrics .pmx-stat .v { font-size: clamp(24px, 2.1vw, 30px); margin-top: 8px; }
+#poolMetrics .pmx-stat .s { margin-top: 8px; font-size: 9.5px; }
+#poolMetrics .pmx-grid { margin-top: 12px; gap: 12px; }
+@media (min-width: 981px) { #poolMetrics .pmx-card { grid-column: span var(--span, 12); } }
+#poolMetrics .pmx-body { min-height: 220px; padding: 12px 18px 0; }
+#poolMetrics .pmx-live { min-height: 220px; }
+#poolMetrics .pmx-head { padding: 12px 18px 10px; }
+#poolMetrics .pmx-t { font-size: 18px; }
+#poolMetrics .pmx-legend { margin: 0 0 10px; }
+#poolMetrics .pmx-src { padding: 8px 18px 12px; }
 </style>
 <script src="js/admin-gate.js"></script>
 </head>
@@ -2656,12 +2663,6 @@ h3.pmv-title { margin: 0 0 14px; font-size: clamp(22px, 2vw, 26px); line-height:
         <span class="pmv-plinth" aria-hidden="true"><u></u><i></i></span>
         <span class="pmv-label"><b>03</b>ECOSYSTEM</span>
       </button>
-      <button class="pmv-ped" type="button" role="tab" id="pmvTab04" data-m="3"
-              aria-selected="false" aria-controls="pmvPanel04" tabindex="-1">
-        <span class="pmv-obj" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"><path d="M3.4 20.2h17.2"/><rect x="5" y="13.4" width="4.2" height="6.8" rx="1"/><rect x="10.4" y="9" width="4.2" height="11.2" rx="1"/><rect x="15.8" y="4.6" width="4.2" height="15.6" rx="1"/></svg></span>
-        <span class="pmv-plinth" aria-hidden="true"><u></u><i></i></span>
-        <span class="pmv-label"><b>04</b>METRICS</span>
-      </button>
     </div>
     <div class="pmv-stage" id="pmvStage">
       <div class="pmv-panel" id="pmvPanel01" role="tabpanel" aria-labelledby="pmvTab01">
@@ -2833,41 +2834,78 @@ h3.pmv-title { margin: 0 0 14px; font-size: clamp(22px, 2vw, 26px); line-height:
     </div>
   </div>
 
-  <!-- Live pool metrics. Data comes from the STRK20 dashboard backend
-       (CORS-open; it proxies Starkscan server-side). Cards default to
-       VIEW LIVE fallbacks: readable with JS off, restored on any error. -->
-      </div>
-      <div class="pmv-panel" id="pmvPanel04" role="tabpanel" aria-labelledby="pmvTab04" hidden>
-        <h3 class="pmv-title" id="the-pool-measured-live">The pool, <span class="em">measured live.</span></h3>
-  <div class="pmx th-pm-reveal" id="poolMetrics">
-    <div class="pmx-stats" id="pmxStats"></div>
-    <div class="pmx-updated" id="pmxUpdated"></div>
-    <!-- ONE CHART (2026-09-07): estimated revenue = the protocol's flat fee
-         target (STRK20_TARGET_FEE_USD in js/fee-config.js, the same hook the
-         hero reads) times the backend's daily transaction count, labeled
-         ESTIMATED throughout; the measured cumulative fees stay in the
-         REVENUE pill above. The pill row and this card share one fetch
-         cycle, so they cannot disagree in vintage. -->
-    <div class="pmx-grid">
-      <div class="pmx-card pmx-wide" data-pmx="estimated">
-        <div class="pmx-head"><span class="pmx-t">Estimated revenue</span><span class="pmx-sub">ESTIMATED: FLAT FEE <span data-fee-target>~$0.12</span> &times; DAILY TRANSACTIONS, USD</span></div>
-        <div class="pmx-body"><a class="pmx-live" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">VIEW LIVE &rarr;</a></div>
-        <a class="pmx-src" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">SOURCE: STRK20 DASHBOARD, DAILY TRANSACTIONS &#8599;</a>
-      </div>
-    </div>
-  </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ================= SECTION 05 ================= -->
+<!-- ================= SECTION 05, THE POOL ================= -->
+<!-- MAIN'S FULL METRICS DASHBOARD as its own section (2026-09-07), out of
+     the movement selector. Every number is fetched by the live pool
+     metrics engine below (STRK20 dashboard backend, Starkscan proxied);
+     the cards ship VIEW LIVE fallbacks and no literal figure. This is a
+     dashboard, the one exception to the one-viewport rule: the KPI row and
+     row 2 hold the first viewport, rows 3 and 4 the second; no chart
+     shorter than 220px. Row 4's third card is the ESTIMATED revenue (the
+     flat fee target times daily transactions), labeled as such. -->
+<div class="th-pm-div"></div>
+<section class="th-pm-sec th-pm-sec--pool">
+  <div class="th-pm-head th-pm-reveal"><span class="th-pm-marker"></span><span class="th-pm-num">05</span><h2 id="the-pool-measured-live" class="th-pm-title">The pool, <b>measured live.</b></h2></div>
+  <p class="th-pm-eyebrow th-pm-reveal">The pool <span class="pmx-updated" id="pmxUpdated" aria-live="polite"></span></p>
+  <div class="pmx th-pm-reveal" id="poolMetrics">
+    <div class="pmx-stats" id="pmxStats"></div>
+    <div class="pmx-grid">
+      <div class="pmx-card" data-pmx="shielded" style="--span:8">
+        <div class="pmx-head"><span class="pmx-t">Shielded value over time</span><span class="pmx-sub">USD, STACKED BY ASSET, DAILY</span></div>
+        <div class="pmx-body"><a class="pmx-live" href="https://starkscan.co/privacy-pool" target="_blank" rel="noopener">VIEW LIVE &rarr;</a></div>
+        <a class="pmx-src" href="https://starkscan.co/privacy-pool" target="_blank" rel="noopener">SOURCE: STARKSCAN &#8599;</a>
+      </div>
+      <div class="pmx-card" data-pmx="comp" style="--span:4">
+        <div class="pmx-head"><span class="pmx-t">Pool composition</span><span class="pmx-sub">USD BY ASSET, LATEST</span></div>
+        <div class="pmx-body"><a class="pmx-live" href="https://starkscan.co/privacy-pool" target="_blank" rel="noopener">VIEW LIVE &rarr;</a></div>
+        <a class="pmx-src" href="https://starkscan.co/privacy-pool" target="_blank" rel="noopener">SOURCE: STARKSCAN &#8599;</a>
+      </div>
+      <div class="pmx-card" data-pmx="txs" style="--span:4">
+        <div class="pmx-head"><span class="pmx-t">Transactions</span><span class="pmx-sub">COUNT, DAILY</span></div>
+        <div class="pmx-body"><a class="pmx-live" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">VIEW LIVE &rarr;</a></div>
+        <a class="pmx-src" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">SOURCE: STRK20 DASHBOARD &#8599;</a>
+      </div>
+      <div class="pmx-card" data-pmx="users" style="--span:4">
+        <div class="pmx-head"><span class="pmx-t">New users</span><span class="pmx-sub">VIEWING-KEY REGISTRATIONS, DAILY + CUMULATIVE</span></div>
+        <div class="pmx-body"><a class="pmx-live" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">VIEW LIVE &rarr;</a></div>
+        <a class="pmx-src" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">SOURCE: STRK20 DASHBOARD &#8599;</a>
+      </div>
+      <div class="pmx-card" data-pmx="swaps" style="--span:4">
+        <div class="pmx-head"><span class="pmx-t">Private swap volume</span><span class="pmx-sub">USD BY TOKEN, DAILY</span></div>
+        <div class="pmx-body"><a class="pmx-live" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">VIEW LIVE &rarr;</a></div>
+        <a class="pmx-src" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">SOURCE: STRK20 DASHBOARD &#8599;</a>
+      </div>
+      <div class="pmx-card" data-pmx="defi" style="--span:4">
+        <div class="pmx-head"><span class="pmx-t">DeFi volume privately routed</span><span class="pmx-sub">USD BY PROTOCOL, DAILY</span></div>
+        <div class="pmx-body"><a class="pmx-live" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">VIEW LIVE &rarr;</a></div>
+        <a class="pmx-src" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">SOURCE: STRK20 DASHBOARD &#8599;</a>
+      </div>
+      <div class="pmx-card" data-pmx="revenue" style="--span:4">
+        <div class="pmx-head"><span class="pmx-t">Revenue</span><span class="pmx-sub">PROTOCOL FEES, MEASURED, DAILY + CUMULATIVE</span></div>
+        <div class="pmx-body"><a class="pmx-live" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">VIEW LIVE &rarr;</a></div>
+        <a class="pmx-src" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">SOURCE: STRK20 DASHBOARD &#8599;</a>
+      </div>
+      <div class="pmx-card" data-pmx="estimated" style="--span:4">
+        <div class="pmx-head"><span class="pmx-t">Estimated revenue</span><span class="pmx-sub">ESTIMATED: FLAT FEE <span data-fee-target>~$0.12</span> &times; DAILY TRANSACTIONS</span></div>
+        <div class="pmx-body"><a class="pmx-live" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">VIEW LIVE &rarr;</a></div>
+        <a class="pmx-src" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">SOURCE: STRK20 DASHBOARD, DAILY TRANSACTIONS &#8599;</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SECTION 06 ================= -->
 <div class="th-pm-div"></div>
 <section class="th-pm-sec">
-  <!-- the standard head (marker, 05, kicker), left in the container like
+  <!-- the standard head (marker, 06, kicker), left in the container like
        every other section; the accent block on "not invisible" is main's
        grammar and stays -->
-  <div class="th-pm-head th-pm-reveal"><span class="th-pm-marker"></span><span class="th-pm-num">05</span><h2 id="private-not-invisible" class="th-pm-title">Private, <mark class="pv-hl">not invisible</mark></h2></div>
+  <div class="th-pm-head th-pm-reveal"><span class="th-pm-marker"></span><span class="th-pm-num">06</span><h2 id="private-not-invisible" class="th-pm-title">Private, <mark class="pv-hl">not invisible</mark></h2></div>
   <p class="th-pm-eyebrow th-pm-reveal">The law</p>
 
     <!-- The law, as a four-column feature band. The fanned deck was replaced on
@@ -4045,13 +4083,17 @@ var pvVideoChrome = thVideoChrome({
   // real 9px in a third-width cell exactly as in a full-width one. Height is
   // the card's base, pulled down on narrow cells so the plot never becomes
   // taller than it is wide.
-  var PLOT_H = { shielded: 240, comp: 0, swaps: 190, defi: 210, txs: 190, users: 190, revenue: 210, estimated: 150 };
+  var PLOT_H = { shielded: 260, comp: 0, swaps: 220, defi: 220, txs: 220, users: 220, revenue: 220, estimated: 220 };
   function plotW(k){
-    var w = bodies[k] && bodies[k].el ? bodies[k].el.clientWidth : 0;
+    /* the CONTENT width: the sui skin pads .pmx-body, and a viewBox drawn at
+       the padded width rendered 12% short (193px for a 220px plot) */
+    var el = bodies[k] && bodies[k].el, w = 0;
+    if (el) { var cs = getComputedStyle(el); w = el.clientWidth - parseFloat(cs.paddingLeft || 0) - parseFloat(cs.paddingRight || 0); }
     return Math.max(240, Math.round(w || 520));
   }
   function plotH(k, w){
-    return Math.max(160, Math.min(PLOT_H[k] || 190, Math.round(w * 0.55)));
+    /* no chart shorter than 220px (2026-09-07, the dashboard section) */
+    return Math.max(220, Math.min(PLOT_H[k] || 220, Math.round(w * 0.8)));
   }
   function get(path){
     // cache-busting param: every page load and refresh pulls fresh numbers
