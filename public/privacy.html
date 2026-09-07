@@ -1605,151 +1605,9 @@
     .sq { padding: 72px 12px; }
   }
 
-  /* ============ 04: the app-window chrome (awin-) ============
-     All four movements of section 04 render inside the same window: a large
-     rounded dark surface, a title bar carrying a breadcrumb on the left and
-     tabs on the right, a thin toolbar under it, and the movement's own
-     content inset in the body. The existing wallet card set the treatment;
-     this generalises it so the four read as one family instead of four
-     unrelated blocks.
-
-     The tabs and the breadcrumb are chrome, not controls: they are
-     aria-hidden and unfocusable, because the real tablist is the four
-     pedestals above. A second set of role="tab" nodes inside the panel a
-     tab already owns would announce four tabs inside one tab.
-
-     This block lives at the end of privacy.html's inline <style>, which
-     loads AFTER every linked stylesheet, so nothing in css/*.css can
-     outrank it without an id or !important. */
-  .awin { margin-top: 40px; border: 1px solid var(--line); border-radius: 18px;
-    background: linear-gradient(180deg, var(--bg-raise), #0d0d0d); overflow: hidden;
-    box-shadow: 0 24px 60px rgba(0,0,0,.45); }
-  .awin-bar { display: flex; align-items: center; gap: 14px; min-width: 0;
-    padding: 12px 18px; border-bottom: 1px solid var(--line); background: #141414; }
-  .awin-dots { display: flex; gap: 6px; flex: 0 0 auto; }
-  .awin-dots i { display: block; width: 9px; height: 9px; border-radius: 50%; background: #262626; }
-  .awin-dots i:first-child { background: var(--em); opacity: .8; }
-  /* the breadcrumb is the flexible item: it truncates, the tabs never do */
-  .awin-crumb { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis;
-    white-space: nowrap; font-family: var(--mono); font-size: 11px; letter-spacing: .1em;
-    color: var(--muted); }
-  .awin-crumb b { font-weight: 400; color: rgba(250,250,250,.26); margin: 0 8px; }
-  .awin-crumb em { font-style: normal; color: var(--ink); }
-  .awin-tabs { display: flex; gap: 6px; flex: 0 0 auto; }
-  .awin-tabs span { font-family: var(--mono); font-size: 10px; letter-spacing: .12em;
-    text-transform: uppercase; white-space: nowrap; color: var(--muted);
-    border: 1px solid var(--line); border-radius: 7px; padding: 5px 10px; }
-  .awin-tabs .is-on { color: var(--em); border-color: var(--em-line);
-    background: rgba(var(--accent-rgb), .09); }
-  .awin-tool { display: flex; align-items: center; gap: 12px; min-width: 0;
-    padding: 9px 18px; border-bottom: 1px solid var(--line); background: #0d0d0d; }
-  .awin-arrows { flex: 0 0 auto; display: flex; gap: 8px; font-family: var(--mono);
-    font-size: 12px; line-height: 1; color: rgba(250,250,250,.30); }
-  .awin-path { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis;
-    white-space: nowrap; font-family: var(--mono); font-size: 10.5px; letter-spacing: .08em;
-    color: rgba(250,250,250,.42); border: 1px solid var(--line); border-radius: 99px;
-    padding: 5px 12px; }
-  .awin-status { flex: 0 0 auto; white-space: nowrap; font-family: var(--mono);
-    font-size: 10px; letter-spacing: .14em; color: var(--em); }
-  .awin-body { padding: 22px; }
-  /* components that used to be the panel's outermost box give up their own
-     frame inside the window, so the treatment is one border, never two */
-  .awin-body > .wlt, .awin-body > .pmx, .awin-body > .pv-bento,
-  .awin-body > .builders, .awin-body > .fst { margin-top: 0; }
-  .awin-body > .wlt { border: 0; border-radius: 0; background: none; }
-  .awin-body > .wlt .wlt-bar { padding-left: 0; padding-right: 0; padding-top: 0; }
-  .awin-body > .wlt .wlt-band, .awin-body > .wlt .wlt-foot { padding-left: 0; padding-right: 0; }
-  .awin-body > .wlt .wlt-foot { padding-bottom: 0; border-bottom: 0; }
-  .awin-body > .builders { margin-top: 34px; }
-  .awin-body > .pmx { margin-top: 26px; }
-  @media (max-width: 640px) {
-    /* the breadcrumb plus the tabs cannot both hold their width at 390px,
-       and the breadcrumb is the one that says where you are */
-    .awin-tabs, .awin-status { display: none; }
-    .awin-bar, .awin-tool { padding-left: 13px; padding-right: 13px; }
-    .awin-body { padding: 14px; }
-  }
-
-  /* ---- 04 / movement 01: the base layer as a stack ----
-     The seven properties, verbatim, as seven layers of one stack read top
-     down, over a base plate carrying the two constants that hold at every
-     layer. Its own prefix (fst-) rather than the retired .sp-card, whose
-     paragraphs collapse to max-height 0 unless a script opens them. */
-  .fst-head { font-family: var(--mono); font-size: 11px; letter-spacing: .16em;
-    color: var(--muted); margin-bottom: 16px; }
-  .fst-stack { list-style: none; margin: 0; padding: 0 0 0 26px; position: relative; }
-  /* the spine: one hairline the layers hang off, so the seven read as a
-     stack rather than as seven separate cards */
-  .fst-stack::before { content: ""; position: absolute; left: 8px; top: 10px; bottom: 10px;
-    width: 1px; background: linear-gradient(180deg, var(--em-line), var(--line) 40%, transparent); }
-  .fst-layer { position: relative; display: grid; grid-template-columns: auto minmax(0,1fr);
-    gap: 0 16px; align-items: baseline; border: 1px solid var(--line); border-radius: 10px;
-    background: #0d0d0d; padding: 14px 18px; margin-bottom: 8px;
-    transition: border-color .25s, background .25s; }
-  .fst-layer:last-child { margin-bottom: 0; }
-  .fst-layer:hover { border-color: var(--em-line); background: rgba(var(--accent-rgb), .05); }
-  /* the node on the spine, centred on the layer's first line */
-  .fst-layer::before { content: ""; position: absolute; left: -22.5px; top: 21px;
-    width: 7px; height: 7px; border-radius: 50%; background: #0d0d0d;
-    border: 1px solid var(--em-line); transition: background .25s; }
-  .fst-layer:hover::before { background: var(--em); }
-  .fst-n { font-family: var(--mono); font-size: 10.5px; letter-spacing: .16em;
-    color: var(--em); grid-row: 1 / span 2; align-self: start; padding-top: 3px; }
-  .fst-layer h5 { font-family: var(--display); font-weight: 700; font-size: 15px; margin: 0; }
-  .fst-layer p { font-size: 13px; line-height: 1.6; color: var(--muted); margin: 6px 0 0; }
-  .fst-layer p b { color: var(--ink); }
-  .fst-base { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; padding: 14px 18px;
-    border: 1px solid var(--em-line); border-radius: 10px;
-    background: linear-gradient(180deg, rgba(var(--accent-rgb), .09), rgba(var(--accent-rgb), .03)); }
-  .fst-chip { font-family: var(--mono); font-size: 12px; line-height: 1; letter-spacing: .1em;
-    color: var(--em); border: 1px solid var(--em-line); border-radius: 99px;
-    padding: 9px 14px; background: #0d0d0d; white-space: nowrap; }
-  @media (max-width: 560px) {
-    .fst-stack { padding-left: 0; }
-    .fst-stack::before, .fst-layer::before { display: none; }
-    .fst-layer { padding: 13px 14px; }
-    .fst-chip { font-size: 11px; letter-spacing: .06em; white-space: normal; }
-  }
-
-  /* ---- 04 / movement 03: the ecosystem field inside the window ----
-     A fixed pixel height, not an aspect-ratio: the stage that owns section
-     04 measures the incoming panel to animate its own height, and it does
-     that while the panel is still hidden, where a ratio box resolves to
-     zero. peo- prefix and #pvEcoOrb are this instance's alone; #ecoGlobe
-     and .eg- belong to the ecosystem page's full-screen flight. */
-  .peo { position: relative; height: 340px; border: 1px solid var(--line);
-    border-radius: 12px; overflow: hidden; background: #0d0d0d; }
-  .peo::after { content: ""; position: absolute; inset: 0; pointer-events: none;
-    background: radial-gradient(ellipse at center, transparent 52%, rgba(13,13,13,.85) 100%); }
-  .peo-stage { position: absolute; inset: 0; }
-  .peo-stage canvas { display: block; width: 100%; height: 100%; }
-  .peo-chip { position: absolute; left: 14px; bottom: 14px; z-index: 2; display: grid; gap: 3px;
-    max-width: calc(100% - 28px); opacity: 0; transition: opacity .4s ease; }
-  .peo-chip.on { opacity: 1; }
-  .peo-chip-name { font-family: var(--mono); font-size: 11.5px; letter-spacing: .08em;
-    color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .peo-chip-role { font-family: var(--mono); font-size: 10px; letter-spacing: .12em;
-    text-transform: uppercase; color: var(--em); overflow: hidden; text-overflow: ellipsis;
-    white-space: nowrap; }
-  .peo-stats { position: absolute; right: 14px; top: 14px; z-index: 2; display: flex;
-    align-items: baseline; gap: 8px; font-family: var(--mono); font-size: 10px;
-    letter-spacing: .14em; color: var(--muted); }
-  .peo-stats b { font-size: 14px; font-weight: 500; color: var(--em); }
-  .peo-cap { font-family: var(--mono); font-size: 11px; letter-spacing: .1em;
-    color: var(--muted); margin: 12px 0 0; }
-  @media (max-width: 640px) { .peo { height: 260px; } }
-  @media (prefers-reduced-motion: reduce) { .peo-chip { transition: none; } }
-
-  /* ---- 04 / movement 04: the live dashboard, framed ---- */
-  .pmf { border: 1px solid var(--line); border-radius: 12px; overflow: hidden;
-    background: #0d0d0d; }
-  .pmf iframe { display: block; width: 100%; height: 760px; border: 0; background: #0d0d0d; }
-  .pmf-fall { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between;
-    gap: 10px; padding: 12px 16px; border-top: 1px solid var(--line);
-    font-family: var(--mono); font-size: 10.5px; letter-spacing: .1em; color: var(--muted); }
-  .pmf-fall a { color: var(--em); text-decoration: underline; text-underline-offset: 3px;
-    white-space: nowrap; }
-  @media (max-width: 640px) { .pmf iframe { height: 560px; } }
+  /* the window frames (awin-), the base-layer stack (fst-), the ecosystem orb
+     (peo-, js/pv-eco-orb.js) and the dashboard iframe (pmf-) left on
+     2026-09-07 for main's four movements in vesper's skin */
 
 /* ============================================================
    SECTION 05, THE LAW, at the reference section's proportions.
@@ -1777,185 +1635,6 @@
   .th-pm-sec--law .pl{padding-inline:16px;}
 }
 
-/* ============================================================
-   SECTION 04 AS A MISTRAL-STYLE PRODUCT SURFACE (2026-09-02)
-   Mistral's framed product-section anatomy, translated into the Starknet
-   Thesis dark palette. The existing movement markup and tab script stay
-   intact; this is a skin over the same four panels.
-   ============================================================ */
-.th-pm-sec--mistral{
-  --mi-bg:#070303;--mi-ink:#fafafa;--mi-muted:#9a8f8a;
-  --mi-line:rgba(250,250,250,.12);--mi-orange:#c53400;--mi-orange-2:#e85b27;
-  width:100vw;max-width:none;margin:0 calc(50% - 50vw);padding:0 0 64px;
-  background:
-    radial-gradient(circle at 82% 20%,rgba(197,52,0,.16),transparent 34%),
-    radial-gradient(circle at 16% 74%,rgba(197,52,0,.10),transparent 32%),
-    linear-gradient(180deg,#070303,#0d0503 48%,#070303);
-  background-color:#070303!important;color:var(--mi-ink);border-top:1px solid var(--mi-line);
-  border-bottom:1px solid var(--mi-line);overflow:hidden;
-}
-body section.th-pm-sec--mistral{background-color:#070303!important;}
-.th-pm-sec--mistral::before{display:none;}
-.th-pm-sec--mistral>.th-pm-head,
-.th-pm-sec--mistral>.th-pm-eyebrow,
-.th-pm-sec--mistral>.th-pm-intro,
-.th-pm-sec--mistral>.pmv{max-width:1440px;margin-left:auto;margin-right:auto;}
-.th-pm-sec--mistral>.th-pm-head{
-  display:grid;grid-template-columns:auto auto minmax(0,1fr);align-items:end;
-  gap:18px;padding:44px 32px 34px;border-bottom:1px solid var(--mi-line);
-}
-.th-pm-sec--mistral .th-pm-marker{border-left-color:var(--mi-orange);filter:none;}
-.th-pm-sec--mistral .th-pm-num{color:var(--mi-orange);font-size:clamp(52px,6.2vw,90px);}
-.th-pm-sec--mistral .th-pm-title{
-  color:var(--mi-ink);font-weight:300;font-size:clamp(42px,5.2vw,76px);
-  line-height:.98;letter-spacing:-.04em;
-}
-.th-pm-sec--mistral>.th-pm-eyebrow{
-  color:var(--mi-orange-2);padding:26px 32px 0;margin-top:0;
-}
-.th-pm-sec--mistral>.th-pm-intro{
-  color:rgba(250,250,250,.72);font-size:clamp(20px,2vw,28px);line-height:1.32;
-  max-width:1440px;padding:22px 32px 0;margin-top:0;
-}
-.th-pm-sec--mistral .pmv{margin-top:30px;padding:0 32px;}
-.th-pm-sec--mistral .pmv-row{
-  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;
-  border:1px solid var(--mi-line);border-bottom:0;border-radius:0;background:rgba(8,5,4,.78);
-}
-.th-pm-sec--mistral .pmv.stick-on .pmv-row{position:static;top:auto;z-index:auto;}
-.th-pm-sec--mistral .pmv.is-stuck .pmv-row{
-  gap:0;padding:0;margin:0;background:rgba(8,5,4,.94);box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none;
-}
-.th-pm-sec--mistral .pmv-spacer{display:none;}
-.th-pm-sec--mistral .pmv-ped,
-.th-pm-sec--mistral .pmv.is-stuck .pmv-ped{
-  min-height:64px;display:flex;align-items:center;justify-content:flex-start;gap:12px;
-  padding:0 20px;border:0;border-left:1px solid var(--mi-line);border-radius:0;
-  background:transparent;color:var(--mi-ink);opacity:1;
-}
-.th-pm-sec--mistral .pmv-ped:first-child{border-left:0;}
-.th-pm-sec--mistral .pmv-ped::before{display:none;}
-.th-pm-sec--mistral .pmv-obj,
-.th-pm-sec--mistral .pmv.is-stuck .pmv-obj{
-  width:22px;height:22px;margin:0;color:var(--mi-ink);filter:none;transform:none;align-self:center;
-}
-.th-pm-sec--mistral .pmv-ped[aria-selected="true"] .pmv-obj{color:var(--mi-orange);transform:none;filter:none;}
-.th-pm-sec--mistral .pmv-plinth{display:none;}
-.th-pm-sec--mistral .pmv-label,
-.th-pm-sec--mistral .pmv.is-stuck .pmv-label{
-  position:static;width:auto;height:auto;clip:auto;clip-path:none;overflow:hidden;text-overflow:ellipsis;
-  margin:0;font-family:var(--display);font-size:16px;letter-spacing:-.01em;color:var(--mi-ink);
-  text-transform:none;white-space:nowrap;
-}
-.th-pm-sec--mistral .pmv-label b{font-family:var(--mono);font-size:12px;letter-spacing:.12em;color:var(--mi-orange);margin-right:8px;}
-.th-pm-sec--mistral .pmv-ped[aria-selected="true"]{background:rgba(197,52,0,.10);}
-.th-pm-sec--mistral .pmv-ped:focus-visible{outline:2px solid var(--mi-orange);outline-offset:-2px;}
-.th-pm-sec--mistral .pmv-stage{
-  margin-top:0;padding-top:0;border:1px solid var(--mi-line);overflow:hidden;
-  background:rgba(8,5,4,.60);transition:height .42s var(--hover-ease);
-}
-.th-pm-sec--mistral .pmv-panel{padding:42px 0 0;}
-.th-pm-sec--mistral .pmv-title{
-  max-width:none;margin:0 0 34px;padding:0 24px;color:var(--mi-ink);
-  font-weight:700;font-size:clamp(34px,4.8vw,70px);line-height:.98;letter-spacing:-.045em;
-}
-.th-pm-sec--mistral .pmv-title .em{color:var(--mi-orange);}
-.th-pm-sec--mistral .awin{
-  position:relative;margin:0;border:0;border-radius:0;
-  background:linear-gradient(135deg,#2b0903 0%,#c53400 46%,#7b1607 100%);
-  min-height:clamp(480px,52vw,720px);padding:clamp(32px,5vw,74px);
-  box-shadow:none;overflow:hidden;
-}
-.th-pm-sec--mistral .awin::before{
-  content:"";position:absolute;inset:0;pointer-events:none;opacity:.24;
-  background-image:
-    linear-gradient(rgba(250,250,250,.20) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(250,250,250,.20) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(0,0,0,.10) 0 10%,transparent 10% 18%,rgba(250,250,250,.08) 18% 24%,transparent 24% 100%);
-  background-size:92px 92px,92px 92px,100% 100%;
-}
-.th-pm-sec--mistral .awin::after{
-  content:"";position:absolute;left:15%;right:15%;top:30%;height:42%;
-  border:2px solid rgba(250,250,250,.40);border-top:0;border-bottom:0;
-  opacity:.55;pointer-events:none;
-}
-.th-pm-sec--mistral .awin-bar,
-.th-pm-sec--mistral .awin-tool{display:none;}
-.th-pm-sec--mistral .awin-body{
-  position:relative;z-index:1;min-height:clamp(360px,37vw,520px);display:grid;
-  place-items:center;padding:0;
-}
-.th-pm-sec--mistral .awin-body>.fst,
-.th-pm-sec--mistral .awin-body>.wlt,
-.th-pm-sec--mistral .awin-body>.pmf,
-.th-pm-sec--mistral .awin-body>.pmx,
-.th-pm-sec--mistral .awin-body>.pv-bento{
-  width:min(760px,100%);max-height:min(520px,70vh);overflow:auto;
-  border:1px solid rgba(250,250,250,.14);border-radius:0;
-  background:linear-gradient(180deg,rgba(13,13,13,.94),rgba(7,7,7,.96));
-  color:var(--mi-ink);box-shadow:0 22px 60px rgba(0,0,0,.46);
-}
-.th-pm-sec--mistral .awin-body>.fst{padding:22px;}
-.th-pm-sec--mistral .fst-head,
-.th-pm-sec--mistral .wlt-gl,
-.th-pm-sec--mistral .wn,
-.th-pm-sec--mistral .bnt-n,
-.th-pm-sec--mistral .bnt-sum,
-.th-pm-sec--mistral .pmx-sub{color:rgba(250,250,250,.48);}
-.th-pm-sec--mistral .fst-layer,
-.th-pm-sec--mistral .wp-card,
-.th-pm-sec--mistral .pmx-card,
-.th-pm-sec--mistral .pmf{
-  border-color:rgba(250,250,250,.12);background:#0d0d0d;color:var(--mi-ink);
-}
-.th-pm-sec--mistral .fst-layer h5,
-.th-pm-sec--mistral .fst-layer p b,
-.th-pm-sec--mistral .wp-t,
-.th-pm-sec--mistral .wp-card h5,
-.th-pm-sec--mistral .bnt h5,
-.th-pm-sec--mistral .pmx-t{color:var(--mi-ink);}
-.th-pm-sec--mistral .fst-layer p,
-.th-pm-sec--mistral .wp-card p,
-.th-pm-sec--mistral .wlt-row,
-.th-pm-sec--mistral .pmx-card{color:rgba(250,250,250,.62);}
-.th-pm-sec--mistral .fst-n,
-.th-pm-sec--mistral .fst-chip,
-.th-pm-sec--mistral .bnt-fbtn,
-.th-pm-sec--mistral .wp-row .pill.live,
-.th-pm-sec--mistral .bnt-chip .pill.live{color:var(--mi-orange);border-color:rgba(255,79,15,.38);}
-.th-pm-sec--mistral .fst-stack::before{background:linear-gradient(180deg,var(--mi-orange),rgba(250,250,250,.14) 44%,transparent);}
-.th-pm-sec--mistral .fst-layer::before{background:#0d0d0d;border-color:var(--mi-orange);}
-.th-pm-sec--mistral .fst-base{border-color:rgba(197,52,0,.42);background:rgba(197,52,0,.08);}
-.th-pm-sec--mistral .fst-chip{background:#0d0d0d;}
-.th-pm-sec--mistral .wlt-val .rv,
-.th-pm-sec--mistral .em,
-.th-pm-sec--mistral .ba{color:var(--mi-orange);}
-.th-pm-sec--mistral .peo,
-.th-pm-sec--mistral .peo-cap{display:none;}
-.th-pm-sec--mistral .pv-bento{padding:18px;background:#0d0d0d;}
-.th-pm-sec--mistral .builders{display:none;}
-.th-pm-sec--mistral .pmf iframe{height:360px;background:#0d0d0d;}
-.th-pm-sec--mistral .pmf-fall{border-color:rgba(250,250,250,.12);color:rgba(250,250,250,.48);}
-.th-pm-sec--mistral .pmf-fall a{color:var(--mi-orange);}
-@media(max-width:900px){
-  .th-pm-sec--mistral>.th-pm-head{grid-template-columns:auto minmax(0,1fr);padding:34px 20px 26px;}
-  .th-pm-sec--mistral .th-pm-marker{display:none;}
-  .th-pm-sec--mistral>.th-pm-eyebrow,
-  .th-pm-sec--mistral>.th-pm-intro,
-  .th-pm-sec--mistral .pmv{padding-left:20px;padding-right:20px;}
-  .th-pm-sec--mistral .pmv-row{grid-template-columns:repeat(2,minmax(0,1fr));}
-  .th-pm-sec--mistral .pmv-ped:nth-child(odd){border-left:0;}
-  .th-pm-sec--mistral .pmv-ped:nth-child(n+3){border-top:1px solid var(--mi-line);}
-  .th-pm-sec--mistral .pmv-panel{padding-top:28px;}
-  .th-pm-sec--mistral .awin{padding:22px;min-height:420px;}
-}
-@media(max-width:560px){
-  .th-pm-sec--mistral .pmv-row{grid-template-columns:1fr;}
-  .th-pm-sec--mistral .pmv-ped{border-left:0;border-top:1px solid var(--mi-line);}
-  .th-pm-sec--mistral .pmv-ped:first-child{border-top:0;}
-  .th-pm-sec--mistral .awin{padding:16px;}
-  .th-pm-sec--mistral .pmv-label{font-size:15px;}
-}
 /* ============================================================
    SECTION 01, ONE VIEWPORT (2026-09-07). Main's device in vesper's skin:
    numbered head, 17px intro, then the stage (three glass plates over the
@@ -2177,6 +1856,33 @@ body section.th-pm-sec--mistral{background-color:#070303!important;}
 .pcore-item .elim { font-family: var(--mono); font-size: 11px; letter-spacing: .12em; color: var(--danger); margin-top: 12px; }
 .pcore-link { color: var(--em); text-decoration: underline; text-underline-offset: 3px; }
 @media (prefers-reduced-motion: reduce) { .pcore-item, .pcore-item.is-on { transition: none; } }
+/* ============================================================
+   SECTION 04, main's four movements in vesper's skin (2026-09-07). The
+   glass platters with their icons select; the panel is a CONTAINED glass
+   card (the shipped --card-glass recipe), not a full-bleed band. Panel
+   titles are h3s. Sticky sub-bar: js/sticky-rail.js, flush under the
+   nav (--pmv-stick-top is the nav's measured height), released at the
+   section's end because #pmv is the section's last child.
+   ============================================================ */
+.pmv-stage { margin-top: 34px; border: 1px solid var(--card-glass-border); border-top: 1px solid var(--card-glass-border);
+  border-radius: 16px; padding: 28px 28px 30px;
+  background: var(--card-glass-fill);
+  -webkit-backdrop-filter: blur(var(--card-glass-blur)) saturate(var(--card-glass-sat));
+          backdrop-filter: blur(var(--card-glass-blur)) saturate(var(--card-glass-sat));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.14), 0 18px 50px -30px rgba(0,0,0,.9); }
+@supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) { .pmv-stage { background: #0d0d0d; } }
+.pmv.stick-on .pmv-row { top: var(--pmv-stick-top, 64px); }
+.pmv.is-stuck .pmv-row { background: rgba(10, 10, 10, .96); }
+h3.pmv-title { margin: 0 0 22px; font-weight: 300; letter-spacing: -.01em; color: var(--ink); }
+.pmv-panel .th-pm-reveal { margin-top: 0; }
+.stamp-wrap { margin-top: 0; }
+.sp-card { cursor: pointer; }
+.sp-card:focus-visible { outline: 2px solid var(--em); outline-offset: 2px; }
+.sp-card[aria-expanded="true"] { border-color: var(--em); }
+#pmvPanel03 .pv-bento { margin-top: 0; }
+#pmvPanel03 .builders { margin-top: 34px; }
+#pmvPanel04 .pmx { margin-top: 0; }
+@media (max-width: 860px) { .pmv-stage { padding: 20px 16px 22px; } }
 </style>
 <script src="js/admin-gate.js"></script>
 </head>
@@ -2700,7 +2406,7 @@ body section.th-pm-sec--mistral{background-color:#070303!important;}
 
 <!-- ================= SECTION 04 ================= -->
 <div class="th-pm-div"></div>
-<section class="th-pm-sec th-pm-sec--mistral">
+<section class="th-pm-sec">
   <div class="th-pm-head th-pm-reveal"><span class="th-pm-marker"></span><span class="th-pm-num">04</span><h2 id="the-most-complete-privacy-ecosystem" class="th-pm-title">The most complete privacy ecosystem</h2></div>
   <p class="th-pm-eyebrow th-pm-reveal">The ecosystem</p>
   <p class="th-pm-intro th-pm-reveal">From first announcement to a live, multi-asset, wallet-native privacy system: in under a year. Here is what is live today, and the foundation it stands on.</p>
@@ -2739,37 +2445,40 @@ body section.th-pm-sec--mistral{background-color:#070303!important;}
     </div>
     <div class="pmv-stage" id="pmvStage">
       <div class="pmv-panel" id="pmvPanel01" role="tabpanel" aria-labelledby="pmvTab01">
-        <div class="pmv-title">The foundation <span class="em">everything builds on.</span></div>
-  <div class="awin th-pm-reveal" id="awinFoundations">
-    <div class="awin-bar">
-      <span class="awin-dots" aria-hidden="true"><i></i><i></i><i></i></span>
-      <span class="awin-crumb" aria-hidden="true">starknet<b>/</b>privacy<b>/</b><em>base layer</em></span>
-      <span class="awin-tabs" aria-hidden="true"><span class="is-on">stack</span><span>properties</span></span>
-    </div>
-    <div class="awin-tool" aria-hidden="true">
-      <span class="awin-arrows"><span>&lsaquo;</span><span>&rsaquo;</span></span>
-      <span class="awin-path">strk20://base-layer/properties</span>
-      <span class="awin-status">7 LAYERS</span>
-    </div>
-    <div class="awin-body">
-      <div class="fst">
-        <div class="fst-head">SEVEN PROPERTIES OF THE BASE LAYER</div>
-        <ol class="fst-stack">
-          <li class="fst-layer"><span class="fst-n">01</span><h5>One pool for all assets</h5><p>A first in crypto: STRK, USDC, USDT, ETH, BTC, memecoins... <b>ALL crypto assets in the same pool</b>. Every new user and asset deepens the same crowd.</p></li>
-          <li class="fst-layer"><span class="fst-n">02</span><h5>Any amount, no denominations</h5><p>Where Tornado forced fixed sizes and fragmented its crowd, the Starknet pool takes arbitrary amounts through note splitting and merging.</p></li>
-          <li class="fst-layer"><span class="fst-n">03</span><h5>Fee: ~$0.12 per action</h5><p>Shielding a billion dollars costs the same as shielding a hundred: the fee is charged per action, not per amount. The protocol targets about $0.12 per action and settles it in STRK; the STRK amount floats, adjusted by the protocol as the price moves.</p></li>
-          <li class="fst-layer"><span class="fst-n">04</span><h5>Best-in-class UX</h5><p>A few clicks inside Ready or Xverse, settled in seconds. No separate app, no new seed phrase, no protocol to learn.</p></li>
-          <li class="fst-layer"><span class="fst-n">05</span><h5>Security-first stack</h5><p>Public whitepaper, OpenZeppelin audit, formal Lean model with machine-checked theorems, and fully open source under Apache 2.0.</p></li>
-          <li class="fst-layer"><span class="fst-n">06</span><h5>Deep DeFi integration</h5><p>The pool plugs straight into live Starknet DeFi: private swaps, lending, staking, yield, all atomic, your funds never sitting at a public address in between. And it already reaches other ecosystems: anonymous trading on Polymarket's liquidity works today, straight from an EVM wallet.</p></li>
-          <li class="fst-layer"><span class="fst-n">07</span><h5>A compliance path built in</h5><p>Private to the market, transparent to the law. <b>Section 05 below.</b></p></li>
-        </ol>
-        <div class="fst-base">
-          <span class="fst-chip">FEE: ~$0.12 · PAID IN STRK</span>
-          <span class="fst-chip">SHIELDED IN SECONDS</span>
+        <!-- the band's line is the tab's h3 (2026-09-07); the full-bleed band is gone -->
+        <h3 class="pmv-title" id="the-foundation-everything-builds-on">The foundation <span class="em">everything builds on.</span></h3>
+  <!-- main's shield-stamp device (the logo panel, js loop below) beside the
+       seven base-layer properties. The properties expand on click, one open
+       at a time; the loop's own cycling stops once a reader pins one. -->
+  <div class="stamp-wrap th-pm-reveal" id="shieldStamp">
+    <div class="stamp-stage">
+      <div class="ss-scene">
+        <div class="ss-stamp" id="ssStamp" aria-hidden="true"><div class="ss-handle"></div><div class="ss-head">[ ]</div></div>
+        <div class="ss-coin in" id="ssCoin">
+          <div class="ss-ring" id="ssRing"></div>
+          <img class="ss-logo" id="ssLogo" src="assets/tokens/btc.png" alt="BTC logo">
+          <span class="ss-fallback" id="ssFb" hidden>&#8383;</span>
+          <span class="ss-tick tl"></span><span class="ss-tick tr"></span><span class="ss-tick bl"></span><span class="ss-tick br"></span>
         </div>
       </div>
+      <div class="ss-amount" id="ssAmount">14,532 BTC</div>
+      <div class="ss-chips">
+        <span class="ss-chip" id="ssChip1">FEE: <span data-fee-target>~$0.12</span> &middot; PAID IN STRK</span>
+        <span class="ss-chip" id="ssChip2">SHIELDED IN SECONDS</span>
+      </div>
+    </div>
+    <div class="stamp-props" id="stampProps">
+      <div class="sp-head">SEVEN PROPERTIES OF THE BASE LAYER</div>
+      <div class="sp-card" role="button" tabindex="0" aria-expanded="false"><div class="n">01</div><h5>One pool for all assets</h5><p>A first in crypto: STRK, USDC, USDT, ETH, BTC, memecoins... <b>ALL crypto assets in the same pool</b>. Every new user and asset deepens the same crowd.</p></div>
+      <div class="sp-card" role="button" tabindex="0" aria-expanded="false"><div class="n">02</div><h5>Any amount, no denominations</h5><p>Where Tornado forced fixed sizes and fragmented its crowd, the Starknet pool takes arbitrary amounts through note splitting and merging.</p></div>
+      <div class="sp-card" role="button" tabindex="0" aria-expanded="false"><div class="n">03</div><h5>Fee: <span data-fee-target>~$0.12</span> per action</h5><p>Shielding a billion dollars costs the same as shielding a hundred: the fee is charged per action, not per amount. The protocol targets about <span data-fee-target="plain">$0.12</span> per action and settles it in STRK; the STRK amount floats, adjusted by the protocol as the price moves.</p></div>
+      <div class="sp-card" role="button" tabindex="0" aria-expanded="false"><div class="n">04</div><h5>Best-in-class UX</h5><p>A few clicks inside Ready or Xverse, settled in seconds. No separate app, no new seed phrase, no protocol to learn.</p></div>
+      <div class="sp-card" role="button" tabindex="0" aria-expanded="false"><div class="n">05</div><h5>Security-first stack</h5><p>Public whitepaper, OpenZeppelin audit, formal Lean model with machine-checked theorems, and fully open source under Apache 2.0.</p></div>
+      <div class="sp-card" role="button" tabindex="0" aria-expanded="false"><div class="n">06</div><h5>Deep DeFi integration</h5><p>The pool plugs straight into live Starknet DeFi: private swaps, lending, staking, yield, all atomic, your funds never sitting at a public address in between. And it already reaches other ecosystems: anonymous trading on Polymarket's liquidity works today, straight from an EVM wallet.</p></div>
+      <div class="sp-card" role="button" tabindex="0" aria-expanded="false"><div class="n">07</div><h5>A compliance path built in</h5><p>Private to the market, transparent to the law. <b>Section 05 below.</b></p></div>
     </div>
   </div>
+
   <!-- Redactable wallet card. Every value column is a real string plus a
        same-length block-glyph mask plus an sr-only "redacted"; the row class
        swaps which one is live, so masking can never change a width or a
@@ -2777,19 +2486,7 @@ body section.th-pm-sec--mistral{background-color:#070303!important;}
        footer states outright. -->
       </div>
       <div class="pmv-panel" id="pmvPanel02" role="tabpanel" aria-labelledby="pmvTab02" hidden>
-        <div class="pmv-title">What users get, <span class="em">in one wallet.</span></div>
-  <div class="awin th-pm-reveal" id="awinWallet">
-    <div class="awin-bar">
-      <span class="awin-dots" aria-hidden="true"><i></i><i></i><i></i></span>
-      <span class="awin-crumb" aria-hidden="true">starknet<b>/</b>privacy<b>/</b><em>one wallet</em></span>
-      <span class="awin-tabs" aria-hidden="true"><span class="is-on">wallet</span><span>activity</span><span>defi</span></span>
-    </div>
-    <div class="awin-tool" aria-hidden="true">
-      <span class="awin-arrows"><span>&lsaquo;</span><span>&rsaquo;</span></span>
-      <span class="awin-path">strk20://wallet/two-states</span>
-      <span class="awin-status">DEMO</span>
-    </div>
-    <div class="awin-body">
+        <h3 class="pmv-title" id="what-users-get-in-one-wallet">What users get, <span class="em">in one wallet.</span></h3>
   <div class="wlt th-pm-reveal" id="wlt">
     <div class="wlt-bar">
       <span class="wlt-eyebrow wlt-swap" id="wltEyebrow">
@@ -2828,26 +2525,9 @@ body section.th-pm-sec--mistral{background-color:#070303!important;}
     </div>
     <p class="pvc-vh" id="wltLive" role="status" aria-live="polite"></p>
   </div>
-    </div>
-  </div>
       </div>
       <div class="pmv-panel" id="pmvPanel03" role="tabpanel" aria-labelledby="pmvTab03" hidden>
-        <div class="pmv-title">Three fronts are building <span class="em">on top of it.</span></div>
-  <div class="awin th-pm-reveal" id="awinEco">
-    <div class="awin-bar">
-      <span class="awin-dots" aria-hidden="true"><i></i><i></i><i></i></span>
-      <span class="awin-crumb" aria-hidden="true">starknet<b>/</b>privacy<b>/</b><em>ecosystem</em></span>
-      <span class="awin-tabs" aria-hidden="true"><span class="is-on">field</span><span>defi</span><span>pipeline</span></span>
-    </div>
-    <div class="awin-tool" aria-hidden="true">
-      <span class="awin-arrows"><span>&lsaquo;</span><span>&rsaquo;</span></span>
-      <span class="awin-path">strk20://ecosystem/three-fronts</span>
-      <span class="awin-status">3 FRONTS</span>
-    </div>
-    <div class="awin-body">
-      <div class="peo" id="pvEcoOrb" role="img"
-           aria-label="Particle field of Starknet ecosystem project logos, decorative"></div>
-      <p class="peo-cap">THE STARKNET ECOSYSTEM THE POOL PLUGS INTO. ILLUSTRATIVE FIELD.</p>
+        <h3 class="pmv-title" id="three-fronts-are-building-on-top">Three fronts are building <span class="em">on top of it.</span></h3>
   <div class="pv-bento th-pm-reveal">
       <div class="gx-bloom" aria-hidden="true">
         <i style="--bc:var(--em);left:8%;top:4%;width:32%;height:34%"></i>
@@ -3008,7 +2688,6 @@ body section.th-pm-sec--mistral{background-color:#070303!important;}
         <span class="ba">→</span>
       </a>
     </div>
-  </div>    </div>
   </div>
 
   <!-- Live pool metrics. Data comes from the STRK20 dashboard backend
@@ -3016,26 +2695,7 @@ body section.th-pm-sec--mistral{background-color:#070303!important;}
        VIEW LIVE fallbacks: readable with JS off, restored on any error. -->
       </div>
       <div class="pmv-panel" id="pmvPanel04" role="tabpanel" aria-labelledby="pmvTab04" hidden>
-        <div class="pmv-title">The pool, <span class="em">measured live.</span></div>
-  <div class="awin th-pm-reveal" id="awinMetrics">
-    <div class="awin-bar">
-      <span class="awin-dots" aria-hidden="true"><i></i><i></i><i></i></span>
-      <span class="awin-crumb" aria-hidden="true">starknet<b>/</b>privacy<b>/</b><em>metrics</em></span>
-      <span class="awin-tabs" aria-hidden="true"><span class="is-on">dashboard</span><span>charts</span></span>
-    </div>
-    <div class="awin-tool" aria-hidden="true">
-      <span class="awin-arrows"><span>&lsaquo;</span><span>&rsaquo;</span></span>
-      <span class="awin-path">https://strk20.starknet.io/dashboard</span>
-      <span class="awin-status">LIVE</span>
-    </div>
-    <div class="awin-body">
-      <div class="pmf">
-        <iframe src="https://strk20.starknet.io/dashboard" loading="lazy"
-                title="STRK20 live pool dashboard"
-                referrerpolicy="no-referrer-when-downgrade"></iframe>
-        <p class="pmf-fall">LIVE STRK20 DASHBOARD, EMBEDDED.
-          <a href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">OPEN THE DASHBOARD &#8599;</a></p>
-      </div>
+        <h3 class="pmv-title" id="the-pool-measured-live">The pool, <span class="em">measured live.</span></h3>
   <div class="pmx th-pm-reveal" id="poolMetrics">
     <div class="pmx-stats" id="pmxStats"></div>
     <div class="pmx-updated" id="pmxUpdated"></div>
@@ -3079,7 +2739,6 @@ body section.th-pm-sec--mistral{background-color:#070303!important;}
         <a class="pmx-src" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">SOURCE: STRK20 DASHBOARD ↗</a>
       </div>
     </div>
-  </div>    </div>
   </div>
       </div>
     </div>
@@ -4086,7 +3745,7 @@ var pvVideoChrome = thVideoChrome({
     amount.textContent = '[ ' + t.sym + ' &middot; AMOUNT HIDDEN ]';
     amount.classList.add('sealed');
   }
-  function setProp(i){ cards.forEach(function(c, j){ c.classList.toggle('on', j === i); }); }
+  function setProp(i){ if (props.dataset.pinned) return; cards.forEach(function(c, j){ c.classList.toggle('on', j === i); }); }
 
   // Desktop: the wrap's height is driven by the props column, so reserve the
   // tallest single description expansion up front: cycling the open card can
@@ -4138,9 +3797,21 @@ var pvVideoChrome = thVideoChrome({
   var ti = 0, pi = 0, paused = false, timers = [];
   props.addEventListener('mouseenter', function(){
     paused = true;
-    cards.forEach(function(c){ c.classList.remove('on'); }); // hovered card highlights via :hover
+    if (!props.dataset.pinned) cards.forEach(function(c){ c.classList.remove('on'); }); // hovered card highlights via :hover
   });
   props.addEventListener('mouseleave', function(){ paused = false; setProp(pi); });
+  /* click (or Enter / Space) pins one property open and retires the cycle;
+     clicking the open one closes it and lets the cycle resume */
+  cards.forEach(function(c, i){
+    function pin(){
+      var open = c.classList.contains('on') && props.dataset.pinned;
+      cards.forEach(function(x){ x.classList.remove('on'); x.setAttribute('aria-expanded', 'false'); });
+      if (open) { delete props.dataset.pinned; pi = i; return; }
+      props.dataset.pinned = '1'; c.classList.add('on'); c.setAttribute('aria-expanded', 'true');
+    }
+    c.addEventListener('click', pin);
+    c.addEventListener('keydown', function(ev){ if (ev.key === 'Enter' || ev.key === ' ' || ev.key === 'Spacebar') { ev.preventDefault(); pin(); } });
+  });
   function later(fn, ms){ timers.push(setTimeout(fn, ms)); }
   function restart(el, cls){ el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); }
   function cycle(){
@@ -5616,6 +5287,5 @@ var PV_PERISHABLE = {
 <script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.185.0/build/three.module.js"}}</script>
 <script type="module" src="js/eco-backdrop.js"></script>
 <script type="module" src="js/pv-human-key.js"></script>
-<script type="module" src="js/pv-eco-orb.js"></script>
 </body>
 </html>
