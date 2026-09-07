@@ -2042,6 +2042,27 @@ body section.th-pm-sec--mistral{background-color:#070303!important;}
   .tw-card:not(.is-open) .tw-body { display: block; -webkit-line-clamp: none; overflow: visible; }
   .tw-more { display: none; }
 }
+/* ============================================================
+   SECTION 03 MATRIX, ONE VIEWPORT (2026-09-07). Title, intro and the
+   7x7 table hold the viewport: ~62px rows (criterion name over a
+   one-line description on a 34% column), a 62px head, tight legend.
+   Main's per-cell tooltip is back on .fx-cell[data-tip] (the .tipbox
+   the script builds); the scroller releases its overflow from 1000px
+   up, where the 940px table needs no scrolling, because an overflow
+   scroller clips an absolutely positioned tip.
+   ============================================================ */
+.fx-wrap { margin-top: 24px; }
+.fx-table thead th { padding: 12px 14px 14px; }
+.fx-corner { width: 34%; min-width: 260px; }
+.fx-crit { padding: 10px 16px; }
+.fx-crit-sub { max-width: none; font-size: 12.5px; line-height: 1.35; margin-top: 2px; }
+.fx-cell { padding: 10px 12px; height: 62px; box-sizing: border-box; position: relative; }
+.fx-legend { margin-top: 14px; }
+.fx-cell .tipbox { top: calc(100% + 8px); left: 50%; transform: translateX(-50%); width: 240px; z-index: 5; }
+.fx-cell[data-tip]:hover .tipbox, .fx-cell[data-tip]:focus .tipbox, .fx-cell[data-tip]:focus-visible .tipbox { opacity: 1; visibility: visible; }
+.fx-cell:last-child .tipbox, .fx-cell:nth-last-child(2) .tipbox { left: auto; right: 0; transform: none; }
+.fx-table tbody tr:nth-last-child(-n+2) .fx-cell .tipbox { top: auto; bottom: calc(100% + 8px); }
+@media (min-width: 1000px) { .fx-scroll { overflow: visible; } }
 </style>
 <script src="js/admin-gate.js"></script>
 </head>
@@ -2368,7 +2389,7 @@ body section.th-pm-sec--mistral{background-color:#070303!important;}
 <section class="th-pm-sec">
   <div class="th-pm-head th-pm-reveal"><span class="th-pm-marker"></span><span class="th-pm-num">03</span><h2 id="why-starknet-structurally" class="th-pm-title">Why Starknet, structurally</h2></div>
   <p class="th-pm-eyebrow th-pm-reveal">The architecture</p>
-  <p class="th-pm-intro th-pm-reveal">Strip away the branding and it comes down to architecture: <b>Starknet is, structurally, the strongest privacy platform in production today.</b> Not on one criterion. On all of them.</p>
+  <p class="th-pm-intro th-pm-intro--wide th-pm-reveal">Strip away the branding and it comes down to architecture: <b>Starknet is, structurally, the strongest privacy platform in production today.</b> Not on one criterion. On all of them.</p>
 
   <!-- ===== PRIVACY COMPLETENESS MATRIX =====
        DATA INTEGRITY: the matrix tbody cell state classes (y / p / n) are the
@@ -3329,10 +3350,11 @@ body section.th-pm-sec--mistral{background-color:#070303!important;}
 })();
 
 // ============================================================
-// SECTION 03: protocol grid tooltips (hover + keyboard focus)
+// SECTION 03: matrix cell tooltips (hover + keyboard focus), main's
+// per-cell criterion definition on the fx-table (rewired 2026-09-07)
 // ============================================================
 (function(){
-  [].forEach.call(document.querySelectorAll('.pgrid td[data-tip]'), function(td, i){
+  [].forEach.call(document.querySelectorAll('.fx-cell[data-tip]'), function(td, i){
     var t = document.createElement('span');
     t.className = 'tipbox';
     t.textContent = td.dataset.tip;
