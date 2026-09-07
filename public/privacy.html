@@ -1984,6 +1984,64 @@ body section.th-pm-sec--mistral{background-color:#070303!important;}
   .bstk-stage { padding-top: 20px; }
   .bstk-panel { min-height: 0; }
 }
+/* ============================================================
+   CLOSING LINES (2026-09-07): a section ends on a sentence, not a beat
+   of its own. The pivot is left-aligned display copy at ~38px with no
+   hairline and short air; section 01 uses --tight at 26px because its
+   device fills the viewport.
+   ============================================================ */
+.th-pm-pivot { max-width: none; margin: 22px 0 0; padding: 0; text-align: left;
+  font-size: clamp(22px, 2.1vw, 30px); line-height: 1.22; text-wrap: pretty; }
+.th-pm-pivot::before { display: none; }
+
+/* ============================================================
+   SECTION 02, ONE VIEWPORT (2026-09-07). The three-column walls stay:
+   illustration and case files on top, title and prose on the floor,
+   the three figures under the same dividers. What changes is the
+   budget: one-line head, one-line intro, 64px figures beside their
+   slabs, ~190px case files, and the wall prose clamped to three lines
+   behind a Read the wall expander (one open at a time; the text is all
+   in the DOM, the clamp is presentational, and an open wall may grow
+   the section temporarily). The two case statuses render an as-of date
+   from the PV_PERISHABLE registry below the engines. Measured 1440x900
+   from the deep-linked h2: see the commit.
+   ============================================================ */
+.th-pm-eyebrow { margin-top: 8px; }
+.th-pm-intro--wide { max-width: none; margin-top: 10px; }
+.tw { margin-top: 16px; }
+.tw-card { min-height: 0; padding: 16px 22px 14px; }
+.tw-viz { flex: 1 1 auto; justify-content: flex-start; gap: 10px; margin-bottom: 10px; }
+.tw-ico { max-width: 140px; }
+.tw-viz .cases { gap: 8px; }
+.tw-viz .case { padding: 8px 10px 9px; }
+.tw-viz .case .ch { font-size: 9px; }
+.tw-viz .case .cn { font-size: 11.5px; margin-top: 5px; }
+.tw-viz .case .cd { font-size: 9.5px; line-height: 1.4; margin-top: 5px; }
+.tw-viz .case .cs { font-size: 8.5px; margin-top: 7px; padding-top: 6px; }
+.th-asof { display: block; font-style: normal; font-family: var(--mono); font-size: 8.5px; letter-spacing: .08em;
+  color: var(--muted); margin-top: 3px; }
+.th-asof:empty { display: none; }
+.tw-card h3 { font-size: 16px; line-height: 1.2; margin-bottom: 6px; }
+.tw-card h3 .wall-tag { margin-bottom: 7px; }
+.tw-card p { font-size: 13.5px; line-height: 1.5; }
+.tw-card .kicker { font-size: 13.5px; margin-top: 8px; }
+.tw-card:not(.is-open) .tw-body { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; }
+.tw-card:not(.is-open) .tw-body p { margin: 0; }
+.tw-more { margin-top: 8px; padding: 0; border: 0; background: none; cursor: pointer;
+  font-family: var(--mono); font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--em); }
+.tw-more:hover span { text-decoration: underline; text-underline-offset: 3px; }
+.tw-more:focus-visible { outline: 2px solid var(--em); outline-offset: 3px; }
+/* the figures: 64px over a two-line slab, short air (the side-by-side row
+   was tried and rejected: $500,000 left its slab a 70px column) */
+.tw-stats { margin-top: 0; }
+.tw-stat { padding: 10px 22px 0; }
+.tw-num { font-size: clamp(40px, 4.4vw, 64px); }
+.tw-slab { margin-top: 6px; max-width: none; font-size: 10.5px; line-height: 1.55; }
+@media (max-width: 980px) {
+  .tw-viz { min-height: 0; }
+  .tw-card:not(.is-open) .tw-body { display: block; -webkit-line-clamp: none; overflow: visible; }
+  .tw-more { display: none; }
+}
 </style>
 <script src="js/admin-gate.js"></script>
 </head>
@@ -2164,9 +2222,9 @@ body section.th-pm-sec--mistral{background-color:#070303!important;}
 <!-- ================= SECTION 02 ================= -->
 <div class="th-pm-div"></div>
 <section class="th-pm-sec">
-  <div class="th-pm-head th-pm-reveal"><span class="th-pm-marker"></span><span class="th-pm-num">02</span><h2 id="three-walls-fifty-years-of-precedent" class="th-pm-title th-pm-title--two"><span>Three walls,</span> <span class="tw-dim">fifty years of precedent</span></h2></div>
+  <div class="th-pm-head th-pm-reveal"><span class="th-pm-marker"></span><span class="th-pm-num">02</span><h2 id="three-walls-fifty-years-of-precedent" class="th-pm-title">Three walls, fifty years of precedent</h2></div>
   <p class="th-pm-eyebrow th-pm-reveal">The precedent</p>
-  <p class="th-pm-intro th-pm-reveal">Crypto has attempted privacy for a decade. Every attempt hit at least one of <b>three walls</b>.</p>
+  <p class="th-pm-intro th-pm-intro--wide th-pm-reveal">Crypto has attempted privacy for a decade. Every attempt hit at least one of <b>three walls</b>.</p>
 
   <!-- V7 grid: the three walls read side by side, no rail and no selection.
        A two-line heading over a dotted rule, then one column per wall
@@ -2201,20 +2259,23 @@ body section.th-pm-sec--mistral{background-color:#070303!important;}
               <div class="ch">CASE FILE &middot; NL</div>
               <div class="cn">ALEXEY PERTSEV</div>
               <div class="cd">Arrested in the Netherlands days after the sanctions. Sentenced May 2024: five years and four months of jail, money laundering.</div>
-              <div class="cs">STATUS: APPEALING</div>
+              <div class="cs">STATUS: APPEALING <i class="th-asof" data-perish="pertsev-status"></i></div>
             </div>
             <div id="case-file-us-roman-storm-arrested" class="case gx-card gx-coral">
               <div class="ch">CASE FILE &middot; US</div>
               <div class="cn">ROMAN STORM</div>
               <div class="cd">Arrested near Seattle, 2023. Convicted August 2025: unlicensed money transmitting. Jury hung on counts carrying forty more years.</div>
-              <div class="cs">STATUS: POST-TRIAL MOTIONS</div>
+              <div class="cs">STATUS: POST-TRIAL MOTIONS <i class="th-asof" data-perish="storm-status"></i></div>
             </div>
           </div>
         </div>
         <div class="tw-txt">
           <h3 id="wall-n-01compliance-a-privacy-system"><span class="wall-tag">WALL Nº 01</span>Compliance: a privacy system with no disclosure path <span class="em">is unbankable by design.</span></h3>
+          <div class="tw-body">
           <p>Tornado Cash was the category's most used product until OFAC sanctioned it in 2022. What put it on the list was not the hiding itself; it was the absence of any mechanism, for anyone, ever, to answer a court. The human cost of that design choice fell on the people who wrote it.</p>
           <p class="kicker">The sanctions were eventually struck down. <span class="em">But without a disclosure path, privacy is not a system a regulator can accept, and TradFi capital cannot touch it.</span></p>
+          </div>
+          <button type="button" class="tw-more" aria-expanded="false"><span>Read the wall</span></button>
         </div>
       </article>
 
@@ -2235,7 +2296,10 @@ body section.th-pm-sec--mistral{background-color:#070303!important;}
         </div>
         <div class="tw-txt">
           <h3 id="wall-n-02composability-privacy-kept-being"><span class="wall-tag">WALL Nº 02</span>Composability: privacy kept being built as a destination, <span class="em">and destinations empty out.</span></h3>
+          <div class="tw-body">
           <p>Zcash and Monero put real cryptography on dedicated chains and paid two prices: isolation and no programmability. Aztec rebuilt privacy as its own L2, but applications cannot be connected, they have to be rebuilt, and reaching real liquidity means bridging out in public and bridging back in public. Railgun stayed on the EVM chains but takes a 0.25% cut each way, on every shield and on every unshield. Do the math: shielding then unshielding a $100M treasury costs $500,000, for privacy alone.</p>
+          </div>
+          <button type="button" class="tw-more" aria-expanded="false"><span>Read the wall</span></button>
         </div>
       </article>
 
@@ -2271,7 +2335,10 @@ body section.th-pm-sec--mistral{background-color:#070303!important;}
         </div>
         <div class="tw-txt">
           <h3 id="wall-n-03scale-anonymity-is-headcount"><span class="wall-tag">WALL Nº 03</span>Scale: anonymity is headcount. <span class="em">You are only as hidden as the crowd is large.</span></h3>
+          <div class="tw-body">
           <p>If a thousand users shield similar amounts at similar times, you are lost in the crowd; if three do, you are one of three. Tornado split its users into fixed denominations and thinned each crowd. <a href="https://www.usenix.org/conference/usenixsecurity18/presentation/kappos" target="_blank" rel="noopener">UCL researchers showed in 2018</a> that Zcash's own usage patterns compromised it: founders and miners moved coins through the shielded pool so regularly that simple heuristics could shrink its effective anonymity set by 69.1%.</p>
+          </div>
+          <button type="button" class="tw-more" aria-expanded="false"><span>Read the wall</span></button>
         </div>
       </article>
 
@@ -4500,6 +4567,57 @@ var pvVideoChrome = thVideoChrome({
   } else {
     once();
   }
+})();
+</script>
+
+<script>
+// ============================================================
+// SECTION 02: the wall expander. Three lines of each wall show at rest;
+// Read the wall opens the full prose in place, one wall at a time.
+// Presentational only: every word is in the DOM at all times.
+// ============================================================
+(function(){
+  var cards = [].slice.call(document.querySelectorAll('.tw-card'));
+  if (!cards.length) return;
+  function set(card, open){
+    card.classList.toggle('is-open', open);
+    var b = card.querySelector('.tw-more');
+    if (b) { b.setAttribute('aria-expanded', open ? 'true' : 'false'); b.querySelector('span').textContent = open ? 'Close' : 'Read the wall'; }
+  }
+  cards.forEach(function(card){
+    var b = card.querySelector('.tw-more');
+    if (!b) return;
+    b.addEventListener('click', function(){
+      var open = !card.classList.contains('is-open');
+      cards.forEach(function(c){ set(c, false); });
+      set(card, open);
+    });
+  });
+})();
+
+// ============================================================
+// PERISHABLE CLAIMS REGISTRY (quantum's Q_PERISHABLE contract): each
+// entry names a dated claim; 'asof' entries stamp the reading's date
+// onto the [data-perish] element so the page never asserts a status
+// without saying when it held. The two case-file statuses are legal
+// states that WILL change; their as-of is the last verification on
+// record, the day the copy entered the repo (7da845c, 2026-07-21).
+// Re-verify, then move the date here, never in the markup.
+// ============================================================
+var PV_PERISHABLE = {
+  'pertsev-status': { asof: '2026-07-21' },
+  'storm-status':   { asof: '2026-07-21' }
+};
+(function(){
+  var MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  Object.keys(PV_PERISHABLE).forEach(function(k){
+    var e = PV_PERISHABLE[k];
+    var el = document.querySelector('[data-perish="' + k + '"]');
+    if (!el || !e.asof) return;
+    var d = new Date(e.asof + 'T00:00:00Z');
+    el.textContent = 'as of ' + MON[d.getUTCMonth()] + ' ' + d.getUTCDate() + ', ' + d.getUTCFullYear();
+    el.setAttribute('data-as-of', e.asof);
+  });
 })();
 </script>
 
