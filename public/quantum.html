@@ -1486,7 +1486,7 @@ a.qg-card:focus-visible,.qg-linkcard:has(.th-eo-main:focus-visible){outline:2px 
 
 <!-- 01 CATALYST -->
 <div class="th-pm-div"></div>
-<section class="th-pm-sec">
+<section class="th-pm-sec qsec1">
   <div class="th-pm-head th-pm-reveal"><span class="th-pm-marker"></span><span class="th-pm-num">01</span><h2 id="nation-states-became-quantum-investors" class="th-pm-title">Money and mandates converged on <b>quantum.</b></h2></div>
   <p class="th-pm-eyebrow th-pm-reveal">The catalyst</p>
 
@@ -3954,6 +3954,66 @@ body.page-quantum{--qhx-u:min(1vw,14.4px)}
   background:rgba(250,250,250,.03);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);}
 .qadv-photo img{display:block;width:100%;height:auto;border-radius:6px;}
 @media(max-width:880px){.qadv.qadv2{grid-template-columns:1fr;gap:28px;}.qadv-photo{max-width:340px;}}
+
+/* ============================================================
+   PART 3b (2026-09-07): SECTION 01 FITS ONE VIEWPORT at 1440x900 with any
+   chapter selected. The rhythm is tightened (title block ~150px, rail
+   ~100px, chapter h2 38px, intro at two lines on the full measure), the
+   cards sit on fixed 230px rows with the body copy CLAMPED TO TWO LINES,
+   presentationally only: the full text stays in the DOM and expands in
+   place through an OVERLAY CLONE inside the card (position:absolute over
+   the grid, so the other cards never reflow). Hover expands on pointer
+   devices, first tap expands on touch (second tap follows the link),
+   focus expands for the keyboard, Escape closes. Reduced motion: the
+   overlay snaps, no transition. Anchors get scroll-margin-top = the nav.
+   ============================================================ */
+.qsec1{scroll-margin-top:var(--vcnav-h,64px);padding-top:48px;}
+.qsec1 [id]{scroll-margin-top:var(--vcnav-h,64px);}
+.qsec1 .th-pm-head{margin-bottom:6px;}
+.qsec1 .th-pm-title{font-size:clamp(30px,2.9vw,42px);}
+.qsec1 .th-pm-num{font-size:34px;}
+.qsec1 .th-pm-eyebrow{margin:0 0 2px;}
+.qsec1 #catalyst-chapters{margin-top:12px;}
+.qsec1 #catalyst-chapters .qw-shell{padding-top:14px;}
+.qsec1 .qw-ch .scale-title{font-size:38px;line-height:1.08;}
+.qsec1 .qw-ch .scale-intro{max-width:none;font-size:14px;line-height:1.5;margin-top:8px;}
+.qsec1 .th-q-chapter{margin:0;}
+.qsec1 .th-pm-grid{margin-top:12px;gap:14px;grid-auto-rows:230px;}
+.qsec1 .th-pm-card{height:230px;padding:16px 16px 14px;overflow:visible;}
+.qsec1 .th-pm-card h3{margin-top:8px;font-size:15px;line-height:1.25;}
+.qsec1 .th-pm-card .th-pm-stat{margin-top:8px;font-size:26px;}
+.qsec1 .th-pm-card p{margin-top:8px;font-size:13px;line-height:1.5;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+/* the small MORE affordance, shown only where the clamp actually bites */
+.qcx-more{position:absolute;right:12px;bottom:10px;font-family:'IBM Plex Mono',monospace;
+  font-size:9px;letter-spacing:.14em;color:var(--th-q);opacity:.85;pointer-events:none;}
+/* the in-place expansion: an overlay clone inside the card, over the grid */
+.qcx-pop{position:absolute;left:-1px;right:-1px;top:-1px;z-index:7;display:none;
+  background:#161616;border:1px solid color-mix(in srgb,var(--th-q) 55%,transparent);
+  border-radius:14px;padding:16px 16px 18px;box-shadow:0 26px 60px -24px rgba(0,0,0,.8);}
+.qsec1 .th-pm-card .qcx-pop{min-height:calc(100% + 2px);display:none;}
+.qsec1 .th-pm-card .qcx-pop p{display:block;-webkit-line-clamp:none;overflow:visible;}
+.qsec1 .th-pm-card.qcx-open .qcx-pop{display:flex;flex-direction:column;}
+.th-pm-card.qcx-open{z-index:7;}
+.th-pm-card.qcx-open .qcx-pop{display:block;}
+@media (prefers-reduced-motion: no-preference){
+  .qcx-pop{opacity:0;transition:opacity .18s ease;}
+  .th-pm-card.qcx-open .qcx-pop{opacity:1;}
+}
+/* chapter 02's document panels join the same budget: the renders cap at
+   340px with a bottom fade; the full orders are one click away and the
+   skip strip already declares the excerpt */
+.qsec1 .th-eo-panels{margin-top:14px;}
+.qsec1 .th-eo-doc{max-height:270px;overflow:hidden;
+  -webkit-mask-image:linear-gradient(180deg,#000 74%,transparent);
+  mask-image:linear-gradient(180deg,#000 74%,transparent);}
+/* the 270px window skips most of the render's dark header band so the
+   order's title and opening text are what shows; the seal's bottom edge
+   keeps the provenance readable */
+.qsec1 .th-eo-doc > img:first-child,.qsec1 .th-eo-doc > a > img:first-child{margin-top:-150px;}
+@media(max-width:880px){
+  .qsec1 .th-pm-grid{grid-auto-rows:230px;}
+}
 </style>
 
   <!-- chapter: the referee. The heading was removed on request; its id moves
@@ -4310,6 +4370,80 @@ var qvFilmChrome = thVideoChrome({
 
 <script src="js/news-lazy.js"></script>
 <script src="js/news-loading.js"></script>
+<script>
+// ============================================================
+// SECTION 01 CARD EXPANSION (PART 3b, 2026-09-07). The two-line clamp is
+// presentational; this builds, per card, a MORE affordance (only where the
+// clamp bites) and an overlay clone that expands the card in place without
+// reflowing the grid. Pointer: hover opens, click follows the link. Touch:
+// first tap opens, second tap follows. Keyboard: focus opens, Escape
+// closes. The clone duplicates the card's own content, so the data is
+// never shortened.
+// ============================================================
+(function(){
+  var cards = [].slice.call(document.querySelectorAll('.qsec1 .th-pm-card'));
+  if (!cards.length) return;
+  var touch = window.matchMedia('(hover: none)').matches;
+  function build(card){
+    var p = card.querySelector('p');
+    if (!p) return;
+    function clamped(){ return p.scrollHeight > p.clientHeight + 2; }
+    var pop = null, more = null;
+    function ensure(){
+      if (pop) return;
+      pop = document.createElement('span');
+      pop.className = 'qcx-pop';
+      pop.setAttribute('aria-hidden', 'true');
+      pop.innerHTML = card.innerHTML.replace(/<span class="qcx-more"[^>]*>.*?<\/span>/, '');
+      card.appendChild(pop);
+    }
+    function sync(){
+      var c = clamped();
+      if (c && !more){
+        more = document.createElement('span');
+        more.className = 'qcx-more';
+        more.setAttribute('aria-hidden', 'true');
+        more.textContent = 'MORE';
+        card.appendChild(more);
+      } else if (!c && more){ more.remove(); more = null; }
+    }
+    function open(){ if (!clamped() && !card.classList.contains('qcx-open')) return; ensure(); card.classList.add('qcx-open'); }
+    function close(){ card.classList.remove('qcx-open'); }
+    if (!touch){
+      card.addEventListener('mouseenter', open);
+      card.addEventListener('mouseleave', close);
+    } else {
+      card.addEventListener('click', function(e){
+        if (!card.classList.contains('qcx-open') && clamped()){ e.preventDefault(); open(); }
+      });
+      document.addEventListener('pointerdown', function(e){
+        if (card.classList.contains('qcx-open') && !card.contains(e.target)) close();
+      });
+    }
+    card.addEventListener('focusin', open);
+    card.addEventListener('focusout', close);
+    card.addEventListener('keydown', function(e){ if (e.key === 'Escape') close(); });
+    sync();
+    var rt; window.addEventListener('resize', function(){ clearTimeout(rt); rt = setTimeout(sync, 150); });
+    card.__qcxSync = sync;
+  }
+  cards.forEach(build);
+  /* cards in chapters hidden at load measure zero, so the clamp test lies
+     until the chapter shows; re-run sync when a chapter's is-on flips */
+  var host = document.getElementById('catalyst-chapters');
+  if (host && 'MutationObserver' in window){
+    new MutationObserver(function(muts){
+      muts.forEach(function(m){
+        if (m.target.classList && m.target.classList.contains('is-on')){
+          [].forEach.call(m.target.querySelectorAll('.th-pm-card'), function(c){
+            if (c.__qcxSync) c.__qcxSync();
+          });
+        }
+      });
+    }).observe(host, { subtree: true, attributes: true, attributeFilter: ['class'] });
+  }
+})();
+</script>
 <script>
 // ============================================================
 // PERISHABLE CLAIMS REGISTRY (the strk/btcfi BREAKS contract): each entry
