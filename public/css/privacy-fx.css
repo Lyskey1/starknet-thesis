@@ -4,7 +4,11 @@
    red highlights green). The table follows Framer's pricing layout: criteria
    as rows with a description under each, protocols as columns. */
 :root { --pf-ink: #fafafa; --pf-dim: rgba(250,250,250,.62); --pf-faint: #616161;
-        --pf-line: #262626; --pf-acc: #c53400; --pf-bg: #0d0d0d; }
+        --pf-line: #262626; --pf-acc: #c53400; --pf-bg: #0d0d0d;
+        /* the matrix's positive semantics (2026-09-07), quantum's roadmap tokens:
+           yes = green, partial = amber, no = gray; the accent stays on the
+           STRK20 column and the headers only */
+        --fx-yes: #36C692; --fx-part: #E5A552; --fx-no: #9a9a9a; }
 
 /* ---------- hero ---------- */
 /* .pv-human spans the whole hero: js/pv-human-shader.js paints the landing
@@ -55,12 +59,12 @@ body.page-privacy .hero::before { display: none; }
 .fx-cell[tabindex]:focus-visible { outline: 2px solid var(--pf-acc); outline-offset: -2px; }
 /* a tick for yes, a half disc for partial, a dash for no */
 .fx-y, .fx-p { display: inline-block; width: 15px; height: 15px; vertical-align: middle; }
-.fx-y { background: var(--pf-acc); -webkit-mask: no-repeat center/15px url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M2.5 8.5l3.5 3.5 7.5-8' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+.fx-y { background: var(--fx-yes); -webkit-mask: no-repeat center/15px url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M2.5 8.5l3.5 3.5 7.5-8' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   mask: no-repeat center/15px url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M2.5 8.5l3.5 3.5 7.5-8' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); }
-.fx-p { border-radius: 999px; border: 1.5px solid var(--pf-acc); background: linear-gradient(90deg, var(--pf-acc) 50%, transparent 50%); }
+.fx-p { border-radius: 999px; border: 1.5px solid var(--fx-part); background: linear-gradient(90deg, var(--fx-part) 50%, transparent 50%); }
 /* was #3a3a3a, which measures APCA Lc 0.0 on this ground: not low contrast,
    invisible. #b2b2b2 is the minimum that reaches the Lc 60 floor. */
-.fx-n { color: #b2b2b2; font-size: 17px; }
+.fx-n { color: var(--fx-no); font-size: 17px; }
 .fx-legend { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 16px 0 0;
   font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--pf-faint); }
 .fx-legend .fx-y, .fx-legend .fx-p { margin-left: 14px; }
