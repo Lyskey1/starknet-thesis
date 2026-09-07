@@ -748,28 +748,37 @@
   .ss-stamp.down { transform: translate(-50%,0); transition: transform .28s cubic-bezier(.6,.05,.8,.4); }
   .ss-handle { width: 46px; height: 22px; margin: 0 auto; border-radius: 6px 6px 0 0; background: #141414; border: 1px solid var(--line); border-bottom: none; }
   .ss-head { width: 150px; height: 62px; border-radius: 10px; background: #141414; border: 1px solid var(--line); display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 26px; letter-spacing: .3em; text-indent: .3em; color: var(--em); box-shadow: 0 10px 24px rgba(0,0,0,.5); }
-  .ss-coin { position: relative; width: 170px; height: 170px; border-radius: 50%; background: #0d0d0d; border: 2px solid #c53400; display: flex; align-items: center; justify-content: center; transition: box-shadow .3s; }
+  /* the ring is static: page accent at 40%, never a token hue */
+  .ss-coin { --ss-logo: 96px; position: relative; width: 170px; height: 170px; border-radius: 50%; background: #0d0d0d; border: 2px solid rgba(var(--accent-rgb), .4); display: flex; align-items: center; justify-content: center; transition: box-shadow .3s; }
   .ss-coin.sealed { box-shadow: 0 0 42px rgba(var(--accent-rgb),.35); }
-  .ss-coin.in { animation: ssIn .35s ease; }
-  @keyframes ssIn { from { opacity: 0; transform: scale(.85); } to { opacity: 1; transform: scale(1); } }
-  .ss-coin.shake { animation: ssShake .3s ease; }
+  /* the face holds the logo: it crossfades on a swap and takes the stamp's shake, so ring and viewfinder never move */
+  .ss-face { position: relative; width: var(--ss-logo); height: var(--ss-logo); display: flex; align-items: center; justify-content: center; }
+  .ss-face.in { animation: ssIn .35s ease; }
+  @keyframes ssIn { from { opacity: 0; } to { opacity: 1; } }
+  .ss-face.shake { animation: ssShake .3s ease; }
+  .ss-ghost { position: absolute; left: 50%; top: 50%; width: var(--ss-logo); height: var(--ss-logo); margin: calc(var(--ss-logo) / -2) 0 0 calc(var(--ss-logo) / -2); object-fit: contain; pointer-events: none; animation: ssOut .35s ease forwards; }
+  @keyframes ssOut { from { opacity: 1; } to { opacity: 0; } }
   @keyframes ssShake { 0%,100% { transform: translateY(0); } 30% { transform: translateY(7px); } 60% { transform: translateY(-3px); } 80% { transform: translateY(2px); } }
   .ss-ring { position: absolute; inset: -2px; border-radius: 50%; border: 2px solid var(--em); opacity: 0; pointer-events: none; }
   .ss-ring.boom { animation: ssRing .7s ease-out; }
   @keyframes ssRing { from { opacity: .7; transform: scale(1); } to { opacity: 0; transform: scale(1.6); } }
-  .ss-logo { width: 96px; height: 96px; object-fit: contain; display: block; }
+  .ss-logo { width: var(--ss-logo); height: var(--ss-logo); object-fit: contain; display: block; }
   .ss-logo[hidden] { display: none; }
   .ss-fallback { font-family: var(--mono); font-size: 64px; font-weight: 600; line-height: 1; }
   .ss-fallback[hidden] { display: none; }
   /* seal marks: four thin corner ticks framing the logo (STRK20 stamp look).
      Frame square = 96px logo + 10px air per side = 116px, centered in the
      170px coin -> 27px inset; corners sit just inside the coin border. */
-  .ss-tick { position: absolute; width: 15px; height: 15px; border: 0 solid var(--em); opacity: 0; transition: opacity .25s, transform .25s; pointer-events: none; filter: drop-shadow(0 0 6px rgba(var(--accent-rgb),.55)); }
-  .ss-tick.tl { left: 27px; top: 27px; border-left-width: 2px; border-top-width: 2px; transform: translate(-10px,-10px); }
-  .ss-tick.tr { right: 27px; top: 27px; border-right-width: 2px; border-top-width: 2px; transform: translate(10px,-10px); }
-  .ss-tick.bl { left: 27px; bottom: 27px; border-left-width: 2px; border-bottom-width: 2px; transform: translate(-10px,10px); }
-  .ss-tick.br { right: 27px; bottom: 27px; border-right-width: 2px; border-bottom-width: 2px; transform: translate(10px,10px); }
-  .ss-coin.sealed .ss-tick { opacity: 1; transform: translate(0,0); }
+  /* viewfinder: one square, centered on the coin's center (margin, not transform, so the
+     transform is free for the scale loop), side = logo + 24; 1.15 -> 1 -> 1.15 over 2.4s */
+  .ss-vf { --ss-vf: calc(var(--ss-logo) + 24px); position: absolute; left: 50%; top: 50%; width: var(--ss-vf); height: var(--ss-vf); margin: calc(var(--ss-vf) / -2) 0 0 calc(var(--ss-vf) / -2); transform-origin: 50% 50%; animation: ssVf 2.4s ease-in-out infinite; pointer-events: none; }
+  @keyframes ssVf { 0%, 100% { transform: scale(1.15); } 50% { transform: scale(1); } }
+  .ss-vf i { position: absolute; width: 18px; height: 18px; border: 0 solid var(--accent); }
+  .ss-vf i:nth-child(1) { left: 0; top: 0; border-left-width: 2px; border-top-width: 2px; }
+  .ss-vf i:nth-child(2) { right: 0; top: 0; border-right-width: 2px; border-top-width: 2px; }
+  .ss-vf i:nth-child(3) { left: 0; bottom: 0; border-left-width: 2px; border-bottom-width: 2px; }
+  .ss-vf i:nth-child(4) { right: 0; bottom: 0; border-right-width: 2px; border-bottom-width: 2px; }
+  .ss-coin.sealed .ss-vf i { filter: drop-shadow(0 0 6px rgba(var(--accent-rgb),.55)); }
   /* fixed line: "14,532 BTC" and "[ EKUBO &middot; AMOUNT HIDDEN ]" (25ch, the longest
      string) swap inside the same reserved box: it can never wrap or resize */
   .ss-amount { margin-top: 24px; font-family: var(--mono); font-size: 14px; letter-spacing: .08em; color: var(--ink); height: 22px; line-height: 22px; white-space: nowrap; min-width: 26ch; text-align: center; transition: color .2s; }
@@ -807,7 +816,7 @@
   }
   @media (prefers-reduced-motion: reduce) {
     .ss-stamp { display: none; }
-    .ss-coin.in, .ss-coin.shake { animation: none; }
+    .ss-face.in, .ss-face.shake, .ss-ghost, .ss-vf { animation: none; }
     .ss-ring { display: none; }
     .ss-chip { transition: none; }
     .sp-card p { transition: none; }
@@ -1950,11 +1959,8 @@ h3.pmv-title { margin: 0 0 14px; font-size: clamp(22px, 2vw, 26px); line-height:
 .ss-stamp { top: 0; transform: translate(-50%, -170px); }
 .ss-handle { width: 30px; height: 12px; }
 .ss-head { width: 92px; height: 34px; font-size: 16px; border-radius: 7px; }
-.ss-coin { width: 120px; height: 120px; }
-.ss-logo { width: 66px; height: 66px; }
+.ss-coin { --ss-logo: 66px; width: 120px; height: 120px; }
 .ss-fallback { font-size: 44px; }
-.ss-tick.tl, .ss-tick.bl { left: 19px; } .ss-tick.tr, .ss-tick.br { right: 19px; }
-.ss-tick.tl, .ss-tick.tr { top: 19px; } .ss-tick.bl, .ss-tick.br { bottom: 19px; }
 .ss-amount { margin-top: 14px; font-size: 11.5px; height: 18px; line-height: 18px; }
 .ss-chips { margin-top: 10px; padding-top: 0; gap: 8px; min-height: 26px; }
 .ss-chip { font-size: 10px; padding: 7px 10px; }
@@ -2741,11 +2747,15 @@ h3.pmv-title { margin: 0 0 14px; font-size: clamp(22px, 2vw, 26px); line-height:
     <div class="stamp-stage">
       <div class="ss-scene">
         <div class="ss-stamp" id="ssStamp" aria-hidden="true"><div class="ss-handle"></div><div class="ss-head">[ ]</div></div>
-        <div class="ss-coin in" id="ssCoin">
+        <div class="ss-coin" id="ssCoin">
           <div class="ss-ring" id="ssRing"></div>
-          <img class="ss-logo" id="ssLogo" src="assets/tokens/btc.png" alt="BTC logo">
-          <span class="ss-fallback" id="ssFb" hidden>&#8383;</span>
-          <span class="ss-tick tl"></span><span class="ss-tick tr"></span><span class="ss-tick bl"></span><span class="ss-tick br"></span>
+          <div class="ss-face in" id="ssFace">
+            <img class="ss-logo" id="ssLogo" src="assets/tokens/btc.png" alt="BTC logo">
+            <span class="ss-fallback" id="ssFb" hidden>&#8383;</span>
+          </div>
+          <!-- viewfinder: one square centered on the coin's center, side = logo + 24,
+               four 18px corners, scaled as one (no per-corner offsets, 2026-09-07) -->
+          <div class="ss-vf" id="ssVf" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
         </div>
       </div>
       <div class="ss-amount" id="ssAmount">14,532 BTC</div>
@@ -3750,7 +3760,7 @@ var pvVideoChrome = thVideoChrome({
     { sym: 'HYPE',  amt: '789,654 HYPE',     img: 'assets/tokens/hype.png',  color: '#97FCE4', fb: 'H' }
   ];
   var coin = document.getElementById('ssCoin'), logo = document.getElementById('ssLogo'),
-      fb = document.getElementById('ssFb'), ring = document.getElementById('ssRing'),
+      fb = document.getElementById('ssFb'), ring = document.getElementById('ssRing'), face = document.getElementById('ssFace'),
       stamp = document.getElementById('ssStamp'), amount = document.getElementById('ssAmount'),
       chip1 = document.getElementById('ssChip1'), chip2 = document.getElementById('ssChip2'),
       props = document.getElementById('stampProps'),
@@ -3760,12 +3770,20 @@ var pvVideoChrome = thVideoChrome({
     failed[logo.getAttribute('src')] = true;
     logo.hidden = true; fb.hidden = false;
   });
+  /* the outgoing logo fades out as a ghost beside the face while the new one fades in;
+     the ring and the viewfinder are not touched by a swap */
+  function crossfade(src){
+    var g = document.createElement('img'); g.className = 'ss-ghost'; g.alt = ''; g.src = src;
+    coin.appendChild(g);
+    var gone = false, drop = function(){ if (!gone) { gone = true; g.remove(); } };
+    g.addEventListener('animationend', drop); setTimeout(drop, 600);
+  }
   function applyToken(t){
-    coin.style.borderColor = t.color;
     fb.textContent = t.fb; fb.style.color = t.color;
     logo.alt = t.sym + ' logo';
     if (failed[t.img]) { logo.hidden = true; fb.hidden = false; }
     else {
+      if (!logo.hidden && logo.getAttribute('src') !== t.img) crossfade(logo.getAttribute('src'));
       fb.hidden = true; logo.hidden = false;
       if (logo.getAttribute('src') !== t.img) logo.setAttribute('src', t.img);
     }
@@ -3840,15 +3858,15 @@ var pvVideoChrome = thVideoChrome({
     timers.forEach(clearTimeout); timers = [];
     var t = TOKENS[ti];
     stamp.classList.remove('down');
-    coin.classList.remove('sealed', 'shake');
+    coin.classList.remove('sealed'); face.classList.remove('shake');
     ring.classList.remove('boom');
     chip1.classList.remove('on'); chip2.classList.remove('on');
     applyToken(t);
-    restart(coin, 'in');
+    restart(face, 'in');
     if (!paused) setProp(pi);
     later(function(){ stamp.classList.add('down'); }, 900);
     later(function(){
-      restart(coin, 'shake');
+      restart(face, 'shake');
       coin.classList.add('sealed');
       restart(ring, 'boom');
       sealAmount(t);
