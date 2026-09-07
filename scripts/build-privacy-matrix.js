@@ -50,6 +50,21 @@ let i = 0;
 const next = html.replace(/<span class="fx-score">[^<]*<\/span>/g,
   () => `<span class="fx-score">${scores[i]}/${criteria}</span>`.replace('$', '$$') && `<span class="fx-score">${scores[i++]}/${criteria}</span>`);
 src = src.replace(html, next);
+
+/* the hero strip's two stats derive from the same data: the STRK20 column's
+   score (below, once names are known) and the fee target in js/fee-config.js.
+   Stamped here so a no-JS reader sees the derived figures; the page re-derives
+   both at runtime from the DOM table and the same constant. */
+const champIdx = names.indexOf('STRK20');
+if (champIdx !== -1) {
+  src = src.replace(/(<[^>]*\bdata-matrix-score\b[^>]*>)[^<]*(<\/)/g, `$1${scores[champIdx]}/${criteria}$2`);
+}
+const feeSrc = fs.readFileSync(path.join(__dirname, '..', 'public', 'js', 'fee-config.js'), 'utf8');
+const feeM = feeSrc.match(/STRK20_TARGET_FEE_USD\s*=\s*([\d.]+)/);
+if (!feeM) { console.error('privacy-matrix: STRK20_TARGET_FEE_USD missing from js/fee-config.js'); process.exit(1); }
+const feeTxt = '$' + Number(feeM[1]).toFixed(2);
+src = src.replace(/(<[^>]*\bdata-fee-target="plain"[^>]*>)[^<]*(<\/)/g, `$1${feeTxt}$2`);
+src = src.replace(/(<[^>]*\bdata-fee-target\b(?!=)[^>]*>)[^<]*(<\/)/g, `$1~${feeTxt}$2`);
 fs.writeFileSync(FILE, src);
 
 const champ = names.indexOf('STRK20');

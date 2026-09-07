@@ -14,5 +14,6 @@
    do not derive from these constants: both pages read the backend's
    measured protocol-fees series (/agg/tvl-history feesUsd, cross-checked
    against /agg/lifetime-revenue). */
+window.STRK20_TARGET_FEE_USD = 0.12;    // the protocol's dollar TARGET per private action; every "~$0.12" surface on the privacy page reads this (hero strip stat, claim chip, foundations copy) and the build stamps it into [data-fee-target]
 window.STRK20_CURRENT_FEE_STRK = 6;      // floating side, reference seed; live value is lifetime-revenue currentFeeStrk
 window.STRK20_CURRENT_FEE_USD_SEED = 0.146; // live spot-cost seed; live value is lifetime-revenue currentFeeUsd

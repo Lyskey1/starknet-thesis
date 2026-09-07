@@ -74,107 +74,89 @@
   }
   body.page-privacy ::selection { background: var(--em); color: #0d0d0d; }
 
-  /* ============ HERO ============================================
-     SHARED SHELL, PER-PAGE BACKDROP. The frame around the backdrop is a
-     twin of ecosystem.html's and digest.html's heroes: full-bleed hero
-     box, contained content grid (1160 / 32px gutters), left-aligned
-     eyebrow + display + lede, glass CTA pair, marquee band directly
-     below. That shell is duplicated per page by convention, not
-     factored, so keep the four copies in sync.
-     The BACKDROP is deliberately per-page and must NOT be re-synced:
-     privacy keeps its aurora curtain (js/curtain.js plus the falloff
-     layers below), ecosystem carries the node network, digest the
-     publishing-cadence chart. Reading a diff between the backdrops is
-     not drift.
-     The curtain, its scrim and its afterglow are absolutely positioned
-     children of .hero and sit OUTSIDE .pv-hero-inner, so left-aligning
-     the copy moves the copy only: no shader parameter, no height rule
-     and no falloff layer changed here. */
-  /* HEIGHT BUDGET, shared with the quantum/btcfi/strk heroes: min-height
-     calc(100vh - 72px) with the content centred inside it, and their
-     112/26 vertical padding, so the claim band below lands 11px above the
-     fold in the first viewport (band is 61px tall, under the 72px
-     allowance). This hero still carries more content than any sibling
-     (premise + payoff + three-line lede + CTAs), so the stack only fits
-     inside the budget at these paddings: at 1440x900 the content
-     measures 761px against an 828px budget, at 1280x800 it is 657px
-     against 728px. Fatten the padding or a gap and the margin erodes
-     until the hero outgrows min-height on short laptop windows, pushing
-     the band below the fold. */
-  /* exactly one viewport under the fixed nav (2026-09-05 baseline rule);
-     content stays centered; below 700px viewport height it grows to fit */
-  .hero { min-height: 0; height: calc(100svh - var(--vcnav-h, 64px)); display: flex; flex-direction: column; justify-content: center; align-items: stretch; overflow: visible; padding: 40px 0 28px; max-width: none; margin: 0 auto; text-align: left; position: relative; }
+  /* ============ HERO (pvh-): the site's three-zone frame ============
+     The strk/btcfi/quantum geometry name for name: wrap = the 1392
+     container, scene takes the flex slack, stage = the right column (the
+     bust mount), strip = the shared fixed geometry (1px hairline + 1.25u
+     pad + 2.3u value box + 5px + 45px = 102.11px at 1440). The headline
+     rides the shared .vch-title token set in css/vesper-chrome.css; the
+     payoff em is its own line because it is the page's accent line, not
+     an inline highlight. Hero = ~85svh (owner spec), min 620px, growing
+     to its content below 700px viewport height. */
+  body.page-privacy { --pvh-u: min(1vw, 14.4px); }
+  .hero { position: relative; z-index: 0; display: flex; flex-direction: column;
+    height: 85svh; min-height: 620px; max-width: none; margin: 0; padding: 0 0 28px;
+    overflow: hidden; text-align: left; background: transparent; }
   @media (max-height: 700px) {
-    .hero { height: auto; min-height: calc(100svh - var(--vcnav-h, 64px)); }
+    .hero { height: auto; min-height: 85svh; padding-top: calc(2 * var(--pvh-u)); }
+    .pvh-scene { min-height: 54svh; }
   }
-  /* same gutters as the landing hero (1.667vw, 24px at 1440): the copy runs to the edges, not a 1160px column */
-  .pv-hero-inner { width: 100%; max-width: none; margin: 0 auto; padding: 0 1.667vw; position: relative; z-index: 1; }
-  /* the CSS glow only paints when WebGL2 is missing (.hero-curtain-on
-     hides it); left-anchored now so the fallback lights the copy rather
-     than the empty right half */
-  .hero::before { top: -40px; left: 18%; width: 760px; height: 420px; max-width: 100%; background: radial-gradient(ellipse at center top, rgba(var(--accent-rgb),0.16), transparent 70%); }
-  .hero-eyebrow { color: var(--accent); opacity: 1; margin-bottom: 14px; position: relative; }
-  /* Premise and payoff both sit on the site display spec inherited from
-     css/styles.css .hero-title (clamp(34px,5.4vw,76px), weight 800,
-     line-height .98, letter-spacing -.01em), matching every sibling hero;
-     the two lines differ by color, not by size. Eyebrow sits directly
-     above the h1 at the sibling heroes' 22px gap. The h1 keeps the id
-     "your-savings-your-strategy-your-next" from the removed bracket
-     setup line: build-search-index.js never rewrites existing ids, and
-     shipped deep links resolve against it. */
-  .hero-title { margin-bottom: 0; max-width: none; position: relative; font-size: clamp(34px, 5.4vw, 76px); }
-  /* PREMISE: display scale, softened to 78% white so the accent payoff
-     below still dominates. */
-  .hero-mid { display: block; color: rgba(250, 250, 250,.78); }
-  /* PAYOFF: accent color, static from first paint: its old 2s entrance
-     was the tail of the removed bracket line's reveal sequence. Size,
-     weight and tracking are the inherited display spec: no local type
-     overrides. */
-  /* white, not accent: /btcfi's .bfh-turn is #fafafa and this is the same
-     slot on the same artboard. */
-  .hero .turn { display: block; margin-top: 0; color: #fafafa; }
-  .hero-subtitle { font-size: 18px; color: rgba(250, 250, 250,0.62); max-width: 620px; margin: 22px 0 0; line-height: 1.7; position: relative; }
-  .hero-subtitle b { color: var(--white); font-weight: 600; }
+  /* styles.css hangs a centred radial glow off .hero::before; this hero is
+     not centred and the wash paints its own light */
+  .hero::before { display: none; }
+  .pvh-wrap { width: calc(100% - 48px); max-width: 1392px; margin: 0 auto;
+    display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; }
+  .pvh-scene { position: relative; display: flex; align-items: center; flex: 1 1 auto; min-height: 0; }
+  /* the stage is the RIGHT COLUMN, from the editorial column's edge (47u)
+     to the container edge, full scene height; the keyed bust fills it */
+  .pvh-stage { position: absolute; top: 0; bottom: 0; left: calc(44 * var(--pvh-u)); right: 0;
+    z-index: 0; pointer-events: none; overflow: hidden; }
+  .pvh-stage .pv-human { position: absolute; inset: 0; overflow: hidden; }
+  .pvh-stage .pv-figure { position: absolute; inset: 0; height: auto; --focus: 52% 34%; }
+  .pvh-col { position: relative; z-index: 2; width: calc(47 * var(--pvh-u));
+    display: flex; flex-direction: column; align-items: flex-start; }
+  .hero .hero-eyebrow { margin: 0; font-family: var(--sans); font-weight: 400;
+    font-size: max(calc(0.9 * var(--pvh-u)), 11px); line-height: 1.5;
+    letter-spacing: .2em; text-transform: uppercase; color: var(--accent); opacity: 1; }
+  .hero .vch-title em { display: block; }
+  .hero .hero-subtitle { margin: calc(1.6 * var(--pvh-u)) 0 0; max-width: calc(32 * var(--pvh-u));
+    font-family: var(--sans); font-weight: 300; font-size: max(calc(1.06 * var(--pvh-u)), 15px);
+    line-height: 1.7; color: rgba(250, 250, 250, .72); text-align: left; }
+  .hero .hero-subtitle b { color: var(--white); font-weight: 600; }
+  /* the CTA pair on the site's glass tier (css/vesper-chrome.css .dg-glass),
+     quantum's hero pair name for name */
+  .pvh-ctas { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: calc(2 * var(--pvh-u)); }
+  .pvh-cta { display: inline-flex; align-items: center; padding: 12px 20px;
+    font-family: var(--mono); font-size: 12px; letter-spacing: .12em; text-transform: uppercase;
+    text-decoration: none; color: var(--white); border-radius: 6px; white-space: nowrap; }
+  .pvh-cta:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
-  /* HERO CTAs: twin of .eco-cta / .dg-cta. The locked shared dark glass
-     tier (css/glass-chips.css) reading this page's accent through the
-     fallback --accent-rgb, primary on an accent border with the recipe's
-     full glow, secondary on a neutral border reaching primary intensity
-     on hover. Those two shadow stacks are copies of the locked recipe:
-     keep in sync. Anchors only, so the site's html{scroll-behavior:smooth}
-     carries the scroll and reduced motion turns it off for free. */
-  /* 24px above the CTAs is strk's subtitle-to-CTA gap; the eco/dg 42px
-     does not fit this hero's height budget (see the .hero comment). */
-  .pv-ctas { display: flex; gap: 14px; margin-top: 18px; flex-wrap: wrap; position: relative; }
-  /* Same face, casing, and colours as the landing's "Read the thesis" CTA
-     (General Sans, sentence case, medium weight, a chalk pill at rest that
-     turns accent on hover) instead of the page's own uppercase mono chip --
-     and the same icon tile (send-icon.svg, the actual asset, not an arrow
-     glyph standing in for it), so this button reads as the same control as
-     the one that opens the thesis on every other page. */
-  .pv-cta { display: inline-flex; align-items: stretch; gap: 4px; text-decoration: none; color: #000; outline: none; }
-  .pv-cta > span { display: flex; align-items: center; justify-content: center; padding: 16px 40px; background: #fafafa; color: #000;
-    font-family: var(--display); font-weight: 500; font-size: 16px; line-height: 1.2; letter-spacing: 0; text-transform: none; border: 1px solid transparent;
-    transition: background var(--hover-dur) var(--hover-ease), color var(--hover-dur) var(--hover-ease), border-color var(--hover-dur) var(--hover-ease); }
-  .pv-cta > i { display: block; flex: none; width: 51px; height: 51px; background: #fafafa; border: 1px solid transparent; box-sizing: border-box;
-    transition: background var(--hover-dur) var(--hover-ease), border-color var(--hover-dur) var(--hover-ease); }
-  .pv-cta > i svg { display: block; width: 100%; height: 100%; }
-  .pv-cta > i svg path { fill: #000; transition: fill var(--hover-dur) var(--hover-ease); }
-  .pv-cta:hover > span { background: var(--accent); color: #fafafa; }
-  .pv-cta:active > span { background: #a02a00; }
-  .pv-cta:focus-visible > span { outline: 2px solid var(--accent); outline-offset: 2px; }
-  .pv-cta--muted > span { background: rgba(255,255,255,0); color: #fafafa; border-color: rgba(255,255,255,.5); }
-  .pv-cta--muted > i { background: rgba(255,255,255,0); border-color: rgba(255,255,255,.5); }
-  .pv-cta--muted > i svg path { fill: #fafafa; }
-  .pv-cta--muted:hover > span { background: rgba(255,255,255,.12); border-color: #fff; color: #fafafa; }
-  .pv-cta--muted:hover > i { background: rgba(255,255,255,.12); border-color: #fff; }
-  .pv-cta--muted:active > span { background: rgba(255,255,255,.22); }
-  @media (max-width: 860px) {
-    .pv-cta { width: 100%; }
-    .pv-cta > span { flex: 1; padding: 15px 24px; }
+  /* the baseline strip: two derived stats left on the twins' fixed tracks
+     (102px + 2u pitch), main's claim marquee filling the right */
+  .pvh-strip { position: relative; z-index: 2; margin-top: 0;
+    display: flex; align-items: center; gap: calc(2 * var(--pvh-u));
+    border-top: 1px solid rgba(250, 250, 250, .16); padding-top: calc(1.25 * var(--pvh-u));
+    box-sizing: border-box; height: calc(1px + 3.55 * var(--pvh-u) + 50px); }
+  .pvh-stats { flex: none; display: grid; grid-template-columns: repeat(2, calc(118px + 2 * var(--pvh-u)));
+    margin: 0; padding: 0; list-style: none; }
+  .pvh-stats li { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+  .pvh-stats b { font-family: var(--display); font-weight: 300; font-size: max(calc(1.7 * var(--pvh-u)), 22px);
+    line-height: 1; letter-spacing: -.01em; color: var(--white); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .pvh-stats span { font-family: var(--mono), monospace; font-size: max(calc(0.68 * var(--pvh-u)), 10px);
+    line-height: 1.5; letter-spacing: .14em; text-transform: uppercase; color: rgba(250, 250, 250, .72); max-width: 21ch; }
+  .pvh-strip .pv-marquee { flex: 1 1 auto; min-width: 0; border: 0; padding: 0;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 92%, transparent);
+            mask-image: linear-gradient(90deg, transparent, #000 12%, #000 92%, transparent); }
+
+  /* below the artboard: a rem-sized stack, the bust on its own band above
+     the copy (the column would otherwise sit on the figure) */
+  @media (max-width: 980px) {
+    .hero { height: auto; min-height: 0; padding: 2rem 1.5rem 28px; overflow: visible; }
+    .pvh-wrap { width: 100%; max-width: none; }
+    .pvh-scene { min-height: 0; position: static; display: block; }
+    .pvh-stage { position: relative; left: 0; height: 46svh; min-height: 260px; margin: 0 -1.5rem 1.5rem; }
+    .pvh-col { width: auto; }
+    .hero .hero-eyebrow { font-size: .75rem; }
+    .hero .hero-subtitle { margin-top: 1rem; max-width: 40rem; font-size: 1rem; }
+    .pvh-strip { margin-top: 2rem; padding-top: 1.25rem; height: auto; flex-direction: column; align-items: flex-start; gap: 1rem; }
+    .pvh-stats { grid-template-columns: repeat(2, 126px); }
+    .pvh-stats b { font-size: 1.5rem; }
+    .pvh-stats span { font-size: 10px; }
+    .pvh-strip .pv-marquee { width: 100%; }
   }
-  @media (prefers-reduced-motion: reduce) {
-    .pv-cta > span, .pv-cta > i, .pv-cta > i svg path { transition: none; }
+  @media (max-width: 380px) {
+    .hero { padding: 1.5rem 1.25rem 24px; }
+    .pvh-stats { width: 100%; grid-template-columns: repeat(2, 1fr); }
   }
 
   /* CLAIM BAND: twin of .eco-marquee / .dg-marquee. Seamless loop over
@@ -238,103 +220,12 @@
     .pv-marquee { -webkit-mask-image: none; mask-image: none; padding: 16px 0; }
   }
 
-  /* ===== hero to section 01: gradual light falloff, no perceptible seam.
-     Three static, inert layers, page-scoped:
-     1) .pv-hero-fade: full-width scrim over the hero's lower half, from
-        transparent to the page canvas color. Sits BETWEEN the curtain and
-        the blooms in the markup (negative-z siblings paint in tree order),
-        so it eases the curtain's tail into black without dimming the chip
-        bloom. The site grain (body::after) paints above it and dithers the
-        dark end.
-     2) .hero-bloom overflow released on this page only: the styles.css
-        clip cut the chip bloom dead at the hero's bottom edge, which WAS
-        the hard band across the divider here. Unclipped, the 70px-blurred
-        tails decay across the hairline instead of stopping on it.
-     3) .pv-hero-afterglow: a very faint accent radial straddling the hero
-        bottom (well below the chip bloom's .30), so the dark under the
-        hero carries a trace of the light dying out before section 01's
-        own corner glow takes over. */
-  /* HERO SCENE: the aperture. One large hairline camera iris right of
-     frame, replacing the old hex-noise field: concentric rings, nine
-     blades on a slow rotation, a breathing main ring, a scan line through
-     the pupil, two full-frame eyelid arcs, and a left-to-right scrim so
-     the copy sits on near-solid black. Every moving part is its own
-     HTML-level layer animated with compositor transforms only; animating
-     SVG geometry (the ring's r) would repaint the whole iris at hero
-     scale every frame, so nothing does. Strokes are 1.1 hairlines with
-     vector-effect non-scaling-stroke, matching the page line icons.
-     The brightness caps are load-bearing: the payoff line crosses the
-     iris at 1280, so the scan runs at 14% behind the copy column (full
-     strength only on the copy-free right flank), the pupil edge sits at
-     .24, the center dot at .35, the blades at .22. Measured
-     brightest-pixel contrast at these values: premise 7.7 / payoff 5.7
-     at 1440x900 and 5.1 / 4.6 at 1280x800, against a 4.5 target.
-     Decorative: aria-hidden, pointer-events none, unfocusable. */
-  .pv-aperture-scene { position: absolute; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
-  .pv-aperture { position: absolute; top: 50%; left: 71%; width: min(104vh, 980px); height: min(104vh, 980px); transform: translate(-50%, -50%); }
-  .pv-aperture > * { position: absolute; inset: 0; width: 100%; height: 100%; }
-  .apt-glow { background: radial-gradient(circle closest-side, rgba(var(--accent-rgb), .09), rgba(var(--accent-rgb), .03) 55%, transparent 74%); }
-  .apt-svg { display: block; overflow: visible; }
-  .apt-svg * { vector-effect: non-scaling-stroke; }
-  .apt-blades { animation: aptSpin 68s linear infinite; will-change: transform; }
-  .apt-breath { animation: aptBreath 9s ease-in-out infinite alternate; will-change: transform; }
-  @keyframes aptSpin { to { transform: rotate(360deg); } }
-  @keyframes aptBreath { from { transform: scale(.965); } to { transform: scale(1.045); } }
-  .apt-scan { clip-path: circle(46% at 50% 50%);
-    -webkit-mask-image: linear-gradient(90deg, rgba(0,0,0,.14) 0 80%, #000 90%);
-    mask-image: linear-gradient(90deg, rgba(0,0,0,.14) 0 80%, #000 90%); }
-  .apt-scan i { position: absolute; left: 4%; right: 4%; top: 50%; height: 2px; display: block;
-    background: linear-gradient(90deg, transparent, rgba(var(--accent-rgb), .95) 18% 82%, transparent);
-    box-shadow: 0 0 14px rgba(var(--accent-rgb), .55), 0 0 3px rgba(var(--accent-rgb), .9);
-    animation: aptScan 6.5s linear infinite; will-change: transform; }
-  @keyframes aptScan { from { transform: translateY(-46.5vh); } to { transform: translateY(46.5vh); } }
-  .apt-lids { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
-  .apt-lids path { vector-effect: non-scaling-stroke; }
-  .pv-hero-scrim { position: absolute; inset: 0;
-    background: linear-gradient(90deg, var(--black) 0%, var(--black) 26%, rgba(13, 13, 13,.86) 44%, rgba(13, 13, 13,.45) 60%, rgba(13, 13, 13,0) 78%); }
-  @media (max-width: 980px) {
-    /* the aperture stays on mobile (cheap SVG) but scaled to the top
-       right edge, out from under the stacked copy. Rotation and scan
-       are dropped; breathing is kept (transform-only, no per-frame
-       cost); the eyelid arcs are dropped because at this width they
-       would cross the copy. */
-    .pv-aperture { width: 74vw; height: 74vw; left: auto; right: -30vw; top: 4vw; transform: none; }
-    .apt-blades { animation: none; transform: rotate(8deg); }
-    .apt-scan, .apt-lids { display: none; }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    /* static at a composed angle: no rotation, no breathing, no scan */
-    .apt-blades { animation: none; transform: rotate(8deg); }
-    .apt-breath { animation: none; transform: scale(1.02); }
-    .apt-scan { display: none; }
-  }
-  .pv-hero-fade { position: absolute; left: 0; right: 0; bottom: 0; height: 14%; z-index: 1; pointer-events: none;
-    background: linear-gradient(180deg, transparent, var(--black)); }
-  .hero .hero-bloom { overflow: visible; }
-  .pv-hero-afterglow { position: absolute; left: 50%; transform: translateX(-50%); bottom: -260px; width: min(1100px, 92vw); height: 520px; z-index: -1; pointer-events: none;
-    background: radial-gradient(ellipse closest-side at 50% 35%, rgba(var(--accent-rgb), .07), transparent 72%); }
-  @media (max-width: 980px) {
-    /* mobile: blooms are the site's reduced treatment; keep the clip and
-       drop the afterglow, scrim stays (cheap). Hero rhythm matches the
-       sibling heroes' mobile pattern. */
-    .hero .hero-bloom { overflow: hidden; }
-    .pv-hero-afterglow { display: none; }
-    /* 100/60 is the sibling heroes' mobile padding (css/styles.css ≤768
-       .hero); at the display-scale title the old 130/90 pushed the CTAs
-       below an 812px fold. Side gutters stay 0: .pv-hero-inner owns them. */
-    .hero { padding: 100px 0 60px; }
-  }
-  @media (max-width: 700px) {
-    .pv-hero-inner { padding: 0 1.5rem; }
-    .pv-ctas { flex-direction: column; gap: 20px; align-items: flex-start; }
-  }
 
   /* ============ SECTION SHELL (quantum th-pm design system, emerald) ============ */
   .th-pm-sec { --th-q: var(--accent); --th-ink: var(--white); --th-muted: #9a9a9a; --th-hair: rgba(250, 250, 250,.08); --th-hair-soft: rgba(250, 250, 250,.05); position: relative; max-width: 1160px; margin: 0 auto; padding: 90px 32px 0; overflow: visible; }
   /* section 01 only: the falloff zone and the section spacing read as one
      transition (56px here + 36px hero bottom padding + hairline = 93px
      from chip row to header block), later sections keep the 90px rhythm */
-  .pv-marquee + .th-pm-div + .th-pm-sec { padding-top: 56px; }
   .th-pm-sec::before { content: ""; position: absolute; top: 40px; left: 6px; width: 520px; height: 520px; background: radial-gradient(circle,var(--th-q) 0%,transparent 60%); opacity: .07; filter: blur(8px); pointer-events: none; z-index: 0; }
   .th-pm-sec > * { position: relative; z-index: 1; }
   .th-pm-div { max-width: 1160px; margin: 0 auto; height: 1px; background: rgba(250, 250, 250,.05); }
@@ -2204,52 +2095,63 @@ body section.th-pm-sec--mistral{background-color:#070303!important;}
 </header>
 
 <!-- ================= HERO ================= -->
+<!-- HERO (pvh-): the site's three-zone frame, the strk/btcfi/quantum
+     geometry name for name (2026-09-07). Left, the editorial column: the
+     kicker, main's two-line display (premise white, payoff in the page
+     accent through the shared .vch-title em), main's paragraph and the CTA
+     pair on the glass tier. Right, the chrome bust on the column stage
+     (js/pv-human-key.js keys the clip onto the page wash). Across the
+     container, the baseline strip: the two stats left and main's claim
+     marquee right. THE TWO STATS ARE DERIVED, NEVER TYPED: the completeness
+     score is stamped at build from the matrix cells (the same
+     scripts/build-privacy-matrix.js pass that writes every column score)
+     and re-derived from the table in the DOM at runtime; the fee is
+     STRK20_TARGET_FEE_USD from js/fee-config.js, the one place the fee
+     model lives, stamped at build and refreshed at runtime. The hero holds
+     ~85svh so the strip and the first hairline land inside the first
+     viewport. Nothing here paints a ground: js/eco-backdrop.js runs the
+     wash on a fixed canvas underneath. -->
 <div class="hero">
-  <div class="pv-human" aria-hidden="true">
-    <div class="pv-figure">
-      <video autoplay muted loop playsinline preload="metadata" poster="assets/video/metal-human.jpg">
-        <source src="assets/video/metal-human.mp4" type="video/mp4">
-      </video>
-    </div>
-    <div class="pv-scrim"></div>
-  </div>
-  <!-- HERO SCENE: the aperture (see the CSS note on .pv-aperture-scene).
-       Placed between the curtain and the bottom fade: the curtain reads
-       through from below as the ambient light around the iris, the scrim
-       inside the scene takes the copy column to near-black, and the fade
-       below eases everything into the page. The scene clips to the hero
-       so the outer rings never bleed into the claim band. Decorative. -->
-  
-  <div class="pv-hero-inner pv-hero-grid">
-    <div class="pv-tl">
-      <p class="hero-eyebrow">The privacy flip</p>
-      <h1 id="your-savings-your-strategy-your-next" class="hero-title"><span class="hero-mid">Onchain, everything<br>is public.</span></h1>
-    </div>
-    <p class="pv-stat pv-stat-a"><b>7 / 7</b>Completeness score</p>
-    <p class="pv-stat pv-stat-b"><b>~$0.12</b>Lowest privacy fee in DeFi</p>
-    <p class="pv-note">Private to the market,<br>answerable to the law,<br>and live today.</p>
-    <div class="pv-br">
-      <p class="hero-title pv-turn"><span class="turn">Starknet made<br>that optional.</span></p>
-      <div class="pv-ctas">
-        <a class="pv-cta chip-glass" href="#why-starknet-structurally"><span>How it works</span><i aria-hidden="true"><svg viewBox="0 0 51 51" fill="none"><path d="M26.293 23.583L34.4834 15.3926L35.6064 16.5156L27.416 24.7061H39V26.2939H27.418L35.6084 34.4844L34.4854 35.6074L26.293 27.415V39H24.7051V27.417L16.5146 35.6074L15.3916 34.4844L23.582 26.2939H12V24.7061H23.584L15.3936 16.5156L16.5166 15.3926L24.7051 23.5811V12H26.293V23.583Z"/></svg></i></a>
-        <a class="pv-cta pv-cta--muted chip-glass" href="#the-most-complete-privacy-ecosystem"><span>See what is live</span><i aria-hidden="true"><svg viewBox="0 0 51 51" fill="none"><path d="M26.293 23.583L34.4834 15.3926L35.6064 16.5156L27.416 24.7061H39V26.2939H27.418L35.6084 34.4844L34.4854 35.6074L26.293 27.415V39H24.7051V27.417L16.5146 35.6074L15.3916 34.4844L23.582 26.2939H12V24.7061H23.584L15.3936 16.5156L16.5166 15.3926L24.7051 23.5811V12H26.293V23.583Z"/></svg></i></a>
+  <div class="pvh-wrap">
+    <div class="pvh-scene">
+      <div class="pvh-stage" aria-hidden="true">
+        <div class="pv-human">
+          <div class="pv-figure">
+            <video autoplay muted loop playsinline preload="metadata" poster="assets/video/metal-human.jpg">
+              <source src="assets/video/metal-human.mp4" type="video/mp4">
+            </video>
+          </div>
+        </div>
+      </div>
+      <div class="pvh-col">
+        <p class="hero-eyebrow">The privacy flip</p>
+        <!-- the id is the search index's anchor for the opening claim; it
+             stays on the display heading -->
+        <h1 id="your-savings-your-strategy-your-next" class="hero-title vch-title">Onchain, everything is public. <em>Starknet made that optional.</em></h1>
+        <p class="hero-subtitle">Crypto built the most surveilled financial system in history, <b>by accident</b>. Starknet shipped the layer that ends it: private to the market, answerable to the law, <b>and live today</b>.</p>
+        <div class="pvh-ctas">
+          <a class="pvh-cta dg-glass dg-glass--primary" href="#why-starknet-structurally">How it works</a>
+          <a class="pvh-cta dg-glass" href="#the-most-complete-privacy-ecosystem">See what is live</a>
+        </div>
       </div>
     </div>
-  </div>
+    <div class="pvh-strip">
+      <ul class="pvh-stats">
+        <li><b data-matrix-score>7/7</b><span>Completeness score</span></li>
+        <li><b data-fee-target>~$0.12</b><span>Lowest privacy fee in DeFi</span></li>
+      </ul>
+      <!-- claim band, main's twelve labels on the sibling pages' marquee
+           mechanics, now the strip's right zone. The first set is the
+           readable one; the duplicates exist so the loop is gapless and are
+           aria-hidden. Labels only, never links. -->
+      <div class="pv-marquee" id="pvMarquee"><div class="pv-mq-track">
+  <div class="pv-mq-set"><span class="chip-glass">ZK-STARK</span><span class="chip-glass">PROTOCOL-LEVEL PRIVACY</span><span class="chip-glass">PRIVACY FOR EVERY ASSET</span><span class="chip-glass">LOWEST PRIVACY FEES IN DEFI</span><span class="chip-glass">DEEP DEFI INTEGRATION</span><span class="chip-glass">WALLET-NATIVE</span><span class="chip-glass">ONE POOL FOR ALL ASSETS</span><span class="chip-glass">FEE: <span data-fee-target>~$0.12</span> &middot; PAID IN STRK</span><span class="chip-glass">SHIELDED IN SECONDS</span><span class="chip-glass">AUDITED AND FORMALLY VERIFIED</span><span class="chip-glass">OPEN SOURCE, APACHE 2.0</span><span class="chip-glass">STRK20S</span></div>
+  <div class="pv-mq-set" data-dup aria-hidden="true"><span class="chip-glass">ZK-STARK</span><span class="chip-glass">PROTOCOL-LEVEL PRIVACY</span><span class="chip-glass">PRIVACY FOR EVERY ASSET</span><span class="chip-glass">LOWEST PRIVACY FEES IN DEFI</span><span class="chip-glass">DEEP DEFI INTEGRATION</span><span class="chip-glass">WALLET-NATIVE</span><span class="chip-glass">ONE POOL FOR ALL ASSETS</span><span class="chip-glass">FEE: <span data-fee-target>~$0.12</span> &middot; PAID IN STRK</span><span class="chip-glass">SHIELDED IN SECONDS</span><span class="chip-glass">AUDITED AND FORMALLY VERIFIED</span><span class="chip-glass">OPEN SOURCE, APACHE 2.0</span><span class="chip-glass">STRK20S</span></div>
+  <div class="pv-mq-set" data-dup aria-hidden="true"><span class="chip-glass">ZK-STARK</span><span class="chip-glass">PROTOCOL-LEVEL PRIVACY</span><span class="chip-glass">PRIVACY FOR EVERY ASSET</span><span class="chip-glass">LOWEST PRIVACY FEES IN DEFI</span><span class="chip-glass">DEEP DEFI INTEGRATION</span><span class="chip-glass">WALLET-NATIVE</span><span class="chip-glass">ONE POOL FOR ALL ASSETS</span><span class="chip-glass">FEE: <span data-fee-target>~$0.12</span> &middot; PAID IN STRK</span><span class="chip-glass">SHIELDED IN SECONDS</span><span class="chip-glass">AUDITED AND FORMALLY VERIFIED</span><span class="chip-glass">OPEN SOURCE, APACHE 2.0</span><span class="chip-glass">STRK20S</span></div>
+</div></div>
+    </div>
   </div>
 </div>
-
-<!-- claim band: the hero's four static chips expanded to the full claim
-     set, on the sibling pages' marquee mechanics. The first set is the
-     readable one; the two after it are duplicates that exist purely so the
-     loop is gapless, so both are aria-hidden. Labels only, never links.
-     THREE sets, not the sibling bands' two: at 12 items one set measures
-     2508px, which covers 1440 and 1920 but falls 52px short of 2560 and
-     932px short of 3440, so a two-set track would show bare band at the
-     loop point on an ultrawide display. With three sets the track carries
-     2 x 2508 = 5016px behind the leading edge, and the keyframe steps by
-     one third (one set) instead of one half. -->
-
 
 <!-- ================= SECTION 01 ================= -->
 <div class="th-pm-div"></div>
@@ -3283,6 +3185,27 @@ body section.th-pm-sec--mistral{background-color:#070303!important;}
   </div>
 </footer>
 
+<script>
+// HERO STRIP DATA, derived and never typed (2026-09-07). The completeness
+// score is counted off the matrix cells in the DOM (the same y/p/n classes
+// scripts/build-privacy-matrix.js scores at build; partial never counts),
+// the fee is STRK20_TARGET_FEE_USD from js/fee-config.js, the fee model's
+// single home. Both hooks are also stamped at build, so a reader with JS
+// off sees the same figures the build derived. Runs on DOMContentLoaded
+// because fee-config.js is deferred.
+(function(){
+  function paint(){
+    var rows = [].slice.call(document.querySelectorAll('.fx-table tbody tr')), n = 0, y = 0;
+    rows.forEach(function(r){ var c = r.querySelector('.fx-cell.fx-champ'); if (!c) return; n++; if (c.classList.contains('s-y')) y++; });
+    if (n) [].forEach.call(document.querySelectorAll('[data-matrix-score]'), function(el){ el.textContent = y + '/' + n; });
+    var fee = window.STRK20_TARGET_FEE_USD;
+    if (typeof fee === 'number') [].forEach.call(document.querySelectorAll('[data-fee-target]'), function(el){
+      el.textContent = (el.getAttribute('data-fee-target') === 'plain' ? '' : '~') + '$' + fee.toFixed(2);
+    });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', paint); else paint();
+})();
+</script>
 <!-- the shared selector state machine, in document order ahead of the four
      blocks that consume it (a deferred load would run after them) -->
 <script src="js/selector-rove.js"></script>

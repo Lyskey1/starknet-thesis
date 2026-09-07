@@ -171,31 +171,8 @@ body.page-privacy .hero::before { display: none; }
   .lg-cd { padding: 4px 20px 22px; }
 }
 
-/* ---------- hero copy, placed the way the reference places it ----------
-   Headline top-left, the turn bottom-right, two small readouts on the right
-   flank and a caption bottom-left, all over the figure. */
-.pv-hero-grid { position: relative; z-index: 4; display: grid;
-  grid-template-columns: minmax(0,1fr) minmax(0,1fr); grid-template-rows: auto 1fr auto;
-  height: 100%; min-height: 0; gap: 0; }
-.pv-tl { grid-column: 1; grid-row: 1; }
-.pv-tl .hero-title { margin: 14px 0 0; }
-.pv-br { grid-column: 2; grid-row: 3; justify-self: end; text-align: right; }
-.pv-turn { margin: 0; }
-.pv-br .pv-ctas { justify-content: flex-end; margin-top: 18px; }
-.pv-note { grid-column: 1; grid-row: 3; align-self: end; margin: 0;
-  font-family: 'IBM Plex Mono', monospace; font-size: 12px; line-height: 1.7; letter-spacing: .06em;
-  text-transform: uppercase; color: var(--pf-dim); }
-.pv-stat { grid-column: 2; justify-self: end; margin: 0; text-align: left;
-  font-family: 'IBM Plex Mono', monospace; font-size: 11px; line-height: 1.5; letter-spacing: .12em;
-  text-transform: uppercase; color: var(--pf-dim); }
-.pv-stat b { display: block; font-weight: 400; color: var(--pf-ink); }
-.pv-stat-a { grid-row: 1; align-self: end; }
-.pv-stat-b { grid-row: 2; align-self: center; }
-@media (max-width: 860px) {
-  .pv-hero-grid { grid-template-columns: 1fr; grid-template-rows: auto; min-height: 0; gap: 26px; }
-  .pv-tl, .pv-br, .pv-note, .pv-stat { grid-column: 1; grid-row: auto; justify-self: start; text-align: left; }
-  .pv-br .pv-ctas { justify-content: flex-start; }
-}
+/* the scattered hero copy grid (pv-hero-grid, pv-tl, pv-br, pv-note, pv-stat)
+   left with the three-zone hero of 2026-09-07; its rules live inline as pvh- */
 
 /* ---------- the pool metrics, in sui.io's panel language ----------
    Flat hard-edged panels on #141414 with a 1px #262626 border, a
