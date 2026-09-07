@@ -3520,6 +3520,18 @@ var pvVideoChrome = thVideoChrome({
 (function(){
   var root = document.getElementById('ecoLanes');
   if (!root) return;
+  /* render-time sort inside every lane: LIVE, TESTNET, COHORT, COMING;
+     stable, so tiles of one status keep their data order; a note tile
+     (data-note) stays last. A status change in the markup re-sorts on load. */
+  var SORT = ['LIVE', 'TESTNET', 'COHORT', 'COMING'];
+  root.querySelectorAll('.eco-tiles').forEach(function(lane){
+    var kids = [].slice.call(lane.children);
+    kids.map(function(t, i){
+      var r = t.hasAttribute('data-note') ? SORT.length : SORT.indexOf(t.getAttribute('data-status'));
+      return { t: t, r: r < 0 ? SORT.length : r, i: i };
+    }).sort(function(a, b){ return a.r - b.r || a.i - b.i; })
+      .forEach(function(x){ lane.appendChild(x.t); });
+  });
   /* notes (data-note) are neither projects nor counted */
   var tiles = [].slice.call(root.querySelectorAll('.eco-tile:not([data-note])'));
   var ORDER = ['LIVE', 'TESTNET', 'COMING', 'COHORT'];
