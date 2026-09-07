@@ -540,14 +540,7 @@
   .grid-lead b { color: var(--ink); }
 
   /* ============ 03: forum post / lineage / rail ============ */
-  .forum { max-width: 760px; margin: 60px auto 0; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; font-family: var(--mono); }
-  .forum-bar { background: #10151A; padding: 13px 20px; font-size: 11.5px; letter-spacing: .1em; color: var(--muted); display: flex; justify-content: space-between; gap: 12px; border-bottom: 1px solid var(--line); }
-  .forum-post { display: grid; grid-template-columns: 150px 1fr; background: var(--bg-raise); }
-  .forum-user { padding: 20px; border-right: 1px solid var(--line); font-size: 12px; line-height: 1.8; }
-  .forum-user .u { color: var(--em); font-weight: 600; }
-  .forum-user .r { color: var(--muted); font-size: 10.5px; letter-spacing: .06em; }
-  .forum-body { padding: 20px 24px; font-size: 14px; line-height: 1.8; color: rgba(250, 250, 250,.78); }
-  .forum-body .hl { background: var(--em-dim); color: var(--em); padding: 1px 4px; }
+  /* the mono forum card (.forum) left on 2026-09-07 for the real post in a browser frame (fwin-) */
   /* the reply, unboxed: plain prose columns for the answer row (same
      typography the old boxed reply card carried, minus the box; the
      Satoshi post is the only boxed element of this sub-block) */
@@ -1891,6 +1884,35 @@ body.page-privacy{--qhx-u:min(1vw,14.4px)}
 .tw-stat { padding: 8px 22px 0; }
 .tw-num { font-size: 56px; }
 .tw-slab { margin-top: 4px; font-size: 10.5px; line-height: 1.5; }
+/* ============================================================
+   THE POST IN A BROWSER FRAME (fwin-, 2026-09-07): vesper glass, a thin
+   title bar with the thread URL as a link and the date, the screenshot at
+   its natural ratio, the key passage underlined by an accent overlay in
+   frame percentages, a mono caption. The figure column widens so the
+   1212px capture keeps its type legible.
+   ============================================================ */
+.pv-ask { grid-template-columns: minmax(0, .72fr) minmax(0, 1.28fr); gap: 28px 40px; }
+.fwin { margin: 0; border-radius: 12px; overflow: hidden;
+  background: var(--card-glass-fill); border: 1px solid var(--card-glass-border);
+  -webkit-backdrop-filter: blur(var(--card-glass-blur)) saturate(var(--card-glass-sat));
+          backdrop-filter: blur(var(--card-glass-blur)) saturate(var(--card-glass-sat));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.14), 0 18px 50px -30px rgba(0,0,0,.9); }
+@supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) { .fwin { background: #0d0d0d; } }
+.fwin-bar { display: flex; align-items: center; gap: 12px; padding: 9px 12px; border-bottom: 1px solid var(--card-glass-border);
+  font-family: var(--mono); font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.fwin-dots { display: flex; gap: 5px; flex: none; }
+.fwin-dots i { display: block; width: 8px; height: 8px; border-radius: 50%; background: rgba(250, 250, 250, .16); }
+.fwin-dots i:first-child { background: var(--em); opacity: .85; }
+.fwin-url { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ink);
+  text-decoration: underline; text-underline-offset: 3px; text-transform: none; letter-spacing: .02em; }
+.fwin-url:hover { color: var(--em); }
+.fwin-date { flex: none; white-space: nowrap; }
+.fwin-shot { position: relative; background: #fff; }
+.fwin-shot img { display: block; width: 100%; height: auto; }
+.fwin-mark { position: absolute; border-bottom: 2px solid var(--accent); background: rgba(var(--accent-rgb), .14); pointer-events: none; }
+.fwin-cap { padding: 9px 12px 10px; border-top: 1px solid var(--card-glass-border); font-family: var(--mono); font-size: 10.5px;
+  letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+@media (max-width: 980px) { .pv-ask { grid-template-columns: minmax(0, 1fr); } }
 </style>
 <script src="js/admin-gate.js"></script>
 </head>
@@ -2204,13 +2226,25 @@ body.page-privacy{--qhx-u:min(1vw,14.4px)}
       </div>
     </div>
     <div>
-      <div class="forum">
-        <div class="forum-bar"><a href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/174/" target="_blank" rel="noopener">BITCOINTALK.ORG &middot; THREAD N&deg; 770</a><span>AUGUST 11, 2010</span></div>
-        <div class="forum-post">
-          <div class="forum-user"><span class="u">satoshi</span><br><span class="r">FOUNDER<br>ACTIVITY: 364</span></div>
-          <div class="forum-body">This is a very interesting topic. If a solution was found, <span class="hl">a much better, easier, more convenient implementation of Bitcoin would be possible</span>. [...] It's hard to think of how to apply zero-knowledge-proofs in this case.</div>
+      <!-- the real post (2026-09-07): public/privacy/bitcointalk-770.png (1x)
+           and @2x, satoshi's reply number 8 in thread 770, captured from
+           https://bitcointalk.org/index.php?topic=770.msg9074#msg9074 as the
+           single post element (headless Chrome, CDP clip, 1212x266 CSS px).
+           The key passage is underlined by a CSS overlay positioned in
+           percentages of the frame (measured off the live DOM range at
+           capture), not baked into the image. -->
+      <figure class="fwin">
+        <div class="fwin-bar">
+          <span class="fwin-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <a class="fwin-url" href="https://bitcointalk.org/index.php?topic=770.msg9074#msg9074" target="_blank" rel="noopener">bitcointalk.org/index.php?topic=770</a>
+          <span class="fwin-date">August 11, 2010</span>
         </div>
-      </div>
+        <div class="fwin-shot">
+          <img src="privacy/bitcointalk-770.png" srcset="privacy/bitcointalk-770.png 1x, privacy/bitcointalk-770@2x.png 2x" width="1212" height="266" alt="Satoshi Nakamoto's reply on Bitcointalk, August 11, 2010: This is a very interesting topic. If a solution was found, a much better, easier, more convenient implementation of Bitcoin would be possible. It's hard to think of how to apply zero-knowledge-proofs in this case." loading="lazy" decoding="async">
+          <span class="fwin-mark" aria-hidden="true" style="left:47.17%;top:23.09%;width:45.25%;height:6.01%"></span>
+        </div>
+        <figcaption class="fwin-cap">Satoshi Nakamoto, Bitcointalk thread 770, August 11, 2010</figcaption>
+      </figure>
     </div>
   </div>
 
