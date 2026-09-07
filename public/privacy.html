@@ -2063,6 +2063,53 @@ body section.th-pm-sec--mistral{background-color:#070303!important;}
 .fx-cell:last-child .tipbox, .fx-cell:nth-last-child(2) .tipbox { left: auto; right: 0; transform: none; }
 .fx-table tbody tr:nth-last-child(-n+2) .fx-cell .tipbox { top: auto; bottom: calc(100% + 8px); }
 @media (min-width: 1000px) { .fx-scroll { overflow: visible; } }
+/* ============================================================
+   SATOSHI ROW + THE HORIZONTAL LINEAGE (tl-, 2026-09-07). Main's layout
+   in vesper's skin: the question against the boxed post, then six nodes
+   on one accent-gradient line (emphasis grows toward 2026), each node a
+   tab whose card renders in a fixed-height panel under the line, so
+   hover, click and arrow keys swap cards without moving anything below.
+   ============================================================ */
+.pv-ask { margin-top: 72px; }
+.pv-ask .chapter h3 { max-width: 20ch; }
+.pv-ask .chapter p { margin-bottom: 0; }
+.forum-bar a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+.tl { margin-top: 48px; padding: 30px 0 24px; border-top: 1px solid var(--th-hair); border-bottom: 1px solid var(--th-hair); }
+.tl-rail { position: relative; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); }
+.tl-rail::before { content: ""; position: absolute; left: calc(100% / 12); right: calc(100% / 12); top: 7px; height: 2px;
+  background: linear-gradient(90deg, rgba(var(--accent-rgb), .15), var(--accent)); }
+.tl-node { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+  background: none; border: 0; padding: 0 8px; cursor: pointer; text-align: center; color: inherit; font-family: var(--mono); }
+.tl-node i { display: block; width: 14px; height: 14px; margin: 0 auto; border-radius: 50%; background: #1a1a1a; border: 2px solid var(--muted);
+  transition: transform .2s, background .2s, border-color .2s, box-shadow .2s; }
+.tl-node:last-child i { box-shadow: 0 0 10px rgba(var(--accent-rgb), .35); }
+.tl-node:hover i, .tl-node[aria-selected="true"] i { background: var(--em); border-color: var(--em); box-shadow: 0 0 10px var(--em); transform: scale(1.15); }
+.tl-node .y { display: block; margin-top: 14px; font-size: 13px; color: var(--ink); transition: color .2s; }
+.tl-node .l { display: block; margin-top: 5px; font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); line-height: 1.6; }
+.tl-node[aria-selected="true"] .y, .tl-node:hover .y { color: var(--em); }
+.tl-node:focus-visible { outline: 2px solid var(--em); outline-offset: 4px; border-radius: 6px; }
+/* the card panel: six cards in one grid cell, the tallest reserves the height */
+.tl-panel { position: relative; display: grid; margin-top: 26px; min-height: 92px; }
+.tl-card { grid-area: 1 / 1; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 18px; align-items: start;
+  visibility: hidden; opacity: 0; transition: opacity .25s ease, visibility 0s .25s; }
+.tl-card.is-on { visibility: visible; opacity: 1; transition: opacity .25s ease .05s, visibility 0s; }
+.tl-num { grid-row: 1 / span 3; font-family: var(--mono); font-size: 12px; letter-spacing: .16em; color: var(--em);
+  border: 1px solid var(--em-line); padding: 8px 10px; line-height: 1; }
+.tl-ct { margin: 0; font-family: var(--display); font-weight: 700; font-size: 19px; line-height: 1.2; color: var(--ink); }
+.tl-card p { margin: 0; max-width: 78ch; font-size: 15px; line-height: 1.55; color: rgba(250, 250, 250, .78); }
+.tl-src { justify-self: start; margin-top: 2px; font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--em); text-decoration: none; }
+.tl-src:hover { text-decoration: underline; text-underline-offset: 3px; }
+@media (max-width: 860px) {
+  .tl-rail { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px 0; }
+  .tl-rail::before { display: none; }
+  .tl-panel { min-height: 0; }
+  .tl-card { grid-template-columns: minmax(0, 1fr); }
+  .tl-num { grid-row: auto; justify-self: start; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tl-card, .tl-card.is-on, .tl-node i, .tl-node .y { transition: none; }
+}
 </style>
 <script src="js/admin-gate.js"></script>
 </head>
@@ -2411,84 +2458,50 @@ body section.th-pm-sec--mistral{background-color:#070303!important;}
 <p class="fx-legend"><span class="fx-y" aria-hidden="true"></span> Yes<span class="fx-p" aria-hidden="true"></span> Partial, not counted<span class="fx-n" aria-hidden="true">&ndash;</span> No</p>
 </div>
 
-  <!-- Satoshi's statement, set the way sui.io sets its thesis line: a mono
-       chip for the source, one huge tight statement, the three qualities
-       he asked for carried as inverted highlight blocks with an icon tile
-       each. Static, nothing pinned, nothing else in the section. -->
-  <section class="sq th-pm-reveal" aria-labelledby="sq-heading" id="sq-band">
-    <p class="sq-kicker">Satoshi on Bitcointalk, thread 770, August 11, 2010</p>
-    <blockquote class="sq-quote" id="sq-heading">
-      <p>If a solution was found, <mark class="sq-hl"><i class="sq-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 13.5h7L10 22l9-11.5h-7z"/></svg></i>a much better,</mark> <mark class="sq-hl"><i class="sq-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l18 18"/><path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M6.6 6.7C4 8.3 2.5 12 2.5 12s3.5 6.5 9.5 6.5c1.7 0 3.2-.5 4.5-1.2"/><path d="M9.9 5.7C10.6 5.6 11.3 5.5 12 5.5c6 0 9.5 6.5 9.5 6.5s-.9 1.7-2.5 3.3"/></svg></i>easier,</mark> <mark class="sq-hl"><i class="sq-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="7" rx="8" ry="3.2"/><path d="M4 7v10c0 1.8 3.6 3.2 8 3.2s8-1.4 8-3.2V7"/><path d="M4 12c0 1.8 3.6 3.2 8 3.2s8-1.4 8-3.2"/></svg></i>more convenient</mark> implementation of Bitcoin would be possible.</p>
-    </blockquote>
-  </section>
-
-  <!-- The lineage, set the way sui.io sets its stack: a title over light
-       streaks that fade as you scroll, then one dotted rail down the middle
-       with a square playhead pinned at mid-viewport, and a card per stop
-       alternating left and right. A card opens (its line-art visual and
-       description unfold) when it reaches the middle (js/lineage.js). The
-       art is inline SVG line drawings, drawn on open, no photography. -->
-  <section class="lg th-pm-reveal" id="lg" aria-label="How the tool reached Starknet">
-    <div class="lg-head">
-      <div class="lg-pin">
-        <div class="lg-streaks" aria-hidden="true"></div>
-        <div class="lg-streaks-r" aria-hidden="true"></div>
-        <div class="lg-head-in">
-          <h2 id="from-the-questionto-the-answer" class="lg-title">From the question<br>to the answer</h2>
-          <p class="lg-sub"><span class="lg-sq" aria-hidden="true"></span>Sixteen years from Satoshi's open question to STRK20</p>
+  <!-- Satoshi narrative, main's three rows (restored 2026-09-07 in place of
+       the full-viewport quote screen and the six-screen vertical rail):
+       row 1 asks (question + the post, the post the only boxed element),
+       row 2 bridges (the horizontal lineage, six nodes on one line; a node
+       reveals its short card in a fixed-height panel on hover or click, one
+       at a time, no layout shift), row 3 answers (the two prose columns
+       below, unchanged). -->
+  <div class="pv-duo pv-duo--center th-pm-reveal pv-ask" id="satoshi">
+    <div>
+      <div class="chapter" style="margin-top:0">
+        <h3 id="so-how-does-one-chain-check">So how does one chain <span class="em">check every box at once?</span></h3>
+        <!-- sixteen: 2026 less 2010, the same count the answer row states -->
+        <p>The answer starts sixteen years back, with Satoshi himself naming the tool.</p>
+      </div>
+    </div>
+    <div>
+      <div class="forum">
+        <div class="forum-bar"><a href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/174/" target="_blank" rel="noopener">BITCOINTALK.ORG &middot; THREAD N&deg; 770</a><span>AUGUST 11, 2010</span></div>
+        <div class="forum-post">
+          <div class="forum-user"><span class="u">satoshi</span><br><span class="r">FOUNDER<br>ACTIVITY: 364</span></div>
+          <div class="forum-body">This is a very interesting topic. If a solution was found, <span class="hl">a much better, easier, more convenient implementation of Bitcoin would be possible</span>. [...] It's hard to think of how to apply zero-knowledge-proofs in this case.</div>
         </div>
       </div>
     </div>
-    <div class="lg-track">
-      <span class="lg-line" aria-hidden="true"></span>
-      <div class="lg-play" aria-hidden="true"></div>
-      <ol class="lg-list">
-      <li class="lg-stop lg-r">
-        <article class="lg-card">
-          <header class="lg-ch"><span class="lg-num">01</span><h3 class="lg-ct">Satoshi's open question</h3></header>
-          <div class="lg-cv"><div class="lg-cv-in"><svg class="lg-art" viewBox="0 0 320 220" aria-hidden="true"><g stroke="#4a4a4a" stroke-width="1.2" fill="none" stroke-linejoin="round" stroke-linecap="round"><path d="M60 60h120a8 8 0 0 1 8 8v40a8 8 0 0 1-8 8H92l-20 16v-16H60a8 8 0 0 1-8-8V68a8 8 0 0 1 8-8z"/><path d="M76 82h72M76 96h48"/><path d="M130 130h120a8 8 0 0 1 8 8v36a8 8 0 0 1-8 8h-12v14l-18-14h-90a8 8 0 0 1-8-8v-36a8 8 0 0 1 8-8z"/><path d="M146 150h70M146 164h44"/></g><g stroke="#c53400" stroke-width="1.4" fill="none" stroke-linejoin="round" stroke-linecap="round" class="lg-acc"><path d="M200 34h52a6 6 0 0 1 6 6v20a6 6 0 0 1-6 6h-30l-10 8v-8h-12a6 6 0 0 1-6-6V40a6 6 0 0 1 6-6z"/><path d="M222 44c0-4 4-6 8-6s8 2 8 6-8 5-8 9M230 58v1"/></g></svg><p class="lg-cd">Satoshi says a much better Bitcoin would be possible if privacy could be solved, and that he cannot see how to apply zero-knowledge proofs to it.</p></div></div>
-          <footer class="lg-cf"><span class="lg-yr">2010</span><a class="lg-src" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/174/" target="_blank" rel="noopener">Bitcointalk, thread 770</a></footer>
-        </article>
-      </li>
-      <li class="lg-stop lg-l">
-        <article class="lg-card">
-          <header class="lg-ch"><span class="lg-num">02</span><h3 class="lg-ct">The San Jose talk</h3></header>
-          <div class="lg-cv"><div class="lg-cv-in"><svg class="lg-art" viewBox="0 0 320 220" aria-hidden="true"><g stroke="#4a4a4a" stroke-width="1.2" fill="none" stroke-linejoin="round" stroke-linecap="round"><path d="M70 50l150-30v110L70 160z"/><path d="M70 160v14l150-30v-14M60 46l10 4M230 16l-10 4"/><path d="M96 74l98-19M96 92l98-19M96 110l60-12"/><path d="M130 190h60M160 172v18"/></g><g stroke="#c53400" stroke-width="1.4" fill="none" stroke-linejoin="round" stroke-linecap="round" class="lg-acc"><path d="M100 138c20-8 30-42 46-44s22 20 54-20"/><circle cx="146" cy="94" r="3"/><circle cx="200" cy="74" r="3"/></g></svg><p class="lg-cd">At Bitcoin 2013, Eli Ben-Sasson puts succinct zero-knowledge proofs in front of a Bitcoin audience: the tool Satoshi could not see how to use.</p></div></div>
-          <footer class="lg-cf"><span class="lg-yr">2013</span><a class="lg-src" href="https://www.youtube.com/watch?v=kLueWNsYRno" target="_blank" rel="noopener">Bitcoin 2013, San Jose</a></footer>
-        </article>
-      </li>
-      <li class="lg-stop lg-r">
-        <article class="lg-card">
-          <header class="lg-ch"><span class="lg-num">03</span><h3 class="lg-ct">The Zerocash paper</h3></header>
-          <div class="lg-cv"><div class="lg-cv-in"><svg class="lg-art" viewBox="0 0 320 220" aria-hidden="true"><g stroke="#4a4a4a" stroke-width="1.2" fill="none" stroke-linejoin="round" stroke-linecap="round"><path d="M100 30h90l40 40v120H100z"/><path d="M190 30v40h40"/><path d="M120 90h70M120 106h90M120 154h60M120 170h90"/></g><g stroke="#c53400" stroke-width="1.4" fill="none" stroke-linejoin="round" stroke-linecap="round" class="lg-acc"><path d="M120 122h48M176 122h34M120 138h30"/><rect x="118" y="118" width="52" height="8" rx="1" fill="#c53400" stroke="none" opacity=".9"/><rect x="118" y="134" width="34" height="8" rx="1" fill="#c53400" stroke="none" opacity=".9"/></g></svg><p class="lg-cd">Fully private payments on a public ledger, from zero-knowledge proofs, with Eli Ben-Sasson among the authors.</p></div></div>
-          <footer class="lg-cf"><span class="lg-yr">2014</span><a class="lg-src" href="http://zerocash-project.org/paper" target="_blank" rel="noopener">Zerocash, IEEE S&amp;P 2014</a></footer>
-        </article>
-      </li>
-      <li class="lg-stop lg-l">
-        <article class="lg-card">
-          <header class="lg-ch"><span class="lg-num">04</span><h3 class="lg-ct">Zcash launches</h3></header>
-          <div class="lg-cv"><div class="lg-cv-in"><svg class="lg-art" viewBox="0 0 320 220" aria-hidden="true"><g stroke="#4a4a4a" stroke-width="1.2" fill="none" stroke-linejoin="round" stroke-linecap="round"><path d="M160 24l84 30v56c0 46-34 78-84 94-50-16-84-48-84-94V54z"/><path d="M160 24v180M76 108h168"/></g><g stroke="#c53400" stroke-width="1.4" fill="none" stroke-linejoin="round" stroke-linecap="round" class="lg-acc"><circle cx="160" cy="108" r="30"/><path d="M150 96h20l-20 24h20"/></g></svg><p class="lg-cd">The Zerocash design ships as a live chain, with Eli Ben-Sasson as founding scientist. Private, but one asset on one purpose-built network.</p></div></div>
-          <footer class="lg-cf"><span class="lg-yr">2016</span><a class="lg-src" href="https://en.wikipedia.org/wiki/Eli_Ben-Sasson" target="_blank" rel="noopener">Zcash, founding scientist</a></footer>
-        </article>
-      </li>
-      <li class="lg-stop lg-r">
-        <article class="lg-card">
-          <header class="lg-ch"><span class="lg-num">05</span><h3 class="lg-ct">StarkWare is founded</h3></header>
-          <div class="lg-cv"><div class="lg-cv-in"><svg class="lg-art" viewBox="0 0 320 220" aria-hidden="true"><g stroke="#4a4a4a" stroke-width="1.2" fill="none" stroke-linejoin="round" stroke-linecap="round"><path d="M160 150l90-40-90-40-90 40z"/><path d="M160 178l90-40-90-40-90 40z" opacity=".7"/><path d="M160 122l90-40-90-40-90 40z"/><path d="M70 42v96M250 42v96M160 82v96"/></g><g stroke="#c53400" stroke-width="1.4" fill="none" stroke-linejoin="round" stroke-linecap="round" class="lg-acc"><circle cx="160" cy="42" r="4"/><circle cx="115" cy="62" r="4"/><circle cx="205" cy="62" r="4"/><path d="M160 46l-45 16M160 46l45 16M115 66l45 16 45-16"/></g></svg><p class="lg-cd">STARK proofs go to production: transparent, hash-based, built to scale. The proof system that would carry Starknet.</p></div></div>
-          <footer class="lg-cf"><span class="lg-yr">2018</span><a class="lg-src" href="https://starkware.co" target="_blank" rel="noopener">StarkWare</a></footer>
-        </article>
-      </li>
-      <li class="lg-stop lg-l">
-        <article class="lg-card">
-          <header class="lg-ch"><span class="lg-num">06</span><h3 class="lg-ct">STRK20 is live</h3></header>
-          <div class="lg-cv"><div class="lg-cv-in"><svg class="lg-art" viewBox="0 0 320 220" aria-hidden="true"><g stroke="#4a4a4a" stroke-width="1.2" fill="none" stroke-linejoin="round" stroke-linecap="round"><path d="M40 110l120-60 120 60-120 60z"/><path d="M70 95l120 60M100 80l120 60M130 65l120 60M190 65l-120 60M220 80l-120 60M250 95l-120 60"/></g><g stroke="#c53400" stroke-width="1.4" fill="none" stroke-linejoin="round" stroke-linecap="round" class="lg-acc"><path d="M160 80l30 15-30 15-30-15z" fill="#c53400" fill-opacity=".25"/><path d="M160 110v-12M160 80v-8M152 60h16v12h-16zM160 52v8" /><path d="M155 60v-4a5 5 0 0 1 10 0v4"/></g></svg><p class="lg-cd">Private transfers, swaps and balances for any asset on Starknet, with wallet-level UX. The 2010 question has an answer on a general-purpose chain.</p></div></div>
-          <footer class="lg-cf"><span class="lg-yr">2026</span><a class="lg-src" href="https://x.com/Starknet/status/2064375302957289598" target="_blank" rel="noopener">Starknet, mainnet</a></footer>
-        </article>
-      </li>
-      </ol>
+  </div>
+
+  <div class="tl th-pm-reveal" id="lineage">
+    <div class="tl-rail" role="tablist" aria-label="From the question to the answer, 2010 to 2026">
+      <button class="tl-node" type="button" role="tab" id="tl-2010" data-tl="0" aria-selected="true" aria-controls="tl-panel" tabindex="0"><i aria-hidden="true"></i><span class="y">2010</span><span class="l">Satoshi's open question</span></button>
+      <button class="tl-node" type="button" role="tab" id="tl-2013" data-tl="1" aria-selected="false" aria-controls="tl-panel" tabindex="-1"><i aria-hidden="true"></i><span class="y">2013</span><span class="l">The San Jose talk</span></button>
+      <button class="tl-node" type="button" role="tab" id="tl-2014" data-tl="2" aria-selected="false" aria-controls="tl-panel" tabindex="-1"><i aria-hidden="true"></i><span class="y">2014</span><span class="l">The Zerocash paper</span></button>
+      <button class="tl-node" type="button" role="tab" id="tl-2016" data-tl="3" aria-selected="false" aria-controls="tl-panel" tabindex="-1"><i aria-hidden="true"></i><span class="y">2016</span><span class="l">Zcash founding scientist</span></button>
+      <button class="tl-node" type="button" role="tab" id="tl-2018" data-tl="4" aria-selected="false" aria-controls="tl-panel" tabindex="-1"><i aria-hidden="true"></i><span class="y">2018</span><span class="l">StarkWare founded</span></button>
+      <button class="tl-node" type="button" role="tab" id="tl-2026" data-tl="5" aria-selected="false" aria-controls="tl-panel" tabindex="-1"><i aria-hidden="true"></i><span class="y">2026</span><span class="l">STRK20 live</span></button>
     </div>
-  </section>
-  <script src="js/lineage.js" defer></script>
+    <div class="tl-panel" id="tl-panel" role="tabpanel" aria-live="polite">
+      <article class="tl-card is-on" data-tl="0"><span class="tl-num" aria-hidden="true">01</span><h4 id="satoshi-s-open-question" class="tl-ct">Satoshi's open question</h4><p>Satoshi says a much better Bitcoin would be possible if privacy could be solved, and that he cannot see how to apply zero-knowledge proofs to it.</p><a class="tl-src" href="https://satoshi.nakamotoinstitute.org/posts/bitcointalk/threads/174/" target="_blank" rel="noopener">Bitcointalk, thread 770</a></article>
+      <article class="tl-card" data-tl="1"><span class="tl-num" aria-hidden="true">02</span><h4 id="the-san-jose-talk" class="tl-ct">The San Jose talk</h4><p>At Bitcoin 2013, Eli Ben-Sasson puts succinct zero-knowledge proofs in front of a Bitcoin audience: the tool Satoshi could not see how to use.</p><a class="tl-src" href="https://www.youtube.com/watch?v=kLueWNsYRno" target="_blank" rel="noopener">Bitcoin 2013, San Jose</a></article>
+      <article class="tl-card" data-tl="2"><span class="tl-num" aria-hidden="true">03</span><h4 id="the-zerocash-paper" class="tl-ct">The Zerocash paper</h4><p>Fully private payments on a public ledger, from zero-knowledge proofs, with Eli Ben-Sasson among the authors.</p><a class="tl-src" href="http://zerocash-project.org/paper" target="_blank" rel="noopener">Zerocash, IEEE S&amp;P 2014</a></article>
+      <article class="tl-card" data-tl="3"><span class="tl-num" aria-hidden="true">04</span><h4 id="zcash-founding-scientist" class="tl-ct">Zcash founding scientist</h4><p>The Zerocash design ships as a live chain, with Eli Ben-Sasson as founding scientist. Private, but one asset on one purpose-built network.</p><a class="tl-src" href="https://en.wikipedia.org/wiki/Eli_Ben-Sasson" target="_blank" rel="noopener">Zcash, founding scientist</a></article>
+      <article class="tl-card" data-tl="4"><span class="tl-num" aria-hidden="true">05</span><h4 id="starkware-founded" class="tl-ct">StarkWare founded</h4><p>STARK proofs go to production: transparent, hash-based, built to scale. The proof system that would carry Starknet.</p><a class="tl-src" href="https://starkware.co" target="_blank" rel="noopener">StarkWare</a></article>
+      <article class="tl-card" data-tl="5"><span class="tl-num" aria-hidden="true">06</span><h4 id="strk20-live" class="tl-ct">STRK20 live</h4><p>Private transfers, swaps and balances for any asset on Starknet, with wallet-level UX. The 2010 question has an answer on a general-purpose chain.</p><a class="tl-src" href="https://x.com/Starknet/status/2064375302957289598" target="_blank" rel="noopener">Starknet, mainnet</a></article>
+    </div>
+  </div>
   <script src="js/video-cards.js" defer></script>
   <div class="pv-duo th-pm-reveal" style="margin-top:56px">
     <div>
@@ -4615,6 +4628,33 @@ var pvVideoChrome = thVideoChrome({
       set(card, open);
     });
   });
+})();
+
+// ============================================================
+// SECTION 03: the horizontal lineage. Six nodes drive one card panel on
+// the shared thRove machine (click, Enter, arrows); a fine pointer also
+// previews on hover. One card at a time, the panel's height reserved.
+// ============================================================
+(function(){
+  var root = document.getElementById('lineage');
+  if (!root || !window.thRove) return;
+  var nodes = [].slice.call(root.querySelectorAll('.tl-node'));
+  var cards = [].slice.call(root.querySelectorAll('.tl-card'));
+  var fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  function shown(){ var c = root.querySelector('.tl-card.is-on'); return c ? +c.dataset.tl : 0; }
+  function select(i){
+    cards.forEach(function(c){ c.classList.toggle('is-on', +c.dataset.tl === i); });
+    rove.mirror(i);
+  }
+  var rove = thRove({ root: root, buttons: nodes, shown: shown, pick: function(k){ select(k); } });
+  if (fine) nodes.forEach(function(n, i){ n.addEventListener('mouseenter', function(){ select(i); }); });
+  /* deep links to a card's heading open it */
+  function surface(){
+    var id = (location.hash || '').slice(1); if (!id) return;
+    var el = document.getElementById(id); if (!el || !root.contains(el)) return;
+    var c = el.closest('.tl-card'); if (c) select(+c.dataset.tl);
+  }
+  window.addEventListener('hashchange', surface); surface();
 })();
 
 // ============================================================
