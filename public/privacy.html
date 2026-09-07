@@ -2136,7 +2136,7 @@ h3.pmv-title { margin: 0 0 14px; font-size: clamp(22px, 2vw, 26px); line-height:
 .eco-lab { display: flex; flex-direction: column; gap: 3px; padding-top: 6px; }
 .eco-lab .wn { font-family: var(--mono); font-size: 9.5px; letter-spacing: .12em; color: var(--em); line-height: 1.4; }
 .eco-n { font-family: var(--mono); font-size: 9px; letter-spacing: .06em; color: var(--muted); }
-.eco-tiles { display: flex; flex-wrap: wrap; gap: 8px; }
+.eco-tiles { display: flex; flex-wrap: wrap; gap: 6px; }
 .eco-tile { width: 78px; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 3px 2px 4px; margin: 0; border: 0; border-radius: 10px;
   background: none; text-decoration: none; color: var(--ink); text-align: center; transition: opacity .25s, background .2s; }
 .eco-tile.wp-card:hover { border: 0; background: rgba(250, 250, 250, .04); }
@@ -3527,7 +3527,7 @@ var pvVideoChrome = thVideoChrome({
   tiles.forEach(function(t){ var k = t.getAttribute('data-status'); counts[k] = (counts[k] || 0) + 1; });
   root.querySelectorAll('.eco-lane').forEach(function(l){
     var n = l.querySelectorAll('.eco-tile:not([data-note])').length, el = l.querySelector('[data-eco-count]');
-    if (el) el.textContent = n + ' ' + el.getAttribute('data-eco-count');
+    if (el) { var noun = el.getAttribute('data-eco-count'); el.textContent = n + ' ' + (n === 1 ? noun.replace(/s$/, '') : noun); }
   });
   var bar = document.getElementById('ecoFilter');
   function btn(label, f, count){
