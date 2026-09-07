@@ -2736,6 +2736,51 @@ body.page-quantum{overflow-x:clip;}
 .th-fl-conn .th-fl-tip{color:var(--th-muted);font-size:10px;line-height:1;margin-top:-2px;}
 .th-fl-node.th-dest .th-fl-title{color:var(--th-done);}
 @media(max-width:1080px){.th-pq-layout{grid-template-columns:1fr;}.th-fl{position:static;top:auto;}}
+/* ROADMAP FITS ONE VIEWPORT (2026-09-07): 1440x900 with All active is a
+   836px budget under the 64px nav. Title block ~122 (h3 40px, intro two
+   lines on a 1000px measure, clamp as the guard), filters one 40px row,
+   table 40 + 8x56 = 490, path four ~96px collapsed cards (kicker, title,
+   duration chip with its as-of line; chevron at the right) that together
+   stay under the table height. Every phase starts closed, Phase 1
+   included; the click handler keeps one open at a time. Row and card
+   type is unchanged in face and case, only sized. Desktop cell heights
+   are gated >=681 because the <=680 card restack makes every td a block.
+   The chapter's h3 id already carries the nav scroll-margin via
+   .qsec3 [id]. */
+.qrm-head{margin-top:0;padding-top:32px;scroll-margin-top:var(--vcnav-h,64px);}
+/* the two-line cap is a desktop budget device only: on a 375 measure the
+   clamp would cut the copy, so below 861 the shared scale-title/intro
+   sizes stand and the intro runs its full length */
+@media(min-width:861px){
+  .qrm-head .scale-title{font-size:40px;line-height:1.05;margin-bottom:10px;}
+  .qrm-head .scale-intro{font-size:14px;line-height:1.5;max-width:1000px;margin-bottom:0;
+    display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;}
+}
+.th-pq{margin-top:16px;}
+.th-pq-filters{margin-bottom:12px;}
+.th-pq-chip{padding:12px 14px;font-size:12px;gap:8px;}
+.th-pq-chip .th-pq-ct{font-size:11px;padding:0 6px;}
+.th-pq-layout{margin-top:0;}
+@media(min-width:861px){.th-pq-filters{flex-wrap:nowrap;}}
+@media(min-width:681px){
+  .th-pq-table thead th{padding:0 16px;height:40px;box-sizing:border-box;}
+  .th-pq-table tbody td{padding:0 16px;height:56px;box-sizing:border-box;font-size:14px;}
+  .th-pq-table .th-mono,.th-pq-table .th-owner{font-size:13.5px;}
+  .th-pq-table .th-detailrow td{height:auto;padding:0;}
+  .th-pq-badge{padding:4px 9px;font-size:11px;}
+}
+.th-fl-head{margin-bottom:10px;line-height:1.3;}
+.th-fl-headrow{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"txt chev" "time chev";
+  row-gap:7px;column-gap:12px;align-items:start;padding:10px 14px 11px;}
+.th-fl-txt{grid-area:txt;}
+.th-fl-phase{line-height:1.25;}
+.th-fl-title{line-height:1.2;margin-top:2px;}
+.th-fl-time{grid-area:time;justify-self:start;line-height:1.25;padding:3px 8px;}
+.th-fl-asof{line-height:1.2;margin-top:2px;}
+.th-fl-chev{grid-area:chev;align-self:center;}
+.th-fl-conn{height:18px;}
+.th-fl-detail{padding:0 14px 14px;}
+@media (prefers-reduced-motion: reduce){.th-fl-node.th-open .th-fl-detail{animation:none;}}
 .th-maze-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:26px;}
 .th-maze-panel{border:1px solid rgba(250, 250, 250,.08);border-radius:16px;padding:18px 18px 20px;background:linear-gradient(180deg,rgba(255,255,255,.015),rgba(255,255,255,.004));}
 .th-maze-head{display:flex;align-items:center;gap:9px;margin-bottom:5px;}
@@ -2772,7 +2817,7 @@ body.page-quantum{overflow-x:clip;}
 </style>
 
   <!-- chapter: what remains -->
-  <div class="th-q-chapter th-pm-reveal">
+  <div class="th-q-chapter th-pm-reveal qrm-head">
     <h3 id="what-remains-is-mapped-owned-and" class="scale-title">What remains is <span>mapped, owned, and scheduled.</span></h3>
     <p class="scale-intro">The head start does not cover everything. Here is every remaining cryptographic surface on Starknet: what it runs on today, what it moves to, who owns the change, and which phase delivers it. Filter by phase, and click any row for the details.</p>
   </div>
@@ -2822,7 +2867,7 @@ body.page-quantum{overflow-x:clip;}
   <aside class="th-fl">
     <div class="th-fl-head">The path to end-to-end</div>
 
-    <div class="th-fl-node th-open" style="--ac:var(--th-q)">
+    <div class="th-fl-node" style="--ac:var(--th-q)">
       <div class="th-fl-headrow"><div class="th-fl-txt"><div class="th-fl-phase">Phase 1</div><div class="th-fl-title">Secure the future</div></div><span class="th-fl-time">&asymp; 2 months <i class="th-fl-asof" data-perish="roadmap-phase1">as of Jun 30, 2026</i></span><span class="th-fl-chev">&#9656;</span></div>
       <div class="th-fl-detail"><p>Every new deployment, transaction, and state update becomes quantum-safe by default. Pedersen moves to BLAKE2 across state commitment, address derivation, and the chain environment, and consensus signing moves to Falcon-512.</p><div class="th-fl-sfcs"><span class="th-fl-sfc">State trie hashing</span><span class="th-fl-sfc">Address derivation</span><span class="th-fl-sfc" style="--ac:var(--th-done)">OS config hash</span><span class="th-fl-sfc">Consensus signing</span></div></div>
     </div>
