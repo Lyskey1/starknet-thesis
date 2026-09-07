@@ -1847,6 +1847,50 @@ body.page-privacy{--qhx-u:min(1vw,14.4px)}
 /* the claim band under the hero: main's thin divider (its rules are the
    CLAIM BAND block above); the strip no longer hosts it */
 .pv-marquee { margin: 0; }
+/* ============================================================
+   ISOMETRIC LINE ART (iso-, 2026-09-07): one style for the walls and the
+   law. 2px non-scaling strokes on the dim ink, one accent class per
+   drawing (.iso-acc), background parts on .iso-dim. Every element carries
+   pathLength="1" and .iso-p, so the draw-in is dasharray 1 to 0 when the observer
+   adds .is-in, staggered by --i; reduced motion draws nothing and shows
+   the finished art.
+   ============================================================ */
+.iso { display: block; color: rgba(250, 250, 250, .62); overflow: visible; }
+.iso * { vector-effect: non-scaling-stroke; }
+.iso .iso-acc { stroke: var(--accent); }
+.iso .iso-dim { stroke: rgba(250, 250, 250, .26); }
+/* class, not [pathLength]: an HTML document lowercases the attribute name in
+   a stylesheet selector and SVG attribute matching is case-sensitive, so the
+   attribute form never bound (measured 2026-09-07) */
+.iso .iso-p { stroke-dasharray: 1; stroke-dashoffset: 1; }
+.iso.is-in .iso-p { animation: isoDraw .9s cubic-bezier(.3, .6, .2, 1) forwards; animation-delay: calc(var(--i, 0) * 28ms); }
+@keyframes isoDraw { to { stroke-dashoffset: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .iso .iso-p { stroke-dasharray: none; stroke-dashoffset: 0; animation: none !important; }
+}
+
+/* ============================================================
+   SECTION 02, THE TIGHTER BUDGET (2026-09-07): title block ~130, the
+   illustration 120, case files ~180 at 11.5px mono, h3 + two-line clamp
+   + READ THE WALL, 56px figures over one caption line.
+   ============================================================ */
+.tw-ico { width: auto; max-width: 100%; height: 120px; }
+.tw-viz { gap: 12px; margin-bottom: 12px; }
+.tw-card { padding: 14px 22px 12px; }
+/* case files at 12px mono, ~170px: the description clamps to three lines at
+   rest and runs whole once the wall is opened (Read the wall) */
+.tw-viz .case { padding: 9px 10px 9px; }
+.tw-viz .case .ch { font-size: 9.5px; }
+.tw-viz .case .cn { font-size: 12px; margin-top: 5px; }
+.tw-viz .case .cd { font-size: 12px; line-height: 1.4; margin-top: 6px; }
+.tw-card:not(.is-open) .tw-viz .case .cd { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; }
+.tw-viz .case .cs { font-size: 9.5px; margin-top: 7px; padding-top: 6px; }
+.tw-card:not(.is-open) .tw-body { -webkit-line-clamp: 2; }
+.tw-card h3 { margin-bottom: 6px; }
+.tw-more { margin-top: 7px; }
+.tw-stat { padding: 8px 22px 0; }
+.tw-num { font-size: 56px; }
+.tw-slab { margin-top: 4px; font-size: 10.5px; line-height: 1.5; }
 </style>
 <script src="js/admin-gate.js"></script>
 </head>
@@ -2040,16 +2084,7 @@ body.page-privacy{--qhx-u:min(1vw,14.4px)}
 
       <article class="tw-card">
         <div class="tw-viz">
-          <svg class="tw-ico" viewBox="0 0 232 104" fill="none" stroke="#4a4a4a" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <circle cx="44" cy="52" r="30"/>
-    <circle cx="44" cy="52" r="21" stroke-dasharray="4 5"/>
-    <path d="M34 52.5 41 60 55 44" stroke="#c53400" stroke-width="1.7"/>
-    <path d="M80 52h48" stroke-dasharray="5 7"/>
-    <path d="M136 44l16 16M152 44l-16 16" stroke="#c53400" stroke-width="1.7"/>
-    <rect x="170" y="22" width="50" height="60" rx="3"/>
-    <path d="M170 36h50"/>
-    <path d="M182 50h26M182 60h26M182 70h16"/>
-  </svg>
+          <svg class="iso tw-ico" viewBox="0 0 320 130" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="iso-p" d="M160.0 32.7 L212.6 63.1 L160.0 93.5 L107.4 63.1 Z" pathLength="1" style="--i:0"/><path class="iso-p" d="M212.6 91.6 L160.0 122.0 L160.0 93.5 L212.6 63.1 Z" pathLength="1" style="--i:1"/><path class="iso-p" d="M107.4 91.6 L160.0 122.0 L160.0 93.5 L107.4 63.1 Z" pathLength="1" style="--i:2"/><path class="iso-p" d="M160.0 36.5 L206.1 63.1 L160.0 89.7 L113.9 63.1 Z" pathLength="1" style="--i:3"/><path class="iso-p" d="M206.1 82.1 L166.6 104.9" pathLength="1" style="--i:4"/><path class="iso-p" d="M113.9 82.1 L153.4 104.9" pathLength="1" style="--i:5"/><path d="M194.6 96.3 L178.1 105.8 L178.1 92.5 L194.6 83.0 Z" class="iso-p iso-acc" pathLength="1" style="--i:6"/><path d="M186.3 101.1 L186.3 87.8" class="iso-p iso-acc" pathLength="1" style="--i:7"/><path class="iso-p" d="M160.0 8.0 L160.0 21.3" pathLength="1" style="--i:8"/><path class="iso-p" d="M157.5 15.1 L170.7 22.7 L162.5 27.5 L149.3 19.9 Z" pathLength="1" style="--i:9"/><path class="iso-p" d="M170.7 32.2 L162.5 37.0 L162.5 27.5 L170.7 22.7 Z" pathLength="1" style="--i:10"/><path class="iso-p" d="M149.3 29.4 L162.5 37.0 L162.5 27.5 L149.3 19.9 Z" pathLength="1" style="--i:11"/><path class="iso-p" d="M160.0 30.8 L160.0 49.8" pathLength="1" style="--i:12"/><path class="iso-p" d="M160.0 46.0 L164.9 48.8" pathLength="1" style="--i:13"/><path class="iso-p" d="M160.0 49.8 L164.1 52.2" pathLength="1" style="--i:14"/></svg>
           <div class="cases">
             <div class="gx-bloom" aria-hidden="true">
               <i style="--bc:var(--danger);left:12%;top:4%;width:76%;height:42%"></i>
@@ -2081,18 +2116,7 @@ body.page-privacy{--qhx-u:min(1vw,14.4px)}
 
       <article class="tw-card">
         <div class="tw-viz">
-          <svg class="tw-ico" viewBox="0 0 232 104" fill="none" stroke="#4a4a4a" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <circle cx="40" cy="52" r="30"/>
-    <circle cx="40" cy="52" r="13" stroke-dasharray="3 4"/>
-    <circle cx="192" cy="52" r="30"/>
-    <circle cx="183" cy="52" r="3"/>
-    <circle cx="193" cy="43" r="3"/>
-    <circle cx="201" cy="59" r="3"/>
-    <path d="M70 52h92" stroke="#c53400" stroke-dasharray="5 6"/>
-    <path d="M154 46l8 6-8 6" stroke="#c53400" stroke-width="1.6"/>
-    <path d="M78 46l-8 6 8 6" stroke="#c53400" stroke-width="1.6"/>
-    <path d="M116 24v11M116 69v11"/>
-  </svg>
+          <svg class="iso tw-ico" viewBox="0 0 320 130" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="iso-p" d="M117.6 14.0 L166.1 42.0 L128.0 64.0 L79.5 36.0 Z" pathLength="1" style="--i:0"/><path class="iso-p" d="M166.1 50.0 L128.0 72.0 L128.0 64.0 L166.1 42.0 Z" pathLength="1" style="--i:1"/><path class="iso-p" d="M79.5 44.0 L128.0 72.0 L128.0 64.0 L79.5 36.0 Z" pathLength="1" style="--i:2"/><path class="iso-p" d="M117.6 8.0 L127.1 13.5 L119.4 18.0 L109.8 12.5 Z" pathLength="1" style="--i:3"/><path class="iso-p" d="M127.1 25.5 L119.4 30.0 L119.4 18.0 L127.1 13.5 Z" pathLength="1" style="--i:4"/><path class="iso-p" d="M109.8 24.5 L119.4 30.0 L119.4 18.0 L109.8 12.5 Z" pathLength="1" style="--i:5"/><path class="iso-p" d="M106.4 8.5 L115.9 14.0 L108.1 18.5 L98.6 13.0 Z" pathLength="1" style="--i:6"/><path class="iso-p" d="M115.9 32.0 L108.1 36.5 L108.1 18.5 L115.9 14.0 Z" pathLength="1" style="--i:7"/><path class="iso-p" d="M98.6 31.0 L108.1 36.5 L108.1 18.5 L98.6 13.0 Z" pathLength="1" style="--i:8"/><path class="iso-p" d="M95.1 23.0 L104.6 28.5 L96.8 33.0 L87.3 27.5 Z" pathLength="1" style="--i:9"/><path class="iso-p" d="M104.6 38.5 L96.8 43.0 L96.8 33.0 L104.6 28.5 Z" pathLength="1" style="--i:10"/><path class="iso-p" d="M87.3 37.5 L96.8 43.0 L96.8 33.0 L87.3 27.5 Z" pathLength="1" style="--i:11"/><path class="iso-p" d="M131.5 12.0 L141.0 17.5 L133.2 22.0 L123.7 16.5 Z" pathLength="1" style="--i:12"/><path class="iso-p" d="M141.0 33.5 L133.2 38.0 L133.2 22.0 L141.0 17.5 Z" pathLength="1" style="--i:13"/><path class="iso-p" d="M123.7 32.5 L133.2 38.0 L133.2 22.0 L123.7 16.5 Z" pathLength="1" style="--i:14"/><path class="iso-p" d="M120.2 12.5 L129.7 18.0 L121.9 22.5 L112.4 17.0 Z" pathLength="1" style="--i:15"/><path class="iso-p" d="M129.7 40.0 L121.9 44.5 L121.9 22.5 L129.7 18.0 Z" pathLength="1" style="--i:16"/><path class="iso-p" d="M112.4 39.0 L121.9 44.5 L121.9 22.5 L112.4 17.0 Z" pathLength="1" style="--i:17"/><path class="iso-p" d="M109.0 27.0 L118.5 32.5 L110.7 37.0 L101.2 31.5 Z" pathLength="1" style="--i:18"/><path class="iso-p" d="M118.5 46.5 L110.7 51.0 L110.7 37.0 L118.5 32.5 Z" pathLength="1" style="--i:19"/><path class="iso-p" d="M101.2 45.5 L110.7 51.0 L110.7 37.0 L101.2 31.5 Z" pathLength="1" style="--i:20"/><path class="iso-p" d="M145.2 25.0 L154.9 30.5 L147.1 35.0 L137.5 29.5 Z" pathLength="1" style="--i:21"/><path class="iso-p" d="M154.9 41.5 L147.1 46.0 L147.1 35.0 L154.9 30.5 Z" pathLength="1" style="--i:22"/><path class="iso-p" d="M137.5 40.5 L147.1 46.0 L147.1 35.0 L137.5 29.5 Z" pathLength="1" style="--i:23"/><path class="iso-p" d="M134.1 23.5 L143.6 29.0 L135.8 33.5 L126.3 28.0 Z" pathLength="1" style="--i:24"/><path class="iso-p" d="M143.6 48.0 L135.8 52.5 L135.8 33.5 L143.6 29.0 Z" pathLength="1" style="--i:25"/><path class="iso-p" d="M126.3 47.0 L135.8 52.5 L135.8 33.5 L126.3 28.0 Z" pathLength="1" style="--i:26"/><path class="iso-p" d="M122.8 36.0 L132.2 41.5 L124.5 46.0 L115.0 40.5 Z" pathLength="1" style="--i:27"/><path class="iso-p" d="M132.2 54.5 L124.5 59.0 L124.5 46.0 L132.2 41.5 Z" pathLength="1" style="--i:28"/><path class="iso-p" d="M115.0 53.5 L124.5 59.0 L124.5 46.0 L115.0 40.5 Z" pathLength="1" style="--i:29"/><path d="M211.1 82.0 L240.6 99.0 L214.6 114.0 L185.2 97.0 Z" class="iso-p iso-dim" pathLength="1" style="--i:30"/><path d="M240.6 107.0 L214.6 122.0 L214.6 114.0 L240.6 99.0 Z" class="iso-p iso-dim" pathLength="1" style="--i:31"/><path d="M185.2 105.0 L214.6 122.0 L214.6 114.0 L185.2 97.0 Z" class="iso-p iso-dim" pathLength="1" style="--i:32"/><path d="M213.7 79.5 L224.1 85.5 L213.7 91.5 L203.4 85.5 Z" class="iso-p iso-dim" pathLength="1" style="--i:33"/><path d="M224.1 97.5 L213.7 103.5 L213.7 91.5 L224.1 85.5 Z" class="iso-p iso-dim" pathLength="1" style="--i:34"/><path d="M203.4 97.5 L213.7 103.5 L213.7 91.5 L203.4 85.5 Z" class="iso-p iso-dim" pathLength="1" style="--i:35"/><path class="iso-p" d="M150.5 49.0 L171.2 61.0" pathLength="1" style="--i:36"/><path class="iso-p" d="M185.2 69.0 L207.7 82.0" pathLength="1" style="--i:37"/><path class="iso-p" d="M143.6 53.0 L164.4 65.0" pathLength="1" style="--i:38"/><path class="iso-p" d="M178.2 73.0 L200.8 86.0" pathLength="1" style="--i:39"/><path class="iso-p" d="M150.5 49.0 L143.6 53.0" pathLength="1" style="--i:40"/><path class="iso-p" d="M207.7 82.0 L200.8 86.0" pathLength="1" style="--i:41"/><path class="iso-p" d="M171.2 61.0 L164.4 65.0" pathLength="1" style="--i:42"/><path class="iso-p" d="M185.2 69.0 L178.2 73.0" pathLength="1" style="--i:43"/><path class="iso-p" d="M155.7 66.0 L155.7 56.0" pathLength="1" style="--i:44"/><path class="iso-p" d="M193.8 88.0 L193.8 78.0" pathLength="1" style="--i:45"/><path d="M171.2 61.0 L173.0 62.0 L167.8 65.0 L168.7 66.5" class="iso-p iso-acc" pathLength="1" style="--i:46"/><path d="M185.2 69.0 L180.0 70.0 L180.0 69.0 L173.9 71.5" class="iso-p iso-acc" pathLength="1" style="--i:47"/></svg>
         </div>
         <div class="tw-txt">
           <h3 id="wall-n-02composability-privacy-kept-being"><span class="wall-tag">WALL Nº 02</span>Composability: privacy kept being built as a destination, <span class="em">and destinations empty out.</span></h3>
@@ -2105,33 +2129,7 @@ body.page-privacy{--qhx-u:min(1vw,14.4px)}
 
       <article class="tw-card">
         <div class="tw-viz">
-          <svg class="tw-ico" viewBox="0 0 232 104" fill="none" stroke="#4a4a4a" stroke-width="1.2" aria-hidden="true">
-    <circle cx="12" cy="16" r="3.4"/>
-    <circle cx="12" cy="40" r="3.4"/>
-    <circle cx="12" cy="64" r="3.4"/>
-    <circle cx="12" cy="88" r="3.4"/>
-    <circle cx="38" cy="16" r="3.4"/>
-    <circle cx="38" cy="40" r="3.4"/>
-    <circle cx="38" cy="64" r="3.4"/>
-    <circle cx="38" cy="88" r="3.4"/>
-    <circle cx="64" cy="16" r="3.4"/>
-    <circle cx="64" cy="40" r="3.4"/>
-    <circle cx="64" cy="64" r="3.4"/>
-    <circle cx="64" cy="88" r="3.4"/>
-    <circle cx="90" cy="16" r="3.4"/>
-    <circle cx="90" cy="40" r="3.4"/>
-    <circle cx="90" cy="88" r="3.4"/>
-    <circle cx="116" cy="16" r="3.4"/>
-    <circle cx="116" cy="64" r="3.4"/>
-    <circle cx="116" cy="88" r="3.4"/>
-    <circle cx="142" cy="40" r="3.4"/>
-    <circle cx="142" cy="64" r="3.4"/>
-    <circle cx="168" cy="16" r="3.4"/>
-    <circle cx="168" cy="88" r="3.4"/>
-    <circle cx="220" cy="88" r="3.4"/>
-    <circle cx="194" cy="40" r="3.8" fill="#c53400" stroke="none"/>
-    <circle cx="194" cy="40" r="9.5" stroke="#c53400"/>
-  </svg>
+          <svg class="iso tw-ico" viewBox="0 0 320 130" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M118.5 13.3 L213.4 68.0" class="iso-p iso-dim" pathLength="1" style="--i:0"/><path d="M108.4 19.1 L203.2 73.8" class="iso-p iso-dim" pathLength="1" style="--i:1"/><path d="M98.3 24.9 L193.1 79.7" class="iso-p iso-dim" pathLength="1" style="--i:2"/><path d="M88.2 30.8 L183.0 85.5" class="iso-p iso-dim" pathLength="1" style="--i:3"/><path d="M78.1 36.6 L172.9 91.3" class="iso-p iso-dim" pathLength="1" style="--i:4"/><circle class="iso-p" cx="125.8" cy="16.2" r="2.3" pathLength="1" style="--i:5"/><path class="iso-p" d="M125.8 18.5L125.8 27.9" pathLength="1" style="--i:6"/><path class="iso-p" d="M122.2 22.7L129.5 22.7" pathLength="1" style="--i:7"/><path class="iso-p" d="M125.8 27.9L122.9 34.4M125.8 27.9L128.8 34.4" pathLength="1" style="--i:8"/><circle class="iso-p" cx="125.8" cy="38.1" r="2.3" pathLength="1" style="--i:9"/><path class="iso-p" d="M125.8 40.4L125.8 49.7" pathLength="1" style="--i:10"/><path class="iso-p" d="M122.2 44.6L129.5 44.6" pathLength="1" style="--i:11"/><path class="iso-p" d="M125.8 49.7L122.9 56.3M125.8 49.7L128.8 56.3" pathLength="1" style="--i:12"/><circle class="iso-p" cx="125.8" cy="60.0" r="2.3" pathLength="1" style="--i:13"/><path class="iso-p" d="M125.8 62.3L125.8 71.6" pathLength="1" style="--i:14"/><path class="iso-p" d="M122.2 66.5L129.5 66.5" pathLength="1" style="--i:15"/><path class="iso-p" d="M125.8 71.6L122.9 78.2M125.8 71.6L128.8 78.2" pathLength="1" style="--i:16"/><circle class="iso-p" cx="125.8" cy="81.9" r="2.3" pathLength="1" style="--i:17"/><path class="iso-p" d="M125.8 84.2L125.8 93.5" pathLength="1" style="--i:18"/><path class="iso-p" d="M122.2 88.4L129.5 88.4" pathLength="1" style="--i:19"/><path class="iso-p" d="M125.8 93.5L122.9 100.1M125.8 93.5L128.8 100.1" pathLength="1" style="--i:20"/><circle class="iso-p" cx="125.8" cy="103.8" r="2.3" pathLength="1" style="--i:21"/><path class="iso-p" d="M125.8 106.1L125.8 115.4" pathLength="1" style="--i:22"/><path class="iso-p" d="M122.2 110.3L129.5 110.3" pathLength="1" style="--i:23"/><path class="iso-p" d="M125.8 115.4L122.9 122.0M125.8 115.4L128.8 122.0" pathLength="1" style="--i:24"/><circle class="iso-p" cx="136.1" cy="10.3" r="2.3" pathLength="1" style="--i:25"/><path class="iso-p" d="M136.1 12.7L136.1 22.0" pathLength="1" style="--i:26"/><path class="iso-p" d="M132.4 16.9L139.7 16.9" pathLength="1" style="--i:27"/><path class="iso-p" d="M136.1 22.0L133.1 28.6M136.1 22.0L139.0 28.6" pathLength="1" style="--i:28"/><circle class="iso-p" cx="136.1" cy="32.2" r="2.3" pathLength="1" style="--i:29"/><path class="iso-p" d="M136.1 34.6L136.1 43.9" pathLength="1" style="--i:30"/><path class="iso-p" d="M132.4 38.8L139.7 38.8" pathLength="1" style="--i:31"/><path class="iso-p" d="M136.1 43.9L133.1 50.5M136.1 43.9L139.0 50.5" pathLength="1" style="--i:32"/><circle class="iso-p" cx="136.1" cy="54.1" r="2.3" pathLength="1" style="--i:33"/><path class="iso-p" d="M136.1 56.5L136.1 65.8" pathLength="1" style="--i:34"/><path class="iso-p" d="M132.4 60.7L139.7 60.7" pathLength="1" style="--i:35"/><path class="iso-p" d="M136.1 65.8L133.1 72.4M136.1 65.8L139.0 72.4" pathLength="1" style="--i:36"/><circle class="iso-p" cx="136.1" cy="76.0" r="2.3" pathLength="1" style="--i:37"/><path class="iso-p" d="M136.1 78.4L136.1 87.7" pathLength="1" style="--i:38"/><path class="iso-p" d="M132.4 82.6L139.7 82.6" pathLength="1" style="--i:39"/><path class="iso-p" d="M136.1 87.7L133.1 94.3M136.1 87.7L139.0 94.3" pathLength="1" style="--i:40"/><circle class="iso-p" cx="136.1" cy="97.9" r="2.3" pathLength="1" style="--i:41"/><path class="iso-p" d="M136.1 100.3L136.1 109.6" pathLength="1" style="--i:42"/><path class="iso-p" d="M132.4 104.5L139.7 104.5" pathLength="1" style="--i:43"/><path class="iso-p" d="M136.1 109.6L133.1 116.2M136.1 109.6L139.0 116.2" pathLength="1" style="--i:44"/><circle class="iso-p" cx="146.3" cy="16.2" r="2.3" pathLength="1" style="--i:45"/><path class="iso-p" d="M146.3 18.5L146.3 27.9" pathLength="1" style="--i:46"/><path class="iso-p" d="M142.6 22.7L149.9 22.7" pathLength="1" style="--i:47"/><path class="iso-p" d="M146.3 27.9L143.4 34.4M146.3 27.9L149.2 34.4" pathLength="1" style="--i:48"/><circle class="iso-p" cx="146.3" cy="38.1" r="2.3" pathLength="1" style="--i:49"/><path class="iso-p" d="M146.3 40.4L146.3 49.7" pathLength="1" style="--i:50"/><path class="iso-p" d="M142.6 44.6L149.9 44.6" pathLength="1" style="--i:51"/><path class="iso-p" d="M146.3 49.7L143.4 56.3M146.3 49.7L149.2 56.3" pathLength="1" style="--i:52"/><circle class="iso-p" cx="146.3" cy="60.0" r="2.3" pathLength="1" style="--i:53"/><path class="iso-p" d="M146.3 62.3L146.3 71.6" pathLength="1" style="--i:54"/><path class="iso-p" d="M142.6 66.5L149.9 66.5" pathLength="1" style="--i:55"/><path class="iso-p" d="M146.3 71.6L143.4 78.2M146.3 71.6L149.2 78.2" pathLength="1" style="--i:56"/><circle class="iso-p" cx="146.3" cy="81.9" r="2.3" pathLength="1" style="--i:57"/><path class="iso-p" d="M146.3 84.2L146.3 93.5" pathLength="1" style="--i:58"/><path class="iso-p" d="M142.6 88.4L149.9 88.4" pathLength="1" style="--i:59"/><path class="iso-p" d="M146.3 93.5L143.4 100.1M146.3 93.5L149.2 100.1" pathLength="1" style="--i:60"/><circle class="iso-p" cx="156.5" cy="10.3" r="2.3" pathLength="1" style="--i:61"/><path class="iso-p" d="M156.5 12.7L156.5 22.0" pathLength="1" style="--i:62"/><path class="iso-p" d="M152.8 16.9L160.1 16.9" pathLength="1" style="--i:63"/><path class="iso-p" d="M156.5 22.0L153.6 28.6M156.5 22.0L159.4 28.6" pathLength="1" style="--i:64"/><circle class="iso-p" cx="156.5" cy="32.2" r="2.3" pathLength="1" style="--i:65"/><path class="iso-p" d="M156.5 34.6L156.5 43.9" pathLength="1" style="--i:66"/><path class="iso-p" d="M152.8 38.8L160.1 38.8" pathLength="1" style="--i:67"/><path class="iso-p" d="M156.5 43.9L153.6 50.5M156.5 43.9L159.4 50.5" pathLength="1" style="--i:68"/><circle class="iso-p" cx="156.5" cy="54.1" r="2.3" pathLength="1" style="--i:69"/><path class="iso-p" d="M156.5 56.5L156.5 65.8" pathLength="1" style="--i:70"/><path class="iso-p" d="M152.8 60.7L160.1 60.7" pathLength="1" style="--i:71"/><path class="iso-p" d="M156.5 65.8L153.6 72.4M156.5 65.8L159.4 72.4" pathLength="1" style="--i:72"/><circle class="iso-p" cx="156.5" cy="76.0" r="2.3" pathLength="1" style="--i:73"/><path class="iso-p" d="M156.5 78.4L156.5 87.7" pathLength="1" style="--i:74"/><path class="iso-p" d="M152.8 82.6L160.1 82.6" pathLength="1" style="--i:75"/><path class="iso-p" d="M156.5 87.7L153.6 94.3M156.5 87.7L159.4 94.3" pathLength="1" style="--i:76"/><circle class="iso-p" cx="166.7" cy="16.2" r="2.3" pathLength="1" style="--i:77"/><path class="iso-p" d="M166.7 18.5L166.7 27.9" pathLength="1" style="--i:78"/><path class="iso-p" d="M163.1 22.7L170.4 22.7" pathLength="1" style="--i:79"/><path class="iso-p" d="M166.7 27.9L163.8 34.4M166.7 27.9L169.6 34.4" pathLength="1" style="--i:80"/><circle class="iso-p" cx="166.7" cy="38.1" r="2.3" pathLength="1" style="--i:81"/><path class="iso-p" d="M166.7 40.4L166.7 49.7" pathLength="1" style="--i:82"/><path class="iso-p" d="M163.1 44.6L170.4 44.6" pathLength="1" style="--i:83"/><path class="iso-p" d="M166.7 49.7L163.8 56.3M166.7 49.7L169.6 56.3" pathLength="1" style="--i:84"/><circle class="iso-p" cx="166.7" cy="60.0" r="2.3" pathLength="1" style="--i:85"/><path class="iso-p" d="M166.7 62.3L166.7 71.6" pathLength="1" style="--i:86"/><path class="iso-p" d="M163.1 66.5L170.4 66.5" pathLength="1" style="--i:87"/><path class="iso-p" d="M166.7 71.6L163.8 78.2M166.7 71.6L169.6 78.2" pathLength="1" style="--i:88"/><circle class="iso-p" cx="176.9" cy="10.3" r="2.3" pathLength="1" style="--i:89"/><path class="iso-p" d="M176.9 12.7L176.9 22.0" pathLength="1" style="--i:90"/><path class="iso-p" d="M173.3 16.9L180.6 16.9" pathLength="1" style="--i:91"/><path class="iso-p" d="M176.9 22.0L174.0 28.6M176.9 22.0L179.9 28.6" pathLength="1" style="--i:92"/><circle class="iso-p" cx="176.9" cy="32.2" r="2.3" pathLength="1" style="--i:93"/><path class="iso-p" d="M176.9 34.6L176.9 43.9" pathLength="1" style="--i:94"/><path class="iso-p" d="M173.3 38.8L180.6 38.8" pathLength="1" style="--i:95"/><path class="iso-p" d="M176.9 43.9L174.0 50.5M176.9 43.9L179.9 50.5" pathLength="1" style="--i:96"/><circle class="iso-p" cx="187.1" cy="16.2" r="2.3" pathLength="1" style="--i:97"/><path class="iso-p" d="M187.1 18.5L187.1 27.9" pathLength="1" style="--i:98"/><path class="iso-p" d="M183.5 22.7L190.8 22.7" pathLength="1" style="--i:99"/><path class="iso-p" d="M187.1 27.9L184.2 34.4M187.1 27.9L190.1 34.4" pathLength="1" style="--i:100"/><circle class="iso-p" cx="187.1" cy="38.1" r="2.3" pathLength="1" style="--i:101"/><path class="iso-p" d="M187.1 40.4L187.1 49.7" pathLength="1" style="--i:102"/><path class="iso-p" d="M183.5 44.6L190.8 44.6" pathLength="1" style="--i:103"/><path class="iso-p" d="M187.1 49.7L184.2 56.3M187.1 49.7L190.1 56.3" pathLength="1" style="--i:104"/><circle class="iso-p" cx="197.4" cy="10.3" r="2.3" pathLength="1" style="--i:105"/><path class="iso-p" d="M197.4 12.7L197.4 22.0" pathLength="1" style="--i:106"/><path class="iso-p" d="M193.7 16.9L201.0 16.9" pathLength="1" style="--i:107"/><path class="iso-p" d="M197.4 22.0L194.4 28.6M197.4 22.0L200.3 28.6" pathLength="1" style="--i:108"/><circle class="iso-p" cx="207.6" cy="16.2" r="2.3" pathLength="1" style="--i:109"/><path class="iso-p" d="M207.6 18.5L207.6 27.9" pathLength="1" style="--i:110"/><path class="iso-p" d="M203.9 22.7L211.2 22.7" pathLength="1" style="--i:111"/><path class="iso-p" d="M207.6 27.9L204.7 34.4M207.6 27.9L210.5 34.4" pathLength="1" style="--i:112"/><circle cx="238.2" cy="23.5" r="2.3" class="iso-p iso-acc" pathLength="1" style="--i:113"/><path d="M238.2 25.8L238.2 35.1" class="iso-p iso-acc" pathLength="1" style="--i:114"/><path d="M234.6 30.0L241.9 30.0" class="iso-p iso-acc" pathLength="1" style="--i:115"/><path d="M238.2 35.1L235.3 41.7M238.2 35.1L241.2 41.7" class="iso-p iso-acc" pathLength="1" style="--i:116"/><circle cx="238.2" cy="45.4" r="2.3" class="iso-p iso-acc" pathLength="1" style="--i:117"/><path d="M238.2 47.7L238.2 57.0" class="iso-p iso-acc" pathLength="1" style="--i:118"/><path d="M234.6 51.9L241.9 51.9" class="iso-p iso-acc" pathLength="1" style="--i:119"/><path d="M238.2 57.0L235.3 63.6M238.2 57.0L241.2 63.6" class="iso-p iso-acc" pathLength="1" style="--i:120"/><circle cx="238.2" cy="67.3" r="2.3" class="iso-p iso-acc" pathLength="1" style="--i:121"/><path d="M238.2 69.6L238.2 78.9" class="iso-p iso-acc" pathLength="1" style="--i:122"/><path d="M234.6 73.8L241.9 73.8" class="iso-p iso-acc" pathLength="1" style="--i:123"/><path d="M238.2 78.9L235.3 85.5M238.2 78.9L241.2 85.5" class="iso-p iso-acc" pathLength="1" style="--i:124"/></svg>
         </div>
         <div class="tw-txt">
           <h3 id="wall-n-03scale-anonymity-is-headcount"><span class="wall-tag">WALL Nº 03</span>Scale: anonymity is headcount. <span class="em">You are only as hidden as the crowd is large.</span></h3>
@@ -4409,6 +4407,20 @@ var pvVideoChrome = thVideoChrome({
 </script>
 
 <script>
+// ============================================================
+// ISOMETRIC LINE ART: draw in once when a drawing nears the viewport
+// (the CSS does the rest; reduced motion shows the finished art).
+// ============================================================
+(function(){
+  var arts = [].slice.call(document.querySelectorAll('svg.iso'));
+  if (!arts.length) return;
+  if (!('IntersectionObserver' in window)) { arts.forEach(function(a){ a.classList.add('is-in'); }); return; }
+  var io = new IntersectionObserver(function(es){
+    es.forEach(function(en){ if (en.isIntersecting) { en.target.classList.add('is-in'); io.unobserve(en.target); } });
+  }, { threshold: .2 });
+  arts.forEach(function(a){ io.observe(a); });
+})();
+
 // ============================================================
 // SECTION 02: the wall expander. Three lines of each wall show at rest;
 // Read the wall opens the full prose in place, one wall at a time.
