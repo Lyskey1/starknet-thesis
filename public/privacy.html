@@ -1962,36 +1962,34 @@ body.page-privacy{--qhx-u:min(1vw,14.4px)}
 .pmv-panel { padding: 0; }
 h3.pmv-title { margin: 0 0 14px; font-size: clamp(22px, 2vw, 26px); line-height: 1.2; }
 /* Foundations */
-.stamp-wrap { grid-template-columns: 300px minmax(0, 1fr); grid-template-rows: auto; align-items: start; gap: 22px; border: 0; background: none; border-radius: 0; overflow: visible; }
-.stamp-side { display: flex; flex-direction: column; gap: 12px; }
-.stamp-stage { min-height: 0; height: 224px; padding: 12px 14px 12px; border: 1px solid var(--line); border-radius: 12px;
-  background: linear-gradient(180deg, var(--bg-raise, #0d0d0d), #0d0d0d); border-right: 1px solid var(--line); justify-content: flex-start; }
+.stamp-wrap { grid-template-columns: 300px minmax(0, 1fr); grid-template-rows: auto; align-items: stretch; gap: 22px; border: 0; background: none; border-radius: 0; overflow: visible; }
+.stamp-side { display: flex; }
+/* the shield card fills the row (the list's height), its scene centered */
+.stamp-stage { flex: 1 1 auto; min-height: 0; height: auto; padding: 14px; border: 1px solid var(--line); border-radius: 12px;
+  background: linear-gradient(180deg, var(--bg-raise, #0d0d0d), #0d0d0d); border-right: 1px solid var(--line); justify-content: center; }
 .stamp-stage::after { bottom: -160px; width: 320px; height: 200px; }
-.ss-scene { height: 118px; margin-top: 0; }
+.ss-scene { height: 150px; margin: 0; }
 .ss-stamp { top: 0; transform: translate(-50%, -170px); }
 .ss-handle { width: 30px; height: 12px; }
 .ss-head { width: 92px; height: 34px; font-size: 16px; border-radius: 7px; }
-.ss-coin { width: 100px; height: 100px; }
-.ss-logo { width: 56px; height: 56px; }
-.ss-fallback { font-size: 38px; }
-.ss-tick.tl, .ss-tick.bl { left: 16px; } .ss-tick.tr, .ss-tick.br { right: 16px; }
-.ss-tick.tl, .ss-tick.tr { top: 16px; } .ss-tick.bl, .ss-tick.br { bottom: 16px; }
-.ss-amount { margin-top: 8px; font-size: 11.5px; height: 18px; line-height: 18px; }
-.ss-chips { margin-top: 6px; padding-top: 0; gap: 8px; min-height: 26px; }
+.ss-coin { width: 120px; height: 120px; }
+.ss-logo { width: 66px; height: 66px; }
+.ss-fallback { font-size: 44px; }
+.ss-tick.tl, .ss-tick.bl { left: 19px; } .ss-tick.tr, .ss-tick.br { right: 19px; }
+.ss-tick.tl, .ss-tick.tr { top: 19px; } .ss-tick.bl, .ss-tick.br { bottom: 19px; }
+.ss-amount { margin-top: 14px; font-size: 11.5px; height: 18px; line-height: 18px; }
+.ss-chips { margin-top: 10px; padding-top: 0; gap: 8px; min-height: 26px; }
 .ss-chip { font-size: 10px; padding: 7px 10px; }
-.stamp-intro { margin: 0; font-size: 13.5px; line-height: 1.55; color: rgba(250, 250, 250, .72); }
+/* seven rows, 55px each, number / title / one-line description */
 .stamp-props { padding: 0; gap: 5px; }
-.sp-head { margin-bottom: 0; }
-.sp-card { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 12px; align-items: center; height: 44px; padding: 0 14px;
-  box-sizing: border-box; overflow: hidden; transition: height .3s var(--hover-ease), border-color .25s, background .25s; }
-.sp-card .n { font-size: 10px; }
+.sp-card { display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-rows: auto auto; column-gap: 12px; row-gap: 2px;
+  align-items: center; align-content: center; height: 55px; padding: 0 14px; box-sizing: border-box; overflow: hidden; }
+.sp-card .n { grid-row: 1 / span 2; font-size: 10px; }
 .sp-card h5 { margin: 0; font-size: 14px; line-height: 1.2; }
-.sp-card p { grid-column: 2; margin: 0; max-height: 0; font-size: 12.5px; line-height: 1.5; transition: none; }
-.stamp-props:has(.sp-card.on) .sp-card:not(.on) { height: 34px; }
-.sp-card.on { height: auto; align-items: start; padding-top: 8px; padding-bottom: 9px; }
-.sp-card.on .n { padding-top: 2px; }
-.sp-card.on p, .sp-card.on:hover p { max-height: none; margin-top: 4px; }
-.sp-card:hover p { max-height: 0; margin-top: 0; }
+.sp-card p.sp-line { grid-column: 2; margin: 0; max-height: none; font-size: 12px; line-height: 1.4; color: var(--muted);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: none; }
+.sp-card.on p.sp-line, .sp-card:hover p.sp-line { max-height: none; margin-top: 0; }
+.sp-card p.sp-full { display: none; }
 /* What users get: 2x2 */
 #pmvPanel02 .wlt { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
 #pmvPanel02 .wlt-bar { grid-column: 1 / -1; padding: 12px 22px; }
@@ -2651,17 +2649,19 @@ h3.pmv-title { margin: 0 0 14px; font-size: clamp(22px, 2vw, 26px); line-height:
         <span class="ss-chip" id="ssChip2">SHIELDED IN SECONDS</span>
       </div>
     </div>
-    <p class="stamp-intro">Seven properties the base layer holds before any app is built on it, from one pool for every asset to a compliance path built in.</p>
     </div>
+    <!-- seven rows, nothing folded (2026-09-07): number, title and a one-line
+         description always visible. The longer paragraph each row used to
+         hide stays as visually-hidden copy for assistive tech and the search
+         index; row 03 reads the derived fee hook. -->
     <div class="stamp-props" id="stampProps">
-      <div class="sp-head">SEVEN PROPERTIES OF THE BASE LAYER</div>
-      <div class="sp-card" role="button" tabindex="0" aria-expanded="false"><div class="n">01</div><h5>One pool for all assets</h5><p>A first in crypto: STRK, USDC, USDT, ETH, BTC, memecoins... <b>ALL crypto assets in the same pool</b>. Every new user and asset deepens the same crowd.</p></div>
-      <div class="sp-card" role="button" tabindex="0" aria-expanded="false"><div class="n">02</div><h5>Any amount, no denominations</h5><p>Where Tornado forced fixed sizes and fragmented its crowd, the Starknet pool takes arbitrary amounts through note splitting and merging.</p></div>
-      <div class="sp-card" role="button" tabindex="0" aria-expanded="false"><div class="n">03</div><h5>Fee: <span data-fee-target>~$0.12</span> per action</h5><p>Shielding a billion dollars costs the same as shielding a hundred: the fee is charged per action, not per amount. The protocol targets about <span data-fee-target="plain">$0.12</span> per action and settles it in STRK; the STRK amount floats, adjusted by the protocol as the price moves.</p></div>
-      <div class="sp-card" role="button" tabindex="0" aria-expanded="false"><div class="n">04</div><h5>Best-in-class UX</h5><p>A few clicks inside Ready or Xverse, settled in seconds. No separate app, no new seed phrase, no protocol to learn.</p></div>
-      <div class="sp-card" role="button" tabindex="0" aria-expanded="false"><div class="n">05</div><h5>Security-first stack</h5><p>Public whitepaper, OpenZeppelin audit, formal Lean model with machine-checked theorems, and fully open source under Apache 2.0.</p></div>
-      <div class="sp-card" role="button" tabindex="0" aria-expanded="false"><div class="n">06</div><h5>Deep DeFi integration</h5><p>The pool plugs straight into live Starknet DeFi: private swaps, lending, staking, yield, all atomic, your funds never sitting at a public address in between. And it already reaches other ecosystems: anonymous trading on Polymarket's liquidity works today, straight from an EVM wallet.</p></div>
-      <div class="sp-card" role="button" tabindex="0" aria-expanded="false"><div class="n">07</div><h5>A compliance path built in</h5><p>Private to the market, transparent to the law. <b>Section 05 below.</b></p></div>
+      <div class="sp-card"><div class="n">01</div><h5>One pool for all assets</h5><p class="sp-line">STRK, USDC, USDT, ETH, BTC, memecoins: every asset deepens the same crowd.</p><p class="sp-full pvc-vh">A first in crypto: STRK, USDC, USDT, ETH, BTC, memecoins... <b>ALL crypto assets in the same pool</b>. Every new user and asset deepens the same crowd.</p></div>
+      <div class="sp-card"><div class="n">02</div><h5>Any amount, no denominations</h5><p class="sp-line">Arbitrary amounts through note splitting and merging, no fixed sizes.</p><p class="sp-full pvc-vh">Where Tornado forced fixed sizes and fragmented its crowd, the Starknet pool takes arbitrary amounts through note splitting and merging.</p></div>
+      <div class="sp-card"><div class="n">03</div><h5>Fee: <span data-fee-target>~$0.12</span> per action</h5><p class="sp-line">Charged per action, not per amount, and settled in STRK.</p><p class="sp-full pvc-vh">Shielding a billion dollars costs the same as shielding a hundred: the fee is charged per action, not per amount. The protocol targets about <span data-fee-target="plain">$0.12</span> per action and settles it in STRK; the STRK amount floats, adjusted by the protocol as the price moves.</p></div>
+      <div class="sp-card"><div class="n">04</div><h5>Best-in-class UX</h5><p class="sp-line">A few clicks inside Ready or Xverse, settled in seconds.</p><p class="sp-full pvc-vh">A few clicks inside Ready or Xverse, settled in seconds. No separate app, no new seed phrase, no protocol to learn.</p></div>
+      <div class="sp-card"><div class="n">05</div><h5>Security-first stack</h5><p class="sp-line">Public whitepaper, OpenZeppelin audit, formal Lean model, Apache 2.0.</p><p class="sp-full pvc-vh">Public whitepaper, OpenZeppelin audit, formal Lean model with machine-checked theorems, and fully open source under Apache 2.0.</p></div>
+      <div class="sp-card"><div class="n">06</div><h5>Deep DeFi integration</h5><p class="sp-line">Private swaps, lending, staking and yield, atomic, into live Starknet DeFi.</p><p class="sp-full pvc-vh">The pool plugs straight into live Starknet DeFi: private swaps, lending, staking, yield, all atomic, your funds never sitting at a public address in between. And it already reaches other ecosystems: anonymous trading on Polymarket's liquidity works today, straight from an EVM wallet.</p></div>
+      <div class="sp-card"><div class="n">07</div><h5>A compliance path built in</h5><p class="sp-line">Private to the market, transparent to the law. Section 06 below.</p><p class="sp-full pvc-vh">Private to the market, transparent to the law. <b>Section 06 below.</b></p></div>
     </div>
   </div>
 
@@ -3957,18 +3957,6 @@ var pvVideoChrome = thVideoChrome({
     if (!props.dataset.pinned) cards.forEach(function(c){ c.classList.remove('on'); }); // hovered card highlights via :hover
   });
   props.addEventListener('mouseleave', function(){ paused = false; setProp(pi); });
-  /* click (or Enter / Space) pins one property open and retires the cycle;
-     clicking the open one closes it and lets the cycle resume */
-  cards.forEach(function(c, i){
-    function pin(){
-      var open = c.classList.contains('on') && props.dataset.pinned;
-      cards.forEach(function(x){ x.classList.remove('on'); x.setAttribute('aria-expanded', 'false'); });
-      if (open) { delete props.dataset.pinned; pi = i; return; }
-      props.dataset.pinned = '1'; c.classList.add('on'); c.setAttribute('aria-expanded', 'true');
-    }
-    c.addEventListener('click', pin);
-    c.addEventListener('keydown', function(ev){ if (ev.key === 'Enter' || ev.key === ' ' || ev.key === 'Spacebar') { ev.preventDefault(); pin(); } });
-  });
   function later(fn, ms){ timers.push(setTimeout(fn, ms)); }
   function restart(el, cls){ el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); }
   function cycle(){
