@@ -1534,77 +1534,6 @@
   .news-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 12px; }
   .news-toggle:focus:not(:focus-visible) { outline: none; }
 
-  /* ============================================================ */
-  /* CLOSING STATEMENT: full-bleed band, in the brand palette.           */
-  /* Set exactly the way the Satoshi band (#sq-band) sets a large        */
-  /* statement: no ground of its own, so the page's near-black shows     */
-  /* through, chalk type, the emphasised phrase carried as an inverted   */
-  /* highlight (accent fill, chalk text) led by a small chalk icon tile. */
-  /* Accent is a FILL here, never the colour of running words: as text   */
-  /* on #0d0d0d it measures APCA Lc 25.8. Same dotted rule with a square */
-  /* at each end that the Satoshi band uses, so the two statement        */
-  /* sections read as a pair. Declared here (inline, after every linked  */
-  /* sheet) so it wins over css/styles.css.                             */
-  /* ============================================================ */
-  .closing.cinv {
-    position: relative; z-index: 1; overflow: visible;
-    max-width: none; margin: 120px 0 0;
-    padding: clamp(88px, 11vw, 156px) clamp(16px, 3.4vw, 52px) clamp(120px, 15vw, 210px);
-    color: #fafafa; border-top: 0; text-align: left;
-  }
-  /* the dotted rule across the top with an accent square at each end */
-  .closing.cinv::before { content: ""; position: absolute; left: 0; right: 0; top: 0; border-top: 2px dotted rgba(250,250,250,.35); }
-  .closing.cinv::after { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 8px;
-    background-image: linear-gradient(#c53400, #c53400), linear-gradient(#c53400, #c53400);
-    background-size: 8px 8px, 8px 8px; background-position: left top, right top; background-repeat: no-repeat; }
-  .closing.cinv .closing-bloom { display: none; }
-  /* the shared .closing rule centres and caps every child at 820px: this band
-     runs the full width, left-aligned */
-  .closing.cinv > :not(.closing-bloom) { max-width: none; margin-left: 0; margin-right: 0; }
-  .closing.cinv .cd {
-    font-family: var(--display); font-weight: 800; color: #fafafa;
-    font-size: clamp(38px, 8vw, 128px); line-height: 1.02; letter-spacing: -.04em;
-  }
-  .closing.cinv .cd .em { color: rgba(250,250,250,.62); }
-  /* inverted highlight: accent fill, chalk text, led by a small chalk icon
-     tile. inline-block + nowrap so it paints as one clean slab, never a stray
-     fragment at a line end */
-  .cinv-hl { display: inline-block; white-space: nowrap; vertical-align: baseline; line-height: 1;
-    padding: 0 .12em 0 0; background: #c53400; color: #fafafa;
-    -webkit-box-decoration-break: clone; box-decoration-break: clone; }
-  .cinv-ic { display: inline-grid; place-items: center; width: .8em; height: .8em; margin-right: .12em;
-    vertical-align: -.08em; background: #fafafa; color: #c53400; }
-  .cinv-ic svg { width: 62%; height: 62%; }
-  .closing.cinv .cd-recap {
-    margin: clamp(34px, 4.4vw, 60px) 0 0; max-width: 720px;
-    color: rgba(250,250,250,.62); font-family: var(--sans); font-weight: 300;
-    font-size: clamp(15px, 1.15vw, 18px); line-height: 1.7;
-  }
-  @media (max-width: 860px) {
-    .closing.cinv { margin-top: 72px; padding: 64px 14px 96px; }
-    .closing.cinv .cd { font-size: clamp(30px, 9vw, 48px); }
-    /* html { overflow-x: clip } would silently crop a nowrap tile that runs
-       past the viewport, so let it wrap normally down here */
-    .cinv-hl { white-space: normal; }
-  }
-
-  /* ============================================================ */
-  /* SATOSHI STATEMENT: owns a full viewport.                      */
-  /* Markup, highlight blocks and icon tiles are untouched; only   */
-  /* the section's height and vertical rhythm change. align-items  */
-  /* stays flex-start so the mono kicker chip is not blockified    */
-  /* into a full-width bar, and the quote stretches back out.      */
-  /* ============================================================ */
-  .sq {
-    display: flex; flex-direction: column; justify-content: center; align-items: flex-start;
-    min-height: 100vh; min-height: 100svh;
-    padding: clamp(96px, 12vh, 168px) 16px;
-  }
-  .sq .sq-quote { align-self: stretch; }
-  @media (max-width: 860px) {
-    .sq { padding: 72px 12px; }
-  }
-
   /* the window frames (awin-), the base-layer stack (fst-), the ecosystem orb
      (peo-, js/pv-eco-orb.js) and the dashboard iframe (pmf-) left on
      2026-09-07 for main's four movements in vesper's skin */
@@ -1875,6 +1804,34 @@ h3.pmv-title { margin: 0 0 22px; font-weight: 300; letter-spacing: -.01em; color
 .pl-fig { margin-top: 16px; }
 .th-pm-sec > .lead:last-child { margin-top: 24px; padding-bottom: 24px; font-size: 15px; }
 @media (max-width: 860px) { .pv-hl { white-space: normal; } }
+/* ============================================================
+   CLOSING + NEWS (2026-09-07). The closing statement is main's: centered
+   h2 capped at 64px, first sentence white, second in the accent, recap
+   under it. The news accordion runs the container's full width on the
+   vesper glass tier (quantum's band, name for name) with its LATEST pill.
+   ============================================================ */
+.closing { margin-top: 0; padding: 110px 48px 120px; }
+.closing .cd { margin: 0 auto; font-family: var(--display); font-weight: 800; font-size: clamp(36px, 4.6vw, 64px);
+  line-height: 1.06; letter-spacing: -.02em; color: var(--white); }
+.closing .cd .em { color: var(--em); }
+.closing .cd-recap { margin: 26px auto 0; }
+.page-privacy .news-flashy .news-toggle { border: 0; border-radius: 0; overflow: visible; width: 100%;
+  background: rgba(250, 250, 250, .04);
+  -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px);
+  box-shadow: none; transition: transform .28s ease, box-shadow .28s ease; }
+.page-privacy .news-flashy .news-toggle::before { content: ''; position: absolute; inset: 0; padding: 1px;
+  background: linear-gradient(90deg, var(--accent), var(--strk-hi, #A78BFA));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  pointer-events: none; opacity: 1; border-radius: 0; }
+.page-privacy .news-flashy .news-toggle:hover { transform: translateY(-2px); box-shadow: 0 0 22px rgba(var(--accent-rgb), .16); }
+.page-privacy .news-flashy .news-toggle-title { font-family: var(--display); font-weight: 300; font-size: 26px; letter-spacing: normal; color: var(--white); }
+.page-privacy .news-flashy .news-eyebrow { background: linear-gradient(90deg, rgba(var(--accent-rgb), .16), rgba(167, 139, 250, .14));
+  border-color: rgba(var(--accent-rgb), .4); color: var(--accent); }
+.page-privacy .news-chevron { font-size: 22px; color: rgba(250, 250, 250, .55); }
+.page-privacy .news-section { border: 0; background: none; padding: 0; }
+.page-privacy .news-grid { width: 100%; margin-top: 26px; }
+@media (prefers-reduced-motion: reduce) { .page-privacy .news-flashy .news-toggle { transition: none; } }
 </style>
 <script src="js/admin-gate.js"></script>
 </head>
@@ -2863,13 +2820,17 @@ h3.pmv-title { margin: 0 0 22px; font-weight: 300; letter-spacing: -.01em; color
 </section>
 
 <!-- ================= CLOSING ================= -->
-<div class="closing cinv">
+<!-- CLOSING: main's statement (restored 2026-09-07). Centered, the first
+     sentence white, the second in the accent, the recap under it. No icon
+     tile and no accent block: the inverted-highlight band went with the
+     Satoshi screen it was set to match. -->
+<div class="closing">
   <div class="closing-bloom" aria-hidden="true">
     <i style="left:24%;top:26%;width:52%;height:56%;opacity:.11"></i>
     <i style="left:6%;top:58%;width:30%;height:44%;opacity:.08"></i>
     <i style="left:64%;top:56%;width:30%;height:46%;opacity:.08"></i>
   </div>
-  <div class="cd th-pm-reveal">Privacy is probably the <mark class="cinv-hl"><i class="cinv-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 13.5h7L10 22l9-11.5h-7z"/></svg></i>last 100x PvE bet</mark> in crypto.<br><span class="em">Starknet is building the best ecosystem for it.</span></div>
+  <h2 class="cd th-pm-reveal" id="privacy-is-probably-the-last-100x">Privacy is probably the last 100x PvE bet in crypto.<br><span class="em">Starknet is building the best ecosystem for it.</span></h2>
   <p class="cd-recap th-pm-reveal">One pool for every asset, at the lowest fees of any privacy system with real DeFi access: shielded in seconds, straight from the wallet, composable across DeFi, and secured by audits and machine-checked formal proofs.</p>
 </div>
 
