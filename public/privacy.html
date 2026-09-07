@@ -1752,116 +1752,6 @@
   @media (max-width: 640px) { .pmf iframe { height: 560px; } }
 
 /* ============================================================
-   SECTION 01 AS THE REFERENCE EXPLODED-STACK SECTION (2026-09-01)
-   Same three-column shape section 03 of the quantum page takes:
-   faint vertical guides, a pill and the layer list on the LEFT,
-   the exploded stack in the MIDDLE, and the active layer's card on
-   the RIGHT. The block covers the section rather than sitting in
-   the middle of it.
-   NO MARKUP WAS REORDERED, and that is deliberate: the tab row
-   lives inside .bstk-stage with the planes, and moving it would
-   have meant cutting into a block whose engine pairs tabs, planes
-   and bills by index. display:contents on .bstk-stage promotes its
-   two children to grid items of .bstk instead, so the three
-   columns are pure layout. .bstk-stage is a plain div with no
-   semantics of its own, so nothing is lost from the tree.
-   ============================================================ */
-.bstk{position:relative;display:grid;
-  grid-template-columns:minmax(0,.74fr) minmax(0,1.5fr) minmax(0,1.18fr);
-  gap:clamp(20px,3vw,52px);align-items:center;
-  width:100vw;max-width:none;margin-inline:calc(50% - 50vw);
-  padding:clamp(40px,6vh,88px) clamp(16px,3vw,44px);
-  min-height:min(88svh,940px);}
-.bstk-stage{display:contents;}
-.bstk-guides{position:absolute;inset:0;display:flex;justify-content:space-between;
-  pointer-events:none;z-index:0;padding:0 13%;}
-.bstk-guides i{width:1px;background:linear-gradient(180deg,transparent,rgba(250,250,250,.07) 18%,rgba(250,250,250,.07) 82%,transparent);}
-.bstk > *:not(.bstk-guides){position:relative;z-index:1;}
-
-/* left column: the pill, then the list */
-.bstk-pill{grid-column:1;grid-row:1;justify-self:start;align-self:end;
-  margin:0 0 18px;padding:7px 13px;border:1px solid rgba(250,250,250,.14);
-  background:rgba(250,250,250,.05);font-family:'IBM Plex Mono',monospace;
-  font-size:11px;letter-spacing:.14em;text-transform:uppercase;
-  color:rgba(250,250,250,.72);}
-.bstk-tabs{grid-column:1;grid-row:2;display:flex;flex-direction:column;
-  align-items:flex-start;gap:4px;align-self:start;margin:0;padding:0;border:0;background:none;}
-.bstk-tab{width:auto;padding:7px 0;margin:0;border:0;background:none;
-  font-family:'General Sans','Helvetica Neue',Arial,sans-serif;
-  font-size:clamp(16px,1.4vw,21px);font-weight:500;letter-spacing:-.01em;
-  text-align:left;text-transform:none;color:rgba(250,250,250,.34);
-  transition:color .25s ease;}
-.bstk-tab:hover{color:rgba(250,250,250,.72);}
-.bstk-tab[aria-selected="true"]{color:var(--pf-acc,#c53400);}
-.bstk-tab .tn{font-family:'IBM Plex Mono',monospace;font-weight:500;
-  font-size:.6em;letter-spacing:.16em;margin-right:.6em;vertical-align:.12em;opacity:.7;}
-
-/* middle: the stack, spanning both rows so it centres against the pair */
-.bstk-iso{grid-column:2;grid-row:1 / span 2;justify-self:center;align-self:center;}
-/* right: the bill */
-.bstk-panel{grid-column:3;grid-row:1 / span 2;align-self:center;min-width:0;}
-
-@media(max-width:1100px){
-  .bstk{grid-template-columns:minmax(0,1fr) minmax(0,1fr);
-    grid-template-areas:"pill panel" "tabs panel" "iso iso";
-    min-height:0;align-items:start;}
-  .bstk-pill{grid-area:pill;}
-  .bstk-tabs{grid-area:tabs;}
-  .bstk-panel{grid-area:panel;}
-  .bstk-iso{grid-area:iso;margin-top:26px;}
-  .bstk-guides{padding:0 7%;}
-}
-@media(max-width:720px){
-  .bstk{grid-template-columns:minmax(0,1fr);
-    grid-template-areas:"pill" "tabs" "iso" "panel";gap:20px;}
-  .bstk-guides{display:none;}
-}
-
-/* the bill card, trimmed. STATUS and FINE PRINT are scaffolding labels:
-   the value beneath STATUS already reads as a status, and the paragraph
-   beneath FINE PRINT is plainly the fine print. Hidden rather than deleted
-   from the markup so the search index's section spec still matches. */
-.bstk-status,.bstk-fp{display:none;}
-.bstk-value{margin-top:0;}
-
-/* ============================================================
-   SECTION 01 HEAD AND THE BILLS (2026-09-02)
-   ============================================================ */
-.th-pm-head--bare{display:block;}
-
-/* the intro takes the .phead--lede treatment: the same large dim setting
-   with bold white segments that the four-properties line uses, rather than
-   17px body copy. Values copied from .phead--lede p in css/privacy-fx.css
-   so the two read as one voice. */
-#the-cost-of-being-visible ~ .th-pm-intro,
-.th-pm-head--bare + .th-pm-eyebrow + .th-pm-intro,
-.th-pm-head--bare ~ .th-pm-intro{
-  max-width:44ch;font-size:clamp(20px,2.4vw,34px);line-height:1.28;
-  letter-spacing:-.01em;margin-top:28px;
-}
-
-/* THE BILLS COME BACK INTO THE COLUMN.
-   The block was full bleed at 100vw, which left the list stranded at the far
-   left and the card at the far right with a lake of ground between them.
-   The reference section on /btcfi holds its content at the site's usual cap,
-   measured starting at x=218 on a 1440 viewport, so this matches that and
-   the three columns close up. */
-.bstk{
-  width:auto;max-width:1160px;margin-inline:auto;
-  padding:clamp(32px,5vh,72px) 32px;
-  grid-template-columns:minmax(0,.62fr) minmax(0,1.18fr) minmax(0,1.2fr);
-  gap:clamp(16px,2vw,32px);
-  min-height:min(78svh,860px);
-}
-.bstk-guides{padding:0 8%;}
-@media(max-width:1100px){
-  .bstk{padding-inline:24px;}
-}
-@media(max-width:720px){
-  .bstk{padding-inline:20px;}
-}
-
-/* ============================================================
    SECTION 05, THE LAW, at the reference section's proportions.
    The reference runs its rule and its four columns almost to the
    viewport edge: measured off it, the band sits 28px in on a 1920
@@ -2066,6 +1956,34 @@ body section.th-pm-sec--mistral{background-color:#070303!important;}
   .th-pm-sec--mistral .awin{padding:16px;}
   .th-pm-sec--mistral .pmv-label{font-size:15px;}
 }
+/* ============================================================
+   SECTION 01, ONE VIEWPORT (2026-09-07). Main's device in vesper's skin:
+   numbered head, 17px intro, then the stage (three glass plates over the
+   01/02/03 pill rail) left and the bill panel right. Budget from the
+   deep-linked h2 (nav + 16): head 64, eyebrow 36, intro ~88, device
+   ~560, closing line ~70 = under 836. The stage headroom drops from 80
+   to 60px: the lift it reserved went on 2026-09-01 and only the 12px
+   hover rise remains. The panel keeps its grid-cell stacking (tallest
+   bill reserves the height) and adds a floor, so no tab reflows the
+   page; STATUS and FINE PRINT are visible again, as on main.
+   ============================================================ */
+.bstk { margin-top: 22px; grid-template-columns: minmax(0, 44%) minmax(0, 1fr); gap: 32px; align-items: start; }
+/* 60px headroom: the projected top plate rises ~45px above the stage box
+   (measured 1440), so 34px let it graze the intro */
+.bstk-stage { min-height: 0; padding-top: 60px; }
+.bstk-tabs { margin-top: 30px; }
+.bstk-tab { text-transform: uppercase; }
+.bstk-panel { min-height: 500px; box-sizing: border-box; }
+.bstk-status, .bstk-fp { display: block; }
+/* the closing line: a sentence under the panel, not a beat of its own */
+.th-pm-pivot--tight { max-width: none; margin: 30px 0 0; padding: 0; text-align: left;
+  font-size: clamp(20px, 1.8vw, 26px); line-height: 1.35; text-wrap: pretty; }
+.th-pm-pivot--tight::before { display: none; }
+@media (max-width: 980px) {
+  .bstk { grid-template-columns: 1fr; }
+  .bstk-stage { padding-top: 20px; }
+  .bstk-panel { min-height: 0; }
+}
 </style>
 <script src="js/admin-gate.js"></script>
 </head>
@@ -2156,14 +2074,18 @@ body section.th-pm-sec--mistral{background-color:#070303!important;}
 <!-- ================= SECTION 01 ================= -->
 <div class="th-pm-div"></div>
 <section class="th-pm-sec">
-  <!-- no numeral and no marker: the head is the heading alone -->
-  <div class="th-pm-head th-pm-head--bare th-pm-reveal"><h2 id="the-cost-of-being-visible" class="th-pm-title">The cost of being visible</h2></div>
+  <div class="th-pm-head th-pm-reveal"><span class="th-pm-marker"></span><span class="th-pm-num">01</span><h2 id="the-cost-of-being-visible" class="th-pm-title">The cost of being visible</h2></div>
   <p class="th-pm-eyebrow th-pm-reveal">The problem</p>
   <p class="th-pm-intro th-pm-reveal">Transparency is not free. The invoice arrives on <b>three separate bills: extraction, strategy, and absence</b>.</p>
 
   <!-- The three bills (stacked glass planes; select a plane to read its bill) -->
+  <!-- ONE VIEWPORT (2026-09-07): main's device, the three glass plates over
+       the 01/02/03 rail on the left, the bill panel on the right. The panel
+       stacks its three bills in one grid cell and holds a fixed floor, so a
+       tab swap never reflows the page. Rail buttons carry ids bill-01..03,
+       so #bill-02 deep-links to a bill (the hashchange surface below the
+       engine). -->
   <div class="bstk" id="bills">
-    <div class="bstk-guides" aria-hidden="true"><i></i><i></i><i></i></div>
     <div class="bstk-stage">
       <div class="bstk-iso">
         <div class="bstk-ground" aria-hidden="true"></div>
@@ -2183,11 +2105,10 @@ body section.th-pm-sec--mistral{background-color:#070303!important;}
           <span class="bstk-edge bstk-er" aria-hidden="true"></span>
         </button>
       </div>
-      <p class="bstk-pill">The bills</p>
       <div class="bstk-tabs" role="tablist" aria-label="The three bills">
-        <button class="bstk-tab" type="button" role="tab" data-bill="0" style="--t:196,206,220" aria-selected="true" aria-controls="bills-panel" tabindex="0"><span class="tn">01</span>Extraction</button>
-        <button class="bstk-tab" type="button" role="tab" data-bill="1" style="--t:140,152,170" aria-selected="false" aria-controls="bills-panel" tabindex="-1"><span class="tn">02</span>Strategy</button>
-        <button class="bstk-tab" type="button" role="tab" data-bill="2" style="--t:96,108,126" aria-selected="false" aria-controls="bills-panel" tabindex="-1"><span class="tn">03</span>Absence</button>
+        <button class="bstk-tab" type="button" role="tab" id="bill-01" data-bill="0" style="--t:196,206,220" aria-selected="true" aria-controls="bills-panel" tabindex="0"><span class="tn">01</span>Extraction</button>
+        <button class="bstk-tab" type="button" role="tab" id="bill-02" data-bill="1" style="--t:140,152,170" aria-selected="false" aria-controls="bills-panel" tabindex="-1"><span class="tn">02</span>Strategy</button>
+        <button class="bstk-tab" type="button" role="tab" id="bill-03" data-bill="2" style="--t:96,108,126" aria-selected="false" aria-controls="bills-panel" tabindex="-1"><span class="tn">03</span>Absence</button>
       </div>
     </div>
     <div class="bstk-panel" id="bills-panel" role="tabpanel" aria-live="polite">
@@ -2235,8 +2156,9 @@ body section.th-pm-sec--mistral{background-color:#070303!important;}
     </div>
   </div>
 
-  <!-- Section exit: the single transition line into 02 -->
-  <p class="th-pm-pivot th-pm-reveal">There is one way to cut every line on those bills: <span class="em">onchain privacy</span>.</p>
+  <!-- the section's closing line, under the panel (the standalone interlude
+       screen it had become is gone) -->
+  <p class="th-pm-pivot th-pm-pivot--tight th-pm-reveal">There is one way to cut every line on those bills: <span class="em">onchain privacy</span>.</p>
 </section>
 
 <!-- ================= SECTION 02 ================= -->
@@ -3312,6 +3234,19 @@ body section.th-pm-sec--mistral{background-color:#070303!important;}
   } else {
     select(0);
   }
+
+  /* deep links: #bill-01 / #bill-02 / #bill-03 land on the rail button and
+     open its bill (the native anchor scroll positions the section; the
+     selection is ours) */
+  function surface(){
+    var m = /^#bill-0([123])$/.exec(location.hash || '');
+    if (!m) return;
+    enter();
+    select(+m[1] - 1);
+    var t = tabs[+m[1] - 1]; if (t) t.focus({ preventScroll: true });
+  }
+  window.addEventListener('hashchange', surface);
+  surface();
 
   /* park the 3D scene while it is far off-screen (see the .bstk-parked
      CSS note): a second observer with a wide rail, independent of the
