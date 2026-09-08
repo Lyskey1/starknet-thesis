@@ -1,25 +1,29 @@
 /**
- * The landing (2026-09-08 correction pass): a sectioned page on the site's
+ * The landing (2026-09-08 correction passes): a sectioned page on the site's
  * shared components, replacing the scroll-driven WebGL scene.
  *
- * A Server Component: it reads the data modules (ecosystem, digest, the two
- * derived fees), numbers the sections from one ordered list (the page's only
- * numbering system: kickers 01..04), and hands everything down as props.
- * Order: hero, problems, ticker + signals in one viewport, faq, then the
- * footer's accent panel and the footer.
+ * A Server Component: it reads the data modules (ecosystem, digest with the
+ * live Substack feed merged, the two derived fees, the Q-day constant),
+ * numbers the sections from one ordered list (the page's only numbering
+ * system: kickers 01..04), and hands everything down as props. Order: hero,
+ * problems, ticker + signals in one viewport, faq, then the footer's accent
+ * panel and the footer. The page regenerates hourly (src/app/page.tsx).
  *
  * The shared stylesheets are the static pages' own files under public/css
- * (th-hero, th-selector, th-vault, glass-cards), linked here rather than
- * copied; landing.css carries the token bridge and the parity copy of the
- * base type rules those components compose on the static pages.
+ * (th-hero, th-selector, glass-cards), linked here rather than copied;
+ * landing.css carries the token bridge and the parity copy of the base type
+ * rules those components compose on the static pages.
  */
 import { homeFaq, homeFooter } from "@/data/home";
-import { digestCounts, latestIssue } from "@/lib/data/digest";
+import { PERISHABLE } from "@/data/perishable";
+import { loadDigest } from "@/lib/data/digest";
 import { postQuantumAccountFeeStrk, privateTransferFee } from "@/lib/data/derived-fees";
-import { pinnedProjects, projectsTracked } from "@/lib/data/ecosystem";
-import { getFaqStructuredData } from "@/utils/seo/faq-structured-data";
+import { landingFeaturedProjects, projectsTracked } from "@/lib/data/ecosystem";
+import { qdayYear } from "@/lib/data/qday";
+import { getFaqStructuredData, type FaqClaims } from "@/utils/seo/faq-structured-data";
 
 import { Hero } from "./home/hero/hero";
+import { PageBackdrop } from "./home/page-backdrop";
 import { Problems } from "./home/problems/problems";
 import { FaqSection } from "./home/sections/faq-section";
 import { SiteFooter } from "./home/sections/site-footer";
@@ -31,11 +35,19 @@ import "./home/landing.css";
 const SECTIONS = ["The three problems", "The ticker", "Signals", "Frequently asked"] as const;
 const kicker = (index: number) => `${String(index + 1).padStart(2, "0")} · ${SECTIONS[index]}`;
 
-export const HomeView = () => {
-  const counts = digestCounts();
-  const latest = latestIssue();
-  const logos = pinnedProjects().map(({ name, handle, url, src, monogram }) => ({ name, handle, url, src, monogram }));
+export const HomeView = async () => {
+  const digest = await loadDigest();
+  const logos = landingFeaturedProjects().map(({ name, handle, url, src, monogram }) => ({ name, handle, url, src, monogram }));
   const projects = projectsTracked();
+  const year = qdayYear();
+
+  /* the FAQ's registered claims: the Q-day timeline's text is filled from the constant */
+  const faqClaims: FaqClaims = {
+    "qday-timeline": {
+      ...PERISHABLE["qday-timeline"],
+      text: year ? PERISHABLE["qday-timeline"].text.replace("{QDAY_YEAR}", String(year)) : "",
+    },
+  };
 
   return (
     <main className="landing">
@@ -50,8 +62,6 @@ export const HomeView = () => {
       <link rel="stylesheet" href="/css/th-hero.css" precedence="shared" />
       {/* eslint-disable-next-line @next/next/no-css-tags */}
       <link rel="stylesheet" href="/css/th-selector.css" precedence="shared" />
-      {/* eslint-disable-next-line @next/next/no-css-tags */}
-      <link rel="stylesheet" href="/css/th-vault.css" precedence="shared" />
       {/* eslint-disable-next-line @next/next/no-page-custom-font */}
       <link
         rel="stylesheet"
@@ -60,10 +70,11 @@ export const HomeView = () => {
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(getFaqStructuredData(homeFaq)) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(getFaqStructuredData(homeFaq, faqClaims)) }}
       />
 
-      <Hero projectsTracked={projects} weeklyRoundups={counts.weeklyRoundups} />
+      <PageBackdrop />
+      <Hero />
       <Problems
         kicker={kicker(0)}
         privateTransferFee={privateTransferFee()}
@@ -73,12 +84,13 @@ export const HomeView = () => {
         tickerKicker={kicker(1)}
         signalsKicker={kicker(2)}
         projectsTracked={projects}
-        weeklyRoundups={counts.weeklyRoundups}
-        monthlyRecaps={counts.monthlyRecaps}
+        weeklyRoundups={digest.weeklyRoundups}
+        monthlyRecaps={digest.monthlyRecaps}
+        researchArticles={digest.researchArticles}
         logos={logos}
-        latest={latest}
+        latest={digest.latest}
       />
-      <FaqSection copy={homeFaq} kicker={kicker(3)} />
+      <FaqSection copy={homeFaq} kicker={kicker(3)} claims={faqClaims} />
       <SiteFooter copy={homeFooter} />
     </main>
   );

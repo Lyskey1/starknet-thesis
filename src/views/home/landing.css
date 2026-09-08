@@ -2,7 +2,7 @@
    THE LANDING (2026-09-08): the token bridge, the parity copy of the
    static pages' base type rules that the shared components compose, and
    the landing's own section grammar. The shared components themselves are
-   linked from public/css (th-hero, th-selector, th-vault, glass-cards) and
+   linked from public/css (th-hero, th-selector, glass-cards) and
    are NOT restyled here.
 
    :where(.landing) scopes every parity rule at ZERO added specificity, so
@@ -27,9 +27,15 @@
   --th-q: #c53400; --th-red: #F2787A; --th-green: #36C692; --th-ink: #fafafa; --th-muted: #9a9a9a;
   --th-hair: rgba(250, 250, 250, .08); --th-hair-soft: rgba(250, 250, 250, .05);
   --hover-dur: .25s; --hover-ease: ease;
-  position: relative; display: block; padding-top: var(--vcnav-h);
-  font-family: var(--sans); color: var(--white); background: var(--black);
+  position: relative; z-index: 1; display: block; padding-top: var(--vcnav-h);
+  font-family: var(--sans); color: var(--white); background: transparent;
 }
+/* the ambient backdrop the static pages run (public/js/eco-backdrop.js): the
+   three layer rules from css/eco-stage.css, verbatim, so the page sits on the
+   same fixed canvas behind everything */
+.eco-bd { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+.eco-bd canvas { display: block; width: 100%; height: 100%; }
+body > *:not(.eco-bd) { position: relative; z-index: 1; }
 .landing section[id], .landing [id] { scroll-margin-top: calc(var(--vcnav-h) + 16px); }
 
 /* ---- HERO PARITY: css/styles.css .hero* (values verbatim) ---- */
@@ -126,9 +132,15 @@
 /* ---- 01 the three problems: the shared selector, landing-hosted ---- */
 .problems .hst { margin-top: 18px; }
 .problems .hst-rail .hst-tile[id] { scroll-margin-top: calc(var(--vcnav-h) + 136px); }
-.problems .hst-tile { position: relative; }
-.problems .qw-shell { margin-top: 12px; height: 480px; }
-.problems .qw-ch { height: 428px; }
+/* this page's tile and panel budget (one viewport with the head): 96px tiles
+   over a 440px panel; the component's chrome, fill and focus ring are its own */
+.problems .hst-tile { position: relative; height: 96px; padding: 10px 14px; gap: 14px; box-shadow: none; outline: none; }
+.problems .hst-tile:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.problems .hst-thumb { flex: 0 0 64px; height: 76px; }
+.problems .hst-name { font-size: clamp(15px, 1.2vw, 17px); }
+.problems .qw-shell { margin-top: 12px; height: 440px; }
+.problems .qw-ch { height: 388px; }
+.lp-nowrap { white-space: nowrap; }
 .problems .qw-ch .th-stark-duo { grid-template-columns: minmax(0, 1fr) minmax(0, 440px); gap: 0 44px; height: 100%; align-items: center; }
 .problems .th-st-item { height: 100%; }
 .lp-copy { max-width: 560px; }
@@ -138,9 +150,20 @@
 .lp-stat span { display: block; margin-top: 7px; font-family: var(--mono); font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; color: rgba(250, 250, 250, .55); }
 .lp-close { margin-top: 16px; font-family: var(--display); font-weight: 500; font-size: 17px; color: var(--accent); }
 .lp-object { position: relative; height: 100%; width: 100%; display: flex; align-items: center; justify-content: center; justify-self: center; }
-.lp-stage { position: relative; width: 100%; height: 100%; min-height: 380px; }
-.problems .th-vt { width: min(300px, 100%); }
-.lp-vault svg { width: 100%; height: auto; display: block; }
+.lp-stage { position: relative; width: 100%; height: 100%; min-height: 340px; }
+/* the privacy hero object inside the panel: css/privacy-fx.css's .pv-* rules and
+   privacy.html's stage overrides (values verbatim), scoped to this page's stage */
+.lp-stage .pv-human { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; background: transparent; }
+.lp-stage .pv-figure { position: absolute; inset: 0; height: auto; --focus: 52% 34%; }
+.lp-stage .pv-human video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: var(--focus); }
+.lp-stage .pv-key { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
+.lp-stage video.pv-key-src { opacity: 0; pointer-events: none; }
+/* the still that stands in for the keyed clip under reduced motion (the page's rule hides both) */
+.lp-stage .pv-still { display: none; position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: var(--focus); }
+@media (prefers-reduced-motion: reduce) {
+  .lp-stage .pv-human video, .lp-stage .pv-key { display: none; }
+  .lp-stage .pv-still { display: block; }
+}
 /* the auto-advance indicator: a hairline along the lit tile's foot, driven by the rail's --hst-prog */
 .hst-prog { position: absolute; left: 16px; right: 16px; bottom: 9px; height: 2px; border-radius: 1px; overflow: hidden;
   background: rgba(250, 250, 250, .08); opacity: 0; transition: opacity .25s ease; }
@@ -192,6 +215,9 @@
 .lp-faq-m2 { top: 0; left: 50%; width: 1.5px; height: 100%; transform: translateX(-50%); }
 .lp-faq-a { overflow: hidden; }
 .lp-faq-a p { margin: 0; padding: 0 6px 18px; max-width: 66ch; font-size: 14.5px; line-height: 1.65; color: var(--th-muted); }
+/* the body link, the static pages' grammar: ink, hairline underline, accent on hover */
+.lp-a { color: var(--white); text-decoration: underline; text-decoration-color: rgba(250, 250, 250, .3); text-underline-offset: 3px; transition: color var(--hover-dur) var(--hover-ease); }
+.lp-a:hover { color: var(--accent); }
 
 /* ---- the footer sits after the last section ---- */
 .landing .vc-footer { margin-top: 64px; }
