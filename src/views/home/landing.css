@@ -1,0 +1,177 @@
+/* ============================================================
+   THE LANDING (2026-09-08): the token bridge, the parity copy of the
+   static pages' base type rules that the shared components compose, and
+   the landing's own section grammar. The shared components themselves are
+   linked from public/css (th-hero, th-selector, th-vault, glass-cards) and
+   are NOT restyled here.
+
+   :where(.landing) scopes every parity rule at ZERO added specificity, so
+   each rule fights the shared sheets with exactly the specificity it has
+   on the static pages and the cascade resolves the same way.
+   ============================================================ */
+
+/* the display face the static pages name; self-hosted here */
+@font-face { font-family: "General Sans"; font-weight: 300; font-style: normal; font-display: swap; src: url("/fonts/GeneralSans-Light.woff2") format("woff2"); }
+@font-face { font-family: "General Sans"; font-weight: 400; font-style: normal; font-display: swap; src: url("/fonts/GeneralSans-Regular.woff2") format("woff2"); }
+@font-face { font-family: "General Sans"; font-weight: 500; font-style: normal; font-display: swap; src: url("/fonts/GeneralSans-Medium.woff2") format("woff2"); }
+
+/* ---- the token bridge: the static pages' names, the site's values ---- */
+.landing {
+  --accent: #c53400; --accent-rgb: 197, 52, 0; --accent-dim: #a02a00;
+  --white: #fafafa; --black: #0d0d0d;
+  --display: "General Sans", "Helvetica Neue", Arial, sans-serif;
+  --sans: "General Sans", "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", monospace;
+  --vcnav-h: 64px; --vch-u: min(1vw, 14.4px); --hero-title-tracking: normal;
+  --vc-orange: #c53400;
+  --th-q: #c53400; --th-red: #F2787A; --th-green: #36C692; --th-ink: #fafafa; --th-muted: #9a9a9a;
+  --th-hair: rgba(250, 250, 250, .08); --th-hair-soft: rgba(250, 250, 250, .05);
+  --hover-dur: .25s; --hover-ease: ease;
+  position: relative; display: block; padding-top: var(--vcnav-h);
+  font-family: var(--sans); color: var(--white); background: var(--black);
+}
+.landing section[id], .landing [id] { scroll-margin-top: calc(var(--vcnav-h) + 16px); }
+
+/* ---- HERO PARITY: css/styles.css .hero* (values verbatim) ---- */
+:where(.landing) .hero { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
+  padding: 150px 40px 80px; max-width: 1240px; margin: 0 auto; position: relative; }
+:where(.landing) .hero-eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: 0.24em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 22px; position: relative; }
+:where(.landing) .hero-title { font-family: var(--display); font-size: clamp(34px, 5.4vw, 76px); font-weight: 800; line-height: 0.98;
+  letter-spacing: -0.01em; text-transform: uppercase; max-width: 1100px; margin-bottom: 26px; position: relative; }
+:where(.landing) .hero-title em { font-style: normal; color: var(--accent); }
+:where(.landing) .hero-subtitle { font-family: var(--sans); font-size: 18px; font-weight: 300; color: rgba(245,242,236,0.62);
+  max-width: 620px; margin: 0 auto; line-height: 1.7; margin-bottom: 40px; position: relative; }
+/* quantum.html's own hero frame rule (its head block): one viewport under the nav */
+:where(.landing) .hero { position: relative; display: block; height: calc(100svh - var(--vcnav-h, 64px)); min-height: 0;
+  max-width: none; margin: 0; padding: 0; overflow: hidden; text-align: left; background: transparent; }
+@media (max-height: 700px) { :where(.landing) .hero { height: auto; min-height: calc(100svh - var(--vcnav-h, 64px)); } }
+:where(.landing) body .hero, :where(.landing) .hero { z-index: 0; }
+/* css/vesper-chrome.css: the shared hero headline and paragraph (values verbatim) */
+:where(.landing) .hero .vch-title { margin: var(--vch-u) 0 0; font-family: "General Sans", sans-serif; font-weight: 300;
+  font-size: calc(4.6 * var(--vch-u)); line-height: .9; letter-spacing: var(--hero-title-tracking); text-transform: none;
+  color: var(--white, #fafafa); max-width: none; text-align: left; }
+:where(.landing) .hero .vch-title em { font-style: normal; color: var(--accent); }
+:where(.landing) .hero .vch-sub { margin: calc(1.6 * var(--vch-u)) 0 0; max-width: calc(32 * var(--vch-u));
+  font-family: "General Sans", sans-serif; font-weight: 300; font-size: max(calc(1.06 * var(--vch-u)), 15px); line-height: 1.7;
+  color: rgba(250, 250, 250, .72); text-align: left; }
+@media (max-width: 980px) {
+  :where(.landing) .hero .vch-title { margin-top: .75rem; font-size: 2.75rem; }
+  :where(.landing) .hero .vch-sub { margin-top: 1rem; max-width: 40rem; font-size: 1rem; }
+}
+@media (max-width: 380px) { :where(.landing) .hero .vch-title { font-size: 2.375rem; } }
+/* the stage canvas, as quantum's .qh-stage canvas rule */
+:where(.landing) .qh-stage canvas, .lp-stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+/* the strip's live stat: laid out at full size from the first paint, shown when a value lands */
+.qhx-live[data-ready="false"] { visibility: hidden; }
+.qhx-stamp { display: block; margin-top: 2px; font-family: var(--mono); font-style: normal; font-size: 9.5px; letter-spacing: .14em;
+  text-transform: uppercase; color: rgba(250, 250, 250, .45); white-space: nowrap; }
+
+/* ---- the section grammar (the page's one numbering system: kickers 01..04) ---- */
+.lp-sec { position: relative; max-width: 1160px; margin: 0 auto; padding: 48px 32px 0; }
+.lp-kicker { margin: 0; font-family: var(--mono); font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: var(--accent); opacity: .85; }
+.lp-h2 { margin: 10px 0 0; font-family: var(--display); font-weight: 300; font-size: clamp(30px, 2.9vw, 42px); line-height: 1.02;
+  letter-spacing: -.015em; color: var(--th-ink); max-width: none; }
+.lp-h2 b { color: var(--accent); font-weight: 800; }
+.lp-vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.lp-p { margin: 18px 0 0; font-size: 17px; line-height: 1.6; color: var(--th-muted); max-width: 52ch; }
+.lp-link { display: inline-flex; align-items: center; gap: 8px; margin-top: 16px; font-family: var(--mono); font-size: 11px; letter-spacing: .16em;
+  text-transform: uppercase; color: var(--white); text-decoration: none; border-bottom: 1px solid rgba(250, 250, 250, .3); padding-bottom: 3px;
+  transition: color var(--hover-dur) var(--hover-ease), border-color var(--hover-dur) var(--hover-ease); }
+.lp-link::after { content: ""; display: block; width: 6px; height: 6px; border-top: 1.5px solid currentColor; border-right: 1.5px solid currentColor; transform: rotate(45deg); }
+.lp-link:hover { color: var(--accent); border-color: var(--accent); }
+.lp-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+/* ---- 01 the three problems: the shared selector, landing-hosted ---- */
+.problems .hst { margin-top: 18px; }
+.problems .hst-rail .hst-tile[id] { scroll-margin-top: calc(var(--vcnav-h) + 136px); }
+.problems .hst-tile { position: relative; }
+.problems .qw-shell { margin-top: 12px; height: 480px; }
+.problems .qw-ch { height: 428px; }
+.problems .qw-ch .th-stark-duo { grid-template-columns: minmax(0, 1fr) minmax(0, 440px); gap: 0 44px; height: 100%; align-items: center; }
+.problems .th-st-item { height: 100%; }
+.lp-copy { max-width: 560px; }
+.lp-h3 { margin: 0 0 10px; font-family: var(--display); font-weight: 800; font-size: 24px; letter-spacing: -.015em; line-height: 1.2; color: var(--white); }
+.lp-stat { margin-top: 18px; }
+.lp-stat b { display: block; font-family: var(--display); font-weight: 300; font-size: 34px; line-height: 1; letter-spacing: -.01em; color: var(--white); font-variant-numeric: tabular-nums; }
+.lp-stat span { display: block; margin-top: 7px; font-family: var(--mono); font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; color: rgba(250, 250, 250, .55); }
+.lp-close { margin-top: 16px; font-family: var(--display); font-weight: 500; font-size: 17px; color: var(--accent); }
+.lp-object { position: relative; height: 100%; width: 100%; display: flex; align-items: center; justify-content: center; justify-self: center; }
+.lp-stage { position: relative; width: 100%; height: 100%; min-height: 380px; }
+.problems .th-vt { width: min(300px, 100%); }
+.lp-vault svg { width: 100%; height: auto; display: block; }
+/* the auto-advance indicator: a hairline along the lit tile's foot, driven by the rail's --hst-prog */
+.hst-prog { position: absolute; left: 16px; right: 16px; bottom: 9px; height: 2px; border-radius: 1px; overflow: hidden;
+  background: rgba(250, 250, 250, .08); opacity: 0; transition: opacity .25s ease; }
+.hst-prog i { display: block; height: 100%; width: 100%; background: var(--accent); transform-origin: left center; transform: scaleX(var(--hst-prog, 0)); }
+.is-auto .hst-tile[aria-selected="true"] .hst-prog { opacity: 1; }
+.is-manual .hst-prog { opacity: 0; }
+/* a perishable claim past its break date is visibly due for a re-check */
+.th-claim[data-stale="true"] { text-decoration: underline dotted rgba(250, 250, 250, .5); text-underline-offset: 4px; }
+
+/* ---- 02 + 03 in one viewport ---- */
+.lp-twoup { max-width: 1160px; margin: 0 auto; padding: 48px 32px 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0 48px; align-items: start; }
+.lp-fly { margin-top: 22px; width: min(340px, 100%); }
+.lp-fly svg { width: 100%; height: auto; overflow: visible; display: block; }
+/* the flywheel, strk's own values */
+.lp-fly .track { fill: none; stroke: rgba(250, 250, 250, 0.08); stroke-width: 1.5; }
+.lp-fly .track-dash { fill: none; stroke: rgba(197, 52, 0, 0.35); stroke-width: 1.5; stroke-dasharray: 3 9; }
+.lp-fly .spoke { stroke: rgba(250, 250, 250, 0.10); stroke-width: 1; }
+.lp-fly .hub circle { fill: rgba(197, 52, 0, 0.16); stroke: var(--accent); stroke-width: 1.6; }
+.lp-fly .stage .dot { fill: var(--black); stroke: var(--accent); stroke-width: 1.8; }
+.lp-fly .stage .snum { fill: var(--accent); font-family: var(--mono), monospace; font-size: 13px; font-weight: 500; text-anchor: middle; }
+.lp-fly .stage .slabel { fill: rgba(250, 250, 250, 0.64); font-family: var(--mono), monospace; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; text-anchor: middle; }
+.lp-cards { display: grid; gap: 14px; margin-top: 22px; }
+.lp-card { display: grid; grid-template-columns: minmax(0, 1fr) 220px; gap: 20px; align-items: center; padding: 22px 24px; border-radius: 14px;
+  border: 1px solid rgba(250, 250, 250, .10); background: rgba(250, 250, 250, .03); }
+.lp-card h3 { margin: 0; font-family: var(--display); font-weight: 500; font-size: 20px; letter-spacing: -.01em; color: var(--white); }
+.lp-card p { margin: 8px 0 0; font-size: 14.5px; line-height: 1.55; color: var(--th-muted); }
+.lp-card .lp-mono { margin-top: 12px; font-family: var(--mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
+.lp-card .lp-link { margin-top: 14px; }
+.lp-logos { display: grid; grid-template-columns: repeat(3, 56px); gap: 10px; justify-content: end; }
+.lp-logo { display: grid; place-items: center; width: 56px; height: 56px; border-radius: 50%; overflow: hidden; background: #1a1a1a;
+  border: 1px solid rgba(250, 250, 250, .12); color: var(--white); font-family: var(--mono); font-size: 13px; letter-spacing: .04em; text-decoration: none; }
+.lp-logo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.lp-issue { display: block; text-decoration: none; color: inherit; }
+.lp-cover { display: block; width: 220px; height: 124px; object-fit: cover; border-radius: 8px; border: 1px solid rgba(250, 250, 250, .12); background: #1a1a1a; }
+.lp-cover-t { display: block; margin-top: 8px; max-width: 220px; font-size: 12px; line-height: 1.4; color: rgba(250, 250, 250, .72); }
+
+/* ---- 04 frequently asked, compact ---- */
+.lp-faq ul { list-style: none; margin: 18px 0 0; padding: 0; max-width: 780px; border-top: 1px solid rgba(250, 250, 250, .10); }
+.lp-faq li { border-bottom: 1px solid rgba(250, 250, 250, .10); }
+.lp-faq-h { margin: 0; }
+.lp-faq-q { display: flex; width: 100%; align-items: center; justify-content: space-between; gap: 16px; min-height: 64px; padding: 0 6px;
+  text-align: left; background: none; border: 0; cursor: pointer; color: var(--white); font-family: var(--display); font-weight: 500; font-size: 17px; line-height: 1.3;
+  transition: color var(--hover-dur) var(--hover-ease); }
+.lp-faq-q:hover { color: var(--accent); }
+.lp-faq-q:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.lp-faq-m { position: relative; display: block; width: 14px; height: 14px; flex: 0 0 auto; }
+.lp-faq-m1, .lp-faq-m2 { position: absolute; background: currentColor; }
+.lp-faq-m1 { top: 50%; left: 0; width: 100%; height: 1.5px; transform: translateY(-50%); }
+.lp-faq-m2 { top: 0; left: 50%; width: 1.5px; height: 100%; transform: translateX(-50%); }
+.lp-faq-a { overflow: hidden; }
+.lp-faq-a p { margin: 0; padding: 0 6px 18px; max-width: 66ch; font-size: 14.5px; line-height: 1.65; color: var(--th-muted); }
+
+/* ---- the footer sits after the last section ---- */
+.landing .vc-footer { margin-top: 64px; }
+
+/* ---- small screens: the halves stack, the panel stacks text over object ---- */
+@media (max-width: 980px) {
+  .lp-sec, .lp-twoup { padding: 40px 20px 0; }
+  .lp-twoup { grid-template-columns: 1fr; gap: 40px 0; }
+  .problems .qw-shell, .problems .qw-ch, .problems .th-st-item { height: auto; }
+  .lp-stage { min-height: 280px; height: 280px; }
+  .lp-object { margin-top: 24px; }
+  .lp-card { grid-template-columns: 1fr; }
+  .lp-logos { justify-content: start; }
+  .lp-cover { width: 100%; height: auto; aspect-ratio: 16 / 9; }
+  .lp-cover-t { max-width: none; }
+}
+/* the strip carries THREE stats on this page (quantum's carries four); the
+   phone grid takes the page's own track count, nothing else changes */
+@media (max-width: 700px) { .landing .qhx-stats { grid-template-columns: repeat(3, auto); column-gap: 18px; justify-content: start; } }
+@media (max-width: 380px) { .lp-sec, .lp-twoup { padding: 32px 16px 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .hst-prog, .lp-link { transition: none; }
+}
