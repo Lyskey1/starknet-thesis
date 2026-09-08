@@ -2636,13 +2636,11 @@ const SRC={
   stables(){return cached('stables',TTL['30D'],()=>gj('https://stablecoins.llama.fi/stablecoincharts/Starknet')
     .then(a=>a.map(r=>[(+r.date)*1000,r.totalCirculatingUSD.peggedUSD]).filter(p=>isFinite(p[1]))));},
   /* chain-level app revenue from growthepie (CC BY 4.0): the full-history
-     export, filtered to Starknet USD rows. The daily row shape matches the
-     old DefiLlama series, so the weekly-bars pipeline is unchanged. The
-     cache key moved to apprev_gtp so a stale DefiLlama series can never
-     render under the growthepie source line. */
-  apprev(){return cached('apprev_gtp',TTL['30D'],()=>gj('https://api.growthepie.com/v1/export/app_revenue.json')
-    .then(a=>a.filter(r=>r.origin_key==='starknet'&&r.metric_key==='app_fees_usd'&&isFinite(r.value))
-      .map(r=>[Date.parse(r.date),r.value]).sort((x,y)=>x[0]-y[0])));},
+     export, filtered to Starknet USD rows, now in js/app-revenue.js with
+     this page's own apprev_gtp cache key and 30D TTL, shared with the
+     landing's hero band. The daily row shape is unchanged, so the
+     weekly-bars pipeline is unchanged. */
+  apprev(){return appRevMod().then(m=>m.appRevenueSeries());},
   chainrev(){return cached('chainrev',TTL['30D'],()=>gj('https://api.llama.fi/summary/fees/starknet?dataType=dailyRevenue')
     .then(d=>d.totalDataChart.map(r=>[r[0]*1000,r[1]])));},
   /* MEASURED daily average block time, committed backfill
@@ -2763,14 +2761,16 @@ function stakingSeries(field,mkey){
 }
 function cumsum(a){let c=0;return a.map(p=>[p[0],c+=p[1]]);}
 function rolling30(a){const out=[];for(let i=29;i<a.length;i++){let s=0;for(let j=i-29;j<=i;j++)s+=a[j][1];out.push([a[i][0],s]);}return out;}
-function weeklySum(a){ // daily [[ms,v]] → calendar-week (Mon to Sun, UTC) sums
-  const w={};
-  a.forEach(p=>{const d=new Date(p[0]);
-    const dow=(d.getUTCDay()+6)%7;
-    const ws=Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate()-dow);
-    w[ws]=(w[ws]||0)+p[1];});
-  return Object.keys(w).map(k=>[+k,w[k]]).sort((x,y)=>x[0]-y[0]);
-}
+/* The app-revenue selector and the weekly bucketing moved to
+   js/app-revenue.js (2026-09-08), because the landing's hero band shows this
+   page's "App revenue · 365D SUM" under the same label and the two must not
+   drift. The module owns the growthepie fetch, this page's own cache key and
+   TTL, the Mon-to-Sun bucketing and the window sum; it is pulled once,
+   lazily, by dynamic import, so nothing here depends on script order.
+   `.then(weeklySum)` still works: then() flattens the promise. */
+let __arMod=null;
+function appRevMod(){return __arMod||(__arMod=window.STRK20AppRevenue?Promise.resolve(window.STRK20AppRevenue):import('/js/app-revenue.js'));}
+function weeklySum(a){return appRevMod().then(m=>m.weeklySum(a));} // daily [[ms,v]] → calendar-week (Mon to Sun, UTC) sums
 
 /* Sourced protocol-upgrade annotations for the BLOCK TIME chart (audited
    2026-08-11 against the committed seed; every date below sits on a durable

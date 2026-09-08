@@ -2,15 +2,15 @@
 
 import { useEffect, useState } from "react";
 
-import { DERIVED } from "@/data/perishable";
+import { PERISHABLE } from "@/data/perishable";
 import {
   abbr,
   fetchAppRevenue,
   fetchShieldedValue,
   fetchStrkStaked,
-  fmtUsd,
   REFRESH_MS,
   TICK_MS,
+  GROWTHEPIE_CREDIT,
   updatedStamp,
   WINDOW_DAYS,
 } from "@/lib/data/live-sources";
@@ -25,17 +25,21 @@ import {
  * slot (.qhx-cdlab, the strip's top padding band, where quantum carries its
  * deadline label).
  *
- * APP REVENUE is annualized (public/js/revenue-series.js), so its label
- * says so and names the window when the series is short. It renders as a
- * derived claim: the series it comes from and a note that it is a run-rate,
- * not realized revenue, ride the element as data attributes from
- * src/data/perishable.ts.
+ * APP REVENUE is the strk dashboard's own metric, "App revenue · 365D SUM":
+ * chain-level app revenue for Starknet from growthepie, the trailing 365
+ * days, through the dashboard's selector (public/js/app-revenue.js). Its
+ * label names the window, and it renders as a registered claim carrying the
+ * endpoint and the check date from src/data/perishable.ts. The band has no
+ * room for a visible source line, so growthepie's credit rides the element's
+ * title and a visually hidden note; the dashboard keeps its visible credit
+ * on the chart's source line.
  */
-interface Live { value: number; at: number; label: string; days?: number }
+interface Live { value: number; at: number; label: string }
 type Key = "shielded" | "staked" | "revenue";
 
 const KEYS: Key[] = ["shielded", "staked", "revenue"];
-const runRate = DERIVED["app-revenue-run-rate"];
+const appRev = PERISHABLE["app-revenue-365d"];
+const CREDIT = `Chain-level app revenue for Starknet, trailing ${WINDOW_DAYS} days. Source: ${GROWTHEPIE_CREDIT.name} (${GROWTHEPIE_CREDIT.licence}).`;
 
 /* each source hands back the printed value and its own label, so the
    component never decides what a number means */
@@ -48,28 +52,28 @@ const READ: Record<Key, () => Promise<Omit<Live, "at">>> = {
     value: await fetchStrkStaked(),
     label: "STRK staked",
   }),
-  revenue: async () => {
-    const rate = await fetchAppRevenue();
-    return {
-      value: rate.usd,
-      days: rate.days,
-      /* a full window says only "annualized"; a short one names its length,
-         because the reader is owed the denominator */
-      label: rate.days >= WINDOW_DAYS ? "App revenue, annualized" : `App revenue, annualized from ${rate.days}d`,
-    };
-  },
+  revenue: async () => ({
+    value: (await fetchAppRevenue()).usd,
+    /* the dashboard's wording, "App revenue - 365D SUM", on two lines */
+    label: appRev.text,
+  }),
 };
 
+/* each figure prints exactly as its own page prints it: the pool's shielded
+   value in full (privacy section 05), the stake and the app revenue through
+   the strk dashboard's abbr(), so the dashboard's header and this band read
+   the same string. The privacy page's compact formatter would round the same
+   number to a whole million and the two would disagree on sight. */
 const PRINT: Record<Key, (v: number) => string> = {
   shielded: (v) => "$" + Math.round(v).toLocaleString("en-US"),
   staked: (v) => abbr(v) + " STRK",
-  revenue: (v) => fmtUsd(v),
+  revenue: (v) => "$" + abbr(v),
 };
 
 const PLACEHOLDER: Record<Key, string> = {
   shielded: "$0,000,000",
   staked: "0.00B STRK",
-  revenue: "$0.0K",
+  revenue: "$00.0M",
 };
 
 export const LiveStats = () => {
@@ -101,25 +105,26 @@ export const LiveStats = () => {
       <ul className="qhx-stats">
         {KEYS.map((key) => {
           const entry = live[key];
-          const derived = key === "revenue";
+          const credited = key === "revenue";
           return (
             <li
               key={key}
               className="qhx-live"
               data-ready={entry ? "true" : "false"}
               aria-hidden={!entry}
-              {...(derived
+              {...(credited
                 ? {
-                    "data-derived": "run-rate",
-                    "data-src": runRate.src,
-                    "data-checked": runRate.checked,
-                    "data-note": runRate.note,
-                    title: runRate.note,
+                    "data-perishable": "third-party",
+                    "data-src": appRev.src,
+                    "data-checked": appRev.checked,
+                    "data-says": appRev.says,
+                    title: CREDIT,
                   }
                 : {})}
             >
               <b>{entry ? PRINT[key](entry.value) : PLACEHOLDER[key]}</b>
               <span>{entry ? entry.label : PLACEHOLDER[key]}</span>
+              {credited && <span className="lp-vh">{CREDIT}</span>}
             </li>
           );
         })}

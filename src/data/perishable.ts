@@ -59,28 +59,18 @@ export const PERISHABLE = {
     checked: "2026-09-08",
     breaks: "2027-01-01",
   },
+  /* APP REVENUE on the hero band: chain-level app revenue for Starknet from
+     growthepie's app_fees_usd export (CC BY 4.0), the trailing 365 days, the
+     same figure and window the strk dashboard renders. The dashboard keeps
+     its own credit on the chart's source line; it has no perishable-registry
+     entry of its own, so this is the site's one entry for the claim. */
+  "app-revenue-365d": {
+    text: "App revenue, 365D",
+    src: "https://api.growthepie.com/v1/export/app_revenue.json",
+    checked: "2026-09-08",
+    breaks: "2026-12-08",
+    says: "growthepie, app_fees_usd for Starknet, CC BY 4.0",
+  },
 } satisfies Record<string, PerishableClaim>;
 
 export type PerishableKey = keyof typeof PERISHABLE;
-
-/**
- * DERIVED claims: figures the page computes itself from a named series. They
- * do not perish the way a third-party statement does, but they still owe the
- * reader a source and a plain statement of what the number is and is not.
- */
-export interface DerivedClaim {
-  /** Where the inputs come from. */
-  src: string;
-  /** What the figure is, and what it is not. */
-  note: string;
-  /** ISO date a human last checked the derivation against the source. */
-  checked: string;
-}
-
-export const DERIVED = {
-  "app-revenue-run-rate": {
-    src: "https://strk20-dashboard-production.up.railway.app/agg/tvl-history",
-    note: "Annualized run-rate: the trailing 30 complete days of STRK20 protocol revenue, scaled by 365/30. A run-rate, not realized annual revenue.",
-    checked: "2026-09-08",
-  },
-} satisfies Record<string, DerivedClaim>;

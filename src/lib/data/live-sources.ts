@@ -9,30 +9,25 @@
  *                   overview, total_stake / 1e18, with the strk page's own
  *                   fallback (starknet_call get_total_stake on the staking
  *                   contract across its three RPCs), printed with abbr().
- *   APP REVENUE     the same series as privacy.html section 05's REVENUE
- *                   KPI (/agg/tvl-history days[].feesUsd), but ANNUALIZED
- *                   rather than cumulative: the trailing 30 complete days of
- *                   daily revenue scaled by 365/30. The derivation is
- *                   public/js/revenue-series.js, one source both this module
- *                   and a static page can read. The pair is still
- *                   cross-checked against /agg/lifetime-revenue revenueUsd
- *                   within a 5% band ($50 floor) and rejected if the series
- *                   is more than 48h stale, and it still prints with
- *                   fmtUsd(). A run-rate, not realized revenue.
+ *   APP REVENUE     strk.html's dashboard metric, "App revenue · 365D SUM":
+ *                   chain-level app revenue for Starknet from growthepie
+ *                   (CC BY 4.0), the dashboard's own selector, cache key and
+ *                   window rule, imported from public/js/app-revenue.js. It
+ *                   is already a trailing-365-day sum, so nothing here
+ *                   annualizes it. This is NOT the STRK20 pool's protocol
+ *                   revenue, which is a different and much smaller figure;
+ *                   the label on this site means the chain's apps.
  *
  * Every call carries a cache-busting query as the pages do; the pages
  * refresh hourly and tick their UPDATED stamp every minute. The formatters
  * are the pages' functions character for character.
  */
-import { annualizedRevenue, cumulativeRevenue, WINDOW_DAYS, YEAR_DAYS, type RunRate } from "../../../public/js/revenue-series.js";
+import { appRevenue365, GROWTHEPIE_APP_REVENUE, GROWTHEPIE_CREDIT, WINDOW_DAYS } from "../../../public/js/app-revenue.js";
 
-/* the derivation's own constants, re-exported so a label can name the window */
-export { WINDOW_DAYS, YEAR_DAYS };
-export type { RunRate };
+/* the selector's own constants, so a label and a credit can name them */
+export { GROWTHEPIE_APP_REVENUE, GROWTHEPIE_CREDIT, WINDOW_DAYS };
 
 export const STRK20_API = "https://strk20-dashboard-production.up.railway.app";
-/** The series the revenue figures derive from; the derived claim's data-src. */
-export const REVENUE_SERIES_URL = `${STRK20_API}/agg/tvl-history`;
 export const ENDUR_OVERVIEW = "https://api.dashboard.endur.fi/api/query/network/overview";
 export const STARKNET_RPCS = [
   "https://rpc.starknet.lava.build",
@@ -113,25 +108,7 @@ export const fetchStrkStaked = async (): Promise<number> => {
 };
 
 /**
- * The annualized run-rate, with the privacy page's own guards kept: the
- * cumulative tail is still cross-checked against the lifetime headline and a
- * stale series is still refused, so a bad series is rejected before it can be
- * annualized into a confident-looking number.
+ * APP REVENUE: the strk dashboard's 365D SUM, straight from its selector.
+ * Already a trailing-365-day figure; there is nothing to annualize.
  */
-export const fetchAppRevenue = async (): Promise<RunRate> => {
-  const [hist, life] = await Promise.all([
-    getJson<{ days?: { date: string; feesUsd?: number }[] }>(REVENUE_SERIES_URL),
-    getJson<{ revenueUsd?: number }>(`${STRK20_API}/agg/lifetime-revenue`),
-  ]);
-  const days = (hist.days || []).filter((x) => typeof x.feesUsd === "number") as { date: string; feesUsd: number }[];
-  if (!days.length) throw new Error("empty");
-  const lastCum = cumulativeRevenue(days);
-  const headline = life.revenueUsd;
-  if (typeof lastCum !== "number") throw new Error("revenue series empty");
-  if (typeof headline !== "number") throw new Error("revenue headline missing");
-  if (Math.abs(headline - lastCum) > Math.max(50, Math.max(headline, lastCum) * 0.05)) throw new Error("revenue pair gap out of bounds");
-  if (Date.now() - new Date(days[days.length - 1].date + "T00:00:00Z").getTime() > 172800000) throw new Error("revenue series stale");
-  const rate = annualizedRevenue(days);
-  if (!rate) throw new Error("no complete day to annualize");
-  return rate;
-};
+export const fetchAppRevenue = async () => appRevenue365();
