@@ -1,0 +1,146 @@
+/* ===== TH-SELECTOR: the object-selector device, shared (2026-09-08).
+   Cut out of quantum.html so /quantum's Head Start and the landing's
+   Three Problems render ONE component: a row of glass tiles (each a
+   thumbnail of the very object its panel shows) over a FIXED-HEIGHT
+   two-column detail panel (text left, object right), so a tab swap is a
+   pure crossfade and the section holds one 1440x900 viewport with any
+   tab selected. The engine is js/selector-panel.js (initQw + thMorph over
+   js/selector-rove.js). The tokens (--th-q accent, --th-ink, --th-muted,
+   --th-hair, --vcnav-h) come from the host page's section wrapper.
+   INACTIVE LIVES ON THE CHROME ONLY: the object never dims.
+   quantum.html links this sheet at the position its hst block held; the
+   shell, duo and item rules moved here from earlier in that sheet, which
+   the pixel diff of all three tabs confirmed to be order-safe. */
+.qw-shell{position:relative;margin-top:22px;overflow:hidden;border-radius:18px;overflow-anchor:none;
+  border:1px solid rgba(250, 250, 250,.08);
+  background:linear-gradient(180deg,rgba(255,255,255,.015),rgba(255,255,255,.004));}
+.qw-panel{padding:26px 30px 26px;}
+/* one chapter in flow at a time */
+.qw-ch{display:none;position:relative;}
+.qw-ch.is-on{display:block;}
+
+@media(max-width:980px){
+  .qw-panel{padding:22px 18px;}
+}
+
+@media (prefers-reduced-motion: reduce){
+  .qw-ch.is-on{animation:none;}
+}
+
+/* readiness items inside the rail's panel: the vertical timeline (rail
+   line + node dots) belonged to the stacked composition; the tabs carry
+   the sequence now */
+
+.qw-ch .th-st-item{padding:0;}
+.qw-ch .th-st-item::before{content:none;}
+
+.th-stark-duo{display:grid;grid-template-columns:minmax(0,55fr) minmax(0,45fr);gap:0 46px;align-items:start;}
+
+@media(max-width:980px){
+  .th-stark-duo{display:block;}
+}
+
+.th-st-item{position:relative;padding:0 0 52px;}
+.th-st-item:last-child{padding-bottom:0;}
+.th-st-item::before{content:'';position:absolute;left:-30px;top:7px;width:9px;height:9px;border-radius:50%;background:#c53400;box-shadow:0 0 12px rgba(197, 52, 0,.8);}
+.th-st-top{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:10px;}
+.th-st-item h4{font-family:'General Sans',sans-serif;font-weight:800;font-size:21px;letter-spacing:-.015em;color:#fafafa;}
+.th-st-item h4 .th-st-a{color:#c53400;}
+.th-st-chip{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;padding:5px 11px;border-radius:999px;border:1px solid;white-space:nowrap;}
+.th-st-chip.q{color:#c53400;border-color:rgba(197, 52, 0,.35);background:rgba(197, 52, 0,.07);}
+
+.th-st-item p{max-width:66ch;font-size:14.5px;line-height:1.65;color:#9a9a9a;}
+.th-st-item p strong{color:#fafafa;font-weight:600;}
+.th-st-item p a{color:#fafafa;text-decoration:underline;text-decoration-color:rgba(250, 250, 250,.3);text-underline-offset:3px;}
+.th-st-item p a:hover{color:#c53400;}
+
+/* ============================================================
+   THE HEAD START (hst-), PART 5 REDO 2026-09-07: objects as the
+   selector. Three equal glass tiles thumbnail the very object each
+   panel shows; the detail panel below is a FIXED-HEIGHT two-column
+   device (505px), so the whole section holds one 1440x900 viewport
+   with any tab selected and a tab swap never shifts layout: with
+   the height pinned, thMorph's height leg is a no-op and the swap
+   is a pure crossfade (instant under reduced motion).
+   The lit tile is CSS off the aria-selected thRove writes.
+   INACTIVE LIVES ON THE CHROME ONLY (2026-09-07 fix): the base
+   .qw-ped rule fades an unselected pedestal to .5 and the first cut
+   stacked a .55 + desaturate on the thumb, a product of ~.27 that made
+   the vault and the record card invisible on the dark tile. Now the
+   object never dims (opacity 1, no filter); the unselected state is a
+   dimmed border, a muted label and no accent glow; hover brightens the
+   border only. The vault line art gets a faint glass plate behind it,
+   the way the paper carries its own white sheet.
+   ============================================================ */
+.qsec3{scroll-margin-top:var(--vcnav-h,64px);padding-top:40px;}
+.qsec3 [id]{scroll-margin-top:var(--vcnav-h,64px);}
+.qsec3 .th-pm-head{margin-bottom:6px;}
+.qsec3 .th-pm-title{font-size:clamp(30px,2.9vw,42px);}
+.qsec3 .th-pm-num{font-size:34px;}
+.qsec3 .th-pm-eyebrow{margin:0 0 2px;}
+/* the intro holds two lines on the full measure rather than losing words */
+.qsec3 > .qprop-body{max-width:none;font-size:14px;line-height:1.5;margin-top:8px;}
+.hst{margin-top:14px;}
+.hst-rail{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;
+  background:none;border:0;padding:0;margin:0;}
+.hst-tile{display:flex;align-items:center;gap:16px;height:145px;padding:14px 16px;margin:0;
+  cursor:pointer;text-align:left;border-radius:14px;
+  border:1px solid rgba(250,250,250,.10);background:rgba(250,250,250,.03);
+  -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+  color:var(--th-muted,#9a9a9a);
+  transition:border-color .25s ease,background .25s ease,color .25s ease;}
+/* the base .qw-ped rule fades an unselected pedestal to .5; the tile is
+   its own chrome and never fades as a whole */
+.hst-tile[aria-selected="false"]{opacity:1;}
+.hst-tile:hover{border-color:rgba(250,250,250,.32);}
+.hst-tile[aria-selected="true"]{border-color:var(--th-q);
+  background:color-mix(in srgb,var(--th-q) 9%,rgba(250,250,250,.02));color:#fafafa;}
+.hst-tile:focus-visible{outline:2px solid var(--th-q);outline-offset:3px;}
+/* deep links: the native anchor scroll positions the BUTTON. The page's
+   scroll-padding already carries nav + 16, so this margin carries only the
+   title block above the rail (173px) minus that 16, landing the whole
+   section in frame with the title at the nav line */
+.qsec3 .hst-rail .hst-tile[id]{scroll-margin-top:157px;}
+.hst-thumb{flex:0 0 96px;height:117px;display:flex;align-items:center;justify-content:center;
+  overflow:hidden;border-radius:6px;background:rgba(250,250,250,.02);}
+.hst-thumb img{width:100%;height:100%;object-fit:contain;display:block;}
+.hst-thumb svg{width:100%;height:100%;}
+/* the vault is bare line art; a faint glass plate gives its strokes a
+   ground on the dark tile (the record card draws its own panel) */
+.hst-thumb[data-hst-clone="vtSvg"]{padding:8px 6px;box-sizing:border-box;
+  background:linear-gradient(180deg,rgba(250,250,250,.085),rgba(250,250,250,.05));
+  border:1px solid rgba(250,250,250,.14);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.10);}
+.hst-name{min-width:0;font-family:'General Sans',sans-serif;
+  font-size:clamp(16px,1.35vw,19px);font-weight:500;letter-spacing:-.01em;line-height:1.25;}
+.hst-name b{display:block;font-family:'IBM Plex Mono',monospace;font-weight:500;
+  font-size:11px;letter-spacing:.16em;margin-bottom:6px;opacity:.7;}
+.hst-tile[aria-selected="true"] .hst-name b{color:var(--th-q);opacity:1;}
+/* the fixed-height detail panel */
+.qsec3 .qw-shell{margin-top:12px;height:502px;}
+.qsec3 .qw-ch{height:450px;}
+.qsec3 .qw-ch .th-stark-duo{grid-template-columns:minmax(0,1fr) minmax(0,440px);gap:0 44px;height:100%;align-items:center;}
+.qsec3 .th-st-item{height:100%;}
+.qsec3 .th-st-item h4{font-size:24px;}
+/* tab 01: if the quote should outgrow the panel the paper shrinks first (it
+   is height-capped to the column); the quote is never cut */
+.qsec3 .th-stark-doc{width:auto;max-width:min(360px,100%);height:100%;
+  display:flex;align-items:center;justify-content:center;justify-self:center;}
+.qsec3 .th-stark-doc img{width:auto;height:auto;max-width:100%;max-height:100%;object-fit:contain;}
+/* tab 02: the vault device scales to sit inside the fixed panel */
+.qsec3 .th-vt{width:min(300px,100%);justify-self:center;align-self:center;}
+/* tab 03: the record card centers in its column */
+.qsec3 .th-rc{max-width:440px;}
+@media(max-width:980px){
+  /* the detail stacks, text over object; the tiles become a horizontal
+     scroll-snap row */
+  .qsec3 .qw-shell,.qsec3 .qw-ch,.qsec3 .th-st-item,.qsec3 .th-stark-doc{height:auto;}
+  .hst-rail{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;
+    -webkit-overflow-scrolling:touch;padding-bottom:6px;}
+  .hst-tile{flex:0 0 74%;scroll-snap-align:start;height:120px;}
+  .hst-thumb{flex-basis:76px;height:92px;}
+  .qsec3 .th-vt{margin:26px auto 0;}
+}
+@media (prefers-reduced-motion: reduce){
+  .hst-tile{transition:none;}
+}

@@ -1,0 +1,98 @@
+/* ===== TH-HERO: the three-zone hero component, shared (2026-09-08).
+   Cut out of quantum.html's last style block (the QHX frame, 2026-09-06)
+   so /quantum and the landing page render ONE hero component: wrap = the
+   1392 container, scene takes the flex slack, stage = the right column
+   (the particle mount, 80% mark size rule in the engine), col = the
+   editorial column, strip = the shared fixed geometry (102.11px at 1440,
+   struts, grid tracks). The page marks its hero with class "qhx"; every
+   rule that used to hang off body.page-quantum hangs off body .hero.qhx
+   at the SAME specificity (0,2,1), so the cascade is unchanged, and the
+   --qhx-u unit now lives on the hero itself (the same value the body
+   used to carry, seen by the same descendants). quantum.html links this
+   sheet at the exact position the inline block held, so order-decided
+   ties resolve as before. The base classes it composes (.hero,
+   .hero-eyebrow, .hero-title.vch-title, .hero-subtitle.vch-sub, .dg-glass)
+   come from css/styles.css and css/vesper-chrome.css on the static pages;
+   the landing carries a parity copy of exactly those rules. */
+/* ===== QHX: the three-zone hero frame (2026-09-06), strk's geometry name
+   for name: wrap = the 1392 container, scene takes the flex slack, stage =
+   the right column (the funnel mount, 80% mark size rule in the engine),
+   strip = the shared fixed geometry (102.11px at 1440, struts, grid
+   tracks). Sits at the end of the last sheet so it wins its ties. */
+body .hero.qhx{display:flex;flex-direction:column;align-items:stretch;
+  padding:0 0 32px;overflow:hidden;text-align:left}
+.qhx-wrap{width:calc(100% - 48px);max-width:1392px;margin:0 auto;
+  display:flex;flex-direction:column;flex:1 1 auto;min-height:0}
+.qhx-scene{position:relative;display:flex;align-items:center;flex:1 1 auto;min-height:0}
+body .qhx .qh-stage{position:absolute;top:0;bottom:0;left:calc(47 * var(--qhx-u));right:0;
+  inset:auto;z-index:0;pointer-events:none;overflow:hidden}
+body .qhx .qh-stage{top:0;bottom:0;left:calc(47 * var(--qhx-u));right:0}
+.qhx-col{position:relative;z-index:2;width:calc(47 * var(--qhx-u));
+  display:flex;flex-direction:column;align-items:flex-start}
+.hero.qhx{--qhx-u:min(1vw,14.4px)}
+/* the old flow rules gave the title a 52vw width and the lede 38vw; the
+   shared classes own the type, these own the measure */
+.qhx-col .hero-title{width:auto;position:relative}
+.qhx-col .hero-subtitle{width:auto;position:relative}
+.qhx-col .hero-eyebrow{margin:0;position:relative}
+.qhx-ctas{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:calc(2 * var(--qhx-u))}
+.qhx-cta{display:inline-flex;align-items:center;padding:12px 20px;
+  font-family:var(--sans);font-weight:500;font-size:max(1 * var(--qhx-u),14px);line-height:1.2;
+  white-space:nowrap;text-decoration:none;color:var(--white)}
+.qhx-cta:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+@media (max-height:700px){
+  body .hero.qhx{height:auto;min-height:calc(100svh - var(--vcnav-h, 64px));padding-top:calc(2 * var(--qhx-u))}
+  .qhx-scene{min-height:54svh}
+}
+
+/* the baseline strip: the shared fixed geometry, byte for byte */
+.qhx-strip{position:relative;z-index:2;margin-top:0;
+  display:flex;align-items:baseline;justify-content:space-between;gap:calc(2 * var(--qhx-u));
+  border-top:1px solid rgba(250,250,250,.16);padding-top:calc(1.25 * var(--qhx-u));
+  box-sizing:border-box;height:calc(1px + 3.55 * var(--qhx-u) + 50px)}
+.qhx-stats{display:grid;grid-template-columns:repeat(4, calc(102px + 2 * var(--qhx-u)));margin:0;padding:0;list-style:none}
+/* the deadline eyebrow: absolutely positioned in the strip's top padding
+   band (hairline at 0, digits start ~28px down), so it can never move the
+   shared value baseline */
+.qhx-cdlab{position:absolute;left:0;top:6px;margin:0;font-family:var(--mono),monospace;
+  font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:rgba(250,250,250,.45)}
+.qhx-cdlab span{color:rgba(250,250,250,.25);margin:0 2px}
+.qhx-cdlab b{font-weight:400;color:rgba(250,250,250,.6)}
+.qhx-stats li{display:flex;flex-direction:column;gap:5px;min-width:0}
+.qhx-stats b{font-family:var(--display);font-weight:300;font-size:max(calc(1.7 * var(--qhx-u)),22px);
+  line-height:1;letter-spacing:-.01em;color:var(--white);font-variant-numeric:tabular-nums;white-space:nowrap}
+.qhx-stats b::before,.qhx-turn::before{content:"";display:inline-block;width:0;
+  height:calc(1.85 * var(--qhx-u))}
+.qhx-stats b::after{content:"";display:inline-block;width:0;vertical-align:top;
+  height:calc(2.3 * var(--qhx-u))}
+.qhx-stats span{font-family:var(--mono),monospace;font-size:max(calc(0.68 * var(--qhx-u)),10px);
+  line-height:1.5;letter-spacing:.14em;text-transform:uppercase;color:rgba(250,250,250,.72);max-width:17ch}
+.qhx-turn{margin:0;text-align:right;font-family:var(--display);font-weight:700;
+  font-size:calc(2.3 * var(--qhx-u));line-height:.95;letter-spacing:-.01em;
+  text-transform:uppercase;white-space:nowrap;color:#fafafa}
+/* the signature's accent variant (2026-09-08): an opt-in color token for
+   a page whose signature is its pillar list, the landing; geometry unchanged */
+.qhx-turn.is-accent{color:var(--accent)}
+@media (max-width:980px){
+  body .hero.qhx{height:auto;min-height:calc(100svh - var(--vcnav-h, 64px));padding:2.5rem 1.5rem 32px;overflow:visible}
+  .qhx-wrap{width:100%;max-width:none}
+  .qhx-scene{min-height:0;position:static}
+  body .qhx .qh-stage{left:0}
+  .qhx-col{width:auto}
+  .qhx-strip{margin-top:2rem;padding-top:1.25rem;height:97px}
+  .qhx-stats{grid-template-columns:repeat(4, 126px)}
+  .qhx-stats b{font-size:1.5rem}
+  .qhx-stats b::before,.qhx-turn::before{height:21px}
+  .qhx-stats b::after{height:26px}
+  .qhx-stats span{font-size:10px}
+  .qhx-turn{font-size:1.375rem}
+}
+@media (max-width:700px){
+  .qhx-strip{flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:1rem;height:151px}
+  .qhx-stats{width:100%;grid-template-columns:repeat(4, 1fr)}
+  .qhx-stats li{min-height:76px}
+  .qhx-turn{text-align:left;font-size:1.25rem;white-space:normal}
+}
+@media (max-width:380px){
+  body .hero.qhx{padding:2rem 1.25rem 24px}
+}

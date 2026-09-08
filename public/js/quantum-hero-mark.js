@@ -31,14 +31,17 @@
 
    Mount is #qhStage, the hero's right-column box (the strk stage geometry).
    The renderer stays alpha/transparent over js/eco-backdrop.js.
-   strk20 palette only: accent #c53400, warm #e07a4a, chalk #fafafa. */
-import * as THREE from 'three';
+   strk20 palette only: accent #c53400, warm #e07a4a, chalk #fafafa.
+
+   2026-09-08: THE ENGINE MOVED TO js/hero-mark-engine.js (renderer,
+   material, point builder, fit/loop/gating, the shared vertex program).
+   This file keeps only what is the funnel's own: its constants, its
+   per-frame motion (the GLSL move hook), its three fills, its fit and its
+   draw. The landing hero's convergence runs on the same engine file. */
+import { createMark, vertexShader, rnd } from './hero-mark-engine.js';
 
 const MOUNT = document.getElementById('qhStage');
 if (MOUNT) {
-  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const smallMQ = matchMedia('(max-width: 980px)');
-
   /* the funnel the fit is measured against: full height 2*R_FIT, top ring
      width = height / 1.6 (main's proportions) */
   const FUN_H = 4.0;                 // world height of the funnel
@@ -56,39 +59,17 @@ if (MOUNT) {
   /* apex pulse at the halo cadence used elsewhere (5.2s real) */
   const PULSE_W = (2 * Math.PI) / (5.2 * SPEED);
 
-  let renderer = null;
-  try { renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'low-power' }); }
-  catch (e) { console.error('[quantum-hero-mark] no WebGL context, the hero renders without the centrepiece', e); }
+  const mark = createMark({ mount: MOUNT, tag: 'quantum-hero-mark', speed: SPEED });
 
-  if (renderer) {
-    renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
-    renderer.setClearColor(0x000000, 0);
-    renderer.outputColorSpace = THREE.SRGBColorSpace;
-    MOUNT.appendChild(renderer.domElement);
+  if (mark) {
+    const { world, points, makeMaterial, smallMQ } = mark;
 
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 90);
-    const HALF_FOV = Math.tan((40 / 2) * Math.PI / 180);
-
-    const world = new THREE.Group();
-    scene.add(world);
-
-    /* deterministic hash noise, the twins' idiom: no Math.random */
-    const rnd = (i, s) => Math.abs(Math.sin((i + 1) * s) * 43758.5453 % 1);
-
-    /* the funnel profile, shared by the CPU sampler and the shader */
-    const profR = (s) => R_TOP * Math.pow(TAPER, s) * Math.min(1, (1 - s) / 0.12);
-
-    const VERT = `
-      attribute float aSize; attribute float aPhase; attribute float aAlpha; attribute float aTint;
-      attribute float aMode; attribute float aTheta; attribute float aS;
-      varying vec3 vC; varying float vA;
-      uniform float uPix, uH, uFade, uTime, uDrift, uSpan, uSz;
-      uniform float uRTop, uTopY, uFunH, uFlowR, uPulseW;
-      uniform vec3 uAcc, uWarm, uChalk;
-      void main(){
-        vec3 p = position;
-        float fadeFlow = 1.0;
+    /* the funnel's own motion: the collapse rides each meridian down the
+       surface; the apex cluster pulses */
+    const VERT = vertexShader({
+      attributes: 'attribute float aMode; attribute float aTheta; attribute float aS;',
+      uniforms: 'uniform float uRTop, uTopY, uFunH, uFlowR, uPulseW;',
+      move: `
         if (aMode > 0.5 && aMode < 1.5) {
           /* the collapse: this particle rides its meridian down the funnel */
           float s = fract(aS + uTime * uFlowR);
@@ -96,73 +77,12 @@ if (MOUNT) {
           p = vec3(r * cos(aTheta), uTopY - s * uFunH, r * sin(aTheta));
           fadeFlow = smoothstep(0.0, 0.05, s);
         }
-        p.z += sin(uTime * 0.75 + aPhase * 6.2831) * 0.055 * uDrift;
-        p.x += sin(uTime * 0.51 + aPhase * 12.566) * 0.014 * uDrift;
-        p.y += cos(uTime * 0.63 + aPhase * 9.4248) * 0.014 * uDrift;
-        vec4 wp = modelMatrix * vec4(p, 1.0);
-        float t = clamp(wp.y / uSpan + 0.5, 0.0, 1.0);
-        vec3 base = t > 0.52 ? mix(uWarm, uChalk, (t - 0.52) / 0.48)
-                             : mix(uAcc,  uWarm,  t / 0.52);
-        vC = base * aTint;
-        vec4 mv = modelViewMatrix * vec4(p, 1.0);
-        float d = -mv.z;
-        gl_Position = projectionMatrix * mv;
-        float pulse = aMode > 1.5 ? (0.85 + 0.35 * sin(uTime * uPulseW)) : 1.0;
-        gl_PointSize = max(1.0, aSize * pulse * uSz * uPix * (uH / 900.0) * (10.0 / max(d, 0.5)));
-        vA = aAlpha * uFade * fadeFlow * (aMode > 1.5 ? (0.8 + 0.2 * sin(uTime * uPulseW)) : 1.0);
-      }`;
-
-    const FRAG = `
-      varying vec3 vC; varying float vA;
-      void main(){
-        float d = length(gl_PointCoord - 0.5);
-        if (d > 0.5) discard;
-        float a = (1.0 - smoothstep(0.08, 0.5, d)) * vA;
-        if (a < 0.008) discard;
-        gl_FragColor = vec4(vC, a);
-      }`;
-
-    const mats = [];
-    function makeMaterial(drift, span) {
-      const m = new THREE.ShaderMaterial({
-        transparent: true, depthWrite: false, depthTest: false,
-        blending: THREE.AdditiveBlending,
-        vertexShader: VERT, fragmentShader: FRAG,
-        uniforms: {
-          uPix: { value: 1 }, uH: { value: 900 }, uFade: { value: 0 }, uSz: { value: 1 },
-          uTime: { value: 0 }, uDrift: { value: drift }, uSpan: { value: span },
-          uRTop: { value: R_TOP }, uTopY: { value: TOP_Y }, uFunH: { value: FUN_H },
-          uFlowR: { value: FLOW_R }, uPulseW: { value: PULSE_W },
-          uAcc: { value: new THREE.Color('#c53400') },
-          uWarm: { value: new THREE.Color('#e07a4a') },
-          uChalk: { value: new THREE.Color('#fafafa') }
-        }
-      });
-      mats.push(m);
-      return m;
-    }
-
-    function points(N, fill, mat) {
-      const pos = new Float32Array(N * 3);
-      const siz = new Float32Array(N), pha = new Float32Array(N);
-      const alp = new Float32Array(N), tin = new Float32Array(N);
-      const mod_ = new Float32Array(N), th = new Float32Array(N), ss = new Float32Array(N);
-      for (let i = 0; i < N; i++) fill(i, pos, siz, pha, alp, tin, mod_, th, ss);
-      const g = new THREE.BufferGeometry();
-      g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-      g.setAttribute('aSize', new THREE.BufferAttribute(siz, 1));
-      g.setAttribute('aPhase', new THREE.BufferAttribute(pha, 1));
-      g.setAttribute('aAlpha', new THREE.BufferAttribute(alp, 1));
-      g.setAttribute('aTint', new THREE.BufferAttribute(tin, 1));
-      g.setAttribute('aMode', new THREE.BufferAttribute(mod_, 1));
-      g.setAttribute('aTheta', new THREE.BufferAttribute(th, 1));
-      g.setAttribute('aS', new THREE.BufferAttribute(ss, 1));
-      /* the flow cloud recomputes its position from (theta, s) per frame in
-         the shader, so its bounding sphere is set by hand: culling must
-         never clip a particle mid-collapse */
-      g.boundingSphere = new THREE.Sphere(new THREE.Vector3(0, 0, 0), FUN_H);
-      return new THREE.Points(g, mat);
-    }
+        pulse = aMode > 1.5 ? (0.85 + 0.35 * sin(uTime * uPulseW)) : 1.0;
+        alphaPulse = aMode > 1.5 ? (0.8 + 0.2 * sin(uTime * uPulseW)) : 1.0;`
+    });
+    const FUNNEL_U = { uRTop: R_TOP, uTopY: TOP_Y, uFunH: FUN_H, uFlowR: FLOW_R, uPulseW: PULSE_W };
+    const ATTRS = ['aMode', 'aTheta', 'aS'];
+    const mat = (drift) => makeMaterial(VERT, FUNNEL_U, drift, FUN_H);
 
     /* density at the strk discipline, desktop / sub-980 */
     const small = smallMQ.matches;
@@ -172,116 +92,72 @@ if (MOUNT) {
 
     /* ---- the 9 rings: static dust on the ellipse stack; the group's own
        Y-rotation is the spin, exactly as the strk ring turns in its plane */
-    {
-      const N = RINGS_N;
-      world.add(points(N, function (i, pos, siz, pha, alp, tin, mod_, th, ss) {
-        /* rings weighted by circumference so density reads even */
-        const w = rnd(i, 91.7);
-        const ring = Math.floor(Math.pow(w, 1.35) * N_RINGS);
-        const sRing = ring / (N_RINGS - 1) * RING_BAND;
-        const r0 = R_TOP * Math.pow(TAPER, sRing);
-        const a = rnd(i, 127.1) * Math.PI * 2;
-        /* gaussian-ish thickness, the strk annulus idiom */
-        const rr = r0 * (1 + (rnd(i, 311.7) + rnd(i, 74.7) - 1) * 0.05);
-        const y = TOP_Y - sRing * FUN_H + (rnd(i, 39.42) - 0.5) * 0.05;
-        pos[i * 3] = Math.cos(a) * rr;
-        pos[i * 3 + 1] = y;
-        pos[i * 3 + 2] = Math.sin(a) * rr;
-        siz[i] = 0.95 + rnd(i, 12.9898) * 0.85;
-        pha[i] = rnd(i, 78.233);
-        alp[i] = 0.32 + rnd(i, 91.3) * 0.42;
-        tin[i] = 0.85 + rnd(i, 5.331) * 0.4;
-        mod_[i] = 0; th[i] = 0; ss[i] = 0;
-      }, makeMaterial(0.6, FUN_H)));
-    }
+    world.add(points(RINGS_N, function (i, pos, siz, pha, alp, tin, x) {
+      /* rings weighted by circumference so density reads even */
+      const w = rnd(i, 91.7);
+      const ring = Math.floor(Math.pow(w, 1.35) * N_RINGS);
+      const sRing = ring / (N_RINGS - 1) * RING_BAND;
+      const r0 = R_TOP * Math.pow(TAPER, sRing);
+      const a = rnd(i, 127.1) * Math.PI * 2;
+      /* gaussian-ish thickness, the strk annulus idiom */
+      const rr = r0 * (1 + (rnd(i, 311.7) + rnd(i, 74.7) - 1) * 0.05);
+      const y = TOP_Y - sRing * FUN_H + (rnd(i, 39.42) - 0.5) * 0.05;
+      pos[i * 3] = Math.cos(a) * rr;
+      pos[i * 3 + 1] = y;
+      pos[i * 3 + 2] = Math.sin(a) * rr;
+      siz[i] = 0.95 + rnd(i, 12.9898) * 0.85;
+      pha[i] = rnd(i, 78.233);
+      alp[i] = 0.32 + rnd(i, 91.3) * 0.42;
+      tin[i] = 0.85 + rnd(i, 5.331) * 0.4;
+      x.aMode[i] = 0; x.aTheta[i] = 0; x.aS[i] = 0;
+    }, mat(0.6), ATTRS, FUN_H));
 
     /* ---- the meridian flow: dust riding 10 curves down to the apex ---- */
-    {
-      const N = FLOW_N;
-      world.add(points(N, function (i, pos, siz, pha, alp, tin, mod_, th, ss) {
-        const mer = i % N_MER;
-        const theta = mer / N_MER * Math.PI * 2 + (rnd(i, 45.164) - 0.5) * 0.22;
-        mod_[i] = 1; th[i] = theta; ss[i] = rnd(i, 17.23);
-        pos[i * 3] = 0; pos[i * 3 + 1] = 0; pos[i * 3 + 2] = 0; /* shader-driven */
-        siz[i] = 0.8 + rnd(i, 12.9898) * 0.7;
-        pha[i] = rnd(i, 78.233);
-        alp[i] = 0.30 + rnd(i, 91.3) * 0.38;
-        tin[i] = 0.9 + rnd(i, 5.331) * 0.4;
-      }, makeMaterial(0.5, FUN_H)));
-    }
+    world.add(points(FLOW_N, function (i, pos, siz, pha, alp, tin, x) {
+      const mer = i % N_MER;
+      const theta = mer / N_MER * Math.PI * 2 + (rnd(i, 45.164) - 0.5) * 0.22;
+      x.aMode[i] = 1; x.aTheta[i] = theta; x.aS[i] = rnd(i, 17.23);
+      pos[i * 3] = 0; pos[i * 3 + 1] = 0; pos[i * 3 + 2] = 0; /* shader-driven */
+      siz[i] = 0.8 + rnd(i, 12.9898) * 0.7;
+      pha[i] = rnd(i, 78.233);
+      alp[i] = 0.30 + rnd(i, 91.3) * 0.38;
+      tin[i] = 0.9 + rnd(i, 5.331) * 0.4;
+    }, mat(0.5), ATTRS, FUN_H));
 
     /* ---- the apex: one bright particle (a tight pulsing cluster) ---- */
-    {
-      world.add(points(APEX_N, function (i, pos, siz, pha, alp, tin, mod_, th, ss) {
-        const a = rnd(i, 127.1) * Math.PI * 2, r = Math.pow(rnd(i, 311.7), 1.6) * 0.06;
-        pos[i * 3] = Math.cos(a) * r;
-        pos[i * 3 + 1] = TOP_Y - FUN_H + (rnd(i, 39.42) - 0.5) * 0.05;
-        pos[i * 3 + 2] = Math.sin(a) * r;
-        siz[i] = i === 0 ? 4.6 : 1.3 + rnd(i, 12.9898) * 1.1;
-        pha[i] = rnd(i, 78.233);
-        alp[i] = i === 0 ? 1 : 0.5 + rnd(i, 91.3) * 0.4;
-        tin[i] = 1.35;
-        mod_[i] = 2; th[i] = 0; ss[i] = 0;
-      }, makeMaterial(0.25, FUN_H)));
-    }
+    world.add(points(APEX_N, function (i, pos, siz, pha, alp, tin, x) {
+      const a = rnd(i, 127.1) * Math.PI * 2, r = Math.pow(rnd(i, 311.7), 1.6) * 0.06;
+      pos[i * 3] = Math.cos(a) * r;
+      pos[i * 3 + 1] = TOP_Y - FUN_H + (rnd(i, 39.42) - 0.5) * 0.05;
+      pos[i * 3 + 2] = Math.sin(a) * r;
+      siz[i] = i === 0 ? 4.6 : 1.3 + rnd(i, 12.9898) * 1.1;
+      pha[i] = rnd(i, 78.233);
+      alp[i] = i === 0 ? 1 : 0.5 + rnd(i, 91.3) * 0.4;
+      tin[i] = 1.35;
+      x.aMode[i] = 2; x.aTheta[i] = 0; x.aS[i] = 0;
+    }, mat(0.25), ATTRS, FUN_H));
 
     /* the verification hook the report reads, the twins' idiom */
     window.__qh = { particles: RINGS_N + FLOW_N + APEX_N, rings: RINGS_N, flow: FLOW_N, apex: APEX_N, world, SPEED };
 
-    /* ================= fit, loop, gating ================= */
-    function fit() {
-      const w = MOUNT.clientWidth || 1, h = MOUNT.clientHeight || 1;
-      renderer.setSize(w, h, false);
-      camera.aspect = w / h;
-      const sm = smallMQ.matches;
+    mark.run({
       /* the mark size rule: the funnel's full height spans 80% of the mount
          (the nav-to-strip column); byW guards the top ring against the
          stage box on a narrow desktop, 0.91 like the twins */
-      const byH = R_FIT / ((sm ? 0.40 : 0.80) * HALF_FOV);
-      const byW = R_TOP / ((sm ? 0.40 : 0.455) * HALF_FOV * camera.aspect);
-      camera.position.z = Math.max(byH, byW);
-      world.position.x = 0;
-      camera.updateProjectionMatrix();
-      const pix = Math.min(devicePixelRatio || 1, 2);
-      const trim = sm ? 1 : 0.89;
-      mats.forEach((m) => { m.uniforms.uH.value = h; m.uniforms.uPix.value = pix; m.uniforms.uSz.value = trim; });
-    }
-
-    const target = () => (smallMQ.matches ? 0.62 : 1);
-    let t0 = performance.now(), raf = 0, running = false, visible = false, lit = 0;
-
-    function draw(t) {
-      const want = target();
-      lit += (want - lit) * 0.03;
-      mats.forEach((m) => {
-        m.uniforms.uTime.value = t;
-        m.uniforms.uFade.value = reduced ? want : lit;
-      });
+      fit({ camera, aspect, small: sm, HALF_FOV }) {
+        const byH = R_FIT / ((sm ? 0.40 : 0.80) * HALF_FOV);
+        const byW = R_TOP / ((sm ? 0.40 : 0.455) * HALF_FOV * aspect);
+        camera.position.z = Math.max(byH, byW);
+        world.position.x = 0;
+        return sm ? 1 : 0.89;
+      },
+      target: (sm) => (sm ? 0.62 : 1),
       /* the whole funnel turns about its vertical axis at the strk outer
          ring's angular speed; a gentle breath, the twins' cadence */
-      world.rotation.y = t * 0.055;
-      world.scale.setScalar(1 + Math.sin(t * 0.34) * 0.012);
-      renderer.render(scene, camera);
-    }
-
-    function tick(now) { draw(((now - t0) / 1000) * SPEED); raf = requestAnimationFrame(tick); }
-    function start() { if (running || reduced) return; running = true; raf = requestAnimationFrame(tick); }
-    function stop() { if (!running) return; running = false; cancelAnimationFrame(raf); }
-    function update() { if (visible && !document.hidden) start(); else stop(); }
-
-    fit();
-    let rt;
-    addEventListener('resize', () => {
-      clearTimeout(rt);
-      rt = setTimeout(() => { fit(); if (reduced) draw(0); }, 120);
+      draw(w, t) {
+        w.rotation.y = t * 0.055;
+        w.scale.setScalar(1 + Math.sin(t * 0.34) * 0.012);
+      }
     });
-    document.addEventListener('visibilitychange', update);
-
-    const host = MOUNT.closest('.hero') || MOUNT;
-    if ('IntersectionObserver' in window) {
-      new IntersectionObserver((es) => { visible = es[0].isIntersecting; update(); }, { threshold: 0 }).observe(host);
-    } else { visible = true; update(); }
-
-    if (reduced) draw(0);
   }
 }
