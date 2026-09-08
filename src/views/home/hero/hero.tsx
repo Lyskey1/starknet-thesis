@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import { HeroTorus } from "./hero-torus";
-import { ShieldedValue } from "./shielded-value";
+import { LiveStats } from "./live-stats";
 
 /**
  * The landing hero, the site's three-zone hero component (2026-09-08).
@@ -12,20 +12,13 @@ import { ShieldedValue } from "./shielded-value";
  * .hero-title.vch-title, .hero-subtitle.vch-sub) and the glass CTA tier
  * (.dg-glass), whose static-page rules the landing carries as a parity copy
  * in landing.css. Zones: the editorial column on the container, the particle
- * object on the right-column stage, and the baseline strip on the shared
- * fixed geometry. Nothing here restyles the component; the one addition is
- * the strip's UPDATED stamp under the live stat, a new element.
+ * torus on the right-column stage, and the baseline strip on the shared
+ * fixed geometry. Nothing here restyles the component.
  *
- * The strip's three stats are derived, never typed: the shielded value is
- * fetched live (see ShieldedValue), the two counts arrive as props from the
- * data modules the ecosystem and digest pages are built from.
+ * The strip is three LIVE numbers and one UPDATED stamp (see LiveStats);
+ * nothing on it is typed.
  */
-export interface HeroProps {
-  projectsTracked: number;
-  weeklyRoundups: number;
-}
-
-export const Hero = ({ projectsTracked, weeklyRoundups }: HeroProps) => (
+export const Hero = () => (
   <section className="hero qhx" id="hero" aria-labelledby="hero-title">
     <div className="qhx-wrap">
       <div className="qhx-scene">
@@ -51,17 +44,7 @@ export const Hero = ({ projectsTracked, weeklyRoundups }: HeroProps) => (
         </div>
       </div>
       <div className="qhx-strip">
-        <ul className="qhx-stats">
-          <ShieldedValue />
-          <li>
-            <b>{projectsTracked.toLocaleString("en-US")}</b>
-            <span>Projects tracked</span>
-          </li>
-          <li>
-            <b>{weeklyRoundups.toLocaleString("en-US")}</b>
-            <span>Weekly roundups</span>
-          </li>
-        </ul>
+        <LiveStats />
         <p className="qhx-turn is-accent">Privacy. Quantum. BTCFi.</p>
       </div>
     </div>
