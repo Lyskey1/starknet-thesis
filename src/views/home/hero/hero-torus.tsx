@@ -38,7 +38,6 @@ const HALF_FOV = Math.tan((FOV / 2) * Math.PI / 180);
 const R_FIT = 1.25;
 
 const Rig = ({ reduced }: { reduced: boolean }) => {
-  const camera = useThree((s) => s.camera) as THREE.PerspectiveCamera;
   const size = useThree((s) => s.size);
   const invalidate = useThree((s) => s.invalidate);
 
@@ -50,16 +49,14 @@ const Rig = ({ reduced }: { reduced: boolean }) => {
     return Math.max(byH, byW);
   }, [size.width, size.height]);
 
+  /* fov, near and far are the Canvas's own camera props; the rig only walks
+     the distance, so nothing here modifies a hook's value outside the frame */
   useEffect(() => {
-    camera.fov = FOV;
-    camera.near = 0.1;
-    camera.far = 400;
-    camera.updateProjectionMatrix();
     startIntro();
     if (reduced) invalidate();
-  }, [camera, reduced, invalidate]);
+  }, [reduced, invalidate]);
 
-  useFrame(() => {
+  useFrame(({ camera }) => {
     const intro = getIntro();
     const eased = 1 - Math.pow(1 - intro, 2);
     camera.position.set(0, 0, fitZ + (1 - eased) * INTRO_DOLLY);

@@ -62,3 +62,25 @@ export const PERISHABLE = {
 } satisfies Record<string, PerishableClaim>;
 
 export type PerishableKey = keyof typeof PERISHABLE;
+
+/**
+ * DERIVED claims: figures the page computes itself from a named series. They
+ * do not perish the way a third-party statement does, but they still owe the
+ * reader a source and a plain statement of what the number is and is not.
+ */
+export interface DerivedClaim {
+  /** Where the inputs come from. */
+  src: string;
+  /** What the figure is, and what it is not. */
+  note: string;
+  /** ISO date a human last checked the derivation against the source. */
+  checked: string;
+}
+
+export const DERIVED = {
+  "app-revenue-run-rate": {
+    src: "https://strk20-dashboard-production.up.railway.app/agg/tvl-history",
+    note: "Annualized run-rate: the trailing 30 complete days of STRK20 protocol revenue, scaled by 365/30. A run-rate, not realized annual revenue.",
+    checked: "2026-09-08",
+  },
+} satisfies Record<string, DerivedClaim>;

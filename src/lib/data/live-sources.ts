@@ -9,18 +9,30 @@
  *                   overview, total_stake / 1e18, with the strk page's own
  *                   fallback (starknet_call get_total_stake on the staking
  *                   contract across its three RPCs), printed with abbr().
- *   APP REVENUE     privacy.html section 05, REVENUE: /agg/tvl-history
- *                   days[].feesUsd (already cumulative; the last value is
- *                   the headline), cross-checked against
- *                   /agg/lifetime-revenue revenueUsd within a 5% band
- *                   ($50 floor) and rejected if the series is more than 48h
- *                   stale, printed with fmtUsd().
+ *   APP REVENUE     the same series as privacy.html section 05's REVENUE
+ *                   KPI (/agg/tvl-history days[].feesUsd), but ANNUALIZED
+ *                   rather than cumulative: the trailing 30 complete days of
+ *                   daily revenue scaled by 365/30. The derivation is
+ *                   public/js/revenue-series.js, one source both this module
+ *                   and a static page can read. The pair is still
+ *                   cross-checked against /agg/lifetime-revenue revenueUsd
+ *                   within a 5% band ($50 floor) and rejected if the series
+ *                   is more than 48h stale, and it still prints with
+ *                   fmtUsd(). A run-rate, not realized revenue.
  *
  * Every call carries a cache-busting query as the pages do; the pages
  * refresh hourly and tick their UPDATED stamp every minute. The formatters
  * are the pages' functions character for character.
  */
+import { annualizedRevenue, cumulativeRevenue, WINDOW_DAYS, YEAR_DAYS, type RunRate } from "../../../public/js/revenue-series.js";
+
+/* the derivation's own constants, re-exported so a label can name the window */
+export { WINDOW_DAYS, YEAR_DAYS };
+export type { RunRate };
+
 export const STRK20_API = "https://strk20-dashboard-production.up.railway.app";
+/** The series the revenue figures derive from; the derived claim's data-src. */
+export const REVENUE_SERIES_URL = `${STRK20_API}/agg/tvl-history`;
 export const ENDUR_OVERVIEW = "https://api.dashboard.endur.fi/api/query/network/overview";
 export const STARKNET_RPCS = [
   "https://rpc.starknet.lava.build",
@@ -100,17 +112,26 @@ export const fetchStrkStaked = async (): Promise<number> => {
   }
 };
 
-export const fetchAppRevenue = async (): Promise<number> => {
+/**
+ * The annualized run-rate, with the privacy page's own guards kept: the
+ * cumulative tail is still cross-checked against the lifetime headline and a
+ * stale series is still refused, so a bad series is rejected before it can be
+ * annualized into a confident-looking number.
+ */
+export const fetchAppRevenue = async (): Promise<RunRate> => {
   const [hist, life] = await Promise.all([
-    getJson<{ days?: { date: string; feesUsd?: number }[] }>(`${STRK20_API}/agg/tvl-history`),
+    getJson<{ days?: { date: string; feesUsd?: number }[] }>(REVENUE_SERIES_URL),
     getJson<{ revenueUsd?: number }>(`${STRK20_API}/agg/lifetime-revenue`),
   ]);
   const days = (hist.days || []).filter((x) => typeof x.feesUsd === "number") as { date: string; feesUsd: number }[];
   if (!days.length) throw new Error("empty");
-  const lastCum = days[days.length - 1].feesUsd;
+  const lastCum = cumulativeRevenue(days);
   const headline = life.revenueUsd;
+  if (typeof lastCum !== "number") throw new Error("revenue series empty");
   if (typeof headline !== "number") throw new Error("revenue headline missing");
   if (Math.abs(headline - lastCum) > Math.max(50, Math.max(headline, lastCum) * 0.05)) throw new Error("revenue pair gap out of bounds");
   if (Date.now() - new Date(days[days.length - 1].date + "T00:00:00Z").getTime() > 172800000) throw new Error("revenue series stale");
-  return lastCum;
+  const rate = annualizedRevenue(days);
+  if (!rate) throw new Error("no complete day to annualize");
+  return rate;
 };
