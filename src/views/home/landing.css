@@ -60,6 +60,47 @@
   :where(.landing) .hero .vch-sub { margin-top: 1rem; max-width: 40rem; font-size: 1rem; }
 }
 @media (max-width: 380px) { :where(.landing) .hero .vch-title { font-size: 2.375rem; } }
+/* css/vesper-chrome.css: the dg-glass button tier the hero CTAs ride (values
+   verbatim; the class is stacked three times for specificity there, so here too) */
+:where(.landing) .dg-glass.dg-glass.dg-glass { border: 0;
+  background: rgba(16, 16, 16, .55);
+  -webkit-backdrop-filter: blur(12px) saturate(115%);
+  backdrop-filter: blur(12px) saturate(115%);
+  box-shadow:
+    0 0 0 .5px rgba(250, 250, 250, .28),
+    inset 0 1px 0 rgba(255, 255, 255, .14);
+  transition: background var(--hover-dur, .25s) var(--hover-ease, ease),
+              box-shadow var(--hover-dur, .25s) var(--hover-ease, ease),
+              color var(--hover-dur, .25s) var(--hover-ease, ease); }
+:where(.landing) .dg-glass.dg-glass.dg-glass:hover {
+  background: rgba(30, 30, 30, .66);
+  box-shadow:
+    0 0 0 .5px rgba(250, 250, 250, .45),
+    inset 0 1px 0 rgba(255, 255, 255, .22); }
+:where(.landing) .dg-glass.dg-glass.dg-glass.active, :where(.landing) .dg-glass.dg-glass.dg-glass.dg-glass--primary {
+  background: rgba(38, 38, 38, .74);
+  box-shadow:
+    0 0 0 .5px rgba(var(--accent-rgb, 197, 52, 0), .65),
+    inset 0 1px 0 rgba(255, 255, 255, .22); }
+:where(.landing) .dg-glass.dg-glass.dg-glass.active:hover, :where(.landing) .dg-glass.dg-glass.dg-glass.dg-glass--primary:hover {
+  background: rgba(48, 48, 48, .8);
+  box-shadow:
+    0 0 0 .5px rgba(var(--accent-rgb, 197, 52, 0), .9),
+    inset 0 1px 0 rgba(255, 255, 255, .28); }
+:where(.landing) .dg-glass.dg-glass.dg-glass:focus-visible { outline: 2px solid var(--vc-orange); outline-offset: 3px; }
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  :where(.landing) .dg-glass.dg-glass.dg-glass { background: #161616; }
+  :where(.landing) .dg-glass.dg-glass.dg-glass:hover { background: #202020; }
+  :where(.landing) .dg-glass.dg-glass.dg-glass.active, :where(.landing) .dg-glass.dg-glass.dg-glass.dg-glass--primary { background: #262626; }
+  :where(.landing) .dg-glass.dg-glass.dg-glass.active:hover, :where(.landing) .dg-glass.dg-glass.dg-glass.dg-glass--primary:hover { background: #2e2e2e; }
+}
+@media (max-width: 980px) {
+  :where(.landing) .dg-glass.dg-glass.dg-glass { -webkit-backdrop-filter: none; backdrop-filter: none; background: #161616; }
+  :where(.landing) .dg-glass.dg-glass.dg-glass:hover { background: #202020; }
+  :where(.landing) .dg-glass.dg-glass.dg-glass.active, :where(.landing) .dg-glass.dg-glass.dg-glass.dg-glass--primary { background: #262626; }
+  :where(.landing) .dg-glass.dg-glass.dg-glass.active:hover, :where(.landing) .dg-glass.dg-glass.dg-glass.dg-glass--primary:hover { background: #2e2e2e; }
+}
+@media (prefers-reduced-motion: reduce) { :where(.landing) .dg-glass.dg-glass.dg-glass { transition: none; } }
 /* the stage canvas, as quantum's .qh-stage canvas rule */
 :where(.landing) .qh-stage canvas, .lp-stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 /* the strip's live stat: laid out at full size from the first paint, shown when a value lands */

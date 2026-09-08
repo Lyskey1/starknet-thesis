@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { HeroConvergence } from "./hero-convergence";
+import { HeroTorus } from "./hero-torus";
 import { ShieldedValue } from "./shielded-value";
 
 /**
@@ -29,7 +29,7 @@ export const Hero = ({ projectsTracked, weeklyRoundups }: HeroProps) => (
   <section className="hero qhx" id="hero" aria-labelledby="hero-title">
     <div className="qhx-wrap">
       <div className="qhx-scene">
-        <HeroConvergence />
+        <HeroTorus />
         <div className="qhx-col">
           <p className="hero-eyebrow">The thesis</p>
           <h1 id="hero-title" className="hero-title vch-title">
