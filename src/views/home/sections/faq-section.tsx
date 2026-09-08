@@ -4,10 +4,46 @@ import { animated, config, useSpring } from "@react-spring/web";
 import { useId, useLayoutEffect, useRef, useState } from "react";
 
 import type { FaqCopy } from "@/data/home";
+import type { FaqClaims } from "@/utils/seo/faq-structured-data";
+
+/**
+ * An answer may carry two inline forms: `[label](https://...)` renders a body
+ * link, `[[key]]` renders a registered perishable claim with its source and
+ * check date as data attributes; everything else is text. The JSON-LD
+ * generator reduces the same forms to plain text
+ * (src/utils/seo/faq-structured-data.ts), so the schema and the rows read
+ * one string.
+ */
+const TOKEN = /\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)|\[\[([a-z0-9-]+)\]\]/g;
+const renderAnswer = (text: string, claims: FaqClaims) => {
+  const out: React.ReactNode[] = [];
+  let last = 0;
+  for (const m of text.matchAll(TOKEN)) {
+    if (m.index! > last) out.push(text.slice(last, m.index));
+    if (m[3]) {
+      const c = claims[m[3]];
+      if (c) out.push(
+        <span key={m.index} className="th-claim" data-perishable="third-party" data-src={c.src} data-checked={c.checked} data-breaks={c.breaks}>
+          {c.text}
+        </span>,
+      );
+    } else {
+      out.push(
+        <a key={m.index} className="lp-a" href={m[2]} target="_blank" rel="noopener noreferrer">
+          {m[1]}
+        </a>,
+      );
+    }
+    last = m.index! + m[0].length;
+  }
+  if (last < text.length) out.push(text.slice(last));
+  return out;
+};
 
 interface FaqItemProps {
   question: string;
   answer: string;
+  claims: FaqClaims;
   open: boolean;
   onToggle: () => void;
 }
@@ -18,7 +54,7 @@ interface FaqItemProps {
  * turns into an `x` on open. `ReducedMotion` at the app root flips
  * react-spring's global skipAnimation, so both jump under reduced motion.
  */
-const FaqItem = ({ question, answer, open, onToggle }: FaqItemProps) => {
+const FaqItem = ({ question, answer, claims, open, onToggle }: FaqItemProps) => {
   const panelRef = useRef<HTMLDivElement>(null);
   const [height, setHeight] = useState(0);
   const id = useId();
@@ -49,7 +85,7 @@ const FaqItem = ({ question, answer, open, onToggle }: FaqItemProps) => {
       </h3>
       <animated.div id={id} role="region" className="lp-faq-a" style={reveal} aria-hidden={!open}>
         <div ref={panelRef}>
-          <p>{answer}</p>
+          <p>{renderAnswer(answer, claims)}</p>
         </div>
       </animated.div>
     </li>
@@ -59,13 +95,14 @@ const FaqItem = ({ question, answer, open, onToggle }: FaqItemProps) => {
 export interface FaqSectionProps {
   copy: FaqCopy;
   kicker: string;
+  claims: FaqClaims;
 }
 
 /**
  * Section 04, frequently asked: six compact rows, the accordion kept (the one
  * place it is the right pattern), the first row open, about half a viewport.
  */
-export const FaqSection = ({ copy, kicker }: FaqSectionProps) => {
+export const FaqSection = ({ copy, kicker, claims }: FaqSectionProps) => {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
   return (
     <section className="lp-sec lp-faq" id="faq" aria-labelledby="frequently-asked">
@@ -77,6 +114,7 @@ export const FaqSection = ({ copy, kicker }: FaqSectionProps) => {
             key={item.question}
             question={item.question}
             answer={item.answer}
+            claims={claims}
             open={openIndex === index}
             onToggle={() => setOpenIndex(openIndex === index ? null : index)}
           />

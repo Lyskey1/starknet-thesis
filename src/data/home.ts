@@ -6,6 +6,9 @@ import { FOLLOW_LINKS } from "@/lib/links";
 
 export interface FaqCopy {
   eyebrow: string; title: string;
+  /** Answers are plain text with two inline forms: `[label](https://url)` renders a
+   *  body link; `[[key]]` renders a registered perishable claim (src/data/perishable.ts,
+   *  filled by the view), for wording that carries a source and a check date. */
   items: { question: string; answer: string }[];
 }
 
@@ -32,12 +35,12 @@ export const homeFaq: FaqCopy = {
     {
       question: "Why does quantum matter for a blockchain today?",
       answer:
-        "Governments, Big Tech and researchers are converging on the same timeline for when quantum computers break today's elliptic-curve cryptography. Most chains will have to migrate. Starknet's proofs are hash-based, which is post-quantum by construction, with a committed roadmap to full end-to-end post-quantum security.",
+        "Governments, Big Tech and researchers are converging on the same timeline, [[qday-timeline]], for when quantum computers break today's elliptic-curve cryptography. Most chains will have to migrate. Starknet's proofs are hash-based, which is post-quantum by construction, with a committed roadmap to full end-to-end post-quantum security.",
     },
     {
       question: "What does BTCFi actually mean here?",
       answer:
-        "Turning idle BTC into productive, programmable capital on Starknet: lending, yield and settlement for the largest asset in crypto, without leaving Bitcoin's security behind. Bitcoin is the best asset to hold. It is time to make it the best to use.",
+        "Turning idle BTC into working capital on Starknet: lend and borrow against it, earn yield on it, stake it to secure the network, trade it for cents, and shield it when you want privacy.",
     },
     {
       question: "Where does STRK come in?",
@@ -47,7 +50,7 @@ export const homeFaq: FaqCopy = {
     {
       question: "Who writes this, and is it financial advice?",
       answer:
-        "Starknet Thesis is an independent, educational project by Lyskey. It is not financial advice and is not affiliated with or endorsed by StarkWare. Always do your own research.",
+        "Starknet Thesis is an independent, educational project by [Lyskey](https://x.com/Lyskey). It is not financial advice and is not affiliated with or endorsed by StarkWare. Always do your own research.",
     },
   ],
 };
