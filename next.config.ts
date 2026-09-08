@@ -9,7 +9,9 @@ const nextConfig: NextConfig = {
   // The six thesis pages are static HTML served from public/. Clean URLs map
   // onto them; the .html forms redirect so old links keep working.
   async rewrites() {
-    return STATIC_PAGES.map((page) => ({ source: `/${page}`, destination: `/${page}.html` }));
+    // /digest is served by src/app/digest/route.ts (its counts follow the
+    // Substack feed hourly); the other five stay plain rewrites.
+    return STATIC_PAGES.filter((page) => page !== "digest").map((page) => ({ source: `/${page}`, destination: `/${page}.html` }));
   },
   async redirects() {
     return STATIC_PAGES.map((page) => ({ source: `/${page}.html`, destination: `/${page}`, permanent: true }));

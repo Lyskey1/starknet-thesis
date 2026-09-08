@@ -6,9 +6,11 @@ import { LogoRow, type LogoItem } from "./logo-row";
 /**
  * Sections 02 and 03 in one viewport: the ticker on the left, the two signal
  * cards on the right. Every count is derived from the data modules the
- * ecosystem and digest pages are built from (src/lib/data); the digest
- * card's object is the real Substack cover of the newest issue, the URL the
- * digest page hotlinks.
+ * ecosystem and digest pages are built from (src/lib/data): the six logos
+ * are public/data/landing-featured.json's slugs through the avatar pipeline,
+ * the digest counts follow the digest page's classifier (its "Research"
+ * filter is the third), and the digest card's object is the real Substack
+ * cover of the newest issue, the URL the digest page hotlinks.
  */
 export interface TickerSignalsProps {
   tickerKicker: string;
@@ -16,11 +18,12 @@ export interface TickerSignalsProps {
   projectsTracked: number;
   weeklyRoundups: number;
   monthlyRecaps: number;
+  researchArticles: number;
   logos: LogoItem[];
   latest: { title: string; href: string; cover: string | null } | null;
 }
 
-export const TickerSignals = ({ tickerKicker, signalsKicker, projectsTracked, weeklyRoundups, monthlyRecaps, logos, latest }: TickerSignalsProps) => (
+export const TickerSignals = ({ tickerKicker, signalsKicker, projectsTracked, weeklyRoundups, monthlyRecaps, researchArticles, logos, latest }: TickerSignalsProps) => (
   <div className="lp-twoup" id="ticker-signals">
     <section className="lp-ticker" id="ticker" aria-labelledby="the-thesis-in-a-single-asset">
       <p className="lp-kicker">{tickerKicker}</p>
@@ -54,7 +57,8 @@ export const TickerSignals = ({ tickerKicker, signalsKicker, projectsTracked, we
             <p>Starknet&apos;s shipping, recapped every week and every month.</p>
             <p className="lp-mono">
               {weeklyRoundups.toLocaleString("en-US")} weekly roundups <span aria-hidden="true">&middot;</span>{" "}
-              {monthlyRecaps.toLocaleString("en-US")} monthly recaps
+              {monthlyRecaps.toLocaleString("en-US")} monthly recaps <span aria-hidden="true">&middot;</span>{" "}
+              {researchArticles.toLocaleString("en-US")} research articles
             </p>
             <Link className="lp-link" href="/digest">Read the digest</Link>
           </div>

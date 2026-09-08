@@ -10,6 +10,7 @@
  * the first entry of each category is that category's pinned account.
  */
 import ecosystem from "../../../public/data/ecosystem.json";
+import featured from "../../../public/data/landing-featured.json";
 
 export interface EcosystemAccount {
   name: string;
@@ -56,6 +57,26 @@ export const pinnedProjects = (): (EcosystemAccount & { src: string; monogram: s
         : `/assets/avatars/${encodeURIComponent(account.handle)}.jpg`,
       monogram: monogramFor(account.name),
     }));
+
+/**
+ * The landing's featured six, from public/data/landing-featured.json (slugs =
+ * ecosystem handles, slot order preserved), resolved against every category
+ * of ecosystem.json and run through the same avatar chain as pinnedProjects.
+ * A slug missing from the data is dropped, never invented.
+ */
+export const landingFeaturedProjects = (): (EcosystemAccount & { src: string; monogram: string })[] => {
+  const all = Object.values(data).flatMap((list) => list ?? []);
+  return (featured as { handles: string[] }).handles
+    .map((handle) => all.find((account) => account.handle.toLowerCase() === handle.toLowerCase()))
+    .filter((account): account is EcosystemAccount => Boolean(account))
+    .map((account) => ({
+      ...account,
+      src: account.avatar && !account.avatar.startsWith("data:")
+        ? `/${account.avatar}`
+        : `/assets/avatars/${encodeURIComponent(account.handle)}.jpg`,
+      monogram: monogramFor(account.name),
+    }));
+};
 
 /** The ecosystem page's initials rule: first letters of the first two words. */
 export const monogramFor = (name: string): string => {
