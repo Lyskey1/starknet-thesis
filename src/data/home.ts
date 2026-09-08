@@ -2,13 +2,7 @@
  * Copy for the Starknet Thesis landing. Passed in via props, never imported
  * directly by a component.
  */
-
-export interface StatusCopy { label: string; detail: string; scrollHint: string; }
-
-export interface LoaderCopy {
-  brand: string; brandDetail: string; bootLabel: string; bootState: string;
-  initializing: string; loading: string; coordinates: string; version: string;
-}
+import { FOLLOW_LINKS } from "@/lib/links";
 
 export interface FaqCopy {
   eyebrow: string; title: string;
@@ -21,20 +15,9 @@ export interface FooterCopy {
   legal?: string;
 }
 
-export const homeLoader: LoaderCopy = {
-  brand: "STARKNET THESIS",
-  brandDetail: "THREE FORCES / ONE CHAIN",
-  bootLabel: "BOOT SEQUENCE",
-  bootState: "● INIT",
-  initializing: "INITIALIZING PRIVACY POOL",
-  loading: "LOADING PROOFS",
-  coordinates: "PRIVACY / QUANTUM / BTCFI",
-  version: "v4.0, one ticker",
-};
-
 export const homeFaq: FaqCopy = {
-  eyebrow: "05 · QUESTIONS",
-  title: "Frequently asked",
+  eyebrow: "Frequently asked",
+  title: "Frequently asked.",
   items: [
     {
       question: "What is the Starknet thesis, in one line?",
@@ -93,14 +76,11 @@ export const homeFooter: FooterCopy = {
     },
     {
       heading: "Follow",
-      links: [
-        { label: "Newsletter", href: "https://starknetresearch.substack.com" },
-        { label: "X / Twitter", href: "https://x.com/Lyskey" },
-      ],
+      // one source with the nav icons: src/lib/links.ts
+      links: [...FOLLOW_LINKS],
     },
     // CONNECT went with the 2026-09 footer grid: /llms.txt keeps being
-    // served, only its footer link went, and network status stays reachable
-    // through the baseline bar's status pill.
+    // served, only its footer link went.
   ],
   legal:
     "Website made for educational purposes only. This is not financial advice. Always DYOR. A personal project, not affiliated with or endorsed by StarkWare. All views expressed here are my own.",
