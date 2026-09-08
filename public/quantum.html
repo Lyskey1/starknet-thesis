@@ -2261,7 +2261,7 @@ if (window.thStickyRail) {
              so it is written as a completed event with its fee. Neither
              sentence contains a continuity marker, which is what the temporal
              check tests for. -->
-        <p><span class="th-claim" data-perishable="third-party" data-src="https://www.linkedin.com/posts/starkware_post-quantum-wallets-are-now-live-on-starknet-activity-7445099734052225024-MUUi" data-checked="2026-08-21" data-says="And now, S2morrow is live on Starknet Mainnet, using Falcon-512, a NIST-standardized post-quantum signature scheme." data-noun-ok="StarkWare April"><a href="https://www.linkedin.com/posts/starkware_post-quantum-wallets-are-now-live-on-starknet-activity-7445099734052225024-MUUi" target="_blank" rel="noopener noreferrer">In April 2026 StarkWare announced <strong>S2morrow live on Starknet Mainnet</strong>, using Falcon-512</a></span>. <a href="https://x.com/StarkWareLtd/status/2079955780019864015" target="_blank" rel="noopener noreferrer">Three months later, on <strong>22 July 2026, an OpenZeppelin Falcon-512 account executed a real transfer on Starknet mainnet</strong></a>, for a fee of <strong>1.93 STRK</strong>, a few cents. Two teams wrote Falcon-512 accounts in Cairo independently, and neither needed the protocol to change: signature logic lives in the account, so shipping a post-quantum one takes nobody's permission. Simply put, quantum-safe accounts already exist on Starknet Mainnet, and adopting one is a single transaction for the user rather than a migration for the network.</p>
+        <p><span class="th-claim" data-perishable="third-party" data-src="https://www.linkedin.com/posts/starkware_post-quantum-wallets-are-now-live-on-starknet-activity-7445099734052225024-MUUi" data-checked="2026-08-21" data-says="And now, S2morrow is live on Starknet Mainnet, using Falcon-512, a NIST-standardized post-quantum signature scheme." data-noun-ok="StarkWare April"><a href="https://www.linkedin.com/posts/starkware_post-quantum-wallets-are-now-live-on-starknet-activity-7445099734052225024-MUUi" target="_blank" rel="noopener noreferrer">In April 2026 StarkWare announced <strong>S2morrow live on Starknet Mainnet</strong>, using Falcon-512</a></span>. <a href="https://x.com/StarkWareLtd/status/2079955780019864015" target="_blank" rel="noopener noreferrer">Three months later, on <strong>22 July 2026, an OpenZeppelin Falcon-512 account executed a real transfer on Starknet mainnet</strong></a>, for a fee of <strong>1.93 STRK</strong>, a few cents. Two teams wrote Falcon-512 accounts in Cairo independently, and neither needed the protocol to change: signature logic lives in the account, so shipping a post-quantum one takes nobody's permission. Simply put, quantum-safe accounts already exist on Starknet Mainnet, and adopting one is a single transaction for the user rather than a migration for the network. <span class="th-claim" data-perish="pq-accounts-poc" data-perishable="owner" data-src="owner" data-checked="2026-09-08" data-breaks="2026-12-07" data-note="internal roadmap, cleared for publication, no public announcement yet; replace with the public source when announced">Both accounts are proofs of concept for now: experimental, unaudited, and built for research and benchmarking rather than for holding funds. Wallet-level support is the next step, so adopting a post-quantum account becomes something a user taps rather than something a developer writes in Cairo.</span></p>
         <!-- THE CLOSING LINE MIXES TWO KINDS OF CLAIM, and the wording is
              chosen so neither borrows credibility from the other.
              "Already exist on mainnet" is SOURCED, by the two records above:
@@ -4004,6 +4004,14 @@ var qvFilmChrome = thVideoChrome({
 var Q_PERISHABLE = {
   'israel-call-close': { breaks: '2026-10-08',
     after: 'Applications closed October 8, 2026.' },
+  /* Head Start tab 03's proof-of-concept status and the wallet-support step
+     are OWNER-SOURCED: cleared for publication, but nothing public to cite
+     yet, so there is no URL to hang on data-src. No wallet, team or date is
+     named. Re-verify within the window and swap data-src for the public
+     source the moment there is one; past the break the claim is flagged
+     data-stale in the DOM rather than quietly trusted. */
+  'pq-accounts-poc': { src: 'owner', checked: '2026-09-08', breaks: '2026-12-07',
+    note: 'internal roadmap, cleared for publication, no public announcement yet; replace with the public source when announced' },
   /* the roadmap's relative estimates are dated readings of the published
      roadmap (StarkWare, 2026-06-30): the phase cards render the as-of */
   'roadmap-phase1': { asof: '2026-06-30' },
@@ -4017,6 +4025,9 @@ var Q_PERISHABLE = {
     var el = document.querySelector('[data-perish="' + k + '"]');
     if (!el) return;
     if (e.breaks && now >= Date.parse(e.breaks + 'T00:00:00Z') && e.after) el.textContent = e.after;
+    /* a break with no after-text cannot rewrite the sentence, so it marks the
+       claim instead: the check has lapsed and the DOM says so */
+    if (e.breaks && now >= Date.parse(e.breaks + 'T00:00:00Z') && !e.after) el.setAttribute('data-stale', 'true');
     if (e.asof) el.setAttribute('data-as-of', e.asof);
   });
 })();
