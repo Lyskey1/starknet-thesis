@@ -31,7 +31,11 @@ function parseFocus(str) {
   return m ? [parseFloat(m[1]) / 100, parseFloat(m[2]) / 100] : [0.5, 0.5];
 }
 
-function key(video) {
+/* keyVideo(video): luma-keys one <video>; returns { dispose } so a host that
+   mounts and unmounts the figure (the landing's problems panel) can stop the
+   loop and drop the canvas. The page self-runs it on every .pv-figure /
+   .lg-figure video unless a host sets window.PV_KEY_MANUAL first. */
+export function keyVideo(video) {
   const host = video.parentElement;
   const canvas = document.createElement('canvas');
   canvas.className = 'pv-key';
@@ -62,20 +66,29 @@ function key(video) {
     renderer.setSize(w, h, false);
     mat.uniforms.uRes.value.set(w, h);
   }
-  new ResizeObserver(resize).observe(host);
+  const ro = new ResizeObserver(resize); ro.observe(host);
   resize();
 
+  let live = true, raf = 0;
   const focusEl = host.closest('[data-focus], .lg-visual, .pv-figure') || host;
   function frame() {
+    if (!live) return;
     if (!document.hidden) {
       if (video.videoWidth) mat.uniforms.uVid.value.set(video.videoWidth, video.videoHeight);
       const f = parseFocus(getComputedStyle(focusEl).getPropertyValue('--focus') || focusEl.dataset.focus || getComputedStyle(video).objectPosition);
       mat.uniforms.uFocus.value.set(f[0], f[1]);
       renderer.render(scene, cam);
     }
-    requestAnimationFrame(frame);
+    raf = requestAnimationFrame(frame);
   }
-  requestAnimationFrame(frame);
+  raf = requestAnimationFrame(frame);
+  return {
+    dispose() {
+      live = false; cancelAnimationFrame(raf); ro.disconnect();
+      tex.dispose(); mat.dispose(); renderer.dispose();
+      canvas.remove(); video.classList.remove('pv-key-src');
+    }
+  };
 }
 
-document.querySelectorAll('.pv-figure video, .lg-figure video').forEach(key);
+if (!window.PV_KEY_MANUAL) document.querySelectorAll('.pv-figure video, .lg-figure video').forEach(keyVideo);

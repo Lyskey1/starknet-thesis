@@ -40,8 +40,10 @@
    draw. The landing hero's convergence runs on the same engine file. */
 import { createMark, vertexShader, rnd } from './hero-mark-engine.js';
 
-const MOUNT = document.getElementById('qhStage');
-if (MOUNT) {
+/* mountQuantumFunnel(mount): the funnel on any stage box; returns the engine
+   mark (dispose() included) or null without WebGL. The page self-runs it on
+   #qhStage unless a host (the landing) sets window.QH_MARK_MANUAL first. */
+export function mountQuantumFunnel(MOUNT) {
   /* the funnel the fit is measured against: full height 2*R_FIT, top ring
      width = height / 1.6 (main's proportions) */
   const FUN_H = 4.0;                 // world height of the funnel
@@ -60,8 +62,8 @@ if (MOUNT) {
   const PULSE_W = (2 * Math.PI) / (5.2 * SPEED);
 
   const mark = createMark({ mount: MOUNT, tag: 'quantum-hero-mark', speed: SPEED });
-
-  if (mark) {
+  if (!mark) return null;
+  {
     const { world, points, makeMaterial, smallMQ } = mark;
 
     /* the funnel's own motion: the collapse rides each meridian down the
@@ -160,4 +162,10 @@ if (MOUNT) {
       }
     });
   }
+  return mark;
+}
+
+if (!window.QH_MARK_MANUAL) {
+  const stage = document.getElementById('qhStage');
+  if (stage) mountQuantumFunnel(stage);
 }

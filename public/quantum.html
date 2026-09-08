@@ -415,6 +415,7 @@
 </style>
 <style>
 </style>
+<script src="js/qday-config.js"></script>
 <script src="js/admin-gate.js"></script>
 <style>
 /* ============================================================
@@ -4009,7 +4010,8 @@ var Q_PERISHABLE = {
 // COUNTDOWN to Jan 1, 2029
 // ============================================================
 (function(){
-  var target = new Date('2029-01-01T00:00:00Z').getTime();
+  /* the target is js/qday-config.js's one constant, shared with the landing */
+  var target = new Date(window.QDAY_TARGET_ISO).getTime();
   var start = new Date('2026-01-01T00:00:00Z').getTime();
   function tick(){
     var now = Date.now(), d = Math.max(0, target - now);
