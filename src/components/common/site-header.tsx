@@ -1,4 +1,5 @@
 import { PressableLink } from "@/components/ui/pressable";
+import { LINKS } from "@/lib/links";
 import { GHOST, NAV_LINK, QUIET } from "@/lib/springs/interaction";
 
 import { MobileNav } from "./mobile-nav";
@@ -41,17 +42,17 @@ const NAV = [
 const SOCIALS = [
   {
     label: "Starknet Discord",
-    href: "https://discord.gg/starknet-community",
+    href: LINKS.discord,
     path: "M20.32 4.37a19.8 19.8 0 0 0-4.93-1.51 13.8 13.8 0 0 0-.64 1.28 18.3 18.3 0 0 0-5.5 0 12.6 12.6 0 0 0-.64-1.28c-1.71.29-3.37.8-4.93 1.51A20.3 20.3 0 0 0 .1 18.06a19.9 19.9 0 0 0 6.07 3.06c.49-.66.93-1.37 1.3-2.11a12.9 12.9 0 0 1-2.05-.98c.17-.12.34-.25.5-.38a14.2 14.2 0 0 0 12.16 0c.16.13.33.26.5.38-.65.39-1.34.72-2.05.98.37.74.81 1.45 1.3 2.11a19.8 19.8 0 0 0 6.07-3.06A20.2 20.2 0 0 0 20.32 4.37ZM8.02 15.33c-1.18 0-2.16-1.08-2.16-2.42s.95-2.42 2.16-2.42 2.19 1.09 2.16 2.42c0 1.34-.95 2.42-2.16 2.42Zm7.96 0c-1.18 0-2.16-1.08-2.16-2.42s.95-2.42 2.16-2.42 2.19 1.09 2.16 2.42c0 1.34-.95 2.42-2.16 2.42Z",
   },
   {
     label: "Lyskey on X",
-    href: "https://x.com/Lyskey",
+    href: LINKS.x,
     path: "M18.24 2.25h3.31l-7.23 8.26 8.5 11.24h-6.66l-5.21-6.82-5.97 6.82H1.67l7.73-8.84L1.25 2.25h6.83l4.71 6.23 5.45-6.23Zm-1.16 17.52h1.83L7.08 4.13H5.12l11.96 15.64Z",
   },
   {
     label: "Starknet ecosystem Telegram",
-    href: "https://t.me/starknet_ecosystem",
+    href: LINKS.telegram,
     path: "M21.94 3.6a1.5 1.5 0 0 0-1.53-.26L2.7 10.34c-.9.35-.88 1.63.03 1.95l4.63 1.63 1.79 5.63c.27.86 1.37 1.1 1.98.44l2.58-2.83 4.66 3.42c.72.53 1.75.13 1.93-.75l2.16-14.6a1.5 1.5 0 0 0-.52-1.63ZM9.16 13.94l9.28-6.86c.31-.23.66.19.39.46l-7.5 7.42c-.24.24-.4.55-.45.89l-.35 2.42-1.37-4.33Z",
   },
 ] as const;
@@ -121,7 +122,7 @@ export const SiteHeader = () => {
           {/* Subscribe: the links' mono grammar at 11px over the glass
               surface; the trailing 2x2 dot from the old bar is gone */}
           <PressableLink
-            href="https://starknetresearch.substack.com"
+            href={LINKS.newsletter}
             interaction={GHOST}
             className="flex shrink-0 items-center rounded-[6px] border border-[rgba(245,242,236,0.22)] bg-[rgba(38,38,38,0.74)] px-[14px] py-[8px] font-[family-name:var(--font-plex-mono)] text-[11px] leading-[1.2] font-normal tracking-[0.14em] uppercase whitespace-nowrap shadow-[inset_0_1px_0_rgba(255,255,255,0.22)]"
           >

@@ -4,6 +4,7 @@ import { animated, useSpring } from "@react-spring/web";
 import { useEffect, useState } from "react";
 
 import { PressableButton, PressableLink } from "@/components/ui/pressable";
+import { LINKS } from "@/lib/links";
 import { SPRING_SOFT } from "@/lib/springs/config";
 import { GHOST, NAV_LINK, QUIET } from "@/lib/springs/interaction";
 
@@ -24,7 +25,7 @@ export interface MobileNavProps {
  * links move into a panel that drops out from under the bar.
  *
  * The panel is a spring, not a CSS transition (the project has no CSS motion),
- * and it unmounts on `onRest` rather than lingering at `opacity: 0` — otherwise
+ * and it unmounts on `onRest` rather than lingering at `opacity: 0`, otherwise
  * a fixed, blurred panel keeps compositing over the WebGL canvas for nothing.
  * The bars of the toggle animate into an ✕ off the same spring.
  */
@@ -37,7 +38,7 @@ export const MobileNav = ({ items }: MobileNavProps) => {
     if (open) setMounted(true);
   }, [open]);
 
-  // Escape closes it — a focus-trapping menu the keyboard cannot dismiss is a
+  // Escape closes it: a focus-trapping menu the keyboard cannot dismiss is a
   // trap, not a menu.
   useEffect(() => {
     if (!open) return;
@@ -111,7 +112,7 @@ export const MobileNav = ({ items }: MobileNavProps) => {
           ))}
 
           <PressableLink
-            href="https://starknetresearch.substack.com"
+            href={LINKS.newsletter}
             onClick={() => setOpen(false)}
             interaction={GHOST}
             className="mt-[0.75rem] flex items-center justify-center rounded-[6px] border border-[rgba(245,242,236,0.22)] px-[14px] py-[10px] font-[family-name:var(--font-plex-mono)] text-[11px] leading-[1.2] font-normal tracking-[0.14em] uppercase"

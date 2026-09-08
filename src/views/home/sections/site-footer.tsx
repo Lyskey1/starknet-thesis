@@ -3,6 +3,7 @@
 import Link from "next/link";
 
 import type { FooterCopy } from "@/data/home";
+import { LINKS } from "@/lib/links";
 
 export interface SiteFooterProps {
   copy: FooterCopy;
@@ -96,7 +97,7 @@ export const SiteFooter = ({ copy }: SiteFooterProps) => {
                 <Arrow />
               </button>
               <Link
-                href="/"
+                href="/privacy"
                 className="vc-btn inline-flex h-[52px] min-w-0 flex-1 items-center justify-between gap-[14px] bg-[#fafafa] px-[18px] font-general text-[15px] leading-[1.2] whitespace-nowrap text-[#0d0d0d] no-underline transition-colors duration-250 hover:bg-white max-sm:w-full max-sm:flex-none"
               >
                 Read the thesis
@@ -169,15 +170,15 @@ export const SiteFooter = ({ copy }: SiteFooterProps) => {
         )}
       </div>
 
-      {/* the classic baseline bar; the status pill mirrors css/styles.css's
-          .status/.dot component (its pulse lives in globals.css with a
-          reduced-motion guard) */}
+      {/* the classic baseline bar. The network status pill that stood on
+          col 9 was a static link to status.starknet.io bound to no check,
+          so it went (2026-09-08). */}
       <div className="dgf-foot mx-auto w-[calc(100%-48px)] max-w-[1392px]">
         <div className="dgf-bar dgf-grid grid grid-cols-12 items-start gap-x-[24px] border-t border-[#262626] pt-[24px] pb-[40px] font-hud-mono text-[12px] tracking-[0.06em] text-[rgba(250,250,250,0.55)] max-[700px]:flex max-[700px]:flex-col max-[700px]:gap-y-[12px] max-[700px]:pt-[20px] max-[700px]:pb-[36px]">
           <span className="col-span-5">
-            © 2026 · Made by{" "}
+            © {new Date().getFullYear()} · Made by{" "}
             <a
-              href="https://x.com/Lyskey"
+              href={LINKS.x}
               target="_blank"
               rel="noopener"
               className="text-[rgba(250,250,250,0.72)] no-underline transition-colors duration-250 hover:text-signal"
@@ -185,20 +186,6 @@ export const SiteFooter = ({ copy }: SiteFooterProps) => {
               Lyskey
             </a>
           </span>
-          <a
-            className="dgf-status col-span-4 col-start-9 justify-self-start text-inherit no-underline"
-            href="https://status.starknet.io/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <span className="inline-flex items-center gap-[8px] text-[#c53400]">
-              <span
-                aria-hidden
-                className="vc-status-dot block size-[7px] rounded-full bg-[#c53400] shadow-[0_0_8px_#c53400]"
-              />
-              All systems operational
-            </span>
-          </a>
         </div>
       </div>
     </footer>
