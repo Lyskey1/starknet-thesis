@@ -1,33 +1,33 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 
 import type { HeroMark } from "../../../../public/js/hero-mark-engine.js";
 
 /**
- * The live particle object of a pillar's detail panel, on the shared mark
- * engine (public/js/hero-mark-engine.js). Two kinds:
+ * The live object of a pillar's detail panel (2026-09-08). Three kinds, two
+ * of them the thesis pages' own hero objects, imported from their files:
  *
- *   silhouette  the privacy figure: the landing's former second-act bust
- *               (src/views/home/scene/galaxy/galaxy-shaders.ts, humanPoint),
- *               three volumetric ellipsoids, head, neck and shoulders, each
- *               claiming a share of the points proportional to its volume,
- *               sampled on the CPU with the engine's hash noise.
- *   coin        the BTCFi mark: btcfi's hero centrepiece (public/js/
- *               btcfi-hero-mark.js), a bright particle annulus with three
- *               baked sweeps around the Bitcoin symbol rasterised from
- *               assets/img/bitcoin-logo.svg, the two documented traps
- *               honored (size stamped on the root, fill on <svg>, the orange
- *               disc dropped).
+ *   human   the privacy hero object: the metal-human clip, luma-keyed and
+ *           tinted to the accent by public/js/pv-human-key.js (the module
+ *           privacy.html loads), sitting on whatever is behind it. The
+ *           markup is privacy's (.pv-human > .pv-figure > video); the key
+ *           canvas is created on select and disposed on deselect. Under
+ *           prefers-reduced-motion the page's rule hides the clip and the
+ *           key, and the poster stands in as the still.
+ *   funnel  the quantum hero object: the particle funnel from
+ *           public/js/quantum-hero-mark.js (the module quantum.html loads),
+ *           mounted on this stage through its exported mount.
+ *   coin    the BTCFi mark on the shared engine: btcfi's particle annulus
+ *           around the rasterised Bitcoin symbol (the documented recipe).
  *
  * Only the pillar whose panel is shown carries a live system: the object
  * mounts on its `problems:select` event and disposes when another pillar
- * takes the panel, so there is never more than one particle loop in the
- * section. The engine gates on visibility and reduced motion as everywhere.
+ * takes the panel. The engines gate on visibility and reduced motion.
  */
-export type PillarKind = "silhouette" | "coin";
+export type PillarKind = "human" | "funnel" | "coin";
 
-export const PillarObject = ({ kind, index }: { kind: PillarKind; index: number }) => {
+export const PillarObject = ({ kind, index, children }: { kind: PillarKind; index: number; children?: ReactNode }) => {
   const mount = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -35,13 +35,13 @@ export const PillarObject = ({ kind, index }: { kind: PillarKind; index: number 
     if (!el) return;
     const rail = el.closest(".qw");
     if (!rail) return;
-    let mark: HeroMark | null = null;
+    let dispose: (() => void) | null = null;
     let building = false;
     let wanted = false;
     let alive = true;
 
-    const dispose = () => {
-      if (mark) { mark.dispose(); mark = null; }
+    const tearDown = () => {
+      if (dispose) { dispose(); dispose = null; }
     };
 
     /* the panel swap shows the article ~150ms after the pick (thMorph fades
@@ -57,14 +57,34 @@ export const PillarObject = ({ kind, index }: { kind: PillarKind; index: number 
       });
 
     const build = async () => {
-      if (mark || building) return;
+      if (dispose || building) return;
       building = true;
       try {
-        const engine = await import("../../../../public/js/hero-mark-engine.js");
         await laidOut();
         if (!alive || !wanted) return;
-        mark = kind === "silhouette" ? buildSilhouette(el, engine) : await buildCoin(el, engine);
-        if (!alive || !wanted) dispose();
+        if (kind === "funnel") {
+          (window as typeof window & { QH_MARK_MANUAL?: boolean }).QH_MARK_MANUAL = true;
+          const { mountQuantumFunnel } = await import("../../../../public/js/quantum-hero-mark.js");
+          if (!alive || !wanted) return;
+          const mark = mountQuantumFunnel(el);
+          dispose = mark ? () => mark.dispose() : null;
+        } else if (kind === "human") {
+          (window as typeof window & { PV_KEY_MANUAL?: boolean }).PV_KEY_MANUAL = true;
+          const video = el.querySelector("video");
+          if (!video) return;
+          if (matchMedia("(prefers-reduced-motion: reduce)").matches) return; // the poster stands in
+          const { keyVideo } = await import("../../../../public/js/pv-human-key.js");
+          if (!alive || !wanted) return;
+          const keyed = keyVideo(video);
+          video.play().catch(() => {});
+          dispose = () => { keyed.dispose(); video.pause(); };
+        } else {
+          const engine = await import("../../../../public/js/hero-mark-engine.js");
+          if (!alive || !wanted) return;
+          const mark = await buildCoin(el, engine);
+          dispose = mark ? () => mark.dispose() : null;
+        }
+        if (!alive || !wanted) tearDown();
       } catch (e) {
         console.error("[problems] the object failed to build", e);
       } finally {
@@ -75,81 +95,24 @@ export const PillarObject = ({ kind, index }: { kind: PillarKind; index: number 
     const onSelect = (ev: Event) => {
       const i = (ev as CustomEvent<{ index: number }>).detail?.index;
       wanted = i === index;
-      if (wanted) build(); else dispose();
+      if (wanted) build(); else tearDown();
     };
     rail.addEventListener("problems:select", onSelect);
     return () => {
       alive = false;
       rail.removeEventListener("problems:select", onSelect);
-      dispose();
+      tearDown();
     };
   }, [kind, index]);
 
-  return <div ref={mount} className="lp-stage" data-kind={kind} aria-hidden="true" />;
+  return (
+    <div ref={mount} className="lp-stage" data-kind={kind} aria-hidden="true">
+      {children}
+    </div>
+  );
 };
 
 type Engine = typeof import("../../../../public/js/hero-mark-engine.js");
-
-/* A point in the interior of an ellipsoid from three hashes in [0,1): the
-   bust's own sampler (galaxy-shaders.ts ellipsoidPoint), depth 0.15 to 1 so
-   the fill is volumetric rather than a hollow shell. */
-const ellipsoid = (
-  out: Float32Array, i: number,
-  cx: number, cy: number, cz: number, rx: number, ry: number, rz: number,
-  ra: number, rb: number, rc: number,
-) => {
-  const theta = ra * 6.2831853;
-  const phi = Math.acos(rb * 2 - 1);
-  const depth = 0.15 + rc * 0.85;
-  out[i * 3] = cx + Math.sin(phi) * Math.cos(theta) * rx * depth;
-  out[i * 3 + 1] = cy + Math.cos(phi) * ry * depth;
-  out[i * 3 + 2] = cz + Math.sin(phi) * Math.sin(theta) * rz * depth;
-};
-
-function buildSilhouette(el: HTMLElement, { createMark, vertexShader, rnd }: Engine): HeroMark | null {
-  const SPEED = 0.34;
-  const mark = createMark({ mount: el, host: el.closest(".qw-shell") as HTMLElement, tag: "problems-silhouette", speed: SPEED });
-  if (!mark) return null;
-  const { world, points, makeMaterial, smallMQ } = mark;
-  const N = smallMQ.matches ? 12000 : 30000;
-  /* the bust spans y -0.32 to 0.82 in its own frame; recentered on 0 */
-  const Y_OFF = -0.25;
-  const SPAN = 1.25;
-  const R_FIT = 0.62;
-  const VERT = vertexShader();
-  world.add(
-    points(
-      N,
-      (i, pos, siz, pha, alp, tin) => {
-        const pick = rnd(i, 12.989), ra = rnd(i, 78.233), rb = rnd(i, 45.164), rc = rnd(i, 93.989);
-        if (pick < 0.18) ellipsoid(pos, i, 0, 0.62, 0, 0.17, 0.2, 0.18, ra, rb, rc);
-        else if (pick < 0.195) ellipsoid(pos, i, 0, 0.4, 0, 0.075, 0.09, 0.07, ra, rb, rc);
-        else ellipsoid(pos, i, 0, 0.02, 0, 0.36, 0.34, 0.22, ra, rb, rc);
-        pos[i * 3 + 1] += Y_OFF;
-        siz[i] = 0.55 + rnd(i, 12.9898) * 0.6;
-        pha[i] = rnd(i, 78.233);
-        alp[i] = 0.22 + rnd(i, 91.3) * 0.4;
-        tin[i] = 0.85 + rnd(i, 5.331) * 0.4;
-      },
-      makeMaterial(VERT, {}, 0.18, SPAN),
-    ),
-  );
-  mark.run({
-    fit({ camera, aspect, small, HALF_FOV }) {
-      const byH = R_FIT / ((small ? 0.6 : 0.82) * HALF_FOV);
-      const byW = 0.4 / ((small ? 0.7 : 0.8) * HALF_FOV * aspect);
-      camera.position.z = Math.max(byH, byW);
-      return 1;
-    },
-    target: () => 1,
-    draw(w, t) {
-      /* a slow breath and a gentle yaw: the figure never spins */
-      w.rotation.y = Math.sin(t * 0.3) * 0.28;
-      w.scale.setScalar(1 + Math.sin(t * 0.55) * 0.006);
-    },
-  });
-  return mark;
-}
 
 async function buildCoin(el: HTMLElement, { createMark, vertexShader, rnd }: Engine): Promise<HeroMark | null> {
   const SPEED = 0.34;
