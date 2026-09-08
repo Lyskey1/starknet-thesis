@@ -38,6 +38,7 @@
 <link rel="stylesheet" href="css/glass-chips.css">
 <script defer src="js/curtain.js"></script>
 <script defer src="js/fee-config.js"></script>
+<script defer src="js/staking-config.js"></script>
 
 <style>
 :root{
@@ -1615,12 +1616,12 @@ window.ADMIN_GATE=on;})();
         <span class="pmotif" aria-hidden="true"><svg viewBox="0 0 260 200"><path d="M130 28 210 62v46c0 50-34 78-80 94-46-16-80-44-80-94V62z"/><path d="M130 58v112"/><path d="M76 84h108"/><path d="M72 116h116"/><path class="uacc" d="M130 58 210 92M130 170 50 136"/><path class="uacc" d="M96 112l22 22 48-58"/></svg></span>
         <div class="eyebrow">Security</div>
         <h3>Staking</h3>
-        <p>Staking STRK is the core of Starknet's decentralization, carrying 75% of all staking power. Bitcoin staking was added on top to tie STRK and BTC value in a flywheel: BTC stakers take a fixed 25% share of staking rewards, so the more STRK is staked, the higher their rewards and APR, pulling even more Bitcoin into consensus. All of it runs on less than 1% annual STRK inflation.</p>
+        <p>Staking STRK is the core of Starknet's decentralization, carrying <span data-stake-share="strk">75%</span> of all staking power. Bitcoin staking was added on top to tie STRK and BTC value in a flywheel: BTC stakers take a fixed <span data-stake-share="btc">25%</span> share of staking rewards, so the more STRK is staked, the higher their rewards and APR, pulling even more Bitcoin into consensus. All of it runs on less than 1% annual STRK inflation.</p>
         <div class="viz">
           <div class="barrow">
             <div class="bl">Staking power</div>
             <div class="bartrack"><div class="barfill strk" data-w="75%"></div><div class="barfill btc" data-w="25%"></div></div>
-            <div class="seglbl"><i><span class="dotc strk"></span>STRK 75%</i><i><span class="dotc btc"></span>BTC 25%</i></div>
+            <div class="seglbl"><i><span class="dotc strk"></span>STRK <span data-stake-share="strk">75%</span></i><i><span class="dotc btc"></span>BTC <span data-stake-share="btc">25%</span></i></div>
           </div>
           <div class="barrow">
             <div class="bl">Circulating supply staked</div>
@@ -1629,7 +1630,7 @@ window.ADMIN_GATE=on;})();
           <div class="vrow">
             <a class="figlink" href="https://dashboard.endur.fi/" target="_blank" rel="noopener noreferrer"><div class="bignum" data-metric="strk_staked_pct">21.2%</div><div class="subt">Of circulating STRK supply staked <span class="arr">&#8599;</span></div></a>
             <a class="figlink" href="https://dashboard.endur.fi/" target="_blank" rel="noopener noreferrer"><div class="bignum" data-metric="strk_staked_total">1.43B STRK</div><div class="subt">STRK staked <span class="arr">&#8599;</span></div></a>
-            <div><div class="bignum">75 / 25</div><div class="subt">STRK / BTC power</div></div>
+            <div><div class="bignum"><span data-stake-share="strk" data-stake-share-bare>75</span> / <span data-stake-share="btc" data-stake-share-bare>25</span></div><div class="subt">STRK / BTC power</div></div>
           </div>
           <div id="stakingUpdated" style="font-family:var(--mono),monospace;font-size:10px;letter-spacing:.12em;color:var(--muted);text-align:right;margin-top:10px;min-height:13px"></div>
         </div>
