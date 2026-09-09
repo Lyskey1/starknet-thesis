@@ -51,7 +51,7 @@ export const Problems = ({ kicker, privateTransferFee, postQuantumFeeStrk }: Pro
     <header className="lp-head">
       <p className="lp-kicker">{kicker}</p>
       <h2 className="lp-h2" id="the-three-hardest-problems">
-        The three hardest problems in crypto, <b className="lp-nowrap">answered on Starknet.</b>
+        All three, answered <b className="lp-nowrap">on one chain.</b>
       </h2>
     </header>
 
@@ -153,13 +153,17 @@ export const Problems = ({ kicker, privateTransferFee, postQuantumFeeStrk }: Pro
             <div className="th-st-item">
               <div className="th-stark-duo">
                 <div className="lp-copy">
-                  <h3 className="lp-h3">
-                    Bitcoin is <Claim claim={PERISHABLE["btc-largest-asset"]} />, and it still needs real DeFi.
-                  </h3>
+                  <h3 className="lp-h3">The biggest asset, barely used.</h3>
+                  {/* the btc-largest-asset claim moved OUT of the heading and into this
+                      paragraph when the heading was shortened (2026-09-09). It keeps its
+                      sourced span, so the registry entry is still rendered with its
+                      data-src and data-checked; do not restate the superlative in the
+                      heading, or the page carries the claim twice under one source. */}
                   <p>
-                    Idle BTC becomes working capital on Starknet: lend and borrow against it, earn yield on
-                    it, stake it to secure the network, trade it for cents, and shield it when you want
-                    privacy.
+                    Bitcoin is <Claim claim={PERISHABLE["btc-largest-asset"]} /> and most of it sits
+                    idle. On Starknet it becomes working capital: lend and borrow against it, earn
+                    yield on it, stake it to secure the network, trade it for cents, and shield it
+                    when you want privacy.
                   </p>
                   {/* no stat line: the btcfi page's BTC figures live in an inline fetch engine with
                       an inline seed, not in a data module this build can read */}
