@@ -16,10 +16,22 @@ const SHELL_Y = -0.55;   // near-centred, just clear of the copy
   MOUNT.innerHTML =
     '<div class="eg-track"><div class="eg-stick">' +
       '<div class="eg-copy eg-copy-a">' +
-        /* not a heading: the page's real h1 carries this wording, pre-rendered
-           into #ecoIndex by scripts/build-ecosystem.js. .eg-h is styled exactly
-           like .eg-copy h2 (css/eco-stage.css), so nothing moves. */
-        '<p class="eg-h vch-title">The people building &amp; <em>shaping Starknet</em></p>' +
+        /* THE PAGE'S ONLY h1, and it is injected here (2026-09-09). It used
+           to be a <p> so that the pre-rendered directory block could hold the
+           h1 instead; that put the page's first heading below the fold, and
+           with JS on it was the CLIPPED one, so the only h1 was invisible.
+           The directory heading is now an h2 reading "The directory"
+           (scripts/build-ecosystem.js), which is why this may carry rank 1
+           without duplicating a sentence.
+           CONSEQUENCE, deliberate: with JS disabled this element never
+           exists, so the page has NO h1 at all and the outline starts at the
+           directory's h2. Do not demote this back without moving rank 1
+           somewhere that ships in the HTML.
+           .eg-h keeps the class-based type (.eg-copy .eg-h and
+           #ecoGlobe .vch-title in css/eco-stage.css and css/vesper-chrome.css
+           both out-rank the bare h1 rule in css/styles.css), so the tag
+           change moves no pixels. */
+        '<h1 class="eg-h vch-title">The people building &amp; <em>shaping Starknet</em></h1>' +
         '<p class="vch-sub">Every project, every voice, on one chain.</p>' +
       '</div>' +
       '<div class="eg-copy eg-copy-b"><h2>Powered by Starknet</h2>' +

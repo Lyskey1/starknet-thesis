@@ -146,15 +146,27 @@ body::before { opacity: .35; }
 /* ---------- the index: ecosystem cards, matching the BTCFi directory ---------- */
 #ecoIndex { width: 100vw; max-width: none; margin: 0 0 96px calc(50% - 50vw); padding: 15vh clamp(24px, 4.4vw, 72px) 0; }
 .ix-head { margin: 0 0 26px; }
-/* the h1 lives in the pre-rendered directory block and reads exactly like the
-   index title above it */
-.ix-head h1 { font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-weight: 300; font-size: clamp(28px, 3.4vw, 52px); line-height: 1; letter-spacing: -.03em; color: var(--es-ink); margin: 8px 0 22px; }
+/* the directory block's own heading. An h2 since 2026-09-09 (the h1 moved to
+   the injected hero copy), and this selector MUST track the tag: leave it on
+   h1 and it matches nothing, dropping the heading onto the bare h2 rule in
+   css/styles.css at a different size.
+   SCOPED TO #eco-directory, and it has to be. The demotion put this heading
+   on the same ".ix-head h2" selector as the INTERACTIVE index's own title
+   (line 199 below, 76px/600), which sits later in this sheet and would win
+   on source order at equal specificity; the pre-rendered block then painted
+   at 76px instead of its own 52px clamp. The id lifts this to 1,1,1 so the
+   two headings keep their separate type. Declarations are unchanged from the
+   h1 rule this replaced, so the paint is identical. */
+#eco-directory .ix-head h2 { font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-weight: 300; font-size: clamp(28px, 3.4vw, 52px); line-height: 1; letter-spacing: -.03em; color: var(--es-ink); margin: 8px 0 22px; max-width: none; }
 
 /* ---------- the pre-rendered directory (scripts/build-ecosystem.js) ----------
-   Ships in the HTML so the page carries its h1 and all 126 entries with their
-   descriptions before a line of JS runs. With JS, eco-index.js sets
-   data-enhanced and the interactive index takes over the view: the block is
-   clipped, NOT display:none, so every word stays in the DOM. */
+   Ships in the HTML so the page carries its heading and all its entries with
+   their descriptions before a line of JS runs. That heading is an h2 since
+   2026-09-09; with JS off it is the page's FIRST heading and the page has no
+   h1, because rank 1 now belongs to the hero copy js/eco-globe.js injects.
+   With JS, eco-index.js sets data-enhanced and the interactive index takes
+   over the view: the block is clipped, NOT display:none, so every word
+   stays in the DOM. */
 .ixs-group { margin: 0 0 34px; }
 .ixs-group .es-kicker { margin: 0 0 12px; }
 .ixs-list { list-style: none; margin: 0; padding: 0; }

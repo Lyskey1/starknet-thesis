@@ -36,11 +36,16 @@ const PAGE = path.join(ROOT, 'ecosystem.html');
 const START = '<!-- STATIC-ECO:START -->';
 const END = '<!-- STATIC-ECO:END -->';
 
-/* The h1 text is the hero title eco-globe.js used to emit as an h2 (copy A);
-   the script now emits a non-heading there so this stays the page's only
-   heading of rank 1 and nothing is duplicated. */
-const H1_ID = 'the-people-building-shaping-starknet';
-const H1_TEXT = 'The people building &amp; shaping Starknet';
+/* The directory's own heading, an h2 (2026-09-09). It held rank 1 and the
+   hero copy was emitted as a non-heading so the page carried exactly one h1;
+   that put the outline's first heading below the fold, and with JS on this
+   block is clipped, so the page's only h1 was invisible. js/eco-globe.js now
+   emits the hero copy as the h1 and this is an h2, retitled so the page does
+   not print the same sentence twice.
+   THE ID IS UNCHANGED on purpose: it is a deep-link anchor and the search
+   index's anchor for this block. Only the rank and the words moved. */
+const H2_ID = 'the-people-building-shaping-starknet';
+const H2_TEXT = 'The directory';
 const KICKER = 'The projects &amp; the voices';
 
 const esc = s => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -108,10 +113,10 @@ if (count !== expected) die('rendered ' + count + ' accounts but the data holds 
 
 const block = START +
   '\n  <!-- Pre-rendered from data/ecosystem.json: regenerated automatically on deploy (npm run build); run node scripts/build-ecosystem.js for local preview.\n' +
-  '       js/eco-index.js appends its interactive index beside this block and marks it data-enhanced (clipped, still in the DOM). Without JS this IS the directory. -->\n' +
+  '       js/eco-index.js appends its interactive index beside this block and marks it data-enhanced (clipped, still in the DOM). Without JS this IS the directory, and its h2 is the page\'s first heading, because the h1 is injected by js/eco-globe.js. -->\n' +
   '  <div class="ixs" id="eco-directory">' +
     '<div class="ix-head"><p class="es-kicker">' + KICKER + '</p>' +
-    '<h1 id="' + H1_ID + '">' + H1_TEXT + '</h1></div>' +
+    '<h2 id="' + H2_ID + '">' + H2_TEXT + '</h2></div>' +
     groups +
   '</div>\n  ' + END;
 
