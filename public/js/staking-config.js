@@ -15,6 +15,20 @@
    states the split as a figure nobody can trace. The live AMOUNTS staked are
    a different thing entirely and come from the staking protocol's own
    endpoint; they must never be presented as the source of this ratio. */
+/* ENDUR'S DESTINATIONS, one place. The staking figures on /btcfi and /strk
+   come from Endur's network-overview API, and the site credits and links
+   Endur in four different spots; before this they were four inline strings.
+   Two named constants now, plus the liquid-staking product the strk page's
+   "Where to get STRK" chip already pointed at, which is a DIFFERENT surface
+   (app.endur.fi) from the dashboard: kept as its own constant rather than
+   collapsed, because nothing here can verify the two are the same page.
+   Stamped onto [data-stake-link="dashboard"|"stake"|"liquid"] elements; the
+   markup carries the same href as its no-JS value, so a reader without JS
+   still gets a working link. */
+window.ENDUR_DASHBOARD_URL = 'https://dashboard.endur.fi/';
+window.ENDUR_STAKE_URL = 'https://dashboard.endur.fi/stake';
+window.ENDUR_LIQUID_STAKE_URL = 'https://app.endur.fi/strk';
+
 window.STARKNET_STAKE_SHARE = {
   strk: 75,
   btc: 25,
@@ -42,7 +56,19 @@ window.STARKNET_STAKE_SHARE = {
   /* the strk page loads this deferred, so readyState is already past
      'loading' when it runs; btcfi loads it in the head, before the markup
      exists. Paint on whichever signal has not passed yet. */
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', paint);
-  else paint();
-  addEventListener('load', paint);
+  var LINKS = {
+    dashboard: window.ENDUR_DASHBOARD_URL,
+    stake: window.ENDUR_STAKE_URL,
+    liquid: window.ENDUR_LIQUID_STAKE_URL
+  };
+  function paintLinks(){
+    [].forEach.call(document.querySelectorAll('[data-stake-link]'), function(a){
+      var url = LINKS[a.getAttribute('data-stake-link')];
+      if (url) a.setAttribute('href', url);
+    });
+  }
+  function run(){ paint(); paintLinks(); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run);
+  else run();
+  addEventListener('load', run);
 })();

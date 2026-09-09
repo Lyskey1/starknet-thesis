@@ -1079,9 +1079,20 @@
     text-transform: uppercase; color: rgba(250, 250, 250,0.45); min-width: 92px; }
   .bsk-amt dd { margin: 0; font-family: var(--mono); font-size: 13px; letter-spacing: 0.04em;
     color: var(--white); font-variant-numeric: tabular-nums; }
-  .bsk-amt-stamp { margin: 10px 0 0; font-family: var(--mono); font-size: 9.5px;
+  /* the source credit and the action link, the page's mono grammar */
+  .bsk-amt-src { margin: 10px 0 0; font-family: var(--mono); font-size: 10px;
     letter-spacing: 0.14em; text-transform: uppercase; color: rgba(250, 250, 250,0.38); }
-  .bsk-amt-stamp[hidden] { display: none; }
+  .bsk-amt-src a { color: var(--orange); text-decoration: none; }
+  .bsk-amt-src a:hover { text-decoration: underline; }
+  .bsk-amt-src .arr, .bsk-cta-link .arr { font-size: 10px; opacity: 0.75; }
+  .bsk-cta { margin: 14px 0 0; }
+  .bsk-cta-link { display: inline-flex; align-items: center; gap: 6px;
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--white); text-decoration: none; padding: 9px 14px; border-radius: 8px;
+    border: 1px solid rgba(var(--accent-rgb), 0.45); background: rgba(var(--accent-rgb), 0.10);
+    transition: border-color 0.25s ease, background 0.25s ease; }
+  .bsk-cta-link:hover { border-color: var(--accent); background: rgba(var(--accent-rgb), 0.18); }
+  .bsk-cta-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
   /* fade cascade: line and percents just after the growth, roles next, the
      signature last */
   .bsk-fade { opacity: 1; }
@@ -3176,7 +3187,7 @@
              data-src="https://www.starknet.io/blog/starknet-2025-year-in-review/"
              data-checked="2026-08-23"
              data-says="the Starknet ecosystem launched BTC staking, making Starknet the first Rollup to tether its security directly to Bitcoin | Bitcoin holders can now stake their BTC to secure Starknet and earn STRK rewards, launching a dual-token consensus model where STRK represents 75% and BTC 25% of the network&#39;s total security weight"
-             data-noun-ok="Starknet BTC STRK">Since late 2025, Bitcoin can be staked natively on Starknet to help secure the network and earn rewards. Not custodial lending. Not a yield farm. Starknet is the first rollup to tether its security directly to Bitcoin: BTC and STRK stake together, at a protocol-fixed <span data-stake-share="btc">25%</span> and <span data-stake-share="strk">75%</span> of total staking power.</p>
+             data-noun-ok="Starknet BTC STRK">Since late 2025, Bitcoin can be <a class="inline-accent-link" href="https://dashboard.endur.fi/stake" data-stake-link="stake" target="_blank" rel="noopener noreferrer">staked natively on Starknet</a> to help secure the network and earn rewards. Not custodial lending. Not a yield farm. Starknet is the first rollup to tether its security directly to Bitcoin: BTC and STRK stake together, at a protocol-fixed <span data-stake-share="btc">25%</span> and <span data-stake-share="strk">75%</span> of total staking power.</p>
           <!-- COPY CONSOLIDATION (owner-approved, 2026-08-24). The middle
                paragraph — "BTC carries 25% of consensus weight (monetary
                security), STRK carries 75% (network economics)." — moved into
@@ -3223,9 +3234,10 @@
                below the share column: the 25/75 above is a protocol constant
                and must never read as something derived from these two
                numbers. A source that fails hides its own line rather than
-               showing a placeholder, and the stamp reports the older of the
-               two vintages. -->
-          <dl class="bsk-amts" id="bskAmounts">
+               showing a placeholder. The figures are credited to Endur
+               below them, not on the numbers themselves. -->
+          <dl class="bsk-amts" id="bskAmounts"
+              data-src="https://api.dashboard.endur.fi/api/query/network/overview" data-checked="2026-09-09">
             <div class="bsk-amt" data-bsk-amt="btc" hidden>
               <dt>BTC staked</dt><dd data-bsk-val="btc"></dd>
             </div>
@@ -3233,7 +3245,17 @@
               <dt>STRK staked</dt><dd data-bsk-val="strk"></dd>
             </div>
           </dl>
-          <p class="bsk-amt-stamp" id="bskStamp" aria-live="polite" hidden></p>
+          <!-- SOURCE CREDIT (2026-09-09), the site's own pattern (see the
+               dashboard chart's "Source: growthepie" line on /strk): a mono
+               credit under the figures, the link on the credit and never on
+               the numbers. The href rides js/staking-config.js's
+               ENDUR_DASHBOARD_URL; the markup carries the same value so it
+               works without JS. The stamp that read "LIVE DATA, UPDATED X
+               AGO" is gone; the two figures are still fetched live. -->
+          <p class="bsk-amt-src">Source: <a href="https://dashboard.endur.fi/" data-stake-link="dashboard"
+             target="_blank" rel="noopener noreferrer">Endur <span class="arr" aria-hidden="true">&#8599;</span></a></p>
+          <p class="bsk-cta"><a class="bsk-cta-link" href="https://dashboard.endur.fi/stake" data-stake-link="stake"
+             target="_blank" rel="noopener noreferrer">Stake on Starknet <span class="arr" aria-hidden="true">&#8599;</span></a></p>
           <p class="bsk-sig bsk-fade">One security budget, staked together</p>
         </div>
       </div>
@@ -4619,28 +4641,17 @@
      no placeholder, and no stamp at all if neither arrived. */
   function renderStakeAmounts(){
     var wrap = document.getElementById('bskAmounts');
-    var stampEl = document.getElementById('bskStamp');
     if (!wrap) return;
-    var live = [];
-    function line(key, value, text, at){
+    function line(key, value, text){
       var row = wrap.querySelector('[data-bsk-amt="' + key + '"]');
       if (!row) return;
       var ok = isFinite(value) && value > 0;
       row.hidden = !ok;
       if (!ok) return;
       row.querySelector('[data-bsk-val="' + key + '"]').textContent = text;
-      if (at) live.push(at);
     }
-    var stakedAt = snap.prov && snap.prov.staked ? snap.prov.staked.at : null;
-    line('btc', snap.stakedBtc, Math.round(snap.stakedBtc) + ' BTC', stakedAt);
-    line('strk', snap.strkStaked, abbrStrk(snap.strkStaked) + ' STRK', snap.strkStakedAt || stakedAt);
-    if (!stampEl) return;
-    if (!live.length) { stampEl.hidden = true; return; }
-    var oldest = Math.min.apply(null, live);
-    var m = Math.floor((Date.now() - oldest) / 60000);
-    var age = m < 1 ? 'JUST NOW' : m < 60 ? m + ' MIN AGO' : m < 2880 ? Math.floor(m / 60) + ' HR AGO' : Math.floor(m / 1440) + ' DAYS AGO';
-    stampEl.textContent = 'LIVE DATA, UPDATED ' + age;
-    stampEl.hidden = false;
+    line('btc', snap.stakedBtc, Math.round(snap.stakedBtc) + ' BTC');
+    line('strk', snap.strkStaked, abbrStrk(snap.strkStaked) + ' STRK');
   }
   function renderAll(){
     var netOpen = netTip.open(), stakedOpen = stakedTip.open();
@@ -4804,7 +4815,7 @@
 
   refresh();
   setInterval(refresh, 3600000); // silent hourly refresh while the page stays open
-  setInterval(function(){ tickUpdated(); renderStakeAmounts(); }, 60000);
+  setInterval(tickUpdated, 60000);
 })();
 </script>
 

@@ -416,6 +416,7 @@ h1,h2,h3{font-family:var(--display),sans-serif;font-weight:800;line-height:1.04;
   display:inline-flex;align-items:center;gap:6px;text-decoration:none;cursor:pointer;transition:background .2s,border-color .2s,color .2s}
 a.chip:hover{background:var(--acc);border-color:var(--acc);color:#0d0d0d}
 .chip .arr{font-size:11px;opacity:.7}
+.stk-cta{margin-top:16px}
 .basebar{height:40px;border-radius:10px;background:linear-gradient(90deg,rgba(197, 52, 0,.22),rgba(197, 52, 0,.12));
   border:1px solid rgba(197, 52, 0,.4);display:flex;align-items:center;padding:0 16px;
   font-family:var(--mono),monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--white)}
@@ -1628,10 +1629,16 @@ window.ADMIN_GATE=on;})();
             <div class="bartrack"><div class="barfill meter" data-w="21.2%"></div></div>
           </div>
           <div class="vrow">
-            <a class="figlink" href="https://dashboard.endur.fi/" target="_blank" rel="noopener noreferrer"><div class="bignum" data-metric="strk_staked_pct">21.2%</div><div class="subt">Of circulating STRK supply staked <span class="arr">&#8599;</span></div></a>
-            <a class="figlink" href="https://dashboard.endur.fi/" target="_blank" rel="noopener noreferrer"><div class="bignum" data-metric="strk_staked_total">1.43B STRK</div><div class="subt">STRK staked <span class="arr">&#8599;</span></div></a>
+            <a class="figlink" href="https://dashboard.endur.fi/" data-stake-link="dashboard" target="_blank" rel="noopener noreferrer"><div class="bignum" data-metric="strk_staked_pct">21.2%</div><div class="subt">Of circulating STRK supply staked <span class="arr">&#8599;</span></div></a>
+            <a class="figlink" href="https://dashboard.endur.fi/" data-stake-link="dashboard" target="_blank" rel="noopener noreferrer"><div class="bignum" data-metric="strk_staked_total">1.43B STRK</div><div class="subt">STRK staked <span class="arr">&#8599;</span></div></a>
             <div><div class="bignum"><span data-stake-share="strk" data-stake-share-bare>75</span> / <span data-stake-share="btc" data-stake-share-bare>25</span></div><div class="subt">STRK / BTC power</div></div>
           </div>
+          <!-- the action link (2026-09-09), on this page's own .chip style,
+               left-aligned with the three stat blocks above it. The href
+               rides js/staking-config.js's ENDUR_STAKE_URL and is present in
+               the markup too, so it works without JS. -->
+          <p class="stk-cta"><a class="chip" href="https://dashboard.endur.fi/stake" data-stake-link="stake"
+             target="_blank" rel="noopener noreferrer">Stake on Starknet <span class="arr">&#8599;</span></a></p>
           <div id="stakingUpdated" style="font-family:var(--mono),monospace;font-size:10px;letter-spacing:.12em;color:var(--muted);text-align:right;margin-top:10px;min-height:13px"></div>
         </div>
       </div>
@@ -1675,7 +1682,7 @@ window.ADMIN_GATE=on;})();
             <a class="chip" href="https://vesu.xyz/lite/markets" target="_blank" rel="noopener noreferrer">Lending <span class="arr">&#8599;</span></a>
             <a class="chip" href="https://ekubo.org/positions?chainId=23448594291968334" target="_blank" rel="noopener noreferrer">LP <span class="arr">&#8599;</span></a>
             <a class="chip" href="https://www.troves.fi/" target="_blank" rel="noopener noreferrer">Leverage yield <span class="arr">&#8599;</span></a>
-            <a class="chip" href="https://app.endur.fi/strk" target="_blank" rel="noopener noreferrer">Liquid stake <span class="arr">&#8599;</span></a>
+            <a class="chip" href="https://app.endur.fi/strk" data-stake-link="liquid" target="_blank" rel="noopener noreferrer">Liquid stake <span class="arr">&#8599;</span></a>
             <a class="chip" href="https://www.opus.money/" target="_blank" rel="noopener noreferrer">Mint stablecoin <span class="arr">&#8599;</span></a>
           </div>
           <div class="basebar">STRK &middot; base collateral</div>
