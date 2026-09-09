@@ -559,6 +559,47 @@
 .th-pm-sec .scale-title span{color:var(--th-q);}
 /* free-flowing body text, same size/measure as btcfi .scale-intro */
 .th-q-flow{font-size:15px;line-height:1.7;color:rgba(250, 250, 250,.6);max-width:720px;margin-top:32px;}
+/* THE BITCOIN CASE block (2026-09-09), chapter 04's closing edge case. Type
+   borrowed from the page's own idioms: the kicker is .th-pm-eyebrow's mono
+   scale, the heading is .scale-title's family at a smaller step, the body is
+   .th-q-flow's. ONE accent per block, on "at a price." in the heading; the
+   two source links are underlined rather than accent-filled so the heading
+   keeps the only accent. */
+/* SPACING IS TIGHT ON PURPOSE. Chapter 04's panel has the least headroom of
+   the four, so every gap here is the smallest that still reads as a separate
+   block: 14px above the rule, 14px below it, and the page's 13.5px card body
+   rather than the 15px flow body. Loosening any of these puts the panel back
+   over its siblings. */
+.qsb-case{margin-top:14px;padding-top:14px;border-top:1px solid var(--th-hair);}
+.qsb-kicker{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.3em;
+  text-transform:uppercase;color:var(--th-muted);margin:0 0 6px;}
+.qsb-h{font-family:'General Sans','Helvetica Neue',Arial,sans-serif;font-weight:600;
+  font-size:clamp(21px,1.9vw,27px);line-height:1.15;letter-spacing:-.02em;
+  color:var(--th-ink);margin:0 0 8px;}
+.qsb-acc{color:var(--th-q);}
+.qsb-p{font-size:13.5px;line-height:1.55;color:rgba(250,250,250,.62);margin:0 0 8px;max-width:none;}
+.qsb-p:last-child{margin-bottom:0;}
+.qsb-p b{color:var(--th-ink);font-weight:600;}
+.qsb-link{color:inherit;text-decoration:underline;text-underline-offset:3px;
+  text-decoration-thickness:1px;text-decoration-color:color-mix(in srgb,var(--th-q) 55%,transparent);}
+.qsb-link:hover{color:var(--th-ink);text-decoration-color:var(--th-q);}
+/* the limits disclosure. First <details> on the site, so the default marker
+   is removed on both engines and a chevron drawn instead. */
+.qsb-more{margin:0;}
+.qsb-more > summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:8px;
+  font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--th-muted);padding:2px 0;transition:color .2s;}
+.qsb-more > summary::-webkit-details-marker{display:none;}
+.qsb-more > summary::marker{content:'';}
+.qsb-more > summary:hover{color:var(--th-ink);}
+.qsb-more > summary:focus-visible{outline:2px solid var(--th-q);outline-offset:3px;}
+.qsb-chev{width:0;height:0;border-left:4px solid currentColor;
+  border-top:3.5px solid transparent;border-bottom:3.5px solid transparent;
+  transition:transform .2s;transform-origin:35% 50%;}
+.qsb-more[open] > summary{color:var(--th-ink);}
+.qsb-more[open] .qsb-chev{transform:rotate(90deg);}
+.qsb-more .qsb-p{margin-top:10px;}
+@media (prefers-reduced-motion: reduce){ .qsb-chev{transition:none;} }
 .th-q-flow b{color:var(--th-ink);font-weight:600;}
 .th-q-flow b.acc{color:var(--th-q);}
 .th-q-flow a{color:inherit;text-decoration:underline;text-underline-offset:2px;text-decoration-thickness:1px;transition:color .2s;}
@@ -1736,6 +1777,46 @@ if (window.thStickyRail) {
       <p class="note th-claim" data-perishable="third-party" data-src="https://arxiv.org/abs/2603.28846" data-checked="2026-08-22" data-says="Only protocols utilizing zkSTARKs (green) employ hash-based proofs that are currently believed to be resistant to quantum attacks. | Indeed, some zk-rollups, such as Starknet, use hash-based protocols which are believed to be resistant to quantum cryptanalysis." data-noun-ok="Google March">In <a href="https://arxiv.org/abs/2603.28846" target="_blank" rel="noopener noreferrer">the paper's March 2026 risk chart</a>, zk-STARK is the only proving category not flagged as quantum-vulnerable by Google, and Starknet's proving system is named explicitly as resistant. The authors call the chart a point-in-time assessment.</p></div>
   </div>
   </div>
+  </div>
+
+  <!-- THE BITCOIN CASE (2026-09-09). QSB, added as the edge case at the end
+       of chapter 04. Read the constraints before editing:
+       WHAT THIS BLOCK MUST NEVER SAY. Not that Bitcoin is quantum-safe, not
+       that BTC is protected, not that holders are covered. StarkWare's own
+       post says it plainly, and both sentences are in data-says: "QSB does
+       not make Bitcoin itself quantum-safe" and "It would not help an
+       address whose public key was published before the transaction was
+       sent." QSB makes a specific spend quantum-safe at a cost; it protects
+       nothing passively.
+       NO MOAT, PRICE OR COMPETITIVE LANGUAGE, and no contrast of Starknet's
+       migration cost against Bitcoin's as an investment argument. The last
+       sentence is the whole of the intended contrast and it is an
+       engineering one.
+       FOUR CLAIMS FROM THE ORIGINAL DRAFT ARE ABSENT ON PURPOSE, because no
+       primary source carries them: that the paper is "explicit that this is
+       a last resort, not a migration path", that there is "no path to
+       Bitcoin-scale throughput", and that there is "no Lightning coverage".
+       The paper never characterises itself against other strategies and
+       never mentions Lightning or throughput. Do not add them back without
+       a source that states them. What IS sourced, and what the block says
+       instead, is StarkWare's own statement of what QSB does not do.
+       COST: the paper's own figure, presented as the paper's estimate.
+       StarkWare's post about the actual mainnet run says "several hundred
+       dollars" instead, which is a different number for a different thing
+       (one real run versus the paper's projected search cost); the block
+       quotes the paper because that is what it attributes. -->
+  <div class="qsb-case th-pm-reveal">
+    <p class="qsb-kicker">The Bitcoin case</p>
+    <h3 id="bitcoin-can-be-saved-at-a-price" class="qsb-h">Bitcoin can be saved, <span class="qsb-acc">at a price.</span></h3>
+    <p class="qsb-p">Bitcoin's signatures are ECDSA and Schnorr, and neither survives Shor. One published scheme gets around that without a soft fork: <a class="qsb-link th-claim" data-perishable="third-party" data-src="https://github.com/avihu28/Quantum-Safe-Bitcoin-Transactions/" data-checked="2026-09-09" data-says="Since this puzzle depends only on the pre-image resistance of RIPEMD-160 (not on any elliptic curve assumption), it is fully resistant to Shor's algorithm | ~118-bit second pre-image resistance under Shor; ~59-bit under Grover | 201 non-push opcodes | 10,000 byte script size" href="https://github.com/avihu28/Quantum-Safe-Bitcoin-Transactions/" target="_blank" rel="noopener noreferrer">QSB</a>, by StarkWare's Avihu Levy, replaces the quantum-vulnerable step of earlier designs with a hash-to-sig puzzle whose security rests only on the pre-image resistance of RIPEMD-160, roughly 118 bits even against Shor, inside Bitcoin's legacy limits of 201 non-push opcodes and 10,000 bytes. The first quantum-safe Bitcoin transaction <a class="qsb-link th-claim" data-perishable="third-party" data-src="https://starkware.co/blog/the-first-quantum-safe-bitcoin-transaction-has-been-mined/" data-checked="2026-09-09" data-says="The first quantum-safe Bitcoin transaction has been mined | Today's quantum-safe transaction is the first time anyone has run it on mainnet." href="https://starkware.co/blog/the-first-quantum-safe-bitcoin-transaction-has-been-mined/" target="_blank" rel="noopener noreferrer">ran on Bitcoin mainnet on 26 August 2026</a>.</p>
+    <!-- THE LIMITS ARE A DISCLOSURE, NOT A CUT (2026-09-09). Chapter 04 has
+         to fit one 1440x900 viewport under the sticky nav and this paragraph
+         put it 121px over, so it collapses instead of losing a word. Do not
+         solve a height problem here by deleting a limit. -->
+    <details class="qsb-more">
+      <summary class="qsb-sum">What it costs<i class="qsb-chev" aria-hidden="true"></i></summary>
+      <p class="qsb-p">StarkWare is explicit about what this is not: QSB does not make Bitcoin itself quantum-safe, and it would not help an address whose public key was already published. The paper estimates <b>$75 to $150</b> of cloud GPU compute for the off-chain search behind a single transaction, and the transactions it produces are non-standard, so they never travel the ordinary mempool and need a direct path to a miner. It works, and it shows what quantum safety costs on a chain that was not built for it.</p>
+    </details>
   </div>
 
   <ul class="rxa-keys"><li>1,200 logical qubits</li><li>6.9M BTC</li><li>20.5M ETH</li><li>$200B in stablecoins</li><li>zk-STARK proofs</li></ul>
