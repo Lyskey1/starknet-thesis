@@ -1570,7 +1570,7 @@ if (window.thStickyRail) {
   <div class="rxa-fcol">
   <!-- chapter 2: the blind spot -->
   <div class="th-q-chapter th-pm-reveal">
-    <h3 id="safe-every-single-day-right-up" class="scale-title">Safe every single day, <span>right up until one day in 2029.</span></h3>
+    <h3 id="safe-every-single-day-right-up" class="scale-title">Safe every day, <span>until one day in <span data-qd-year>2029</span>.</span></h3>
     <p class="scale-intro">A turkey grows more confident every day, fed and cared for, right up to Thanksgiving, the day it gets eaten. Every safe day made the turkey more certain the next one would be safe too. Most blockchains sit on the same curve: a lengthening track record of safety that proves nothing about the day the machine arrives.</p>
   </div>
 
@@ -1594,7 +1594,7 @@ if (window.thStickyRail) {
   </div>
   </div>
 
-  <ul class="rxa-keys"><li>The turkey</li><li>Track record of safety</li><li>One day in 2029</li><li>We can see the knife</li></ul>
+  <ul class="rxa-keys"><li>The turkey</li><li>Track record of safety</li><li>One day in <span data-qd-year>2029</span></li><li>We can see the knife</li></ul>
 
 </div>
 
@@ -1897,7 +1897,7 @@ if (window.thStickyRail) {
       <div class="th-stark-duo">
         <div>
       <div class="th-st-top">
-        <h4 id="migration-is-one-transaction-not-a">Migration is <span class="th-st-a">one transaction,</span> not a hard fork.</h4>
+        <h4 id="migration-is-one-transaction-not-a"><span class="th-st-a">One transaction,</span> not a hard fork.</h4>
         <span class="th-st-chip q">Native account abstraction</span>
       </div>
       <p>On Starknet, signature logic lives in the account contract, not in the protocol. Upgrading a wallet to post-quantum signatures is a <strong>single transaction by the user</strong>: no protocol change, no new address format, no network-wide coordination.</p>
@@ -2174,7 +2174,7 @@ if (window.thStickyRail) {
       <div class="th-stark-duo th-duo-mid">
         <div>
       <div class="th-st-top">
-        <h4 id="post-quantum-wallets-already-running-on">Post-quantum accounts are <span class="th-st-a">already live on Mainnet.</span></h4>
+        <h4 id="post-quantum-wallets-already-running-on">Post-quantum accounts <span class="th-st-a">already run on Mainnet.</span></h4>
         <!-- THE SCOPE RULE, and it applies site-wide, not just here:
              A CHIP INHERITS THE SCOPE OF WHATEVER IT SITS BESIDE. A chip next
              to a heading qualifies everything that heading covers. So a
@@ -4055,9 +4055,16 @@ var Q_PERISHABLE = {
     document.querySelector('[data-qd-min]').textContent = String(m).padStart(2,'0');
     var rm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
     document.querySelector('[data-qd-sec]').textContent = rm ? '00' : String(s).padStart(2,'0');
-    // the label's year comes from the same target constant as the digits
-    var qy = document.querySelector('[data-qd-year]');
-    if (qy && qy.textContent !== String(new Date(target).getUTCFullYear())) qy.textContent = new Date(target).getUTCFullYear();
+    // the label's year comes from the same target constant as the digits.
+    // querySelectorAll, not querySelector: the hero strip's label was the
+    // only [data-qd-year] until section 02's "until one day in <year>"
+    // heading joined it (2026-09-09), and a single-element query would have
+    // left the heading's literal unstamped and free to drift from the
+    // constant. Both carry 2029 in the markup as their no-JS value.
+    var qyy = String(new Date(target).getUTCFullYear());
+    [].forEach.call(document.querySelectorAll('[data-qd-year]'), function(qy){
+      if (qy.textContent !== qyy) qy.textContent = qyy;
+    });
   }
   // The interval used to run forever, including for readers who could not
   // see the panel and in hidden tabs. Same discipline as the hero field and
