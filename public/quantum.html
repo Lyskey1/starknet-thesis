@@ -1620,8 +1620,19 @@ if (window.thStickyRail) {
 
   <div class="qg-holder">
   <div class="qg-bloom" aria-hidden="true"><i style="--bc:var(--th-q);left:6%;top:12%;width:30%;height:76%"></i></div>
-  <div class="th-pm-stathero qg-card th-pm-reveal"><span class="big">10,000&times;</span>
-  <p>The estimated cost of a quantum attack on crypto's cryptography has <b>collapsed roughly 10,000x since 2012</b>, paper after paper, all from the organizations that actually build the hardware.</p></div>
+  <!-- THE 10,000x MULTIPLIER IS GONE (2026-09-09) and must not come back.
+       It was not a measured series. It divided a 2012 surface-code estimate
+       for factoring a 2000-bit number (~1e9 physical qubits) by a 2026
+       estimate for a DIFFERENT problem, the 256-bit elliptic-curve discrete
+       log (<5e5 physical qubits), across papers with different error models,
+       and the arithmetic of even that mismatched pair is ~2,000x, not
+       10,000x. The Google/Ethereum Foundation paper's own comparison is
+       "nearly a 20 fold reduction over prior estimates" for ECDLP-256.
+       What replaces it is that paper's dated point estimate with the
+       assumptions it is conditional on stated in the same breath. -->
+  <div class="th-pm-stathero qg-card th-pm-reveal"><span class="big">&lt;500k</span>
+  <p><b>Fewer than half a million physical qubits</b>: the March 2026 estimate for breaking secp256k1's elliptic curve, the one behind most crypto wallets. <em>Conditional</em> arithmetic, not a measurement. No such machine exists.</p>
+  <p class="qcost-src" data-src="https://arxiv.org/abs/2603.28846" data-checked="2026-09-09"><a href="https://arxiv.org/abs/2603.28846" target="_blank" rel="noopener noreferrer">Babbush et al., 30 Mar 2026</a> &middot; assumptions at right</p></div>
   </div>
 
   <!-- resource collapse chart (component preserved, only wrapped + labels de-em-dashed) -->
@@ -1631,21 +1642,22 @@ if (window.thStickyRail) {
   <div class="th-pm-note th-pm-reveal">
     <div class="chart-card">
       <div class="chart-head">
-        <div class="t">The collapse of the qubit barrier</div>
-        <div class="s">physical qubits required · log scale</div>
+        <div class="t">Three estimates, three papers</div>
+        <div class="s">physical qubits, as estimated at the time · log scale · not one series</div>
       </div>
       <div class="chartbars" id="bars">
-        <a class="bar-col" href="https://arxiv.org/abs/1208.0928" target="_blank" rel="noopener noreferrer"><div class="bar red" style="height:90%"><span class="v">~1,000,000,000</span></div><div class="yr">2012</div><div class="lb">RSA-2048 estimate</div></a>
-        <a class="bar-col" href="https://arxiv.org/abs/2505.15917" target="_blank" rel="noopener noreferrer"><div class="bar orange" style="height:55%"><span class="v">&lt;1,000,000</span></div><div class="yr">May 2025</div><div class="lb">RSA-2048 (Gidney), ~1,000x drop</div></a>
-        <a class="bar-col" href="https://arxiv.org/abs/2603.28846" target="_blank" rel="noopener noreferrer"><div class="bar" style="height:42%"><span class="v">&lt;500,000</span></div><div class="yr">Mar 2026</div><div class="lb">ECDLP-256 (Google x EF), the curve behind your wallet</div></a>
+        <a class="bar-col" href="https://arxiv.org/abs/1208.0928" target="_blank" rel="noopener noreferrer"><div class="bar red" style="height:90%"><span class="v">~1,000,000,000</span></div><div class="yr">2012</div><div class="lb">Factoring a 2000-bit number (Fowler et al.), ~1 day</div></a>
+        <a class="bar-col" href="https://arxiv.org/abs/2505.15917" target="_blank" rel="noopener noreferrer"><div class="bar orange" style="height:55%"><span class="v">&lt;1,000,000</span></div><div class="yr">May 2025</div><div class="lb">Factoring RSA-2048 (Gidney), &lt;1 week</div></a>
+        <a class="bar-col" href="https://arxiv.org/abs/2603.28846" target="_blank" rel="noopener noreferrer"><div class="bar" style="height:42%"><span class="v">&lt;500,000</span></div><div class="yr">Mar 2026</div><div class="lb">ECDLP-256, secp256k1 (Google x EF), minutes</div></a>
       </div>
-      <p class="chart-note">ECC keys are ~10x smaller than RSA keys, so a smaller machine breaks them first. Simply put: crypto is at the front line of the risk.</p>
+      <p class="chart-note"><b>Three different problems, not one series.</b> The first two estimate integer factoring, the third the elliptic-curve discrete log, each on its own error model: three dated snapshots, not one quantity falling. The third paper does note that elliptic-curve keys are "almost an order of magnitude smaller than those of RSA at a similar security level".</p>
+      <p class="chart-note chart-srcs">Read <time datetime="2026-09-09">2026-09-09</time>. Each bar links to its paper. <a href="https://arxiv.org/abs/2603.28846" target="_blank" rel="noopener noreferrer">Babbush 2026</a>: 1,200 logical qubits + 90M Toffoli gates, or 1,450 + 70M; surface code, 10<sup>&minus;3</sup> error rate, planar connectivity. <a href="https://arxiv.org/abs/1208.0928" target="_blank" rel="noopener noreferrer">Fowler 2012</a> and <a href="https://arxiv.org/abs/2505.15917" target="_blank" rel="noopener noreferrer">Gidney 2025</a> assume their own error models.</p>
     </div>
   </div>
   </div>
   </div>
 
-  <ul class="rxa-keys"><li>10,000x since 2012</li><li>Physical qubits</li><li>RSA-2048</li><li>ECDLP-256</li></ul>
+  <ul class="rxa-keys"><li>Conditional estimates</li><li>Physical qubits</li><li>RSA-2048</li><li>ECDLP-256</li></ul>
 
 </div>
 
@@ -2431,6 +2443,17 @@ if (window.thStickyRail) {
 .th-pq-qualify b{color:var(--th-ink);font-weight:600;}
 .th-pq-qsrc{display:block;margin-top:8px;font-family:'IBM Plex Mono',monospace;
   font-size:11px;letter-spacing:.06em;color:var(--th-muted);}
+/* the attack-cost source lines (2026-09-09), matching .th-pq-qsrc */
+.qcost-src,.chart-srcs{font-family:'IBM Plex Mono',monospace;font-size:11px;
+  line-height:1.7;letter-spacing:.04em;color:var(--th-muted);margin-top:10px;}
+/* the paper's assumptions, in mono so the required detail does not push this
+   chapter panel past one viewport; measured, see the commit message */
+.qcost-assume{font-family:'IBM Plex Mono',monospace;font-size:11px;line-height:1.75;
+  letter-spacing:.03em;color:var(--th-muted);margin-top:12px;padding-top:10px;
+  border-top:1px solid var(--th-hair);}
+.qcost-assume sup{font-size:9px;}
+.qcost-src a,.chart-srcs a{color:var(--th-q);text-decoration:underline;
+  text-underline-offset:3px;text-decoration-thickness:1px;}
 .th-pq-card{border:1px solid var(--th-hair);border-radius:0;overflow:hidden;background:var(--th-panel);}
 .th-pq-table{width:100%;border-collapse:collapse;}
 .th-pq-table thead th{text-align:left;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--th-muted);padding:16px 20px;border-bottom:1px solid var(--th-hair);background:rgba(255,255,255,.015);white-space:nowrap;}
