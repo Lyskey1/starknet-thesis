@@ -1541,7 +1541,13 @@ if (window.thStickyRail) {
   <!-- chapter 1: the race -->
   <div class="th-q-chapter th-pm-reveal">
     <h3 id="one-key-two-machines" class="scale-title">One key. <span>Two machines.</span></h3>
-    <p class="scale-intro">Every wallet in crypto is protected by the same lock: elliptic-curve cryptography, the math that links your private key to your public address. Breaking it with today's computers is impossible on any human timescale. The picture changes completely with a quantum computer.</p>
+    <!-- BOUNDED 2026-09-09. This read "Every wallet in crypto", which is not
+     true and did not need to be: hash-based and lattice-based accounts
+     exist, Starknet's own demonstrated Falcon-512 accounts among them, and
+     the claim was arguing against the page's own later content. The bound
+     is the one the Google/Ethereum Foundation paper draws: mainstream
+     accounts that sign with elliptic-curve signatures. -->
+    <p class="scale-intro">Nearly every account in mainstream crypto is protected by the same lock: <b>elliptic-curve signatures</b>, the math that links your private key to your public address. Bitcoin and Ethereum both sign this way, which is why a single paper about one curve is a problem for most of the market at once. Breaking it with today's computers is impossible on any human timescale. The picture changes with a quantum computer.</p>
   </div>
 
 
@@ -1865,7 +1871,20 @@ if (window.thStickyRail) {
        heading (search anchor + the hero CTA target). -->
   <div class="th-pm-head th-pm-reveal"><span class="th-pm-marker"></span><span class="th-pm-num">03</span><h2 id="starknet-will-be-ready-before-q" class="th-pm-title">Starknet will be ready <b>before Q-day.</b></h2></div>
   <p class="th-pm-eyebrow th-pm-reveal">The head start</p>
-  <p class="qprop-body th-pm-reveal">Every other major chain starts its quantum migration from zero: vulnerable proofs, vulnerable wallets, and a hard fork between them and safety. Starknet starts from three facts that are already true on mainnet today.</p>
+  <!-- THE "FROM ZERO" CLAIM IS GONE (2026-09-09) and must not come back.
+     It said "Every other major chain starts its quantum migration from
+     zero". Ethereum publishes a post-quantum roadmap covering accounts
+     (native account abstraction for EOAs), consensus signatures
+     (hash-based leanXMSS aggregated by leanVM) and replacing KZG, with
+     milestones targeted around 2029, and that roadmap itself states
+     "STARKs, which rely on hash functions rather than elliptic curves,
+     are already quantum-resistant and are used by several rollups". So
+     the comparison was false in both directions: others are not at zero,
+     and the party the page compares itself against agrees about STARKs.
+     What is left is the real, narrower difference: where each chain
+     starts from, not whether anyone else has started. -->
+  <p class="qprop-body th-pm-reveal">Chains are not starting this from the same place, and several are not starting from nothing: <a href="https://ethereum.org/roadmap/security/quantum-resistance/" target="_blank" rel="noopener noreferrer">Ethereum publishes a post-quantum roadmap</a> covering accounts, consensus signatures and its KZG commitments. The difference is what each has to replace. A chain whose proof system rests on elliptic curves has to change that proof system; Starknet's rests on hash functions, so its proving layer needs no migration, and Ethereum's own roadmap says as much about STARKs. What Starknet still owes is everything above that layer, which the rest of this section sets out.</p>
+  <p class="qprop-src" data-src="https://ethereum.org/roadmap/security/quantum-resistance/" data-checked="2026-09-09">Ethereum roadmap, post-quantum cryptography, read <time datetime="2026-09-09">2026-09-09</time>.</p>
 
   <!-- THE HEAD START, PART 5 REDO (2026-09-07): objects as the selector.
        The exploded isometric stack is gone. The selector row is three equal
@@ -2448,6 +2467,9 @@ if (window.thStickyRail) {
   line-height:1.7;letter-spacing:.04em;color:var(--th-muted);margin-top:10px;}
 /* the paper's assumptions, in mono so the required detail does not push this
    chapter panel past one viewport; measured, see the commit message */
+.qprop-src{font-family:'IBM Plex Mono',monospace;font-size:11px;line-height:1.7;
+  letter-spacing:.04em;color:var(--th-muted);margin-top:10px;}
+.qprop-src a{color:var(--th-q);}
 .qcost-assume{font-family:'IBM Plex Mono',monospace;font-size:11px;line-height:1.75;
   letter-spacing:.03em;color:var(--th-muted);margin-top:12px;padding-top:10px;
   border-top:1px solid var(--th-hair);}
