@@ -74,66 +74,6 @@
   }
   body.page-privacy ::selection { background: var(--em); color: #0d0d0d; }
 
-  /* CLAIM BAND: twin of .eco-marquee / .dg-marquee. Seamless loop over
-     repeated sets (three here, see the markup for why), edge fade masks,
-     hover pause, IO gated, same 70s duration as the other bands. The items are plain labels, never
-     links: they are claims, not navigation.
-     Two deliberate divergences from the sibling bands, both because
-     these items carry CONTENT the page does not repeat elsewhere (the
-     ecosystem band repeats project names from the sections below it, so
-     it is decorative and fully aria-hidden):
-     1) only the DUPLICATE sets are aria-hidden, so the claims are read
-        once by a screen reader instead of three times or not at all;
-     2) below 981px the band stays, as static wrapped rows, where the
-        sibling bands hide entirely. */
-  /* 10px of band padding, not the sibling bands' 19px: their items are
-     bare text, these are chips that carry 9px of their own padding plus a
-     border, so the band is 41px of content against their 21px. Matching
-     their padding would put the band 20px taller and push its lower edge
-     past the fold at 1440x900, with the hero already at exactly the
-     ecosystem height. */
-  .pv-marquee { border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); overflow: hidden; padding: 10px 0;
-    -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
-            mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent); }
-  .pv-mq-track { display: flex; width: max-content; }
-  .pv-mq-set { display: flex; gap: 14px; padding-right: 14px; }
-  .pv-mq-set > span { /* child combinator: the FEE chip nests a live-value span, and the old descendant selector dressed it as a second pill, inflating the whole flex row (59px chips vs quantum's 39px) */ font-family: var(--mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; white-space: nowrap;
-    border: 1px solid var(--em-line); color: var(--em); padding: 9px 16px; border-radius: 99px; display: inline-flex; }
-  /* two sets up to 2600px viewports, three from there. The loop period is
-     one set width (2600px at 1440) in both regimes: -50% of a 2-set track
-     equals -33.33% of a 3-set track, so rate and seam are identical. An
-     N-set track covers viewports up to (N-1) set widths, so two sets
-     cover everything to 2600px (every DPR-2 laptop, 2560px desktops);
-     3440px ultrawides and deep zoom-out get the third set back or the
-     band would run bare at the loop point. Each glass chip is a
-     composited layer (backdrop-filter, never culled inside the animated
-     track while the band is on screen), so the third set costs 12 layers
-     wherever it exists: it now exists only where it covers something.
-     The width switch keys on the same [data-dup] sets the reduced-motion
-     and sub-981px static treatments hide; the no-preference guard keeps
-     it from out-ranking the reduced-motion hide. */
-  .pv-marquee.run .pv-mq-track { animation: pvmq 70s linear infinite; }
-  @keyframes pvmq { to { transform: translateX(-50%); } }
-  .pv-mq-set[data-dup] + .pv-mq-set[data-dup] { display: none; }
-  @media (min-width: 2600px) and (prefers-reduced-motion: no-preference) {
-    .pv-mq-set[data-dup] + .pv-mq-set[data-dup] { display: flex; }
-    .pv-marquee.run .pv-mq-track { animation-name: pvmq3; }
-  }
-  @keyframes pvmq3 { to { transform: translateX(-33.3333%); } }
-  .pv-marquee:hover .pv-mq-track { animation-play-state: paused; }
-  @media (prefers-reduced-motion: reduce) {
-    .pv-mq-track { animation: none !important; flex-wrap: wrap; width: auto; gap: 12px 0; }
-    .pv-mq-set[data-dup] { display: none; }
-    .pv-mq-set { flex-wrap: wrap; gap: 12px; padding-right: 0; }
-    .pv-marquee { -webkit-mask-image: none; mask-image: none; }
-  }
-  @media (max-width: 980px) {
-    /* static wrapped rows, not hidden: these claims appear nowhere else */
-    .pv-mq-track { animation: none !important; flex-wrap: wrap; width: auto; }
-    .pv-mq-set[data-dup] { display: none; }
-    .pv-mq-set { flex-wrap: wrap; gap: 10px; padding: 0 24px; }
-    .pv-marquee { -webkit-mask-image: none; mask-image: none; padding: 16px 0; }
-  }
 
 
   /* ============ SECTION SHELL (quantum th-pm design system, emerald) ============ */
@@ -913,10 +853,19 @@
   .bnt-filter .chip-glass { -webkit-backdrop-filter: none; backdrop-filter: none; background: var(--chip-solid, #0d0d0d); }
   .bnt-fbtn:focus-visible { outline: 2px solid var(--em); outline-offset: 2px; }
   /* site hover signature on the chip tier, page-scoped so the locked
-     css/glass-chips.css recipe stays untouched */
-  .pv-mq-set .chip-glass, .bnt-filter .chip-glass { transition: background var(--hover-dur) var(--hover-ease), box-shadow var(--hover-dur) var(--hover-ease); }
+     css/glass-chips.css recipe stays untouched. The .pv-mq-set half went
+     with the claim band (2026-09-09).
+     HEADS UP: .bnt-filter matches NOTHING on this page and already did
+     not before that removal, so this rule and the one above it are dead,
+     and with the band gone there are now zero .chip-glass elements here,
+     which makes the css/glass-chips.css link in the head dead weight on
+     this page too (the other five pages still use it). Left in place
+     rather than widening a band-removal into a cleanup; delete both
+     .bnt-filter rules and the stylesheet link together if the bento
+     filter is not coming back. */
+  .bnt-filter .chip-glass { transition: background var(--hover-dur) var(--hover-ease), box-shadow var(--hover-dur) var(--hover-ease); }
   @media (prefers-reduced-motion: reduce) {
-    .pv-mq-set .chip-glass, .bnt-filter .chip-glass { transition: none; }
+    .bnt-filter .chip-glass { transition: none; }
   }
   .bnt-fbtn[aria-pressed="true"] {
     border-color: var(--em);
@@ -1852,9 +1801,6 @@ body.page-privacy{--qhx-u:min(1vw,14.4px)}
   body.page-privacy .hero{padding:2rem 1.25rem 24px}
 }
 
-/* the claim band under the hero: main's thin divider (its rules are the
-   CLAIM BAND block above); the strip no longer hosts it */
-.pv-marquee { margin: 0; }
 /* ============================================================
    SECTION 02, THE TIGHTER BUDGET (2026-09-07): title block ~130, the
    illustration 120, case files ~180 at 11.5px mono, h3 + two-line clamp
@@ -2281,16 +2227,6 @@ h3.pmv-title { margin: 0 0 14px; font-size: clamp(22px, 2vw, 26px); line-height:
     </div>
   </div>
 </div>
-
-<!-- claim band: main's twelve labels on the sibling pages' marquee
-     mechanics, a thin full-width divider directly under the hero. The
-     first set is the readable one; the duplicates exist so the loop is
-     gapless and are aria-hidden. Labels only, never links. -->
-<div class="pv-marquee" id="pvMarquee"><div class="pv-mq-track">
-  <div class="pv-mq-set"><span class="chip-glass">ZK-STARK</span><span class="chip-glass">PROTOCOL-LEVEL PRIVACY</span><span class="chip-glass">PRIVACY FOR EVERY ASSET</span><span class="chip-glass">LOWEST PRIVACY FEES IN DEFI</span><span class="chip-glass">DEEP DEFI INTEGRATION</span><span class="chip-glass">WALLET-NATIVE</span><span class="chip-glass">ONE POOL FOR ALL ASSETS</span><span class="chip-glass">FEE: <span data-fee-target>~$0.12</span> &middot; PAID IN STRK</span><span class="chip-glass">SHIELDED IN SECONDS</span><span class="chip-glass">AUDITED AND FORMALLY VERIFIED</span><span class="chip-glass">OPEN SOURCE, APACHE 2.0</span><span class="chip-glass">STRK20S</span></div>
-  <div class="pv-mq-set" data-dup aria-hidden="true"><span class="chip-glass">ZK-STARK</span><span class="chip-glass">PROTOCOL-LEVEL PRIVACY</span><span class="chip-glass">PRIVACY FOR EVERY ASSET</span><span class="chip-glass">LOWEST PRIVACY FEES IN DEFI</span><span class="chip-glass">DEEP DEFI INTEGRATION</span><span class="chip-glass">WALLET-NATIVE</span><span class="chip-glass">ONE POOL FOR ALL ASSETS</span><span class="chip-glass">FEE: <span data-fee-target>~$0.12</span> &middot; PAID IN STRK</span><span class="chip-glass">SHIELDED IN SECONDS</span><span class="chip-glass">AUDITED AND FORMALLY VERIFIED</span><span class="chip-glass">OPEN SOURCE, APACHE 2.0</span><span class="chip-glass">STRK20S</span></div>
-  <div class="pv-mq-set" data-dup aria-hidden="true"><span class="chip-glass">ZK-STARK</span><span class="chip-glass">PROTOCOL-LEVEL PRIVACY</span><span class="chip-glass">PRIVACY FOR EVERY ASSET</span><span class="chip-glass">LOWEST PRIVACY FEES IN DEFI</span><span class="chip-glass">DEEP DEFI INTEGRATION</span><span class="chip-glass">WALLET-NATIVE</span><span class="chip-glass">ONE POOL FOR ALL ASSETS</span><span class="chip-glass">FEE: <span data-fee-target>~$0.12</span> &middot; PAID IN STRK</span><span class="chip-glass">SHIELDED IN SECONDS</span><span class="chip-glass">AUDITED AND FORMALLY VERIFIED</span><span class="chip-glass">OPEN SOURCE, APACHE 2.0</span><span class="chip-glass">STRK20S</span></div>
-</div></div>
 
 <!-- ================= SECTION 01 ================= -->
 <div class="th-pm-div"></div>
@@ -5464,25 +5400,6 @@ var PV_PERISHABLE = {
 
   renderPublic();
   syncDraftUI();
-})();
-</script>
-
-<script>
-/* claim band: same gate as the ecosystem and digest bands. The CSS only
-   declares the animation under .run, so off-screen the band is not
-   animating at all rather than animating invisibly. Reduced motion and
-   the sub-981px static treatment are handled in CSS, so this stays a
-   pure visibility toggle. */
-(function(){
-  var band = document.getElementById('pvMarquee');
-  if (!band) return;
-  if ('IntersectionObserver' in window) {
-    new IntersectionObserver(function(es){
-      band.classList.toggle('run', es[0].isIntersecting);
-    }, { threshold: 0 }).observe(band);
-  } else {
-    band.classList.add('run');
-  }
 })();
 </script>
 
