@@ -44,8 +44,18 @@
 .th-st-item:last-child{padding-bottom:0;}
 .th-st-item::before{content:'';position:absolute;left:-30px;top:7px;width:9px;height:9px;border-radius:50%;background:#c53400;box-shadow:0 0 12px rgba(197, 52, 0,.8);}
 .th-st-top{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:10px;}
-.th-st-item h4{font-family:'General Sans',sans-serif;font-weight:800;font-size:21px;letter-spacing:-.015em;color:#fafafa;}
-.th-st-item h4 .th-st-a{color:#c53400;}
+/* PANEL TITLE, addressed by CLASS not by tag (2026-09-09). These rules read
+   ".th-st-item h4" while quantum's three Head Start titles were h4 elements
+   sitting directly under the section's h2, which skipped a heading level.
+   They are h3 now, and this selector had to follow WITHOUT becoming
+   ".th-st-item h3": this file is shared with the landing (src/views/home.tsx),
+   whose problems panels put an h3.lp-h3 inside .th-st-item, and a tag
+   selector here would have overridden that page's own type at higher
+   specificity. Only quantum's titles carry .th-st-h, so the landing is
+   untouched. The h4 selector is removed rather than kept alongside, because
+   nothing on either consumer uses an h4 in this slot any more. */
+.th-st-item .th-st-h{font-family:'General Sans',sans-serif;font-weight:800;font-size:21px;letter-spacing:-.015em;color:#fafafa;}
+.th-st-item .th-st-h .th-st-a{color:#c53400;}
 .th-st-chip{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;padding:5px 11px;border-radius:999px;border:1px solid;white-space:nowrap;}
 .th-st-chip.q{color:#c53400;border-color:rgba(197, 52, 0,.35);background:rgba(197, 52, 0,.07);}
 
@@ -121,7 +131,7 @@
 .qsec3 .qw-ch{height:450px;}
 .qsec3 .qw-ch .th-stark-duo{grid-template-columns:minmax(0,1fr) minmax(0,440px);gap:0 44px;height:100%;align-items:center;}
 .qsec3 .th-st-item{height:100%;}
-.qsec3 .th-st-item h4{font-size:24px;}
+.qsec3 .th-st-item .th-st-h{font-size:24px;}
 /* tab 01: if the quote should outgrow the panel the paper shrinks first (it
    is height-capped to the column); the quote is never cut */
 .qsec3 .th-stark-doc{width:auto;max-width:min(360px,100%);height:100%;

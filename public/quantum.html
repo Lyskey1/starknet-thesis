@@ -1945,7 +1945,7 @@ if (window.thStickyRail) {
       <div class="th-stark-duo">
         <div class="ssui-left">
           <div class="th-st-top">
-            <h4 id="the-proofs-were-born-post-quantum">The proofs were <span class="th-st-a">born post-quantum.</span></h4>
+            <h3 class="th-st-h" id="the-proofs-were-born-post-quantum">The proofs were <span class="th-st-a">born post-quantum.</span></h3>
             <span class="th-st-chip q">STARKs</span>
           </div>
           <div class="ssui-body">
@@ -1966,7 +1966,7 @@ if (window.thStickyRail) {
       <div class="th-stark-duo">
         <div>
       <div class="th-st-top">
-        <h4 id="migration-is-one-transaction-not-a"><span class="th-st-a">One transaction,</span> not a hard fork.</h4>
+        <h3 class="th-st-h" id="migration-is-one-transaction-not-a"><span class="th-st-a">One transaction,</span> not a hard fork.</h3>
         <span class="th-st-chip q">Native account abstraction</span>
       </div>
       <p>On Starknet, signature logic lives in the account contract, not in the protocol. Upgrading a wallet to post-quantum signatures is a <strong>single transaction by the user</strong>: no protocol change, no new address format, no network-wide coordination.</p>
@@ -2249,7 +2249,7 @@ if (window.thStickyRail) {
              Hub supports; "users are migrated" and "wallets are protected" are
              not. The Hub is explicit: "Existing accounts do not change
              automatically." Do not restore a title that implies otherwise. -->
-        <h4 id="post-quantum-wallets-already-running-on">Post-quantum accounts are <span class="th-st-a">deployable on Mainnet today.</span></h4>
+        <h3 class="th-st-h" id="post-quantum-wallets-already-running-on">Post-quantum accounts are <span class="th-st-a">deployable on Mainnet today.</span></h3>
         <!-- THE SCOPE RULE, and it applies site-wide, not just here:
              A CHIP INHERITS THE SCOPE OF WHATEVER IT SITS BESIDE. A chip next
              to a heading qualifies everything that heading covers. So a
@@ -3775,7 +3775,7 @@ body.page-quantum{overflow-x:clip;}
     <div class="qw-panel video-grid vgrid" id="qw-panel-v" role="tabpanel" aria-live="polite">
       <article class="qw-ch video-slot th-pm-vcard is-on" data-ch="0" data-qv="0">
         <div class="frame">
-          <div class="qv-ph"><i class="ti ti-movie" aria-hidden="true"></i><span>No video set</span></div>
+          <div class="qv-ph" hidden><i class="ti ti-movie" aria-hidden="true"></i><span>No video set</span></div>
           <video class="qv-player" tabindex="0" preload="none" playsinline hidden poster="assets/posters/quantum-video-01.jpg"></video>
         </div>
         <div class="meta">
@@ -3787,7 +3787,7 @@ body.page-quantum{overflow-x:clip;}
       </article>
       <article class="qw-ch video-slot th-pm-vcard" data-ch="1" data-qv="1">
         <div class="frame">
-          <div class="qv-ph"><i class="ti ti-movie" aria-hidden="true"></i><span>No video set</span></div>
+          <div class="qv-ph" hidden><i class="ti ti-movie" aria-hidden="true"></i><span>No video set</span></div>
           <video class="qv-player" tabindex="0" preload="none" playsinline hidden poster="assets/posters/quantum-video-02.jpg"></video>
         </div>
         <div class="meta">
@@ -3799,7 +3799,7 @@ body.page-quantum{overflow-x:clip;}
       </article>
       <article class="qw-ch video-slot th-pm-vcard" data-ch="2" data-qv="2">
         <div class="frame">
-          <div class="qv-ph"><i class="ti ti-movie" aria-hidden="true"></i><span>No video set</span></div>
+          <div class="qv-ph" hidden><i class="ti ti-movie" aria-hidden="true"></i><span>No video set</span></div>
           <video class="qv-player" tabindex="0" preload="none" playsinline hidden poster="assets/posters/quantum-video-03.jpg"></video>
         </div>
         <div class="meta">
@@ -3811,7 +3811,7 @@ body.page-quantum{overflow-x:clip;}
       </article>
       <article class="qw-ch video-slot th-pm-vcard" data-ch="3" data-qv="3">
         <div class="frame">
-          <div class="qv-ph"><i class="ti ti-movie" aria-hidden="true"></i><span>No video set</span></div>
+          <div class="qv-ph" hidden><i class="ti ti-movie" aria-hidden="true"></i><span>No video set</span></div>
           <video class="qv-player" tabindex="0" preload="none" playsinline hidden poster="assets/posters/quantum-video-04.jpg"></video>
         </div>
         <div class="meta">
@@ -4991,7 +4991,16 @@ var VIDEOS = [
     c.querySelector('.qv-title').textContent = (st.title != null && st.title !== '') ? st.title : defaults[i];
     var live = blobs[i] || (st.src || '');   // prefer session preview, else saved path/URL
     if(live){ video.src = live; video.hidden = false; ph.hidden = true; }
-    else { video.removeAttribute('src'); try{ video.load(); }catch(e){} video.hidden = true; ph.hidden = false; }
+    else {
+      video.removeAttribute('src'); try{ video.load(); }catch(e){} video.hidden = true;
+      /* AN EMPTY SLOT RENDERS NOTHING (2026-09-09). "No video set" used to
+         show to every reader, and because the placeholder shipped visible in
+         the markup it also showed with JS disabled and flashed before this
+         engine ran, on four slots that are all seeded with real videos. It is
+         an EDITOR affordance now: revealed only when the admin gate has put a
+         .qv-editor in the card, hidden for everyone else. */
+      ph.hidden = !c.querySelector('.qv-editor');
+    }
     /* gates the custom control bar: no source, no chrome (see the vctl CSS) */
     c.classList.toggle('has-video', !!live);
     /* the length hint travels with the seeded file and nothing else: a
