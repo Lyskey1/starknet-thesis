@@ -130,8 +130,10 @@ export const Problems = ({ kicker, privateTransferFee, postQuantumFeeStrk }: Pro
                   <p>
                     Starknet&apos;s proofs were born post-quantum: STARKs are hash-based, with no
                     elliptic-curve assumptions, since the first block. Post-quantum accounts{" "}
-                    <Claim claim={PERISHABLE["pq-accounts-mainnet"]} />, and moving yours is one
-                    transaction, not a hard fork.
+                    <Claim claim={PERISHABLE["pq-accounts-mainnet"]} />, and adopting one is a
+                    transaction rather than a hard fork. Existing accounts do not change by
+                    themselves: wallet support, key management, recovery and custody are separate
+                    work.
                   </p>
                   {postQuantumFeeStrk && (
                     <div className="lp-stat">

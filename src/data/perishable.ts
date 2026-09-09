@@ -39,9 +39,16 @@ export const PERISHABLE = {
   /* Post-quantum accounts on Mainnet: quantum's Head Start tab 03 claim,
      same source, same check date, same quote (public/quantum.html, the
      .th-claim in the data-ch="2" panel). The claim can only strengthen with
-     time; the break date is a yearly re-read. */
+     time; the break date is a yearly re-read.
+     TEXT CORRECTED 2026-09-09. It read "already run on Mainnet", which is
+     true of the demonstrations and reads as production. StarkWare's own
+     Quantum Hub migration register says, verbatim, "Existing accounts do
+     not change automatically" and that "Wallet support, signing, key
+     management, recovery, custody, audits and adoption remain separate
+     work". "Deployable" and "demonstrated" are supported; "users are
+     migrated" and "wallets are protected" are not. */
   "pq-accounts-mainnet": {
-    text: "already run on Mainnet",
+    text: "have been demonstrated on Mainnet",
     src: "https://www.linkedin.com/posts/starkware_post-quantum-wallets-are-now-live-on-starknet-activity-7445099734052225024-MUUi",
     checked: "2026-08-21",
     breaks: "2027-08-21",
