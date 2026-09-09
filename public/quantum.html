@@ -2504,6 +2504,11 @@ if (window.thStickyRail) {
   text-underline-offset:3px;text-decoration-thickness:1px;
   text-decoration-color:color-mix(in srgb,var(--th-q) 45%,transparent);}
 .th-pq-qualify a:hover,.th-pq-qsrc a:hover{color:var(--th-ink);}
+/* the per-row Source links added with the row audit. They live inside the
+   collapsed detail rows, which is why default-blue went unnoticed. */
+.th-detail-src a{color:var(--th-q);text-decoration:underline;
+  text-underline-offset:2px;text-decoration-thickness:1px;}
+.th-detail-src a:hover{color:var(--th-ink);}
 .th-pq-qsrc{display:block;margin-top:8px;font-family:'IBM Plex Mono',monospace;
   font-size:11px;letter-spacing:.06em;color:var(--th-muted);}
 /* the attack-cost source lines (2026-09-09), matching .th-pq-qsrc */
@@ -2511,11 +2516,21 @@ if (window.thStickyRail) {
   line-height:1.7;letter-spacing:.04em;color:var(--th-muted);margin-top:10px;}
 /* the paper's assumptions, in mono so the required detail does not push this
    chapter panel past one viewport; measured, see the commit message */
-.qprov{padding:0 0 18px;}
+/* TOKENS DECLARED LOCALLY, and they have to be. --th-q, --th-muted and
+   --th-hair are scoped to .th-pm-sec, .th-pq and .th-fl on this page. This
+   band is outside all three, so var(--th-q) resolved to nothing, the color
+   declaration was invalid and the link inherited white. Same pattern as
+   .th-pq and .th-fl, which declare their own. */
+.qprov{padding:0 0 18px;--th-q:#c53400;--th-muted:#9a9a9a;--th-hair:rgba(250,250,250,.09);}
 .qprov-line{font-family:'IBM Plex Mono',monospace;font-size:11px;line-height:1.9;
   letter-spacing:.05em;color:var(--th-muted);margin:0;padding-top:18px;
   border-top:1px solid var(--th-hair);}
 .qprov-line a{color:var(--th-q);text-decoration:underline;text-underline-offset:3px;}
+/* the Ethereum-roadmap link in the comparison paragraph. Same default-blue
+   trap as the FIPS links: .qprop-body lends no link styling. */
+.qprop-body a{color:var(--th-q);text-decoration:underline;text-underline-offset:3px;
+  text-decoration-thickness:1px;text-decoration-color:color-mix(in srgb,var(--th-q) 45%,transparent);}
+.qprop-body a:hover{color:var(--th-ink);}
 .qprop-src{font-family:'IBM Plex Mono',monospace;font-size:11px;line-height:1.7;
   letter-spacing:.04em;color:var(--th-muted);margin-top:10px;}
 .qprop-src a{color:var(--th-q);}
