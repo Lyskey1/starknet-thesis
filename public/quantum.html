@@ -2489,10 +2489,21 @@ if (window.thStickyRail) {
 /* the Falcon / FIPS qualification under the matrix lead-in (2026-09-09).
    Unnested on purpose: an earlier attempt put it inside the @media
    (hover:none) touch-target block, which closed that block early and leaked
-   its button min-height to every width. */
-.th-pq-qualify{margin-top:14px;padding-top:14px;border-top:1px solid var(--th-hair);
-  font-size:14px;line-height:1.6;color:var(--th-muted);}
+   its button min-height to every width.
+   IT ALSO MUST NOT CARRY .scale-intro. Inside .qrm-head that class is
+   -webkit-line-clamp:2 above 861px, which silently cut this paragraph off at
+   "it is being..." and hid the entire FIPS mapping. It owns its type here
+   instead. */
+.th-pq-qualify{margin:14px 0 0;padding-top:14px;border-top:1px solid var(--th-hair);
+  font-family:'General Sans','Helvetica Neue',Arial,sans-serif;
+  font-size:14px;line-height:1.6;max-width:1000px;color:var(--th-muted);}
 .th-pq-qualify b{color:var(--th-ink);font-weight:600;}
+/* the inline FIPS links: without this they paint browser-default blue, the
+   same trap the btcfi body link hit */
+.th-pq-qualify a,.th-pq-qsrc a{color:var(--th-q);text-decoration:underline;
+  text-underline-offset:3px;text-decoration-thickness:1px;
+  text-decoration-color:color-mix(in srgb,var(--th-q) 45%,transparent);}
+.th-pq-qualify a:hover,.th-pq-qsrc a:hover{color:var(--th-ink);}
 .th-pq-qsrc{display:block;margin-top:8px;font-family:'IBM Plex Mono',monospace;
   font-size:11px;letter-spacing:.06em;color:var(--th-muted);}
 /* the attack-cost source lines (2026-09-09), matching .th-pq-qsrc */
@@ -2688,7 +2699,7 @@ body.page-quantum{overflow-x:clip;}
          or squints at the card should still leave this section knowing the
          mainnet Falcon work is a demonstration and that Falcon is not a
          finalized standard. Do not move this back into a chip. -->
-    <p class="scale-intro th-pq-qualify">Two things to carry out of this section. The post-quantum accounts that have run on Mainnet are <b>demonstrations</b>, built on verifiers their own authors describe as experimental and unaudited, intended for research and benchmarking rather than for holding funds. And Falcon is <b>not a finalized standard</b>: it is being standardized as FIPS 206, which is still in development. The finalized NIST signature standards are <a href="https://csrc.nist.gov/pubs/fips/204/final" target="_blank" rel="noopener noreferrer">FIPS 204</a> (ML-DSA) and <a href="https://csrc.nist.gov/pubs/fips/205/final" target="_blank" rel="noopener noreferrer">FIPS 205</a> (SLH-DSA); <a href="https://csrc.nist.gov/pubs/fips/203/final" target="_blank" rel="noopener noreferrer">FIPS 203</a> is ML-KEM, a key-encapsulation mechanism, not a signature scheme. Starknet's STARK proofs and its BLAKE2s-256 hashing are post-quantum by construction and are not members of any of those families. <span class="th-pq-qsrc" data-src="https://csrc.nist.gov/projects/post-quantum-cryptography/post-quantum-cryptography-standardization" data-checked="2026-09-09">Source: <a href="https://csrc.nist.gov/projects/post-quantum-cryptography/post-quantum-cryptography-standardization" target="_blank" rel="noopener noreferrer">NIST PQC standardization</a>, read <time datetime="2026-09-09">2026-09-09</time>.</span></p>
+    <p class="th-pq-qualify">Two things to carry out of this section. The post-quantum accounts that have run on Mainnet are <b>demonstrations</b>, built on verifiers their own authors describe as experimental and unaudited, intended for research and benchmarking rather than for holding funds. And Falcon is <b>not a finalized standard</b>: it is being standardized as FIPS 206, which is still in development. The finalized NIST signature standards are <a href="https://csrc.nist.gov/pubs/fips/204/final" target="_blank" rel="noopener noreferrer">FIPS 204</a> (ML-DSA) and <a href="https://csrc.nist.gov/pubs/fips/205/final" target="_blank" rel="noopener noreferrer">FIPS 205</a> (SLH-DSA); <a href="https://csrc.nist.gov/pubs/fips/203/final" target="_blank" rel="noopener noreferrer">FIPS 203</a> is ML-KEM, a key-encapsulation mechanism, not a signature scheme. Starknet's STARK proofs and its BLAKE2s-256 hashing are post-quantum by construction and are not members of any of those families. <span class="th-pq-qsrc" data-src="https://csrc.nist.gov/projects/post-quantum-cryptography/post-quantum-cryptography-standardization" data-checked="2026-09-09">Source: <a href="https://csrc.nist.gov/projects/post-quantum-cryptography/post-quantum-cryptography-standardization" target="_blank" rel="noopener noreferrer">NIST PQC standardization</a>, read <time datetime="2026-09-09">2026-09-09</time>.</span></p>
   </div>
 
   <div class="th-pq">
