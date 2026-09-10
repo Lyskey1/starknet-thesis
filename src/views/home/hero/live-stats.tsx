@@ -11,19 +11,23 @@ import {
   REFRESH_MS,
   TICK_MS,
   GROWTHEPIE_CREDIT,
-  updatedStamp,
+  relativeStamp,
   WINDOW_DAYS,
 } from "@/lib/data/live-sources";
 
 /**
- * The baseline band: three LIVE numbers and one UPDATED stamp, the stamp
- * reporting the OLDEST of the three fetches (the privacy page's rule, so a
- * partially failed refresh can never claim freshness). Each slot is laid
+ * The baseline band: three LIVE numbers, and nothing else. Each slot is laid
  * out at full size from the first paint and revealed only once its value
  * has landed; a source that fails stays invisible. There is no literal
- * fallback anywhere on this band. The stamp rides the component's own label
- * slot (.qhx-cdlab, the strip's top padding band, where quantum carries its
- * deadline label).
+ * fallback anywhere on this band.
+ *
+ * FRESHNESS (2026-09-10): the printed "Live / UPDATED n HR AGO" line is gone
+ * from the band. The stamp still exists and still reports the OLDEST of the
+ * three fetches (the privacy page's rule, so a partially failed refresh can
+ * never claim freshness); it rides the band's own title attribute, refreshed
+ * by the same minute tick that drove the removed line. Nothing else moved:
+ * .qhx-cdlab was absolutely positioned in the strip's top padding band, so
+ * dropping it changes no geometry.
  *
  * APP REVENUE is the strk dashboard's own metric, "App revenue · 365D SUM":
  * chain-level app revenue for Starknet from growthepie, the trailing 365
@@ -98,37 +102,32 @@ export const LiveStats = () => {
   const oldest = landed.length ? Math.min(...landed.map((x) => x.at)) : 0;
 
   return (
-    <>
-      <p className="qhx-cdlab qhx-live" data-ready={landed.length ? "true" : "false"} aria-live="polite">
-        Live <span aria-hidden="true">/</span> <b>{oldest ? updatedStamp(oldest) : "UPDATED"}</b>
-      </p>
-      <ul className="qhx-stats">
-        {KEYS.map((key) => {
-          const entry = live[key];
-          const credited = key === "revenue";
-          return (
-            <li
-              key={key}
-              className="qhx-live"
-              data-ready={entry ? "true" : "false"}
-              aria-hidden={!entry}
-              {...(credited
-                ? {
-                    "data-perishable": "third-party",
-                    "data-src": appRev.src,
-                    "data-checked": appRev.checked,
-                    "data-says": appRev.says,
-                    title: CREDIT,
-                  }
-                : {})}
-            >
-              <b>{entry ? PRINT[key](entry.value) : PLACEHOLDER[key]}</b>
-              <span>{entry ? entry.label : PLACEHOLDER[key]}</span>
-              {credited && <span className="lp-vh">{CREDIT}</span>}
-            </li>
-          );
-        })}
-      </ul>
-    </>
+    <ul className="qhx-stats" aria-live="polite" {...(oldest ? { title: `Updated ${relativeStamp(oldest)}` } : {})}>
+      {KEYS.map((key) => {
+        const entry = live[key];
+        const credited = key === "revenue";
+        return (
+          <li
+            key={key}
+            className="qhx-live"
+            data-ready={entry ? "true" : "false"}
+            aria-hidden={!entry}
+            {...(credited
+              ? {
+                  "data-perishable": "third-party",
+                  "data-src": appRev.src,
+                  "data-checked": appRev.checked,
+                  "data-says": appRev.says,
+                  title: CREDIT,
+                }
+              : {})}
+          >
+            <b>{entry ? PRINT[key](entry.value) : PLACEHOLDER[key]}</b>
+            <span>{entry ? entry.label : PLACEHOLDER[key]}</span>
+            {credited && <span className="lp-vh">{CREDIT}</span>}
+          </li>
+        );
+      })}
+    </ul>
   );
 };

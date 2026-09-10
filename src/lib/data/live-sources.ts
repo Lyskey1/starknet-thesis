@@ -64,10 +64,16 @@ export function abbr(v: number) {
   return Math.round(v).toString();
 }
 
-/** privacy.html tickUpdated wording, from the oldest provenance */
-export function updatedStamp(oldest: number) {
+/**
+ * privacy.html tickUpdated wording, from the oldest provenance, as the
+ * relative half alone: "just now", "12 min ago", "1 hr ago". The landing's
+ * baseline band no longer prints a freshness line (2026-09-10); the stamp
+ * rides the band's title, so the wording is sentence case rather than the
+ * band label's caps.
+ */
+export function relativeStamp(oldest: number) {
   const m = Math.floor((Date.now() - oldest) / 60000);
-  return m < 1 ? "UPDATED JUST NOW" : m < 60 ? "UPDATED " + m + " MIN AGO" : "UPDATED " + Math.floor(m / 60) + " HR AGO";
+  return m < 1 ? "just now" : m < 60 ? m + " min ago" : Math.floor(m / 60) + " hr ago";
 }
 
 export const fetchShieldedValue = async (): Promise<number> => {
