@@ -1,15 +1,58 @@
 /**
  * Copy for the Starknet Thesis landing. Passed in via props, never imported
- * directly by a component.
+ * directly by a component: every sentence the page says lives here, and no
+ * section types one inline.
+ *
+ * Prose fields are plain strings carrying three inline forms, rendered by
+ * src/utils/inline-copy.tsx and reduced to plain text by the JSON-LD
+ * generator, so the schema and the page read one string:
+ *
+ *   [label](https://host/path)   an external body link, new tab
+ *   [label](/path)               an internal route link, same tab
+ *   [[key]]                      a registered perishable claim
+ *                                (src/data/perishable.ts, filled by the view)
+ *
+ * No figure is typed here. A stat line carries its CAPTION only; the number
+ * itself is derived at build from the file the thesis page derives it from
+ * (src/lib/data), and a missing source hides its line.
  */
 import { FOLLOW_LINKS } from "@/lib/links";
 
 export interface FaqCopy {
   eyebrow: string; title: string;
-  /** Answers are plain text with two inline forms: `[label](https://url)` renders a
-   *  body link; `[[key]]` renders a registered perishable claim (src/data/perishable.ts,
-   *  filled by the view), for wording that carries a source and a check date. */
   items: { question: string; answer: string }[];
+}
+
+/** One section 01 panel: the copy column of the object-selector triptych. */
+export interface PanelCopy {
+  /** the rail tile's name, and the panel's identity */
+  tab: string;
+  heading: string;
+  body: string;
+  /** the derived stat's caption, omitted where the panel carries no stat */
+  statLabel?: string;
+  close: string;
+  link: { label: string; href: string };
+}
+
+export interface ProblemsCopy {
+  /** the h2, split where it must not wrap */
+  title: { lead: string; nowrap: string };
+  panels: [PanelCopy, PanelCopy, PanelCopy];
+}
+
+export interface TickerCopy {
+  title: string;
+  body: string;
+  link: { label: string; href: string };
+}
+
+/** One signals card. `mono` is a format string; `{n}` and `{m}` are counts. */
+export interface SignalCardCopy {
+  heading: string;
+  blurb: string;
+  mono: string;
+  link: { label: string; href: string };
 }
 
 export interface FooterCopy {
@@ -17,6 +60,67 @@ export interface FooterCopy {
   columns: { heading: string; links: { label: string; href: string }[] }[];
   legal?: string;
 }
+
+/**
+ * Section 01, the three problems, in nav order. Each panel states the
+ * problem and then the answer; the perishable tokens are the wording that
+ * carries a source and a check date.
+ *
+ * OWNER COPY PASS, 2026-09-10: the three bodies below are owner-approved and
+ * shipped verbatim. Two of them changed what the page asserts, not only how
+ * it reads:
+ *  - privacy now claims "the cheapest privacy fees on the market", a
+ *    comparative superlative. It is registered as an owner-sourced claim
+ *    with a ninety-day break date, because the repository holds no sourced
+ *    fee comparison to rest it on.
+ *  - quantum now says accounts "are already running", and no longer carries
+ *    the sentence that existing accounts do not change by themselves. The
+ *    migration register that says so is cited on the roadmap claim in the
+ *    same paragraph. See src/data/perishable.ts, "pq-accounts-running".
+ */
+export const homeProblems: ProblemsCopy = {
+  title: { lead: "All three, answered ", nowrap: "on one chain." },
+  panels: [
+    {
+      tab: "Privacy",
+      heading: "Every wallet is a public ledger.",
+      body:
+        "Every interaction on a blockchain is public, and until now there was no other choice: " +
+        "balances, counterparties, salaries and strategies, visible to anyone, forever. Starknet " +
+        "makes it optional: real onchain privacy for any asset and any use case, " +
+        "[[privacy-cheapest-fees]], deep DeFi integration and composability, shielding in a few " +
+        "seconds, accessible straight from the wallet UI, with a compliance path from day one.",
+      statLabel: "Per private transfer, derived",
+      close: "Live on Mainnet today.",
+      link: { label: "Read Privacy", href: "/privacy" },
+    },
+    {
+      tab: "Quantum",
+      heading: "Quantum will break most chains.",
+      body:
+        "Every major chain signs with elliptic-curve cryptography, and a working quantum computer " +
+        "breaks it. While most chains will have to migrate everything, Starknet has already done " +
+        "most of the work: its proofs are hash-based, which is post-quantum by construction, " +
+        "account abstraction lets a wallet migrate in a single transaction, and " +
+        "[[pq-accounts-running]]. For the rest, [[pq-roadmap-public]].",
+      statLabel: "STRK per post-quantum account tx, derived",
+      close: "Starknet has been waiting for it.",
+      link: { label: "Read Quantum", href: "/quantum" },
+    },
+    {
+      tab: "BTCFi",
+      heading: "The biggest asset, barely used.",
+      body:
+        "Bitcoin is [[btc-largest-asset]] and most of it sits idle. Starknet built the perfect " +
+        "ecosystem for it: native staking, lending and borrowing, swaps, perps, options and yield, " +
+        "with BTC as collateral throughout.",
+      // no stat line: the btcfi page's BTC figures live in an inline fetch engine
+      // with an inline seed, not in a data module this build can read
+      close: "Starknet puts it to work.",
+      link: { label: "Read BTCFi", href: "/btcfi" },
+    },
+  ],
+};
 
 export const homeFaq: FaqCopy = {
   eyebrow: "Frequently asked",

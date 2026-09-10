@@ -4,46 +4,21 @@ import { animated, config, useSpring } from "@react-spring/web";
 import { useId, useLayoutEffect, useRef, useState } from "react";
 
 import type { FaqCopy } from "@/data/home";
-import type { FaqClaims } from "@/utils/seo/faq-structured-data";
+import { renderInline, type InlineClaims } from "@/utils/inline-copy";
 
 /**
- * An answer may carry two inline forms: `[label](https://...)` renders a body
- * link, `[[key]]` renders a registered perishable claim with its source and
- * check date as data attributes; everything else is text. The JSON-LD
- * generator reduces the same forms to plain text
- * (src/utils/seo/faq-structured-data.ts), so the schema and the rows read
- * one string.
+ * An answer carries the landing's three inline copy forms, rendered by the
+ * shared renderer (src/utils/inline-copy.tsx): an external body link, an
+ * internal route link, and a registered perishable claim with its source and
+ * check date as data attributes. The JSON-LD generator reduces the same
+ * forms to plain text (src/utils/seo/faq-structured-data.ts), so the schema
+ * and the rows read one string.
  */
-const TOKEN = /\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)|\[\[([a-z0-9-]+)\]\]/g;
-const renderAnswer = (text: string, claims: FaqClaims) => {
-  const out: React.ReactNode[] = [];
-  let last = 0;
-  for (const m of text.matchAll(TOKEN)) {
-    if (m.index! > last) out.push(text.slice(last, m.index));
-    if (m[3]) {
-      const c = claims[m[3]];
-      if (c) out.push(
-        <span key={m.index} className="th-claim" data-perishable="third-party" data-src={c.src} data-checked={c.checked} data-breaks={c.breaks}>
-          {c.text}
-        </span>,
-      );
-    } else {
-      out.push(
-        <a key={m.index} className="lp-a" href={m[2]} target="_blank" rel="noopener noreferrer">
-          {m[1]}
-        </a>,
-      );
-    }
-    last = m.index! + m[0].length;
-  }
-  if (last < text.length) out.push(text.slice(last));
-  return out;
-};
 
 interface FaqItemProps {
   question: string;
   answer: string;
-  claims: FaqClaims;
+  claims: InlineClaims;
   open: boolean;
   onToggle: () => void;
 }
@@ -85,7 +60,7 @@ const FaqItem = ({ question, answer, claims, open, onToggle }: FaqItemProps) => 
       </h3>
       <animated.div id={id} role="region" className="lp-faq-a" style={reveal} aria-hidden={!open}>
         <div ref={panelRef}>
-          <p>{renderAnswer(answer, claims)}</p>
+          <p>{renderInline(answer, claims)}</p>
         </div>
       </animated.div>
     </li>
@@ -95,7 +70,7 @@ const FaqItem = ({ question, answer, claims, open, onToggle }: FaqItemProps) => 
 export interface FaqSectionProps {
   copy: FaqCopy;
   kicker: string;
-  claims: FaqClaims;
+  claims: InlineClaims;
 }
 
 /**

@@ -14,13 +14,14 @@
  * landing.css carries the token bridge and the parity copy of the base type
  * rules those components compose on the static pages.
  */
-import { homeFaq, homeFooter } from "@/data/home";
+import { homeFaq, homeFooter, homeProblems } from "@/data/home";
 import { PERISHABLE } from "@/data/perishable";
 import { loadDigest } from "@/lib/data/digest";
 import { postQuantumAccountFeeStrk, privateTransferFee } from "@/lib/data/derived-fees";
 import { landingFeaturedProjects, projectsTracked } from "@/lib/data/ecosystem";
 import { qdayYear } from "@/lib/data/qday";
-import { getFaqStructuredData, type FaqClaims } from "@/utils/seo/faq-structured-data";
+import { getFaqStructuredData } from "@/utils/seo/faq-structured-data";
+import type { InlineClaims } from "@/utils/inline-copy";
 
 import { Hero } from "./home/hero/hero";
 import { PageBackdrop } from "./home/page-backdrop";
@@ -41,8 +42,13 @@ export const HomeView = async () => {
   const projects = projectsTracked();
   const year = qdayYear();
 
-  /* the FAQ's registered claims: the Q-day timeline's text is filled from the constant */
-  const faqClaims: FaqClaims = {
+  /* One registered-claim table for the whole page: section 01's panels and
+     the FAQ answers reference the same keys, so a claim registered once is
+     rendered once wherever the copy names it. The Q-day timeline's text is
+     the only filled one; its year comes from the constant the quantum page
+     counts down from, never typed. */
+  const claims: InlineClaims = {
+    ...PERISHABLE,
     "qday-timeline": {
       ...PERISHABLE["qday-timeline"],
       text: year ? PERISHABLE["qday-timeline"].text.replace("{QDAY_YEAR}", String(year)) : "",
@@ -70,13 +76,15 @@ export const HomeView = async () => {
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(getFaqStructuredData(homeFaq, faqClaims)) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(getFaqStructuredData(homeFaq, claims)) }}
       />
 
       <PageBackdrop />
       <Hero />
       <Problems
         kicker={kicker(0)}
+        copy={homeProblems}
+        claims={claims}
         privateTransferFee={privateTransferFee()}
         postQuantumFeeStrk={postQuantumAccountFeeStrk()}
       />
@@ -90,7 +98,7 @@ export const HomeView = async () => {
         logos={logos}
         latest={digest.latest}
       />
-      <FaqSection copy={homeFaq} kicker={kicker(3)} claims={faqClaims} />
+      <FaqSection copy={homeFaq} kicker={kicker(3)} claims={claims} />
       <SiteFooter copy={homeFooter} />
     </main>
   );
