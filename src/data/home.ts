@@ -122,6 +122,22 @@ export const homeProblems: ProblemsCopy = {
   ],
 };
 
+/**
+ * Section 02, the ticker. Heading and link are unchanged by the 2026-09-10
+ * owner copy pass; the body is owner-approved and shipped verbatim. It names
+ * the three narratives in the page's own order and then says what STRK does
+ * with them: secure, pay (gas and privacy fees alike), govern.
+ */
+export const homeTicker: TickerCopy = {
+  title: "The thesis, in a single asset.",
+  body:
+    "Onchain privacy, Bitcoin put to work in DeFi, and quantum resistance as the long-term bet: " +
+    "all three run on Starknet, and STRK is the asset that captures all of it. It secures the " +
+    "network, pays the fees, gas and privacy fees alike, and governs the protocol. Put simply, " +
+    "STRK captures the demand the thesis creates.",
+  link: { label: "What STRK does across the network", href: "/strk" },
+};
+
 export const homeFaq: FaqCopy = {
   eyebrow: "Frequently asked",
   title: "Frequently asked.",

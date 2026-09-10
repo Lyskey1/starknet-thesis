@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import type { TickerCopy } from "@/data/home";
+import { renderInline, type InlineClaims } from "@/utils/inline-copy";
 import { Flywheel } from "./flywheel";
 import { LogoRow, type LogoItem } from "./logo-row";
 
@@ -14,6 +16,8 @@ import { LogoRow, type LogoItem } from "./logo-row";
  */
 export interface TickerSignalsProps {
   tickerKicker: string;
+  ticker: TickerCopy;
+  claims: InlineClaims;
   signalsKicker: string;
   projectsTracked: number;
   weeklyRoundups: number;
@@ -23,16 +27,13 @@ export interface TickerSignalsProps {
   latest: { title: string; href: string; cover: string | null } | null;
 }
 
-export const TickerSignals = ({ tickerKicker, signalsKicker, projectsTracked, weeklyRoundups, monthlyRecaps, researchArticles, logos, latest }: TickerSignalsProps) => (
+export const TickerSignals = ({ tickerKicker, ticker, claims, signalsKicker, projectsTracked, weeklyRoundups, monthlyRecaps, researchArticles, logos, latest }: TickerSignalsProps) => (
   <div className="lp-twoup" id="ticker-signals">
     <section className="lp-ticker" id="ticker" aria-labelledby="the-thesis-in-a-single-asset">
       <p className="lp-kicker">{tickerKicker}</p>
-      <h2 className="lp-h2" id="the-thesis-in-a-single-asset">The thesis, in a single asset.</h2>
-      <p className="lp-p">
-        Privacy, quantum resistance and Bitcoin all run on Starknet. STRK is the asset that secures the
-        network and captures the demand the thesis creates.
-      </p>
-      <Link className="lp-link" href="/strk">What STRK does across the network</Link>
+      <h2 className="lp-h2" id="the-thesis-in-a-single-asset">{ticker.title}</h2>
+      <p className="lp-p">{renderInline(ticker.body, claims)}</p>
+      <Link className="lp-link" href={ticker.link.href}>{ticker.link.label}</Link>
       <div className="lp-fly" aria-hidden="true">
         <Flywheel />
       </div>

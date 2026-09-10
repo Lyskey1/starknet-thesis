@@ -14,7 +14,7 @@
  * landing.css carries the token bridge and the parity copy of the base type
  * rules those components compose on the static pages.
  */
-import { homeFaq, homeFooter, homeProblems } from "@/data/home";
+import { homeFaq, homeFooter, homeProblems, homeTicker } from "@/data/home";
 import { PERISHABLE } from "@/data/perishable";
 import { loadDigest } from "@/lib/data/digest";
 import { postQuantumAccountFeeStrk, privateTransferFee } from "@/lib/data/derived-fees";
@@ -90,6 +90,8 @@ export const HomeView = async () => {
       />
       <TickerSignals
         tickerKicker={kicker(1)}
+        ticker={homeTicker}
+        claims={claims}
         signalsKicker={kicker(2)}
         projectsTracked={projects}
         weeklyRoundups={digest.weeklyRoundups}
