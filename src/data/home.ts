@@ -176,13 +176,19 @@ export const homeFaq: FaqCopy = {
     },
     {
       question: "How is privacy on Starknet different from a mixer?",
+      /* the fee claim is the SAME registry entry section 01's privacy panel
+         renders, not a second one: one owner-sourced claim, one break date,
+         one place to re-verify it (src/data/perishable.ts). */
       answer:
-        "STRK20 is a privacy pool on Starknet itself, for any token and any use case, powered by ZK proofs. Entry escrows a viewing key that the proof enforces; by default it does nothing, and under a verified lawful request it can unwind one user's trail while the rest of the pool stays sealed. Private, not invisible.",
+        "STRK20 is a privacy pool on Starknet itself, for any token and any use case, powered by ZK proofs. It has [[privacy-cheapest-fees]], deep DeFi integration and composability, shielding and unshielding in a few seconds, and it is accessible straight from the wallet UI. Entry escrows a viewing key that the proof enforces: by default it does nothing, and under a verified lawful request it can unwind one user's trail while the rest of the pool stays sealed. Private, not invisible.",
     },
     {
       question: "Why does quantum matter for a blockchain today?",
+      /* the year is the Q-day constant the quantum page counts down from
+         (public/js/qday-config.js through src/lib/data/qday.ts), filled into
+         the claim's text by the view; nothing here types it. */
       answer:
-        "Governments, Big Tech and researchers are converging on the same timeline, [[qday-timeline]], for when quantum computers break today's elliptic-curve cryptography. Most chains will have to migrate. Starknet's proofs are hash-based, which is post-quantum by construction, with a committed roadmap to full end-to-end post-quantum security.",
+        "Governments, Big Tech and researchers are converging on the same timeline, [[qday-timeline]], for when quantum computers break today's elliptic-curve cryptography. While most chains will have to migrate everything, Starknet has already done most of the work: its proofs are hash-based, which is post-quantum by construction, account abstraction allows wallets to migrate in a single transaction, and [[pq-accounts-running]]. For the rest, [[pq-roadmap-public]].",
     },
     {
       question: "What does BTCFi actually mean here?",
@@ -192,7 +198,7 @@ export const homeFaq: FaqCopy = {
     {
       question: "Where does STRK come in?",
       answer:
-        "STRK secures the network and captures the demand the thesis creates. Every one of the three narratives routes value through the same asset. Read the STRK page for the utilities and the numbers.",
+        "STRK secures the network through staking, pays for gas and for privacy fees, and governs the protocol. Every one of the three narratives routes value through the same asset. Read [the STRK page](/strk) for the utilities and the numbers.",
     },
     {
       question: "Who writes this, and is it financial advice?",
