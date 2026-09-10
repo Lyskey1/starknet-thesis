@@ -2,12 +2,19 @@
  * The ecosystem data module, read at build time from the same file the
  * ecosystem page fetches at runtime (public/data/ecosystem.json).
  *
- * The count mirrors public/js/eco-globe.js exactly: "projects" are the six
- * project categories flattened (official, defi, consumer, nft, appchains,
- * tooling); the four people categories are "voices" and are not counted
- * here. Order inside a category is the data order, never re-sorted: the
- * owner pins accounts by dragging them to the head of their category, so
- * the first entry of each category is that category's pinned account.
+ * The counts mirror public/js/eco-globe.js exactly, and off the same field:
+ * an account's TYPE is the top-level category key it sits under in
+ * ecosystem.json, and that key is the only thing separating a project from a
+ * person on either page. The globe splits the ten keys into six project
+ * categories (official, defi, consumer, nft, appchains, tooling) and four
+ * people categories (starkware, snf, builders, shitposter), counts each
+ * side, and prints them as PROJECTS and VOICES. The two lists below are
+ * those two, so moving one entry between categories moves the ecosystem
+ * page's globe count and the landing's signals card together.
+ *
+ * Order inside a category is the data order, never re-sorted: the owner pins
+ * accounts by dragging them to the head of their category, so the first
+ * entry of each category is that category's pinned account.
  */
 import ecosystem from "../../../public/data/ecosystem.json";
 import featured from "../../../public/data/landing-featured.json";
@@ -22,7 +29,7 @@ export interface EcosystemAccount {
 
 type EcosystemData = Record<string, EcosystemAccount[] | undefined>;
 
-/** The same list, in the same order, as eco-globe.js. */
+/** The project half of eco-globe.js's split, same list, same order. */
 export const PROJECT_CATEGORIES = [
   "official",
   "defi",
@@ -32,13 +39,22 @@ export const PROJECT_CATEGORIES = [
   "tooling",
 ] as const;
 
+/** The people half of the same split: the globe's VOICES. */
+export const VOICE_CATEGORIES = ["starkware", "snf", "builders", "shitposter"] as const;
+
 const data = ecosystem as EcosystemData;
 
-export const projectAccounts = (): EcosystemAccount[] =>
-  PROJECT_CATEGORIES.flatMap((key) => data[key] ?? []);
+const accountsIn = (categories: readonly string[]): EcosystemAccount[] =>
+  categories.flatMap((key) => data[key] ?? []);
+
+export const projectAccounts = (): EcosystemAccount[] => accountsIn(PROJECT_CATEGORIES);
+export const voiceAccounts = (): EcosystemAccount[] => accountsIn(VOICE_CATEGORIES);
 
 /** The number the ecosystem page's globe shows as PROJECTS. */
 export const projectsTracked = (): number => projectAccounts().length;
+
+/** The number the ecosystem page's globe shows as VOICES. */
+export const voicesTracked = (): number => voiceAccounts().length;
 
 /**
  * The pinned head of each project category, in category order: one logo

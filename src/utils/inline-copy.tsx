@@ -71,3 +71,14 @@ export const renderInline = (text: string, claims: InlineClaims = {}): React.Rea
   if (last < text.length) out.push(text.slice(last));
   return out;
 };
+
+/**
+ * A count template: `{key}` is replaced by its count, formatted the way
+ * every other figure on the page is (en-US grouping). A key with no count
+ * behind it is left as it stands, so a missing source is visible rather
+ * than silently printing an empty gap.
+ */
+export const fillCounts = (template: string, counts: Record<string, number>) =>
+  template.replace(/\{([a-z]+)\}/g, (whole, key: string) =>
+    typeof counts[key] === "number" ? counts[key].toLocaleString("en-US") : whole,
+  );

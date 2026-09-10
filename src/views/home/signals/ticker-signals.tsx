@@ -1,25 +1,34 @@
+import { Fragment } from "react";
 import Link from "next/link";
 
-import type { TickerCopy } from "@/data/home";
-import { renderInline, type InlineClaims } from "@/utils/inline-copy";
+import type { SignalCardCopy, TickerCopy } from "@/data/home";
+import { fillCounts, renderInline, type InlineClaims } from "@/utils/inline-copy";
 import { Flywheel } from "./flywheel";
 import { LogoRow, type LogoItem } from "./logo-row";
 
 /**
  * Sections 02 and 03 in one viewport: the ticker on the left, the two signal
- * cards on the right. Every count is derived from the data modules the
- * ecosystem and digest pages are built from (src/lib/data): the six logos
- * are public/data/landing-featured.json's slugs through the avatar pipeline,
- * the digest counts follow the digest page's classifier (its "Research"
- * filter is the third), and the digest card's object is the real Substack
- * cover of the newest issue, the URL the digest page hotlinks.
+ * cards on the right. Not a sentence here is typed: every string comes from
+ * homeTicker and homeSignals (src/data/home.ts).
+ *
+ * Every count is derived from the data modules the ecosystem and digest
+ * pages are built from (src/lib/data): the six logos are
+ * public/data/landing-featured.json's slugs through the avatar pipeline, the
+ * ecosystem card's two counts are the two halves of the globe's own split
+ * (an account's category key in public/data/ecosystem.json is what separates
+ * a project from a person, on both pages), the digest counts follow the
+ * digest page's classifier (its "Research" filter is the third), and the
+ * digest card's object is the real Substack cover of the newest issue, the
+ * URL the digest page hotlinks.
  */
 export interface TickerSignalsProps {
   tickerKicker: string;
   ticker: TickerCopy;
   claims: InlineClaims;
   signalsKicker: string;
+  signals: { ecosystem: SignalCardCopy; digest: SignalCardCopy };
   projectsTracked: number;
+  voicesTracked: number;
   weeklyRoundups: number;
   monthlyRecaps: number;
   researchArticles: number;
@@ -27,7 +36,22 @@ export interface TickerSignalsProps {
   latest: { title: string; href: string; cover: string | null } | null;
 }
 
-export const TickerSignals = ({ tickerKicker, ticker, claims, signalsKicker, projectsTracked, weeklyRoundups, monthlyRecaps, researchArticles, logos, latest }: TickerSignalsProps) => (
+/**
+ * A filled mono line. The separators stay aria-hidden, so a screen reader
+ * reads the counts as counts and not as punctuation.
+ */
+const MonoLine = ({ text }: { text: string }) => (
+  <p className="lp-mono">
+    {text.split("\u00b7").map((part, index) => (
+      <Fragment key={index}>
+        {index > 0 && <span aria-hidden="true">&middot;</span>}
+        {part}
+      </Fragment>
+    ))}
+  </p>
+);
+
+export const TickerSignals = ({ tickerKicker, ticker, claims, signalsKicker, signals, projectsTracked, voicesTracked, weeklyRoundups, monthlyRecaps, researchArticles, logos, latest }: TickerSignalsProps) => (
   <div className="lp-twoup" id="ticker-signals">
     <section className="lp-ticker" id="ticker" aria-labelledby="the-thesis-in-a-single-asset">
       <p className="lp-kicker">{tickerKicker}</p>
@@ -45,23 +69,21 @@ export const TickerSignals = ({ tickerKicker, ticker, claims, signalsKicker, pro
       <div className="lp-cards">
         <article className="lp-card" id="signal-ecosystem">
           <div>
-            <h3>Ecosystem</h3>
-            <p>The builders and projects worth following.</p>
-            <p className="lp-mono">{projectsTracked.toLocaleString("en-US")} projects tracked</p>
-            <Link className="lp-link" href="/ecosystem">Explore the ecosystem</Link>
+            <h3>{signals.ecosystem.heading}</h3>
+            <p>{signals.ecosystem.blurb}</p>
+            <MonoLine text={fillCounts(signals.ecosystem.mono, { n: projectsTracked, m: voicesTracked })} />
+            <Link className="lp-link" href={signals.ecosystem.link.href}>{signals.ecosystem.link.label}</Link>
           </div>
           <LogoRow items={logos} />
         </article>
         <article className="lp-card" id="signal-digest">
           <div>
-            <h3>Digest</h3>
-            <p>Starknet&apos;s shipping, recapped every week and every month.</p>
-            <p className="lp-mono">
-              {weeklyRoundups.toLocaleString("en-US")} weekly roundups <span aria-hidden="true">&middot;</span>{" "}
-              {monthlyRecaps.toLocaleString("en-US")} monthly recaps <span aria-hidden="true">&middot;</span>{" "}
-              {researchArticles.toLocaleString("en-US")} research articles
-            </p>
-            <Link className="lp-link" href="/digest">Read the digest</Link>
+            <h3>{signals.digest.heading}</h3>
+            <p>{signals.digest.blurb}</p>
+            <MonoLine
+              text={fillCounts(signals.digest.mono, { w: weeklyRoundups, m: monthlyRecaps, r: researchArticles })}
+            />
+            <Link className="lp-link" href={signals.digest.link.href}>{signals.digest.link.label}</Link>
           </div>
           {latest && (
             <a className="lp-issue" href={latest.href} target="_blank" rel="noopener noreferrer">

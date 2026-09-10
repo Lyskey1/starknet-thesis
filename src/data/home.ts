@@ -138,6 +138,33 @@ export const homeTicker: TickerCopy = {
   link: { label: "What STRK does across the network", href: "/strk" },
 };
 
+/**
+ * Section 03, the two signal cards. Both mono lines are count templates:
+ * `{key}` is filled from the data module the matching page is built from,
+ * never typed. .lp-mono uppercases them in CSS, so the case written here is
+ * only the source's own; the ecosystem line is quoted from the owner's copy
+ * pass (2026-09-10) as written.
+ *
+ * The ecosystem line's two counts are the two halves of one split: an
+ * account's category key in public/data/ecosystem.json is what separates a
+ * project from a person, on the ecosystem page's globe and here alike
+ * (src/lib/data/ecosystem.ts). Editing that file moves both pages.
+ */
+export const homeSignals: { ecosystem: SignalCardCopy; digest: SignalCardCopy } = {
+  ecosystem: {
+    heading: "Ecosystem",
+    blurb: "The builders and projects worth following.",
+    mono: "{n} PROJECTS TRACKED \u00b7 {m} VOICES",
+    link: { label: "Explore the ecosystem", href: "/ecosystem" },
+  },
+  digest: {
+    heading: "Digest",
+    blurb: "Starknet's shipping, recapped every week and every month.",
+    mono: "{w} weekly roundups \u00b7 {m} monthly recaps \u00b7 {r} research articles",
+    link: { label: "Read the digest", href: "/digest" },
+  },
+};
+
 export const homeFaq: FaqCopy = {
   eyebrow: "Frequently asked",
   title: "Frequently asked.",

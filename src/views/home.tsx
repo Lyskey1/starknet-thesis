@@ -14,11 +14,11 @@
  * landing.css carries the token bridge and the parity copy of the base type
  * rules those components compose on the static pages.
  */
-import { homeFaq, homeFooter, homeProblems, homeTicker } from "@/data/home";
+import { homeFaq, homeFooter, homeProblems, homeSignals, homeTicker } from "@/data/home";
 import { PERISHABLE } from "@/data/perishable";
 import { loadDigest } from "@/lib/data/digest";
 import { postQuantumAccountFeeStrk, privateTransferFee } from "@/lib/data/derived-fees";
-import { landingFeaturedProjects, projectsTracked } from "@/lib/data/ecosystem";
+import { landingFeaturedProjects, projectsTracked, voicesTracked } from "@/lib/data/ecosystem";
 import { qdayYear } from "@/lib/data/qday";
 import { getFaqStructuredData } from "@/utils/seo/faq-structured-data";
 import type { InlineClaims } from "@/utils/inline-copy";
@@ -40,6 +40,7 @@ export const HomeView = async () => {
   const digest = await loadDigest();
   const logos = landingFeaturedProjects().map(({ name, handle, url, src, monogram }) => ({ name, handle, url, src, monogram }));
   const projects = projectsTracked();
+  const voices = voicesTracked();
   const year = qdayYear();
 
   /* One registered-claim table for the whole page: section 01's panels and
@@ -93,7 +94,9 @@ export const HomeView = async () => {
         ticker={homeTicker}
         claims={claims}
         signalsKicker={kicker(2)}
+        signals={homeSignals}
         projectsTracked={projects}
+        voicesTracked={voices}
         weeklyRoundups={digest.weeklyRoundups}
         monthlyRecaps={digest.monthlyRecaps}
         researchArticles={digest.researchArticles}
