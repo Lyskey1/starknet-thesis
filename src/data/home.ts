@@ -180,7 +180,7 @@ export const homeFaq: FaqCopy = {
          renders, not a second one: one owner-sourced claim, one break date,
          one place to re-verify it (src/data/perishable.ts). */
       answer:
-        "STRK20 is a privacy pool on Starknet itself, for any token and any use case, powered by ZK proofs. It has [[privacy-cheapest-fees]], deep DeFi integration and composability, shielding and unshielding in a few seconds, and it is accessible straight from the wallet UI. Entry escrows a viewing key that the proof enforces: by default it does nothing, and under a verified lawful request it can unwind one user's trail while the rest of the pool stays sealed. Private, not invisible.",
+        "STRK20 is a privacy pool on Starknet itself, for any token and any use case, powered by ZK proofs. It has [[privacy-cheapest-fees]], deep DeFi integration and composability, shielding and unshielding in a few seconds, and it is accessible straight from the wallet UI.",
     },
     {
       question: "Why does quantum matter for a blockchain today?",
