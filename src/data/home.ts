@@ -90,7 +90,7 @@ export const homeProblems: ProblemsCopy = {
         "makes it optional: real onchain privacy for any asset and any use case, " +
         "[[privacy-cheapest-fees]], deep DeFi integration and composability, shielding in a few " +
         "seconds, accessible straight from the wallet UI, with a compliance path from day one.",
-      statLabel: "Per private transfer, derived",
+      statLabel: "Per private transfer",
       close: "Live on Mainnet today.",
       link: { label: "Read Privacy", href: "/privacy" },
     },
@@ -103,7 +103,7 @@ export const homeProblems: ProblemsCopy = {
         "most of the work: its proofs are hash-based, which is post-quantum by construction, " +
         "account abstraction lets a wallet migrate in a single transaction, and " +
         "[[pq-accounts-running]]. For the rest, [[pq-roadmap-public]].",
-      statLabel: "STRK per post-quantum account tx, derived",
+      statLabel: "STRK per post-quantum account tx",
       close: "Starknet has been waiting for it.",
       link: { label: "Read Quantum", href: "/quantum" },
     },
