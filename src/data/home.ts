@@ -18,9 +18,22 @@
  */
 import { FOLLOW_LINKS } from "@/lib/links";
 
+export interface FaqItemCopy {
+  question: string;
+  answer: string;
+  /**
+   * Optional call to action, for an answer whose subject has a page of its
+   * own. Rendered under the answer text in section 01's link grammar, and
+   * NEVER part of the answer body: the FAQPage JSON-LD is generated from
+   * `answer` alone (src/utils/seo/faq-structured-data.ts), so a CTA label
+   * cannot leak into the schema. An item without one renders no link.
+   */
+  cta?: { label: string; href: string };
+}
+
 export interface FaqCopy {
   eyebrow: string; title: string;
-  items: { question: string; answer: string }[];
+  items: FaqItemCopy[];
 }
 
 /** One section 01 panel: the copy column of the object-selector triptych. */
@@ -181,6 +194,7 @@ export const homeFaq: FaqCopy = {
          one place to re-verify it (src/data/perishable.ts). */
       answer:
         "STRK20 is a privacy pool on Starknet itself, for any token and any use case, powered by ZK proofs. It has [[privacy-cheapest-fees]], deep DeFi integration and composability, shielding and unshielding in a few seconds, and it is accessible straight from the wallet UI.",
+      cta: { label: "Read Privacy", href: "/privacy" },
     },
     {
       question: "Why does quantum matter for a blockchain today?",
@@ -189,16 +203,19 @@ export const homeFaq: FaqCopy = {
          the claim's text by the view; nothing here types it. */
       answer:
         "Governments, Big Tech and researchers are converging on the same timeline, [[qday-timeline]], for when quantum computers break today's elliptic-curve cryptography. While most chains will have to migrate everything, Starknet has already done most of the work: its proofs are hash-based, which is post-quantum by construction, account abstraction allows wallets to migrate in a single transaction, and [[pq-accounts-running]]. For the rest, [[pq-roadmap-public]].",
+      cta: { label: "Read Quantum", href: "/quantum" },
     },
     {
       question: "What does BTCFi actually mean here?",
       answer:
         "Turning idle BTC into working capital on Starknet: lend and borrow against it, earn yield on it, stake it to secure the network, trade it for cents, and shield it when you want privacy.",
+      cta: { label: "Read BTCFi", href: "/btcfi" },
     },
     {
       question: "Where does STRK come in?",
       answer:
-        "STRK secures the network through staking, pays for gas and for privacy fees, and governs the protocol. Every one of the three narratives routes value through the same asset. Read [the STRK page](/strk) for the utilities and the numbers.",
+        "STRK secures the network through staking, pays for gas and for privacy fees, and governs the protocol. Every one of the three narratives routes value through the same asset.",
+      cta: { label: "Read STRK", href: "/strk" },
     },
     {
       question: "Who writes this, and is it financial advice?",

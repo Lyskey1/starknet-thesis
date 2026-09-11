@@ -1,9 +1,10 @@
 "use client";
 
 import { animated, config, useSpring } from "@react-spring/web";
+import Link from "next/link";
 import { useId, useLayoutEffect, useRef, useState } from "react";
 
-import type { FaqCopy } from "@/data/home";
+import type { FaqCopy, FaqItemCopy } from "@/data/home";
 import { renderInline, type InlineClaims } from "@/utils/inline-copy";
 
 /**
@@ -15,9 +16,7 @@ import { renderInline, type InlineClaims } from "@/utils/inline-copy";
  * and the rows read one string.
  */
 
-interface FaqItemProps {
-  question: string;
-  answer: string;
+interface FaqItemProps extends FaqItemCopy {
   claims: InlineClaims;
   open: boolean;
   onToggle: () => void;
@@ -28,8 +27,21 @@ interface FaqItemProps {
  * measured before paint and the first open never flashes; the `+` marker
  * turns into an `x` on open. `ReducedMotion` at the app root flips
  * react-spring's global skipAnimation, so both jump under reduced motion.
+ *
+ * An answer whose subject has a page of its own ends with that page's link,
+ * in section 01's CTA grammar (.lp-link, mono caps and a chevron). The
+ * target comes from the item's own data, never from the component.
+ *
+ * KEYBOARD: a collapsed panel is animated to height 0, which does NOT take
+ * its links out of the tab order, so a closed answer's CTA would otherwise
+ * be reachable by Tab and would scroll the page to an invisible target. The
+ * panel carries `inert` while closed, which drops the whole subtree from
+ * both the tab order and the accessibility tree, and `aria-hidden` stays for
+ * anything that does not implement inert. Opening clears both in the same
+ * commit that starts the spring, so the CTA is tabbable as soon as the row
+ * opens.
  */
-const FaqItem = ({ question, answer, claims, open, onToggle }: FaqItemProps) => {
+const FaqItem = ({ question, answer, cta, claims, open, onToggle }: FaqItemProps) => {
   const panelRef = useRef<HTMLDivElement>(null);
   const [height, setHeight] = useState(0);
   const id = useId();
@@ -42,7 +54,7 @@ const FaqItem = ({ question, answer, claims, open, onToggle }: FaqItemProps) => 
     const observer = new ResizeObserver(measure);
     observer.observe(panel);
     return () => observer.disconnect();
-  }, [answer]);
+  }, [answer, cta]);
 
   const reveal = useSpring({ height: open ? height : 0, opacity: open ? 1 : 0, config: config.gentle });
   const marker = useSpring({ rotate: open ? 45 : 0, config: config.stiff });
@@ -58,9 +70,12 @@ const FaqItem = ({ question, answer, claims, open, onToggle }: FaqItemProps) => 
           </animated.span>
         </button>
       </h3>
-      <animated.div id={id} role="region" className="lp-faq-a" style={reveal} aria-hidden={!open}>
+      <animated.div id={id} role="region" className="lp-faq-a" style={reveal} aria-hidden={!open} inert={!open}>
         <div ref={panelRef}>
           <p>{renderInline(answer, claims)}</p>
+          {cta && (
+            <Link className="lp-link" href={cta.href}>{cta.label}</Link>
+          )}
         </div>
       </animated.div>
     </li>
@@ -87,8 +102,7 @@ export const FaqSection = ({ copy, kicker, claims }: FaqSectionProps) => {
         {copy.items.map((item, index) => (
           <FaqItem
             key={item.question}
-            question={item.question}
-            answer={item.answer}
+            {...item}
             claims={claims}
             open={openIndex === index}
             onToggle={() => setOpenIndex(openIndex === index ? null : index)}

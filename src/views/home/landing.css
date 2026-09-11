@@ -214,7 +214,12 @@ body > *:not(.eco-bd) { position: relative; z-index: 1; }
 .lp-faq-m1 { top: 50%; left: 0; width: 100%; height: 1.5px; transform: translateY(-50%); }
 .lp-faq-m2 { top: 0; left: 50%; width: 1.5px; height: 100%; transform: translateX(-50%); }
 .lp-faq-a { overflow: hidden; }
-.lp-faq-a p { margin: 0; padding: 0 6px 18px; max-width: 66ch; font-size: 14.5px; line-height: 1.65; color: var(--th-muted); }
+/* the measured panel owns the inset and the closing gap, so the answer text
+   and the CTA under it share one left edge whether or not a CTA is there */
+.lp-faq-a > div { padding: 0 6px 18px; }
+.lp-faq-a p { margin: 0; max-width: 66ch; font-size: 14.5px; line-height: 1.65; color: var(--th-muted); }
+/* the answer's CTA: section 01's link, on its own line under the answer */
+.lp-faq-a .lp-link { margin-top: 14px; }
 /* the body link, the static pages' grammar: ink, hairline underline, accent on hover */
 .lp-a { color: var(--white); text-decoration: underline; text-decoration-color: rgba(250, 250, 250, .3); text-underline-offset: 3px; transition: color var(--hover-dur) var(--hover-ease); }
 .lp-a:hover { color: var(--accent); }
