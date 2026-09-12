@@ -35,6 +35,12 @@
 <link rel="stylesheet" href="css/styles.css?v=20260817a">
 <link rel="stylesheet" href="css/glass-cards.css">
 <link rel="stylesheet" href="css/glass-chips.css">
+  <!-- the shared hero sheet, the SAME file /quantum loads. Everything in
+       it is scoped to .hero.qhx except the two CTA rules, and this page's
+       hero is a bare .hero, so the only thing it contributes here is the
+       CTA pair: one definition of .qhx-ctas and .qhx-cta for all three
+       hero pages, no third copy. -->
+  <link rel="stylesheet" href="css/th-hero.css">
 <style>
 
   /* live idle-capital slots: tabular digits so $1.4T/$1.5T/$1.6T occupy the
@@ -1539,7 +1545,11 @@
      edge under a fixed 32px pad (24px at 375), and the next section starts
      at the fold. Below 700px viewport HEIGHT the hero grows to its content.
      --bfh-chrome stays 0: the nav is truly fixed with a body offset. */
-  body.page-btcfi { --bfh-chrome: 0px; --bfh-u: min(1vw, 14.4px); }
+  /* --qhx-u is what the shared CTA rules size on; --bfh-u is this hero's
+     own unit and the two are the SAME expression, min(1vw, 14.4px), the
+     value privacy and quantum both use. Aliased, not restated, so the
+     buttons here measure exactly what they measure there. */
+  body.page-btcfi { --bfh-chrome: 0px; --bfh-u: min(1vw, 14.4px); --qhx-u: var(--bfh-u); }
   .hero { position: relative; display: flex; flex-direction: column;
     height: calc(100svh - var(--vcnav-h, 64px)); min-height: 0;
     max-width: none; margin: 0; padding: 0 0 32px;
@@ -1728,6 +1738,9 @@
   .mstc-logo img { width: 100%; height: 100%; object-fit: cover; display: block; }
   /* a hash arrival on a card (#eco-*) clears the fixed nav */
   .mstc[id] { scroll-margin-top: 96px; }
+  /* the hero CTA targets, on the same 96px this page already gives its
+     card anchors, so a heading never lands under the sticky chrome */
+  #a-complete-defi-stack-built-for, #native-btc-staking-a-first-for { scroll-margin-top: 96px; }
   .eco-count-row { display: flex; gap: 34px; margin: 26px 0 8px; font-family: var(--mono);
     font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(245,242,236,0.45); }
   .eco-count-row b { font-family: var(--display); font-weight: 700; font-size: 22px; letter-spacing: 0;
@@ -2197,6 +2210,15 @@
         <p class="hero-subtitle">More than <span class="idle-cap" data-idle-cap data-perishable="live"
            data-src="https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&amp;vs_currencies=usd&amp;include_market_cap=true"
            data-checked="2026-08-23" data-as-of="2026-08-23">$1.5T</span> in capital sitting idle. Starknet is building the execution layer Bitcoin has always needed: private, scalable, and built to last.</p>
+        <!-- the site's hero CTA pair, markup for markup with /privacy and
+             /quantum: same container, same two classes, same primary on the
+             left. Both targets are in-page: the DeFi stack section heading and
+             the native staking panel, each given scroll-margin-top so the
+             sticky bar cannot sit on the heading it lands on. -->
+        <div class="qhx-ctas">
+          <a class="qhx-cta dg-glass dg-glass--primary" href="#a-complete-defi-stack-built-for">See the DeFi stack</a>
+          <a class="qhx-cta dg-glass" href="#native-btc-staking-a-first-for">See what is live</a>
+        </div>
       </div>
     </div>
     <div class="bfh-strip">
