@@ -1471,10 +1471,13 @@ window.ADMIN_GATE=on;})();
       </div>
     </div>
     <div class="skh-strip">
-      <!-- three live stats, one snapshot: circulating share of the 10B total
-           (CoinGecko, the price block's source), the staked ratio (onchain /
-           CoinGecko), and chain revenue annualized from the trailing 30 days
-           (DefiLlama, x 365/30), never presented as a forecast. -->
+      <!-- three live stats, one snapshot: circulating share (CoinGecko
+           circulating_supply / total_supply, the price block's source and the
+           same figure [data-stat="unlockedpct"] renders), the staked ratio
+           (onchain stake / CoinGecko circulating), and chain revenue
+           annualized from the trailing 30 days (DefiLlama, x 365/30), never
+           presented as a forecast. The engine that writes all three boots on
+           this strip, because this strip is above the fold. -->
       <ul class="skh-stats">
         <li><b data-metric="circ_supply_pct">71.8%</b><span>% circulating supply</span></li>
         <li><b data-metric="strk_staked_pct">21.2%</b><span>% circulating supply staked</span></li>
@@ -3787,6 +3790,18 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
     p_tvl: 587068, p_tx: 168, p_rev: 342, p_users: 2347, p_vol: 147128,
     govVotes: 10 // real (non-test, uncancelled) votes; live-refreshed from the Snapshot X API
   };
+  /* STRK's contractual total, 10,000,000,000, fixed at genesis and the base
+     of the vesting schedule this page charts.
+       data-src  https://docs.starknet.io/learn/protocol/strk
+     Cross-checked against the live source on every refresh (see the CoinGecko
+     leg below): CoinGecko reports total_supply and max_supply both at exactly
+     this figure, and a divergence is reported rather than absorbed.
+     It calibrates the vesting chart ONLY. Every circulating SHARE a reader
+     sees comes from state.unlockedPct, CoinGecko's own circulating_supply /
+     total_supply, so no percentage on this page is computed against a typed
+     denominator. */
+  var CONTRACT_TOTAL_SUPPLY = 10e9;
+
   var CACHE_KEY = 'strkNumbers_v2'; // v2: state carries per-cluster provenance; older cache shapes are dropped
   var NPM_FIRST_PUBLISH = '2026-02-24'; // starkzap first npm release
 
@@ -3978,9 +3993,16 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
       var ub = document.getElementById('unlockedBar');
       if (ub) ub.style.width = Math.min(100, state.unlockedPct).toFixed(1) + '%';
     }
-    // tokenomics: % of max supply + progress bar (max supply is 10B, fixed)
-    var cp = state.circ / 1e10 * 100;
-    (statEls.circpct || []).forEach(function(el){ tween(el, cp, FMT.circpct); });
+    /* tokenomics. The STAT a reader sees is the same live ratio the hero
+       strip and [data-stat="unlockedpct"] render, which is what its own label
+       cites ("of the 10B max supply", CoinGecko): one number, one source,
+       three surfaces. The progress bar and the vesting chart below calibrate
+       against the CONTRACTUAL total instead, the named constant with the
+       docs.starknet.io source, because that is the base their own schedule
+       is built on. The two agree while CoinGecko keeps reporting a 10B
+       total, which the refresh checks. */
+    if (isFinite(state.unlockedPct)) (statEls.circpct || []).forEach(function(el){ tween(el, state.unlockedPct, FMT.circpct); });
+    var cp = state.circ / CONTRACT_TOTAL_SUPPLY * 100;
     if (tkBar) tkBar.style.width = cp.toFixed(2) + '%';
     // supply-over-time chart: recalibrate its model to the fresh figure
     if (window.__supplyModel) window.__supplyModel.recalibrate(cp);
@@ -3993,10 +4015,18 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
     // (21.2% is 21.2% in the hero, the panel and the tile)
     spTot.forEach(function(el){ tween(el, state.strkStaked, function(v){ return (v / 1e9).toFixed(2) + 'B STRK'; }); });
     spPct.forEach(function(el){ tween(el, state.stakePct, function(v){ return v.toFixed(1) + '%'; }); });
-    /* circulating share of the fixed 10B total (CoinGecko circ), and chain
-       revenue annualized from DefiLlama's trailing-30d aggregate: 365/30 =
-       x12.17, labeled "trailing 30d x 12.2" in the markup, never a forecast */
-    if (isFinite(state.circ)) spCirc.forEach(function(el){ tween(el, state.circ / 1e10 * 100, function(v){ return v.toFixed(1) + '%'; }); });
+    /* CIRCULATING SHARE. state.unlockedPct is CoinGecko's own
+       circulating_supply / total_supply, committed in the same cluster as
+       the circulating figure itself, and it is what [data-stat="unlockedpct"]
+       already renders. This line used to divide by a typed 1e10 instead, a
+       second denominator with no source behind it: it happens to agree today
+       (CoinGecko reports total_supply and max_supply both at exactly
+       10,000,000,000) but it would have kept reading 10B through any burn or
+       any revision, and it made one number on the page arrive two ways.
+       Chain revenue is annualized from DefiLlama's trailing-30d aggregate:
+       365/30 = x12.17, labeled "trailing 30d x 12.2" in the markup, never a
+       forecast. */
+    if (isFinite(state.unlockedPct)) spCirc.forEach(function(el){ tween(el, state.unlockedPct, function(v){ return v.toFixed(1) + '%'; }); });
     if (isFinite(state.chainrev)) spRev.forEach(function(el){ tween(el, state.chainrev * 365 / 30, function(v){ return '$' + abbr(v); }); });
     if (isFinite(state.govVotes)) spGov.forEach(function(el){ el.textContent = String(state.govVotes); });
     if (spBar && isFinite(state.stakePct)) {
@@ -4119,6 +4149,15 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
         if (!ok(price) || !ok(md.circulating_supply) || !ok(md.market_cap && md.market_cap.usd)) throw new Error('bad cg');
         var fdv = md.fully_diluted_valuation && md.fully_diluted_valuation.usd;
         if (!ok(fdv) && ok(md.total_supply)) fdv = md.total_supply * price; // field can be null
+        /* the denominator cross-check: the contractual constant this page
+           calibrates its vesting chart with, against the live source every
+           percentage is actually computed from. Silent divergence is how a
+           typed 10B outlives a burn or a revision, so say it out loud. */
+        if (ok(md.total_supply) && Math.abs(md.total_supply - CONTRACT_TOTAL_SUPPLY) > 1) {
+          console.warn('[strk] total supply divergence: CoinGecko reports ' + md.total_supply +
+                       ', CONTRACT_TOTAL_SUPPLY is ' + CONTRACT_TOTAL_SUPPLY +
+                       '. The vesting chart calibrates on the constant; re-verify docs.starknet.io.');
+        }
         return { price: price, mcap: md.market_cap.usd, circ: md.circulating_supply,
                  fdv: ok(fdv) ? fdv : null,
                  unlockedPct: ok(md.total_supply) ? md.circulating_supply / md.total_supply * 100 : null,
@@ -4351,7 +4390,17 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
     });
   }
 
-  // deferred boot: staking panel (mid-page) or the numbers section, whichever nears first
+  /* BOOT (corrected 2026-09-12). The engine feeds three stats in the HERO
+     strip (.skh-stats: circulating share, staked share, chain revenue), and
+     the hero is the first thing anybody sees. Both boot anchors used to sit
+     far below it: #numbers starts 3506px down, and .util-panel[data-k=
+     "staking"] is a CLOSED TAB, display:none, so it has no box and can never
+     intersect anything. A reader at the top of the page therefore saw the
+     committed SEED, six weeks old, and it never refreshed until they
+     scrolled a third of the page down. The strip is now the first anchor, so
+     the engine boots for its own above-the-fold output; the two older
+     anchors stay, because they still cover a deep link that lands mid-page
+     without passing the hero. */
   var bootDone=false;
   function bootEngine(){
     if(bootDone)return; bootDone=true;
@@ -4359,6 +4408,7 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
     setInterval(function(){ if(!document.hidden) refresh(); }, 3600000*(window.ENGINE_X||1));
     setInterval(function(){ if(!document.hidden) tickUpdated(); }, 60000*(window.ENGINE_X||1));
   }
+  deferEngine('.skh-stats',bootEngine);
   deferEngine('.util-panel[data-k="staking"]',bootEngine);
   deferEngine('#numbers',bootEngine);
 })();
