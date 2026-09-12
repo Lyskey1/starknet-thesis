@@ -455,10 +455,19 @@ if (HOST) {
   /* =============================== the stages =============================== */
   const tabsHost = document.querySelector('.eco-subnav .eco-gang-tabs');
 
+  /* the page's ONE section head (js/section-head.js), the same call THE
+     PROJECTS makes: same element, same classes, same type, left-aligned on
+     the same axis. The --stage modifier carries only what this context
+     needs, the stacking above the canvas and the head's own top padding.
+     The lede is the drag affordance for the ring, so it is not decoration:
+     it is the only place the page says the ring is draggable. */
   HOST.innerHTML =
-    '<div class="es-top es-intro"><p class="es-kicker">The voices</p>' +
-      '<h2>Meet the gang</h2>' +
-      '<p class="es-lede">The people building, shaping and shitposting Starknet. Drag the ring.</p></div>' +
+    window.ecoSectionHead({
+      kicker: 'The voices',
+      title: 'Meet the gang',
+      lede: 'The people building, shaping and shitposting Starknet. Drag the ring.',
+      modifier: 'es-shead--stage'
+    }) +
     GANGS.map(g =>
       '<section class="es-gang" id="gang-' + g.id + '" data-gang="' + g.id + '">' +
         '<div class="es-gbar"><span class="es-gname">' + g.label + '</span><span class="es-gcount"></span></div>' +

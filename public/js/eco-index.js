@@ -35,10 +35,16 @@
   ];
   var CAT_BY_ID = CATS.reduce(function (m, c) { m[c.id] = c; return m; }, {});
 
+  /* the page's ONE section head (js/section-head.js): THE VOICES builds its
+     own from the same call, so the two headings cannot drift apart again.
+     The tab rail rides the head's `extra` slot, where it used to be a
+     hand-written sibling. */
   live.innerHTML =
-    '<div class="ix-head"><p class="es-kicker">The projects</p>' +
-      '<h2 class="ix-title">All projects, builders and protocols</h2>' +
-      '<div class="ix-tabs" role="tablist"></div></div>' +
+    window.ecoSectionHead({
+      kicker: 'The projects',
+      title: 'All projects, builders and protocols',
+      extra: '<div class="ix-tabs" role="tablist"></div>'
+    }) +
     '<div class="ix-grid"></div>';
 
   /* The tabs render into the sticky sub-nav when the page carries one (the
@@ -86,7 +92,7 @@
   };
 
   function render() {
-    live.querySelector('.ix-title').textContent = titleForFilter();
+    live.querySelector('.es-shead-h').textContent = titleForFilter();
     /* data order, untouched: the pinned heads of each category come straight
        from the file */
     var rows = all.filter(function (a) { return filter === 'all' || a.cat === filter; });

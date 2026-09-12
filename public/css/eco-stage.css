@@ -2,7 +2,11 @@
    strk20 palette only: ground #0d0d0d, panels #141414, lines #262626,
    text #fafafa, accent #c53400 / #a02a00. */
 :root { --es-bg:#0d0d0d; --es-panel:#141414; --es-line:#262626; --es-ink:#fafafa; --es-dim:rgba(250,250,250,.65);
-        --es-faint:#616161; --es-acc:#c53400; --es-acc-d:#a02a00; --es-warm:#e07a4a; }
+        --es-faint:#616161; --es-acc:#c53400; --es-acc-d:#a02a00; --es-warm:#e07a4a;
+        /* the page's text axis: ONE left edge for every full-bleed section and
+           for the shared section head, so a head and the content under it line
+           up without either one restating the number */
+        --es-inset: clamp(24px, 4.4vw, 72px); }
 
 /* ---------- shared shell ---------- */
 .es-block { position: relative; margin: 0 0 64px; }
@@ -20,11 +24,30 @@
 .es-ui { position: relative; z-index: 3; min-height: calc(100svh - 152px); display: flex; flex-direction: column; justify-content: space-between; pointer-events: none; }
 .es-ui > * { pointer-events: auto; }
 
-.es-top { position: relative; z-index: 3; padding: 42px 24px 0; text-align: center; }
-.es-top .es-kicker { margin: 0 0 12px; }
-.es-top h2 { font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-weight: 300;
-  font-size: clamp(30px, 4.2vw, 62px); line-height: 1; letter-spacing: -.03em; color: var(--es-ink); margin: 0 0 14px; }
-.es-top .es-lede { font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-size: 15px; color: var(--es-dim); margin: 0; }
+/* THE SECTION HEAD, ONE RULE SET (2026-09-11). Both heads on this page are
+   built by js/section-head.js and land here: THE PROJECTS (the index) and
+   THE VOICES (the gang ring). The declarations are the projects head's own,
+   moved verbatim off the old ".ix-head h2" so the reference head does not
+   move a pixel, and the voices head inherits them rather than carrying a
+   second copy. Left-aligned on --es-inset, the same axis as the content
+   under it. Adding a section means calling the builder; it needs nothing
+   here.
+   The pre-rendered directory (#eco-directory .ix-head) keeps its own,
+   smaller heading: it is the no-JS fallback for the whole page, not a peer
+   section head, and it is clipped the moment the index enhances. */
+.es-shead { margin: 0 0 26px; text-align: left; }
+.es-shead .es-kicker { margin: 0; }
+.es-shead-h { font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-weight: 600; font-size: 76px;
+  line-height: .96; letter-spacing: 0; color: var(--es-ink); margin: 10px 0 30px; max-width: 13ch; }
+/* the lede belongs to the title, so it sits close under it and the head's
+   30px gap lands below the lede instead of above it */
+.es-shead .es-lede { margin: -18px 0 0; max-width: 60ch; }
+/* the ring's head stands on the canvas and the section is full bleed, so it
+   carries the stacking and the page inset itself. Type is untouched. */
+.es-shead--stage { position: relative; z-index: 3; padding: 42px var(--es-inset) 0; }
+
+/* the page's section-intro line, unscoped since the head was shared */
+.es-lede { font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-size: 15px; line-height: 1.6; color: var(--es-dim); margin: 0; }
 
 .es-ring-tabs { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 22px 0 0; position: relative; z-index: 3; }
 .es-ring-tabs button { padding: 8px 15px; border: 1px solid var(--es-line); border-radius: 999px; background: rgba(20,20,20,.7); color: var(--es-dim); font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; cursor: pointer; transition: color .2s, border-color .2s, background-color .2s; }
@@ -79,7 +102,7 @@
 .es-dots i.on { width: 22px; background: var(--es-acc); }
 
 @media (max-width: 860px) {
-  .es-top { padding: 84px 20px 0; }
+  .es-shead--stage { padding-top: 84px; }
   .es-screen, .es-ui { min-height: 100vh; }
   .es-dock { padding-bottom: 44px; }
 }
@@ -144,19 +167,19 @@ body footer.vc-footer { background-image: none !important; }
 body::before { opacity: .35; }
 
 /* ---------- the index: ecosystem cards, matching the BTCFi directory ---------- */
-#ecoIndex { width: 100vw; max-width: none; margin: 0 0 96px calc(50% - 50vw); padding: 15vh clamp(24px, 4.4vw, 72px) 0; }
+#ecoIndex { width: 100vw; max-width: none; margin: 0 0 96px calc(50% - 50vw); padding: 15vh var(--es-inset) 0; }
 .ix-head { margin: 0 0 26px; }
 /* the directory block's own heading. An h2 since 2026-09-09 (the h1 moved to
    the injected hero copy), and this selector MUST track the tag: leave it on
    h1 and it matches nothing, dropping the heading onto the bare h2 rule in
    css/styles.css at a different size.
-   SCOPED TO #eco-directory, and it has to be. The demotion put this heading
-   on the same ".ix-head h2" selector as the INTERACTIVE index's own title
-   (line 199 below, 76px/600), which sits later in this sheet and would win
-   on source order at equal specificity; the pre-rendered block then painted
-   at 76px instead of its own 52px clamp. The id lifts this to 1,1,1 so the
-   two headings keep their separate type. Declarations are unchanged from the
-   h1 rule this replaced, so the paint is identical. */
+   STILL SCOPED TO #eco-directory. The collision it was written against is
+   gone (2026-09-11: the interactive index's title moved to .es-shead-h with
+   the shared head, so no bare ".ix-head h2" rule exists any more), but the
+   scope stays, because .ix-head is now this block's alone and the id says
+   so. This is the no-JS fallback's heading, not a peer section head: it
+   keeps its own, smaller type on purpose, and it is clipped the moment the
+   index enhances. */
 #eco-directory .ix-head h2 { font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-weight: 300; font-size: clamp(28px, 3.4vw, 52px); line-height: 1; letter-spacing: -.03em; color: var(--es-ink); margin: 8px 0 22px; max-width: none; }
 
 /* ---------- the pre-rendered directory (scripts/build-ecosystem.js) ----------
@@ -205,7 +228,6 @@ body::before { opacity: .35; }
 .eco-live .ixs,
 .ixs[data-enhanced] { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
-.ix-head h2 { font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-weight: 600; font-size: 76px; line-height: .96; letter-spacing: 0; color: var(--es-ink); margin: 10px 0 30px; max-width: 13ch; }
 .ix-tabs { display: flex; flex-wrap: wrap; gap: 0; margin: 0 0 40px; border-top: 1px solid var(--es-line); border-left: 1px solid var(--es-line); }
 .ix-tabs button { min-height: 54px; padding: 0 18px; border: 0; border-right: 1px solid var(--es-line); border-bottom: 1px solid var(--es-line); border-radius: 0; background: rgba(20,20,20,.44); color: var(--es-dim);
   font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; cursor: pointer; transition: background-color .18s, color .18s; }
@@ -255,12 +277,14 @@ body::before { opacity: .35; }
   .ix-card-grid { grid-template-columns: repeat(3, minmax(0,1fr)); }
 }
 @media (max-width: 1100px) {
-  .ix-head h2 { font-size: 58px; }
+  .es-shead-h { font-size: 58px; }
   .ix-card-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
 }
 @media (max-width: 640px) {
-  #ecoIndex { padding: 10vh 20px 0; }
-  .ix-head h2 { font-size: 42px; max-width: 9ch; }
+  /* one number, so the head and the index keep sharing an edge */
+  :root { --es-inset: 20px; }
+  #ecoIndex { padding-top: 10vh; }
+  .es-shead-h { font-size: 42px; max-width: 9ch; }
   .ix-tabs button { flex: 1 1 50%; }
   .ix-card-grid { grid-template-columns: 1fr; }
   .ix-card { min-height: 210px; padding: 24px 22px 22px; }
@@ -272,7 +296,6 @@ body::before { opacity: .35; }
    stage; each stage is its own header row on the container's left axis
    plus the ring screen at the unchanged one-viewport rule, so a stage is
    at least a viewport minus the two bars tall by construction. */
-.es-intro { margin: 0 0 6px; }
 /* .es-gang is a <section>, which css/styles.css caps at 1100px: lift the
    cap the way .ix-panel does, so the screen is the full bleed the single
    ring had */

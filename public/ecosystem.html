@@ -2705,6 +2705,11 @@ document.documentElement.className += ' eco-live';
 </script>
 
 <script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.185.0/build/three.module.js"}}</script>
+<!-- the one section head both the index and the ring build their heading from.
+     Classic and synchronous, so window.ecoSectionHead exists before the
+     deferred/module scripts below run, whatever order the browser picks
+     among them. -->
+<script src="js/section-head.js"></script>
 <script type="module" src="js/eco-backdrop.js"></script>
 <script type="module" src="js/eco-globe.js"></script>
 <script type="module" src="js/eco-ring.js"></script>
