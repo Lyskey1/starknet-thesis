@@ -169,7 +169,14 @@
   /* the diagram sits at the top of the card; margin-top:auto on the copy
      block pushes title and body to the floor of whatever height the row
      settles at, which is what keeps the three titles aligned */
-  .tw-viz { flex: 1 1 auto; display: flex; flex-direction: column; justify-content: center;
+  /* flex: 0 0 auto, NOT 1 1 auto. The card is a column in a stretched grid
+     row, so when one wall opens the row grows and a growable .tw-viz absorbs
+     the difference: the devices and the text under them in the columns that
+     did NOT open were pushed down 174px. Pinning the device makes the extra
+     height land at the bottom of the card, where nothing sits, so opening a
+     wall moves nothing in the other two. All three devices measure exactly
+     220px, so nothing changes at rest. */
+  .tw-viz { flex: 0 0 auto; display: flex; flex-direction: column; justify-content: center;
     gap: 22px; margin-bottom: 28px; }
   .tw-ico { display: block; width: 100%; max-width: 300px; height: auto; }
   .tw-txt { flex: 0 0 auto; }
@@ -1458,7 +1465,7 @@
 .th-pm-intro--wide { max-width: none; margin-top: 10px; }
 .tw { margin-top: 16px; }
 .tw-card { min-height: 0; padding: 16px 22px 14px; }
-.tw-viz { flex: 1 1 auto; justify-content: flex-start; gap: 10px; margin-bottom: 10px; }
+.tw-viz { flex: 0 0 auto; justify-content: flex-start; gap: 10px; margin-bottom: 10px; }
 .tw-ico { max-width: 140px; }
 .tw-viz .cases { gap: 8px; }
 .tw-viz .case { padding: 8px 10px 9px; }
@@ -1487,8 +1494,11 @@
 .tw-slab { margin-top: 6px; max-width: none; font-size: 10.5px; line-height: 1.55; }
 @media (max-width: 980px) {
   .tw-viz { min-height: 0; }
-  .tw-card:not(.is-open) .tw-body { display: block; -webkit-line-clamp: none; overflow: visible; }
-  .tw-more { display: none; }
+  /* the walls stay collapsed when they stack (2026-09-12). This used to drop
+     the clamp and hide the toggle below 980, so a narrow reader got all three
+     walls at full length and the section became the wall of text the wide
+     layout is careful to avoid. Same two-line teaser, same one-at-a-time
+     toggle, just stacked. */
 }
 /* ============================================================
    SECTION 03 MATRIX, ONE VIEWPORT (2026-09-07). Title, intro and the
@@ -4616,18 +4626,38 @@ var pvVideoChrome = thVideoChrome({
 (function(){
   var cards = [].slice.call(document.querySelectorAll('.tw-card'));
   if (!cards.length) return;
+  var btns = cards.map(function(c){ return c.querySelector('.tw-more'); }).filter(Boolean);
   function set(card, open){
     card.classList.toggle('is-open', open);
     var b = card.querySelector('.tw-more');
     if (b) { b.setAttribute('aria-expanded', open ? 'true' : 'false'); b.querySelector('span').textContent = open ? 'Close' : 'Read the wall'; }
   }
-  cards.forEach(function(card){
-    var b = card.querySelector('.tw-more');
-    if (!b) return;
+  /* each toggle controls its own body, so the button and the region it opens
+     are wired to each other rather than left to proximity */
+  cards.forEach(function(card, i){
+    var b = card.querySelector('.tw-more'), body = card.querySelector('.tw-body');
+    if (!b || !body) return;
+    if (!body.id) body.id = 'tw-body-' + (i + 1);
+    b.setAttribute('aria-controls', body.id);
     b.addEventListener('click', function(){
       var open = !card.classList.contains('is-open');
       cards.forEach(function(c){ set(c, false); });
       set(card, open);
+    });
+    /* ARROWS MOVE BETWEEN THE THREE TOGGLES, wrapping, with Home and End,
+       the same roving the rest of the page's grouped controls use. Moving
+       focus does NOT open a wall: opening stays on Enter, Space or a click,
+       so a keyboard reader can pass through the section without three
+       expansions firing behind them. */
+    b.addEventListener('keydown', function(e){
+      var n = btns.indexOf(b), to = -1;
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') to = (n + 1) % btns.length;
+      else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') to = (n - 1 + btns.length) % btns.length;
+      else if (e.key === 'Home') to = 0;
+      else if (e.key === 'End') to = btns.length - 1;
+      if (to < 0) return;
+      e.preventDefault();
+      btns[to].focus();
     });
   });
 })();
