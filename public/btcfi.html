@@ -2892,13 +2892,17 @@
         <div id="federation" class="roadmap-step active">
           <p class="step-phase">Phase 1 — Now</p>
           <p class="step-name">Federation</p>
-          <p class="step-desc">strkBTC backed by a transparent federation: Near Intents, Xverse, Luganodes, Twinstakes, UTXO. Trust assumptions are explicit and public.</p>
+          <p class="step-desc th-claim" data-perishable="third-party"
+             data-src="https://x.com/Starknet/status/2052321138852704283"
+             data-checked="2026-09-12" data-src-label="Announcement">strkBTC backed by a transparent federation: Near Intents, Xverse, Luganodes, Twinstakes, UTXO. Trust assumptions are explicit and public.</p>
           <span class="step-status status-live">Live</span>
         </div>
         <div id="bitvm" class="roadmap-step">
           <p class="step-phase">Phase 2 — Next</p>
           <p class="step-name">BitVM</p>
-          <p class="step-desc">Trust-minimized verification without fraud proofs. Only one honest party needed. Working with Alpen Labs on a BitVM-based bridge for Starknet.</p>
+          <p class="step-desc th-claim" data-perishable="third-party"
+             data-src="https://x.com/Starknet/status/1978445862171726204"
+             data-checked="2026-09-12" data-src-label="Announcement">Trust-minimized verification without fraud proofs. Only one honest party needed. Working with Alpen Labs on a BitVM-based bridge for Starknet.</p>
           <span class="step-status status-next">In progress</span>
         </div>
         <div id="collidervm" class="roadmap-step">
@@ -2944,7 +2948,31 @@
              data-noun-ok="July Pingzhou">The endgame. If activated, Bitcoin could verify STARK proofs natively, enabling a fully trustless bridge. And this isn't theory: a Circle-STARK verifier was <a class="inline-accent-link" href="https://starkware.co/blog/general-computation-on-bitcoin/" target="_blank" rel="noopener noreferrer">demonstrated on an OP_CAT-enabled Bitcoin signet in July 2024</a> by Weikeng Chen and Pingzhou Yuan's Bitcoin Wildlife Sanctuary project, with StarkWare collaborating, and the <a class="inline-accent-link" href="https://github.com/Bitcoin-Wildlife-Sanctuary/bitcoin-circle-stark" target="_blank" rel="noopener noreferrer">implementation is still actively developed</a>.</p>
           <span class="step-status status-endgame">Endgame</span>
         </div>
-      </div>
+    </div>
+    <!-- ROADMAP SOURCE LINKS, built from each card's OWN data-src, so the
+         URL is written once per card and the rendered href can never drift
+         from the attribute the audit reads. Opt-in: only a .step-desc that
+         carries data-src-label gets a link, which is why the OP_CAT card
+         (whose links are inline and carry their own wording) is untouched.
+         X POSTS ARE FRAGILE SOURCES, see the report: if an equivalent
+         starknet.io or StarkWare post is found for either announcement,
+         swap the data-src and nothing else changes. -->
+    <script>
+    (function(){
+      document.querySelectorAll('.roadmap-step .step-desc[data-src][data-src-label]').forEach(function(p){
+        var a=document.createElement('a');
+        a.className='inline-accent-link';
+        a.href=p.getAttribute('data-src');
+        a.target='_blank'; a.rel='noopener noreferrer';
+        a.textContent=p.getAttribute('data-src-label');
+        var arr=document.createElement('span');
+        arr.className='arr'; arr.setAttribute('aria-hidden','true'); arr.innerHTML='&#8599;';
+        a.appendChild(document.createTextNode(' ')); a.appendChild(arr);
+        p.appendChild(document.createTextNode(' '));
+        p.appendChild(a);
+      });
+    })();
+    </script>
     </div>
 
     <!-- ============================================================ -->
