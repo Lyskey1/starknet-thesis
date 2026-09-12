@@ -2141,7 +2141,8 @@ window.ADMIN_GATE=on;})();
       <div class="nacc-body" id="strk20-body"><div class="nacc-inner"><div class="cells c5">
         <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="TVL in STRK20 pool" data-chart-series="p_tvl"><div class="cell-top"><span class="cl">TVL in STRK20 pool</span></div><div class="cv" data-stat="p_tvl">$528.9K</div><div class="cs">Shielded value</div></div>
         <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="Revenue from STRK20 (30D)" data-chart-series="p_rev"><div class="cell-top"><span class="cl">Revenue from STRK20 (30D)</span></div><div class="cv" data-stat="p_rev">$342</div><div class="cs">Measured protocol fees · STRK20 dashboard</div></div>
-        <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="Private TX (daily)" data-chart-series="p_tx"><div class="cell-top"><span class="cl">Private TX (daily)</span></div><div class="cv" data-stat="p_tx">36</div><div class="cs">Last full day</div></div>
+        <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="Private TX (total)" data-chart-series="p_tx_total"><div class="cell-top"><span class="cl">Private TX (total)</span></div><div class="cv" data-stat="p_tx_total">31,682</div><div class="cs">All time · since Apr 2026</div></div>
+        <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="Private TX (weekly)" data-chart-series="p_tx"><div class="cell-top"><span class="cl">Private TX (weekly)</span></div><div class="cv" data-stat="p_tx">761</div><div class="cs">Last 7 complete days</div></div>
         <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="STRK20 pool users" data-chart-series="p_users"><div class="cell-top"><span class="cl">STRK20 pool users</span></div><div class="cv" data-stat="p_users">2,347</div><div class="cs">Unique depositors, all time</div></div>
         <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="DeFi volume privately routed (30D)" data-chart-series="p_vol"><div class="cell-top"><span class="cl">DeFi volume privately routed (30D)</span></div><div class="cv" data-stat="p_vol">$147.1K</div><div class="cs">USD by protocol · STRK20 dashboard</div></div>
       </div></div></div>
@@ -2594,7 +2595,11 @@ const M=[
     page's dated-snapshot convention (see `accounts`): 31,682 is the sum
     of the 145 committed days read on 2026-09-11. */
  {k:'p_tx_total',label:'Private TX (total)',type:'num',value:31682,emptyNote:'SERIES UNAVAILABLE · LAST SNAPSHOT, SEP 11 2026'},
- {k:'p_tx',label:'Private TX (daily)',type:'num',value:36},
+ /* `value` is the chart's fallback if the fetch fails: 761 is the sum of
+    the seven complete days ending 2026-07-30, the last complete day at
+    the SEED's own verified time, read from /agg/transactions. It moves
+    with the SEED, not on its own. */
+ {k:'p_tx',label:'Private TX (weekly)',type:'num',value:761},
  {k:'p_vol',label:'DeFi volume privately routed',type:'usd',value:339540},
  {k:'p_users',label:'STRK20 pool users',type:'count',value:2347,source:{name:'onchain (Deposit events)',url:'https://voyager.online/contract/0x040337b1af3c663e86e333bab5a4b28da8d4652a15a69beee2b677776ffe812a'}},
 ];
@@ -2811,6 +2816,25 @@ function rolling30(a){const out=[];for(let i=29;i<a.length;i++){let s=0;for(let 
 let __arMod=null;
 function appRevMod(){return __arMod||(__arMod=window.STRK20AppRevenue?Promise.resolve(window.STRK20AppRevenue):import('/js/app-revenue.js'));}
 function weeklySum(a){return appRevMod().then(m=>m.weeklySum(a));} // daily [[ms,v]] → calendar-week (Mon to Sun, UTC) sums
+/* daily [[ms,v]] → 7-DAY buckets ANCHORED AT THE LAST COMPLETE DAY, oldest
+   first, each stamped with its own last day.
+   Not Monday-start calendar weeks, and the difference is the whole point: a
+   metric whose header is "the last 7 complete days" must be able to point at
+   that figure on its own chart. Anchoring at the end makes the newest bucket
+   exactly the header's window, so the header IS the last bar and the
+   week-over-week badge IS the last two bars. Anchoring at a Monday would put
+   the header on a window no bar covers (read 2026-09-12: header Sep 5-11 =
+   735, last complete Mon-start week Aug 31-Sep 6 = 900).
+   Every bucket is therefore complete by construction; the leftover at the
+   OLDEST edge, fewer than 7 days, is dropped rather than drawn as a short
+   bar that would read as a collapse. */
+function rolling7(a){const out=[];
+  /* stamped with the bucket's FIRST day, the same convention weeklySum uses
+     for its Mondays, so a bar sits at the start of the period it covers and
+     the chart's SINCE note names the day the weekly series really begins. */
+  for(let end=a.length;end-7>=0;end-=7){const w=a.slice(end-7,end);
+    out.unshift([w[0][0],w.reduce((s,p)=>s+p[1],0)]);}
+  return out;}
 
 /* Sourced protocol-upgrade annotations for the BLOCK TIME chart (audited
    2026-08-11 against the committed seed; every date below sits on a durable
@@ -2916,7 +2940,20 @@ const HIST={
     restarts from zero at every window edge is mechanical, not
     informative, so the badge states the period covered instead. */
  p_tx_total:{avail:['7D','30D','1Y','ALL'],defR:'ALL',windowCumulative:true,noDelta:true,get:()=>SRC.s20tx()},
- p_tx:{avail:['7D','30D','1Y','ALL'],get:()=>SRC.s20tx()},
+ /* PRIVATE TX, the weekly rate. Same SRC.s20tx() as the total pill above,
+    same cache entry, same dropped in-progress day; only the bucketing
+    differs. weeklyBars draws the totals as bars, headLast puts the NEWEST
+    complete bucket in the header (= the last 7 complete days, = the last
+    bar), bucketsComplete tells the badge there is no in-progress bucket to
+    step over, and the badge is the week-over-week change between the last
+    two bars, which compares like with like. 7D is dropped from avail: one
+    bucket is not a series. */
+ p_tx:{avail:['30D','1Y','ALL'],weeklyBars:true,headLast:true,bucketsComplete:true,
+   get:()=>SRC.s20tx().then(a=>{const w=rolling7(a);
+     /* the weekly series starts at the first FULL bucket, so the days before
+        it are genuinely not covered: dataSince says so rather than letting
+        the note claim the daily series' own first day. */
+     HIST.p_tx.dataSince=w.length?w[0][0]:null;return w;})},
  /* MEASURED cumulative protocol revenue, the dashboard's own series: fees
     accrue in STRK and the backend prices the whole series at current spot,
     so the header matches the official dashboard's cumulative figure to the
@@ -3238,13 +3275,27 @@ function draw(){
     const first=pts[0][1],last=pts[pts.length-1][1];
     const fv=document.getElementById('fVal');
     if(h.weeklyBars){
-      /* header = sum of the displayed bars, labeled per window; badge = last
-         FULL week vs the week before (the in-progress week is skipped) */
-      fv.textContent=fmt(m,pts.reduce((a,p)=>a+p[1],0));
-      const SL={'30D':'30D SUM','1Y':'365D SUM','ALL':'SUM ALL TIME'};
-      document.getElementById('fLabel').textContent=m.label+' · '+(SL[curR]||curR+' SUM');
+      /* badge = last FULL week vs the week before. The header is either the
+         sum of the displayed bars, labeled per window (the default), or the
+         newest complete bucket alone (headLast). */
       let n=pts.length-1;
-      if(pts[n][0]+7*DAY>Date.now())n--;
+      /* bucketsComplete: buckets anchored at the last complete day (rolling7)
+         are complete by construction, so there is no in-progress bucket to
+         step over before comparing the last two. */
+      if(!h.bucketsComplete&&pts[n][0]+7*DAY>Date.now())n--;
+      if(h.headLast){
+        /* headLast: the header is the NEWEST complete bucket, so it is a rate
+           the reader can find on the chart as the last bar, not a window sum.
+           The window's own sum rides the sub-line, where it cannot be
+           mistaken for the headline. */
+        fv.textContent=fmt(m,pts[n>=0?n:pts.length-1][1]);
+        document.getElementById('fLabel').textContent=m.label;
+        document.getElementById('fSub').textContent='· '+fmt(m,pts.reduce((a,p)=>a+p[1],0))+' in '+curR;
+      }else{
+        fv.textContent=fmt(m,pts.reduce((a,p)=>a+p[1],0));
+        const SL={'30D':'30D SUM','1Y':'365D SUM','ALL':'SUM ALL TIME'};
+        document.getElementById('fLabel').textContent=m.label+' · '+(SL[curR]||curR+' SUM');
+      }
       if(n>=1)windowBadge(m,null,pts[n-1][1],pts[n][1],'WOW');
       else renderBadge(null);
     }else{
@@ -3833,7 +3884,11 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
     strkStaked: 1430248556, strkStakedUsd: 36123874, stakePct: 21.198, btcStaked: 692.25, btcStakedUsd: 44266227, valueStaked: 80390101,
     tvl: 169146064, tvs: 375481582, netflow: -9893561, stables: 162419648, apprev: 2124918, chainrev: 127790,
     dau: 15295, wau: 45166, totaltx: 309219399, tps: 1.748, downloads: 7609, blocktime: 1.69, totalblocks: 13093652, accounts: 6981372,
-    p_tvl: 587068, p_tx: 168, p_rev: 342, p_users: 2347, p_vol: 147128,
+    /* p_tx is the WEEKLY rate since 2026-09-12: the seven complete days
+       ending 2026-07-30, the last complete day at the verified time above.
+       p_tx_total is the all-time sum at that same read. Both from
+       /agg/transactions, neither hand-set. */
+    p_tvl: 587068, p_tx: 761, p_tx_total: 28031, p_rev: 342, p_users: 2347, p_vol: 147128,
     govVotes: 10 // real (non-test, uncancelled) votes; live-refreshed from the Snapshot X API
   };
   /* STRK's contractual total, 10,000,000,000, fixed at genesis and the base
@@ -3891,6 +3946,7 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
     p_tvl:      function(v){ return '$' + abbr(v); },
     p_rev:      function(v){ return '$' + abbr(v); },
     p_tx:       function(v){ return Math.round(v).toLocaleString('en-US'); },
+    p_tx_total: function(v){ return Math.round(v).toLocaleString('en-US'); },
     p_users:    function(v){ return Math.round(v).toLocaleString('en-US'); },
     p_vol:      function(v){ return '$' + abbr(v); }
   };
@@ -3901,7 +3957,7 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
     valuestaked: 'valueStaked', circstaked: 'stakePct',
     dau: 'dau', wau: 'wau', totaltx: 'totaltx', tps: 'tps', downloads: 'downloads', blocktime: 'blocktime', totalblocks: 'totalblocks', accounts: 'accounts',
     tvl: 'tvl', tvs: 'tvs', stables: 'stables', netflow: 'netflow', apprev: 'apprev', chainrev: 'chainrev',
-    p_tvl: 'p_tvl', p_rev: 'p_rev', p_tx: 'p_tx', p_users: 'p_users', p_vol: 'p_vol'
+    p_tvl: 'p_tvl', p_rev: 'p_rev', p_tx: 'p_tx', p_tx_total: 'p_tx_total', p_users: 'p_users', p_vol: 'p_vol'
   };
   // chart-registry keys for window.__numbersLive (price chart chips)
   // note: p_rev and p_vol are deliberately absent: their chart registry
@@ -4288,13 +4344,20 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
         if (!days.length || !ok(d.head) || d.head !== days[days.length - 1][1]) throw 0;
         return { head: d.head, at: Date.parse(d.fetched) };
       }));
+    /* PRIVATE TX, both readings off ONE fetch: the weekly rate (the last 7
+       complete days, the card's figure and the weekly chart's header) and
+       the all-time total (the total card and its chart's ALL header). The
+       in-progress day is dropped before either is summed, so neither ever
+       carries a partial day. Fewer than 7 complete days fails the cluster
+       rather than printing a short week as a real one. */
     var pS20tx = wrap(getJson('https://strk20-dashboard-production.up.railway.app/agg/transactions')
       .then(function(d){
         var days = d.days || [];
         var today = new Date().toISOString().slice(0, 10);
         if (days.length && days[days.length - 1].date === today) days = days.slice(0, -1); // drop the partial day
-        if (!days.length) throw 0;
-        return { p_tx: days[days.length - 1].count };
+        if (days.length < 7) throw 0;
+        var sum = function(a){ return a.reduce(function(t, r){ return t + r.count; }, 0); };
+        return { p_tx: sum(days.slice(-7)), p_tx_total: sum(days) };
       }));
     // MEASURED protocol fees: the dashboard's own cumulative series, with
     // the lifetime headline as a cross-check. A pair mismatch beyond cents
@@ -4413,7 +4476,7 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
         window.__poolUsers = { v: s20tvl.users, at: Date.now() };
       }
       if (s20vol) { state.p_vol = s20vol; stamp('s20vol'); }
-      if (s20tx) { state.p_tx = s20tx.p_tx; stamp('s20tx'); }
+      if (s20tx) { state.p_tx = s20tx.p_tx; state.p_tx_total = s20tx.p_tx_total; stamp('s20tx'); }
       if (s20rev) {
         state.p_rev = s20rev.rev30; stamp('s20rev');
         // refresh the fee legend's live USD (markup ships a $0.15 seed) from
