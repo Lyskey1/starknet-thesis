@@ -1912,7 +1912,10 @@ window.ADMIN_GATE=on;})();
         <svg id="muchart" viewBox="0 0 1000 300"></svg>
         <div class="stip" id="mtip2"></div>
       </div>
-      <div class="legend"><span><i style="background:#c53400"></i>Scheduled vesting</span><span><i style="background:#a02a00"></i>Estimated release (no fixed schedule)</span><span><i style="background:#fafafa"></i>Cumulative supply</span></div>
+      <!-- generated from the chart's own colour tokens, never typed: the
+           swatches ARE the series colours, opacity included. See MU_* in
+           the monthly unlock block. -->
+      <div class="legend" id="mulegend"></div>
       <div class="kpis two" id="mukpis"></div>
     </div>
     <div class="panel">
@@ -3787,6 +3790,15 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
 (function(){
   const muchart=document.getElementById('muchart');if(!muchart)return;
   const mtip=document.getElementById('mtip2');
+  /* ONE set of tokens for this chart. The bars, the cumulative line, the
+     legend swatches and the tooltip rows all read these, so a swatch cannot
+     drift from the series it names. It had: the legend was typed in the
+     markup as two oranges and a solid white while the bars rendered
+     instrument blue at two opacities and the line a 55% white, so all three
+     swatches named a colour that is not on the chart. The estimated release
+     keeps the SAME hue at reduced opacity, the treatment the bars already
+     use, rather than taking a second colour. */
+  const MU_SCHED='#6EB5FF', MU_EST_OP=0.35, MU_CUM='#fafafa', MU_CUM_OP=0.55;
   const start=TODAY_I+1,n=12,end=Math.min(start+n-1,MONTHS-1); /* the 12 months ahead */
   const aL=46,aR=948,aT=18,aB=252;
   const bw=Math.max(3,(aR-aL)/n*0.62);
@@ -3808,12 +3820,18 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
     const lbl=d.getMonth()===0?d.toLocaleString('en',{month:'short'})+' '+String(d.getFullYear()).slice(2):d.toLocaleString('en',{month:'short'});
     s+=`<text x="${bx(k).toFixed(1)}" y="${aB+22}" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="10" fill="rgba(250, 250, 250,.4)">${lbl}</text>`;});
   rows.forEach((r,k)=>{const x=(bx(k)-bw/2).toFixed(1);const yT=byB(r.totD),yV=byB(r.vD);
-    if(r.totD-r.vD>0.001)s+=`<rect x="${x}" y="${yT.toFixed(1)}" width="${bw.toFixed(1)}" height="${(yV-yT).toFixed(1)}" fill="#6EB5FF" fill-opacity="0.35" rx="1"/>`;
-    if(r.vD>0.001)s+=`<rect x="${x}" y="${yV.toFixed(1)}" width="${bw.toFixed(1)}" height="${(aB-yV).toFixed(1)}" fill="#6EB5FF" rx="1"/>`;});
+    if(r.totD-r.vD>0.001)s+=`<rect x="${x}" y="${yT.toFixed(1)}" width="${bw.toFixed(1)}" height="${(yV-yT).toFixed(1)}" fill="${MU_SCHED}" fill-opacity="${MU_EST_OP}" rx="1"/>`;
+    if(r.vD>0.001)s+=`<rect x="${x}" y="${yV.toFixed(1)}" width="${bw.toFixed(1)}" height="${(aB-yV).toFixed(1)}" fill="${MU_SCHED}" rx="1"/>`;});
   let ln='';rows.forEach((r,k)=>{ln+=(k?'L':'M')+bx(k).toFixed(1)+','+byC(r.cum).toFixed(1)+' ';});
-  s+=`<path d="${ln}" fill="none" stroke="#fafafa" stroke-opacity=".55" stroke-width="1.5"/>`;
+  s+=`<path d="${ln}" fill="none" stroke="${MU_CUM}" stroke-opacity="${MU_CUM_OP}" stroke-width="1.5"/>`;
   s+=`<line id="muhl" x1="0" y1="${aT}" x2="0" y2="${aB}" stroke="rgba(250, 250, 250,.25)" stroke-width="1" style="display:none"/>`;
   muchart.innerHTML=s;
+  /* the cumulative entry is a LINE on the chart, so its swatch is a rule and
+     not a block: same token, same opacity, same shape as the thing it names */
+  document.getElementById('mulegend').innerHTML=
+    `<span><i style="background:${MU_SCHED}"></i>Scheduled vesting</span>`+
+    `<span><i style="background:${MU_SCHED};opacity:${MU_EST_OP}"></i>Estimated release (no fixed schedule)</span>`+
+    `<span><i style="background:${MU_CUM};opacity:${MU_CUM_OP};height:2px;border-radius:1px"></i>Cumulative supply</span>`;
   const now=new Date();let nu=new Date(now.getFullYear(),now.getMonth(),15);if(nu<=now)nu=new Date(now.getFullYear(),now.getMonth()+1,15);
   /* next contractual unlock: the vesting bucket of the next 15th; exposed so
      the live engine can compute its share of the live circulating supply */
@@ -3832,8 +3850,8 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
     if(px<r.width*0.6){mtip.style.left=(px+14)+'px';mtip.style.transform='translateX(0)';}
     else{mtip.style.left=(px-14)+'px';mtip.style.transform='translateX(-100%)';}
     mtip.innerHTML=`<div class="td">${d.toLocaleString('en',{month:'short',year:'numeric'})}</div>
-      <div class="r"><span style="color:#6EB5FF">Scheduled vesting</span><b>${row.vD>0.001?tok(row.vD):'·'}</b></div>
-      <div class="r"><span style="color:#6EB5FF;opacity:.8">Estimated release</span><b>${row.estD>0.001?tok(row.estD):'·'}</b></div>
+      <div class="r"><span style="color:${MU_SCHED}">Scheduled vesting</span><b>${row.vD>0.001?tok(row.vD):'·'}</b></div>
+      <div class="r"><span style="color:${MU_SCHED};opacity:.8">Estimated release</span><b>${row.estD>0.001?tok(row.estD):'·'}</b></div>
       <div class="r"><span style="color:var(--muted)">This month</span><b>${tok(row.totD)}</b></div>
       <div class="r"><span style="color:var(--acc-2)">Cumulative</span><b>${row.cum.toFixed(1)}%</b></div>`;}));
   ['mouseleave','pointerleave','pointercancel'].forEach(ev=>muchart.addEventListener(ev,()=>{mtip.style.display='none';hl.style.display='none';}));
