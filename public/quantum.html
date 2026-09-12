@@ -4300,7 +4300,20 @@ var Q_PERISHABLE = {
   /* the roadmap's relative estimates are dated readings of the published
      roadmap (StarkWare, 2026-06-30): the phase cards render the as-of */
   'roadmap-phase1': { asof: '2026-06-30' },
-  'roadmap-phase2': { asof: '2026-06-30' }
+  'roadmap-phase2': { asof: '2026-06-30' },
+  /* ECDSA.Fail is a LIVE leaderboard. The 26 Jul 2026 cutoff figures are fixed
+     and printed in the paper, so they are sourced and dated in the DOM with no
+     key here and nothing to break. The post-cutoff figures (1.26 billion, 813
+     logical qubits) are a dated reading of a moving board: past the break the
+     DOM flags the claim rather than letting it age quietly. */
+  'ecdsafail-leaderboard': { src: 'https://ecdsa.fail', checked: '2026-09-12', breaks: '2026-12-11',
+    note: 'live leaderboard; re-read ecdsa.fail and the arXiv version history. The cutoff figures do not perish, the post-cutoff ones do' },
+  /* OWNER-SOURCED: arXiv lists 36 authors without affiliations, so the seven
+     StarkWare and Starknet Foundation contributors have no public source to
+     cite. Worded as contributors among 36 authors, never as StarkWare
+     research. Replace with a public source the moment one exists. */
+  'ecdsafail-contributors': { src: 'owner', checked: '2026-09-12', breaks: '2026-12-11',
+    note: 'owner-sourced headcount, no public affiliation list to cite; replace with a public source if one appears' }
   /* 'roadmap-destination' removed 2026-09-09 with the ~2027 destination it
      dated; a registry key whose element is gone matches nothing. */
 };
