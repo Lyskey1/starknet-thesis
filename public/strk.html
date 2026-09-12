@@ -755,12 +755,6 @@ a.chip:hover{background:var(--acc);border-color:var(--acc);color:#0d0d0d}
 /* inline source links on a KPI, same convention as .tk-meta a above: muted
    text plus the site's ↗ external marker, hairline underline, white on hover */
 #numbers .kpi .ksrc{margin-top:6px}
-/* the modeled-projection note under a chart legend: the card notes' own
-   muted mono, wrapping, with the source line riding the same block */
-#numbers .mnote{margin-top:10px;font-family:var(--mono),monospace;font-size:11px;line-height:1.55;color:var(--muted);max-width:78ch}
-#numbers .mnote a{color:var(--muted);text-decoration:none;border-bottom:1px solid rgba(250, 250, 250,.2)}
-#numbers .mnote a:hover{color:var(--white)}
-#numbers .mnote .msrc{display:block;margin-top:4px;color:var(--muted-2)}
 /* a registered claim past its break date marks itself, the same contract
    the landing's registry uses: a lapsed check is visible, not silently
    trusted */
@@ -1932,26 +1926,6 @@ window.ADMIN_GATE=on;})();
            swatches ARE the series colours, opacity included. See MU_* in
            the monthly unlock block. -->
       <div class="legend" id="mulegend"></div>
-      <!-- WHAT IS PUBLISHED AND WHAT IS NOT, on the card itself. The monthly
-           cadence (0.64% then 1.27% of supply, the 15th of each month,
-           through Mar 15 2027) and the nine allocation percentages come from
-           the official documentation, read on the date below. That cadence
-           covers Investors and Early Contributors JOINTLY: the docs publish
-           one schedule for the pair, so splitting it between them would be an
-           assumption and this card does not. The month-by-month shape of
-           every OTHER allocation is this page's own model: interpolated
-           anchor points, rescaled so the model's today matches the live
-           circulating figure. No data file fixes that, because no
-           per-category monthly table is published anywhere; the docs state
-           the opposite, that Foundation-held tokens are not circulating until
-           granted or allocated out, so there is no schedule to ingest.
-           Registered as an internal-model claim so the audit sees it. -->
-      <p class="mnote">
-        <span class="th-claim" data-perishable="internal-model" data-src="internal model"
-              data-checked="2026-09-12" data-breaks="2026-12-11"
-              data-note="the only published schedule is ONE joint lock-up cadence covering Investors and Early Contributors together; the seven Foundation-held allocations have no published trajectory, so their month-by-month shape here is a model and no data file can replace it until StarkWare publishes one">The contractual series follows the one published lock-up cadence, which covers Investors and Early Contributors jointly. Everything else is a model, not a published schedule. Foundation-held tokens are not counted as circulating until granted or allocated out.</span>
-        <span class="msrc">Cadence and allocation percentages: <a href="https://docs.starknet.io/learn/protocol/strk" target="_blank" rel="noopener noreferrer">Official schedule ↗</a>, read <time datetime="2026-09-12">Sep 12, 2026</time></span>
-      </p>
       <div class="kpis two" id="mukpis"></div>
     </div>
     <div class="panel">
