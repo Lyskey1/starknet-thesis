@@ -1445,6 +1445,11 @@
     box-shadow: 0 0 26px rgba(var(--accent-rgb), .16);
     font-family: var(--mono); font-size: 12px; letter-spacing: .08em;
     color: var(--accent); }
+  /* the mark sits INSIDE the ring, not on it: 58% of the 92px box leaves the
+     accent border and its glow clear on every side, and the intrinsic 400x400
+     is scaled down rather than up so it stays crisp at 2x. The ring's own
+     diameter, border and shadow are untouched. */
+  .eho-core-mark { width: 58%; height: auto; display: block; }
   .eho-node { position: absolute; left: 50%; top: 50%;
     width: 44px; height: 44px; margin: -22px 0 0 -22px;
     display: inline-flex; align-items: center; justify-content: center;
@@ -3027,7 +3032,11 @@
           <i class="eho-ring eho-ring0" aria-hidden="true"></i>
           <i class="eho-ring eho-ring1" aria-hidden="true"></i>
           <i class="eho-ring eho-ring2" aria-hidden="true"></i>
-          <span class="eho-core" aria-hidden="true">strkBTC</span>
+          <!-- the ring is the .eho-core box itself: 92px, 50% radius, accent
+               border and glow, all untouched. Only its contents changed from
+               mono text to the mark, which now carries the name for assistive
+               tech instead of the span being hidden outright. -->
+          <span class="eho-core"><img class="eho-core-mark" src="assets/tokens/strkbtc.png" alt="strkBTC" width="400" height="400" loading="lazy" decoding="async"></span>
         </div>
         <div class="eho-tip dg-glass" id="ehoTip" hidden><b id="ehoTipName"></b><span id="ehoTipCat"></span></div>
       </div>
