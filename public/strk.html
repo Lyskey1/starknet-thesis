@@ -543,6 +543,14 @@ a.chip:hover{background:var(--acc);border-color:var(--acc);color:#0d0d0d}
 }
 @media (prefers-reduced-motion: reduce){.pda-bar i{transition:none}}
 .tk-meta a:hover{color:var(--white)}
+/* SEED PAST ITS REFRESH WINDOW. The per-app ranking is a committed snapshot
+   rebuilt daily; when the upstream run has not landed for longer than that,
+   the card says so instead of letting a dated stamp pass for a live one. Warm
+   rather than red: the rows are still real data with a real date, they are
+   just old, and hiding them would lose information a reader can still use. */
+.pda-stale{margin-top:8px;font-family:var(--mono),monospace;font-size:11px;line-height:1.6;
+  letter-spacing:.04em;color:var(--warm,#e07a4a)}
+.pda-stale::before{content:"\26A0";margin-right:6px}
 
 /* --- section 04: stats accordion --- */
 .nacc{display:flex;flex-direction:column;gap:10px;margin-top:26px}
@@ -2132,6 +2140,9 @@ window.ADMIN_GATE=on;})();
         <span id="pdaStamp">24h window</span>
         <a href="https://aegis-starknet-dashboard.vercel.app/leaderboard/dau-leaderboard" target="_blank" rel="noopener noreferrer">Data: Prism by Aegis &#8599;</a>
       </div>
+      <!-- filled only when the committed seed is older than its refresh
+           window; empty and unrendered otherwise -->
+      <p class="pda-stale" id="pdaStale" hidden></p>
     </div>
       </div></div></div>
     </div>
@@ -2171,6 +2182,15 @@ window.ADMIN_GATE=on;})();
   (function(){
     var rows=document.getElementById('pdaRows'); if(!rows) return;
     var nf=function(n){return n.toLocaleString('en-US');};
+    var DAY=864e5, STALE_AFTER=2*DAY;
+    /* the dashboard's own relative wording, at the coarseness a daily seed
+       deserves: hours under a day, whole days above it */
+    var rel=function(ms){
+      var h=Math.floor(ms/36e5);
+      if(h<1) return 'just now';
+      if(h<24) return h+' hour'+(h===1?'':'s')+' ago';
+      var d=Math.floor(h/24); return d+' day'+(d===1?'':'s')+' ago';
+    };
     fetch('assets/data/prism-dau-seed.json',{cache:'no-store'}).then(function(r){
       if(!r.ok) throw 0; return r.json();
     }).then(function(d){
@@ -2196,8 +2216,22 @@ window.ADMIN_GATE=on;})();
          already checked against theirs. */
       var dv=d.derived||{}, st=document.getElementById('pdaStamp');
       if(st&&dv.fetched){
+        var at=Date.parse(dv.fetched), age=Date.now()-at;
+        /* the stamp carries the seed's OWN date and how old that is, the same
+           two facts the live cards print. Never a literal: the date is the
+           seed's derived.fetched and the relative half is measured from it. */
         st.textContent=(dv.window||'24h')+' window \u00b7 '+
-          new Date(dv.fetched).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric',timeZone:'UTC'});
+          new Date(at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric',timeZone:'UTC'})+
+          ' \u00b7 updated '+rel(age);
+        /* REFRESH WINDOW. The seed is rebuilt daily by
+           .github/workflows/refresh-prism-dau.yml, so anything past two days
+           means a run has not landed. Say it on the card rather than letting a
+           dated stamp read as a fresh one next to metrics that say UPDATED
+           JUST NOW. The rows stay: they are real data with a real date. */
+        if(age>STALE_AFTER){
+          var w=document.getElementById('pdaStale');
+          if(w){w.textContent='Could not refresh: this is the last verified ranking, '+rel(age)+'.';w.hidden=false;}
+        }
       }
 
     }).catch(function(){ /* the static unavailable line stays */ });
