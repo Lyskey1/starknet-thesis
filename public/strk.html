@@ -752,6 +752,16 @@ a.chip:hover{background:var(--acc);border-color:var(--acc);color:#0d0d0d}
 /* inline source links on a KPI, same convention as .tk-meta a above: muted
    text plus the site's ↗ external marker, hairline underline, white on hover */
 #numbers .kpi .ksrc{margin-top:6px}
+/* the modeled-projection note under a chart legend: the card notes' own
+   muted mono, wrapping, with the source line riding the same block */
+#numbers .mnote{margin-top:10px;font-family:var(--mono),monospace;font-size:11px;line-height:1.55;color:var(--muted);max-width:78ch}
+#numbers .mnote a{color:var(--muted);text-decoration:none;border-bottom:1px solid rgba(250, 250, 250,.2)}
+#numbers .mnote a:hover{color:var(--white)}
+#numbers .mnote .msrc{display:block;margin-top:4px;color:var(--muted-2)}
+/* a registered claim past its break date marks itself, the same contract
+   the landing's registry uses: a lapsed check is visible, not silently
+   trusted */
+#numbers .th-claim[data-stale="true"]{text-decoration:underline dotted rgba(250, 250, 250,.5);text-underline-offset:4px}
 #numbers .kpi .ksrc a{color:var(--muted);text-decoration:none;border-bottom:1px solid rgba(250, 250, 250,.2)}
 #numbers .kpi .ksrc a:hover{color:var(--white)}
 #numbers .note{font-family:var(--mono),monospace;font-size:11px;letter-spacing:.03em;color:var(--muted);margin-top:16px;line-height:1.6}
@@ -1907,7 +1917,7 @@ window.ADMIN_GATE=on;})();
     </div>
     <div class="panel">
       <div class="eyebrow">Unlock schedule</div>
-      <div class="ptitle">Tokens entering circulation, next 12 months</div>
+      <div class="ptitle">Tokens entering circulation, next 12 months (modeled)</div>
       <div class="supchart" id="mucbox">
         <svg id="muchart" viewBox="0 0 1000 300"></svg>
         <div class="stip" id="mtip2"></div>
@@ -1916,6 +1926,21 @@ window.ADMIN_GATE=on;})();
            swatches ARE the series colours, opacity included. See MU_* in
            the monthly unlock block. -->
       <div class="legend" id="mulegend"></div>
+      <!-- WHAT IS PUBLISHED AND WHAT IS NOT, on the card itself. The monthly
+           cadence (0.64% then 1.27% of supply, the 15th of each month,
+           through Mar 15 2027) and the nine allocation percentages come from
+           the official documentation, read on the date below. The split of
+           every OTHER category across months is this page's own model:
+           interpolated anchor points, rescaled so the model's today matches
+           the live circulating figure. Registered as an internal-model claim
+           so the audit sees it; replace it when
+           public/data/strk-unlocks.json exists. -->
+      <p class="mnote">
+        <span class="th-claim" data-perishable="internal-model" data-src="internal model"
+              data-checked="2026-09-12" data-breaks="2026-12-11"
+              data-note="hand-authored anchor curves for the seven non-vesting categories, rescaled to live circulating supply; replace with public/data/strk-unlocks.json when a per-category schedule is ingested">Scheduled vesting follows the published cadence. Everything else is a model, not a published schedule.</span>
+        <span class="msrc">Cadence and allocation percentages: <a href="https://docs.starknet.io/learn/protocol/strk" target="_blank" rel="noopener noreferrer">Official schedule ↗</a>, read <time datetime="2026-09-12">Sep 12, 2026</time></span>
+      </p>
       <div class="kpis two" id="mukpis"></div>
     </div>
     <div class="panel">
@@ -3830,7 +3855,7 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
      not a block: same token, same opacity, same shape as the thing it names */
   document.getElementById('mulegend').innerHTML=
     `<span><i style="background:${MU_SCHED}"></i>Scheduled vesting</span>`+
-    `<span><i style="background:${MU_SCHED};opacity:${MU_EST_OP}"></i>Estimated release (no fixed schedule)</span>`+
+    `<span><i style="background:${MU_SCHED};opacity:${MU_EST_OP}"></i>Modeled release (no published schedule)</span>`+
     `<span><i style="background:${MU_CUM};opacity:${MU_CUM_OP};height:2px;border-radius:1px"></i>Cumulative supply</span>`;
   const now=new Date();let nu=new Date(now.getFullYear(),now.getMonth(),15);if(nu<=now)nu=new Date(now.getFullYear(),now.getMonth()+1,15);
   /* next contractual unlock: the vesting bucket of the next 15th; exposed so
@@ -3839,8 +3864,16 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
   const nuAmt=Math.max(0,vAt(nuI)-vAt(nuI-1))/100*SUPPLY;
   window.__nextUnlock={amount:nuAmt,date:nu.getFullYear()+'-'+String(nu.getMonth()+1).padStart(2,'0')+'-'+String(nu.getDate()).padStart(2,'0')};
   document.getElementById('mukpis').innerHTML=
-    `<div class="kpi"><div class="kl">Next unlock</div><div class="kv">${nuAmt>0?'~'+Math.round(nuAmt/1e6)+'M':'·'}</div><div class="ks">${nu.toLocaleString('en',{month:'short',day:'numeric',year:'numeric'})} · <span data-stat="nextunlockpct">≈1.9%</span> computed from live circulating supply</div></div>`+
-    `<div class="kpi"><div class="kl">Vesting rate</div><div class="kv">up to 127M</div><div class="ks">per month · until Mar 15, 2027</div><div class="ks ksrc"><a href="https://docs.starknet.io/learn/protocol/strk" target="_blank" rel="noopener noreferrer">Official schedule ↗</a></div></div>`;
+    /* both KPIs come off the PUBLISHED cadence, not the model, and say so on
+       their own source line. The figures are unchanged. */
+    `<div class="kpi"><div class="kl">Next unlock</div><div class="kv">${nuAmt>0?'~'+Math.round(nuAmt/1e6)+'M':'·'}</div><div class="ks">${nu.toLocaleString('en',{month:'short',day:'numeric',year:'numeric'})} · <span data-stat="nextunlockpct">≈1.9%</span> computed from live circulating supply</div><div class="ks ksrc">Published cadence · <a href="https://docs.starknet.io/learn/protocol/strk" target="_blank" rel="noopener noreferrer">Official schedule ↗</a>, as of <time datetime="2026-09-12">Sep 12, 2026</time></div></div>`+
+    `<div class="kpi"><div class="kl">Vesting rate</div><div class="kv">up to 127M</div><div class="ks">per month · until Mar 15, 2027</div><div class="ks ksrc">Published cadence · <a href="https://docs.starknet.io/learn/protocol/strk" target="_blank" rel="noopener noreferrer">Official schedule ↗</a>, as of <time datetime="2026-09-12">Sep 12, 2026</time></div></div>`;
+  /* flag any registered claim on this card whose re-verification date has
+     passed, so the audit reads it off the DOM instead of the source */
+  document.querySelectorAll('#numbers [data-breaks]').forEach(function(el){
+    const b=Date.parse((el.getAttribute('data-breaks')||'')+'T00:00:00Z');
+    if(b&&Date.now()>=b)el.setAttribute('data-stale','true');
+  });
   const hl=document.getElementById('muhl');
   ['pointermove','pointerdown'].forEach(ev=>muchart.addEventListener(ev,e=>{const r=muchart.getBoundingClientRect();const vx=(e.clientX-r.left)/r.width*1000;
     let k=Math.round((vx-aL)/(aR-aL)*(n-1));k=Math.max(0,Math.min(n-1,k));const row=rows[k];const d=new Date(2024,row.i,1);
@@ -3851,9 +3884,9 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
     else{mtip.style.left=(px-14)+'px';mtip.style.transform='translateX(-100%)';}
     mtip.innerHTML=`<div class="td">${d.toLocaleString('en',{month:'short',year:'numeric'})}</div>
       <div class="r"><span style="color:${MU_SCHED}">Scheduled vesting</span><b>${row.vD>0.001?tok(row.vD):'·'}</b></div>
-      <div class="r"><span style="color:${MU_SCHED};opacity:.8">Estimated release</span><b>${row.estD>0.001?tok(row.estD):'·'}</b></div>
-      <div class="r"><span style="color:var(--muted)">This month</span><b>${tok(row.totD)}</b></div>
-      <div class="r"><span style="color:var(--acc-2)">Cumulative</span><b>${row.cum.toFixed(1)}%</b></div>`;}));
+      <div class="r"><span style="color:${MU_SCHED};opacity:.8">Modeled release</span><b>${row.estD>0.001?tok(row.estD):'·'}</b></div>
+      <div class="r"><span style="color:var(--muted)">This month (modeled)</span><b>${tok(row.totD)}</b></div>
+      <div class="r"><span style="color:var(--acc-2)">Cumulative (modeled)</span><b>${row.cum.toFixed(1)}%</b></div>`;}));
   ['mouseleave','pointerleave','pointercancel'].forEach(ev=>muchart.addEventListener(ev,()=>{mtip.style.display='none';hl.style.display='none';}));
 })();
 })();
