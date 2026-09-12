@@ -661,6 +661,9 @@ a.chip:hover{background:var(--acc);border-color:var(--acc);color:#0d0d0d}
 #numbers .feat .chgs span{color:var(--muted)}
 #numbers .feat .src a{color:var(--acc-2);text-decoration:none}#numbers .feat .src a:hover{text-decoration:underline}
 #numbers .up{color:var(--up)}#numbers .down{color:var(--down)}
+/* a badge that states a fact rather than a change: no sign, no sign colour.
+   Used by metrics flagged noDelta, where a percentage would be noise. */
+#numbers .neu{color:var(--muted)}
 #numbers .ranges{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:rgba(0,0,0,.2)}
 #numbers .ranges button{font-family:var(--mono),monospace;font-size:11px;letter-spacing:.08em;padding:8px 12px;background:transparent;color:var(--muted);border:0;cursor:pointer;transition:.15s}
 #numbers .ranges button:hover{color:var(--white)}#numbers .ranges button.on{background:rgba(197, 52, 0,.18);color:var(--white)}
@@ -2583,6 +2586,14 @@ const M=[
  {k:'chainrev',label:'Chain revenue',type:'usd',value:120744,source:{name:'DefiLlama',url:'https://defillama.com/chain/starknet'}},
  {k:'p_tvl',label:'TVL in STRK20 pool',type:'usd',value:528903},
  {k:'p_rev',label:'Revenue from STRK20',type:'usd',value:4167,source:{name:'STRK20 dashboard',url:'https://strk20.starknet.io/dashboard'}},
+ /* the SAME series, twice: the running total inside the selected window,
+    and the per-day figure it is summed from. The daily pill keeps the
+    card binding ([data-chart-series="p_tx"], "Last full day") and the
+    live engine's [data-stat="p_tx"]; neither reading is lost.
+    `value` is the fallback the chart shows ONLY if the fetch fails, the
+    page's dated-snapshot convention (see `accounts`): 31,682 is the sum
+    of the 145 committed days read on 2026-09-11. */
+ {k:'p_tx_total',label:'Private TX (total)',type:'num',value:31682,emptyNote:'SERIES UNAVAILABLE · LAST SNAPSHOT, SEP 11 2026'},
  {k:'p_tx',label:'Private TX (daily)',type:'num',value:36},
  {k:'p_vol',label:'DeFi volume privately routed',type:'usd',value:339540},
  {k:'p_users',label:'STRK20 pool users',type:'count',value:2347,source:{name:'onchain (Deposit events)',url:'https://voyager.online/contract/0x040337b1af3c663e86e333bab5a4b28da8d4652a15a69beee2b677776ffe812a'}},
@@ -2896,6 +2907,15 @@ const HIST={
  /* stacked: per-asset stacked areas + white total line; badge = absolute
     window delta (%-vs-first-dust-deposit was absurd) */
  p_tvl:{avail:['7D','30D','1Y','ALL'],stacked:true,get:()=>SRC.s20bal()},
+ /* PRIVATE TX, the running total. Same SRC.s20tx() the daily pill reads,
+    same cache entry, same dropped in-progress day: the only difference is
+    that draw() cumulates the window's slice, so the header is the total
+    accumulated in the selected window and the curve rises to it. ALL is
+    the default, where the header is the all-time total and the note
+    carries the SINCE stamp. noDelta: a percentage on a series that
+    restarts from zero at every window edge is mechanical, not
+    informative, so the badge states the period covered instead. */
+ p_tx_total:{avail:['7D','30D','1Y','ALL'],defR:'ALL',windowCumulative:true,noDelta:true,get:()=>SRC.s20tx()},
  p_tx:{avail:['7D','30D','1Y','ALL'],get:()=>SRC.s20tx()},
  /* MEASURED cumulative protocol revenue, the dashboard's own series: fees
     accrue in STRK and the backend prices the whole series at current spot,
@@ -2993,6 +3013,12 @@ function renderBadgeText(text,pos,label){const el=document.getElementById('cR'),
   wrap.style.visibility='visible';
   document.getElementById('cRLabel').textContent=label;
   el.outerHTML='<b id="cR" class="'+(pos?'up':'down')+'">'+text+'</b>';}
+/* same slot, no sign and no sign colour: for a metric whose badge states the
+   period covered instead of a change */
+function renderBadgeNeutral(text,label){const el=document.getElementById('cR'),wrap=el.parentElement;
+  wrap.style.visibility='visible';
+  document.getElementById('cRLabel').textContent=label;
+  el.outerHTML='<b id="cR" class="neu">'+text+'</b>';}
 /* absolute delta in the metric's own unit (USD compact, counts, TPS, pp…) */
 function fmtDelta(m,d){const s=d>=0?'+':'−',a=Math.abs(d);
   if(m.type==='price')return s+'$'+(a>=0.01?a.toFixed(2):a.toFixed(4));
@@ -3009,10 +3035,21 @@ function fmtDelta(m,d){const s=d>=0?'+':'−',a=Math.abs(d);
       delta in their unit; never %.
    2) level metrics → % only when the window's starting value is meaningful
       (≥ MEANINGFUL_BASE of the ending value); otherwise the absolute delta.
-      Kills the "+8,247,856,067%"-from-near-zero class of badges for good. */
+      Kills the "+8,247,856,067%"-from-near-zero class of badges for good.
+   3) noDelta metrics → NO change at all, in any form. A series that
+      cumulates from zero inside its own window always "grows" by whatever
+      multiple the first day happens to be: the badge is arithmetic about the
+      window, not information about the metric. Those metrics state the
+      period they cover instead, from `span` (see draw()). The flag lives on
+      the metric, never on a name test inside this function. */
 const MEANINGFUL_BASE=0.05;
-function windowBadge(m,h,first,last,label){
+function windowBadge(m,h,first,last,label,span){
   const d=last-first,inv=!!(h&&h.invert); // invert: color flips, sign text stays
+  if(h&&h.noDelta){
+    if(!span||!span.days){renderBadge(null);return;}
+    renderBadgeNeutral('SINCE '+new Date(span.t0).toLocaleString('en',{month:'short',year:'numeric',timeZone:'UTC'}).toUpperCase()
+      +', '+span.days+' DAY'+(span.days===1?'':'S'),label);
+    return;}
   if(!isFinite(d)){renderBadge(null);return;}
   if(h&&h.deltaBadge){
     renderBadgeText(fmtDelta(m,d)+(h.deltaBadge.unit||'')+(h.deltaBadge.suffix||''),inv?d<=0:d>=0,label);return;}
@@ -3042,7 +3079,13 @@ function draw(){
     if(seq!==drawSeq)return;
     const days=RANGES[curR].days;
     const cut=days===Infinity?-Infinity:Date.now()-days*DAY;
-    const pts=all.filter(p=>p[0]>=cut&&isFinite(p[1]));
+    /* windowCumulative: the source stays the DAILY series; the running total
+       is taken AFTER the window is cut, so the header is the total
+       accumulated inside the selected window and the curve rises to it.
+       Every daily point falls in exactly one slice and is added once, so
+       there is no double counting at a window edge. */
+    const sliced=all.filter(p=>p[0]>=cut&&isFinite(p[1]));
+    const pts=h.windowCumulative?cumsum(sliced):sliced;
     if(pts.length<2){
       clearChart();document.getElementById('fVal').textContent=fmt(m,m.value);
       renderBadge(null);setNote('NO DATA FOR THIS RANGE');return;}
@@ -3050,7 +3093,7 @@ function draw(){
     const t0=pts[0][0],t1=pts[pts.length-1][0];curSpan=t1-t0;
     let mn=Infinity,mx=-Infinity;pts.forEach(p=>{if(p[1]<mn)mn=p[1];if(p[1]>mx)mx=p[1];});
     if(h.signed){mn=Math.min(mn,0);mx=Math.max(mx,0);} // signed charts anchor on zero
-    if(h.weeklyBars||h.stacked)mn=Math.min(mn,0); // bars/stacks grow from a zero base
+    if(h.weeklyBars||h.stacked||h.windowCumulative)mn=Math.min(mn,0); // bars, stacks and in-window totals grow from a zero base
     const rng=(mx-mn)||1;
     PTS=pts.map(p=>({x:(p[0]-t0)/(curSpan||1)*W,y:H-pB-(p[1]-mn)/rng*(H-pT-pB),v:p[1],ts:p[0]}));
     const signG=document.getElementById('signG');signG.innerHTML='';
@@ -3206,7 +3249,7 @@ function draw(){
       else renderBadge(null);
     }else{
       fv.textContent=fmt(m,last);
-      windowBadge(m,h,first,last,curR);
+      windowBadge(m,h,first,last,curR,{t0:t0,t1:t1,days:pts.length});
       /* STRK STAKED carries its circulating share on the sub-line, the same
          value and source as the staked-ratio stat (live circstaked) */
       if(m.k==='strkstaked'&&map.circstaked&&isFinite(map.circstaked.value))
@@ -3247,7 +3290,10 @@ function paintRanges(){const h=HIST[curK];
 function setMetric(k){curK=k;
   root.querySelectorAll('.chip').forEach(c=>c.classList.toggle('on',c.dataset.k===k));
   const h=HIST[k];
-  if(h&&h.avail.indexOf(curR)<0)curR=h.avail.indexOf('7D')>=0?'7D':h.avail[0];
+  /* defR: a metric whose headline is a running total opens on the window
+     that total is about. Every other metric keeps the dashboard's 7D. */
+  if(h&&h.defR&&h.avail.indexOf(h.defR)>=0)curR=h.defR;
+  else if(h&&h.avail.indexOf(curR)<0)curR=h.avail.indexOf('7D')>=0?'7D':h.avail[0];
   paintRanges();draw();}
 function setRange(r){const h=HIST[curK];
   if(!h||h.avail.indexOf(r)<0)return;
