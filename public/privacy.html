@@ -199,6 +199,54 @@
   .tw-viz .case .cn { font-size: 12px; letter-spacing: .02em; margin-top: 7px; }
   .tw-viz .case .cd { font-size: 10.5px; margin-top: 8px; line-height: 1.6; }
   .tw-viz .case .cs { font-size: 9px; letter-spacing: .08em; margin-top: 9px; padding-top: 8px; }
+  /* SECTION 02 ON SECTION 06'S COMPONENT (2026-09-12). Only two rules are
+     new; everything else is .pl-* from css/privacy-fx.css, untouched.
+     .pl--3 is the same grid at three columns instead of four, with the same
+     -24px bleed so the outer edges line up with the prose above and every
+     column gets identical inner padding.
+     .tw-fig is the device frame. Section 06's figures are one SVG each and
+     size themselves off `.pl-fig .ld { height: 260px }`; these three devices
+     are HTML of three different natures, so the frame fixes the height
+     instead and each device fills it. 274px is section 06's own measured
+     figure height, so the two sections' cards end on the same rhythm. */
+  .pl--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  /* the accent clause: section 06's columns have none, so .pl-title and the
+     prose beside them need the page's .em tone declared here rather than
+     inherited from the .tw-card rules this replaced */
+  .pl--3 .pl-title .em, .pl-prose .lead .em { color: var(--em); }
+  .tw-fig { height: 274px; padding: 14px; display: flex; flex-direction: column; justify-content: center; overflow: hidden; }
+  .tw-fig > * { width: 100%; margin: 0; max-width: none; }
+  /* the case files fill the frame as two columns; the prose tightens rather
+     than the box growing, because the frame is the thing that has to hold */
+  .tw-fig .cases { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .tw-fig .case { padding: 11px 11px 12px; border-radius: 8px; }
+  .tw-fig .case .ch { font-size: 9px; letter-spacing: .12em; }
+  .tw-fig .case .cn { font-size: 11px; letter-spacing: .02em; margin-top: 6px; }
+  .tw-fig .case .cd { font-size: 9.5px; margin-top: 6px; line-height: 1.5; }
+  .tw-fig .case .cs { font-size: 8.5px; letter-spacing: .08em; margin-top: 7px; padding-top: 7px; }
+  .tw-fig .island { gap: 10px; }
+  .tw-fig .crowd { display: flex; flex-direction: column; gap: 10px; }
+  @media (max-width: 1080px) { .pl--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  @media (max-width: 860px) {
+    .pl--3 { grid-template-columns: minmax(0, 1fr); margin-left: 0; margin-right: 0; }
+    .pl--3 .pl-col { padding: 0 0 4px; border-left: 0; }
+    .pl--3 .pl-col + .pl-col { margin-top: 32px; padding-top: 28px; border-top: 1px solid var(--pf-line); }
+    /* STACK ORDER: each figure follows ITS OWN card, not all three after all
+       three. The cards and the figures live in two sibling grids, so both
+       collapse to display:contents and their six children become one column
+       on .tw, interleaved with order. .tw-stats' border-top goes with the
+       contents, so each stat carries its own rule instead. */
+    .tw { display: grid; grid-template-columns: minmax(0, 1fr); }
+    .tw > .pl--3, .tw > .tw-stats { display: contents; }
+    .pl--3 .pl-col:nth-child(1) { order: 1; }
+    .tw-stats .tw-stat:nth-child(1) { order: 2; }
+    .pl--3 .pl-col:nth-child(2) { order: 3; }
+    .tw-stats .tw-stat:nth-child(2) { order: 4; }
+    .pl--3 .pl-col:nth-child(3) { order: 5; }
+    .tw-stats .tw-stat:nth-child(3) { order: 6; }
+    .tw-stats .tw-stat { padding: 24px 0 6px; margin-top: 22px; border-left: 0; border-top: 1px solid #262626; }
+    .pl--3 .pl-col:nth-child(n+2) { margin-top: 32px; padding-top: 28px; border-top: 1px solid var(--pf-line); }
+  }
   .tw-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid #262626; }
   .tw-stat { padding: 36px 26px 6px; border-left: 1px solid #262626; }
   .tw-stat:first-child { border-left: 0; padding-left: 0; }
@@ -2333,95 +2381,93 @@ h3.pmv-title { margin: 0 0 14px; font-size: clamp(22px, 2vw, 26px); line-height:
 <section class="th-pm-sec">
   <div class="th-pm-head th-pm-reveal"><span class="th-pm-marker"></span><span class="th-pm-num">02</span><h2 id="three-walls-fifty-years-of-precedent" class="th-pm-title">Three walls, fifty years of precedent</h2></div>
   <p class="th-pm-eyebrow th-pm-reveal">The precedent</p>
-  <p class="th-pm-intro th-pm-intro--wide th-pm-reveal">Crypto has attempted privacy for a decade. Every attempt hit at least one of <b>three walls</b>.</p>
+  <!-- SECTION 02, REBUILT ON SECTION 06'S GRAMMAR (2026-09-12).
+       It was three columns each stacking a device, a title, a long body, a
+       READ THE WALL toggle and a big figure: five kinds of thing per column,
+       three devices of different natures, and a toggle that made the row
+       breathe. Section 06 solves the same problem (one idea per column, a
+       device per column, nothing hidden) and reads, so this is that
+       component, not a second one: .pl-prose for the intro, .pl for the
+       grid, .pl-col / .pl-top / .pl-ic / .pl-name / .pl-arrow / .pl-body /
+       .pl-title / .pl-sum / .pl-fig for the card. The only new rules are
+       .pl--3 (three columns instead of four) and .tw-fig (a fixed device
+       frame, since these devices are HTML, not one SVG each).
+       The long wall bodies are gone; what survived moved into the intro's
+       right column. The three figures keep their own .tw-stats row below
+       the grid, which is already a matching 3-column grid. -->
+  <div class="pl-prose th-pm-reveal">
+    <p class="th-pm-intro">Crypto has attempted privacy for a decade. Every attempt hit at least one of <b>three walls</b>.</p>
+    <p class="lead">Tornado Cash was the category's most used product until OFAC sanctioned it in 2022, and what put it on the list was not the hiding: it was the absence of any mechanism, for anyone, ever, to answer a court. Zcash, Monero and Aztec chose dedicated chains and paid for it in isolation, while Railgun stayed on the EVM and charges 0.25% each way. And a crowd you can count is not a crowd: Tornado split its users into fixed denominations and thinned every one of them. Compliance. Composability. Scale. Three walls, a decade of failed attempts. <span class="em">Starknet is the first design to clear all three at once.</span></p>
+  </div>
 
-  <!-- V7 grid: the three walls read side by side, no rail and no selection.
-       A two-line heading over a dotted rule, then one column per wall
-       (diagram on top, title and prose on the floor of the row), then a
-       stat band on the same dividers. Wall copy, wall h3 ids and the two
-       case files are the retired pedestal panel's, verbatim; the case
-       files fold into wall 01's diagram area as the mono cards they
-       already were. Diagrams are line-only: #4a4a4a with a #c53400
-       highlight, no fills except the one crowd dot that is you. -->
   <div class="tw th-pm-reveal" id="three-walls">
-    <div class="tw-rule" aria-hidden="true"></div>
-    <div class="tw-cards">
-
-      <article class="tw-card">
-        <div class="tw-viz">
-          <div class="cases">
-            <div class="gx-bloom" aria-hidden="true">
-              <i style="--bc:var(--danger);left:12%;top:4%;width:76%;height:42%"></i>
-              <i style="--bc:var(--danger);left:12%;top:54%;width:76%;height:42%"></i>
+    <div class="pl pl--3">
+    <div class="pl-col" id="wall-01">
+      <div class="pl-top">
+        <span class="pl-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v16"/><path d="M7 20h10"/><path d="M5 8h14"/><path d="m5 8-2.5 5a3 3 0 0 0 5 0z"/><path d="m19 8 2.5 5a3 3 0 0 1-5 0z"/></svg></span>
+        <span class="pl-name">01 &middot; COMPLIANCE</span>
+        <span class="pl-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></span>
+      </div>
+      <div class="pl-body">
+        <h3 class="pl-title" id="wall-n-01compliance-a-privacy-system">Compliance: a privacy system with no disclosure path <span class="em">is unbankable by design.</span></h3>
+        <p class="pl-sum">Sanctioned in 2022, and the people who wrote it went to prison. Not for the hiding, for having no way to answer a court.</p>
+      </div>
+      <div class="pl-fig tw-fig">
+        <div class="cases">
+              <div id="case-file-nl-alexey-pertsev-arrested" class="case gx-card gx-coral">
+                <div class="ch">CASE FILE &middot; NL</div>
+                <div class="cn">ALEXEY PERTSEV</div>
+                <div class="cd">Arrested in the Netherlands days after the sanctions. Sentenced May 2024: five years and four months of jail, money laundering.</div>
+                <div class="cs">STATUS: APPEALING <i class="th-asof" data-perish="pertsev-status"></i></div>
+              </div>
+              <div id="case-file-us-roman-storm-arrested" class="case gx-card gx-coral">
+                <div class="ch">CASE FILE &middot; US</div>
+                <div class="cn">ROMAN STORM</div>
+                <div class="cd">Arrested near Seattle, 2023. Convicted August 2025: unlicensed money transmitting. Jury hung on counts carrying forty more years.</div>
+                <div class="cs">STATUS: POST-TRIAL MOTIONS <i class="th-asof" data-perish="storm-status"></i></div>
+              </div>
             </div>
-            <div id="case-file-nl-alexey-pertsev-arrested" class="case gx-card gx-coral">
-              <div class="ch">CASE FILE &middot; NL</div>
-              <div class="cn">ALEXEY PERTSEV</div>
-              <div class="cd">Arrested in the Netherlands days after the sanctions. Sentenced May 2024: five years and four months of jail, money laundering.</div>
-              <div class="cs">STATUS: APPEALING <i class="th-asof" data-perish="pertsev-status"></i></div>
+      </div>
+    </div>
+    <div class="pl-col" id="wall-02">
+      <div class="pl-top">
+        <span class="pl-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 14.5 14.5 9.5"/><path d="M11 6.5 12.8 4.7a4 4 0 0 1 5.7 5.7l-1.9 1.8"/><path d="M13 17.5l-1.8 1.8a4 4 0 0 1-5.7-5.7l1.9-1.8"/></svg></span>
+        <span class="pl-name">02 &middot; COMPOSABILITY</span>
+        <span class="pl-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></span>
+      </div>
+      <div class="pl-body">
+        <h3 class="pl-title" id="wall-n-02composability-privacy-kept-being">Composability: privacy kept being built as a destination, <span class="em">and destinations empty out.</span></h3>
+        <p class="pl-sum">A private chain of your own means no applications and no liquidity. Reaching either one means crossing back out in public.</p>
+      </div>
+      <div class="pl-fig tw-fig">
+        <div class="island">
+              <div id="privacy-island" class="landmass iso gx-card"><div class="lt">PRIVACY ISLAND</div><div class="ls">ZCASH &middot; MONERO &middot; AZTEC<br>REAL PRIVACY, NO ECONOMY</div></div>
+              <div class="bridge"><div class="rail-line"></div><div class="bl">EVERY CROSSING IS PUBLIC</div></div>
+              <div id="defi-mainland" class="landmass gx-card gx-coral"><div class="lt">DEFI MAINLAND</div><div class="ls">LIQUIDITY &middot; LENDING &middot; MARKETS<br>REAL ECONOMY, NO PRIVACY</div></div>
             </div>
-            <div id="case-file-us-roman-storm-arrested" class="case gx-card gx-coral">
-              <div class="ch">CASE FILE &middot; US</div>
-              <div class="cn">ROMAN STORM</div>
-              <div class="cd">Arrested near Seattle, 2023. Convicted August 2025: unlicensed money transmitting. Jury hung on counts carrying forty more years.</div>
-              <div class="cs">STATUS: POST-TRIAL MOTIONS <i class="th-asof" data-perish="storm-status"></i></div>
+      </div>
+    </div>
+    <div class="pl-col" id="wall-03">
+      <div class="pl-top">
+        <span class="pl-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0 1 12 0"/><circle cx="17.5" cy="9.5" r="2.2"/><path d="M15 20a5 5 0 0 1 6.9-4.6"/></svg></span>
+        <span class="pl-name">03 &middot; SCALE</span>
+        <span class="pl-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></span>
+      </div>
+      <div class="pl-body">
+        <h3 class="pl-title" id="wall-n-03scale-anonymity-is-headcount">Scale: anonymity is headcount. <span class="em">You are only as hidden as the crowd is large.</span></h3>
+        <p class="pl-sum">Hiding needs a crowd, and a crowd needs users. Drag the slider: at eight, you are one of eight.</p>
+      </div>
+      <div class="pl-fig tw-fig">
+        <div class="crowd">
+              <div class="crowd-top">
+                <span class="t" id="crowdLabel">HOW HIDDEN ARE YOU? DRAG THE CROWD.</span>
+                <input type="range" id="crowdRange" min="3" max="240" value="8" aria-labelledby="crowdLabel">
+              </div>
+              <div class="dots" id="dots"><canvas id="crowdField" aria-hidden="true"></canvas></div>
+              <div class="crowd-cap" id="crowdCap" aria-live="polite"></div>
             </div>
-          </div>
-        </div>
-        <div class="tw-txt">
-          <h3 id="wall-n-01compliance-a-privacy-system"><span class="wall-tag">WALL Nº 01</span>Compliance: a privacy system with no disclosure path <span class="em">is unbankable by design.</span></h3>
-          <div class="tw-body">
-          <p>Tornado Cash was the category's most used product until OFAC sanctioned it in 2022. What put it on the list was not the hiding itself; it was the absence of any mechanism, for anyone, ever, to answer a court. The human cost of that design choice fell on the people who wrote it.</p>
-          <p class="kicker">The sanctions were eventually struck down. <span class="em">But without a disclosure path, privacy is not a system a regulator can accept, and TradFi capital cannot touch it.</span></p>
-          </div>
-          <button type="button" class="tw-more" aria-expanded="false"><span>Read the wall</span></button>
-        </div>
-      </article>
-
-      <article class="tw-card">
-        <div class="tw-viz">
-          <!-- main's two-island diagram, ported (2026-09-07): two glass
-               landmasses and the dashed accent bridge; on hover the dashes
-               travel across (reduced motion: still) -->
-          <div class="island">
-            <div id="privacy-island" class="landmass iso gx-card"><div class="lt">PRIVACY ISLAND</div><div class="ls">ZCASH &middot; MONERO &middot; AZTEC<br>REAL PRIVACY, NO ECONOMY</div></div>
-            <div class="bridge"><div class="rail-line"></div><div class="bl">EVERY CROSSING IS PUBLIC</div></div>
-            <div id="defi-mainland" class="landmass gx-card gx-coral"><div class="lt">DEFI MAINLAND</div><div class="ls">LIQUIDITY &middot; LENDING &middot; MARKETS<br>REAL ECONOMY, NO PRIVACY</div></div>
-          </div>
-        </div>
-        <div class="tw-txt">
-          <h3 id="wall-n-02composability-privacy-kept-being"><span class="wall-tag">WALL Nº 02</span>Composability: privacy kept being built as a destination, <span class="em">and destinations empty out.</span></h3>
-          <div class="tw-body">
-          <p>Zcash and Monero put real cryptography on dedicated chains and paid two prices: isolation and no programmability. Aztec rebuilt privacy as its own L2, but applications cannot be connected, they have to be rebuilt, and reaching real liquidity means bridging out in public and bridging back in public. Railgun stayed on the EVM chains but takes a 0.25% cut each way, on every shield and on every unshield. Do the math: shielding then unshielding a $100M treasury costs $500,000, for privacy alone.</p>
-          </div>
-          <button type="button" class="tw-more" aria-expanded="false"><span>Read the wall</span></button>
-        </div>
-      </article>
-
-      <article class="tw-card">
-        <div class="tw-viz">
-          <!-- main's interactive crowd, ported (2026-09-07): a range slider
-               fills a field of dots, one ringed as you, with the live line
-               under it. Keyboard operable (native range), reduced-motion safe
-               (no animation, the paint follows the handle) -->
-          <div class="crowd">
-            <div class="crowd-top">
-              <span class="t" id="crowdLabel">HOW HIDDEN ARE YOU? DRAG THE CROWD.</span>
-              <input type="range" id="crowdRange" min="3" max="240" value="8" aria-labelledby="crowdLabel">
-            </div>
-            <div class="dots" id="dots"><canvas id="crowdField" aria-hidden="true"></canvas></div>
-            <div class="crowd-cap" id="crowdCap" aria-live="polite"></div>
-          </div>
-        </div>
-        <div class="tw-txt">
-          <h3 id="wall-n-03scale-anonymity-is-headcount"><span class="wall-tag">WALL Nº 03</span>Scale: anonymity is headcount. <span class="em">You are only as hidden as the crowd is large.</span></h3>
-          <div class="tw-body">
-          <p>If a thousand users shield similar amounts at similar times, you are lost in the crowd; if three do, you are one of three. Tornado split its users into fixed denominations and thinned each crowd. <a href="https://www.usenix.org/conference/usenixsecurity18/presentation/kappos" target="_blank" rel="noopener">UCL researchers showed in 2018</a> that Zcash's own usage patterns compromised it: founders and miners moved coins through the shielded pool so regularly that simple heuristics could shrink its effective anonymity set by 69.1%.</p>
-          </div>
-          <button type="button" class="tw-more" aria-expanded="false"><span>Read the wall</span></button>
-        </div>
-      </article>
-
+      </div>
+    </div>
     </div>
 
     <div class="tw-stats">
@@ -2435,12 +2481,14 @@ h3.pmv-title { margin: 0 0 14px; font-size: clamp(22px, 2vw, 26px); line-height:
       </div>
       <div class="tw-stat">
         <p class="tw-num">69.1%</p>
-        <p class="tw-slab">How far simple heuristics could shrink Zcash's effective anonymity set (UCL, 2018).</p>
+        <!-- the UCL citation was a body link in the wall-03 prose that this
+     rebuild dropped. It is re-attached to the figure the study
+     produced, which already named it, rather than left orphaned. -->
+        <p class="tw-slab">How far simple heuristics could shrink Zcash's effective anonymity set (<a href="https://www.usenix.org/conference/usenixsecurity18/presentation/kappos" target="_blank" rel="noopener noreferrer">UCL, 2018</a>).</p>
       </div>
     </div>
   </div>
 
-  <p class="th-pm-pivot th-pm-reveal">Compliance. Composability. Scale. Three walls, a decade of failed attempts. <span class="em">Starknet is the first design to clear all three at once.</span></p>
 </section>
 
 <!-- ================= SECTION 03 ================= -->
