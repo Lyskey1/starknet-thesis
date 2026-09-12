@@ -1749,16 +1749,18 @@
   a.mstc-name:focus-visible { outline: 1px solid #c53400; outline-offset: 3px; }
   .mstc-ext { font-size: 16px; color: rgba(250,250,250,0.35); transition: color 0.18s; }
   a.mstc-name:hover .mstc-ext { color: #c53400; }
-  /* one line, per the card spec: the tags carry the categorization */
+  /* FULL TEXT, NO CLAMP (2026-09-12). This was -webkit-line-clamp:1, so
+     every description longer than one line was cut mid-sentence with an
+     ellipsis: avnu lost "Private fee payments via Paymaster for strkBTC
+     swaps", Extended lost the whole second half of what it does, Troves and
+     Endur lost theirs too. A one-line rule is not a card spec when four of
+     seven cards do not fit it. The grid row stretches the cards to a common
+     height, so the ragged descriptions still leave the tag rows aligned. */
   .mstc-desc {
     font-size: 13.5px;
     line-height: 1.55;
     color: rgba(250,250,250,0.62);
     margin: 0 0 12px;
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-line-clamp: 1;
-    -webkit-box-orient: vertical;
   }
   .mstc-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 2px; }
   .mstc-tag {
@@ -3180,7 +3182,7 @@
                     <span class="mstc-kind">DeFi protocol</span>
                   </div>
                   <a class="mstc-name" href="https://x.com/trovesfi" target="_blank" rel="noopener">Troves<i class="ti ti-brand-x mstc-ext" aria-hidden="true"></i></a>
-                  <p class="mstc-desc">Advanced one-click DeFi strategies for Bitcoiners. Private vaults are live.</p>
+                  <p class="mstc-desc">Advanced one-click DeFi strategies for Bitcoiners.</p>
                   <div class="mstc-tags"><span class="mstc-tag">Yield farming</span></div>
                 </div>
                 <div class="mstc" id="eco-forge-yields">
@@ -5009,7 +5011,7 @@
       "tags": [
         "Yield farming"
       ],
-      "description": "Advanced one-click DeFi strategies for Bitcoiners. Private vaults are live.",
+      "description": "Advanced one-click DeFi strategies for Bitcoiners.",
       "url": "https://x.com/trovesfi"
     },
     {
