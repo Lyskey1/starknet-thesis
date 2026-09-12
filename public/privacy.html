@@ -255,6 +255,13 @@
     line-height: 1; letter-spacing: -.02em; color: var(--white); }
   .tw-slab { font-family: var(--mono); font-size: 11.5px; line-height: 1.7; letter-spacing: .04em;
     color: rgba(250, 250, 250,.62); margin-top: 16px; max-width: 32ch; }
+  /* the UCL citation is the only link in a caption, and a bare <a> here paints
+     the UA blue. Same treatment the page gives its body links: the caption's
+     own tone, a hairline underline, accent on hover. */
+  .tw-slab a { color: inherit; text-decoration: none;
+    border-bottom: 1px solid rgba(250, 250, 250,.28); transition: color .18s, border-color .18s; }
+  .tw-slab a:hover { color: var(--em); border-bottom-color: var(--em); }
+  .tw-slab a:focus-visible { outline: 2px solid var(--em); outline-offset: 3px; }
   /* the section heading runs two lines with the tail in the dim tone */
   .th-pm-title--two > span { display: block; }
   .th-pm-title--two .tw-dim { color: rgba(250, 250, 250,.62); }
@@ -1496,6 +1503,12 @@
 .th-pm-pivot { max-width: none; margin: 22px 0 0; padding: 0; text-align: left;
   font-size: clamp(22px, 2.1vw, 30px); line-height: 1.22; text-wrap: pretty; }
 .th-pm-pivot::before { display: none; }
+/* SECTION 02'S CLOSE. The shorthand above resets margin to 22px, which under a
+   row of figure captions reads as a fourth caption, so the close declares its
+   own gap and has to sit AFTER that rule to win on source order. 64px is the
+   distance at which the figures finish and the sentence starts. */
+.th-pm-pivot--close { margin-top: 64px; }
+@media (max-width: 860px) { .th-pm-pivot--close { margin-top: 48px; } }
 
 /* ============================================================
    SECTION 02, ONE VIEWPORT (2026-09-07). The three-column walls stay:
@@ -2396,8 +2409,13 @@ h3.pmv-title { margin: 0 0 14px; font-size: clamp(22px, 2vw, 26px); line-height:
        right column. The three figures keep their own .tw-stats row below
        the grid, which is already a matching 3-column grid. -->
   <div class="pl-prose th-pm-reveal">
-    <p class="th-pm-intro">Crypto has attempted privacy for a decade. Every attempt hit at least one of <b>three walls</b>.</p>
-    <p class="lead">Tornado Cash was the category's most used product until OFAC sanctioned it in 2022, and what put it on the list was not the hiding: it was the absence of any mechanism, for anyone, ever, to answer a court. Zcash, Monero and Aztec chose dedicated chains and paid for it in isolation, while Railgun stayed on the EVM and charges 0.25% each way. And a crowd you can count is not a crowd: Tornado split its users into fixed denominations and thinned every one of them. Compliance. Composability. Scale. Three walls, a decade of failed attempts. <span class="em">Starknet is the first design to clear all three at once.</span></p>
+    <!-- ACCENT KEPT ON "three walls" ALONE. .th-pm-intro b is white at 600,
+         an emphasis rather than the orange accent, and carrying it across
+         "compliance, composability, and scale" would set half the sentence
+         in it. The three names are the payload; the emphasis stays on the
+         phrase they expand. -->
+    <p class="th-pm-intro">Crypto has attempted privacy for a decade. Every attempt hit at least one of <b>three walls</b>: compliance, composability, and scale.</p>
+    <p class="lead">Tornado Cash was the category's most used product until OFAC sanctioned it in 2022, and what put it on the list was not the hiding: it was the absence of any mechanism, for anyone, ever, to answer a court. Zcash, Monero and Aztec chose dedicated chains and paid for it in isolation, while Railgun stayed on the EVM and charges 0.25% each way. And a crowd you can count is not a crowd: Tornado split its users into fixed denominations and thinned every one of them.</p>
   </div>
 
   <div class="tw th-pm-reveal" id="three-walls">
@@ -2489,6 +2507,13 @@ h3.pmv-title { margin: 0 0 14px; font-size: clamp(22px, 2vw, 26px); line-height:
     </div>
   </div>
 
+  <!-- the section's close, back where a close belongs: under the grid AND
+       under the figures, full width, the page's own .th-pm-pivot. Entirely
+       in the accent, which is what it was before the rework, where it was
+       the accent clause of the old closing sentence. --pivot-gap lifts it
+       clear of the figure captions so it reads as a conclusion and not as a
+       fourth caption. -->
+  <p class="th-pm-pivot th-pm-pivot--close th-pm-reveal"><span class="em">Starknet is the first design to clear all three at once.</span></p>
 </section>
 
 <!-- ================= SECTION 03 ================= -->
