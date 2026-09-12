@@ -1083,6 +1083,13 @@
   .bsk-amt-src { margin: 10px 0 0; font-family: var(--mono); font-size: 10px;
     letter-spacing: 0.14em; text-transform: uppercase; color: rgba(250, 250, 250,0.38); }
   .bsk-amt-src a { color: var(--orange); text-decoration: none; }
+  /* the staked figures carry their own source link, in the panel's link
+     grammar: the figure's colour until hover, a hairline underline so it
+     reads as a link without shouting inside a mono figure row */
+  .bsk-amt-link { color: inherit; text-decoration: none;
+    border-bottom: 1px solid rgba(250,250,250,0.25); transition: color 0.18s, border-color 0.18s; }
+  .bsk-amt-link:hover { color: var(--orange); border-bottom-color: var(--orange); }
+  .bsk-amt-link:focus-visible { outline: 1px solid var(--orange); outline-offset: 3px; }
   .bsk-amt-src a:hover { text-decoration: underline; }
   .bsk-amt-src .arr, .bsk-cta-link .arr { font-size: 10px; opacity: 0.75; }
   .bsk-cta { margin: 14px 0 0; }
@@ -3238,7 +3245,7 @@
              data-src="https://www.starknet.io/blog/starknet-2025-year-in-review/"
              data-checked="2026-08-23"
              data-says="the Starknet ecosystem launched BTC staking, making Starknet the first Rollup to tether its security directly to Bitcoin | Bitcoin holders can now stake their BTC to secure Starknet and earn STRK rewards, launching a dual-token consensus model where STRK represents 75% and BTC 25% of the network&#39;s total security weight"
-             data-noun-ok="Starknet BTC STRK">Since late 2025, Bitcoin can be <a class="inline-accent-link" href="https://dashboard.endur.fi/stake" data-stake-link="stake" target="_blank" rel="noopener noreferrer">staked natively on Starknet</a> to help secure the network and earn rewards. Not custodial lending. Not a yield farm. Starknet is the first rollup to tether its security directly to Bitcoin: BTC and STRK stake together, at a protocol-fixed <span data-stake-share="btc">25%</span> and <span data-stake-share="strk">75%</span> of total staking power.</p>
+             data-noun-ok="Starknet BTC STRK">Since late 2025, Bitcoin can be <a class="inline-accent-link" href="https://dashboard.endur.fi/stake" data-stake-link="stake" target="_blank" rel="noopener noreferrer">staked natively on Starknet</a> to help secure the network and earn rewards. Starknet is the first rollup to tether its security directly to Bitcoin: BTC and STRK stake together, at a protocol-fixed <span data-stake-share="btc">25%</span> and <span data-stake-share="strk">75%</span> of total staking power.</p>
           <!-- COPY CONSOLIDATION (owner-approved, 2026-08-24). The middle
                paragraph — "BTC carries 25% of consensus weight (monetary
                security), STRK carries 75% (network economics)." — moved into
@@ -3296,15 +3303,16 @@
               <dt>STRK staked</dt><dd data-bsk-val="strk"></dd>
             </div>
           </dl>
-          <!-- SOURCE CREDIT (2026-09-09), the site's own pattern (see the
-               dashboard chart's "Source: growthepie" line on /strk): a mono
-               credit under the figures, the link on the credit and never on
-               the numbers. The href rides js/staking-config.js's
-               ENDUR_DASHBOARD_URL; the markup carries the same value so it
-               works without JS. The stamp that read "LIVE DATA, UPDATED X
-               AGO" is gone; the two figures are still fetched live. -->
-          <p class="bsk-amt-src">Source: <a href="https://dashboard.endur.fi/" data-stake-link="dashboard"
-             target="_blank" rel="noopener noreferrer">Endur <span class="arr" aria-hidden="true">&#8599;</span></a></p>
+          <!-- THE FIGURES ARE THE LINK (2026-09-12). The separate
+               "Source: Endur" credit line under them is gone: it spent a row
+               to say what the numbers can say themselves. Each figure is now
+               an anchor to ENDUR_DASHBOARD_URL with an aria-label naming
+               Endur as the source, so the credit is available to a screen
+               reader and to a hover, not only to sighted readers of a
+               footnote. The href rides js/staking-config.js's
+               ENDUR_DASHBOARD_URL and the markup carries the same value, so
+               it works without JS. data-src and data-checked stay on the
+               <dl>, where the audit reads them. -->
           <p class="bsk-cta"><a class="bsk-cta-link" href="https://dashboard.endur.fi/stake" data-stake-link="stake"
              target="_blank" rel="noopener noreferrer">Stake on Starknet <span class="arr" aria-hidden="true">&#8599;</span></a></p>
           <p class="bsk-sig bsk-fade">One security budget, staked together</p>
@@ -4699,7 +4707,19 @@
       var ok = isFinite(value) && value > 0;
       row.hidden = !ok;
       if (!ok) return;
-      row.querySelector('[data-bsk-val="' + key + '"]').textContent = text;
+      /* the figure IS the source link: same anchor style as the CTA below,
+         new tab, and an aria-label that names Endur so the credit reaches a
+         screen reader rather than living in a footnote we deleted. */
+      var cell = row.querySelector('[data-bsk-val="' + key + '"]');
+      cell.textContent = '';
+      var a = document.createElement('a');
+      a.className = 'bsk-amt-link';
+      a.href = (window.ENDUR_DASHBOARD_URL || 'https://dashboard.endur.fi/');
+      a.target = '_blank'; a.rel = 'noopener noreferrer';
+      a.setAttribute('data-stake-link', 'dashboard');
+      a.setAttribute('aria-label', text + ', source: Endur dashboard');
+      a.textContent = text;
+      cell.appendChild(a);
     }
     line('btc', snap.stakedBtc, Math.round(snap.stakedBtc) + ' BTC');
     line('strk', snap.strkStaked, abbrStrk(snap.strkStaked) + ' STRK');
