@@ -1,0 +1,206 @@
+/* ===== Privacy page: the metal-human hero and the comparison table =====
+   The head is the GetLayers metalHuman loop, desaturated and tinted to the
+   strk20 orange with a blend layer (a hue-rotate would send the clip's own
+   red highlights green). The table follows Framer's pricing layout: criteria
+   as rows with a description under each, protocols as columns. */
+:root { --pf-ink: #fafafa; --pf-dim: rgba(250,250,250,.62); --pf-faint: #616161;
+        --pf-line: #262626; --pf-acc: #c53400; --pf-bg: #0d0d0d;
+        /* the matrix's positive semantics (2026-09-07), quantum's roadmap tokens:
+           yes = green, partial = amber, no = gray; the accent stays on the
+           STRK20 column and the headers only */
+        --fx-yes: #36C692; --fx-part: #E5A552; --fx-no: #9a9a9a; }
+
+/* ---------- hero ---------- */
+/* .pv-human spans the whole hero: js/pv-human-shader.js paints the landing
+   page's backdrop (flame wash plus motes) onto the canvas here, and the
+   metal-human clip screens onto it from the lower band. No curtain, bloom,
+   grid or heavy scrim: the landing hero has none, and this hero matches it. */
+/* no ground of its own: the keyed figure sits directly on the page's ambient wash (js/eco-backdrop.js) */
+/* the hero box stops short of the fold (top offset + its own bottom padding),
+   so the canvas runs past it to the viewport edge, otherwise a strip of the
+   page wash showed under the figure */
+.pv-human { position: absolute; inset: 0 0 -96px 0; z-index: 0; overflow: hidden; pointer-events: none; background: transparent; }
+.pv-human-shader { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
+.pv-figure { position: absolute; inset: auto 0 0 0; height: min(100%, 106vh); }
+.pv-figure { --focus: 68% 42%; }
+.pv-human video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: var(--focus); }
+/* js/pv-human-key.js: the clip becomes a transparent keyed canvas, the <video> stays as its (hidden) source */
+.pv-key { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
+video.pv-key-src { opacity: 0; pointer-events: none; }
+/* the keyed clip has no edges to hide, so no scrim: a scrim here read as a dark halo around the figure */
+.pv-human .pv-scrim { display: none; }
+body.page-privacy .hero { position: relative; }
+body.page-privacy .hero::before { display: none; }
+@media (max-width: 860px) { .pv-figure { --focus: 62% 40%; } }
+@media (prefers-reduced-motion: reduce) { .pv-human video, .pv-key { display: none; } }
+
+/* ---------- the comparison table ---------- */
+.fx-wrap { max-width: 1160px; margin: 44px auto 0; }
+.fx-scroll { overflow-x: auto; border: 1px solid var(--pf-line); border-radius: 14px; background: rgba(20,20,20,.5); }
+.fx-table { width: 100%; min-width: 880px; border-collapse: collapse; font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; }
+.fx-table th, .fx-table td { border-bottom: 1px solid var(--pf-line); }
+.fx-table tbody tr:last-child th, .fx-table tbody tr:last-child td { border-bottom: 0; }
+
+/* header: the protocol and its score, the way Framer heads a plan with a price */
+.fx-table thead th { padding: 22px 20px; text-align: left; vertical-align: baseline; border-bottom: 1px solid var(--pf-line); }
+.fx-corner { width: 30%; min-width: 240px; }
+.fx-pname { display: block; font-size: 19px; font-weight: 400; letter-spacing: -.01em; color: var(--pf-ink); }
+.fx-score { display: block; margin-top: 4px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: .1em; color: var(--pf-faint); }
+.fx-table thead th.fx-champ .fx-pname { color: var(--pf-acc); }
+.fx-table thead th.fx-champ .fx-score { color: var(--pf-acc); }
+
+/* criterion rows: name over a quiet description */
+.fx-crit { padding: 20px; text-align: left; vertical-align: top; }
+.fx-crit-name { display: block; font-size: 16px; font-weight: 400; color: var(--pf-ink); }
+.fx-crit-sub { display: block; margin-top: 3px; font-size: 14px; line-height: 1.4; color: var(--pf-dim); max-width: 34ch; }
+
+.fx-cell { padding: 20px; text-align: center; vertical-align: middle; }
+.fx-cell.fx-champ { background: rgba(197,52,0,.07); }
+.fx-cell[tabindex]:focus-visible { outline: 2px solid var(--pf-acc); outline-offset: -2px; }
+/* a tick for yes, a half disc for partial, a dash for no */
+.fx-y, .fx-p { display: inline-block; width: 15px; height: 15px; vertical-align: middle; }
+.fx-y { background: var(--fx-yes); -webkit-mask: no-repeat center/15px url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M2.5 8.5l3.5 3.5 7.5-8' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  mask: no-repeat center/15px url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M2.5 8.5l3.5 3.5 7.5-8' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); }
+.fx-p { border-radius: 999px; border: 1.5px solid var(--fx-part); background: linear-gradient(90deg, var(--fx-part) 50%, transparent 50%); }
+/* was #3a3a3a, which measures APCA Lc 0.0 on this ground: not low contrast,
+   invisible. #b2b2b2 is the minimum that reaches the Lc 60 floor. */
+.fx-n { color: var(--fx-no); font-size: 17px; }
+.fx-legend { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 16px 0 0;
+  font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--pf-faint); }
+.fx-legend .fx-y, .fx-legend .fx-p { margin-left: 14px; }
+.fx-legend .fx-y:first-child { margin-left: 0; }
+@media (max-width: 860px) { .fx-crit-sub { display: none; } .fx-crit, .fx-cell { padding: 15px 12px; } }
+
+/* the Satoshi quote screen (sq-) and the vertical lineage (lg-) left on
+   2026-09-07 for main's forum card and a horizontal timeline (privacy.html,
+   tl-). Section 05's accent block is pv-hl, inline in privacy.html. */
+/* the scattered hero copy grid (pv-hero-grid, pv-tl, pv-br, pv-note, pv-stat)
+   left with the three-zone hero of 2026-09-07; its rules live inline as pvh- */
+
+/* ---------- the pool metrics, in sui.io's panel language ----------
+   Flat hard-edged panels on #141414 with a 1px #262626 border, a
+   sentence-case title bar cut off by a rule, the mono legend directly under
+   it, and the plot below. Big numbers light, not bold. Scoped to the id so
+   these beat the page's inline rules regardless of load order. */
+#poolMetrics .pmx-stats { gap: 12px; margin-top: 30px; }
+#poolMetrics .pmx-stat { border-radius: 0; background: #141414; border: 1px solid #262626; padding: 18px 22px 24px; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
+#poolMetrics .pmx-stat::before, #poolMetrics .pmx-stat::after { display: none; }
+#poolMetrics .pmx-stat .l { font-size: 11px; letter-spacing: .1em; color: rgba(250,250,250,.72); }
+#poolMetrics .pmx-stat .v { font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-weight: 300; font-size: clamp(36px, 3.4vw, 54px); letter-spacing: -.03em; margin-top: 16px; }
+#poolMetrics .pmx-stat .s { margin-top: 12px; font-size: 10px; }
+#poolMetrics .pmx-updated { margin-top: 12px; }
+#poolMetrics .pmx-grid { gap: 12px; margin-top: 12px; }
+#poolMetrics .pmx-card { border-radius: 0; background: #141414; border: 1px solid #262626; padding: 0; box-shadow: none; }
+#poolMetrics .pmx-head { flex-direction: column; align-items: flex-start; flex-wrap: nowrap; gap: 6px; padding: 20px 22px 18px; border-bottom: 1px solid #262626; }
+#poolMetrics .pmx-t { font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-size: 22px; font-weight: 400; letter-spacing: -.01em; line-height: 1.1; color: var(--pf-ink); }
+#poolMetrics .pmx-sub { font-size: 10px; letter-spacing: .12em; color: rgba(250,250,250,.55); }
+#poolMetrics .pmx-body { margin: 0; padding: 18px 22px 0; }
+#poolMetrics .pmx-legend { order: -1; margin: 0 0 18px; gap: 8px 18px; }
+#poolMetrics .pmx-legend span { font-size: 10px; letter-spacing: .1em; color: rgba(250,250,250,.85); }
+#poolMetrics .pmx-legend i { width: 10px; height: 10px; border-radius: 0; }
+#poolMetrics .pmx-live, #poolMetrics .pmx-skel, #poolMetrics .pmx-tip, #poolMetrics .pmx-comp-bar, #poolMetrics .pmx-comp-bar i { border-radius: 0; }
+#poolMetrics .pmx-src { padding: 16px 22px 20px; }
+
+/* the news grid lives in css/stride.css now (.video-grid-wrap / .vgrid), shared
+   with the quantum page. The id-scoped copy that stood here is gone. */
+
+/* eco-stage.css flattens every body child to z-index 1; with the hero canvas
+   reaching up behind the header, the header needs to sit above it again */
+body.page-privacy header.vc-header { z-index: 100; }
+
+/* the four-properties column band (pcore-strip / pcol / pscene, js/proof-columns.js)
+   left on 2026-09-07 for main's convergence diagram, styled inline in privacy.html */
+
+/* ---------- the comparison table, after public.com's rebate table ----------
+   Flat and centred: no card radius or panel fill, hairline rules only, and the
+   winning column carries a tinted band with an accent border down its full
+   height so the eye lands on STRK20 before it reads a single row. */
+.fx-wrap { max-width: 1240px; }
+.fx-scroll { border: 0; border-radius: 0; background: transparent; overflow-x: auto; }
+.fx-table { min-width: 940px; border-collapse: separate; border-spacing: 0; }
+.fx-table thead th { padding: 18px 18px 20px; text-align: center; border-bottom: 1px solid var(--pf-line); }
+.fx-table thead th.fx-corner { text-align: left; border-bottom: 0; }
+.fx-pname { font-size: 16px; letter-spacing: .01em; color: rgba(250,250,250,.82); }
+.fx-score { margin-top: 6px; font-size: 11px; letter-spacing: .14em; color: rgba(250,250,250,.42); }
+/* the winner: one tinted band, accent hairline down both flanks, capped top and bottom */
+.fx-table thead th.fx-champ, .fx-table .fx-cell.fx-champ {
+  background: rgba(197,52,0,.10);
+  border-left: 1px solid rgba(197,52,0,.55); border-right: 1px solid rgba(197,52,0,.55); }
+.fx-table thead th.fx-champ { border-top: 1px solid rgba(197,52,0,.55); }
+.fx-table tbody tr:last-child .fx-cell.fx-champ { border-bottom: 1px solid rgba(197,52,0,.55); }
+.fx-table thead th.fx-champ .fx-pname { font-weight: 500; }
+.fx-crit { padding: 22px 20px; border-bottom: 1px solid var(--pf-line); }
+.fx-cell { text-align: center; border-bottom: 1px solid var(--pf-line); }
+.fx-crit-name { font-size: 15px; }
+.fx-crit-sub { font-size: 13px; color: rgba(250,250,250,.5); }
+.fx-legend { justify-content: center; margin-top: 22px; }
+
+/* ---------- 05: the law, as a four-column feature band ----------
+   Replaced the fanned deck on 2026-09-01. Four stages that all have to read
+   at once do not want a selection device, so each owns a column and nothing
+   is hidden. Lives here rather than in privacy.html's inline <style> only to
+   stay out of the way of concurrent edits to that block; every selector that
+   touches an existing class therefore carries two classes, so it beats the
+   inline single-class rules (.th-pm-title at 52px, and its 880px override)
+   regardless of source order. Verified with getComputedStyle, not by
+   reading the cascade. */
+
+/* the prose, folded above the columns as two measures */
+.pl-prose { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr);
+  gap: 24px 56px; align-items: start; margin: 34px 0 0; }
+.pl-prose > .th-pm-intro { margin: 0; max-width: none; }
+.pl-prose > .lead { margin: 0; max-width: none; }
+
+/* the band bleeds out by its own column padding, so all four columns get the
+   SAME inner padding and still line their outer edges up with the prose
+   above. Zeroing the first/last padding instead (the obvious version) makes
+   the outer two content boxes 32px wider than the inner two, which shows up
+   as two figure panels taller than the other two. Measured: 350 vs 318. */
+.pl { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); margin: 56px -24px 0; }
+.pl-col { display: flex; flex-direction: column; min-width: 0;
+  padding: 0 24px 4px; border-left: 1px solid var(--pf-line); }
+.pl-col:first-child { border-left: 0; }
+/* the name row has to hold on ONE line in every column, and the longest name
+   is "04 - THE DISCLOSURE" at 19 characters. Budget at 1440: the column's
+   237px of content less two 30px tiles and two 10px gaps leaves 157px, and
+   19 characters of IBM Plex Mono at 10.5px with .1em tracking measure 140.
+   Fatten the tiles, the gap or the tracking and column 04 wraps to two lines
+   while the other three do not, which drops its title out of line. */
+.pl-top { display: flex; align-items: center; gap: 10px; }
+.pl-ic { flex: none; display: grid; place-items: center; width: 30px; height: 30px;
+  border: 1px solid var(--pf-line); color: var(--pf-acc); }
+.pl-ic svg { width: 16px; height: 16px; }
+.pl-name { min-width: 0; font-family: 'IBM Plex Mono', monospace; font-size: 10.5px;
+  letter-spacing: .1em; white-space: nowrap; color: var(--pf-ink); }
+.pl-arrow { flex: none; margin-left: auto; display: grid; place-items: center;
+  width: 30px; height: 30px; border: 1px solid var(--pf-line); color: var(--pf-dim); }
+.pl-arrow svg { width: 16px; height: 16px; }
+.pl-body { flex: 1 1 auto; }
+.pl-title { margin: 22px 0 0; font-family: 'General Sans','Helvetica Neue',Arial,sans-serif;
+  font-weight: 600; font-size: 17px; line-height: 1.25; letter-spacing: -.01em; color: var(--pf-ink); }
+.pl-sum { margin: 10px 0 0; font-family: 'General Sans','Helvetica Neue',Arial,sans-serif;
+  font-size: 13.5px; line-height: 1.62; color: var(--pf-dim); }
+/* the figure sits at the base of every column, so the four bottom edges line
+   up whatever the description above them measures */
+.pl-fig { margin: 26px 0 0; border: 1px solid var(--pf-line); background: #141414;
+  color: rgba(250,250,250,.34); }
+.pl-fig svg { display: block; width: 100%; height: auto; }
+.pl-fig .pl-acc { stroke: var(--pf-acc); stroke-width: 1.5; }
+
+@media (max-width: 1080px) {
+  .pl { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .pl-col:nth-child(odd) { border-left: 0; }
+  .pl-col:nth-child(n+3) { margin-top: 34px; padding-top: 30px; border-top: 1px solid var(--pf-line); }
+}
+@media (max-width: 860px) {
+  /* body.page-privacy sets overflow-x: clip, so an over-wide nowrap tile is
+     silently cropped instead of raising a scrollbar. Keep the inline-block
+     (plain inline left stray slabs at line ends) and relax only the wrap, so
+     the tile shrinks to the container instead of running past it. */
+  .pl-prose { grid-template-columns: minmax(0,1fr); gap: 20px; }
+}
+@media (max-width: 640px) {
+  .pl { grid-template-columns: minmax(0,1fr); margin-left: 0; margin-right: 0; }
+  .pl-col, .pl-col:nth-child(odd) { padding: 0 0 4px; border-left: 0; }
+  .pl-col + .pl-col { margin-top: 32px; padding-top: 28px; border-top: 1px solid var(--pf-line); }
+}

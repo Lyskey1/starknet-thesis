@@ -26,8 +26,8 @@
 
 const fs = require('fs');
 
-const HTML = 'strk.html';
-const SEED = 'assets/data/prism-dau-seed.json';
+const HTML = 'public/strk.html';
+const SEED = 'public/assets/data/prism-dau-seed.json';
 const fail = (msg) => { console.error('check-quoted-definition: ' + msg); process.exit(1); };
 
 const html = fs.readFileSync(HTML, 'utf8');

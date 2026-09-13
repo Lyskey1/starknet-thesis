@@ -1,6 +1,6 @@
 # Daily refresh of the PER-APP ACTIVE USERS seed (strk.html, Apps group).
 #
-# LIVE. Runs daily and commits assets/data/prism-dau-seed.json when the
+# LIVE. Runs daily and commits public/assets/data/prism-dau-seed.json when the
 # ranking changes.
 #
 # THE ENDPOINT IS UNDOCUMENTED AND MAY CHANGE OR DISAPPEAR WITHOUT NOTICE.
@@ -11,6 +11,13 @@
 # Reference"; if that becomes available, move BASE in the script to it and
 # pass the key from a repository secret rather than staying on this host.
 # Treat a run failure as expected maintenance, not an incident.
+#
+# CURRENTLY FAILING, and correctly. Since 2026-09-12 every data path on the
+# host returns HTTP 500; Aegis's own dashboard calls the same URL, gets the
+# same 500 and renders a hardcoded fallback behind an error line. This
+# workflow will fail daily until they fix it, commit nothing each time, and
+# the page keeps its last verified seed with a visible "could not refresh"
+# note. See the diagnosis in scripts/refresh-prism-dau.mjs.
 #
 # Nothing breaks on the page when it does change. The script validates hard
 # and writes only on success, so a failed or malformed fetch fails the run
@@ -53,13 +60,13 @@ jobs:
         run: node scripts/refresh-prism-dau.mjs
       - name: commit when changed
         run: |
-          if git diff --quiet assets/data/prism-dau-seed.json 2>/dev/null \
-             && git ls-files --error-unmatch assets/data/prism-dau-seed.json >/dev/null 2>&1; then
+          if git diff --quiet public/assets/data/prism-dau-seed.json 2>/dev/null \
+             && git ls-files --error-unmatch public/assets/data/prism-dau-seed.json >/dev/null 2>&1; then
             echo "seed unchanged, nothing to commit"; exit 0
           fi
-          leader=$(node -e "const s=require('./assets/data/prism-dau-seed.json');console.log(s.apps[0].name+' '+s.apps[0].users)")
+          leader=$(node -e "const s=require('./public/assets/data/prism-dau-seed.json');console.log(s.apps[0].name+' '+s.apps[0].users)")
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add assets/data/prism-dau-seed.json
+          git add public/assets/data/prism-dau-seed.json
           git commit -m "data: per-app active users seed refresh, leader $leader, source Prism by Aegis"
           git push

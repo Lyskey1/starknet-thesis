@@ -12,7 +12,7 @@ const crypto = require('crypto');
 const PAGES = ['quantum', 'privacy', 'btcfi'];
 const REPO = process.env.GITHUB_REPO || 'Lyskey1/starknet-thesis';
 const BRANCH = process.env.GITHUB_BRANCH || 'main';
-const FILE_PATH = 'data/news.json';
+const FILE_PATH = 'public/data/news.json'; // vesper layout: the site serves from public/
 
 const MAX_BODY_BYTES = 512 * 1024; // total payload cap for the news target
 const MAX_ENTRIES_PER_PAGE = 100;
@@ -26,7 +26,7 @@ const FIELD_CAPS = { url: 2048, title: 400, date: 64, fallbackText: 2000, name: 
 // 3 to 10KB each), so this target gets its own caps: 2MB total (room for a
 // couple hundred accounts each carrying a generous data URL; the news cap
 // stays 512KB), 150K chars per avatar, 160K chars per entry.
-const ECO_FILE = 'data/ecosystem.json';
+const ECO_FILE = 'public/data/ecosystem.json'; // vesper layout: the site serves from public/
 const ECO_CATS = ['official', 'defi', 'consumer', 'nft', 'appchains', 'tooling', 'starkware', 'snf', 'builders', 'shitposter'];
 const ECO_MAX_BODY_BYTES = 2 * 1024 * 1024;
 const ECO_MAX_PER_CAT = 200;
@@ -39,7 +39,7 @@ const ECO_MAX_ENTRY_CHARS = 160000;
 // Chip categories (wallets, bridges) carry { name, logo, url }; the defi card
 // category additionally carries { tags, description }. Logos may be base64
 // data URLs (96px JPEG uploads), so this target shares the 2MB cap rationale.
-const BTCFI_ECO_FILE = 'data/btcfi-ecosystem.json';
+const BTCFI_ECO_FILE = 'public/data/btcfi-ecosystem.json'; // vesper layout: the site serves from public/
 const BTCFI_CATS = ['wallets', 'bridges', 'defi'];
 const BTCFI_MAX_PER_CAT = 100;
 const BTCFI_FIELD_CAPS = { name: 120, logo: 150000, url: 2048, description: 400 };

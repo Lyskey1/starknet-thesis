@@ -1,0 +1,308 @@
+/* ===== Ecosystem stage: the globe (projects) and the gang ring (voices) =====
+   strk20 palette only: ground #0d0d0d, panels #141414, lines #262626,
+   text #fafafa, accent #c53400 / #a02a00. */
+:root { --es-bg:#0d0d0d; --es-panel:#141414; --es-line:#262626; --es-ink:#fafafa; --es-dim:rgba(250,250,250,.65);
+        --es-faint:#616161; --es-acc:#c53400; --es-acc-d:#a02a00; --es-warm:#e07a4a;
+        /* the page's text axis: ONE left edge for every full-bleed section and
+           for the shared section head, so a head and the content under it line
+           up without either one restating the number */
+        --es-inset: clamp(24px, 4.4vw, 72px); }
+
+/* ---------- shared shell ---------- */
+.es-block { position: relative; margin: 0 0 64px; }
+.es-head { display: flex; align-items: baseline; justify-content: space-between; gap: 24px; flex-wrap: wrap; margin: 0 0 18px; }
+.es-kicker { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: var(--es-acc); margin: 0; }
+.es-sub { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--es-faint); margin: 0; }
+
+/* ---------- gang ring: a WebGL carousel standing on water ---------- */
+#ecoRing { width: 100vw; max-width: none; margin: 0 0 0 calc(50% - 50vw); padding: 0; background: transparent; }
+/* one viewport under the sticky bar: the section used to run 116vh, which
+   pushed the ring's foot below the fold at 1440x900 and slid the title
+   under the bar (2026-09-05 fit pass; 152px = fixed nav 64 + two-row sticky bar 88) */
+.es-screen { position: relative; min-height: calc(100svh - 152px); overflow: hidden; background: transparent; }
+/* the copy rides ON the water rather than sitting below it */
+.es-ui { position: relative; z-index: 3; min-height: calc(100svh - 152px); display: flex; flex-direction: column; justify-content: space-between; pointer-events: none; }
+.es-ui > * { pointer-events: auto; }
+
+/* THE SECTION HEAD, ONE RULE SET (2026-09-11). Both heads on this page are
+   built by js/section-head.js and land here: THE PROJECTS (the index) and
+   THE VOICES (the gang ring). The declarations are the projects head's own,
+   moved verbatim off the old ".ix-head h2" so the reference head does not
+   move a pixel, and the voices head inherits them rather than carrying a
+   second copy. Left-aligned on --es-inset, the same axis as the content
+   under it. Adding a section means calling the builder; it needs nothing
+   here.
+   The pre-rendered directory (#eco-directory .ix-head) keeps its own,
+   smaller heading: it is the no-JS fallback for the whole page, not a peer
+   section head, and it is clipped the moment the index enhances. */
+.es-shead { margin: 0 0 26px; text-align: left; }
+.es-shead .es-kicker { margin: 0; }
+.es-shead-h { font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-weight: 600; font-size: 76px;
+  line-height: .96; letter-spacing: 0; color: var(--es-ink); margin: 10px 0 30px; max-width: 13ch; }
+/* the lede belongs to the title, so it sits close under it and the head's
+   30px gap lands below the lede instead of above it */
+.es-shead .es-lede { margin: -18px 0 0; max-width: 60ch; }
+/* the ring's head stands on the canvas and the section is full bleed, so it
+   carries the stacking and the page inset itself. Type is untouched. */
+.es-shead--stage { position: relative; z-index: 3; padding: 42px var(--es-inset) 0; }
+
+/* the page's section-intro line, unscoped since the head was shared */
+.es-lede { font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-size: 15px; line-height: 1.6; color: var(--es-dim); margin: 0; }
+
+.es-ring-tabs { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 22px 0 0; position: relative; z-index: 3; }
+.es-ring-tabs button { padding: 8px 15px; border: 1px solid var(--es-line); border-radius: 999px; background: rgba(20,20,20,.7); color: var(--es-dim); font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; cursor: pointer; transition: color .2s, border-color .2s, background-color .2s; }
+.es-ring-tabs button:hover { color: var(--es-ink); border-color: #3a3a3a; }
+.es-ring-tabs button.on { color: var(--es-acc); border-color: var(--es-acc); background: rgba(197,52,0,.12); }
+
+/* the stage runs edge to edge; the canvas carries the cards AND their water */
+/* the canvas fills the WHOLE section: the pool runs behind the name too */
+.es-stage { position: absolute; inset: 0; z-index: 0; width: 100%; border: 0; background: none; overflow: hidden; touch-action: pan-y; cursor: grab; user-select: none; -webkit-user-select: none; }
+.es-stage.dragging { cursor: grabbing; }
+.es-stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+/* the pool has no edge: it dissolves into the dock so the two read as one */
+/* no hard edge at either end: the pool dissolves into the page */
+.es-stage::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 26%; pointer-events: none; z-index: 2;
+  background: linear-gradient(to bottom, rgba(13,13,13,0), rgba(13,13,13,.55) 55%, rgba(13,13,13,.92)); }
+.es-stage::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 20%; pointer-events: none; z-index: 2;
+  background: linear-gradient(to top, rgba(13,13,13,0), rgba(13,13,13,.7)); }
+
+.es-labels { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+.es-label { position: absolute; left: 0; top: 0; display: flex; flex-direction: column; align-items: center; gap: 3px;
+  padding: 6px 10px; background: rgba(6, 6, 6, .55); border-radius: 6px;
+  font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-align: center;
+  letter-spacing: .14em; text-transform: uppercase; color: rgba(250, 250, 250, .78); white-space: nowrap;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, .8);
+  will-change: transform, opacity; transition: color .25s; }
+/* labels never exceed the card: the stage publishes the front card's
+   rendered width (--es-cardw); anything longer ellipsizes on the card and
+   reads in full in the dock readout below the ring */
+.es-label { max-width: var(--es-cardw, 220px); }
+.es-label b, .es-label .es-label-role { display: block; max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+.es-label b { font-weight: 400; font-size: 10.5px; color: rgba(250, 250, 250, .68); }
+/* THE ROLE LEADS THE BAND (2026-09-05): it drives the click, so it sits
+   first, mono caps at 12.5px in the accent family. #e07a4a, not the base
+   #c53400: the warm tone reads about 6.9:1 on the band's dark ground where
+   the base accent sits near 3:1 and would fail the 4.6:1 floor. */
+.es-label .es-label-role { order: -1; font-style: normal; font-weight: 600; font-size: 12.5px; letter-spacing: .12em; color: #e07a4a; }
+.es-label.is-front b { color: var(--es-ink); }
+
+.es-hint { position: absolute; z-index: 4; padding: 9px 16px; border-radius: 999px; background: var(--es-acc); color: #fafafa; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; pointer-events: none; opacity: 0; transition: opacity .18s; white-space: nowrap; will-change: transform; }
+.es-hint.on { opacity: 1; }
+
+/* the dock continues the pool rather than sitting under it */
+.es-dock { position: relative; z-index: 3; display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 0 24px 40px; text-align: center; }
+.es-dock .es-count { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .2em; color: var(--es-faint); }
+.es-dock .es-count b { color: var(--es-acc); font-weight: 500; }
+.es-dock .es-name { font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-weight: 300; font-size: clamp(24px, 3vw, 40px); line-height: 1.05; letter-spacing: -.028em; color: var(--es-ink); }
+.es-dock .es-name a { color: inherit; text-decoration: none; }
+.es-dock .es-name a:hover { color: var(--es-acc); }
+.es-dock .es-role { font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--es-dim); max-width: 46ch; }
+.es-dots { display: flex; flex-wrap: wrap; justify-content: center; max-width: 520px; gap: 7px; margin-top: 20px; }
+.es-dots i { width: 6px; height: 6px; border-radius: 999px; background: #3a3a3a; transition: width .25s, background-color .25s; }
+.es-dots i.on { width: 22px; background: var(--es-acc); }
+
+@media (max-width: 860px) {
+  .es-shead--stage { padding-top: 84px; }
+  .es-screen, .es-ui { min-height: 100vh; }
+  .es-dock { padding-bottom: 44px; }
+}
+
+
+/* ---------- the hero flight (Morpho-shaped): a tall track, a sticky canvas ---------- */
+#ecoGlobe { width: 100vw; max-width: none; margin: 0 0 0 calc(50% - 50vw); padding: 0; background: transparent; }
+.eg-track { position: relative; height: 240vh; }
+.eg-stick { position: sticky; top: 0; height: 100vh; overflow: hidden; background: transparent; }
+/* the flight's last frame dissolves into the page instead of being cut off
+   mid-logo where the sticky canvas ends */
+.eg-stick::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 26vh; pointer-events: none; z-index: 4;
+  background: linear-gradient(to bottom, rgba(13,13,13,0) 0%, rgba(13,13,13,.7) 55%, rgba(13,13,13,1) 100%); }
+.eg-stick canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+
+.eg-copy { position: absolute; left: 50%; transform: translate(-50%,0); width: min(1180px, calc(100% - 56px)); text-align: center; pointer-events: none; will-change: opacity, transform; }
+.eg-copy-a { top: 13vh; }
+.eg-copy-b { top: 50%; transform: translate(-50%,-50%); width: min(760px, calc(100% - 48px)); }
+.eg-copy h2, .eg-copy .eg-h { font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-weight: 300; font-size: clamp(26px, 3.3vw, 47px); line-height: 1.12; letter-spacing: -.02em; color: var(--es-ink); margin: 0 0 16px; }
+.eg-copy p { font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-size: clamp(14px, 1.3vw, 18px); line-height: 1.5; color: var(--es-dim); margin: 0; }
+/* the hero copy rides the SHARED classes (css/vesper-chrome.css .vch-title /
+   .vch-sub, 2026-09-06); these two keep only the LAYOUT this stage owns:
+   the copy stays centred and the absolutely positioned block keeps no top
+   margin. Typography comes from the shared rules (the #ecoGlobe arm
+   out-ranks .eg-copy's own type on specificity). */
+#ecoGlobe .vch-title { margin: 0; text-align: center; }
+#ecoGlobe .vch-sub { margin-left: auto; margin-right: auto; text-align: center; }
+
+.eg-stats { position: absolute; left: 48px; bottom: 7vh; z-index: 5; display: flex; gap: 44px; pointer-events: none; }
+.eg-stats span { display: block; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: rgba(250,250,250,.75); margin-bottom: 8px; }
+.eg-stats b { font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-weight: 300; font-size: clamp(30px, 3.2vw, 46px); letter-spacing: -.02em; color: var(--es-ink); }
+.eg-hint { position: absolute; right: 48px; bottom: 7vh; z-index: 5; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: rgba(250,250,250,.72); pointer-events: none; }
+
+.eg-chip { position: absolute; top: 0; left: 0; z-index: 5; display: flex; align-items: center; gap: 11px; padding: 9px 15px; border-radius: 999px; background: #fafafa; color: #0d0d0d; font-family: 'IBM Plex Mono', monospace; font-size: 12px; pointer-events: none; opacity: 0; transition: opacity .16s; white-space: nowrap; will-change: transform; }
+.eg-chip.on { opacity: 1; }
+.eg-chip span + span { color: #616161; padding-left: 11px; border-left: 1px solid rgba(13,13,13,.18); }
+@media (max-width: 860px) {
+  .eg-track { height: 210vh; }
+  .eg-stats { left: 20px; bottom: 5vh; gap: 28px; }
+  .eg-hint { display: none; }
+}
+
+
+/* the ambient backdrop from the landing: fixed, behind everything, inert */
+.eco-bd { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+.eco-bd canvas { display: block; width: 100%; height: 100%; }
+/* the page's own sections have to sit above it and carry no opaque ground */
+body { background: transparent; }
+body > *:not(.eco-bd) { position: relative; z-index: 1; }
+#ecoGlobe, .es-screen { background: transparent !important; }
+.es-screen { background: radial-gradient(120% 80% at 50% 0%, rgba(197,52,0,.07) 0%, transparent 62%) !important; }
+
+/* Sections that painted their own solid ground now cut black bands through
+   the backdrop; hand them transparency so the wash runs the whole page. */
+body section:not(.sq-band),
+body .eco-close,
+body .eco-cta-band,
+body footer.vc-footer,
+body .tf-wrap { background-color: transparent !important; }
+body footer.vc-footer { background-image: none !important; }
+/* keep the page's own glow from doubling the wash */
+body::before { opacity: .35; }
+
+/* ---------- the index: ecosystem cards, matching the BTCFi directory ---------- */
+#ecoIndex { width: 100vw; max-width: none; margin: 0 0 96px calc(50% - 50vw); padding: 15vh var(--es-inset) 0; }
+.ix-head { margin: 0 0 26px; }
+/* the directory block's own heading. An h2 since 2026-09-09 (the h1 moved to
+   the injected hero copy), and this selector MUST track the tag: leave it on
+   h1 and it matches nothing, dropping the heading onto the bare h2 rule in
+   css/styles.css at a different size.
+   STILL SCOPED TO #eco-directory. The collision it was written against is
+   gone (2026-09-11: the interactive index's title moved to .es-shead-h with
+   the shared head, so no bare ".ix-head h2" rule exists any more), but the
+   scope stays, because .ix-head is now this block's alone and the id says
+   so. This is the no-JS fallback's heading, not a peer section head: it
+   keeps its own, smaller type on purpose, and it is clipped the moment the
+   index enhances. */
+#eco-directory .ix-head h2 { font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-weight: 300; font-size: clamp(28px, 3.4vw, 52px); line-height: 1; letter-spacing: -.03em; color: var(--es-ink); margin: 8px 0 22px; max-width: none; }
+
+/* ---------- the pre-rendered directory (scripts/build-ecosystem.js) ----------
+   Ships in the HTML so the page carries its heading and all its entries with
+   their descriptions before a line of JS runs. That heading is an h2 since
+   2026-09-09; with JS off it is the page's FIRST heading and the page has no
+   h1, because rank 1 now belongs to the hero copy js/eco-globe.js injects.
+   With JS, eco-index.js sets data-enhanced and the interactive index takes
+   over the view: the block is clipped, NOT display:none, so every word
+   stays in the DOM. */
+.ixs-group { margin: 0 0 34px; }
+.ixs-group .es-kicker { margin: 0 0 12px; }
+.ixs-list { list-style: none; margin: 0; padding: 0; }
+.ixs-item { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px;
+  padding: 12px 14px; border-bottom: 1px solid var(--es-line);
+  font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-size: 15px; color: var(--es-dim); }
+.ixs-name { color: var(--es-ink); text-decoration: none; letter-spacing: .01em; text-transform: uppercase; }
+.ixs-name:hover { color: var(--es-acc); }
+/* --es-faint (#616161) on the accent chip measures APCA Lc 0.0, invisible.
+   #fafafa on #c53400 measures 77.7 and clears both thresholds, and it needs
+   no change to the chip fill. */
+.ixs-cat { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: #fafafa; }
+.ixs-desc { flex: 1 1 320px; min-width: 0; }
+/* clipped from first paint when JS is available (html.eco-live, set by an
+   inline head script), and also once the handoff completes. The first
+   selector is what removes the layout shift; the second keeps the state
+   correct if the flag is ever cleared after enhancement. */
+/* SPACE RESERVED FOR THE LIVE INDEX (2026-09-02).
+   The interactive index is built from a fetch of /data/ecosystem.json, and
+   it lands late: measured at 3.8 seconds on a PRODUCTION build, not just in
+   dev, which was checked before assuming latency was the cause. Until then
+   the container is 135px, and when the index arrives it grows to its full
+   height and shoves everything below it down. That single shift measured a
+   CLS of 0.670.
+   These floors reserve the settled height per breakpoint so the arrival
+   changes nothing below it. Values are measured on the production build,
+   re-measured for the projects-only grid (the voices left for the ring): 5162 at 1440, scaled for the narrower counts. They
+   are floors on the container, so if the directory grows the container
+   simply exceeds them and the layout still holds.
+   Scoped to .eco-live, so with JS off the static directory renders at its
+   own natural height and nothing is reserved. */
+.eco-live #ecoIndex { min-height: 4800px; }
+@media (max-width: 1240px) { .eco-live #ecoIndex { min-height: 6900px; } }
+@media (max-width: 760px)  { .eco-live #ecoIndex { min-height: 13000px; } }
+
+.eco-live .ixs,
+.ixs[data-enhanced] { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+.ix-tabs { display: flex; flex-wrap: wrap; gap: 0; margin: 0 0 40px; border-top: 1px solid var(--es-line); border-left: 1px solid var(--es-line); }
+.ix-tabs button { min-height: 54px; padding: 0 18px; border: 0; border-right: 1px solid var(--es-line); border-bottom: 1px solid var(--es-line); border-radius: 0; background: rgba(20,20,20,.44); color: var(--es-dim);
+  font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; cursor: pointer; transition: background-color .18s, color .18s; }
+.ix-tabs button:hover { background: rgba(20,20,20,.82); color: var(--es-ink); }
+.ix-tabs button.on { background: var(--es-acc); color: #fafafa; }
+
+.ix-grid { display: block; background: transparent; }
+/* .ix-panel is a <section>, and css/styles.css caps every section at 1100px
+   with its own padding: lift both so each category grid runs the full
+   container (the 2026-09-05 four-up pass). */
+.ix-panel { margin: 0 0 52px; max-width: none; padding: 0; }
+.ix-group { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: rgba(250,250,250,.48); margin: 0 0 14px; }
+.ix-group b { color: var(--es-acc); font-weight: 500; margin-left: 8px; }
+.ix-card-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid var(--es-line); border-left: 1px solid var(--es-line); }
+.ix-card { display: flex; flex-direction: column; min-width: 0; min-height: 228px; padding: 24px 26px 22px; text-decoration: none; border: 0; border-right: 1px solid var(--es-line); border-bottom: 1px solid var(--es-line); border-radius: 0; background: rgba(20,20,20,.52); color: var(--es-ink); text-align: left; cursor: pointer; transition: background-color .18s, border-color .18s; }
+.ix-card:hover, .ix-card:focus-visible { background: rgba(20,20,20,.86); outline: none; }
+.ix-card:focus-visible { box-shadow: inset 0 0 0 1px var(--es-acc); }
+.ix-card-top { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 24px; }
+.ix-card-logo { position: relative; width: 52px; height: 52px; flex: none; display: grid; place-items: center; overflow: hidden; border: 1px solid var(--es-line); background: rgba(250,250,250,.05); color: rgba(250,250,250,.48); }
+.ix-card-logo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; background: var(--es-panel); }
+.ix-card-mono { font-family: 'IBM Plex Mono', monospace; font-size: 14px; letter-spacing: .08em; text-transform: uppercase; }
+.ix-kind { margin-left: auto; flex: none; padding: 6px 11px; border: 1px solid var(--es-line); font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: rgba(250,250,250,.5); }
+.ix-card-name { display: flex; align-items: center; gap: 10px; min-width: 0; margin: 0 0 12px; font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-size: 28px; font-weight: 600; line-height: 1.05; letter-spacing: 0; color: #fafafa; }
+.ix-card-ext { font-size: 17px; color: rgba(250,250,250,.34); }
+.ix-card:hover .ix-card-name, .ix-card:focus-visible .ix-card-name { color: #fff; }
+.ix-card:hover .ix-card-ext, .ix-card:focus-visible .ix-card-ext { color: var(--es-acc); }
+.ix-card-desc { display: block; margin: 0 0 22px; font-family: 'General Sans','Helvetica Neue',Arial,sans-serif; font-size: 15px; line-height: 1.55; color: rgba(250,250,250,.62); }
+.ix-card-link { display: flex; align-items: center; gap: 12px; width: 100%; margin-top: auto; padding: 13px 14px; border: 1px solid var(--es-line); border-radius: 0; background: rgba(20,20,20,.9); font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; letter-spacing: .03em; color: rgba(250,250,250,.62); cursor: copy; transition: border-color .18s, color .18s; }
+.ix-card-link:hover { border-color: var(--es-acc); color: var(--es-ink); }
+.ix-copy.copied i { color: var(--es-acc); }
+.ix-card-link span { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ix-card-link i { flex: none; font-size: 16px; color: rgba(250,250,250,.4); }
+/* the four-dot move glyph the reference puts on the active row */
+.ix-move { width: 13px; height: 13px; flex: none; background:
+  radial-gradient(circle 1.5px at 50% 2px, currentColor 99%, transparent) ,
+  radial-gradient(circle 1.5px at 50% 11px, currentColor 99%, transparent),
+  radial-gradient(circle 1.5px at 2px 50%, currentColor 99%, transparent),
+  radial-gradient(circle 1.5px at 11px 50%, currentColor 99%, transparent),
+  radial-gradient(circle 1.5px at 50% 50%, currentColor 99%, transparent); }
+
+/* the detail sheet was removed 2026-09-05: cards link straight to X. */
+.ix-noise { height: 110px; background:
+  repeating-linear-gradient(0deg, rgba(250,250,250,.05) 0 1px, transparent 1px 4px),
+  repeating-linear-gradient(90deg, rgba(197,52,0,.06) 0 1px, transparent 1px 7px); }
+
+@media (max-width: 1240px) {
+  .ix-card-grid { grid-template-columns: repeat(3, minmax(0,1fr)); }
+}
+@media (max-width: 1100px) {
+  .es-shead-h { font-size: 58px; }
+  .ix-card-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+}
+@media (max-width: 640px) {
+  /* one number, so the head and the index keep sharing an edge */
+  :root { --es-inset: 20px; }
+  #ecoIndex { padding-top: 10vh; }
+  .es-shead-h { font-size: 42px; max-width: 9ch; }
+  .ix-tabs button { flex: 1 1 50%; }
+  .ix-card-grid { grid-template-columns: 1fr; }
+  .ix-card { min-height: 210px; padding: 24px 22px 22px; }
+  .ix-card-name { font-size: 24px; }
+}
+
+/* ---------- four gang stages (2026-09-05 direction change) ----------
+   The intro (kicker, h2, lede) renders once, in flow, above the first
+   stage; each stage is its own header row on the container's left axis
+   plus the ring screen at the unchanged one-viewport rule, so a stage is
+   at least a viewport minus the two bars tall by construction. */
+/* .es-gang is a <section>, which css/styles.css caps at 1100px: lift the
+   cap the way .ix-panel does, so the screen is the full bleed the single
+   ring had */
+.es-gang { position: relative; margin: 0 0 26px; max-width: none; padding: 0; }
+.es-gbar { display: flex; align-items: baseline; gap: 12px; width: calc(100% - 48px); max-width: 1392px; margin: 0 auto;
+  padding: 18px 0 10px; border-bottom: 1px solid rgba(245,242,236,.12); position: relative; z-index: 3; }
+.es-gname { font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--es-ink); }
+.es-gcount { font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: .04em; color: var(--es-acc); }
+/* per-stage UI has no top block: the dock alone rides the bottom */
+.es-ui-stage { justify-content: flex-end; }

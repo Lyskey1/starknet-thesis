@@ -33,6 +33,26 @@
    account created by a bridge or exchange deposit is a user that never sent
    anything. That is a HYPOTHESIS and is not written to the seed as fact.
 
+   UPSTREAM OUTAGE, OPEN SINCE 2026-09-12 (diagnosed, not guessed).
+   Every data path on this host returns HTTP 500 {"error":"internal error"}:
+   /api/stats/leaderboard, /api/stats/wallet-providers and /api/protocols
+   alike, on every window and category. Non-data paths still 404 with the
+   router's own page, so the service is up and its data layer is not.
+   IT IS NOT US. Aegis's own dashboard calls the IDENTICAL URL from the
+   browser, gets the same 500, and prints "Error loading data:" on the page;
+   the Top 10 it still shows underneath is a hardcoded fixture, byte for byte
+   the same under 5m, 1h, 24h and 7d, and it names Argent Wallet and zkLend.
+   It is not CORS either: the 500 carries access-control-allow-origin: *.
+   It is not auth: their frontend sends no key, only Content-Type, and the
+   separate admin host (prism-admin-api-production.up.railway.app) is a
+   different service that answers missing_token and has no leaderboard path.
+   So there is nothing here to repoint and no key to add. The seed simply
+   stops updating until Aegis fix their API, and the card says so on its own
+   face (strk.html, #pdaStale). Re-test with the one-liner below; when it
+   returns 200 again this comment can go.
+     curl -s -o /dev/null -w '%{http_code}\n' \
+       'https://api-internal-prism.aegisanalytics.xyz/api/stats/leaderboard?category=all&window=24h'
+
    Validation before any write, because a failed run must commit nothing and
    leave the last good seed in place:
      - HTTP 200, JSON parses, success === true
@@ -50,7 +70,7 @@ import { writeFileSync, readFileSync, existsSync } from 'node:fs';
 
 const BASE = 'https://api-internal-prism.aegisanalytics.xyz/api/stats/leaderboard';
 const WINDOW = '24h';
-const OUT = 'assets/data/prism-dau-seed.json';
+const OUT = 'public/assets/data/prism-dau-seed.json';
 const MIN_APPS = 8;
 const KEEP = 12; // the card shows ten; one spare either side for ties/churn
 

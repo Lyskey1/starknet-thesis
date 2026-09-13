@@ -202,6 +202,6 @@ async function waybackCirc(monthIso){ // circulating from an archived CoinGecko 
     console.log(JSON.stringify(row));
   }
   const out = { generated: new Date().toISOString(), source: { chain: 'Cartridge archive RPC', prices: 'Binance 1M klines', circulating: 'CoinGecko (365d) + Wayback snapshots' }, months: rows };
-  fs.writeFileSync(path.join(__dirname, '..', 'assets', 'data', 'strk-staking-history.json'), JSON.stringify(out, null, 1));
+  fs.writeFileSync(path.join(__dirname, '..', 'public', 'assets', 'data', 'strk-staking-history.json'), JSON.stringify(out, null, 1));
   console.log('written: assets/data/strk-staking-history.json (' + rows.length + ' months)');
 })();

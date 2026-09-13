@@ -1,0 +1,302 @@
+/* ===== Static chrome for the thesis pages: Vesper header + footer, strk20 colors =====
+   Mirrors the Next.js landing (src/components/common/site-header.tsx and
+   src/views/home/sections/site-footer.tsx) so the inner pages read as the same
+   site. General Sans (self-hosted) + Mulish. */
+@font-face { font-family: "General Sans"; font-weight: 300; font-display: swap; src: url("/fonts/GeneralSans-Light.woff2") format("woff2"); }
+@font-face { font-family: "General Sans"; font-weight: 400; font-display: swap; src: url("/fonts/GeneralSans-Regular.woff2") format("woff2"); }
+@font-face { font-family: "General Sans"; font-weight: 500; font-display: swap; src: url("/fonts/GeneralSans-Medium.woff2") format("woff2"); }
+:root { --vc-bg: #0d0d0d; --vc-panel: #141414; --vc-line: #262626; --vc-text: #fafafa; --vc-dim: rgba(250,250,250,.65); --vc-faint: #616161; --vc-orange: #c53400; --vc-orange-d: #a02a00;
+  --vc-sans: "General Sans", "Helvetica Neue", Arial, sans-serif; --vc-tag: "Mulish", "Helvetica Neue", Arial, sans-serif; --vc-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --vcnav-h: 64px; }
+
+/* ===== HEADER: a full-width fixed bar on the site container (2026-09-05
+   typography pass, then the same-day alignment fix). The inner row is the
+   page container itself (calc(100% - 48px) capped at 1392, no padding of
+   its own): brand cluster flush on its left edge, right cluster flush on
+   its right edge, and the link row absolutely centered on the bar's TRUE
+   center, which equals the viewport's 50% because the container is
+   viewport-centered. Hierarchy: the three-bar
+   mark at 22px over an Archivo Expanded 500 wordmark at 15px; the page
+   links drop to the site's mono uppercase eyebrow grammar (IBM Plex Mono
+   11.5px, .14em, muted at .62 ink) instead of 16px sentence-case sans.
+   There is no shared cross-page eyebrow token (every page declares its own
+   .eyebrow class inline), so the grammar is declared once here on the
+   --vc-mono family token. Glass over content, one hairline bottom border at
+   .10 ink, ALWAYS THERE: no hide-on-scroll, no shrink.
+   THE DOUBLED SELECTOR IS LOAD-BEARING: css/eco-stage.css forces
+   position: relative on body > * at (0,1,1) on every static page, which is
+   what used to unfix this bar; body > header.vc-header (0,1,2) beats it.
+   The body padding restores the flow strip the in-flow header used to
+   occupy, so page layouts keep their offsets; html scroll-padding makes
+   every anchor, hash arrival and search-palette landing clear the bar. */
+body { padding-top: var(--vcnav-h); }
+html { scroll-padding-top: calc(var(--vcnav-h) + 16px); }
+body > header.vc-header, header.vc-header { position: fixed; top: 0; left: 0; right: 0; transform: none; z-index: 100;
+  width: 100%; height: var(--vcnav-h);
+  border: 0; border-bottom: 1px solid rgba(245,242,236,.10);
+  background: rgba(13,13,13,.82); backdrop-filter: blur(12px) saturate(115%); -webkit-backdrop-filter: blur(12px) saturate(115%);
+  font-family: var(--vc-sans); color: var(--vc-text); }
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  body > header.vc-header, header.vc-header { background: rgba(13,13,13,.96); }
+}
+/* ONE CONTAINER (2026-09-05 alignment fix): the row is the page container
+   itself, calc(100% - 48px) capped at 1392 with NO padding of its own, so
+   the mark's left edge sits on the content's left edge and Subscribe's
+   right edge on the content's right edge. It is position:relative so the
+   link row can center on it; the container is viewport-centered, so its
+   50% IS the viewport's 50%. */
+header.vc-header .vc-in { display: flex; align-items: center; justify-content: space-between; position: relative; height: 100%;
+  width: calc(100% - 48px); max-width: 1392px; margin: 0 auto; padding: 0; }
+/* brand cluster on the container's left edge: 22px mark, 10px gap, 15px
+   expanded wordmark, vertically centered on the mark's optical center */
+header.vc-header .vc-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; flex: none; }
+header.vc-header .vc-mark { display: block; width: 22px; height: auto; flex: none; }
+header.vc-header .vc-word { font-family: "Archivo", var(--vc-sans); font-stretch: 125%; font-weight: 500; font-size: 15px; line-height: 1; letter-spacing: -.01em; color: #F5F2EC; white-space: nowrap; }
+/* page links centered on the bar's TRUE center (the alignment fix dropped
+   the col 4 rule): absolutely positioned at 50% of the viewport-centered
+   container, so the row's midpoint equals viewport width / 2 at any width.
+   The centered-guard math: at .14em the row is ~433px wide, so the right
+   cluster (~254px + 24px inset) would touch it only below ~966px, and the
+   brand side even later; the 1023px fold arrives first, so neither guard
+   (tracking to .10em, then gap to 16px) ever fires and none is shipped. */
+header.vc-header nav.vc-nav { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); display: flex; align-items: center; gap: 22px; white-space: nowrap; }
+header.vc-header nav.vc-nav a { font-family: var(--vc-mono); font-weight: 400; font-size: 11.5px; line-height: 1.2; letter-spacing: .14em; text-transform: uppercase; color: rgba(245,242,236,.62); text-decoration: none; transition: color .28s ease; }
+header.vc-header nav.vc-nav a:hover { color: #F5F2EC; }
+header.vc-header nav.vc-nav a.active { color: var(--vc-orange); }
+/* right cluster ends on the container's right edge */
+header.vc-header .vc-right { display: flex; align-items: center; justify-content: flex-end; gap: 12px; flex: none; }
+header.vc-header .vc-social { display: flex; align-items: center; gap: 4px; }
+header.vc-header .vc-social a { display: grid; place-items: center; width: 34px; height: 34px; color: rgba(245,242,236,.70); transition: color .28s ease; }
+header.vc-header .vc-social a:hover { color: var(--vc-orange); }
+header.vc-header .vc-social svg { width: 17px; height: 17px; display: block; }
+/* Subscribe: the links' mono grammar at 11px on the glass surface. The
+   trailing 2x2 dot the old bar drew via `.vc-cta i` is gone: markup and rule. */
+header.vc-header .vc-cta { display: inline-flex; align-items: center; padding: 8px 14px; border: 1px solid rgba(245,242,236,.22); border-radius: 6px; color: var(--vc-text); text-decoration: none;
+  font-family: var(--vc-mono); font-weight: 400; font-size: 11px; line-height: 1.2; letter-spacing: .14em; text-transform: uppercase; white-space: nowrap;
+  transition: border-color .28s ease, background-color .28s ease; }
+header.vc-header .vc-cta:hover { border-color: rgba(245,242,236,.5); background: rgba(255,255,255,.10); }
+header.vc-header .vc-burger { display: none; width: 40px; height: 40px; background: none; border: 0; position: relative; cursor: pointer; }
+header.vc-header .vc-burger span { position: absolute; left: 10px; width: 20px; height: 1px; background: #fff; transition: transform .25s; }
+header.vc-header .vc-burger span:first-child { top: calc(50% - 5px); } header.vc-header .vc-burger span:last-child { top: calc(50% + 5px); }
+header.vc-header.open .vc-burger span:first-child { transform: translateY(5px) rotate(45deg); } header.vc-header.open .vc-burger span:last-child { transform: translateY(-5px) rotate(-45deg); }
+header.vc-header .vc-mobile { display: none; position: absolute; top: 100%; left: 0; right: 0; flex-direction: column; border: 0; border-bottom: 1px solid rgba(245,242,236,.10); background: rgba(13,13,13,.96); padding: 20px; }
+header.vc-header .vc-mobile .vc-social { display: flex; margin: 8px 0 0; }
+header.vc-header.open .vc-mobile { display: flex; }
+/* the folded links inherit the same mono uppercase grammar */
+header.vc-header .vc-mobile a { font-family: var(--vc-mono); font-weight: 400; font-size: 11.5px; line-height: 1.2; letter-spacing: .14em; text-transform: uppercase; color: rgba(245,242,236,.62); text-decoration: none; padding: 12px 0; transition: color .28s ease; }
+header.vc-header .vc-mobile a:hover { color: #F5F2EC; }
+header.vc-header .vc-mobile a.active { color: var(--vc-orange); }
+header.vc-header .vc-mobile a.vc-cta { margin-top: 12px; justify-content: center; padding: 10px 14px; color: var(--vc-text); }
+@media (max-width: 1023px) {
+  header.vc-header .vc-in { display: flex; align-items: center; width: calc(100% - 32px); gap: 14px; }
+  header.vc-header nav.vc-nav, header.vc-header .vc-right .vc-social { display: none; }
+  header.vc-header .vc-right { margin-left: auto; }
+  header.vc-header .vc-burger { display: block; }
+}
+/* site glass rule below 981px: solid surface, no backdrop blur */
+@media (max-width: 980px) {
+  body > header.vc-header, header.vc-header { -webkit-backdrop-filter: none; backdrop-filter: none; background: rgba(13,13,13,.96); }
+}
+/* the overlay hangs from the full-width bar edge to edge */
+@media (max-width: 640px) { header.vc-header .vc-in { width: calc(100% - 24px); } }
+/* the old chrome assumed a bar in flow; the pill floats, so pages keep their own top padding */
+
+/* footer: two bands. Band one is a full-bleed accent block (statement + email
+   capture + two buttons); band two is the near-black link/brand band.
+   Band one is styled through BARE class selectors, never a
+   `footer.vc-footer ...` descendant selector. Keep them ancestor-independent:
+   a past change scoped `form.vc-sub` under the footer and silently unstyled
+   the form on five pages. */
+footer.vc-footer { position: relative; width: 100vw; max-width: none; margin: 0 0 0 calc(50% - 50vw); padding: 0; background: var(--vc-bg); color: var(--vc-text); font-family: var(--vc-sans); border-top: 0; }
+
+/* ---- band one: the accent statement block ---- */
+.vc-cta-band { width: 100vw; margin-left: calc(50% - 50vw); flex: none; background: var(--vc-orange); color: #fff; padding: clamp(36px, 4.5vh, 60px) 0; }
+.vc-cta-in { width: calc(100% - 48px); max-width: 1392px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 40px 56px; align-items: end; min-height: min(24vh, 250px); text-align: left; }
+.vc-cta-say { display: block; }
+.vc-kicker { margin: 0 0 20px; font-family: var(--vc-mono); font-weight: 400; font-size: 11px; line-height: 1.2; letter-spacing: .2em; text-transform: uppercase; color: #fff; }
+.vc-title { margin: 0; padding: 0; text-align: left; color: #fff; font-family: var(--vc-sans); font-weight: 300; font-size: clamp(34px, 4.4vw, 66px); line-height: .96; letter-spacing: -.022em; }
+
+form.vc-sub { display: flex; flex-direction: column; align-items: stretch; gap: 18px; width: 100%; max-width: 440px; height: auto; margin: 0 0 0 auto; border: 0; border-radius: 0; background: none; padding: 0; backdrop-filter: none; -webkit-backdrop-filter: none; }
+.vc-sub-field { display: block; }
+.vc-sub-label { display: block; margin-bottom: 9px; font-family: var(--vc-mono); font-size: 11px; line-height: 1.2; letter-spacing: .16em; text-transform: uppercase; color: rgba(255,255,255,.82); }
+form.vc-sub input { flex: none; width: 100%; height: 46px; min-width: 0; border: 1px solid rgba(255,255,255,.5); border-radius: 0; background: rgba(0,0,0,.16); padding: 0 14px; outline: none; color: #fff; font: 15px/1.2 var(--vc-sans); }
+form.vc-sub input::placeholder { color: rgba(255,255,255,.68); }
+form.vc-sub input:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+.vc-acts { display: flex; align-items: stretch; gap: 12px; }
+.vc-btn { flex: 1 1 0; min-width: 0; display: inline-flex; align-items: center; justify-content: space-between; gap: 14px; height: 52px; padding: 0 18px; margin: 0; border: 0; border-radius: 0; box-shadow: none; font: 15px/1.2 var(--vc-sans); text-decoration: none; white-space: nowrap; cursor: pointer; transition: background-color .25s, color .25s; }
+.vc-btn-dark { background: var(--vc-bg); color: var(--vc-text); }
+.vc-btn-dark:hover { background: #000; }
+.vc-btn-light { background: var(--vc-text); color: var(--vc-bg); }
+.vc-btn-light:hover { background: #fff; }
+.vc-btn i { display: block; flex: none; width: 7px; height: 7px; background: none; border-top: 1.5px solid currentColor; border-right: 1.5px solid currentColor; transform: rotate(45deg); }
+
+/* ---- band two: link columns, then brand + legal ---- */
+/* ===== BAND TWO ON ONE 12-COLUMN GRID (2026-09-05, promoted from the digest
+   pass). Everything below the banner sits on one 12-column grid (24px
+   gutters) inside the 1392px container, as .dgf-grid on all three rows:
+   links on cols 1 / 5 / 9 as equal thirds, identity on cols 1-5 with the
+   legal line LEFT-aligned on cols 9-12, and the baseline bar with the
+   copyright on col 1 and the status pill on col 9, so the rows share two
+   vertical alignment lines (col 9 lands 8px off the banner form's left
+   edge). Nothing right-aligns or touches the viewport edge. The rows stack
+   single column below 700px. KEEP IN SYNC: the landing's React port in
+   src/views/home/sections/site-footer.tsx mirrors these rules. ===== */
+footer.vc-footer .vc-cols { display: block; width: calc(100% - 48px); max-width: 1392px; margin: 0 auto; padding: 0; }
+footer.vc-footer .dgf-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; align-items: start; }
+footer.vc-footer nav.vc-links { padding: 0; }
+/* row 1, links: 48px row padding, 12px between links, no dividers */
+footer.vc-footer .vc-col { display: flex; flex-direction: column; gap: 20px; width: auto; padding: 48px 0; border-left: 0; }
+footer.vc-footer .vc-col:nth-child(1) { grid-column: 1 / 5; }
+footer.vc-footer .vc-col:nth-child(2) { grid-column: 5 / 9; }
+footer.vc-footer .vc-col:nth-child(3) { grid-column: 9 / 13; }
+/* h3, not h4: the column headings sit under the footer's own h2, so h4 skipped
+   a level. The selector has to move with the markup or the seven footers
+   lose their styling entirely. */
+footer.vc-footer .vc-col h3 { margin: 0; font-family: var(--vc-mono); font-weight: 400; font-size: 11px; line-height: 1.2; letter-spacing: .18em; text-transform: uppercase; color: var(--vc-dim); }
+footer.vc-footer .vc-col ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+/* 16px at line-height 1.25 is a 20px tap target, under the 24px minimum.
+   The padding grows the hit area and the equal negative margin cancels its
+   layout effect, so the target reaches 24px with the footer's spacing
+   rhythm unchanged. inline-block is required for the block padding to
+   apply to an inline element at all. */
+footer.vc-footer .vc-col a { display: inline-block; color: var(--vc-text); text-decoration: none; font-size: 16px; line-height: 1.25; padding-block: 2px; margin-block: -2px; transition: color .25s; }
+footer.vc-footer .vc-col a:hover { color: var(--vc-orange); }
+footer.vc-footer .vc-rule { width: calc(100% - 48px); max-width: 1392px; margin: 0 auto; border-top: 1px solid var(--vc-line); }
+/* row 2, identity + legal: same column starts as row 1, one shared top line */
+footer.vc-footer .vc-base { width: calc(100% - 48px); max-width: 1392px; margin: 0 auto; padding: 24px 0 48px; }
+footer.vc-footer .vc-brand { grid-column: 1 / 6; display: flex; flex-direction: column; gap: 8px; width: auto; max-width: none; }
+footer.vc-footer .vc-brand img { display: block; height: 26px; width: 160px; }
+footer.vc-footer .vc-brand p { margin: 0; max-width: 40ch; font-family: var(--vc-sans); font-weight: 400; font-size: 15px; line-height: 1.5; text-transform: none; color: var(--vc-dim); }
+/* the disclaimer, demoted to a legal line: sentence case, 11.5px, the
+   dimmest ink that still clears 4.6:1 on the near-black ground
+   (rgba(250,250,250,.52) blends to about #888, 5.3:1), LEFT-aligned on
+   cols 9-12 so its edge lines up with FOLLOW above it */
+footer.vc-footer .vc-legal { margin: 0; grid-column: 9 / 13; width: auto; max-width: none; padding: 0; text-align: left; font-family: var(--vc-sans); font-size: 11.5px; line-height: 1.6; letter-spacing: 0; text-transform: none; color: rgba(250,250,250,.52); }
+/* row 3, the classic baseline bar: copyright on col 1, the status pill on
+   col 9. The pill is the shared .status/.dot component from css/styles.css
+   on the static pages; the landing's React footer carries its own copy. */
+footer.vc-footer .dgf-foot { width: calc(100% - 48px); max-width: 1392px; margin: 0 auto; }
+footer.vc-footer .dgf-bar { padding: 24px 0 40px; border-top: 1px solid var(--vc-line); font-family: var(--vc-mono); font-size: 12px; letter-spacing: .06em; color: rgba(250,250,250,.55); }
+footer.vc-footer .dgf-bar > span { grid-column: 1 / 6; }
+footer.vc-footer .dgf-bar .dgf-status { grid-column: 9 / 13; justify-self: start; }
+footer.vc-footer .dgf-bar a { color: rgba(250,250,250,.72); text-decoration: none; transition: color .25s; }
+footer.vc-footer .dgf-bar a:hover { color: var(--vc-orange); }
+footer.vc-footer .dgf-bar .dgf-status, footer.vc-footer .dgf-bar .dgf-status:hover { color: inherit; }
+footer.vc-footer .dgf-bar .status { font-size: 12px; }
+/* single column below 700px: rows stack, all left-aligned on the container */
+@media (max-width: 700px) {
+  footer.vc-footer .dgf-grid { display: flex; flex-direction: column; align-items: stretch; gap: 0; }
+  footer.vc-footer .vc-col { padding: 24px 0; }
+  footer.vc-footer .vc-base { padding: 24px 0 32px; }
+  footer.vc-footer .vc-base.dgf-grid { gap: 28px; }
+  footer.vc-footer .dgf-bar { padding: 20px 0 36px; }
+  footer.vc-footer .dgf-bar.dgf-grid { gap: 12px; }
+}
+
+/* ===== dg-glass: the liquid glass control tier (promoted from the digest
+   pass with the footer). One shared surface for the chrome's Subscribe
+   controls and the digest page's pills and hero CTAs: translucent dark
+   fill sampling the scene through a backdrop blur, a half-pixel outer
+   hairline drawn as a spread box-shadow so it follows any radius, and one
+   inset top highlight. The active / primary state steps the fill up and
+   swaps the hairline to the accent (--accent-rgb is the unified 197,52,0
+   on every page; the fallback covers a page that skips styles.css).
+   THE SELECTORS STACK THE CLASS for specificity on purpose: this sheet
+   loads before css/styles.css, whose .toggle-btn (background: transparent)
+   and .toggle-btn.active (background) rules would otherwise win the
+   cascade over a single-class tier. Site glass rules hold: solid surface
+   below 981px and where backdrop-filter is unsupported, no nested glass,
+   transitions sit out under reduced motion. */
+.dg-glass.dg-glass.dg-glass { border: 0;
+  background: rgba(16, 16, 16, .55);
+  -webkit-backdrop-filter: blur(12px) saturate(115%);
+  backdrop-filter: blur(12px) saturate(115%);
+  box-shadow:
+    0 0 0 .5px rgba(250, 250, 250, .28),
+    inset 0 1px 0 rgba(255, 255, 255, .14);
+  transition: background var(--hover-dur, .25s) var(--hover-ease, ease),
+              box-shadow var(--hover-dur, .25s) var(--hover-ease, ease),
+              color var(--hover-dur, .25s) var(--hover-ease, ease); }
+.dg-glass.dg-glass.dg-glass:hover {
+  background: rgba(30, 30, 30, .66);
+  box-shadow:
+    0 0 0 .5px rgba(250, 250, 250, .45),
+    inset 0 1px 0 rgba(255, 255, 255, .22); }
+.dg-glass.dg-glass.dg-glass.active, .dg-glass.dg-glass.dg-glass.dg-glass--primary {
+  background: rgba(38, 38, 38, .74);
+  box-shadow:
+    0 0 0 .5px rgba(var(--accent-rgb, 197, 52, 0), .65),
+    inset 0 1px 0 rgba(255, 255, 255, .22); }
+.dg-glass.dg-glass.dg-glass.active:hover, .dg-glass.dg-glass.dg-glass.dg-glass--primary:hover {
+  background: rgba(48, 48, 48, .8);
+  box-shadow:
+    0 0 0 .5px rgba(var(--accent-rgb, 197, 52, 0), .9),
+    inset 0 1px 0 rgba(255, 255, 255, .28); }
+.dg-glass.dg-glass.dg-glass:focus-visible { outline: 2px solid var(--vc-orange); outline-offset: 3px; }
+/* the nav CTA: its 1px border goes (padding +1px holds the width), and it
+   takes NO blur of its own: it sits inside the header bar, which is
+   already a glass surface, and the site rule is no nested glass. */
+header.vc-header .vc-cta.dg-glass.dg-glass { border: 1px solid rgba(245,242,236,.22); border-radius: 6px; padding: 8px 14px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .22); }
+header.vc-header .vc-cta.dg-glass.dg-glass:hover { border-color: rgba(245,242,236,.5); background: rgba(48, 48, 48, .8); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .22); }
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .dg-glass.dg-glass.dg-glass { background: #161616; }
+  .dg-glass.dg-glass.dg-glass:hover { background: #202020; }
+  .dg-glass.dg-glass.dg-glass.active, .dg-glass.dg-glass.dg-glass.dg-glass--primary { background: #262626; }
+  .dg-glass.dg-glass.dg-glass.active:hover, .dg-glass.dg-glass.dg-glass.dg-glass--primary:hover { background: #2e2e2e; }
+}
+@media (max-width: 980px) {
+  .dg-glass.dg-glass.dg-glass { -webkit-backdrop-filter: none; backdrop-filter: none; background: #161616; }
+  .dg-glass.dg-glass.dg-glass:hover { background: #202020; }
+  .dg-glass.dg-glass.dg-glass.active, .dg-glass.dg-glass.dg-glass.dg-glass--primary { background: #262626; }
+  .dg-glass.dg-glass.dg-glass.active:hover, .dg-glass.dg-glass.dg-glass.dg-glass--primary:hover { background: #2e2e2e; }
+}
+@media (prefers-reduced-motion: reduce) { .dg-glass.dg-glass.dg-glass { transition: none; } }
+
+@media (max-width: 1023px) {
+  .vc-cta-in { grid-template-columns: 1fr; align-items: start; min-height: 0; gap: 32px; }
+  form.vc-sub { max-width: 520px; margin: 0; }
+}
+@media (max-width: 640px) {
+  .vc-acts { flex-direction: column; }
+  .vc-btn { flex: none; width: 100%; }
+}
+
+/* styles.css styles the bare <nav> element as the old fixed bar; neutralise it for the chrome's navs */
+header.vc-header nav, footer.vc-footer nav { position: static; top: auto; left: auto; right: auto; z-index: auto; height: auto; min-height: 0; padding: 0; background: none; border: 0; backdrop-filter: none; -webkit-backdrop-filter: none; justify-content: flex-start; }
+header.vc-header nav.vc-mobile { position: absolute; align-items: stretch; padding: 20px; }
+
+/* ============================================================
+   SHARED HERO HEADLINE (2026-09-06): one token set for the display
+   headline of the three-zone heroes (strk, btcfi, digest). The values are
+   strk's computed set at 1440, dumped before unification.
+   No !important anywhere (2026-09-06): css/styles.css's strk20 branding
+   rule dropped its own flags, so this rule wins on plain specificity
+   (0,2,0 over its .hero h1 at 0,1,1). The tracking is the owner's token,
+   --hero-title-tracking: normal, consumed by this class only. The u token
+   is the same min(1vw, 14.4px) unit the three heroes already scale by. */
+:root { --vch-u: min(1vw, 14.4px); --hero-title-tracking: normal; }
+.hero .vch-title, #ecoGlobe .vch-title { margin: var(--vch-u) 0 0;
+  font-family: "General Sans", sans-serif;
+  font-weight: 300;
+  font-size: calc(4.6 * var(--vch-u));
+  line-height: .9;
+  letter-spacing: var(--hero-title-tracking);
+  text-transform: none;
+  color: var(--white, #fafafa);
+  max-width: none;
+  text-align: left; }
+.hero .vch-title em, #ecoGlobe .vch-title em { font-style: normal; color: var(--accent); }
+/* the shared hero paragraph: strk's subtitle values, dumped computed and
+   promoted to the token set (2026-09-06); ecosystem and digest consume it */
+.hero .vch-sub, #ecoGlobe .vch-sub { margin: calc(1.6 * var(--vch-u)) 0 0; max-width: calc(32 * var(--vch-u));
+  font-family: "General Sans", sans-serif; font-weight: 300;
+  font-size: max(calc(1.06 * var(--vch-u)), 15px); line-height: 1.7;
+  color: rgba(250, 250, 250, .72); text-align: left; }
+@media (max-width: 980px) {
+  .hero .vch-title, #ecoGlobe .vch-title { margin-top: .75rem; font-size: 2.75rem; }
+  .hero .vch-sub, #ecoGlobe .vch-sub { margin-top: 1rem; max-width: 40rem; font-size: 1rem; }
+}
+@media (max-width: 380px) {
+  .hero .vch-title, #ecoGlobe .vch-title { font-size: 2.375rem; }
+}

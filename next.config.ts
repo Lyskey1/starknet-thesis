@@ -1,0 +1,68 @@
+import type { NextConfig } from "next";
+
+const STATIC_PAGES = ["privacy", "quantum", "btcfi", "strk", "ecosystem", "digest"];
+
+const nextConfig: NextConfig = {
+  // Drop the `X-Powered-By: Next.js` response header.
+  poweredByHeader: false,
+
+  // The six thesis pages are static HTML served from public/. Clean URLs map
+  // onto them; the .html forms redirect so old links keep working.
+  async rewrites() {
+    // /digest is served by src/app/digest/route.ts (its counts follow the
+    // Substack feed hourly); the other five stay plain rewrites.
+    return STATIC_PAGES.filter((page) => page !== "digest").map((page) => ({ source: `/${page}`, destination: `/${page}.html` }));
+  },
+  async redirects() {
+    return STATIC_PAGES.map((page) => ({ source: `/${page}.html`, destination: `/${page}`, permanent: true }));
+  },
+
+  // No security headers were set anywhere in the repo. Vercel adds HSTS on a
+  // custom domain, so this covers the rest. The CSP is frame-ancestors only:
+  // a full policy would have to enumerate cdn.jsdelivr.net, cloud.umami.is and
+  // fonts.googleapis.com, and getting that wrong silently breaks the page, so
+  // it is deliberately scoped to the one directive that cannot.
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        headers: [
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          { key: "X-Frame-Options", value: "SAMEORIGIN" },
+          { key: "Content-Security-Policy", value: "frame-ancestors 'self'" },
+          {
+            key: "Permissions-Policy",
+            value: "camera=(), microphone=(), geolocation=(), interest-cohort=()",
+          },
+        ],
+      },
+    ];
+  },
+
+  compiler: {
+    // Strip `console.*` from production bundles, keeping error/warn for
+    // monitoring. Left on in dev so logs stay available.
+    removeConsole:
+      process.env.NODE_ENV === "production"
+        ? { exclude: ["error", "warn"] }
+        : false,
+  },
+
+  images: {
+    // Modern formats, smaller than JPEG/PNG; the browser picks what it supports.
+    formats: ["image/avif", "image/webp"],
+    // Breakpoints `next/image` uses to build `srcset`. `deviceSizes` covers
+    // full-width images (aligned with the adaptive-grid breakpoints + retina);
+    // `imageSizes` covers smaller, fixed-width images and icons.
+    deviceSizes: [360, 640, 768, 1024, 1280, 1440, 1920, 2560],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+  },
+
+  // React Compiler (automatic memoisation) is an opt-in performance win.
+  // It requires the `babel-plugin-react-compiler` dev dependency and routes
+  // the build through Babel — enable once installed:
+  // reactCompiler: true,
+};
+
+export default nextConfig;

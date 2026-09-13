@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starknet Digest: Weekly Roundups and Research</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+  <link rel="canonical" href="https://starknetthesis.io/digest">
+  <meta property="og:title" content="Starknet Digest: Weekly Roundups and Research">
+  <meta property="og:description" content="Weekly roundups, monthly digests and research notes covering what is shipping and changing across the Starknet ecosystem, from the Starknet Research newsletter.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://starknetthesis.io/digest">
+  <meta property="og:site_name" content="Starknet Thesis">
+  <meta property="og:image" content="https://starknetthesis.io/assets/og-default.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Starknet Digest: Weekly Roundups and Research">
+  <meta name="twitter:description" content="Weekly roundups, monthly digests and research notes covering what is shipping and changing across the Starknet ecosystem, from the Starknet Research newsletter.">
+  <meta name="twitter:image" content="https://starknetthesis.io/assets/og-default.png">
+<meta name="description" content="Weekly roundups, monthly digests and research notes covering what is shipping and changing across the Starknet ecosystem, from the Starknet Research newsletter.">
+<script defer src="https://cloud.umami.is/script.js" data-website-id="45f11859-9fc2-49ae-a59e-4826e0f1e174"></script>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/dist/tabler-icons.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Mulish:wght@300;400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/vesper-chrome.css">
+<link rel="stylesheet" href="css/eco-stage.css">
+<link rel="stylesheet" href="css/privacy-fx.css">
+<link rel="stylesheet" href="css/stride.css">
+<link rel="stylesheet" href="css/styles.css?v=20260817a">
+<link rel="stylesheet" href="css/glass-cards.css">
+<link rel="stylesheet" href="css/glass-chips.css">
+<script defer src="js/search.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<style>
+</style>
+<style>
+  /* ===== Hero shell. NO LONGER APPLIED ON THIS PAGE as of 2026-09-02: the
+     hero was rebuilt on /btcfi's frame and uses .dgh-hero, not .dg-hero (see
+     the dgh- block further down). The block is kept because it is the shell
+     ecosystem.html shares, and removing it here would break that sync note.
+     KEEP IN SYNC with ecosystem.html's eco-hero block (eco- prefix), but
+     only the SHELL: hero frame, content grid, glass CTAs, scrim, marquee
+     band and breakpoints must stay byte-identical modulo the prefix.
+     The SVG scene layer is deliberately NOT shared as of 2026-08-06 (this
+     page: publishing cadence; ecosystem: node network) and must not be
+     re-synced. Tint rides var(--accent-rgb) = this page's salmon. ===== */
+  /* the 72px subtrahend and the 120px bottom padding were both sized to a
+     53px bare-text band. Glass pills carry 9px of vertical padding plus a
+     1px rim, taking the band to 79px, so the hero gives that 20px back on
+     both levers: nav + hero + band lands on exactly the same bottom edge as
+     before the pills. Height comes out of the hero, never the pills. */
+  .dg-hero { height: 100lvh; min-height: 0; align-items: stretch; text-align: left; max-width: none; padding: 0; position: relative; }
+  .dg-hero .dg-hero-inner { display: flex; flex-direction: column; height: 100%; padding-top: 128px; padding-bottom: 72px; position: relative; z-index: 2; }
+  .dg-hero .hero-eyebrow { margin-bottom: 18px; }
+  .dg-hero .sk-foot { margin-top: auto; }
+  .dg-hero .sk-acts { margin-top: 48px; }
+  .dg-hero-inner { width: 100%; max-width: 1160px; margin: 0 auto; padding: 0 32px; position: relative; z-index: 1; }
+  .dg-hero .hero-title { margin-left: 0; margin-right: 0; max-width: none; }
+  .dg-hero .hero-subtitle { margin: 22px 0 0; max-width: 620px; }
+  /* The SVG cadence scene that used to live here went in the 2026-09
+     hero rebuilds (see the dgh- block at the end of the head). Its rules
+     were removed with it. */
+  /* hero CTAs: the locked shared dark glass tier (css/glass-chips.css
+     .chip-glass) at button scale (nav-CTA-like padding, chip pill
+     radius). The recipe's accent terms read --chip-accent-rgb with an
+     --accent-rgb fallback, so this page's own accent colors the glow
+     with nothing hardcoded. Primary carries the accent border and the
+     recipe's full glow; secondary sits on a neutral border with a faint
+     glow and reaches primary intensity on hover (those two stacks are
+     copied from the locked recipe; keep in sync). Site hover signature
+     page-scoped so the locked file stays untouched. The buttons sit
+     over the hero scene, which carries no backdrop-filter: no nested
+     glass, and the blur samples the cadence bars behind. */
+  .dg-ctas { display: flex; gap: 18px; margin-top: 42px; flex-wrap: wrap; position: relative; }
+  .dg-cta { font-family: var(--mono); font-size: 13px; letter-spacing: .14em; text-transform: uppercase; text-decoration: none; color: var(--white); padding: 12px 22px; border-radius: 99px; border: 1px solid rgba(var(--accent-rgb), .55); display: inline-flex; align-items: center; gap: 10px; }
+  .dg-cta.chip-glass { transition: background var(--hover-dur) var(--hover-ease), box-shadow var(--hover-dur) var(--hover-ease), border-color var(--hover-dur); }
+  .dg-cta i { font-style: normal; transition: transform var(--hover-dur) var(--hover-ease); }
+  .dg-cta:hover i { transform: translateX(4px); }
+  .dg-cta:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  .dg-cta--muted { border-color: var(--border);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.5),
+      inset -1px -1px 0 rgba(255,255,255,.30),
+      inset 1px 1px 0 rgba(255,255,255,.12),
+      inset 0 10px 18px -8px rgba(255,255,255,.18),
+      inset 0 -1px 0 rgba(0,0,0,.6),
+      inset 0 -3px 5px rgba(0,0,0,.22),
+      0 0 12px rgba(var(--accent-rgb), .10); }
+  .dg-cta--muted:hover { border-color: rgba(var(--accent-rgb), .55); background: rgba(250, 250, 250,.10);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.5),
+      inset -1px -1px 0 rgba(255,255,255,.30),
+      inset 1px 1px 0 rgba(255,255,255,.12),
+      inset 0 10px 18px -8px rgba(255,255,255,.18),
+      inset 0 -1px 0 rgba(0,0,0,.6),
+      inset 0 -3px 5px rgba(0,0,0,.22),
+      0 0 40px rgba(var(--accent-rgb), .45); }
+  @media (prefers-reduced-motion: reduce) {
+    .dg-cta.chip-glass { transition: none; }
+    .dg-cta i { transition: none; }
+  }
+  @media (max-width: 980px) {
+    .dg-hero { height: auto; min-height: 0; padding: 0; }
+    .dg-hero .dg-hero-inner { height: auto; padding-top: 110px; padding-bottom: 56px; }
+  }
+  @media (max-width: 700px) {
+    .dg-hero-inner { padding: 0 24px; }
+    .dg-ctas { flex-direction: column; gap: 20px; align-items: flex-start; }
+  }
+
+  /* section headers ported from quantum.html (th-pm- structure), using this page's own accent */
+  .th-pm-head{display:flex;align-items:center;gap:18px;}
+  .th-pm-marker{width:0;height:0;border-left:13px solid var(--accent);border-top:8px solid transparent;border-bottom:8px solid transparent;transform:translateY(2px);filter:drop-shadow(0 0 8px rgba(var(--accent-rgb),.6));}
+  .th-pm-num{font-family:var(--display);font-weight:900;font-size:64px;line-height:1;color:var(--accent);letter-spacing:-.02em;}
+  .th-pm-title{font-family:var(--display);font-weight:300;font-size:52px;line-height:1.02;letter-spacing:-.015em;color:var(--white);max-width:none;}
+  .th-pm-title b, .th-pm-title em{color:var(--accent);font-weight:800;font-style:normal;}
+  /* eyebrow: the landing's spec (13px, .04em, sentence case, opacity .9).
+     Kicker position, ABOVE the title, like every other section of the site. */
+  .th-pm-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:.04em;color:var(--accent);opacity:.9;margin:0 0 14px;}
+  @media(max-width:880px){.th-pm-title{font-size:38px;}.th-pm-num{font-size:48px;}}
+
+  /* ===== coherence pass (audit/digest-vs-landing.md). The feed's base
+     rules live in css/styles.css (off limits); each rule below
+     page-scopes the canon value over the shared selector it names. */
+  /* D3 (2026-09-02): the feed section opens up to the near-viewport gutter
+     the four-track band above it carries, so the page's wide bands sit on
+     one pair of edges. It replaces the earlier 1160/32 box. */
+  section.dg-feed { max-width: none; margin: 0 auto; padding: 120px clamp(16px, 1.5vw, 28px); }
+  @media (max-width: 768px) { section.dg-feed { padding: 80px 16px; } }
+  /* D9: the muted readout tier. .recap-excerpt and .recap-content went with
+     the card redesign (D4 below); .recap-count is the "showing X of Y" line
+     under the grid and is still emitted. */
+  .recap-count { color: #9a9a9a; }
+  /* D4 (2026-09-02, covers 2026-09-04): the feed renders the .dgw-card
+     design. Both renderers (scripts/build-digest.js for the static prerender
+     and the client renderer at the foot of this page) emit the same markup.
+     The .recap-card class stays on the anchor because the filter and
+     Load-more code queries it; every rule that class used to carry is
+     unwound below, and the border scheme is column-count agnostic: the
+     container draws top and left, every card draws right and bottom, and the
+     container's ::after redraws the bottom edge across the ragged tail of
+     the last row, which matters because this feed's length varies with the
+     filter and the Load-more batches.
+     Also fixes the UA link-blue computing on the anchor itself. */
+  .recap-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0; position: relative;
+    border-top: 1px solid var(--sd-line, #262626); border-left: 1px solid var(--sd-line, #262626); }
+  .recap-grid::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 1px;
+    background: var(--sd-line, #262626); pointer-events: none; }
+  .recap-card.dgw-card { border-radius: 0; overflow: visible; color: inherit;
+    border: 0; border-right: 1px solid var(--sd-line, #262626); border-bottom: 1px solid var(--sd-line, #262626);
+    background: rgba(20, 20, 20, .55); box-shadow: none; transform: none;
+    transition: background .18s; }
+  .recap-card.dgw-card:hover { background: rgba(20, 20, 20, .85); border-color: var(--sd-line, #262626);
+    box-shadow: none; transform: none; }
+  @media (max-width: 1240px) { .recap-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 820px) { .recap-grid { grid-template-columns: minmax(0, 1fr); } }
+  @media (prefers-reduced-motion: reduce) { .recap-card.dgw-card { transition: none; } }
+  /* D5: filter tabs adopt ecosystem's filter pill vocabulary in this
+     page's accent (overrides .chart-toggle and .toggle-btn; behavior,
+     classes and the marquee band's tab wiring untouched) */
+  /* the pill SURFACE (fill, hairline, active state) is the shared dg-glass
+     tier at the end of the head; these rules carry only geometry and text.
+     The old 1px border went to the glass hairline, so the padding grows 1px
+     on both axes and the pill's outer size holds. */
+  #recapTabs.chart-toggle { border: none; padding: 0; gap: 8px; border-radius: 0; background: none; }
+  #recapTabs .toggle-btn { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: #9a9a9a; padding: 8px 15px; border-radius: 40px; }
+  #recapTabs .toggle-btn:hover { color: var(--white); }
+  #recapTabs .toggle-btn.active { color: var(--accent); }
+  /* the pills' breathing room below the h2. The 3-up grid, the line
+     clamps, the .recap-content padding and the .recap-cat badge scheme all
+     went with the card redesign (D4 above): the feed now renders .dgw-card
+     markup, which carries its own geometry. */
+  #recapTabs { margin-top: 26px; }
+  /* The .dg-close closing panel (ecosystem's .cta-block twin) went on
+     2026-09-04 with its section: it sat back to back with the footer band's
+     own subscribe form. Ecosystem still carries the original. */
+</style>
+<style>
+  /* ===== The hero (dgh-) and the page's glass control tier (dg-glass).
+     The dgx-/dga- About statement and four-track band this block also
+     carried went on 2026-09-04 with their markup; their isometric SVGs
+     survive as files in assets/img/digest-iso-*.svg. This block sits LAST
+     in the head, after every linked sheet and after the page's own inline
+     styles, so these rules win the cascade over stride.css and styles.css
+     at equal specificity; where an existing selector is more specific it
+     is named in full. ===== */
+
+  /* ---- D5 (recomposed 2026-09-04): THE HERO, three zones ----
+     The btcfi port scattered the copy across three corners (kicker and
+     display top left, note plus CTAs bottom left, readout and turn line
+     bottom right, the turn line at 4.2vw rivalling the 4.6vw display).
+     Now: ONE editorial column top left in reading order (kicker, display,
+     one argument paragraph, the CTA pair), the particle centrepiece
+     (js/digest-hero-mark.js) untouched on its full-bleed stage centre
+     right, and a BASELINE STRIP across the hero's full width at the foot,
+     split from the scene by a hairline: the generated counters left, the
+     streak signature right, on one shared baseline. The signature steps
+     down to 2.3vw, half the display, so it reads as a sign-off and not a
+     second headline. No card, no panel, no ground: every layer is
+     transparent over js/eco-backdrop.js, which paints on a FIXED canvas
+     underneath the whole page.
+     Geometry stays in btcfi's vw units (Figma pixels / 14.4): gutter
+     1.667vw, display 4.6vw at weight 300, CTA pill 4.167vw/1.111vw. The
+     top padding carries a px floor so the copy can never slide under the
+     floating header on a narrow desktop window.
+     FULL VIEWPORT, HEADER OVER IT, the way btcfi frames the same hero.
+     css/eco-stage.css declares `body > *:not(.eco-bd) { position: relative;
+     z-index: 1 }`, which out-specifies vesper-chrome's `position: fixed`, so
+     the header occupies --dgh-chrome pixels of flow above the hero. The
+     negative margin gives that strip back so the hero is a true 100svh, and
+     z-index 0 (body-scoped, because the eco-stage rule would otherwise win)
+     puts the hero back UNDER the header so the header still reads over it.
+     svh, not vh, so mobile browser chrome cannot overshoot the frame.
+     Selectors are body-scoped rather than single-class so nothing in
+     css/styles.css's own .hero block can win on specificity. */
+  /* --dgh-chrome is 0 since the 2026-09-05 nav pass: the full-width nav is
+     truly fixed and vesper-chrome's body padding restores the flow strip, so
+     the hero no longer pulls itself under the header nor pads for it. The
+     var stays so the formulas below keep reading. */
+  body.page-recap { --dgh-chrome: 0px;
+    /* THE CAPPED UNIT: 1vw, frozen at its 1440 value (14.4px) above 1440.
+       Every hero dimension that was authored in vw rides it, so the hero
+       scales down exactly as before but stops growing once the container
+       stops: on a wide monitor the type and geometry hold their 1440
+       sizes inside the centred 1392px box instead of stretching with the
+       viewport. */
+    --dgh-u: min(1vw, 14.4px); }
+  /* the hero's centred container: the exact geometry of the footer band's
+     .vc-cta-in (css/vesper-chrome.css), the page's capped centred box. The
+     column and the strip's hairline sit on its left edge, the signature on
+     its right, the envelope's stage right-aligned inside it. */
+  .dgh-wrap { width: calc(100% - 48px); max-width: 1392px; margin: 0 auto;
+    display: flex; flex-direction: column; align-items: stretch; flex: 1 1 auto; }
+  /* HERO FILLS THE FIRST VIEWPORT (2026-09-05): min-height is the viewport
+     minus the fixed bar (svh, so mobile browser chrome cannot push it), so
+     nothing from The newsletter onward shows before the first scroll. The
+     scene band takes the slack (flex: 1 below) and centers the column in
+     the space ABOVE the strip, so the column cannot float up to the nav on
+     a tall viewport; the strip stays pinned to the hero's bottom edge with
+     its hairline above it. */
+  body.page-recap .hero.dgh-hero { position: relative;
+    display: flex; flex-direction: column; align-items: stretch;
+    height: auto; min-height: calc(100svh - var(--vcnav-h, 64px)); max-width: none;
+    margin: calc(-1 * var(--dgh-chrome)) 0 0;
+    padding: calc(var(--dgh-chrome) + max(4.5 * var(--dgh-u), 56px)) 0 32px;
+    overflow: hidden; text-align: left; background: transparent; z-index: 0; }
+  /* styles.css hangs a centred radial glow off .hero::before for the centred
+     heroes. This hero is not centred and carries its own light, so it goes. */
+  body.page-recap .hero.dgh-hero::before { display: none; }
+
+  /* the scene band: the column centres vertically in it, and the stage
+     anchors to it, so the envelope's centring lands on the column block,
+     not the viewport. The min-height is what gives the band its air. */
+  .dgh-scene { position: relative; display: flex; align-items: center;
+    flex: 1 1 auto; min-height: 54svh; }
+  /* THE STAGE IS THE RIGHT COLUMN (2026-09-05 mark size rule, shared with
+     strk/btcfi/quantum): everything from the editorial column's right edge
+     (47u) to the container edge, full scene height. js/digest-hero-mark.js
+     centres its ring in the mount and fits it to 80% of the mount height,
+     so the ring diameter is 80% of the column between the nav and the
+     baseline strip, centred in the free column, clear of the 47u column
+     and never touching the nav or the strip. */
+  .dgh-stage { position: absolute; top: 0; bottom: 0; left: calc(47 * var(--dgh-u)); right: 0;
+    z-index: 0; pointer-events: none; }
+  .dgh-stage canvas { display: block; width: 100%; height: 100%; }
+
+  /* zone one: the editorial column, one reading order top to bottom */
+  .dgh-col { position: relative; z-index: 2; width: calc(47 * var(--dgh-u)); max-width: none;
+    display: flex; flex-direction: column; align-items: flex-start; }
+  .dgh-kicker { margin: 0; font-family: var(--vc-tag); font-weight: 400;
+    font-size: max(0.9 * var(--dgh-u), 11px); line-height: 1.5;
+    letter-spacing: .2em; text-transform: uppercase; color: var(--accent); }
+  /* the display headline rides the SHARED token set in css/vesper-chrome.css
+     (.vch-title, 2026-09-06): one source of truth for strk, btcfi, digest. */
+  /* the one argument paragraph rides the SHARED spec (css/vesper-chrome.css
+     .vch-sub, 2026-09-06): strk's family, size, line-height and color tier,
+     byte for byte. The two hero CTAs and their .dgh-cta/.dgh-pill rules are
+     gone, the same decision as strk and btcfi. */
+
+  /* zone three: the baseline strip, full hero width, one shared baseline.
+     No margin-top auto: the hero fits its content now, and the balanced air
+     around the column comes from the scene band's own centring. */
+  /* FIXED GEOMETRY (2026-09-05, shared with strk and btcfi): constant-height
+     bar, constant hairline / value baseline per breakpoint. This page's
+     counters sit ON the shared value baseline (a 1.85u baseline strut in the
+     counter line and the signature pins it, exactly as the stat values on
+     strk and btcfi are pinned), and the label slot those pages reserve stays
+     EMPTY here: the space is reserved, not collapsed, so the hairline sits
+     at the same offset from the fold on all three pages.
+     Height = 1px hairline + 1.25u pad + 2.3u value box + 5px gap + 45px. */
+  .dgh-strip { position: relative; z-index: 2; margin-top: 0;
+    display: flex; align-items: baseline; justify-content: space-between; gap: calc(2 * var(--dgh-u));
+    border-top: 1px solid rgba(250, 250, 250, .16); padding-top: calc(1.25 * var(--dgh-u));
+    box-sizing: border-box; height: calc(1px + 3.55 * var(--dgh-u) + 50px); }
+  /* the shared strip component (2026-09-06), strk's stats byte for byte:
+     values large in ink, labels below in muted mono at the shared 17ch
+     measure, the same baseline and box struts pinning the fixed geometry.
+     The single-line counter row (.dgh-stat/.dgh-n/.dgh-slash) is gone. */
+  /* three FIXED tracks (2026-09-06): strk's measured pitch (102px + 2u =
+     130.8px at 1440) on every strip page; labels wrap inside their track. */
+  .dgh-stats { display: grid; grid-template-columns: repeat(3, calc(102px + 2 * var(--dgh-u))); margin: 0; padding: 0; list-style: none; }
+  .dgh-stats li { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+  .dgh-stats b { font-family: var(--display); font-weight: 300; font-size: max(calc(1.7 * var(--dgh-u)), 22px);
+    line-height: 1; letter-spacing: -.01em; color: var(--white); font-variant-numeric: tabular-nums; }
+  .dgh-stats b::before, .dgh-turn::before { content: ""; display: inline-block; width: 0;
+    height: calc(1.85 * var(--dgh-u)); }
+  .dgh-stats b::after { content: ""; display: inline-block; width: 0; vertical-align: top;
+    height: calc(2.3 * var(--dgh-u)); }
+  .dgh-stats span { font-family: var(--mono), monospace; font-size: max(calc(0.68 * var(--dgh-u)), 10px);
+    line-height: 1.5; letter-spacing: .14em; text-transform: uppercase; color: rgba(250, 250, 250, .72); max-width: 17ch; }
+  /* SENTENCE CASE IN THE SOURCE, CAPS ON SCREEN: text-transform does the
+     shouting, so a screen reader and the search index still get real words.
+     2.3vw = half the 4.6vw display, measured 33.1px against 66.2px at 1440;
+     nowrap holds the signature to one line at every desktop width. */
+  .dgh-turn { margin: 0; text-align: right; font-family: var(--vc-sans); font-weight: 700;
+    font-size: calc(2.3 * var(--dgh-u)); line-height: .95; letter-spacing: -.01em; text-transform: uppercase;
+    white-space: nowrap; color: #fafafa; }
+
+  /* The dg-glass liquid glass tier that lived here moved to
+     css/vesper-chrome.css with the shared footer (2026-09-05): the pills,
+     the hero CTAs, the nav CTA and the footer form all ride the shared
+     rules now. It is written there at stacked-class specificity because
+     that sheet loads before css/styles.css. */
+
+  /* ============================================================
+     THE ARCHIVE CARD (dgw-). The separate "The latest issues" grid
+     that introduced these rules went on 2026-09-04 (it repeated the
+     feed's newest six a screen apart); the filtered feed below is
+     their only consumer now, so the section shell (.dgw, .dgw-wrap,
+     .dgw-h, .dgw-grid, .dgw-foot) went with it and .recap-grid owns
+     the border scheme. The card leads with the issue's real Substack
+     cover (cover_image in data/recap.json, the field the
+     pre-redesign page rendered), full bleed to the card's borders,
+     then the category chip, the title and the date. The .recap-cover
+     class rides the shared css/styles.css rules (16:9 aspect,
+     object-fit cover, the hover zoom); .dgw-cover carries only what
+     is page-specific. This inline block sits after the styles.css
+     link, so its equal-specificity overrides win by source order.
+     ============================================================ */
+  .dgw-card { display: flex; flex-direction: column; position: relative; min-width: 0;
+    padding: 0 0 28px; text-decoration: none; color: inherit;
+    background: rgba(20, 20, 20, .55); transition: background .18s;
+    border-right: 1px solid var(--sd-line, #262626); border-bottom: 1px solid var(--sd-line, #262626); }
+  .dgw-card:hover { background: rgba(20, 20, 20, .85); }
+  .dgw-card:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+  /* the shared rule paints .recap-cover with the light-theme --gray-light,
+     which would flash a light plate behind every lazy image on this dark
+     page, so the ground is re-pointed at the card's own surface tone */
+  .dgw-cover { display: block; width: 100%; background: #141414;
+    border-bottom: 1px solid var(--sd-line, #262626); }
+  .dgw-top { display: flex; align-items: flex-start; margin: 24px 28px 18px; }
+  .dgw-cat { flex: none; font-family: var(--mono); font-size: 10.5px;
+    letter-spacing: .14em; text-transform: uppercase; color: rgba(250, 250, 250, .5);
+    padding: 6px 11px; border: 1px solid var(--sd-line, #262626); }
+  .dgw-title { display: block; margin: 0 28px 16px; font-family: var(--display); font-size: 24px;
+    font-weight: 600; line-height: 1.2; letter-spacing: -.01em; color: var(--sd-ink, #fafafa);
+    transition: color .18s; }
+  .dgw-card:hover .dgw-title { color: var(--accent); }
+  .dgw-ext { font-size: 16px; color: rgba(250, 250, 250, .35); transition: color .18s; }
+  .dgw-card:hover .dgw-ext { color: var(--accent); }
+  /* margin-top auto pins the date to the card's foot across the row */
+  .dgw-date { margin: auto 28px 0; font-family: var(--mono); font-size: 12px; letter-spacing: .1em;
+    text-transform: uppercase; color: rgba(250, 250, 250, .45); }
+  @media (max-width: 820px) {
+    .dgw-top { margin: 20px 22px 14px; }
+    .dgw-title { font-size: 21px; margin: 0 22px 14px; }
+    .dgw-date { margin: auto 22px 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .dgw-card, .dgw-title, .dgw-ext { transition: none; }
+    .recap-card:hover .recap-cover img { transform: none; }
+  }
+
+  /* Below the artboard the vw sizes stop meaning anything, so the frame
+     becomes a plain top-to-bottom stack sized in rem, exactly as btcfi's
+     does. The centrepiece stays behind it, dimmed by the renderer, so the
+     copy keeps its contrast. The strip stacks: counters above, signature
+     below, both left-aligned. */
+  @media (max-width: 1023px) { body.page-recap { --dgh-chrome: 0px; } }
+  @media (max-width: 980px) {
+    /* the stacked hero still owns the first viewport: same svh floor as
+       the desktop rule; the scene's flex slack keeps the column centered
+       above the strip and the strip on the bottom edge */
+    body.page-recap .hero.dgh-hero { height: auto; min-height: calc(100svh - var(--vcnav-h, 64px));
+      justify-content: flex-start; padding: 6.5rem 1.5rem 2rem; }
+    .dgh-wrap { width: 100%; max-width: none; }
+    .dgh-scene { min-height: 0; }
+    /* the stacked hero puts the envelope directly BEHIND the copy, not
+       beside it, and the renderer's own mobile dim (0.62) was tuned for
+       the old empty-middle layout: the paragraph sat unreadable on the
+       dust. Stacked, the envelope is texture, so it dims to ambient. */
+    .dgh-stage { inset: 0; width: auto; height: auto; transform: none; opacity: .3; }
+    .dgh-col { width: auto; }
+    .dgh-kicker { font-size: .75rem; }
+    /* THE STRIP STAYS ONE ROW down to 700px: counters left, signature
+       right, one baseline. The signature holds near half the 2.75rem
+       display; the counters may wrap before the strip does. */
+    /* fixed geometry, rem tier: 1 + 20 pad + 26 value box + 5 + 45 = 97px */
+    .dgh-strip { margin-top: 2rem; padding-top: 1.25rem; height: 97px; }
+    .dgh-stats { grid-template-columns: repeat(3, 126px); }
+    .dgh-stats b { font-size: 1.5rem; }
+    .dgh-stats b::before, .dgh-turn::before { height: 21px; }
+    .dgh-stats b::after { height: 26px; }
+    .dgh-stats span { font-size: 10px; }
+    .dgh-turn { font-size: 1.375rem; }
+  }
+  /* below 700px the row cannot hold both: stack, counters above, signature
+     below, both left-aligned */
+  @media (max-width: 700px) {
+    /* stacked: the strk/btcfi constant, 1 + 20 + 76 + 16 + 38 = 151px */
+    .dgh-strip { flex-direction: column; align-items: flex-start; justify-content: flex-start; gap: 1rem; height: 151px; }
+    /* three equal tracks across the container */
+    .dgh-stats { width: 100%; grid-template-columns: repeat(3, 1fr); }
+    /* full label slot held, so the stacked claim starts at one shared y */
+    .dgh-stats li { min-height: 76px; }
+    .dgh-turn { text-align: left; font-size: 1.25rem; }
+  }
+  @media (max-width: 380px) {
+    body.page-recap .hero.dgh-hero { padding: 5.5rem 1.25rem 24px; }
+    .dgh-turn { font-size: 1.125rem; }
+  }
+
+  /* The footer's dgf- rules that lived here moved to css/vesper-chrome.css
+     on 2026-09-05: the 12-column footer grid is site chrome now, one and
+     the same on all seven pages. */
+
+</style>
+<script src="js/admin-gate.js"></script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://starknetthesis.io/#organization","name":"Starknet Thesis","url":"https://starknetthesis.io/","logo":{"@type":"ImageObject","url":"https://starknetthesis.io/apple-icon-180x180.png","width":180,"height":180},"sameAs":["https://x.com/Lyskey","https://starknetresearch.substack.com/"]},{"@type":"Person","@id":"https://starknetthesis.io/#lyskey","name":"Lyskey","url":"https://x.com/Lyskey","sameAs":["https://x.com/Lyskey","https://starknetresearch.substack.com/"]},{"@type":"WebSite","@id":"https://starknetthesis.io/#website","name":"Starknet Thesis: Privacy, Quantum Security, BTCFi","description":"An independent thesis on Starknet's three differentiators: private transfers via STRK20, a post-quantum proving system, and Bitcoin staking and DeFi (BTCFi).","url":"https://starknetthesis.io/","publisher":{"@id":"https://starknetthesis.io/#organization"},"inLanguage":"en"},{"@type":"CollectionPage","@id":"https://starknetthesis.io/digest#webpage","url":"https://starknetthesis.io/digest","name":"Starknet Digest: Weekly Roundups and Research","description":"Weekly roundups, monthly digests and research notes covering what is shipping and changing across the Starknet ecosystem, from the Starknet Research newsletter.","isPartOf":{"@id":"https://starknetthesis.io/#website"},"breadcrumb":{"@id":"https://starknetthesis.io/digest#breadcrumb"},"primaryImageOfPage":{"@id":"https://starknetthesis.io/digest#primaryimage"},"mainEntity":{"@id":"https://starknetthesis.io/digest#newsletter"},"isBasedOn":{"@id":"https://starknetthesis.io/digest#newsletter"},"about":{"@type":"Thing","name":"Starknet","sameAs":"https://www.starknet.io/"},"author":{"@id":"https://starknetthesis.io/#lyskey"},"publisher":{"@id":"https://starknetthesis.io/#organization"},"inLanguage":"en"},{"@type":"ImageObject","@id":"https://starknetthesis.io/digest#primaryimage","url":"https://starknetthesis.io/assets/og-default.png","contentUrl":"https://starknetthesis.io/assets/og-default.png","width":1200,"height":630},{"@type":"BreadcrumbList","@id":"https://starknetthesis.io/digest#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://starknetthesis.io/"},{"@type":"ListItem","position":2,"name":"Digest","item":"https://starknetthesis.io/digest"}]},{"@type":"Blog","@id":"https://starknetthesis.io/digest#newsletter","name":"Starknet Research","description":"Weekly roundups, monthly recaps and research notes on the Starknet ecosystem. Published on Substack and indexed here.","url":"https://starknetresearch.substack.com/","author":{"@id":"https://starknetthesis.io/#lyskey"},"publisher":{"@id":"https://starknetthesis.io/#organization"},"inLanguage":"en"}]}</script>
+</head>
+<body class="page-recap">
+
+<!-- NAV -->
+<header class="vc-header" id="vc-header">
+  <div class="vc-in">
+    <a href="/" class="vc-logo" aria-label="Starknet Thesis, home"><svg class="vc-mark" viewBox="2.4 5.4 21.2 15.2" aria-hidden="true" focusable="false"><path d="M4 7 H22" stroke="#8b7bff" stroke-width="3.2" stroke-linecap="round"/><path d="M4 13 H17" stroke="#8b7bff" stroke-opacity="0.55" stroke-width="3.2" stroke-linecap="round"/><path d="M4 19 H12" stroke="#8b7bff" stroke-opacity="0.3" stroke-width="3.2" stroke-linecap="round"/></svg><span class="vc-word">Starknet Thesis</span></a>
+    <nav class="vc-nav" aria-label="Main"><a href="/privacy">Privacy</a><a href="/quantum">Quantum</a><a href="/btcfi">BTCFi</a><a href="/strk">STRK</a><a href="/ecosystem">Ecosystem</a><a href="/digest">Digest</a></nav>
+    <div class="vc-right">
+      <div class="vc-social">
+      <a href="https://discord.gg/starknet-community" target="_blank" rel="noopener" aria-label="Starknet Discord"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.32 4.37a19.8 19.8 0 0 0-4.93-1.51 13.8 13.8 0 0 0-.64 1.28 18.3 18.3 0 0 0-5.5 0 12.6 12.6 0 0 0-.64-1.28c-1.71.29-3.37.8-4.93 1.51A20.3 20.3 0 0 0 .1 18.06a19.9 19.9 0 0 0 6.07 3.06c.49-.66.93-1.37 1.3-2.11a12.9 12.9 0 0 1-2.05-.98c.17-.12.34-.25.5-.38a14.2 14.2 0 0 0 12.16 0c.16.13.33.26.5.38-.65.39-1.34.72-2.05.98.37.74.81 1.45 1.3 2.11a19.8 19.8 0 0 0 6.07-3.06A20.2 20.2 0 0 0 20.32 4.37ZM8.02 15.33c-1.18 0-2.16-1.08-2.16-2.42s.95-2.42 2.16-2.42 2.19 1.09 2.16 2.42c0 1.34-.95 2.42-2.16 2.42Zm7.96 0c-1.18 0-2.16-1.08-2.16-2.42s.95-2.42 2.16-2.42 2.19 1.09 2.16 2.42c0 1.34-.95 2.42-2.16 2.42Z"/></svg></a>
+      <a href="https://x.com/Lyskey" target="_blank" rel="noopener" aria-label="Lyskey on X"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.24 2.25h3.31l-7.23 8.26 8.5 11.24h-6.66l-5.21-6.82-5.97 6.82H1.67l7.73-8.84L1.25 2.25h6.83l4.71 6.23 5.45-6.23Zm-1.16 17.52h1.83L7.08 4.13H5.12l11.96 15.64Z"/></svg></a>
+      <a href="https://t.me/starknet_ecosystem" target="_blank" rel="noopener" aria-label="Starknet ecosystem Telegram"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21.94 3.6a1.5 1.5 0 0 0-1.53-.26L2.7 10.34c-.9.35-.88 1.63.03 1.95l4.63 1.63 1.79 5.63c.27.86 1.37 1.1 1.98.44l2.58-2.83 4.66 3.42c.72.53 1.75.13 1.93-.75l2.16-14.6a1.5 1.5 0 0 0-.52-1.63ZM9.16 13.94l9.28-6.86c.31-.23.66.19.39.46l-7.5 7.42c-.24.24-.4.55-.45.89l-.35 2.42-1.37-4.33Z"/></svg></a>
+      </div>
+      <a href="https://starknetresearch.substack.com" target="_blank" rel="noopener" class="vc-cta dg-glass dg-glass--primary" data-umami-event="cta-subscribe">Subscribe</a>
+      <button type="button" class="vc-burger" aria-label="Open menu" aria-expanded="false" aria-controls="vc-mobile" onclick="var h=this.closest('header');var o=h.classList.toggle('open');this.setAttribute('aria-expanded',o);this.setAttribute('aria-label',o?'Close menu':'Open menu')"><span></span><span></span></button>
+    </div>
+    <nav class="vc-mobile" id="vc-mobile" aria-label="Main"><a href="/privacy">Privacy</a><a href="/quantum">Quantum</a><a href="/btcfi">BTCFi</a><a href="/strk">STRK</a><a href="/ecosystem">Ecosystem</a><a href="/digest">Digest</a><div class="vc-social">
+      <a href="https://discord.gg/starknet-community" target="_blank" rel="noopener" aria-label="Starknet Discord"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.32 4.37a19.8 19.8 0 0 0-4.93-1.51 13.8 13.8 0 0 0-.64 1.28 18.3 18.3 0 0 0-5.5 0 12.6 12.6 0 0 0-.64-1.28c-1.71.29-3.37.8-4.93 1.51A20.3 20.3 0 0 0 .1 18.06a19.9 19.9 0 0 0 6.07 3.06c.49-.66.93-1.37 1.3-2.11a12.9 12.9 0 0 1-2.05-.98c.17-.12.34-.25.5-.38a14.2 14.2 0 0 0 12.16 0c.16.13.33.26.5.38-.65.39-1.34.72-2.05.98.37.74.81 1.45 1.3 2.11a19.8 19.8 0 0 0 6.07-3.06A20.2 20.2 0 0 0 20.32 4.37ZM8.02 15.33c-1.18 0-2.16-1.08-2.16-2.42s.95-2.42 2.16-2.42 2.19 1.09 2.16 2.42c0 1.34-.95 2.42-2.16 2.42Zm7.96 0c-1.18 0-2.16-1.08-2.16-2.42s.95-2.42 2.16-2.42 2.19 1.09 2.16 2.42c0 1.34-.95 2.42-2.16 2.42Z"/></svg></a>
+      <a href="https://x.com/Lyskey" target="_blank" rel="noopener" aria-label="Lyskey on X"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.24 2.25h3.31l-7.23 8.26 8.5 11.24h-6.66l-5.21-6.82-5.97 6.82H1.67l7.73-8.84L1.25 2.25h6.83l4.71 6.23 5.45-6.23Zm-1.16 17.52h1.83L7.08 4.13H5.12l11.96 15.64Z"/></svg></a>
+      <a href="https://t.me/starknet_ecosystem" target="_blank" rel="noopener" aria-label="Starknet ecosystem Telegram"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21.94 3.6a1.5 1.5 0 0 0-1.53-.26L2.7 10.34c-.9.35-.88 1.63.03 1.95l4.63 1.63 1.79 5.63c.27.86 1.37 1.1 1.98.44l2.58-2.83 4.66 3.42c.72.53 1.75.13 1.93-.75l2.16-14.6a1.5 1.5 0 0 0-.52-1.63ZM9.16 13.94l9.28-6.86c.31-.23.66.19.39.46l-7.5 7.42c-.24.24-.4.55-.45.89l-.35 2.42-1.37-4.33Z"/></svg></a>
+    </div><a href="https://starknetresearch.substack.com" target="_blank" rel="noopener" class="vc-cta">Subscribe</a></nav>
+  </div>
+  <script>(function(){var p=location.pathname.replace(/\.html$/,'').replace(/\/$/,'')||'/';document.querySelectorAll('#vc-header .vc-nav a, #vc-header .vc-mobile a:not(.vc-cta)').forEach(function(a){if(a.getAttribute('href')===p){a.classList.add('active');a.setAttribute('aria-current','page');}});})();</script>
+</header>
+
+<!-- HERO -->
+<!-- D5, recomposed 2026-09-04: three zones. Zone one is the editorial column
+     top left (kicker, display, one argument paragraph, the CTA pair, in
+     reading order); zone two is the particle centrepiece on its full-bleed
+     stage, centre right, untouched; zone three is the baseline strip across
+     the hero's foot (generated counters left, the streak signature right,
+     one baseline, split from the scene by a hairline). The corner-scatter
+     composition this replaces is described in the dgh- CSS block.
+     Nothing here paints a ground: js/eco-backdrop.js is a FIXED canvas at
+     z-index 0 and every layer above it stays transparent.
+     The centrepiece container is decorative and inert: aria-hidden, pointer
+     events off. If WebGL is missing or the reader prefers reduced motion the
+     module either skips or paints one settled frame, and the copy is
+     unaffected either way. -->
+<div class="hero dgh-hero">
+  <!-- The container (2026-09-04): the page's capped centred box, the exact
+       geometry of the footer band's .vc-cta-in (max-width 1392px, 24px side
+       margins). Column and hairline sit on its left edge, the signature on
+       its right, and the envelope's stage right-aligns inside it, so wide
+       monitors get a centred hero instead of viewport-pinned corners. -->
+  <div class="dgh-wrap">
+  <!-- The scene band holds zones one and two: the stage fills the band, so
+       the envelope's own centring lands on the column block instead of the
+       viewport, and the column centres vertically against it. -->
+  <div class="dgh-scene">
+    <div class="dgh-stage" id="dghStage" aria-hidden="true"></div>
+
+    <!-- Zone one: the editorial column, in reading order. The old hero
+         scattered these across three corners; the kicker note and the body
+         paragraph are folded into one argument (both sentences verbatim). -->
+    <div class="dgh-col">
+      <p class="dgh-kicker">Digest</p>
+      <!-- the id is the search index's anchor for this page's opening claim
+           (public/data/search-index.json); it stays on the display heading. -->
+      <h1 id="never-miss-whatsshipping-on-starknet" class="dgh-title vch-title">Never miss what's <em>shipping on Starknet.</em></h1>
+      <!-- the paragraph rides the shared spec (.vch-sub); the two glass CTAs
+           are gone, the same decision as strk and btcfi, and the archive
+           section keeps its id. -->
+      <p class="dgh-body vch-sub">A thesis only holds if the ecosystem actually ships behind it. Starknet is among the very few ecosystems shipping this much, this consistently, and the digest is the record of it: weekly roundups, monthly recaps, and original research.</p>
+    </div>
+  </div>
+
+  <!-- Zone two is the particle envelope (js/digest-hero-mark.js) on the
+       scene's stage. Zone three: the baseline strip across the hero's full
+       width, split from the scene by a hairline. -->
+  <div class="dgh-strip">
+    <!-- The three numbers are stamped at build time by scripts/build-digest.js
+         from data/recap.json (see the DIGEST COUNTS block there): the weekly
+         figure is the highest roundup number in the archive's titles, the
+         monthly figure is the count of monthly recap entries, the research
+         figure the count of entries the shared classify() calls research
+         (a title with neither "monthly recap" nor "roundup": the same
+         taxonomy the filter pills run). The values in the source are only
+         the last stamp; never edit them by hand. -->
+    <ul class="dgh-stats">
+      <li><b data-count="weekly-roundups">234</b><span>Weekly roundups published</span></li>
+      <li><b data-count="monthly-recaps">36</b><span>Monthly recaps</span></li>
+      <li><b data-count="research-articles">34</b><span>Research articles</span></li>
+    </ul>
+    <p class="dgh-turn">Every week accounted for</p>
+  </div>
+  </div>
+</div>
+
+<!-- THE ARCHIVE: the page's single issue list. A separate "The latest issues"
+     grid (section id="wk") used to sit above this one showing the same six
+     newest entries a screen apart; it went on 2026-09-04 and this filtered
+     feed, with its Load more and its counter, is the one archive. -->
+<section class="dg-feed">
+  <!-- kicker above the title, the position every other section of the site
+       gives its mono label; the filter row stays below the h2 -->
+  <p class="th-pm-eyebrow">The newsletter</p>
+  <div class="th-pm-head"><span class="th-pm-marker"></span><h2 id="latest-from-the-starknet-ecosystem" class="th-pm-title">Latest from the Starknet ecosystem</h2></div>
+
+  <div class="chart-toggle" role="tablist" id="recapTabs">
+    <button class="toggle-btn dg-glass active" data-filter="all" role="tab">All</button>
+    <button class="toggle-btn dg-glass" data-filter="monthly" role="tab">Monthly</button>
+    <button class="toggle-btn dg-glass" data-filter="weekly" role="tab">Weekly</button>
+    <button class="toggle-btn dg-glass" data-filter="research" role="tab">Research</button>
+  </div>
+
+  <div class="recap-grid" id="recapGrid">
+    <!-- The block below is a static pre-render of the 10 latest entries so
+         the page is readable without JS; on load the script replaces the
+         whole grid with the full hydrated archive. It regenerates
+         AUTOMATICALLY on every Vercel deploy (npm run build); running
+         `node scripts/build-digest.js` manually is only needed to preview
+         locally after updating data/recap.json. -->
+    <!-- STATIC-DIGEST:START -->
+    <!-- Pre-rendered from data/recap.json: regenerated automatically on deploy (npm run build). Run node scripts/build-digest.js for local preview. -->
+    <a class="recap-card dgw-card" data-umami-event="digest-entry-click" data-cat="weekly" href="https://starknetresearch.substack.com/p/starknet-roundup-234" target="_blank" rel="noopener"><span class="recap-cover dgw-cover"><img src="https://substackcdn.com/image/fetch/$s_!Ahvp!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F291b23a1-2f17-4fba-9345-8414b8e61b2a_1920x1080.png" loading="lazy" alt=""></span><span class="dgw-top"><span class="dgw-cat">Weekly digest</span></span><span class="dgw-title">Starknet roundup 234 <span class="dgw-ext" aria-hidden="true">↗</span></span><time class="dgw-date" datetime="2026-09-07">Sep 7, 2026</time></a>
+    <a class="recap-card dgw-card" data-umami-event="digest-entry-click" data-cat="monthly" href="https://starknetresearch.substack.com/p/starknet-monthly-recap-36-august" target="_blank" rel="noopener"><span class="recap-cover dgw-cover"><img src="https://substackcdn.com/image/fetch/$s_!majj!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F601f5191-c83f-4c9c-ad9d-7b64ed07d7be_3016x1532.jpeg" loading="lazy" alt=""></span><span class="dgw-top"><span class="dgw-cat">Monthly digest</span></span><span class="dgw-title">Starknet monthly recap #36: August 2026 <span class="dgw-ext" aria-hidden="true">↗</span></span><time class="dgw-date" datetime="2026-09-02">Sep 2, 2026</time></a>
+    <a class="recap-card dgw-card" data-umami-event="digest-entry-click" data-cat="weekly" href="https://starknetresearch.substack.com/p/starknet-roundup-233" target="_blank" rel="noopener"><span class="recap-cover dgw-cover"><img src="https://substackcdn.com/image/fetch/$s_!Ahvp!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F291b23a1-2f17-4fba-9345-8414b8e61b2a_1920x1080.png" loading="lazy" alt=""></span><span class="dgw-top"><span class="dgw-cat">Weekly digest</span></span><span class="dgw-title">Starknet roundup 233 <span class="dgw-ext" aria-hidden="true">↗</span></span><time class="dgw-date" datetime="2026-08-31">Aug 31, 2026</time></a>
+    <a class="recap-card dgw-card" data-umami-event="digest-entry-click" data-cat="weekly" href="https://starknetresearch.substack.com/p/starknet-roundup-232" target="_blank" rel="noopener"><span class="recap-cover dgw-cover"><img src="https://substackcdn.com/image/fetch/$s_!Ahvp!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F291b23a1-2f17-4fba-9345-8414b8e61b2a_1920x1080.png" loading="lazy" alt=""></span><span class="dgw-top"><span class="dgw-cat">Weekly digest</span></span><span class="dgw-title">Starknet roundup 232 <span class="dgw-ext" aria-hidden="true">↗</span></span><time class="dgw-date" datetime="2026-08-24">Aug 24, 2026</time></a>
+    <a class="recap-card dgw-card" data-umami-event="digest-entry-click" data-cat="weekly" href="https://starknetresearch.substack.com/p/starknet-roundup-231" target="_blank" rel="noopener"><span class="recap-cover dgw-cover"><img src="https://substackcdn.com/image/fetch/$s_!Ahvp!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F291b23a1-2f17-4fba-9345-8414b8e61b2a_1920x1080.png" loading="lazy" alt=""></span><span class="dgw-top"><span class="dgw-cat">Weekly digest</span></span><span class="dgw-title">Starknet roundup 231 <span class="dgw-ext" aria-hidden="true">↗</span></span><time class="dgw-date" datetime="2026-08-17">Aug 17, 2026</time></a>
+    <a class="recap-card dgw-card" data-umami-event="digest-entry-click" data-cat="weekly" href="https://starknetresearch.substack.com/p/starknet-roundup-230" target="_blank" rel="noopener"><span class="recap-cover dgw-cover"><img src="https://substackcdn.com/image/fetch/$s_!Ahvp!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F291b23a1-2f17-4fba-9345-8414b8e61b2a_1920x1080.png" loading="lazy" alt=""></span><span class="dgw-top"><span class="dgw-cat">Weekly digest</span></span><span class="dgw-title">Starknet roundup 230 <span class="dgw-ext" aria-hidden="true">↗</span></span><time class="dgw-date" datetime="2026-08-10">Aug 10, 2026</time></a>
+    <a class="recap-card dgw-card" data-umami-event="digest-entry-click" data-cat="monthly" href="https://starknetresearch.substack.com/p/starknet-monthly-recap-34-june-2026-ef8" target="_blank" rel="noopener"><span class="recap-cover dgw-cover"><img src="https://substackcdn.com/image/fetch/$s_!3DgR!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F25b61362-513e-48b4-b16a-8bbbcfefad01_3840x2160.jpeg" loading="lazy" alt=""></span><span class="dgw-top"><span class="dgw-cat">Monthly digest</span></span><span class="dgw-title">Starknet monthly recap #35: July 2026 <span class="dgw-ext" aria-hidden="true">↗</span></span><time class="dgw-date" datetime="2026-08-04">Aug 4, 2026</time></a>
+    <a class="recap-card dgw-card" data-umami-event="digest-entry-click" data-cat="weekly" href="https://starknetresearch.substack.com/p/starknet-roundup-229" target="_blank" rel="noopener"><span class="recap-cover dgw-cover"><img src="https://substackcdn.com/image/fetch/$s_!Ahvp!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F291b23a1-2f17-4fba-9345-8414b8e61b2a_1920x1080.png" loading="lazy" alt=""></span><span class="dgw-top"><span class="dgw-cat">Weekly digest</span></span><span class="dgw-title">Starknet roundup 229 <span class="dgw-ext" aria-hidden="true">↗</span></span><time class="dgw-date" datetime="2026-08-03">Aug 3, 2026</time></a>
+    <a class="recap-card dgw-card" data-umami-event="digest-entry-click" data-cat="weekly" href="https://starknetresearch.substack.com/p/starknet-roundup-228" target="_blank" rel="noopener"><span class="recap-cover dgw-cover"><img src="https://substackcdn.com/image/fetch/$s_!Ahvp!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F291b23a1-2f17-4fba-9345-8414b8e61b2a_1920x1080.png" loading="lazy" alt=""></span><span class="dgw-top"><span class="dgw-cat">Weekly digest</span></span><span class="dgw-title">Starknet roundup 228 <span class="dgw-ext" aria-hidden="true">↗</span></span><time class="dgw-date" datetime="2026-07-27">Jul 27, 2026</time></a>
+    <a class="recap-card dgw-card" data-umami-event="digest-entry-click" data-cat="weekly" href="https://starknetresearch.substack.com/p/starknet-roundup-227" target="_blank" rel="noopener"><span class="recap-cover dgw-cover"><img src="https://substackcdn.com/image/fetch/$s_!Ahvp!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F291b23a1-2f17-4fba-9345-8414b8e61b2a_1920x1080.png" loading="lazy" alt=""></span><span class="dgw-top"><span class="dgw-cat">Weekly digest</span></span><span class="dgw-title">Starknet roundup 227 <span class="dgw-ext" aria-hidden="true">↗</span></span><time class="dgw-date" datetime="2026-07-20">Jul 20, 2026</time></a>
+    <!-- STATIC-DIGEST:END -->
+  </div>
+  <div class="recap-empty" id="recapEmpty" hidden>No posts in this category yet.</div>
+  <div class="recap-more" id="recapMore" hidden>
+    <p class="recap-count" id="recapCount"></p>
+    <button class="btn-secondary" id="recapMoreBtn" type="button">Load more</button>
+  </div>
+</section>
+
+<!-- The standalone "Get every digest in your inbox" panel that closed the page
+     went on 2026-09-04: it sat back to back with the footer band's own email
+     form, so the page asked twice in one screen. The footer band is the
+     site-wide close and carries the subscribe form alone now. -->
+<footer class="vc-footer">
+<div class="vc-cta-band">
+  <div class="vc-cta-in">
+    <div class="vc-cta-say">
+      <p class="vc-kicker">Starknet Thesis</p>
+      <h2 class="vc-title">Three forces,<br>one chain,<br>one ticker.</h2>
+    </div>
+    <form class="vc-sub" action="https://starknetresearch.substack.com/subscribe" method="get" target="_blank" rel="noopener" data-umami-event="footer-subscribe">
+      <label class="vc-sub-field">
+        <span class="vc-sub-label">Get the thesis in your inbox</span>
+        <input type="email" name="email" placeholder="you@domain.com" aria-label="Email" required>
+      </label>
+      <div class="vc-acts">
+        <button type="submit" class="vc-btn vc-btn-dark dg-glass dg-glass--primary">Subscribe <i aria-hidden="true"></i></button>
+        <a class="vc-btn vc-btn-light" href="/">Read the thesis <i aria-hidden="true"></i></a>
+      </div>
+    </form>
+  </div>
+</div>
+  <div class="vc-cols">
+    <nav class="vc-links dgf-grid" aria-label="Footer">
+      <div class="vc-col"><h3>Thesis</h3><ul><li><a href="/privacy">Privacy</a></li><li><a href="/quantum">Quantum</a></li><li><a href="/btcfi">BTCFi</a></li><li><a href="/strk">STRK</a></li></ul></div>
+      <div class="vc-col"><h3>Signals</h3><ul><li><a href="/ecosystem">Ecosystem</a></li><li><a href="/digest">Digest</a></li></ul></div>
+      <!-- CONNECT went 2026-09-04: /llms.txt keeps being served, only its
+           footer link goes, and network status stays reachable through the
+           baseline bar's status pill. The grid keeps its four tracks; the
+           three groups sit on the left three and the fourth breathes. -->
+      <div class="vc-col"><h3>Follow</h3><ul><li><a href="https://starknetresearch.substack.com" target="_blank" rel="noopener">Newsletter</a></li><li><a href="https://x.com/Lyskey" target="_blank" rel="noopener">X / Twitter</a></li></ul></div>
+    </nav>
+  </div>
+  <div class="vc-rule"></div>
+  <!-- The identity / legal row (2026-09-04): one row on the container under
+       the hairline above. Left, the mark plus the one-line tagline (the
+       banner owns "Three forces, one chain, one ticker.", said once per
+       viewport); right, the disclaimer in its demoted legal style, a
+       right-aligned block. Same words in both, zero copy change. -->
+  <div class="vc-base dgf-grid">
+    <div class="vc-brand">
+      <img src="/assets/hero/logo.svg" alt="Starknet Thesis" width="200" height="26">
+      <p>The independent thesis on how Starknet makes crypto private, quantum-resistant and productive.</p>
+    </div>
+    <p class="vc-legal">Website made for educational purposes only. This is not financial advice. Always DYOR. A personal project, not affiliated with or endorsed by StarkWare. All views expressed here are my own.</p>
+  </div>
+  <div class="dgf-foot">
+    <!-- the classic baseline bar, on the shared .status/.dot component from
+         css/styles.css (pulse and its reduced-motion guard included) -->
+    <div class="dgf-bar dgf-grid">
+      <span>© 2026 · Made by <a href="https://x.com/Lyskey" target="_blank" rel="noopener">Lyskey</a></span>
+      <a class="dgf-status" href="https://status.starknet.io/" target="_blank" rel="noopener noreferrer"><span class="status"><span class="dot" aria-hidden="true"></span> All systems operational</span></a>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  // ============================================================
+  // DATA SOURCE: data/recap.json, generated at build time by scripts/fetch-recap.mjs.
+  // That script hits Substack's archive API DIRECTLY (Node has no CORS limit, so no proxy),
+  // paginates the WHOLE history, and writes it here. Loading it is a plain same-origin fetch:
+  // instant, reliable, and it contains the full archive (200+ posts). To refresh after new
+  // posts are published, re-run:  node scripts/fetch-recap.mjs
+  var DATA_URL = 'data/recap.json';
+  var SUBSTACK_URL = 'https://starknetresearch.substack.com/';
+
+  // Display caps (purely visual: ALL fetched posts stay in memory so the filters always
+  // work across the FULL dataset). Show INITIAL_VISIBLE at first, then reveal LOAD_MORE_STEP
+  // more on each "Load more" click. Switching filter resets the visible count to INITIAL_VISIBLE.
+  var INITIAL_VISIBLE = 20;
+  var LOAD_MORE_STEP = 50;
+
+  var grid = document.getElementById('recapGrid');
+  var emptyNote = document.getElementById('recapEmpty');
+  var tabs = document.getElementById('recapTabs');
+  var moreWrap = document.getElementById('recapMore');
+  var moreBtn = document.getElementById('recapMoreBtn');
+  var countEl = document.getElementById('recapCount');
+  var posts = [];            // ALL posts, sorted newest → oldest (never trimmed)
+  var current = 'all';       // active filter
+  var visible = INITIAL_VISIBLE; // how many of the current filtered list are shown
+
+  // ===== CATEGORY CLASSIFIER: adjust here if your title formats change =====
+  //  monthly : "Starknet monthly recap #33: May 2026"  → title contains "monthly recap"
+  //  weekly  : "Starknet roundup 219" / "...219-220"    → title contains "roundup"
+  //  research: everything else
+  function classify(title){
+    var t = (title || '').toLowerCase();
+    if (t.indexOf('monthly recap') !== -1) return 'monthly';
+    if (t.indexOf('roundup') !== -1) return 'weekly';
+    return 'research';
+  }
+  var CAT_LABELS = { monthly: 'Monthly digest', weekly: 'Weekly digest', research: 'Research' };
+
+  // ---------- helpers ----------
+  function esc(s){ return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function escA(s){ return esc(s).replace(/"/g,'&quot;'); }
+  function stripHTML(html){ var d = document.createElement('div'); d.innerHTML = html || ''; return (d.textContent || d.innerText || '').replace(/\s+/g, ' ').trim(); }
+  function excerpt(html, n){
+    var t = stripHTML(html);
+    if (t.length <= n) return t;
+    var cut = t.slice(0, n);
+    var sp = cut.lastIndexOf(' ');
+    if (sp > 60) cut = cut.slice(0, sp);
+    return cut.replace(/[\s,.;:!?\-–—]+$/, '') + '…';
+  }
+  var MN = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  function fmtDate(d){ return MN[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear(); }
+  // ===== UNOFFICIAL SUBSTACK ARCHIVE: field mapping (adjust here if Substack changes it) =====
+  // Maps one archive post object to the card shape the UI expects.
+  function mapArchivePost(post){
+    var d = new Date(post.post_date || post.published_at || post.date || 0);
+    if (isNaN(d.getTime())) d = new Date(0);
+    return {
+      title: post.title || '(untitled)',
+      link: post.canonical_url || (post.slug ? SUBSTACK_URL + 'p/' + post.slug : SUBSTACK_URL),
+      date: d,
+      dateLabel: d.getTime() ? fmtDate(d) : '',
+      excerpt: excerpt(post.description || post.subtitle || post.truncated_body_text, 180),
+      image: post.cover_image || '',
+      cat: classify(post.title)
+    };
+  }
+
+  // ---------- render ----------
+  // KEEP IN SYNC with cardHTML() in scripts/build-digest.js: the static
+  // prerender and this renderer must emit the same markup, and the ONLY
+  // intentional difference is the date element (a <time datetime> there, a
+  // <div> here). The card: the issue's real Substack cover on top (16:9,
+  // cover_image from data/recap.json; an empty span keeps the plate if an
+  // entry ever ships without one), then the outlined category chip, the
+  // title with its external-link arrow, then the date.
+  // .recap-card stays on the anchor because the filter, the Load-more code
+  // and hasStatic() all query it.
+  function cardHTML(p){
+    return '<a class="recap-card dgw-card" data-umami-event="digest-entry-click" data-cat="' + p.cat + '" href="' + escA(p.link) + '" target="_blank" rel="noopener">' +
+      '<span class="recap-cover dgw-cover">' + (p.image ? '<img src="' + escA(p.image) + '" loading="lazy" alt="">' : '') + '</span>' +
+      '<span class="dgw-top">' +
+        '<span class="dgw-cat">' + CAT_LABELS[p.cat] + '</span>' +
+      '</span>' +
+      '<span class="dgw-title">' + esc(p.title) + ' <span class="dgw-ext" aria-hidden="true">\u2197</span></span>' +
+      (p.dateLabel ? '<div class="dgw-date">' + esc(p.dateLabel) + '</div>' : '') +
+    '</a>';
+  }
+
+  // Posts matching the active filter (across the FULL dataset, not just visible ones).
+  function filteredPosts(){
+    return current === 'all' ? posts : posts.filter(function(p){ return p.cat === current; });
+  }
+
+  // Render the first `visible` cards of the current filter (used on load + tab switch).
+  function renderList(){
+    var list = filteredPosts();
+    grid.innerHTML = list.slice(0, visible).map(cardHTML).join('');
+    if (emptyNote) emptyNote.hidden = list.length !== 0;
+    updateMoreUI(list.length);
+  }
+
+  // Append the next batch without re-rendering (so already-shown images don't reload).
+  function loadMore(){
+    var list = filteredPosts();
+    var prev = visible;
+    visible = Math.min(visible + LOAD_MORE_STEP, list.length);
+    grid.insertAdjacentHTML('beforeend', list.slice(prev, visible).map(cardHTML).join(''));
+    updateMoreUI(list.length);
+  }
+
+  // "Showing X of Y" + show/hide the Load more button.
+  function updateMoreUI(total){
+    if (!moreWrap) return;
+    if (!total) { moreWrap.hidden = true; return; }
+    var shown = Math.min(visible, total);
+    moreWrap.hidden = false;
+    countEl.textContent = 'Showing ' + shown + ' of ' + total;
+    moreBtn.hidden = shown >= total;
+  }
+
+  // The grid ships with a static pre-render of the latest entries (see the
+  // STATIC-DIGEST markers): keep it on screen instead of a spinner while the
+  // archive loads, and keep it if the fetch fails: renderList() replaces the
+  // whole grid once the full dataset is ready, so nothing ever duplicates.
+  function hasStatic(){ return !!grid.querySelector('.recap-card'); }
+  function showLoading(){
+    if (emptyNote) emptyNote.hidden = true;
+    if (moreWrap) moreWrap.hidden = true;
+    if (hasStatic()) return;
+    grid.innerHTML = '<div class="recap-status"><span class="recap-spinner"></span> <span>Loading the archive…</span></div>';
+  }
+  function showError(){
+    if (emptyNote) emptyNote.hidden = true;
+    if (moreWrap) moreWrap.hidden = true;
+    if (hasStatic()) return; // the static 10 stay readable
+    grid.innerHTML = '<div class="recap-status">' +
+      '<p>Couldn’t load the archive right now. You can read everything directly on Substack.</p>' +
+      '<a class="btn-primary" href="' + SUBSTACK_URL + '" target="_blank" rel="noopener">Read on Substack</a>' +
+    '</div>';
+  }
+  function render(list){
+    posts = list.slice().sort(function(a, b){ return b.date - a.date; }); // newest → oldest
+    current = 'all';
+    visible = INITIAL_VISIBLE;
+    tabs.querySelectorAll('.toggle-btn').forEach(function(b){ b.classList.toggle('active', b.getAttribute('data-filter') === 'all'); });
+    renderList();
+  }
+
+  // Load the pre-built archive (data/recap.json): a plain same-origin fetch, no proxy.
+  // If the file is missing/unreadable, fall back to the "read on Substack" state.
+  function load(){
+    showLoading();
+    fetch(DATA_URL, { cache: 'no-cache' })
+      .then(function(r){ if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(function(list){
+        if (!Array.isArray(list) || !list.length) throw new Error('no posts');
+        render(list.map(mapArchivePost));
+      })
+      .catch(function(){ showError(); });
+  }
+
+  // ---------- filter tabs (reset the visible count for the new filtered list) ----------
+  tabs.addEventListener('click', function(e){
+    var btn = e.target.closest('.toggle-btn');
+    if (!btn) return;
+    current = btn.getAttribute('data-filter');
+    tabs.querySelectorAll('.toggle-btn').forEach(function(b){ b.classList.toggle('active', b === btn); });
+    visible = INITIAL_VISIBLE;
+    renderList();
+  });
+
+  // ---------- load more ----------
+  moreBtn.addEventListener('click', loadMore);
+
+  load();
+})();
+</script>
+
+<script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.185.0/build/three.module.js"}}</script>
+<script type="module" src="js/eco-backdrop.js"></script>
+<script type="module" src="js/digest-hero-mark.js"></script>
+</body>
+</html>

@@ -31,7 +31,7 @@ const path = require('path');
 const RPC = 'https://api.cartridge.gg/x/starknet/mainnet';
 const POOL = '0x040337b1af3c663e86e333bab5a4b28da8d4652a15a69beee2b677776ffe812a';
 const BACKEND = 'https://strk20-dashboard-production.up.railway.app';
-const OUT = path.join(__dirname, '..', 'assets', 'data', 'strk20-pool-users.json');
+const OUT = path.join(__dirname, '..', 'public', 'assets', 'data', 'strk20-pool-users.json');
 const CACHE_FILE = path.join(__dirname, '.backfill-users-cache.json');
 
 /* ---- keccak-256 (pure JS, BigInt lanes) — for the event selector ---- */
