@@ -24,6 +24,7 @@
 <script defer src="https://cloud.umami.is/script.js" data-website-id="45f11859-9fc2-49ae-a59e-4826e0f1e174"></script>
 <script defer src="js/search.js"></script>
 <script defer src="js/fee-config.js"></script>
+<script type="module" src="js/pool-summary.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -2961,42 +2962,49 @@ h3.pmv-title { margin: 0 0 14px; font-size: clamp(22px, 2vw, 26px); line-height:
   <div class="pmx th-pm-reveal" id="poolMetrics">
     <div class="pmx-stats" id="pmxStats"></div>
     <div class="pmx-grid">
-      <div class="pmx-card" data-pmx="shielded" style="--span:8">
+      <!-- data-src / data-checked on every card that renders a live figure
+           (the site's claim convention, see quantum.html): data-src is the
+           endpoint that PRODUCES the number, the STRK20 backend, and
+           data-checked the date a human last confirmed it still does. The
+           SOURCE links below name where a reader can see the same pool
+           live; the two chart cards' Starkscan links are correct for them
+           (Starkscan is the balances' upstream) and stay. -->
+      <div class="pmx-card" data-pmx="shielded" style="--span:8" data-src="https://strk20-dashboard-production.up.railway.app/agg/shielded-balance" data-checked="2026-09-20">
         <div class="pmx-head"><span class="pmx-t">Shielded value over time</span><span class="pmx-sub">USD, STACKED BY ASSET, DAILY</span></div>
         <div class="pmx-body"><a class="pmx-live" href="https://starkscan.co/privacy-pool" target="_blank" rel="noopener">VIEW LIVE &rarr;</a></div>
         <a class="pmx-src" href="https://starkscan.co/privacy-pool" target="_blank" rel="noopener">SOURCE: STARKSCAN &#8599;</a>
       </div>
-      <div class="pmx-card" data-pmx="comp" style="--span:4">
+      <div class="pmx-card" data-pmx="comp" style="--span:4" data-src="https://strk20-dashboard-production.up.railway.app/agg/shielded-balance" data-checked="2026-09-20">
         <div class="pmx-head"><span class="pmx-t">Pool composition</span><span class="pmx-sub">USD BY ASSET, LATEST</span></div>
         <div class="pmx-body"><a class="pmx-live" href="https://starkscan.co/privacy-pool" target="_blank" rel="noopener">VIEW LIVE &rarr;</a></div>
         <a class="pmx-src" href="https://starkscan.co/privacy-pool" target="_blank" rel="noopener">SOURCE: STARKSCAN &#8599;</a>
       </div>
-      <div class="pmx-card" data-pmx="txs" style="--span:4">
+      <div class="pmx-card" data-pmx="txs" style="--span:4" data-src="https://strk20-dashboard-production.up.railway.app/agg/transactions" data-checked="2026-09-20">
         <div class="pmx-head"><span class="pmx-t">Transactions</span><span class="pmx-sub">COUNT, DAILY</span></div>
         <div class="pmx-body"><a class="pmx-live" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">VIEW LIVE &rarr;</a></div>
         <a class="pmx-src" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">SOURCE: STRK20 DASHBOARD &#8599;</a>
       </div>
-      <div class="pmx-card" data-pmx="users" style="--span:4">
+      <div class="pmx-card" data-pmx="users" style="--span:4" data-src="https://strk20-dashboard-production.up.railway.app/agg/registrations" data-checked="2026-09-20">
         <div class="pmx-head"><span class="pmx-t">New users</span><span class="pmx-sub">VIEWING-KEY REGISTRATIONS, DAILY + CUMULATIVE</span></div>
         <div class="pmx-body"><a class="pmx-live" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">VIEW LIVE &rarr;</a></div>
         <a class="pmx-src" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">SOURCE: STRK20 DASHBOARD &#8599;</a>
       </div>
-      <div class="pmx-card" data-pmx="swaps" style="--span:4">
+      <div class="pmx-card" data-pmx="swaps" style="--span:4" data-src="https://strk20-dashboard-production.up.railway.app/agg/swap-by-token" data-checked="2026-09-20">
         <div class="pmx-head"><span class="pmx-t">Private swap volume</span><span class="pmx-sub">USD BY TOKEN, DAILY</span></div>
         <div class="pmx-body"><a class="pmx-live" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">VIEW LIVE &rarr;</a></div>
         <a class="pmx-src" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">SOURCE: STRK20 DASHBOARD &#8599;</a>
       </div>
-      <div class="pmx-card" data-pmx="defi" style="--span:4">
+      <div class="pmx-card" data-pmx="defi" style="--span:4" data-src="https://strk20-dashboard-production.up.railway.app/agg/routed-volume" data-checked="2026-09-20">
         <div class="pmx-head"><span class="pmx-t">DeFi volume privately routed</span><span class="pmx-sub">USD BY PROTOCOL, DAILY</span></div>
         <div class="pmx-body"><a class="pmx-live" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">VIEW LIVE &rarr;</a></div>
         <a class="pmx-src" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">SOURCE: STRK20 DASHBOARD &#8599;</a>
       </div>
-      <div class="pmx-card" data-pmx="revenue" style="--span:4">
+      <div class="pmx-card" data-pmx="revenue" style="--span:4" data-src="https://strk20-dashboard-production.up.railway.app/agg/tvl-history" data-checked="2026-09-20">
         <div class="pmx-head"><span class="pmx-t">Revenue</span><span class="pmx-sub">PROTOCOL FEES, MEASURED, DAILY + CUMULATIVE</span></div>
         <div class="pmx-body"><a class="pmx-live" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">VIEW LIVE &rarr;</a></div>
         <a class="pmx-src" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">SOURCE: STRK20 DASHBOARD &#8599;</a>
       </div>
-      <div class="pmx-card" data-pmx="estimated" style="--span:4">
+      <div class="pmx-card" data-pmx="estimated" style="--span:4" data-src="https://strk20-dashboard-production.up.railway.app/agg/transactions" data-checked="2026-09-20">
         <div class="pmx-head"><span class="pmx-t">Estimated revenue</span><span class="pmx-sub">ESTIMATED: FLAT FEE <span data-fee-target>~$0.12</span> &times; DAILY TRANSACTIONS</span></div>
         <div class="pmx-body"><a class="pmx-live" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">VIEW LIVE &rarr;</a></div>
         <a class="pmx-src" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">SOURCE: STRK20 DASHBOARD, DAILY TRANSACTIONS &#8599;</a>
@@ -4295,11 +4303,22 @@ var pvVideoChrome = thVideoChrome({
   }
 
   var upEl = document.getElementById('pmxUpdated');
-  // per-card provenance: when each card's on-screen data was actually fetched
-  // (0 = the card shows no fetched data, e.g. the VIEW LIVE fallback). The
-  // label reports the OLDEST data on screen, so a partially failed silent
-  // refresh can never claim "just now" over a chart it did not update.
+  // per-card provenance: the DATA TIME of each card's on-screen payload, the
+  // backend's tvlAsOf (the block the balances were read at), NOT the moment
+  // this browser fetched it (that was the rule until 2026-09-20 and it
+  // overstated freshness by the backend's own cache age). 0 = the card shows
+  // no dated data: the VIEW LIVE fallback, or a payload that carries no
+  // tvlAsOf (transactions, registrations, swap-by-token, routed-volume are
+  // day series with no block stamp; they contribute nothing to the label).
+  // The label reports the OLDEST data time on screen, so a card mixing two
+  // endpoints (the KPI row) shows the older one, and a partially failed
+  // silent refresh can never claim "just now" over a chart it did not update.
   var prov = { stats: 0, shielded: 0, comp: 0, swaps: 0, defi: 0, txs: 0, users: 0, revenue: 0, estimated: 0 };
+  // a payload's tvlAsOf as ms, 0 when it has none
+  function asOfMs(p){ var t = p && typeof p.tvlAsOf === 'string' ? Date.parse(p.tvlAsOf) : NaN; return isFinite(t) ? t : 0; }
+  // the shared pool-summary module (js/pool-summary.js, loaded in <head>);
+  // the dynamic import is the fallback if that tag has not executed yet
+  function poolMod(){ return window.STRK20PoolSummary ? Promise.resolve(window.STRK20PoolSummary) : import('/js/pool-summary.js'); }
   function tickUpdated(){
     if (!upEl) return;
     var oldest = Infinity;
@@ -4355,31 +4374,36 @@ var pvVideoChrome = thVideoChrome({
     var next = { stats: null, shielded: null, comp: null, swaps: null, defi: null, txs: null, users: null, revenue: null, estimated: null };
     // every card stages a DRAW closure, called once here at the current cell
     // width and again on resize; the payload it closes over is the one this
-    // cycle fetched, so the snapshot stays whole
-    function stage(k, draw){
+    // cycle fetched, so the snapshot stays whole. `at` is the payload's data
+    // time (tvlAsOf, ms), 0 for a payload that carries none.
+    function stage(k, draw, at){
       var w = plotW(k), d = draw(w);
-      next[k] = { chart: d.chart, legend: d.legend, meta: d.meta, draw: draw, w: w, at: Date.now() };
+      next[k] = { chart: d.chart, legend: d.legend, meta: d.meta, draw: draw, w: w, at: at || 0 };
     }
     // raw payloads this cycle, for the KPI row: it reads the same series the
-    // charts do, so a KPI and its chart can never come from different vintages
-    var raw = { summary: null, shielded: null, fees: null };
+    // charts do, so a KPI and its chart can never come from different vintages.
+    // `at` holds each payload's tvlAsOf; the row shows the oldest of them.
+    var raw = { summary: null, shielded: null, fees: null, at: { summary: 0, shielded: 0, fees: 0 } };
     var jobs = [
-      get('/agg/pool-summary').then(function(s){ raw.summary = { s: s, at: Date.now() }; }).catch(function(){}),
+      // the pool summary comes through the shared module (one fetch rule,
+      // one reader, one set of printers for every page)
+      poolMod().then(function(m){ return m.fetchPoolSummary(); })
+        .then(function(s){ raw.summary = { s: s }; raw.at.summary = asOfMs(s); }).catch(function(){}),
 
       get('/agg/shielded-balance').then(function(d){
         if (!d.days || !d.days.length) throw new Error('empty');
-        raw.shielded = d;
+        raw.shielded = d; raw.at.shielded = asOfMs(d);
         var split = topSeries(d.days, 'byToken', 5);
         stage('shielded', function(W){
           var H = plotH('shielded', W);
           return { chart: stackedArea(d.days, split, W, H), legend: legend(split.names),
                    meta: { days: d.days, W: W, P: PAD_STD, rows: stackRows(split, fmtUsd) } };
-        });
+        }, asOfMs(d));
         // Pool composition, same payload and same split: the two cells cannot
         // disagree because they are the same numbers rendered twice
         stage('comp', function(){
           return { chart: compBlock(d.days, split), legend: '', meta: null };
-        });
+        }, asOfMs(d));
       }).catch(function(){}),
 
       get('/agg/swap-by-token').then(function(d){
@@ -4472,7 +4496,7 @@ var pvVideoChrome = thVideoChrome({
         var fdays = days.map(function(x, i){
           return { date: x.date, feesUsd: Math.max(0, x.feesUsd - (i ? days[i - 1].feesUsd : 0)), cumUsd: x.feesUsd };
         });
-        raw.fees = fdays;
+        raw.fees = fdays; raw.at.fees = asOfMs(pair[0]);
         stage('revenue', function(W){
           var H = plotH('revenue', W);
           return { chart: feeBarsLine(fdays, W, H),
@@ -4481,7 +4505,7 @@ var pvVideoChrome = thVideoChrome({
                      return [{ label: 'DAILY FEES', value: fmtUsd(day.feesUsd), color: 'rgba(110,181,255,.5)' },
                              { label: 'CUMULATIVE', value: fmtUsd(day.cumUsd), color: '#6EB5FF' }];
                    } } };
-        });
+        }, asOfMs(pair[0]));
       }).catch(function(){}),
 
       get('/agg/registrations').then(function(d){
@@ -4498,28 +4522,56 @@ var pvVideoChrome = thVideoChrome({
       }).catch(function(){})
     ];
     Promise.all(jobs).then(function(){
-      next.stats = buildStats(raw);
+      next.stats = buildStats(raw, silent);
       commit(next, silent);
     });
   }
 
   /* KPI row, built after the cycle's fetches so each cell reads the same
-     payload its chart does.
+     payload its chart does. The pool figures come through js/pool-summary.js
+     (the fetch, the payload reader and the printers are shared with
+     strk.html, btcfi.html and the landing, so the same number cannot print
+     four ways). NOTHING in this row is a literal: a cell whose payload or
+     field is missing renders the unavailable state (an em dash for the
+     value, DATA UNAVAILABLE for the sub) and never a remembered number.
 
      30D DELTAS are shown only where the delta comes from the SAME series as
      the value on the cell, over a lookback the series actually covers:
-     - shielded value comes from the shielded-balance day series (its last
-       day's total is the pool-summary tvlUsd to the cent), so it carries a
-       delta.
-     - PROTECTED ASSETS shows the pool's onchain asset universe, a verified
-       constant read through STRK20_ASSET_COUNTS in js/fee-config.js (see
-       the note there: contract-derived 2026-08-10; the backend's perToken
-       misses ZEC, and the cell's previous count used balanceUsd > 0, which
-       silently dropped unpriced tokens holding real balances). The
-       sub-line's "with balances" count is live from the same pool-summary
-       payload: balanceRaw > 0, token units. No delta: the asset list has
-       no history series.
-     - revenue is the measured protocol-fees series (cumulative USD, priced
+     - TOTAL SHIELDED VALUE is pool-summary tvlUsd; its delta is the
+       shielded-balance day series' own 30-day movement. The two endpoints
+       are NOT the same number to the cent (a claim this comment made until
+       2026-09-20): they pin different blocks (15159101 against 15159163 on
+       that day's read) and price independently, and that read put the
+       series' last day at $1,174,247.92 against a tvlUsd of $1,169,612.30,
+       a $4,635.63 gap, with xSTRK alone $3,292 apart on an identical
+       balance. So the value is the summary's, the delta is the series',
+       and the label says 30D, not "of this figure".
+       When priceCoverageComplete is false the value is a LOWER BOUND: the
+       unpriced tokens holding real balances contribute $0 to tvlUsd. The
+       figure then carries a >= mark and the sub states the payload's own
+       coverage, pricedCount of tokenCount (both derived by the module from
+       perToken.length and unpricedTokenCount, neither typed here). The >=
+       alone carries the bound; the sub does not repeat it in words.
+       The 30D DELTA carries NO bound mark, deliberately (2026-09-20). The
+       shielded-balance series declares no price coverage, but its byToken
+       keys are exactly the priced tokens (27 symbols over the whole
+       history on that day's read; none of the 10 unpriced perToken rows
+       has ever appeared in it), so both ends of the difference cover the
+       SAME priced subset and the delta is the exact 30-day movement of
+       that subset. A >= on a signed difference would also be false: a
+       difference of two lower bounds bounds nothing, since the unpriced
+       part could have moved either way. What the delta does not cover is
+       the unpriced part, whose USD movement nobody can state, which is the
+       same limit the headline's >= already discloses.
+     - PROTECTED ASSETS is live: perToken rows with balanceRaw > 0 (raw token
+       units, so an unpriced token with a real balance counts; keyed by
+       address, so USDC's two contracts count twice). No delta: the asset
+       list has no history series. HISTORY: from 2026-08-10 to 2026-09-20 this
+       cell printed a literal 34, the onchain asset universe as verified on
+       2026-08-10, meant to be read through a helper in js/fee-config.js that
+       the 2026-08-12 rewrite of that file deleted; the fallback literal then
+       rendered for five weeks while the pool moved on. No literal remains.
+     - REVENUE is the measured protocol-fees series (cumulative USD, priced
        at spot by the backend), so its delta is that series' own 30-day
        movement.
      - STRK20 POOL USERS carries NO delta: its value is pool-summary userCount, a
@@ -4539,33 +4591,53 @@ var pvVideoChrome = thVideoChrome({
     if (v === null) return '';
     return (v >= 0 ? '+' : '-') + fmt(Math.abs(v)) + ' 30D';
   }
-  function statCell(label, value, sub, delta){
-    var foot = (sub || delta)
-      ? '<div class="s">' + (sub ? '<span>' + sub + '</span>' : '') + (delta ? '<b>' + delta + '</b>' : '') + '</div>'
+  /* one KPI cell. A null `value` renders the unavailable state and drops the
+     sub and the delta with it: no number, no figure-shaped placeholder.
+     data-src names the endpoint that produced the number (the STRK20
+     backend, never a site that merely displays the same pool) and
+     data-checked the date a human last confirmed it still does, the site's
+     claim convention. */
+  var CHECKED = '2026-09-20';
+  var UNAVAILABLE = '—';
+  function statCell(label, value, sub, delta, src){
+    var un = value === null || value === undefined;
+    var v = un ? UNAVAILABLE : value;
+    var s = un ? 'DATA UNAVAILABLE' : sub;
+    var d = un ? '' : delta;
+    var foot = (s || d)
+      ? '<div class="s">' + (s ? '<span>' + s + '</span>' : '') + (d ? '<b>' + d + '</b>' : '') + '</div>'
       : '';
-    return '<div class="pmx-stat gx-card"><div class="l">' + label + '</div><div class="v">' + value + '</div>' + foot + '</div>';
+    return '<div class="pmx-stat gx-card" data-src="' + src + '" data-checked="' + CHECKED + '"><div class="l">' + label + '</div><div class="v">' + v + '</div>' + foot + '</div>';
   }
-  function buildStats(raw){
-    if (!raw.summary) return null;
-    var s = raw.summary.s;
+  function buildStats(raw, silent){
+    var M = window.STRK20PoolSummary || null;
+    // a silent refresh whose pool summary failed keeps the row it has (the
+    // charts' rule: a failed source keeps its last good data AND its old
+    // data time); a first load with no summary renders the unavailable state
+    if (silent && !raw.summary) return null;
+    var r = raw.summary && M ? M.readPoolSummary(raw.summary.s) : null;
     var sd = raw.shielded && raw.shielded.days;
-    var counts = window.STRK20_ASSET_COUNTS ? window.STRK20_ASSET_COUNTS(s) : {
-      tracked: 34,
-      withBalances: (s.perToken || []).filter(function(t){ return parseFloat(t.balanceRaw || '0') > 0; }).length
-    };
     var cum = raw.fees && raw.fees.length ? raw.fees[raw.fees.length - 1].cumUsd : null;
+    var cov = r ? M.coverage(r) : null;
+    var tvl = r ? r.tvlUsd : null;
+    // the row mixes three payloads; its data time is the OLDEST of theirs
+    var ats = [raw.at.summary, raw.at.shielded, raw.at.fees].filter(function(t){ return t > 0; });
+    var at = ats.length ? Math.min.apply(null, ats) : 0;
 
+    var tvlHtml = tvl === null ? null
+      : '<span class="em">' + (cov && cov.complete === false ? '&ge; ' : '') + M.formatShieldedValue(tvl) + '</span>';
+    var tvlSub = cov && cov.complete === false ? cov.text.toUpperCase() : 'ONE POOL'; // the >= on the value carries the bound; "27 OF 37 PRICED" says the rest
     var bloom = '<div class="gx-bloom" aria-hidden="true">' +
       [1.5, 26.5, 51.5, 76.5].map(function(l){ return '<i style="--bc:var(--em);left:' + l + '%;top:16%;width:22%;height:68%"></i>'; }).join('') +
       '</div>';
-    return { at: raw.summary.at, html: bloom +
-      statCell('TOTAL SHIELDED VALUE', '<span class="em">$' + Math.round(s.tvlUsd).toLocaleString('en-US') + '</span>',
-        'ONE POOL', dTag(delta30(sd, function(d){ return d.total; }), fmtUsd)) +
-      statCell('PROTECTED ASSETS', counts.tracked.toLocaleString('en-US'),
-        counts.withBalances.toLocaleString('en-US') + ' WITH BALANCES · TRACKED BY THE POOL', '') +
-      statCell('STRK20 POOL USERS', (s.userCount || 0).toLocaleString('en-US'), '', '') +
-      statCell('REVENUE', cum === null ? 'N/A' : fmtUsd(cum),
-        'MEASURED, CUMULATIVE', dTag(delta30(raw.fees, function(d){ return d.cumUsd; }), fmtUsd)) };
+    return { at: at, html: bloom +
+      statCell('TOTAL SHIELDED VALUE', tvlHtml,
+        tvlSub, dTag(delta30(sd, function(d){ return d.total; }), fmtUsd), API + '/agg/pool-summary') +
+      statCell('PROTECTED ASSETS', r && r.withBalances !== null ? M.formatCount(r.withBalances) : null,
+        'WITH BALANCES IN THE POOL', '', API + '/agg/pool-summary') +
+      statCell('STRK20 POOL USERS', r && r.userCount !== null ? M.formatCount(r.userCount) : null, '', '', API + '/agg/pool-summary') +
+      statCell('REVENUE', cum === null ? null : fmtUsd(cum),
+        'MEASURED, CUMULATIVE', dTag(delta30(raw.fees, function(d){ return d.cumUsd; }), fmtUsd), API + '/agg/tvl-history') };
   }
 
   var loaded = false;

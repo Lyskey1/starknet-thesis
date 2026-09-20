@@ -8,6 +8,7 @@ import {
   fetchAppRevenue,
   fetchShieldedValue,
   fetchStrkStaked,
+  formatShieldedValue,
   REFRESH_MS,
   TICK_MS,
   GROWTHEPIE_CREDIT,
@@ -69,7 +70,7 @@ const READ: Record<Key, () => Promise<Omit<Live, "at">>> = {
    the same string. The privacy page's compact formatter would round the same
    number to a whole million and the two would disagree on sight. */
 const PRINT: Record<Key, (v: number) => string> = {
-  shielded: (v) => "$" + Math.round(v).toLocaleString("en-US"),
+  shielded: formatShieldedValue, // public/js/pool-summary.js, the printer privacy.html's cell uses
   staked: (v) => abbr(v) + " STRK",
   revenue: (v) => "$" + abbr(v),
 };

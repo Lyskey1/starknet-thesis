@@ -38,6 +38,7 @@
 <link rel="stylesheet" href="css/glass-chips.css">
 <script defer src="js/curtain.js"></script>
 <script defer src="js/fee-config.js"></script>
+<script type="module" src="js/pool-summary.js"></script>
 <script defer src="js/staking-config.js"></script>
 
 <style>
@@ -2163,7 +2164,7 @@ window.ADMIN_GATE=on;})();
     <div class="nacc-item" id="strk20">
       <button class="nacc-head" aria-expanded="false" aria-controls="strk20-body"><span class="nacc-title">Privacy · STRK20</span><span class="nacc-count"></span><i class="ti ti-chevron-down nacc-chev"></i></button>
       <div class="nacc-body" id="strk20-body"><div class="nacc-inner"><div class="cells c5">
-        <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="TVL in STRK20 pool" data-chart-series="p_tvl"><div class="cell-top"><span class="cl">TVL in STRK20 pool</span></div><div class="cv" data-stat="p_tvl">$528.9K</div><div class="cs">Shielded value</div></div>
+        <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="TVL in STRK20 pool" data-chart-series="p_tvl"><div class="cell-top"><span class="cl">TVL in STRK20 pool</span></div><div class="cv" data-stat="p_tvl">&mdash;</div><div class="cs">Data unavailable</div></div>
         <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="Revenue from STRK20 (30D)" data-chart-series="p_rev"><div class="cell-top"><span class="cl">Revenue from STRK20 (30D)</span></div><div class="cv" data-stat="p_rev">$342</div><div class="cs">Measured protocol fees · STRK20 dashboard</div></div>
         <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="Private TX (total)" data-chart-series="p_tx_total"><div class="cell-top"><span class="cl">Private TX (total)</span></div><div class="cv" data-stat="p_tx_total">31,682</div><div class="cs">All time · since Apr 2026</div></div>
         <div class="cell" data-umami-event="metric-card-click" data-umami-event-metric="Private TX (weekly)" data-chart-series="p_tx"><div class="cell-top"><span class="cl">Private TX (weekly)</span></div><div class="cv" data-stat="p_tx">761</div><div class="cs">Last 7 complete days</div></div>
@@ -2632,7 +2633,10 @@ const M=[
  {k:'netflow',label:'Total netflow (30D)',type:'usdflow',value:-25499197,source:{name:'L2Beat',url:'https://l2beat.com/scaling/projects/starknet'}},
  {k:'apprev',label:'App revenue',type:'usd',value:2124918,source:{name:'growthepie',url:'https://www.growthepie.com'}},
  {k:'chainrev',label:'Chain revenue',type:'usd',value:120744,source:{name:'DefiLlama',url:'https://defillama.com/chain/starknet'}},
- {k:'p_tvl',label:'TVL in STRK20 pool',type:'usd',value:528903},
+ /* no `value`: this cell ships no seed (2026-09-20). The header prints the
+    live figure the numbers engine sets through window.__numbersLive, and an
+    em dash until it lands or if the fetch fails. */
+ {k:'p_tvl',label:'TVL in STRK20 pool',type:'usd'},
  {k:'p_rev',label:'Revenue from STRK20',type:'usd',value:4167,source:{name:'STRK20 dashboard',url:'https://strk20.starknet.io/dashboard'}},
  /* the SAME series, twice: the running total inside the selected window,
     and the per-day figure it is summed from. The daily pill keeps the
@@ -3029,6 +3033,7 @@ const HIST={
 };
 function abbr(v){v=Math.abs(v);if(v>=1e9)return (v/1e9).toFixed(2)+'B';if(v>=1e6)return (v/1e6).toFixed(1)+'M';if(v>=1e3)return (v/1e3).toFixed(1)+'K';return Math.round(v).toString();}
 function fmt(m,v){
+  if(v==null||!isFinite(v))return '—'; /* a metric with no value (no seed, fetch not landed) prints an em dash, never NaN */
   if(m.type==='price')return '$'+v.toFixed(4);
   if(m.type==='pct')return v.toFixed(1)+'%';
   if(m.type==='btc')return (v>=1000?(v/1000).toFixed(1)+'K':Math.round(v))+' BTC';
@@ -3990,8 +3995,10 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
     /* p_tx is the WEEKLY rate since 2026-09-12: the seven complete days
        ending 2026-07-30, the last complete day at the verified time above.
        p_tx_total is the all-time sum at that same read. Both from
-       /agg/transactions, neither hand-set. */
-    p_tvl: 587068, p_tx: 761, p_tx_total: 28031, p_rev: 342, p_users: 2347, p_vol: 147128,
+       /agg/transactions, neither hand-set.
+       p_tvl has NO seed (2026-09-20): the pool cell renders the unavailable
+       state until the live pool summary lands (js/pool-summary.js). */
+    p_tx: 761, p_tx_total: 28031, p_rev: 342, p_users: 2347, p_vol: 147128,
     govVotes: 10 // real (non-test, uncancelled) votes; live-refreshed from the Snapshot X API
   };
   /* STRK's contractual total, 10,000,000,000, fixed at genesis and the base
@@ -4046,7 +4053,10 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
     netflow:    function(v){ return (v >= 0 ? '+' : '-') + '$' + abbr(v); },
     apprev:     function(v){ return '$' + abbr(v); },
     chainrev:   function(v){ return '$' + abbr(v); },
-    p_tvl:      function(v){ return '$' + abbr(v); },
+    /* the pool figure prints through the shared module (js/pool-summary.js,
+       the same printer privacy.html, btcfi.html and the landing use);
+       renderAll skips this cell until the module has landed and repaints then */
+    p_tvl:      function(v){ return window.STRK20PoolSummary.formatShieldedValueCompact(v); },
     p_rev:      function(v){ return '$' + abbr(v); },
     p_tx:       function(v){ return Math.round(v).toLocaleString('en-US'); },
     p_tx_total: function(v){ return Math.round(v).toLocaleString('en-US'); },
@@ -4182,8 +4192,14 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
     var shownValueStaked = dispAbbr(state.strkStakedUsd) + dispAbbr(state.btcStakedUsd);
     Object.keys(BIND).forEach(function(k){
       var v = k === 'valuestaked' ? shownValueStaked : state[BIND[k]];
+      if (k === 'p_tvl' && !window.STRK20PoolSummary) return; // printed by the shared module only; repainted once it lands
       (statEls[k] || []).forEach(function(el){ tween(el, v, FMT[k]); });
     });
+    /* the pool cell's sub: its label once a live figure is in, the unavailable
+       wording until then. The cell has no seed (2026-09-20), so a value that
+       never arrives leaves the em dash the markup ships. */
+    var pSub = document.querySelector('.cell[data-chart-series="p_tvl"] .cs');
+    if (pSub) pSub.textContent = isFinite(state.p_tvl) ? 'Shielded value' : 'Data unavailable';
     // netflow is the site's only signed stat: its card value takes the sign color
     (statEls.netflow || []).forEach(function(el){ el.style.color = state.netflow >= 0 ? 'var(--up)' : 'var(--down)'; });
     // static cards: FDV progress = mcap/FDV; unlocked bar + locked remainder
@@ -4285,6 +4301,7 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
   fetchGov().then(renderGov).catch(function(){}); // the baked ten stay on failure
 
   renderAll(); // paint last-known (cache or seed) immediately
+  poolMod().then(function(){ renderAll(); }).catch(function(){}); // the pool cell paints once its shared printer is in
 
   /* ---------- fetch helpers ---------- */
   function getJson(url){
@@ -4295,6 +4312,9 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
     return fetch(url).then(function(r){ if (!r.ok) throw new Error(url); return r.json(); });
   }
   function ok(v){ return isFinite(v) && v > 0; }
+  // the shared pool-summary module (loaded as a module script in <head>; the
+  // dynamic import is the fallback if that tag has not executed yet)
+  function poolMod(){ return window.STRK20PoolSummary ? Promise.resolve(window.STRK20PoolSummary) : import('/js/pool-summary.js'); }
   // staking-contract fallback for STRK staked, rotating over free RPCs
   function rpcTotalStake(i){
     i = i || 0;
@@ -4481,8 +4501,14 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
     // /agg/registrations.totalUsers is a DIFFERENT metric (viewing-key
     // registrations, 2,366 vs 2,345 on 2026-08-10): never conflate or
     // subtract them (same warning as privacy.html's stats row).
-    var pS20tvl = wrap(getJson('https://strk20-dashboard-production.up.railway.app/agg/pool-summary')
-      .then(function(d){ if (!ok(d.tvlUsd) || !ok(d.userCount)) throw 0; return { tvl: d.tvlUsd, users: d.userCount }; }));
+    // the pool summary comes through js/pool-summary.js: one fetch rule, one
+    // payload reader and one printer shared with privacy.html, btcfi.html and
+    // the landing, so the same tvlUsd cannot read differently across pages
+    var pS20tvl = wrap(poolMod().then(function(m){ return m.fetchPoolSummary().then(function(d){
+        var r = m.readPoolSummary(d);
+        if (!ok(r.tvlUsd) || !ok(r.userCount)) throw 0;
+        return { tvl: r.tvlUsd, users: r.userCount };
+      }); }));
     var pS20vol = wrap(getJson('https://strk20-dashboard-production.up.railway.app/agg/routed-volume')
       .then(function(d){
         var days = d.days || [];

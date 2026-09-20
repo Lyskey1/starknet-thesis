@@ -23,6 +23,7 @@
 <meta name="description" content="How Starknet makes Bitcoin productive: BTC staking with a fixed 25% reward share, strkBTC, and live figures for bridged, staked and shielded BTC.">
 <script defer src="https://cloud.umami.is/script.js" data-website-id="45f11859-9fc2-49ae-a59e-4826e0f1e174"></script>
 <script defer src="js/search.js"></script>
+<script type="module" src="js/pool-summary.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -3391,9 +3392,11 @@
         <span class="mlk-src" aria-hidden="true">SOURCE <i class="ti ti-arrow-up-right"></i></span>
       </a>
       <a class="metric-box btcg-liquid" href="https://starkscan.co/privacy-pool" target="_blank" rel="noopener">
-        <span class="metric-val" data-bm="shielded" data-fmt="dec2">2.48</span>
+        <!-- no seed (2026-09-20): the unavailable state until the live pool
+             summary lands (js/pool-summary.js, perToken strkBTC balanceHuman) -->
+        <span class="metric-val" data-bm="shielded" data-fmt="dec2">&mdash;</span>
         <div class="metric-label">Encrypted strkBTC</div>
-        <div class="metric-sub" data-bm-sub="shielded">≈ $157K</div>
+        <div class="metric-sub" data-bm-sub="shielded">Data unavailable</div>
         <span class="mlk-src" aria-hidden="true">SOURCE <i class="ti ti-arrow-up-right"></i></span>
       </a>
     </div>
@@ -4541,7 +4544,10 @@
       && TOKENS.every(function(t){ return isFinite(s.supplies[t.name]) && s.supplies[t.name] > 0; })
       && TOKENS.every(function(t){ return isFinite(s.stakedTokens[t.name]) && s.stakedTokens[t.name] >= 0; })
       && isFinite(s.stakedOther || 0) && (s.stakedOther || 0) >= 0
-      && isFinite(s.btcUsd) && s.btcUsd > 0 && isFinite(s.encryptedStrkBtc)
+      && isFinite(s.btcUsd) && s.btcUsd > 0
+      // encryptedStrkBtc may be absent: the card has no seed (2026-09-20) and
+      // renders the unavailable state until a live pool summary supplies it
+      && (s.encryptedStrkBtc == null || isFinite(s.encryptedStrkBtc))
       && s.prov && GROUPS.every(function(k){ return s.prov[k] && s.prov[k].origin && s.prov[k].at; }));
   }
 
@@ -4552,10 +4558,10 @@
   var SEED_RAW = { verified: '2026-07-28T14:52:00Z', btcUsd: 63421,
     supplies: { strkBTC: 102.6318, WBTC: 483.6358, tBTC: 56.5315, SolvBTC: 449.9252, LBTC: 9.7699 },
     stakedTokens: { strkBTC: 8.2802, WBTC: 242.0493, tBTC: 18.2813, SolvBTC: 416.6693, LBTC: 1.5134 },
-    stakedOther: 0, encryptedStrkBtc: 2.4828 };
+    stakedOther: 0 }; // no encryptedStrkBtc seed (2026-09-20): that card is live or unavailable, never remembered
   var SEED_AT = Date.parse(SEED_RAW.verified);
   var SEED = makeSnapshot({ updated: SEED_AT, btcUsd: SEED_RAW.btcUsd, supplies: SEED_RAW.supplies,
-    stakedTokens: SEED_RAW.stakedTokens, stakedOther: SEED_RAW.stakedOther, encryptedStrkBtc: SEED_RAW.encryptedStrkBtc, prov: provAll('seed', SEED_AT) });
+    stakedTokens: SEED_RAW.stakedTokens, stakedOther: SEED_RAW.stakedOther, encryptedStrkBtc: null, prov: provAll('seed', SEED_AT) });
   var CACHE_KEY = 'btcfiMetrics_v5'; // v5: staked group carries its per-token breakdown; older cache shapes are ignored and rewritten on the next good fetch
 
   var RPCS = ['https://rpc.starknet.lava.build', 'https://api.cartridge.gg/x/starknet/mainnet', 'https://1rpc.io/starknet'];
@@ -4762,12 +4768,17 @@
     var shownTotal = displayedTotal();
     var shownStaked = displayedStakedTotal();
     var shownSupply = rnd(snap.supplies.strkBTC, 1);
-    var shownShielded = rnd(snap.encryptedStrkBtc, 2);
+    // typeof guard: isFinite(null) is true, and null is exactly the no-data case
+    var shownShielded = (typeof snap.encryptedStrkBtc === 'number' && isFinite(snap.encryptedStrkBtc)) ? rnd(snap.encryptedStrkBtc, 2) : null;
     renderStakeAmounts();
     setStat('network', shownTotal, shownTotal * snap.btcUsd, netOpen);
     setStat('staked', shownStaked, shownStaked * snap.btcUsd, stakedOpen);
     setStat('supply', shownSupply, shownSupply * snap.btcUsd, netOpen);
-    setStat('shielded', shownShielded, shownShielded * snap.btcUsd);
+    /* the encrypted card has no seed: an em dash and "Data unavailable" until
+       a live pool summary has supplied the figure (never a remembered number) */
+    if (shownShielded === null) {
+      if (els.shielded) { els.shielded.val.textContent = '—'; if (els.shielded.sub) els.shielded.sub.textContent = 'Data unavailable'; }
+    } else setStat('shielded', shownShielded, shownShielded * snap.btcUsd);
     netTip.refill();
     stakedTip.refill();
     tickUpdated();
@@ -4904,11 +4915,13 @@
         if (isFinite(strkStake) && strkStake > 0) { next.strkStaked = strkStake; next.strkStakedAt = Date.now(); }
       })
       .catch(function(){}); // the WHOLE staked group keeps its previous vintage
-    var pShielded = getJson('https://strk20-dashboard-production.up.railway.app/agg/pool-summary')
-      .then(function(d){
-        var t = (d.perToken || []).filter(function(x){ return x.symbol === 'strkBTC'; })[0];
-        if (t && t.balanceHuman != null) { next.encryptedStrkBtc = t.balanceHuman; stamp('shielded'); }
-      })
+    // the pool summary comes through js/pool-summary.js (one fetch rule and
+    // one payload reader shared with privacy.html, strk.html and the landing)
+    var pShielded = (window.STRK20PoolSummary ? Promise.resolve(window.STRK20PoolSummary) : import('/js/pool-summary.js'))
+      .then(function(m){ return m.fetchPoolSummary().then(function(d){
+        var t = m.readPoolSummary(d).token('strkBTC');
+        if (t && typeof t.balanceHuman === 'number' && isFinite(t.balanceHuman)) { next.encryptedStrkBtc = t.balanceHuman; stamp('shielded'); }
+      }); })
       .catch(function(){});
     Promise.all([pPrice, pSupplies, pStaked, pShielded]).then(function(){
       snap = makeSnapshot(next); // atomic commit: one object, one vintage

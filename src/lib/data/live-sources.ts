@@ -23,11 +23,21 @@
  * are the pages' functions character for character.
  */
 import { appRevenue365, GROWTHEPIE_APP_REVENUE, GROWTHEPIE_CREDIT, WINDOW_DAYS } from "../../../public/js/app-revenue.js";
+import {
+  STRK20_API,
+  POOL_SUMMARY_URL,
+  fetchPoolSummary,
+  readPoolSummary,
+  formatShieldedValue,
+} from "../../../public/js/pool-summary.js";
 
 /* the selector's own constants, so a label and a credit can name them */
 export { GROWTHEPIE_APP_REVENUE, GROWTHEPIE_CREDIT, WINDOW_DAYS };
 
-export const STRK20_API = "https://strk20-dashboard-production.up.railway.app";
+/* the pool summary's: the same module the three static pages load, so the
+   landing's shielded value is fetched, read and PRINTED by the very code
+   privacy.html's KPI cell uses (2026-09-20) */
+export { STRK20_API, POOL_SUMMARY_URL, formatShieldedValue };
 export const ENDUR_OVERVIEW = "https://api.dashboard.endur.fi/api/query/network/overview";
 export const STARKNET_RPCS = [
   "https://rpc.starknet.lava.build",
@@ -77,9 +87,9 @@ export function relativeStamp(oldest: number) {
 }
 
 export const fetchShieldedValue = async (): Promise<number> => {
-  const s = await getJson<{ tvlUsd?: number }>(`${STRK20_API}/agg/pool-summary`);
-  if (typeof s.tvlUsd !== "number") throw new Error("tvlUsd missing");
-  return s.tvlUsd;
+  const r = readPoolSummary(await fetchPoolSummary());
+  if (r.tvlUsd === null) throw new Error("tvlUsd missing");
+  return r.tvlUsd;
 };
 
 const rpcTotalStake = async (i = 0): Promise<number> => {
