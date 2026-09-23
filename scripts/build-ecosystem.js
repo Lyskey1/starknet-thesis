@@ -89,7 +89,7 @@ function itemHTML(acc, catLabel) {
   const name = acc.name || (handle ? '@' + handle : '');
   if (!name && !handle) return '';
   const url = acc.url || (handle ? 'https://x.com/' + handle : '');
-  /* displayName (2026-09-23): when the X display name is on the account it is
+  /* displayName (2026-09-23): when the project's brand name is on the account it is
      the link text and the @handle follows it as its own span, so the
      prerendered list carries the field. Without one the line is unchanged. */
   const shown = acc.displayName || name;

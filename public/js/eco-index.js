@@ -58,7 +58,10 @@
   var esc = function (t) { return String(t == null ? '' : t).replace(/[&<>"']/g, function (c) {
     return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
   var initials = function (acc) { return (acc.handle || acc.name || '?').replace(/^[@_]+/, '').slice(0, 2).toUpperCase(); };
-  var cleanName = function (acc) { return (acc.name || acc.handle || '').replace(/^@/, ''); };
+  /* the card title is the project's brand name when the data carries one
+     (displayName, 2026-09-23); otherwise the handle, as before. The @handle
+     box under the card is unchanged either way. */
+  var cleanName = function (acc) { return acc.displayName || (acc.name || acc.handle || '').replace(/^@/, ''); };
   var avatarSrc = function (acc) {
     if (acc.avatar) return acc.avatar.startsWith('data:') ? acc.avatar : '/' + acc.avatar.replace(/^\//, '');
     if (acc.handle) return '/assets/avatars/' + acc.handle.replace(/^@/, '') + '.jpg';

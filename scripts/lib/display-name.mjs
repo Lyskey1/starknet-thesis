@@ -1,6 +1,7 @@
 /* Display-name sanitizer for the ecosystem directory (2026-09-23).
-   X allows anything in a display name. The hero chip and the prerendered
-   list render one line of it, so:
+   Project names are curated in data/ecosystem.json; the hero chip, the index
+   cards and the prerendered list render one line of each, so before a name is
+   written:
      1. strip emoji and other pictographic characters, emoji modifiers and
         flag halves, variation selectors, zero-width joiners and the other
         zero-width characters, keycap and tag characters;
