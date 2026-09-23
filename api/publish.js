@@ -30,7 +30,12 @@ const ECO_FILE = 'public/data/ecosystem.json'; // vesper layout: the site serves
 const ECO_CATS = ['official', 'defi', 'consumer', 'nft', 'appchains', 'tooling', 'starkware', 'snf', 'builders', 'shitposter'];
 const ECO_MAX_BODY_BYTES = 2 * 1024 * 1024;
 const ECO_MAX_PER_CAT = 200;
-const ECO_FIELD_CAPS = { handle: 64, name: 160, url: 2048, description: 600, avatar: 150000 };
+// displayName (2026-09-23): the account's X display name, written by
+// scripts/fetch-avatars-x.mjs and carried through the editor's payload so a
+// publish does not strip it. Same cap and the same checks as name: a string,
+// at most 160 chars. Neither field is rewritten here; the fetch script
+// collapses control characters and whitespace before it writes.
+const ECO_FIELD_CAPS = { handle: 64, name: 160, displayName: 160, url: 2048, description: 600, avatar: 150000 };
 const ECO_MAX_ENTRY_CHARS = 160000;
 
 // ---------- btcfi ecosystem target ----------
@@ -136,7 +141,7 @@ function validateEco(eco) {
       if (typeof a.handle !== 'string' || !a.handle.trim()) return where + ' is missing its required "handle" string';
       for (const f of Object.keys(a)) {
         if (!(f in ECO_FIELD_CAPS)) {
-          return where + ' has unexpected field "' + f + '"; allowed: handle, name, url, description, avatar';
+          return where + ' has unexpected field "' + f + '"; allowed: handle, name, displayName, url, description, avatar';
         }
         if (typeof a[f] !== 'string') return where + ' field "' + f + '" must be a string';
         if (a[f].length > ECO_FIELD_CAPS[f]) {

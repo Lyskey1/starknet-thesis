@@ -89,11 +89,16 @@ function itemHTML(acc, catLabel) {
   const name = acc.name || (handle ? '@' + handle : '');
   if (!name && !handle) return '';
   const url = acc.url || (handle ? 'https://x.com/' + handle : '');
+  /* displayName (2026-09-23): when the X display name is on the account it is
+     the link text and the @handle follows it as its own span, so the
+     prerendered list carries the field. Without one the line is unchanged. */
+  const shown = acc.displayName || name;
   const linked = url
-    ? '<a class="ixs-name" href="' + escA(url) + '" target="_blank" rel="noopener">' + esc(name) + '</a>'
-    : '<span class="ixs-name">' + esc(name) + '</span>';
+    ? '<a class="ixs-name" href="' + escA(url) + '" target="_blank" rel="noopener">' + esc(shown) + '</a>'
+    : '<span class="ixs-name">' + esc(shown) + '</span>';
+  const handleSpan = acc.displayName && handle ? '<span class="ixs-handle">@' + esc(handle) + '</span>' : '';
   const desc = acc.description ? '<span class="ixs-desc">' + esc(acc.description) + '</span>' : '';
-  return '<li class="ixs-item">' + linked +
+  return '<li class="ixs-item">' + linked + handleSpan +
     '<span class="ixs-cat">' + esc(catLabel) + '</span>' + desc + '</li>';
 }
 
@@ -147,9 +152,10 @@ dir.itemListElement = cats.flatMap(cat => data[cat].map(acc => {
   pos += 1;
   const item = {
     '@type': PEOPLE_CATS.indexOf(cat) !== -1 ? 'Person' : 'Organization',
-    name: handle || String(acc.name || '').replace(/^@/, ''),
+    name: acc.displayName || handle || String(acc.name || '').replace(/^@/, ''),
     url: acc.url || ('https://x.com/' + handle),
   };
+  if (acc.displayName && handle) item.alternateName = '@' + handle;
   if (acc.description) item.description = acc.description;
   item.sameAs = [item.url];
   return { '@type': 'ListItem', position: pos, item };

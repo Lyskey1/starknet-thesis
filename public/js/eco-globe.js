@@ -39,14 +39,14 @@ const SHELL_Y = -0.55;   // near-centred, just clear of the copy
       '<div class="eg-stats"><div><span>Projects</span><b class="eg-n-p">0</b></div>' +
         '<div><span>Voices</span><b class="eg-n-v">0</b></div></div>' +
       '<div class="eg-hint">Scroll to explore</div>' +
-      '<div class="eg-chip"><span class="eg-chip-name"></span><span class="eg-chip-role"></span></div>' +
+      '<div class="eg-chip"><span class="eg-chip-name"></span><span class="eg-chip-handle"></span><span class="eg-chip-role"></span></div>' +
     '</div></div>';
 
   const stick = MOUNT.querySelector('.eg-stick');
   const copyA = MOUNT.querySelector('.eg-copy-a'), copyB = MOUNT.querySelector('.eg-copy-b');
   const statsEl = MOUNT.querySelector('.eg-stats'), hintEl = MOUNT.querySelector('.eg-hint');
   const chip = MOUNT.querySelector('.eg-chip');
-  const chipName = MOUNT.querySelector('.eg-chip-name'), chipRole = MOUNT.querySelector('.eg-chip-role');
+  const chipName = MOUNT.querySelector('.eg-chip-name'), chipHandle = MOUNT.querySelector('.eg-chip-handle'), chipRole = MOUNT.querySelector('.eg-chip-role');
 
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
   renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
@@ -160,55 +160,141 @@ const SHELL_Y = -0.55;   // near-centred, just clear of the copy
   }
 
   function scatter(list) {
-    /* A jittered grid, not rings: rings banded the field into arcs with holes
-       between them. Each cell gets one project nudged off its centre, which
-       gives an even spread that still reads as scattered. The middle cells are
-       pushed aside so the copy is never covered.
-       THE SPANS ARE SOLVED FROM THE FRUSTUM, NOT FIXED (2026-09-05): the old
-       13.5 x 8.2 world-unit grid overflowed the visible cone at the tile
-       depth, so a deterministic outer ring of projects (avnu, Extended,
-       Schizodio among them) rendered permanently offscreen at 1440x900.
-       layoutField() computes the usable half-extents from the settled camera
-       (z = -1.6 after the dive) at the NEAREST tile depth and relays the
-       grid on every resize, so every tile projects inside |NDC| <= 1 at any
-       aspect. */
-    list.forEach((acc, i) => {
+    /* One sprite per project, in DIRECTORY ORDER (category order, then array
+       order); each entry is { acc, cat }. Sizes and depths are index-hashed
+       so a reload draws the same field. Where each sprite goes is
+       layoutField()'s job. */
+    list.forEach(({ acc, cat }, i) => {
       const j1 = Math.abs(Math.sin((i + 1) * 12.9898) * 43758.5453 % 1);
       const j3 = Math.abs(Math.sin((i + 1) * 39.425) * 6789.1 % 1);
       const spr = new THREE.Sprite(new THREE.SpriteMaterial({ map: tile(acc), transparent: true, opacity: 0, depthWrite: false }));
-      spr.scale.setScalar(0.52 + j3 * 0.10);   // the reference's size: readable marks
-      spr.userData = { acc, i, base: new THREE.Vector3(), seed: j1, hover: 0, size: spr.scale.x };
+      const size = 0.52 + j3 * 0.10;   // the reference's size: readable marks
+      spr.scale.setScalar(size);
+      spr.userData = { acc, cat, i, base: new THREE.Vector3(), seed: j1, hover: 0, size, z: NEAR_TILE_Z - j3 * DEPTH_SPREAD, fit: 1, placed: false, px: null };
+      spr.visible = false;
       scene.add(spr); tiles.push(spr);
     });
     layoutField();
   }
 
+  /* ---- placement (2026-09-23) ----
+     The old jittered grid pushed centre-column tiles sideways to clear the
+     copy, straight into cells that were already taken, and the edge clamp
+     then stacked them: 42 pairs closer than a tile at 1440x900, 143 at 375,
+     eleven tiles sitting on the headline at 375. Replaced with a
+     deterministic screen-space packing:
+       - one seeded candidate stream (mulberry32, fixed seed), so a given
+         canvas size lays out identically on every load;
+       - a slot is accepted only when its circle, grown by half the margin,
+         clears the canvas edges, the h2 and p rects READ FROM THE DOM at
+         layout time, and the strip the fixed site header covers (a tile
+         under the header cannot be hovered), and its centre sits at least
+         one largest-tile diameter plus the margin from every accepted slot;
+       - the margin is derived, not typed: twice the idle wobble amplitude
+         (two tiles can wobble toward each other) plus the lens-drift
+         parallax between the nearest and farthest depths, times 1.1;
+       - slots are filled ROUND-ROBIN across the project categories in
+         directory order (2026-09-23): the first account of each category in
+         turn, then the second of each, and so on, until the slots run out.
+         On desktop every project gets one. Where the whole set cannot fit,
+         the tiles step down toward MIN_TILE_PX (never below it) until they
+         all fit; if they still do not at the floor, the round-robin fills
+         the N slots the packing found and the rest are not drawn. That is
+         the mobile subset rule: every category is represented, its head
+         accounts first, never whichever tiles happened to find room.
+     Every slot is stored in canvas pixels (userData.px) and converted to
+     world units at the sprite's own depth, so the projection through the
+     settled lens (z = CAM_Z, no drift) lands exactly on the slot. */
+  const PROJECT_CATS = ['official', 'defi', 'consumer', 'nft', 'appchains', 'tooling'];   // directory order of the project categories
+  const MIN_TILE_PX = 44;                     // floor for a rendered tile diameter (the brief's number)
+  const CHIP_INSET_PX = 16;                   // the chip's last-resort clamp inset (the brief's number)
+  const WOBBLE = { x: 0.07, y: 0.06 };        // idle wobble amplitude, world units; frame() reads these
+  const DRIFT = { x: 0.6 * 0.35, y: 0.4 * 0.22 };   // lens drift extremes, world units; frame() reads these
+  const CAM_Z = -1.6, NEAR_TILE_Z = -9.5, DEPTH_SPREAD = 2.4;   // the settled lens and the tile depth band
+  const TAN_HALF = Math.tan((46 / 2) * Math.PI / 180);          // camera fov is 46
+  const HOVER_GROW = 0.55;
+  const PACK_MISS_CAP = 3000, PACK_TRY_CAP = 60000, FIT_STEPS = 6;
+  let layoutInfo = null;
+  const pxPerUnit = (z, h) => (h / 2) / (TAN_HALF * (CAM_Z - z));
+  function mulberry32(a) { return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  function circleHitsRect(cx, cy, r, R) {
+    const nx = Math.max(R.x, Math.min(cx, R.x + R.w)), ny = Math.max(R.y, Math.min(cy, R.y + R.h));
+    return (cx - nx) * (cx - nx) + (cy - ny) * (cy - ny) < r * r;
+  }
+  function headerHeight() {
+    const hdr = document.querySelector('header.vc-header');
+    if (!hdr) return 0;
+    const cs = getComputedStyle(hdr);
+    return cs.position === 'fixed' ? hdr.getBoundingClientRect().height : 0;
+  }
+  function exclusionRects(w) {
+    /* the copy's rects relative to the sticky stage; the stage's own rect is
+       the origin so this holds at any scroll position */
+    const s = stick.getBoundingClientRect(), rects = [];
+    [['h2', copyB.querySelector('h2')], ['p', copyB.querySelector('p')]].forEach(([id, el]) => {
+      const r = el.getBoundingClientRect();
+      rects.push({ id, x: r.left - s.left, y: r.top - s.top, w: r.width, h: r.height });
+    });
+    const hh = headerHeight();
+    if (hh > 0) rects.push({ id: 'header', x: 0, y: 0, w, h: hh });
+    return rects;
+  }
+  function packSlots(w, h, rMax, margin, rects, wantN) {
+    const rnd = mulberry32(0x5A17E7), slots = [];
+    const need2 = (2 * rMax + margin) * (2 * rMax + margin);
+    const rx = rMax + margin / 2;   // the circle plus half the margin: the wobble never reaches an edge or the copy
+    let miss = 0, tries = 0;
+    while (slots.length < wantN && miss < PACK_MISS_CAP && tries < PACK_TRY_CAP) {
+      tries++;
+      const x = rx + rnd() * (w - 2 * rx), y = rx + rnd() * (h - 2 * rx);
+      let ok = w - 2 * rx > 0 && h - 2 * rx > 0;
+      for (let k = 0; ok && k < rects.length; k++) if (circleHitsRect(x, y, rx, rects[k])) ok = false;
+      for (let k = 0; ok && k < slots.length; k++) { const dx = slots[k].x - x, dy = slots[k].y - y; if (dx * dx + dy * dy < need2) ok = false; }
+      if (ok) { slots.push({ x, y }); miss = 0; } else miss++;
+    }
+    return slots;
+  }
+
   function layoutField() {
     const N = tiles.length; if (!N) return;
-    const cols = Math.ceil(Math.sqrt(N * 1.7));
-    const rows = Math.ceil(N / cols);
-    /* the settled lens: z = 16.4 - 18.0; nearest tiles sit at z = -9.5 */
-    const CAM_Z = -1.6, NEAR_TILE_Z = -9.5, dist = CAM_Z - NEAR_TILE_Z;
-    const halfH = Math.tan((46 / 2) * Math.PI / 180) * dist;
-    const aspect = camera.aspect || 1.6;
-    const MARGIN = 0.5;  // half a tile plus the idle wobble
-    const spanX = Math.max(2.4, (halfH * aspect - MARGIN) * 2);
-    const spanY = Math.max(2.0, (halfH - MARGIN) * 2);
-    tiles.forEach((spr) => {
-      const i = spr.userData.i;
-      const cx = i % cols, cy = Math.floor(i / cols);
-      const j1 = Math.abs(Math.sin((i + 1) * 12.9898) * 43758.5453 % 1);
-      const j2 = Math.abs(Math.sin((i + 1) * 78.233) * 12345.678 % 1);
-      const j3 = Math.abs(Math.sin((i + 1) * 39.425) * 6789.1 % 1);
-      let x = ((cx + 0.5) / cols - 0.5) * spanX + (j1 - 0.5) * (spanX / cols) * 0.85;
-      let yy = ((cy + 0.5) / rows - 0.5) * spanY + (j2 - 0.5) * (spanY / rows) * 0.85;
-      /* clear the copy, then CLAMP back inside the frustum so the push can
-         never shove a tile offscreen */
-      if (Math.abs(x) < spanX * 0.27 && Math.abs(yy) < 1.5) x += x < 0 ? -2.6 : 2.6;
-      x = Math.max(-spanX / 2, Math.min(spanX / 2, x));
-      spr.userData.base.set(x, yy, -9.5 - j3 * 2.4);
-      spr.position.copy(spr.userData.base);
+    const w = stick.clientWidth, h = stick.clientHeight; if (!w || !h) return;
+    const rects = exclusionRects(w);
+    const pxuNear = pxPerUnit(NEAR_TILE_Z, h), pxuFar = pxPerUnit(NEAR_TILE_Z - DEPTH_SPREAD, h);
+    const wobblePx = Math.hypot(WOBBLE.x, WOBBLE.y) * pxuNear;                    // the most any one tile moves on screen
+    const parallaxPx = Math.hypot(DRIFT.x, DRIFT.y) * (pxuNear - pxuFar);          // how far the lens drift slides near against far
+    const margin = (2 * wobblePx + parallaxPx) * 1.1;
+    const native = tiles.map((s) => (s.userData.size / 2) * pxPerUnit(s.userData.z, h));   // rendered radius at fit 1
+    const rMinNative = Math.min(...native), rMaxNative = Math.max(...native);
+    const fitMin = Math.min(1, (MIN_TILE_PX / 2) / rMinNative);   // the smallest scale that keeps every tile at MIN_TILE_PX or more
+    let chosen = null;
+    for (let k = 0; k <= FIT_STEPS; k++) {
+      const fit = 1 - (1 - fitMin) * (k / FIT_STEPS);
+      const slots = packSlots(w, h, rMaxNative * fit, margin, rects, N);
+      chosen = { fit, slots };
+      if (slots.length >= N) break;
+    }
+    tiles.forEach((spr) => { spr.userData.fit = chosen.fit; spr.userData.placed = false; spr.userData.px = null; spr.visible = false; });
+    const byCat = new Map();
+    tiles.forEach((spr) => { const k = spr.userData.cat; if (!byCat.has(k)) byCat.set(k, []); byCat.get(k).push(spr); });
+    const order = [];
+    for (let r = 0; ; r++) {
+      let any = false;
+      PROJECT_CATS.forEach((k) => { const spr = (byCat.get(k) || [])[r]; if (spr) { order.push(spr); any = true; } });
+      if (!any) break;
+    }
+    order.forEach((spr, i) => {
+      const d = spr.userData, sl = chosen.slots[i];
+      d.fit = chosen.fit; d.placed = !!sl;
+      if (!sl) { d.px = null; spr.visible = false; return; }
+      const pxu = pxPerUnit(d.z, h);
+      d.base.set((sl.x - w / 2) / pxu, (h / 2 - sl.y) / pxu, d.z);
+      spr.position.copy(d.base);
+      d.px = { x: sl.x, y: sl.y, r: (d.size * d.fit / 2) * pxu };
     });
+    layoutInfo = { w, h, rects, margin, wobblePx, parallaxPx, fit: chosen.fit, fitMin, rMaxPx: rMaxNative * chosen.fit, rMinPx: rMinNative * chosen.fit,
+      placed: Math.min(chosen.slots.length, N), total: N, dropped: tiles.filter((s) => !s.userData.placed).map((s) => s.userData.acc.handle),
+      order: order.map((s) => s.userData.acc.handle),
+      perCategory: PROJECT_CATS.map((k) => ({ cat: k, total: (byCat.get(k) || []).length, placed: (byCat.get(k) || []).filter((s) => s.userData.placed).length })) };
   }
 
   /* ---- scroll ---- */
@@ -220,19 +306,45 @@ const SHELL_Y = -0.55;   // near-centred, just clear of the copy
   }
   const smooth = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
 
-  /* ---- pointer ---- */
-  const ray = new THREE.Raycaster(), ndc = new THREE.Vector2(); const at = { x: 0, y: 0 };
-  let hovered = null, drift = { x: 0, y: 0 };
-  const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
+  /* ---- pointer ----
+     Mouse: the tile under the cursor is hovered while the cursor is over the
+     canvas; a click opens it. Touch (2026-09-23): the first tap on a tile
+     selects it and shows its chip, a second tap on the same tile opens it,
+     a tap anywhere else clears the selection. The old hover-only media gate
+     is gone: touch devices used to get neither chip nor link. */
+  const ray = new THREE.Raycaster(), ndc = new THREE.Vector2(), tapNdc = new THREE.Vector2();
+  let hovered = null, selected = null, mouseOver = false, lastPointerType = 'mouse', arriveNow = 0, drift = { x: 0, y: 0 };
   const cv = renderer.domElement;
-  cv.addEventListener('pointermove', e => {
+  const placedTiles = () => tiles.filter((s) => s.userData.placed);
+  function pick(clientX, clientY, into) {
+    const r = cv.getBoundingClientRect();
+    into.x = ((clientX - r.left) / r.width) * 2 - 1;
+    into.y = -((clientY - r.top) / r.height) * 2 + 1;
+    ray.setFromCamera(into, camera);
+    const hit = ray.intersectObjects(placedTiles(), false)[0];
+    return hit ? hit.object : null;
+  }
+  const open = (spr) => { if (spr && spr.userData.acc.url) window.open(spr.userData.acc.url, '_blank', 'noopener'); };
+  cv.addEventListener('pointerdown', (e) => { lastPointerType = e.pointerType || 'mouse'; });
+  cv.addEventListener('pointermove', (e) => {
+    if (e.pointerType === 'touch') return;
     const r = cv.getBoundingClientRect();
     ndc.x = ((e.clientX - r.left) / r.width) * 2 - 1;
     ndc.y = -((e.clientY - r.top) / r.height) * 2 + 1;
-    at.x = e.clientX - r.left; at.y = e.clientY - r.top;
+    mouseOver = true;
   });
-  cv.addEventListener('click', () => { if (hovered && hovered.userData.acc.url) window.open(hovered.userData.acc.url, '_blank', 'noopener'); });
-  cv.addEventListener('pointerleave', () => { hovered = null; chip.classList.remove('on'); });
+  cv.addEventListener('pointerleave', (e) => { if (e.pointerType === 'touch') return; mouseOver = false; hovered = null; chip.classList.remove('on'); });
+  cv.addEventListener('click', (e) => {
+    if (lastPointerType === 'touch') {
+      if (arriveNow < 0.4) return;
+      const hit = pick(e.clientX, e.clientY, tapNdc);
+      if (hit && hit === selected) open(hit);
+      else selected = hit;      // a tap on empty sky clears it
+      return;
+    }
+    open(hovered);
+  });
+  document.addEventListener('pointerdown', (e) => { if (selected && e.target !== cv) selected = null; }, true);
 
   function resize() {
     const w = stick.clientWidth, h = stick.clientHeight;
@@ -270,17 +382,23 @@ const SHELL_Y = -0.55;   // near-centred, just clear of the copy
 
     /* the projects arrive once you are inside */
     const arrive = smooth(0.6, 0.84, p);
-    if (fine && arrive > 0.4) { ray.setFromCamera(ndc, camera); const hit = ray.intersectObjects(tiles, false)[0]; hovered = hit ? hit.object : null; }
-    else hovered = null;
-    tiles.forEach((s, i) => {
+    arriveNow = arrive;
+    if (arrive > 0.4) {
+      if (mouseOver) { ray.setFromCamera(ndc, camera); const hit = ray.intersectObjects(placedTiles(), false)[0]; hovered = hit ? hit.object : null; }
+      else hovered = selected;
+    } else hovered = null;
+    const test = window.__ecoFieldTest || null;   // proof harness: 'rest' freezes the wobble, 'toward' drives every tile at its nearest neighbour
+    tiles.forEach((s) => {
       const d = s.userData;
       d.hover += ((s === hovered ? 1 : 0) - d.hover) * 0.16;
       s.material.opacity = arrive * (0.72 + 0.28 * d.hover);
-      s.visible = arrive > 0.002;
-      s.scale.setScalar(d.size * (1 + d.hover * 0.55));
-      s.position.set(d.base.x + Math.sin(t * 0.3 + d.seed * 6.28) * 0.07,
-                     d.base.y + Math.cos(t * 0.26 + d.seed * 6.28) * 0.06,
-                     d.base.z);
+      s.visible = d.placed && arrive > 0.002;
+      s.renderOrder = s === hovered ? 10 : 0;   // the hovered tile draws over its neighbours
+      s.scale.setScalar(d.size * d.fit * (1 + d.hover * HOVER_GROW));
+      let wx = Math.sin(t * 0.3 + d.seed * 6.28) * WOBBLE.x, wy = Math.cos(t * 0.26 + d.seed * 6.28) * WOBBLE.y;
+      if (test === 'rest') { wx = 0; wy = 0; }
+      else if (test === 'toward' && d.toward) { wx = WOBBLE.x * d.toward.x; wy = WOBBLE.y * d.toward.y; }
+      s.position.set(d.base.x + wx, d.base.y + wy, d.base.z);
     });
 
     /* copy */
@@ -293,39 +411,92 @@ const SHELL_Y = -0.55;   // near-centred, just clear of the copy
     statsEl.style.opacity = String(1 - outA);
     hintEl.style.opacity = String(1 - smooth(0.02, 0.16, p));
 
-    if (hovered) {
-      chipName.textContent = hovered.userData.acc.name || '';
-      chipRole.textContent = hovered.userData.acc.description || '';
-      chip.style.transform = 'translate3d(' + (at.x + 16) + 'px,' + (at.y - 14) + 'px,0)';
-      chip.classList.add('on'); cv.style.cursor = 'pointer';
-    } else { chip.classList.remove('on'); cv.style.cursor = 'default'; }
+    if (hovered) { placeChip(hovered); cv.style.cursor = 'pointer'; }
+    else { chipFor = null; chip.classList.remove('on'); cv.style.cursor = 'default'; }
 
     /* a little lens drift after the cursor, gone once the copy has landed */
-    drift.x += ((ndc.x || 0) * 0.6 - drift.x) * 0.05;
-    drift.y += ((ndc.y || 0) * 0.4 - drift.y) * 0.05;
+    if (test === 'toward') { drift.x = DRIFT.x; drift.y = DRIFT.y; }
+    else {
+      drift.x += ((ndc.x || 0) * 0.6 - drift.x) * 0.05;
+      drift.y += ((ndc.y || 0) * 0.4 - drift.y) * 0.05;
+    }
 
     renderer.render(scene, camera);
     requestAnimationFrame(frame);
   }
 
-  /* debug hook, no runtime cost: projects every field tile through the live
-     camera and reports whether its avatar texture loaded and whether its
-     centre sits inside the frustum. Drives the field's visibility proof. */
-  window.__ecoFieldReport = () => tiles.map((s) => {
-    const v = s.position.clone().project(camera);
-    return { handle: s.userData.acc.handle, x: +v.x.toFixed(2), y: +v.y.toFixed(2),
-      onScreen: Math.abs(v.x) <= 1 && Math.abs(v.y) <= 1 && v.z < 1,
-      imgLoaded: !!(s.material.map && s.material.map.image && (s.material.map.image.width || s.material.map.image instanceof HTMLCanvasElement)),
-      opacity: +s.material.opacity.toFixed(2) };
-  });
+  /* ---- the chip (2026-09-23) ----
+     Anchored to the hovered sprite's projected centre, not the cursor: it
+     hangs off the tile's lower-right, flips to the left when the tile's
+     centre is in the right half of the canvas, flips above when the centre is
+     in the bottom third, and as a last resort its box is clamped inside the
+     canvas with a CHIP_INSET_PX inset, below the fixed header. Content is
+     written only when the hovered tile changes, so the box is measured once
+     per tile rather than every frame. Primary line: displayName; secondary:
+     the handle, muted; then the description. Without a displayName the
+     handle is the only name line. */
+  let chipFor = null;
+  const projectCentre = (spr, w, h) => { const v = spr.position.clone().project(camera); return { x: (v.x + 1) / 2 * w, y: (1 - v.y) / 2 * h }; };
+  function placeChip(spr) {
+    const d = spr.userData, w = stick.clientWidth, h = stick.clientHeight;
+    if (chipFor !== spr) {
+      const acc = d.acc, handle = '@' + String(acc.handle || '').replace(/^@/, '');
+      chipName.textContent = acc.displayName ? acc.displayName : handle;
+      chipHandle.textContent = acc.displayName ? handle : '';
+      chipRole.textContent = acc.description || '';
+      chipFor = spr;
+    }
+    const c = projectCentre(spr, w, h);
+    const r = (spr.scale.x / 2) * pxPerUnit(d.z, h);   // the rendered radius right now, hover growth included
+    const cw = chip.offsetWidth, ch = chip.offsetHeight, off = r * 0.7;
+    const flipX = c.x > w / 2, flipY = c.y > h * (2 / 3);
+    let x = flipX ? c.x - off - cw : c.x + off;
+    let y = flipY ? c.y - off - ch : c.y + off;
+    const topMin = headerHeight() + CHIP_INSET_PX;
+    x = Math.max(CHIP_INSET_PX, Math.min(w - CHIP_INSET_PX - cw, x));
+    y = Math.max(topMin, Math.min(h - CHIP_INSET_PX - ch, y));
+    chip.style.transform = 'translate3d(' + Math.round(x) + 'px,' + Math.round(y) + 'px,0)';
+    chip.dataset.flip = (flipX ? 'left' : 'right') + ' ' + (flipY ? 'up' : 'down');
+    chip.classList.add('on');
+  }
+
+  /* debug hooks, no runtime cost. __ecoFieldReport projects every tile
+     through the LIVE camera (wobble, drift and hover growth included) and
+     returns its rendered circle in canvas pixels alongside the layout's
+     derived margin and exclusion rects; the pairwise and text-clearance
+     proofs read this. __ecoFieldTest = 'rest' | 'toward' | null drives the
+     wobble for those proofs: 'toward' aims every tile's full amplitude at
+     its nearest neighbour and pins the lens drift at its extreme, a worse
+     case than any real frame. */
+  window.__ecoFieldReport = () => {
+    const w = stick.clientWidth, h = stick.clientHeight;
+    return { layout: layoutInfo, w, h, tiles: tiles.map((s) => {
+      const v = s.position.clone().project(camera), d = s.userData;
+      return { handle: d.acc.handle, cat: d.cat, placed: d.placed, x: +v.x.toFixed(3), y: +v.y.toFixed(3),
+        cx: (v.x + 1) / 2 * w, cy: (1 - v.y) / 2 * h, r: (s.scale.x / 2) * pxPerUnit(d.z, h),
+        onScreen: Math.abs(v.x) <= 1 && Math.abs(v.y) <= 1 && v.z < 1,
+        imgLoaded: !!(s.material.map && s.material.map.image && (s.material.map.image.width || s.material.map.image instanceof HTMLCanvasElement)),
+        opacity: +s.material.opacity.toFixed(2), visible: s.visible };
+    }) };
+  };
+  window.__ecoFieldAim = () => {   // sets d.toward for the 'toward' test mode from the current slot layout
+    const P = placedTiles();
+    P.forEach((s) => { const a = s.userData.px; let best = null, bd = Infinity;
+      P.forEach((o) => { if (o === s) return; const b = o.userData.px, dd = (b.x - a.x) ** 2 + (b.y - a.y) ** 2; if (dd < bd) { bd = dd; best = b; } });
+      s.userData.toward = best ? { x: Math.sign(best.x - a.x) || 1, y: -(Math.sign(best.y - a.y) || 1) } : { x: 1, y: 1 };   // canvas y is down, world y is up
+    });
+    return P.length;
+  };
+  window.__ecoFieldHover = (handle) => { const s = tiles.find((t) => t.userData.acc.handle === handle) || null; selected = s; if (!mouseOver) hovered = s; return !!s; };
 
   fetch('/data/ecosystem.json').then(r => r.json()).then(data => {
-    const projects = ['official', 'defi', 'consumer', 'nft', 'appchains', 'tooling'].flatMap(k => data[k] || []);
+    const projects = PROJECT_CATS.flatMap(k => (data[k] || []).map(acc => ({ acc, cat: k })));
     const voices = ['starkware', 'snf', 'builders', 'shitposter'].flatMap(k => data[k] || []);
     MOUNT.querySelector('.eg-n-p').textContent = projects.length;
     MOUNT.querySelector('.eg-n-v').textContent = voices.length;
     scatter(projects);   // the voices have their own act (the ring); this field is the projects
     resize(); readScroll();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { resize(); if (reduced) renderer.render(scene, camera); });   // the copy's rects move when the webfont lands
     if (reduced) { p = target; renderer.render(scene, camera); }
     else requestAnimationFrame(frame);
   }).catch(err => { console.error('[eco-globe]', err); MOUNT.style.display = 'none'; });

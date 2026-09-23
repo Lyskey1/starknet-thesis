@@ -1,23 +1,42 @@
-/* Pull every ecosystem avatar from the X API at full resolution.
+/* Pull every ecosystem avatar from the X API at full resolution, and each
+   account's display name.
    unavatar rate-limits far too hard to finish the list (78 handles stuck at
    96px after three passes). The API hands back `profile_image_url`, which is
    the `_normal` 48px variant — strip the suffix for the ORIGINAL upload.
-   Needs X_BEARER_TOKEN in .env (gitignored). */
+   DISPLAY NAMES (2026-09-23): the same lookup returns `name`, the account's
+   display name. It is written to a `displayName` field on every matching
+   account in data/ecosystem.json and data/ecosystem-export.json. THIS
+   SCRIPT IS THE ONLY WRITER of that field: the editor's publish path
+   (ecosystem.html -> /api/publish) rebuilds accounts from name/handle/url/
+   description/avatar and would drop it, so a publish must be followed by a
+   run of this script. `name` in the data stays the legacy "@handle" string
+   the directory renders; the hero chip reads displayName. Names pass through
+   scripts/lib/display-name.mjs (emoji, joiners and dangling separators out;
+   letters in every script and em-dashes untouched); every altered name is
+   printed before -> after, and every name carrying an em-dash is listed, so a
+   fetch can be reviewed before it ships.
+   Needs X_BEARER_TOKEN in the environment or in .env (gitignored).
+   --dry-run reports what would change and writes nothing. */
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { sanitizeDisplayName } from './lib/display-name.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
 const OUT = path.join(ROOT, 'public', 'assets', 'avatars');
 const DATA = path.join(ROOT, 'public', 'data', 'ecosystem.json');
 
-const env = Object.fromEntries(
-  fs.readFileSync(path.join(ROOT, '.env'), 'utf8').split('\n')
+const EXPORT = path.join(ROOT, 'public', 'data', 'ecosystem-export.json');
+const DRY = process.argv.includes('--dry-run');
+
+const envFile = path.join(ROOT, '.env');
+const env = fs.existsSync(envFile) ? Object.fromEntries(
+  fs.readFileSync(envFile, 'utf8').split('\n')
     .filter((l) => l.includes('=')).map((l) => [l.slice(0, l.indexOf('=')).trim(), l.slice(l.indexOf('=') + 1).trim()])
-);
-const TOKEN = env.X_BEARER_TOKEN;
-if (!TOKEN) { console.error('X_BEARER_TOKEN missing from .env'); process.exit(1); }
+) : {};
+const TOKEN = process.env.X_BEARER_TOKEN || env.X_BEARER_TOKEN;
+if (!TOKEN) { console.error('X_BEARER_TOKEN missing from the environment and from .env'); process.exit(1); }
 
 const MIN_BYTES = 2048;
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -49,15 +68,24 @@ function widthOf(file) {
 }
 
 /* look every handle up, 100 at a time */
-const found = new Map();
+const found = new Map(), names = new Map();
+const altered = [], emDashed = [], emptied = [];
 for (let i = 0; i < handles.length; i += 100) {
   const batch = handles.slice(i, i + 100);
   const url = 'https://api.x.com/2/users/by?usernames=' + batch.map(encodeURIComponent).join(',') +
-              '&user.fields=profile_image_url';
+              '&user.fields=profile_image_url,name';
   const res = await fetch(url, { headers: { Authorization: 'Bearer ' + TOKEN } });
   if (!res.ok) { console.error('lookup failed', res.status, (await res.text()).slice(0, 300)); process.exit(1); }
   const json = await res.json();
-  (json.data || []).forEach((u) => { if (u.profile_image_url) found.set(u.username.toLowerCase(), u.profile_image_url); });
+  (json.data || []).forEach((u) => {
+    if (u.profile_image_url) found.set(u.username.toLowerCase(), u.profile_image_url);
+    const raw = String(u.name || '');
+    const r = sanitizeDisplayName(raw);   // cap = the publish endpoint's 160, so the two never disagree
+    if (r.name) names.set(u.username.toLowerCase(), r.name);
+    else if (raw.trim()) emptied.push({ handle: u.username, before: raw });
+    if (r.name && r.altered) altered.push({ handle: u.username, before: raw, after: r.name });
+    if (r.emDash) emDashed.push({ handle: u.username, name: r.name });
+  });
   (json.errors || []).forEach((e) => console.log('no account', e.value || e.detail));
   console.log(`looked up ${batch.length}, have ${found.size}`);
   await sleep(1200);
@@ -65,6 +93,38 @@ for (let i = 0; i < handles.length; i += 100) {
 
 const extFor = (ct, url) => ct.includes('webp') ? '.webp' : ct.includes('png') ? '.png' :
   (url.endsWith('.png') ? '.png' : '.jpg');
+
+/* ---- review output: what the sanitizer changed, what carries an em-dash ---- */
+const q = (t) => JSON.stringify(t);
+console.log(`\nnames altered by the sanitizer: ${altered.length}`);
+altered.forEach((a) => console.log(`  ${a.handle}: ${q(a.before)} -> ${q(a.after)}`));
+console.log(`names emptied by the sanitizer (handle shown instead): ${emptied.length}`);
+emptied.forEach((a) => console.log(`  ${a.handle}: ${q(a.before)} -> (none)`));
+console.log(`names containing an em-dash (kept as is, review): ${emDashed.length}`);
+emDashed.forEach((a) => console.log(`  ${a.handle}: ${q(a.name)}`));
+console.log('');
+
+/* ---- display names -> ecosystem.json + the export ---- */
+function stampNames(file, accountsOf) {
+  const raw = fs.readFileSync(file, 'utf8');
+  const doc = JSON.parse(raw);
+  let set = 0, changed = 0, unnamed = [];
+  for (const a of accountsOf(doc)) {
+    if (!a.handle) continue;
+    const nm = names.get(String(a.handle).toLowerCase());
+    if (!nm) { unnamed.push(a.handle); continue; }
+    if (a.displayName !== nm) changed++;
+    a.displayName = nm; set++;
+  }
+  const out = JSON.stringify(doc, null, 2) + '\n';
+  if (!DRY && out !== raw) fs.writeFileSync(file, out);
+  console.log(`${DRY ? '[dry-run] ' : ''}${path.relative(ROOT, file)}: displayName on ${set} accounts (${changed} new or changed), ${unnamed.length} without a name from X${unnamed.length ? ': ' + unnamed.join(', ') : ''}`);
+  return unnamed;
+}
+const unnamed = stampNames(DATA, (doc) => Object.values(doc).flat());
+if (fs.existsSync(EXPORT)) stampNames(EXPORT, (doc) => (Array.isArray(doc) ? doc : []).flatMap((c) => c.accounts || []));
+console.log(`display names: ${handles.length - unnamed.length} of ${handles.length} handles named, ${unnamed.length} still missing`);
+if (DRY) { console.log('[dry-run] skipping avatar downloads'); process.exit(0); }
 
 let upgraded = 0, kept = 0, missing = 0;
 for (const h of handles) {

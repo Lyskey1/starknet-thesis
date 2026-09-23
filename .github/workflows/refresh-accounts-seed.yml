@@ -1,4 +1,3 @@
-# TODO: remove the vesper target after merge
 # Daily refresh of the ACCOUNT CONTRACTS seed (strk.html).
 #
 # Why Actions: Voyager is Cloudflare-challenge-gated for container and
@@ -28,9 +27,37 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+      # Two independent refreshes share this job (2026-09-23). Each step
+      # carries continue-on-error so the job reaches the later steps, each
+      # commit step is gated on ITS OWN refresh's outcome, and the last step
+      # turns any recorded failure back into a failed run. A gated Voyager
+      # fetch therefore never blocks the display-name commit, a missing X
+      # token never blocks the seed commit, and neither failure is silent.
       - name: fetch, validate, write seed
+        id: seed
+        continue-on-error: true
         run: node scripts/refresh-accounts-seed.mjs
-      - name: commit when changed
+      # X display names and avatars for the ecosystem directory.
+      # scripts/fetch-avatars-x.mjs is the ONLY writer of the displayName
+      # field in public/data/ecosystem.json and ecosystem-export.json. A
+      # missing token fails this step loudly rather than skipping: a silent
+      # skip would leave the field stale under a green check.
+      - name: refresh X display names and avatars
+        id: names
+        continue-on-error: true
+        env:
+          X_BEARER_TOKEN: ${{ secrets.X_BEARER_TOKEN }}
+        run: |
+          if [ -z "$X_BEARER_TOKEN" ]; then
+            echo "::error::X_BEARER_TOKEN secret is not set; the display-name refresh cannot run"
+            exit 1
+          fi
+          node scripts/fetch-avatars-x.mjs
+      # The two pushes below run one after the other in this job, so they
+      # cannot race each other; the rebase-and-retry covers a push from
+      # anything else landing on main in between.
+      - name: commit seed when changed
+        if: steps.seed.outcome == 'success'
         run: |
           if git diff --quiet public/assets/data/voyager-accounts-seed.json 2>/dev/null \
              && git ls-files --error-unmatch public/assets/data/voyager-accounts-seed.json >/dev/null 2>&1; then
@@ -41,31 +68,23 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add public/assets/data/voyager-accounts-seed.json
           git commit -m "data: account contracts seed refresh, head $head, source Voyager"
-          git push
-      # the deploy branch lags main between merges, so the same refreshed seed
-      # lands on vesper too (same content, same message, vesper second); a
-      # rejected push rebases once and retries. Runs even when the current
-      # branch's copy was already fresh, so a lagging vesper still catches up.
-      - name: mirror the refreshed seed to vesper
+          git push || { git pull --rebase origin "${GITHUB_REF_NAME:-main}" && git push; }
+      - name: commit display names and avatars when changed
+        if: steps.names.outcome == 'success'
         run: |
-          set -e
-          src=assets/data/voyager-accounts-seed.json
-          [ -f public/assets/data/voyager-accounts-seed.json ] && src=public/assets/data/voyager-accounts-seed.json
-          cp "$src" /tmp/voyager-seed.json
-          head=$(node -e "console.log(require('/tmp/voyager-seed.json').head)")
+          git add -A public/data/ecosystem.json public/data/ecosystem-export.json public/assets/avatars
+          if git diff --cached --quiet; then
+            echo "display names and avatars unchanged, nothing to commit"; exit 0
+          fi
+          named=$(node -e "const d=require('./public/data/ecosystem.json');const a=Object.values(d).flat();console.log(a.filter(x=>x.displayName).length+'/'+a.length)")
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git fetch origin vesper
-          git checkout -B vesper origin/vesper
-          cp /tmp/voyager-seed.json public/assets/data/voyager-accounts-seed.json
-          if git diff --quiet public/assets/data/voyager-accounts-seed.json; then
-            echo "vesper seed already current"; exit 0
-          fi
-          git add public/assets/data/voyager-accounts-seed.json
-          git commit -m "data: account contracts seed refresh, head $head, source Voyager"
-          if ! git push origin vesper; then
-            echo "vesper push rejected; rebasing once and retrying"
-            git fetch origin vesper
-            git rebase origin/vesper
-            git push origin vesper
-          fi
+          git commit -m "data: X display names and avatars refresh, $named accounts named"
+          git push || { git pull --rebase origin "${GITHUB_REF_NAME:-main}" && git push; }
+      - name: fail the run if either refresh failed
+        if: always()
+        run: |
+          fail=
+          if [ "${{ steps.seed.outcome }}" != "success" ]; then echo "::error::account contracts seed refresh failed (outcome: ${{ steps.seed.outcome }})"; fail=1; fi
+          if [ "${{ steps.names.outcome }}" != "success" ]; then echo "::error::display-name refresh failed (outcome: ${{ steps.names.outcome }})"; fail=1; fi
+          [ -z "$fail" ] || exit 1
