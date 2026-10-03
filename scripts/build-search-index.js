@@ -354,7 +354,9 @@ function dataEntries() {
   const eco = JSON.parse(fs.readFileSync(path.join(ROOT, 'data', 'ecosystem.json'), 'utf8'));
   for (const [catId, accounts] of Object.entries(eco)) {
     (accounts || []).forEach(a => out.push({ page: 'ecosystem', anchor: catId, cat: catId,
-      title: '@' + (a.handle || a.name || ''), body: cap([a.name, a.desc || a.description].filter(Boolean).join(' · ')), kind: 'account' }));
+      /* displayName carries the brand when it differs from the handle
+         (StarkGate's X account is @StarkWareLtd), so it rides the body */
+      title: '@' + (a.handle || a.name || ''), body: cap([a.displayName, a.name, a.desc || a.description].filter(Boolean).join(' · ')), kind: 'account' }));
   }
   const be = JSON.parse(fs.readFileSync(path.join(ROOT, 'data', 'btcfi-ecosystem.json'), 'utf8'));
   const anchors = { wallets: 'btcfiWallets', bridges: 'btcfiBridges', defi: 'btcfiDefi' };

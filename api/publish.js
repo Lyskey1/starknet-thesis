@@ -27,7 +27,7 @@ const FIELD_CAPS = { url: 2048, title: 400, date: 64, fallbackText: 2000, name: 
 // couple hundred accounts each carrying a generous data URL; the news cap
 // stays 512KB), 150K chars per avatar, 160K chars per entry.
 const ECO_FILE = 'public/data/ecosystem.json'; // vesper layout: the site serves from public/
-const ECO_CATS = ['official', 'defi', 'consumer', 'nft', 'appchains', 'tooling', 'starkware', 'snf', 'builders', 'shitposter'];
+const ECO_CATS = ['official', 'bridges', 'defi', 'consumer', 'nft', 'appchains', 'tooling', 'starkware', 'snf', 'builders', 'shitposter'];
 const ECO_MAX_BODY_BYTES = 2 * 1024 * 1024;
 const ECO_MAX_PER_CAT = 200;
 // displayName (2026-09-23): the project's brand name, curated in the data and
