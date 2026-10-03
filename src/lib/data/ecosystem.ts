@@ -5,8 +5,8 @@
  * The counts mirror public/js/eco-globe.js exactly, and off the same field:
  * an account's TYPE is the top-level category key it sits under in
  * ecosystem.json, and that key is the only thing separating a project from a
- * person on either page. The globe splits the ten keys into six project
- * categories (official, defi, consumer, nft, appchains, tooling) and four
+ * person on either page. The globe splits the eleven keys into seven project
+ * categories (official, bridges, defi, consumer, nft, appchains, tooling) and four
  * people categories (starkware, snf, builders, shitposter), counts each
  * side, and prints them as PROJECTS and VOICES. The two lists below are
  * those two, so moving one entry between categories moves the ecosystem
@@ -32,6 +32,7 @@ type EcosystemData = Record<string, EcosystemAccount[] | undefined>;
 /** The project half of eco-globe.js's split, same list, same order. */
 export const PROJECT_CATEGORIES = [
   "official",
+  "bridges",
   "defi",
   "consumer",
   "nft",
@@ -58,7 +59,7 @@ export const voicesTracked = (): number => voiceAccounts().length;
 
 /**
  * The pinned head of each project category, in category order: one logo
- * per category, six in all. `avatar` follows the ecosystem page's own
+ * per category, seven in all. `avatar` follows the ecosystem page's own
  * resolution chain as far as a build can go: the account's avatar field,
  * else the local mirror at assets/avatars/<handle>.jpg. The monogram
  * fallback is applied at runtime by the image's error handler.

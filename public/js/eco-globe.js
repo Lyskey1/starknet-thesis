@@ -205,7 +205,7 @@ const SHELL_Y = -0.55;   // near-centred, just clear of the copy
      Every slot is stored in canvas pixels (userData.px) and converted to
      world units at the sprite's own depth, so the projection through the
      settled lens (z = CAM_Z, no drift) lands exactly on the slot. */
-  const PROJECT_CATS = ['official', 'defi', 'consumer', 'nft', 'appchains', 'tooling'];   // directory order of the project categories
+  const PROJECT_CATS = ['official', 'bridges', 'defi', 'consumer', 'nft', 'appchains', 'tooling'];   // directory order of the project categories
   const MIN_TILE_PX = 44;                     // floor for a rendered tile diameter (the brief's number)
   const CHIP_INSET_PX = 16;                   // the chip's last-resort clamp inset (the brief's number)
   const WOBBLE = { x: 0.07, y: 0.06 };        // idle wobble amplitude, world units; frame() reads these

@@ -27,12 +27,15 @@
   var CATS = [
     { id: 'all', label: 'All' },
     { id: 'official', label: 'Official' },
+    { id: 'bridges', label: 'Bridges', badge: 'Bridge' },
     { id: 'defi', label: 'DeFi' },
     { id: 'consumer', label: 'Consumer' },
     { id: 'nft', label: 'NFT' },
     { id: 'appchains', label: 'Appchains' },
     { id: 'tooling', label: 'Tooling' }
   ];
+  /* badge: the card's kind label when it differs from the chip and section
+     label (singular BRIDGE under the plural BRIDGES); otherwise the label */
   var CAT_BY_ID = CATS.reduce(function (m, c) { m[c.id] = c; return m; }, {});
 
   /* the page's ONE section head (js/section-head.js): THE VOICES builds its
@@ -76,7 +79,7 @@
      handle row is a real button inside it; its handler stops the click from
      reaching the link. */
   var card = function (r) {
-    var acc = r.acc, src = avatarSrc(acc), label = (CAT_BY_ID[r.cat] || {}).label || r.cat;
+    var acc = r.acc, src = avatarSrc(acc), cat = CAT_BY_ID[r.cat] || {}, label = cat.badge || cat.label || r.cat;
     var handle = '@' + String(acc.handle || '').replace(/^@/, '');
     return '<a class="ix-card" href="' + esc(acc.url || '#') + '" target="_blank" rel="noopener" data-uid="' + esc(r.uid) + '">' +
       '<span class="ix-card-top">' +
