@@ -1960,8 +1960,8 @@ body.page-privacy{--qhx-u:min(1vw,14.4px)}
    38px so the open row's paragraph fits inside the same height);
    What users get = the wallet as a 2x2 grid; Ecosystem = the bento with
    the filter pills on one row, the DeFi marquee window capped at two
-   rows and the builders as one compact row; Metrics = the pill row and
-   the ESTIMATED chart. Sticky sub-bar rules unchanged.
+   rows and the builders as one compact row; Metrics = the pill row.
+   Sticky sub-bar rules unchanged.
    ============================================================ */
 .pmv { margin-top: 16px; }
 .pmv-row { grid-template-columns: repeat(3, minmax(0, 1fr)); max-width: 840px; margin: 0 auto; }
@@ -2199,7 +2199,7 @@ h3.pmv-title { margin: 0 0 14px; font-size: clamp(22px, 2vw, 26px); line-height:
 /* ============================================================
    SECTION 05, THE POOL (2026-09-07): main's dashboard grid. KPI row,
    then shielded (8) + composition (4), then transactions / new users /
-   swaps (4 each), then DeFi routed / revenue / estimated (4 each); every
+   swaps (4 each), then DeFi routed / revenue (6 each); every
    plot at least 220px. The UPDATED stamp rides the kicker line.
    ============================================================ */
 .th-pm-sec--pool .pmx { margin-top: 26px; }
@@ -2953,8 +2953,8 @@ h3.pmv-title { margin: 0 0 14px; font-size: clamp(22px, 2vw, 26px); line-height:
      the cards ship VIEW LIVE fallbacks and no literal figure. This is a
      dashboard, the one exception to the one-viewport rule: the KPI row and
      row 2 hold the first viewport, rows 3 and 4 the second; no chart
-     shorter than 220px. Row 4's third card is the ESTIMATED revenue (the
-     flat fee target times daily transactions), labeled as such. -->
+     shorter than 220px. Row 4 is DeFi routed and the measured Revenue,
+     half width each. -->
 <div class="th-pm-div"></div>
 <section class="th-pm-sec th-pm-sec--pool">
   <div class="th-pm-head th-pm-reveal"><span class="th-pm-marker"></span><span class="th-pm-num">05</span><h2 id="the-pool-measured-live" class="th-pm-title">The pool, <b>measured live.</b></h2></div>
@@ -2994,20 +2994,15 @@ h3.pmv-title { margin: 0 0 14px; font-size: clamp(22px, 2vw, 26px); line-height:
         <div class="pmx-body"><a class="pmx-live" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">VIEW LIVE &rarr;</a></div>
         <a class="pmx-src" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">SOURCE: STRK20 DASHBOARD &#8599;</a>
       </div>
-      <div class="pmx-card" data-pmx="defi" style="--span:4" data-src="https://strk20-dashboard-production.up.railway.app/agg/routed-volume" data-checked="2026-09-20">
+      <div class="pmx-card" data-pmx="defi" style="--span:6" data-src="https://strk20-dashboard-production.up.railway.app/agg/routed-volume" data-checked="2026-09-20">
         <div class="pmx-head"><span class="pmx-t">DeFi volume privately routed</span><span class="pmx-sub">USD BY PROTOCOL, DAILY</span></div>
         <div class="pmx-body"><a class="pmx-live" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">VIEW LIVE &rarr;</a></div>
         <a class="pmx-src" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">SOURCE: STRK20 DASHBOARD &#8599;</a>
       </div>
-      <div class="pmx-card" data-pmx="revenue" style="--span:4" data-src="https://strk20-dashboard-production.up.railway.app/agg/tvl-history" data-checked="2026-09-20">
+      <div class="pmx-card" data-pmx="revenue" style="--span:6" data-src="https://strk20-dashboard-production.up.railway.app/agg/tvl-history" data-checked="2026-09-20">
         <div class="pmx-head"><span class="pmx-t">Revenue</span><span class="pmx-sub">PROTOCOL FEES, MEASURED, DAILY + CUMULATIVE</span></div>
         <div class="pmx-body"><a class="pmx-live" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">VIEW LIVE &rarr;</a></div>
         <a class="pmx-src" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">SOURCE: STRK20 DASHBOARD &#8599;</a>
-      </div>
-      <div class="pmx-card" data-pmx="estimated" style="--span:4" data-src="https://strk20-dashboard-production.up.railway.app/agg/transactions" data-checked="2026-09-20">
-        <div class="pmx-head"><span class="pmx-t">Estimated revenue</span><span class="pmx-sub">ESTIMATED: FLAT FEE <span data-fee-target>~$0.12</span> &times; DAILY TRANSACTIONS</span></div>
-        <div class="pmx-body"><a class="pmx-live" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">VIEW LIVE &rarr;</a></div>
-        <a class="pmx-src" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">SOURCE: STRK20 DASHBOARD, DAILY TRANSACTIONS &#8599;</a>
       </div>
     </div>
   </div>
@@ -4285,7 +4280,7 @@ var pvVideoChrome = thVideoChrome({
   // real 9px in a third-width cell exactly as in a full-width one. Height is
   // the card's base, pulled down on narrow cells so the plot never becomes
   // taller than it is wide.
-  var PLOT_H = { shielded: 260, comp: 0, swaps: 220, defi: 220, txs: 220, users: 220, revenue: 220, estimated: 220 };
+  var PLOT_H = { shielded: 260, comp: 0, swaps: 220, defi: 220, txs: 220, users: 220, revenue: 220 };
   function plotW(k){
     /* the CONTENT width: the sui skin pads .pmx-body, and a viewBox drawn at
        the padded width rendered 12% short (193px for a 220px plot) */
@@ -4313,7 +4308,7 @@ var pvVideoChrome = thVideoChrome({
   // The label reports the OLDEST data time on screen, so a card mixing two
   // endpoints (the KPI row) shows the older one, and a partially failed
   // silent refresh can never claim "just now" over a chart it did not update.
-  var prov = { stats: 0, shielded: 0, comp: 0, swaps: 0, defi: 0, txs: 0, users: 0, revenue: 0, estimated: 0 };
+  var prov = { stats: 0, shielded: 0, comp: 0, swaps: 0, defi: 0, txs: 0, users: 0, revenue: 0 };
   // a payload's tvlAsOf as ms, 0 when it has none
   function asOfMs(p){ var t = p && typeof p.tvlAsOf === 'string' ? Date.parse(p.tvlAsOf) : NaN; return isFinite(t) ? t : 0; }
   // the shared pool-summary module (js/pool-summary.js, loaded in <head>);
@@ -4371,7 +4366,7 @@ var pvVideoChrome = thVideoChrome({
 
   function load(silent){
     if (!silent) Object.keys(bodies).forEach(skel);
-    var next = { stats: null, shielded: null, comp: null, swaps: null, defi: null, txs: null, users: null, revenue: null, estimated: null };
+    var next = { stats: null, shielded: null, comp: null, swaps: null, defi: null, txs: null, users: null, revenue: null };
     // every card stages a DRAW closure, called once here at the current cell
     // width and again on resize; the payload it closes over is the one this
     // cycle fetched, so the snapshot stays whole. `at` is the payload's data
@@ -4434,25 +4429,6 @@ var pvVideoChrome = thVideoChrome({
           return { chart: stackedBars(d.days, split, W, H, fmtN), legend: '',
                    meta: { days: d.days, W: W, P: PAD_STD, rows: function(day){ return [{ label: 'TRANSACTIONS', value: fmtN(day.count || 0), color: '#6EB5FF' }]; } } };
         });
-        // ESTIMATED REVENUE (2026-09-07): the flat fee target times the day's
-        // transaction count, cumulated; derived here from the same payload,
-        // labeled ESTIMATED on the card, its legend and its tooltip. The fee
-        // is js/fee-config.js's STRK20_TARGET_FEE_USD, never a literal.
-        var fee = window.STRK20_TARGET_FEE_USD;
-        if (typeof fee === 'number') {
-          var cumE = 0;
-          var edays = d.days.map(function(day){ var v = (day.count || 0) * fee; cumE += v; return { date: day.date, feesUsd: v, cumUsd: cumE }; });
-          var feeTxt = '$' + fee.toFixed(2);
-          stage('estimated', function(W){
-            var H = plotH('estimated', W);
-            return { chart: feeBarsLine(edays, W, H),
-                     legend: '<div class="pmx-legend"><span><i style="background:rgba(110,181,255,.5)"></i>ESTIMATED DAILY (TX &times; ' + feeTxt + ')</span><span><i style="background:#6EB5FF"></i>ESTIMATED CUMULATIVE (RIGHT AXIS)</span></div>',
-                     meta: { days: edays, W: W, P: PAD_DUAL, rows: function(day){
-                       return [{ label: 'ESTIMATED DAILY', value: fmtUsd(day.feesUsd), color: 'rgba(110,181,255,.5)' },
-                               { label: 'ESTIMATED CUMULATIVE', value: fmtUsd(day.cumUsd), color: '#6EB5FF' }];
-                     } } };
-          });
-        }
       }).catch(function(){}),
 
       // REVENUE, measured: the backend's own protocol-fees series
