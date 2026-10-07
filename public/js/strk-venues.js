@@ -14,7 +14,13 @@
 
    Ordering: connected full-fill on-market venues by price ascending (the
    only rows that get a rank), then partial fills, then off-market venues,
-   then venues that are not connected, dimmed. */
+   then venues that are not connected, dimmed.
+
+   Toggle: the device ships closed, like the 05 accordion above it. The bar
+   (.sv-bar, a real button) carries a live summary, so polling does not care
+   whether the body is open. It opens on its own when the page loads with the
+   heading's id as the hash or the hash changes to it; search palette landings
+   (#s:...) open it through js/search.js reveal(), which clicks the bar. */
 (function () {
   'use strict';
   var root = document.querySelector('[data-sv]');
@@ -27,6 +33,18 @@
   var ageEl = root.querySelector('[data-sv-age]');
   var mktEl = root.querySelector('[data-sv-mkt]');
   var chips = Array.prototype.slice.call(root.querySelectorAll('[data-sv-size]'));
+  var head = root.querySelector('.sv-h');
+  var bar = root.querySelector('.sv-bar');
+  var sumMsg = root.querySelector('[data-sv-sum-msg]');
+  var sumBest = root.querySelector('[data-sv-sum-best]');
+  var sumBestV = root.querySelector('[data-sv-sum-best-v]');
+  var sumSn = root.querySelector('[data-sv-sum-sn]');
+  var sumSnV = root.querySelector('[data-sv-sum-sn-v]');
+  // the summary labels are written here, not in the markup, so the search
+  // index (which reads the heading's static text) indexes the title alone
+  Array.prototype.forEach.call(root.querySelectorAll('[data-sv-l]'), function (el) {
+    el.textContent = el.getAttribute('data-sv-l');
+  });
 
   var size = 100;
   var data = null;       // last payload rendered
@@ -165,11 +183,27 @@
       (d.includeFees ? 'fees and gas included' : 'before fees') +
       (across.length ? ', across ' + across.join(' and ') : '') + '.');
     put(mktEl, isNum(d.marketPrice) ? 'Market price $' + d.marketPrice.toFixed(4) : '');
+
+    // collapsed summary: the best full fill, and the best-placed Starknet
+    // venue that returned a quote (omitted when none did)
+    var bestRow = list.length && list[0].g === 0 ? list[0].v : null;
+    var snRow = null;
+    for (var j = 0; j < list.length; j++) {
+      if (list[j].g !== 3 && isStarknet(list[j].v)) { snRow = list[j].v; break; }
+    }
+    if (bestRow) put(sumBestV, bestRow.source + ' $' + bestRow.price.toFixed(6));
+    if (snRow) put(sumSnV, snRow.source + ' $' + snRow.price.toFixed(6));
+    show(sumBest, !!bestRow);
+    show(sumSn, !!snRow);
+    put(sumMsg, bestRow || snRow ? '' : 'No quotes right now');
   }
+  function isStarknet(v) { return !!v.chain && v.chain.toLowerCase() === 'starknet'; }
+  function show(el, on) { if (el.hidden === on) el.hidden = !on; }
 
   function status() {
     if (!data) {
       put(ageEl, failing ? 'Reconnecting' : 'Connecting');
+      put(sumMsg, failing ? 'Live comparison unavailable right now' : 'Loading live prices');
       cls(root, 'sv-live', false);
       return;
     }
@@ -240,6 +274,21 @@
     });
   });
 
+  // ---------- toggle ----------
+  function setOpen(on) {
+    cls(root, 'open', on);
+    bar.setAttribute('aria-expanded', on ? 'true' : 'false');
+  }
+  bar.addEventListener('click', function () { setOpen(!root.classList.contains('open')); });
+  function fromHash() {
+    var h = '';
+    try { h = decodeURIComponent(location.hash.slice(1)); } catch (e) {}
+    if (h && h === head.id) setOpen(true);
+  }
+  fromHash();
+  window.addEventListener('hashchange', fromHash);
+
+  status();
   document.addEventListener('visibilitychange', sync);
   if ('IntersectionObserver' in window) {
     new IntersectionObserver(function (es) {

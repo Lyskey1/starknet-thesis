@@ -197,6 +197,9 @@
     /* strk: where-to-get accordions */
     const buy = target.closest && target.closest('.buy-cat');
     if (buy && !buy.classList.contains('open')) did = clickIf(buy.querySelector('.buy-head')) || did;
+    /* strk: the live venue device ships closed; its bar is the toggle */
+    const sv = target.closest && target.closest('[data-sv]');
+    if (sv && !sv.classList.contains('open')) did = clickIf(sv.querySelector('.sv-bar')) || did;
     /* strk: utilities selector */
     const util = target.closest && target.closest('.util-panel');
     if (util && !util.classList.contains('show')) did = clickIf(q('.util-tab[data-k="' + util.getAttribute('data-k') + '"]')) || did;

@@ -1207,11 +1207,38 @@ footer.site-footer .foot-bottom a:hover{color:var(--accent)}
    are mono and tabular in fixed-width columns so a live update never moves
    anything. Sized to fit a 1440x900 viewport whole; under ~760px the table
    scrolls sideways inside its own box instead of squeezing. --- */
-.sv{margin-top:24px;border:1px solid var(--line);border-radius:24px;background:#141414;padding:26px 30px 22px}
-.sv-head{display:flex;justify-content:space-between;align-items:flex-end;gap:20px 32px;flex-wrap:wrap;margin-bottom:18px}
-.sv-say{min-width:0;flex:1 1 420px}
-.sv-title{font-family:var(--display);font-weight:300;font-size:clamp(24px,2.2vw,32px);line-height:1.05;letter-spacing:-.025em;color:var(--white)}
-.sv-desc{margin-top:8px;color:var(--muted-2);font-size:14.5px;line-height:1.5;max-width:68ch}
+.sv{margin-top:24px;border:1px solid var(--line);border-radius:24px;background:#141414}
+/* the bar: title left, live summary and chevron right; the whole bar is the
+   toggle, like .buy-head */
+.sv-h{margin:0;font:inherit}
+.sv-bar{display:flex;align-items:center;gap:12px 28px;width:100%;padding:24px 30px;border:0;border-radius:24px;background:transparent;
+  color:inherit;font:inherit;text-align:left;cursor:pointer}
+.sv-bar:focus-visible{outline:2px solid rgba(250,250,250,.5);outline-offset:-2px}
+.sv-bar:hover .sv-title{color:#fff}
+.sv-sum{flex:none;display:flex;align-items:center;gap:6px 16px;flex-wrap:wrap;justify-content:flex-end;
+  font-family:var(--mono),monospace;font-size:12px;letter-spacing:.03em;color:var(--muted);font-variant-numeric:tabular-nums}
+.sv-sum .sv-dot{margin-right:-6px}
+.sv-sum .v{color:var(--white)}
+.sv-sum [hidden]{display:none}
+.sv-sum-msg:empty{display:none}
+.sv-chev{flex:none;font-size:19px;line-height:1;color:var(--muted)}
+.sv.open .sv-chev{transform:rotate(180deg);color:var(--acc-2)}
+/* the body opens by animating its grid row from 0fr to 1fr (real height,
+   no max-height guess); hidden when closed so its chips and links leave
+   the tab order. Reduced motion: no transitions, it switches instantly. */
+.sv-body{display:grid;grid-template-rows:0fr;visibility:hidden}
+.sv.open .sv-body{grid-template-rows:1fr;visibility:visible}
+.sv-clip{min-height:0;overflow:hidden}
+.sv-pad{padding:2px 30px 22px}
+@media (prefers-reduced-motion:no-preference){
+  .sv-body{transition:grid-template-rows .32s cubic-bezier(.22,1,.36,1),visibility 0s linear .32s}
+  .sv.open .sv-body{transition:grid-template-rows .32s cubic-bezier(.22,1,.36,1),visibility 0s}
+  .sv-chev{transition:transform .25s,color .2s}
+  .sv-title{transition:color .2s}
+}
+.sv-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px 32px;flex-wrap:wrap;margin-bottom:18px}
+.sv-title{flex:1 1 auto;min-width:0;font-family:var(--display);font-weight:300;font-size:clamp(22px,2vw,28px);line-height:1.1;letter-spacing:-.025em;color:var(--white)}
+.sv-desc{flex:1 1 420px;min-width:0;color:var(--muted-2);font-size:14.5px;line-height:1.5;max-width:68ch}
 .sv-ctl{display:flex;flex-direction:column;align-items:flex-end;gap:10px}
 .sv-sizes{display:flex;gap:6px}
 .sv-sizes button{font:inherit;font-family:var(--mono),monospace;font-size:12px;letter-spacing:.04em;color:var(--muted-2);
@@ -1276,10 +1303,15 @@ footer.site-footer .foot-bottom a:hover{color:var(--accent)}
 .sv-src a:focus-visible{outline:2px solid rgba(250,250,250,.5);outline-offset:2px}
 @media (prefers-reduced-motion:reduce){.sv-sizes button,.sv-src a{transition:none}}
 @media(max-width:700px){
-  .sv{padding:20px 16px 18px;border-radius:20px}
+  .sv,.sv-bar{border-radius:20px}
+  .sv-bar{position:relative;flex-wrap:wrap;padding:20px 48px 20px 16px}
+  .sv-title{flex-basis:100%}
+  .sv-sum{flex:1 1 100%;min-width:0;justify-content:flex-start}
+  .sv-chev{position:absolute;right:16px;top:22px}
+  .sv-pad{padding:2px 16px 18px}
   .sv-ctl{align-items:flex-start}
   .sv-status{justify-content:flex-start}
-  .sv-say{flex-basis:100%}
+  .sv-desc{flex-basis:100%}
   .sv-wait .sv-desc{min-height:4.5em}
   .sv-src{white-space:normal;flex-wrap:wrap}
   /* phone: the venue column narrows (its meta ellipsizes) so rank, venue
@@ -2382,11 +2414,21 @@ window.ADMIN_GATE=on;})();
        come from /api/strk-quotes (CompareSTRK by avnu) via js/strk-venues.js;
        the attribution in .sv-foot stays visible in every state. -->
   <div class="sv sv-wait" data-sv aria-busy="true">
+    <!-- ships CLOSED like the accordion above. The heading wraps the button
+         (a heading cannot live inside one); the button is named by the title
+         alone and described by the live summary, so its name stays stable
+         while the prices tick. The summary spans start empty on purpose: the
+         search index reads this heading's text. -->
+    <h3 id="where-it-is-cheapest-right-now" class="sv-h">
+      <button type="button" class="sv-bar" aria-expanded="false" aria-controls="sv-body" aria-labelledby="sv-title" aria-describedby="sv-sum">
+        <span class="sv-title" id="sv-title">Where to buy it at the best price right now</span>
+        <span class="sv-sum" id="sv-sum"><span class="sv-dot" aria-hidden="true"></span><span class="sv-sum-msg" data-sv-sum-msg></span><span class="sv-sum-best" data-sv-sum-best hidden><span class="l" data-sv-l="Best:"></span> <span class="v" data-sv-sum-best-v></span></span><span class="sv-sum-sn" data-sv-sum-sn hidden><span class="l" data-sv-l="On Starknet:"></span> <span class="v" data-sv-sum-sn-v></span></span></span>
+        <i class="ti ti-chevron-down sv-chev" aria-hidden="true"></i>
+      </button>
+    </h3>
+    <div class="sv-body" id="sv-body"><div class="sv-clip"><div class="sv-pad">
     <div class="sv-head">
-      <div class="sv-say">
-        <h3 id="where-it-is-cheapest-right-now" class="sv-title">Where to buy it at the best price right now</h3>
-        <p class="sv-desc" data-sv-desc>All-in price per STRK for a $100 market buy, fees and gas included.</p>
-      </div>
+      <p class="sv-desc" data-sv-desc>All-in price per STRK for a $100 market buy, fees and gas included.</p>
       <div class="sv-ctl">
         <div class="sv-sizes" role="group" aria-label="Trade size">
           <button type="button" data-sv-size="100" aria-pressed="true">$100</button>
@@ -2407,6 +2449,7 @@ window.ADMIN_GATE=on;})();
       <p class="sv-note">Simulated market buy, taker fees and estimated gas included, withdrawal and bridging costs excluded. Quotes are indicative and move before you trade. Jupiter and ParaSwap deliver STRK on Solana and Ethereum, not on Starknet.</p>
       <p class="sv-src"><a href="https://www.comparestrk.com/" target="_blank" rel="noopener">Data: CompareSTRK by avnu.</a><a href="https://www.comparestrk.com/how-it-works" target="_blank" rel="noopener">How it works</a></p>
     </div>
+    </div></div></div>
   </div>
 </div></section>
 
