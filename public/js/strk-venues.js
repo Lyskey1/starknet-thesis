@@ -95,11 +95,40 @@
     var name = document.createElement('span'); name.className = 'sv-name';
     var flag = document.createElement('span'); flag.className = 'sv-flag';
     var meta = document.createElement('span'); meta.className = 'sv-meta';
-    cells.venue.appendChild(tag); cells.venue.appendChild(name);
-    cells.venue.appendChild(flag); cells.venue.appendChild(meta);
-    cells.tag = tag; cells.name = name; cells.flag = flag; cells.meta = meta;
+    // name, glyph, flag and meta are one link to the venue's STRK page
+    var link = document.createElement('a'); link.className = 'sv-link';
+    link.target = '_blank'; link.rel = 'noopener noreferrer';
+    link.setAttribute('data-umami-event', 'strk-venue-click');
+    link.appendChild(name);
+    link.insertAdjacentHTML('beforeend', GLYPH);
+    link.appendChild(flag); link.appendChild(meta);
+    cells.venue.appendChild(tag); cells.venue.appendChild(link);
+    cells.tag = tag; cells.name = name; cells.flag = flag; cells.meta = meta; cells.link = link;
     return { tr: tr, cells: cells };
   }
+  // ---------- venue links ----------
+  // static map in strk.html (#sv-venue-links), keyed by the payload's source
+  // name; "{size}" is the selected trade size. A venue missing from the map
+  // renders as plain text (an <a> without href is not a link).
+  var LINKS = {};
+  try { LINKS = JSON.parse(document.getElementById('sv-venue-links').textContent) || {}; } catch (e) {}
+  var GLYPH = '<svg class="sv-ext" viewBox="0 0 12 12" width="10" height="10" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 2.5H2.5v7h7V7"/><path d="M7 2.5h2.5V5"/><path d="M9.5 2.5 5.5 6.5"/></svg>';
+  function linkFor(source) {
+    var u = LINKS[source];
+    return typeof u === 'string' ? u.replace('{size}', String(size)) : '';
+  }
+  function setLink(a, source) {
+    var href = linkFor(source);
+    if (href) {
+      if (a.getAttribute('href') !== href) a.setAttribute('href', href);
+    } else if (a.hasAttribute('href')) a.removeAttribute('href');
+    if (a.getAttribute('data-umami-event-venue') !== source) a.setAttribute('data-umami-event-venue', source);
+    if (href) a.setAttribute('aria-describedby', 'sv-newtab'); else a.removeAttribute('aria-describedby');
+  }
+  function refreshLinks() {
+    Object.keys(rows).forEach(function (k) { setLink(rows[k].cells.link, k); });
+  }
+
   function put(el, text) { if (el.textContent !== text) el.textContent = text; }
   function cls(el, name, on) { if (el.classList.contains(name) !== on) el.classList.toggle(name, on); }
 
@@ -149,6 +178,7 @@
       put(c.rank, g === 0 ? String(rank) : '');
       put(c.tag, v.type === 'CEX' ? 'CEX' : 'DEX');
       put(c.name, v.source);
+      setLink(c.link, v.source);
       put(c.flag, g !== 3 && v.isStale ? 'Stale' : '');
       put(c.meta, metaFor(v, g));
 
@@ -276,6 +306,7 @@
       size = n;
       chips.forEach(function (o) { o.setAttribute('aria-pressed', o === b ? 'true' : 'false'); });
       root.setAttribute('aria-busy', 'true');
+      refreshLinks();
       fetchNow();
       if (running) schedule();
     });

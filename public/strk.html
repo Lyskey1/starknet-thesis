@@ -1292,6 +1292,16 @@ footer.site-footer .foot-bottom a:hover{color:var(--accent)}
 .sv-tag{display:inline-block;margin-right:10px;padding:1px 5px;border:1px solid var(--line);border-radius:4px;
   font-family:var(--mono),monospace;font-size:9.5px;letter-spacing:.1em;color:var(--muted-2);vertical-align:1px}
 .sv-name{font-size:15px;font-weight:500;color:var(--white)}
+/* the venue link: name + glyph + meta. Hover underlines the name and shows
+   the external-link glyph, which always holds its space so nothing moves */
+.sv-link{color:inherit;text-decoration:none;border-radius:3px}
+.sv-link[href]{cursor:pointer}
+.sv-link[href]:hover .sv-name{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}
+.sv-link:focus-visible{outline:2px solid rgba(250,250,250,.6);outline-offset:2px}
+.sv-link:focus-visible .sv-name{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}
+.sv-ext{display:inline-block;margin-left:5px;vertical-align:0;color:var(--muted-2);opacity:0}
+.sv-link[href]:hover .sv-ext,.sv-link[href]:focus-visible .sv-ext{opacity:1}
+.sv-link:not([href]) .sv-ext{display:none}
 .sv-flag{margin-left:8px;font-family:var(--mono),monospace;font-size:10.5px;letter-spacing:.08em;color:var(--acc-2)}
 .sv-flag:empty{display:none}
 .sv-meta{margin-left:10px;font-family:var(--mono),monospace;font-size:11.5px;color:var(--muted)}
@@ -2453,6 +2463,7 @@ window.ADMIN_GATE=on;})();
     </div>
     <div class="sv-foot">
       <p class="sv-note">Simulated market buy, taker fees and estimated gas included, withdrawal and bridging costs excluded. Quotes are indicative and move before you trade. Jupiter and ParaSwap deliver STRK on Solana and Ethereum, not on Starknet.</p>
+      <span id="sv-newtab" hidden>Opens in a new tab</span>
       <p class="sv-src"><a href="https://www.comparestrk.com/" target="_blank" rel="noopener">Data: CompareSTRK by avnu.</a><a href="https://www.comparestrk.com/how-it-works" target="_blank" rel="noopener">How it works</a></p>
     </div>
     </div></div></div>
@@ -5016,6 +5027,25 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
 <script type="module" src="js/eco-backdrop.js"></script>
 <script type="module" src="js/strk-hero-mark.js"></script>
 <script src="js/strk-stride.js" defer></script>
+<!-- venue links for the live venue device (section 05), keyed by the
+     CompareSTRK source name; js/strk-venues.js swaps {size} for the selected
+     trade size. CEX links open the STRK spot pair in the payload's quote
+     currency; Jupiter and ParaSwap (now Velora) open a USDC to STRK swap on
+     their chain, by the STRK token addresses CoinGecko lists for Solana and
+     Ethereum. No referral or affiliate parameters. Checked 2026-10-07. -->
+<script type="application/json" id="sv-venue-links">{
+  "Binance": "https://www.binance.com/en/trade/STRK_USDT?type=spot",
+  "OKX": "https://www.okx.com/trade-spot/strk-usdt",
+  "Bybit": "https://www.bybit.com/en/trade/spot/STRK/USDT",
+  "KuCoin": "https://www.kucoin.com/trade/STRK-USDT",
+  "Gate.io": "https://www.gate.com/trade/STRK_USDT",
+  "Bitget": "https://www.bitget.com/spot/STRKUSDT",
+  "Kraken": "https://pro.kraken.com/app/trade/strk-usd",
+  "Coinbase": "https://www.coinbase.com/advanced-trade/spot/STRK-USD",
+  "avnu": "https://app.avnu.fi/en?sellToken=usdc&buyToken=strk&amount={size}",
+  "Jupiter": "https://jup.ag/swap?sell=EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v&buy=HsRpHQn6VbyMs5b5j5SV6xQ2VvpvvCCzu19GjytVSCoz",
+  "ParaSwap": "https://app.velora.xyz/app/swap/0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48-0xCa14007Eff0dB1f8135f4C25B34De49AB0d42766/{size}/SELL?network=ethereum"
+}</script>
 <script src="js/strk-venues.js" defer></script>
 </body>
 </html>
