@@ -142,7 +142,8 @@
       var c = r.cells;
       if (g === 0) rank++;
 
-      cls(r.tr, 'sv-best', g === 0 && rank === 1);
+      // the accent marks Starknet-native venues, not rank 1
+      cls(r.tr, 'sv-sn', isStarknet(v));
       cls(r.tr, 'sv-off', g === 3);
       put(c.rank, g === 0 ? String(rank) : '');
       put(c.tag, v.type === 'CEX' ? 'CEX' : 'DEX');

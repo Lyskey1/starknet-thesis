@@ -1279,12 +1279,16 @@ footer.site-footer .foot-bottom a:hover{color:var(--accent)}
 .sv-table .n,.sv-price,.sv-vs,.sv-spread,.sv-fee{text-align:right}
 .sv-rank,.sv-price,.sv-vs,.sv-spread,.sv-fee{font-family:var(--mono),monospace;font-size:13px;font-variant-numeric:tabular-nums}
 .sv-rank{color:var(--muted)}
-.sv-best .sv-rank{color:var(--acc-2)}
-.sv-best td{background-color:rgba(197,52,0,.07)}
+/* Starknet-native rows (chain Starknet) carry the accent: tint, rank
+   numeral and venue tag. Rank 1 is not highlighted; its "Best" reads in
+   the text color. */
+.sv-sn .sv-rank{color:var(--acc-2)}
+.sv-sn td{background-color:rgba(197,52,0,.07)}
+.sv-sn .sv-tag{color:var(--acc-2);border-color:var(--accbd)}
 .sv-price{color:var(--white)}
 .sv-vs,.sv-spread,.sv-fee{color:var(--muted-2)}
 .sv-vs{color:var(--muted)}
-.sv-vs.sv-is-best{color:var(--acc-2)}
+.sv-vs.sv-is-best{color:var(--white)}
 .sv-tag{display:inline-block;margin-right:10px;padding:1px 5px;border:1px solid var(--line);border-radius:4px;
   font-family:var(--mono),monospace;font-size:9.5px;letter-spacing:.1em;color:var(--muted-2);vertical-align:1px}
 .sv-name{font-size:15px;font-weight:500;color:var(--white)}
