@@ -153,9 +153,10 @@
       if (!seen[k]) { rows[k].tr.remove(); delete rows[k]; }
     });
 
-    // description, counted from the venues that actually returned a price
+    // description, counted from every venue in the payload by type, live or
+    // not (the Unavailable row already shows which one is down)
     var cex = 0, dex = 0;
-    list.forEach(function (o) { if (o.g !== 3) { if (o.v.type === 'CEX') cex++; else if (o.v.type === 'DEX') dex++; } });
+    list.forEach(function (o) { if (o.v.type === 'CEX') cex++; else if (o.v.type === 'DEX') dex++; });
     var across = [];
     if (cex) across.push(plural(cex, 'exchange', 'exchanges'));
     if (dex) across.push(plural(dex, 'DEX aggregator', 'DEX aggregators'));
