@@ -1200,6 +1200,99 @@ footer.site-footer .foot-bottom a:hover{color:var(--accent)}
   .buy-head .bh-chev{right:0}
 }
 
+/* --- 05, second device: live venue comparison (sv-). Live quotes from the
+   same-origin proxy /api/strk-quotes (CompareSTRK by avnu), driven by
+   js/strk-venues.js. A bento card like the .buy-cat cards above it; rows are
+   divided by dotted hairlines (the section's dotted idiom at 1px), numerals
+   are mono and tabular in fixed-width columns so a live update never moves
+   anything. Sized to fit a 1440x900 viewport whole; under ~760px the table
+   scrolls sideways inside its own box instead of squeezing. --- */
+.sv{margin-top:24px;border:1px solid var(--line);border-radius:24px;background:#141414;padding:26px 30px 22px}
+.sv-head{display:flex;justify-content:space-between;align-items:flex-end;gap:20px 32px;flex-wrap:wrap;margin-bottom:18px}
+.sv-say{min-width:0;flex:1 1 420px}
+.sv-title{font-family:var(--display);font-weight:300;font-size:clamp(24px,2.2vw,32px);line-height:1.05;letter-spacing:-.025em;color:var(--white)}
+.sv-desc{margin-top:8px;color:var(--muted-2);font-size:14.5px;line-height:1.5;max-width:68ch}
+.sv-ctl{display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+.sv-sizes{display:flex;gap:6px}
+.sv-sizes button{font:inherit;font-family:var(--mono),monospace;font-size:12px;letter-spacing:.04em;color:var(--muted-2);
+  background:transparent;border:1px solid var(--line);border-radius:999px;padding:5px 12px;cursor:pointer;
+  transition:color .15s,border-color .15s,background .15s}
+.sv-sizes button:hover{color:var(--white);border-color:rgba(250,250,250,.24)}
+.sv-sizes button[aria-pressed="true"]{color:var(--white);border-color:var(--accbd);background:var(--accbg)}
+.sv-sizes button:focus-visible{outline:2px solid rgba(250,250,250,.5);outline-offset:2px}
+.sv-status{display:flex;align-items:center;gap:8px 14px;flex-wrap:wrap;justify-content:flex-end;font-family:var(--mono),monospace;font-size:11.5px;letter-spacing:.04em;color:var(--muted-2);font-variant-numeric:tabular-nums}
+.sv-age{display:inline-flex;align-items:center;gap:8px}
+.sv-dot{position:relative;width:6px;height:6px;border-radius:50%;background:var(--muted);flex:none}
+.sv-live .sv-dot{background:var(--acc-2)}
+.sv-dot::after{content:"";position:absolute;inset:-4px;border-radius:50%;border:1px solid var(--acc-2);opacity:0}
+@media (prefers-reduced-motion:no-preference){
+  .sv-on.sv-live .sv-dot::after{animation:sv-pulse 2s ease-out infinite}
+}
+@keyframes sv-pulse{0%{transform:scale(.5);opacity:.8}100%{transform:scale(1.5);opacity:0}}
+.sv-mkt{color:var(--muted)}
+
+.sv-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+/* while the first payload is in flight the table box holds its loaded height
+   (header + 11 venue rows, the feed's count on 2026-10-07), so the rows
+   arriving do not shove everything below the device down by ~450px */
+.sv-wait .sv-scroll{min-height:519px}
+.sv-wait .sv-desc{min-height:3em} /* the counted line wraps to two */
+.sv-table{width:100%;min-width:720px;table-layout:fixed;border-collapse:collapse}
+.sv-table col.c-rank{width:48px}.sv-table col.c-price{width:128px}.sv-table col.c-vs{width:104px}
+.sv-table col.c-spread{width:88px}.sv-table col.c-fee{width:76px}
+.sv-table th{font-family:var(--mono),monospace;font-weight:400;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--muted);text-align:left;padding:0 12px 10px;white-space:nowrap}
+/* the row rule is a 2px-period dot pattern painted per cell, gap first: a
+   1px dotted border restarts in every cell and leaves a solid 2px dash at
+   each column seam, this way a seam can at worst be a 2px gap */
+.sv-table td{background-image:linear-gradient(90deg,transparent 1px,rgba(250,250,250,.26) 1px);background-size:2px 1px;background-repeat:repeat-x;background-position:0 0}
+.sv-table tbody tr:last-child td{background-image:linear-gradient(90deg,transparent 1px,rgba(250,250,250,.26) 1px),linear-gradient(90deg,transparent 1px,rgba(250,250,250,.26) 1px);background-size:2px 1px;background-repeat:repeat-x;background-position:0 0,0 100%}
+.sv-table td{padding:10px 12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;vertical-align:baseline}
+.sv-table th:first-child,.sv-table td:first-child{padding-left:14px}
+.sv-table .n,.sv-price,.sv-vs,.sv-spread,.sv-fee{text-align:right}
+.sv-rank,.sv-price,.sv-vs,.sv-spread,.sv-fee{font-family:var(--mono),monospace;font-size:13px;font-variant-numeric:tabular-nums}
+.sv-rank{color:var(--muted)}
+.sv-best .sv-rank{color:var(--acc-2)}
+.sv-best td{background-color:rgba(197,52,0,.07)}
+.sv-price{color:var(--white)}
+.sv-vs,.sv-spread,.sv-fee{color:var(--muted-2)}
+.sv-vs{color:var(--muted)}
+.sv-vs.sv-is-best{color:var(--acc-2)}
+.sv-tag{display:inline-block;margin-right:10px;padding:1px 5px;border:1px solid var(--line);border-radius:4px;
+  font-family:var(--mono),monospace;font-size:9.5px;letter-spacing:.1em;color:var(--muted-2);vertical-align:1px}
+.sv-name{font-size:15px;font-weight:500;color:var(--white)}
+.sv-flag{margin-left:8px;font-family:var(--mono),monospace;font-size:10.5px;letter-spacing:.08em;color:var(--acc-2)}
+.sv-flag:empty{display:none}
+.sv-meta{margin-left:10px;font-family:var(--mono),monospace;font-size:11.5px;color:var(--muted)}
+.sv-off td{opacity:.42}
+.sv-off .sv-price{font-family:var(--mono),monospace;color:var(--muted-2)}
+.sv-msg td{padding:18px 14px;font-family:var(--mono),monospace;font-size:12px;letter-spacing:.04em;color:var(--muted);text-overflow:clip}
+
+.sv-foot{display:flex;justify-content:space-between;align-items:flex-start;gap:12px 32px;flex-wrap:wrap;margin-top:14px}
+.sv-note{flex:1 1 520px;max-width:96ch;color:var(--muted);font-size:12.5px;line-height:1.55}
+.sv-src{display:flex;gap:16px;font-family:var(--mono),monospace;font-size:11.5px;letter-spacing:.03em;white-space:nowrap}
+.sv-src a{color:var(--muted-2);border-bottom:1px dotted rgba(250,250,250,.3);transition:color .15s,border-color .15s}
+.sv-src a:hover{color:var(--acc-2);border-color:var(--acc-2)}
+.sv-src a:focus-visible{outline:2px solid rgba(250,250,250,.5);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){.sv-sizes button,.sv-src a{transition:none}}
+@media(max-width:700px){
+  .sv{padding:20px 16px 18px;border-radius:20px}
+  .sv-ctl{align-items:flex-start}
+  .sv-status{justify-content:flex-start}
+  .sv-say{flex-basis:100%}
+  .sv-wait .sv-desc{min-height:4.5em}
+  .sv-src{white-space:normal;flex-wrap:wrap}
+  /* phone: the venue column narrows (its meta ellipsizes) so rank, venue
+     and price fit the first view; vs best, spread and fee scroll in */
+  .sv-table{min-width:540px}
+  .sv-table col.c-rank{width:34px}.sv-table col.c-venue{width:158px}.sv-table col.c-price{width:108px}
+  .sv-table col.c-vs{width:90px}.sv-table col.c-spread{width:80px}.sv-table col.c-fee{width:70px}
+  .sv-table th,.sv-table td{padding-left:8px;padding-right:8px}
+  .sv-table th:first-child,.sv-table td:first-child{padding-left:8px}
+  .sv-tag{margin-right:7px}
+  .sv-meta{margin-left:7px}
+}
+
 
 
 /* ===== CONCLUSION (restored 2026-09-05) ======================================
@@ -2283,6 +2376,36 @@ window.ADMIN_GATE=on;})();
     <div id="centralized-exchanges" class="buy-cat">
       <button class="buy-head" aria-expanded="false"><span class="bh-l"><i class="ti ti-building-bank"></i><span class="bh-title">Centralized exchanges</span><span class="bh-count">11</span></span><i class="ti ti-chevron-down bh-chev"></i></button>
       <div class="buy-body"><div class="buy-list" data-list="cex"></div></div>
+    </div>
+  </div>
+  <!-- LIVE VENUE COMPARISON (2026-10-07): the section's second device. Rows
+       come from /api/strk-quotes (CompareSTRK by avnu) via js/strk-venues.js;
+       the attribution in .sv-foot stays visible in every state. -->
+  <div class="sv sv-wait" data-sv aria-busy="true">
+    <div class="sv-head">
+      <div class="sv-say">
+        <h3 id="where-it-is-cheapest-right-now" class="sv-title">Where it is cheapest right now</h3>
+        <p class="sv-desc" data-sv-desc>All-in price per STRK for a $100 market buy, fees and gas included.</p>
+      </div>
+      <div class="sv-ctl">
+        <div class="sv-sizes" role="group" aria-label="Trade size">
+          <button type="button" data-sv-size="100" aria-pressed="true">$100</button>
+          <button type="button" data-sv-size="1000" aria-pressed="false">$1K</button>
+          <button type="button" data-sv-size="10000" aria-pressed="false">$10K</button>
+        </div>
+        <p class="sv-status"><span class="sv-age"><span class="sv-dot" aria-hidden="true"></span><span data-sv-age>Connecting</span></span><span class="sv-mkt" data-sv-mkt></span></p>
+      </div>
+    </div>
+    <div class="sv-scroll">
+      <table class="sv-table" aria-labelledby="where-it-is-cheapest-right-now">
+        <colgroup><col class="c-rank"><col class="c-venue"><col class="c-price"><col class="c-vs"><col class="c-spread"><col class="c-fee"></colgroup>
+        <thead><tr><th scope="col">#</th><th scope="col">Venue</th><th scope="col" class="n">All-in price</th><th scope="col" class="n">vs best</th><th scope="col" class="n">Spread</th><th scope="col" class="n">Fee</th></tr></thead>
+        <tbody data-sv-rows><tr class="sv-msg"><td colspan="6">Loading live prices</td></tr></tbody>
+      </table>
+    </div>
+    <div class="sv-foot">
+      <p class="sv-note">Simulated market buy, taker fees and estimated gas included, withdrawal and bridging costs excluded. Quotes are indicative and move before you trade. Jupiter and ParaSwap deliver STRK on Solana and Ethereum, not on Starknet.</p>
+      <p class="sv-src"><a href="https://www.comparestrk.com/" target="_blank" rel="noopener">Data: CompareSTRK by avnu.</a><a href="https://www.comparestrk.com/how-it-works" target="_blank" rel="noopener">How it works</a></p>
     </div>
   </div>
 </div></section>
@@ -4844,5 +4967,6 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
 <script type="module" src="js/eco-backdrop.js"></script>
 <script type="module" src="js/strk-hero-mark.js"></script>
 <script src="js/strk-stride.js" defer></script>
+<script src="js/strk-venues.js" defer></script>
 </body>
 </html>
