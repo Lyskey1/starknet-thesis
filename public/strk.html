@@ -1240,7 +1240,7 @@ footer.site-footer .foot-bottom a:hover{color:var(--accent)}
 .sv-title{flex:1 1 auto;min-width:0;font-family:var(--display);font-weight:300;font-size:clamp(22px,2vw,28px);line-height:1.1;letter-spacing:-.025em;color:var(--white)}
 .sv-desc{flex:1 1 420px;min-width:0;color:var(--muted-2);font-size:14.5px;line-height:1.5;max-width:68ch}
 .sv-ctl{display:flex;flex-direction:column;align-items:flex-end;gap:10px}
-.sv-sizes{display:flex;gap:6px}
+.sv-sizes{display:flex;flex-wrap:wrap;gap:6px}
 .sv-sizes button{font:inherit;font-family:var(--mono),monospace;font-size:12px;letter-spacing:.04em;color:var(--muted-2);
   background:transparent;border:1px solid var(--line);border-radius:999px;padding:5px 12px;cursor:pointer;
   transition:color .15s,border-color .15s,background .15s}
@@ -1266,7 +1266,7 @@ footer.site-footer .foot-bottom a:hover{color:var(--accent)}
 .sv-wait .sv-desc{min-height:3em} /* the counted line wraps to two */
 .sv-table{width:100%;min-width:720px;table-layout:fixed;border-collapse:collapse}
 .sv-table col.c-rank{width:48px}.sv-table col.c-price{width:128px}.sv-table col.c-vs{width:104px}
-.sv-table col.c-spread{width:88px}.sv-table col.c-fee{width:76px}
+.sv-table col.c-spread{width:104px}.sv-table col.c-fee{width:76px}
 .sv-table th{font-family:var(--mono),monospace;font-weight:400;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;
   color:var(--muted);text-align:left;padding:0 12px 10px;white-space:nowrap}
 /* the row rule is a 2px-period dot pattern painted per cell, gap first: a
@@ -1320,9 +1320,9 @@ footer.site-footer .foot-bottom a:hover{color:var(--accent)}
   .sv-src{white-space:normal;flex-wrap:wrap}
   /* phone: the venue column narrows (its meta ellipsizes) so rank, venue
      and price fit the first view; vs best, spread and fee scroll in */
-  .sv-table{min-width:540px}
+  .sv-table{min-width:556px}
   .sv-table col.c-rank{width:34px}.sv-table col.c-venue{width:158px}.sv-table col.c-price{width:108px}
-  .sv-table col.c-vs{width:90px}.sv-table col.c-spread{width:80px}.sv-table col.c-fee{width:70px}
+  .sv-table col.c-vs{width:90px}.sv-table col.c-spread{width:96px}.sv-table col.c-fee{width:70px}
   .sv-table th,.sv-table td{padding-left:8px;padding-right:8px}
   .sv-table th:first-child,.sv-table td:first-child{padding-left:8px}
   .sv-tag{margin-right:7px}
@@ -2438,6 +2438,8 @@ window.ADMIN_GATE=on;})();
           <button type="button" data-sv-size="100" aria-pressed="true">$100</button>
           <button type="button" data-sv-size="1000" aria-pressed="false">$1K</button>
           <button type="button" data-sv-size="10000" aria-pressed="false">$10K</button>
+          <button type="button" data-sv-size="100000" aria-pressed="false">$100K</button>
+          <button type="button" data-sv-size="1000000" aria-pressed="false">$1M</button>
         </div>
         <p class="sv-status"><span class="sv-age"><span class="sv-dot" aria-hidden="true"></span><span data-sv-age>Connecting</span></span><span class="sv-mkt" data-sv-mkt></span></p>
       </div>

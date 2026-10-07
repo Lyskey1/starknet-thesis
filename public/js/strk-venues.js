@@ -108,7 +108,8 @@
     if (v.type === 'CEX') return v.quote ? v.quote + ' orderbook' : 'Orderbook';
     var parts = [];
     if (v.chain) parts.push(v.chain);
-    if (v.route) parts.push('routed via ' + v.route);
+    // upstream sends the literal route "No route" for a DEX it could not route
+    if (v.route && !/^no route$/i.test(v.route)) parts.push('routed via ' + v.route);
     return parts.join(', ');
   }
 
@@ -159,7 +160,12 @@
         var vs = '';
         if (g === 2) vs = 'Off-market';
         else if (g === 0 && rank === 1) vs = 'Best';
-        else if (best) vs = '+' + ((v.price / best - 1) * 100).toFixed(2) + '%';
+        else if (best) {
+          // against the best FULL fill; a partial fill can price below it
+          // (it bought less), so the delta is signed
+          var pct = (v.price / best - 1) * 100;
+          vs = (pct <= -0.005 ? '-' : '+') + Math.abs(pct).toFixed(2) + '%';
+        }
         put(c.vs, vs);
         cls(c.vs, 'sv-is-best', vs === 'Best');
         put(c.spread, isNum(v.venueSpreadBps) ? Math.round(v.venueSpreadBps) + ' bps' : '');

@@ -1,12 +1,14 @@
 /* Same-origin proxy for CompareSTRK's live STRK venue quotes (Vercel function).
-   GET /api/strk-quotes[?size=100|1000|10000] feeds the venue comparison device
+   GET /api/strk-quotes[?size=100|1000|10000|100000|1000000] feeds the venue comparison device
    under section 05 of /strk. Upstream is CompareSTRK by avnu, whose "How it
    works" page declares https://www.comparestrk.com/api/quotes public.
 
    Size probe (2026-10-07): of tradeSizeUsd, size, amount and usd, only `size`
    changes the upstream tradeSizeUsd (1000 -> 1000, 10000 -> 10000); the other
-   three are ignored and return the $100 default. Only the three whitelisted
-   sizes are forwarded; anything else falls back to 100.
+   three are ignored and return the $100 default. Only the five whitelisted
+   sizes are forwarded; anything else falls back to 100. At $100K and $1M
+   upstream answers with partial fills and off-market venues (checked
+   2026-10-07); those flags pass through untouched.
 
    Response contract:
      200 { ts, tradeSizeUsd, includeFees, marketPrice, isLive,
@@ -23,7 +25,7 @@
 'use strict';
 
 const UPSTREAM = 'https://www.comparestrk.com/api/quotes';
-const SIZES = [100, 1000, 10000];
+const SIZES = [100, 1000, 10000, 100000, 1000000];
 const TIMEOUT_MS = 4000;
 const CACHE = 'public, s-maxage=5, stale-while-revalidate=20';
 
