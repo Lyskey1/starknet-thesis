@@ -2775,6 +2775,68 @@ body.page-quantum{overflow-x:clip;}
 .th-fl-conn{height:18px;}
 .th-fl-detail{padding:0 14px 14px;}
 @media (prefers-reduced-motion: reduce){.th-fl-node.th-open .th-fl-detail{animation:none;}}
+/* two tags in one rail headrow (Phase 3, Destination): the wrapper takes the
+   grid area the single tag used to own */
+.th-fl-times{grid-area:time;display:flex;flex-wrap:wrap;gap:6px;justify-self:start;}
+/* THE OCT 8 L1 UPDATE (see the markup note). Row grammar: 1px hairline,
+   3px left rule in the Research/amber token, panel ground, mono labels,
+   the table's own .th-pq-badge for the chip, .th-open/.th-show for state.
+   EFFECTIVE CONTRAST, measured against the composited ground, not the
+   alpha: panel #101010 under a 5% amber wash = rgb(27,23,19).
+   Amber #E5A552 on it 8.35:1, muted #9a9a9a 6.33:1, ink #fafafa 17.07:1;
+   amber chip text on its own 13% fill 6.63:1; muted on the hover wash
+   5.93:1. No opacity or mask is applied to any text in this block, so
+   these are the final values.
+   THE SOURCE LINKS ARE INK, NOT --th-q: the orange the row sources use
+   measures 3.28:1 on this ground, under AA for 13.5px text, so the link
+   text is ink (17.07:1) and the orange moves to the underline. */
+.th-l1{--rowac:var(--th-dev);margin-top:24px;border:1px solid var(--th-hair);border-left:3px solid var(--th-dev);
+  background:linear-gradient(180deg,color-mix(in srgb,var(--th-dev) 5%,var(--th-panel)),var(--th-panel));}
+.th-l1-sum{padding:20px 24px 18px;cursor:pointer;transition:background .2s;}
+.th-l1-sum:hover{background:color-mix(in srgb,var(--th-dev) 4%,transparent);}
+.th-l1-btn{display:block;width:100%;text-align:left;font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;}
+.th-l1-btn:focus-visible{outline:2px solid var(--th-dev);outline-offset:6px;}
+.th-l1-top{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;}
+.th-l1-lbl{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--th-muted);}
+.th-l1-title{display:block;margin-top:14px;font-family:'General Sans',sans-serif;font-weight:600;font-size:22px;line-height:1.25;letter-spacing:-.01em;color:var(--th-ink);}
+.th-l1-amb{color:var(--th-dev);}
+.th-l1-body{margin-top:12px;font-size:14px;line-height:1.6;color:var(--th-ink);max-width:96ch;}
+.th-l1-facts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));margin:18px 0 0;border-top:1px solid var(--th-hair);border-bottom:1px solid var(--th-hair);}
+.th-l1-fact{padding:12px 16px 12px 0;}
+.th-l1-fact+.th-l1-fact{border-left:1px solid var(--th-hair);padding-left:16px;}
+.th-l1-fact dt{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--th-muted);}
+.th-l1-fact dd{margin:5px 0 0;font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;color:var(--th-ink);overflow-wrap:anywhere;}
+.th-l1-fact dd.th-l1-amb{color:var(--th-dev);}
+.th-l1-hint{display:inline-flex;align-items:center;gap:9px;margin-top:14px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--th-muted);}
+.th-l1-chev{display:inline-block;font-size:11px;transition:transform .2s,color .2s;transform:translateY(-1px);}
+.th-l1.th-open .th-l1-chev{transform:rotate(90deg) translateX(-1px);color:var(--th-dev);}
+.th-l1-panel{display:none;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:28px;padding:20px 24px 24px;border-top:1px solid var(--th-hair);}
+.th-l1-panel.th-show{display:grid;animation:thflfade .25s ease;}
+.th-l1-list{margin:12px 0 0;padding:0 0 0 18px;}
+.th-l1-list li{font-size:14px;line-height:1.6;color:var(--th-ink);margin-bottom:8px;}
+.th-l1-list li::marker{color:var(--th-dev);}
+.th-l1-foot{margin-top:12px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.04em;color:var(--th-muted);}
+.th-l1-srcs{list-style:none;margin:12px 0 0;padding:0;}
+.th-l1-srcs li{padding:10px 0;border-bottom:1px solid var(--th-hair-soft);}
+.th-l1-srcs a{font-size:13.5px;line-height:1.5;color:var(--th-ink);text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px;text-decoration-color:var(--th-q);}
+.th-l1-srcs a:hover{color:var(--th-dev);}
+.th-l1-srcs a:focus-visible{outline:2px solid var(--th-dev);outline-offset:3px;}
+.th-l1-srcs a .ti{margin-left:6px;font-size:13px;text-decoration:none;display:inline-block;}
+/* a media query adds no specificity, so the reduced-motion override needs
+   the flag to beat the equal-specificity rule above regardless of order */
+@media (prefers-reduced-motion: reduce){
+  .th-l1-panel.th-show{animation:none !important;}
+  .th-l1-chev,.th-l1-sum{transition:none !important;}
+}
+@media(max-width:860px){.th-l1-panel{grid-template-columns:1fr;gap:20px;}}
+@media(max-width:680px){
+  .th-l1-sum{padding:16px 14px 14px;}
+  .th-l1-panel{padding:16px 14px 18px;}
+  .th-l1-title{font-size:19px;}
+  .th-l1-facts{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .th-l1-fact:nth-child(odd){border-left:0;padding-left:0;}
+  .th-l1-fact:nth-child(n+3){border-top:1px solid var(--th-hair);}
+}
 .th-maze-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:26px;}
 .th-maze-panel{border:1px solid rgba(250, 250, 250,.08);border-radius:16px;padding:18px 18px 20px;background:linear-gradient(180deg,rgba(255,255,255,.015),rgba(255,255,255,.004));}
 .th-maze-head{display:flex;align-items:center;gap:9px;margin-bottom:5px;}
@@ -2900,13 +2962,13 @@ body.page-quantum{overflow-x:clip;}
     <div class="th-fl-conn"><span class="th-fl-line"></span><span class="th-fl-tip">&#9662;</span></div>
 
     <div class="th-fl-node" style="--ac:var(--th-ext)">
-      <div class="th-fl-headrow"><div class="th-fl-txt"><div class="th-fl-phase">Phase 3</div><div class="th-fl-title">Ethereum dependencies</div></div><span class="th-fl-time">Gated on ETH</span><span class="th-fl-chev">&#9656;</span></div>
+      <div class="th-fl-headrow"><div class="th-fl-txt"><div class="th-fl-phase">Phase 3</div><div class="th-fl-title">Ethereum dependencies</div></div><span class="th-fl-times"><span class="th-fl-time">Gated on ETH</span><span class="th-fl-time" style="--ac:var(--th-dev)" data-perish="l1-tag-phase3">or replaced if L1</span></span><span class="th-fl-chev">&#9656;</span></div>
       <div class="th-fl-detail"><p>Two surfaces sit outside Starknet's direct control and resolve as Ethereum completes its own migration.</p><div class="th-fl-sfcs"><span class="th-fl-sfc">secp syscalls (bridge)</span><span class="th-fl-sfc">Blob data availability (KZG)</span></div><span class="th-fl-fallback">Fallback: state diffs can be posted as calldata instead of blobs</span></div>
     </div>
     <div class="th-fl-conn"><span class="th-fl-line"></span><span class="th-fl-tip">&#9662;</span></div>
 
     <div class="th-fl-node th-dest" style="--ac:var(--th-done)">
-      <div class="th-fl-headrow"><div class="th-fl-txt"><div class="th-fl-phase">Destination</div><div class="th-fl-title">Full post-quantum security</div></div><span class="th-fl-time">No date</span><span class="th-fl-chev">&#9656;</span></div>
+      <div class="th-fl-headrow"><div class="th-fl-txt"><div class="th-fl-phase">Destination</div><div class="th-fl-title">Full post-quantum security</div></div><span class="th-fl-times"><span class="th-fl-time">No date as L2</span><span class="th-fl-time" style="--ac:var(--th-dev)" data-perish="l1-tag-destination">2027 target as L1</span></span><span class="th-fl-chev">&#9656;</span></div>
       <!-- THE CALENDAR DESTINATION IS GONE, deliberately (2026-09-09). This read
      "Target ~2027" with "ahead of the industry's 2029 horizon". Neither is
      supportable: the published roadmap gives RELATIVE phase estimates from
@@ -2915,10 +2977,85 @@ body.page-quantum{overflow-x:clip;}
      legacy-storage item is research. A date computed from a start that has
      not been announced is a guess, and racing it against an industry
      horizon compounds the guess with a comparison nobody published. Do not
-     restore a year here without a primary source that states one. -->
+     restore a year here without a primary source that states one.
+     THE YEAR RETURNS ON ONE ROUTE ONLY (2026-10-09). Starknet's own post of
+     Oct 8, 2026 states 2027 as its target, and only for the L1 route it is
+     actively considering. That is the primary source the rule above asks
+     for, so "2027 target as L1" is amber (not decided) and sits beside "No
+     date as L2", which is the unchanged claim for the published L2 roadmap.
+     No industry race is drawn here. Registered in Q_PERISHABLE. -->
       <div class="th-fl-detail"><p>The end state is no elliptic-curve assumptions anywhere in the proving, consensus, or state-commitment layers. There is no published date for it: the roadmap gives relative estimates between phases, not a calendar, and protocol activation is subject to Starknet governance.</p></div>
     </div>
   </aside>
+  </div>
+
+  <!-- THE OCT 8, 2026 L1 UPDATE (2026-10-09, owner copy, verbatim). Full
+       width directly UNDER .th-pq-layout, not inside it, and that is
+       load-bearing: the rail is position:sticky, and Chrome bounds a sticky
+       grid item by the whole grid container, not by its own grid area. As a
+       grid-column:1/-1 child the rail slid down over this block (measured
+       2026-10-09 at 1440x900: rail bottom 540, block top 400). Outside the
+       grid it lines up identically (same width, the grid's 24px gap above)
+       and the rail's sticky range ends with the table.
+       A div, not a <section>: a bare section inherits the shared sheet's
+       section padding (the same trap as bare <nav>).
+       CHIP SCOPE: this is NOT a 9th surface. It carries no .th-mainrow and no
+       data-status, so the filter engine (a plain .th-mainrow attribute
+       match) never counts, hides or closes it, and the chip counts stay
+       8 / 2 / 3 / 1 / 2. Its amber chip is the Research token (--th-dev)
+       used in its "not decided" sense, not a ninth Research row.
+       PROPER-NOUN CONTAINMENT: every proper noun and date in the copy
+       (StarkWare, Eli Ben-Sasson, Starknet, Ethereum, Bitcoin, October 8,
+       2026, 2027, 2029) is carried by one of the four sources in the panel.
+       Checked 2026-10-09: Decrypt quotes Starknet as "actively considering
+       becoming an L1" with "2027 as our target"; ethereum.org says "target
+       the completion of core post-quantum infrastructure by approximately
+       2029". The X posts themselves were not machine-read (bot-gated).
+       TEMPORAL-WORD CONTAINMENT: "actively considering" and "No decision has
+       been announced" are present-state claims with nothing live on the page
+       to prove they still hold, so they are registered in Q_PERISHABLE
+       ('l1-update', break 2026-12-31) and flag data-stale past the break.
+       "Actively considering" must never be upgraded to a stronger verb. -->
+  <div class="th-l1" id="l1-update" role="region" aria-labelledby="th-l1-title" data-perish="l1-update" data-perishable="third-party" data-src="https://x.com/Starknet/status/2108113391525204034" data-checked="2026-10-09" data-breaks="2026-12-31" data-note="Starknet L1 decision pending">
+    <div class="th-l1-sum">
+      <button type="button" class="th-l1-btn" aria-expanded="false" aria-controls="th-l1-panel">
+        <span class="th-l1-top"><span class="th-l1-lbl">What changed on Oct 8, 2026</span><span class="th-pq-badge" style="--bc:var(--th-dev)"><span class="th-bdot"></span>Actively considering</span></span>
+        <span class="th-l1-title" id="th-l1-title">A second route to Phase 3: <span class="th-l1-amb">replace the base layer instead of waiting for it.</span></span>
+      </button>
+      <p class="th-l1-body">On October 8, 2026, StarkWare CEO Eli Ben-Sasson asked publicly whether Starknet should become an L1 for post-quantum agility. Starknet confirmed the same day that it is actively considering it, with 2027 as the target to become the first fully quantum-resistant network. As an L2, Starknet can only be as quantum-safe as Ethereum, whose roadmap places core post-quantum infrastructure around 2029. As an L1, it would replace that base layer with a hash-based one on its own schedule, and the two External surfaces above would become Starknet's to decide. No decision has been announced.</p>
+      <dl class="th-l1-facts">
+        <div class="th-l1-fact"><dt>Public status</dt><dd class="th-l1-amb">Actively considering</dd></div>
+        <div class="th-l1-fact"><dt>Target as an L1</dt><dd>2027</dd></div>
+        <div class="th-l1-fact"><dt>Ethereum roadmap</dt><dd>Post-quantum infra around 2029</dd></div>
+        <div class="th-l1-fact"><dt>Bitcoin</dt><dd>No commitment</dd></div>
+      </dl>
+      <span class="th-l1-hint" aria-hidden="true"><span class="th-l1-chev">&#9656;</span>Thread recap and sources</span>
+    </div>
+    <div class="th-l1-panel" id="th-l1-panel">
+      <div class="th-l1-col">
+        <div class="th-l1-lbl">What Eli said, in short</div>
+        <ul class="th-l1-list">
+          <li>He opened with a question, not a plan: should Starknet become an L1 for post-quantum agility.</li>
+          <li>Two forces he wants the industry to watch: the quantum threat may be much closer than commonly assumed, and AI's progress in mathematics adds a second, faster-moving risk.</li>
+          <li>The constraint: as an L2, Starknet inherits Ethereum's security, and parts of Ethereum are not quantum-safe. Starknet can only be as quantum-safe as its base layer.</li>
+          <li>The timelines he cited: Ethereum's roadmap targets core post-quantum infrastructure around 2029. Bitcoin has made no commitment.</li>
+          <li>The option: as an L1, Starknet would control its own security upgrades and replace the base layer with a hash-based, quantum-resistant one, without waiting for Ethereum or Bitcoin.</li>
+          <li>The target: 2027 for full quantum resistance, two years ahead of the Ethereum date he cited.</li>
+          <li>What was not said: no decision, and no plan yet for how existing apps and users would move.</li>
+          <li>Starknet's follow-up the same day: actively considering becoming an L1, with 2027 as the target to be the first fully quantum-resistant network.</li>
+        </ul>
+        <p class="th-l1-foot">Paraphrased from the thread. Read the original for exact wording.</p>
+      </div>
+      <div class="th-l1-col">
+        <div class="th-l1-lbl">Sources</div>
+        <ul class="th-l1-srcs">
+          <li><a href="https://x.com/EliBenSasson/status/2108110129572741426" target="_blank" rel="noopener noreferrer" data-umami-event="l1-update-source-eli">Eli Ben-Sasson, thread on X, Oct 8, 2026<i class="ti ti-external-link" aria-hidden="true"></i></a></li>
+          <li><a href="https://x.com/Starknet/status/2108113391525204034" target="_blank" rel="noopener noreferrer" data-umami-event="l1-update-source-starknet">Starknet, post on X, Oct 8, 2026<i class="ti ti-external-link" aria-hidden="true"></i></a></li>
+          <li><a href="https://ethereum.org/roadmap/security/quantum-resistance/" target="_blank" rel="noopener noreferrer" data-umami-event="l1-update-source-ethereum">Ethereum roadmap, quantum resistance (ethereum.org)<i class="ti ti-external-link" aria-hidden="true"></i></a></li>
+          <li><a href="https://decrypt.co/380585/ethereum-l2-starknet-jumps-20-after-saying-it-wants-to-become-an-l1" target="_blank" rel="noopener noreferrer" data-umami-event="l1-update-source-decrypt">Decrypt, Oct 9, 2026, coverage<i class="ti ti-external-link" aria-hidden="true"></i></a></li>
+        </ul>
+      </div>
+    </div>
   </div>
 
   <style>
@@ -3857,6 +3994,23 @@ body.page-quantum{overflow-x:clip;}
       empty.style.display = shown===0 ? 'block' : 'none';
     });
   });
+  /* the Oct 8 L1 update block: the rows' state classes (.th-open on the
+     block, .th-show on the panel), driven from a real button. The listener
+     sits on the whole summary so a click anywhere toggles, as on a row;
+     Enter and Space reach it as the button's native click. Outside the
+     chip filter on purpose (chip scope, see the markup note). */
+  var l1 = root.querySelector('#l1-update');
+  if(l1){
+    var l1btn = l1.querySelector('.th-l1-btn');
+    var l1panel = l1.querySelector('#th-l1-panel');
+    l1.querySelector('.th-l1-sum').addEventListener('click',function(){
+      var open = !l1.classList.contains('th-open');
+      l1.classList.toggle('th-open', open);
+      l1panel.classList.toggle('th-show', open);
+      l1btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      if(open && window.umami) umami.track('l1-update-expand');
+    });
+  }
 })();
 </script>
 
@@ -4316,7 +4470,18 @@ var Q_PERISHABLE = {
      cite. Worded as contributors among 36 authors, never as StarkWare
      research. Replace with a public source the moment one exists. */
   'ecdsafail-contributors': { src: 'owner', checked: '2026-09-12', breaks: '2026-12-11',
-    note: 'owner-sourced headcount, no public affiliation list to cite; replace with a public source if one appears. The page no longer states who leads the project: the Layr-Labs and Justin Drake attribution was removed from the note on 2026-09-13, so the only claim left here is the seven contributors' }
+    note: 'owner-sourced headcount, no public affiliation list to cite; replace with a public source if one appears. The page no longer states who leads the project: the Layr-Labs and Justin Drake attribution was removed from the note on 2026-09-13, so the only claim left here is the seven contributors' },
+  /* THE OCT 8, 2026 L1 UPDATE: "actively considering" and "No decision has
+     been announced" are present-state claims, and the two amber rail tags
+     depend on the same pending decision. Past the break all three are
+     flagged data-stale; re-read the sources and rewrite, never upgrade
+     "actively considering" without a primary source that says more. */
+  'l1-update': { src: 'https://x.com/Starknet/status/2108113391525204034', checked: '2026-10-09', breaks: '2026-12-31',
+    note: 'Starknet L1 decision pending' },
+  'l1-tag-phase3': { src: 'https://x.com/Starknet/status/2108113391525204034', checked: '2026-10-09', breaks: '2026-12-31',
+    note: 'Starknet L1 decision pending' },
+  'l1-tag-destination': { src: 'https://x.com/Starknet/status/2108113391525204034', checked: '2026-10-09', breaks: '2026-12-31',
+    note: 'Starknet L1 decision pending' }
   /* 'roadmap-destination' removed 2026-09-09 with the ~2027 destination it
      dated; a registry key whose element is gone matches nothing. */
 };
