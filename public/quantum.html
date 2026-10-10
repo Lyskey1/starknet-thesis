@@ -3041,7 +3041,7 @@ body.page-quantum{overflow-x:clip;}
         <div class="th-l1-fact"><dt>Ethereum roadmap</dt><dd>Post-quantum infra around 2029</dd></div>
         <div class="th-l1-fact"><dt>Bitcoin</dt><dd>No commitment</dd></div>
       </dl>
-      <span class="th-l1-hint" aria-hidden="true"><span class="th-l1-chev">&#9656;</span>Thread recap and videos</span>
+      <span class="th-l1-hint" aria-hidden="true"><span class="th-l1-chev">&#9656;</span><span class="th-l1-hint-txt">Thread recap</span></span>
     </div>
     <div class="th-l1-panel" id="th-l1-panel">
       <div class="th-l1-col">
@@ -5337,6 +5337,12 @@ var VIDEOS = [
     document.getElementById('th-l1-panel').classList.add('th-l1-solo');
     return;
   }
+  /* the hint names only what the panel holds: the markup ships the
+     reader's "Thread recap" (so the common case never flashes a promise
+     of videos), and it gains "and videos" once the column renders, for
+     everyone after one seed and always for the admin */
+  var hintTxt = document.querySelector('#l1-update .th-l1-hint-txt');
+  if (hintTxt) hintTxt.textContent = 'Thread recap and videos';
   var cards = root.querySelectorAll('.th-pm-vcard');
   window.l1FilmChrome = thVideoChrome({
     root: root,
