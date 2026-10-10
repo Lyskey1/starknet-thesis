@@ -2835,6 +2835,8 @@ body.page-quantum{overflow-x:clip;}
   .th-l1-panel.th-show{animation:none !important;}
   .th-l1-chev,.th-l1-sum{transition:none !important;}
 }
+/* the recap alone, when the video column is not rendered (see L1_SEEDS) */
+.th-l1-panel.th-l1-solo{grid-template-columns:minmax(0,1fr);}
 @media(max-width:860px){.th-l1-panel{grid-template-columns:1fr;gap:20px;}}
 @media(max-width:680px){
   .th-l1-sum{padding:16px 14px 14px;}
@@ -3061,10 +3063,11 @@ body.page-quantum{overflow-x:clip;}
            posters, EDIT VIDEOS) and js/video-chrome.js (the control bar).
            Its own storage key (quantumL1Videos_v1) and its own seeds
            (L1_SEEDS below the main device's script), so it never shares
-           state with #qvVideos. It ships EMPTY: with no seed, readers see
-           the bare 16:9 frame and no bar, the admin sees "No video set",
-           exactly what the shared engine does for an empty slot. A film
-           reaches readers only by being committed as a seed. -->
+           state with #qvVideos. It ships EMPTY: with no seed and the admin
+           gate off, the script removes this column and the recap runs
+           full width; the admin sees the label, the bare frame, "No video
+           set" and EDIT VIDEOS. A film reaches readers only by being
+           committed as a seed, which brings the column back. -->
       <div class="th-l1-col th-l1-vcol">
         <div class="th-l1-vhead"><div class="th-l1-lbl">Eli on video</div></div>
         <div class="th-l1-vid" id="l1Videos">
@@ -5322,6 +5325,18 @@ var VIDEOS = [
      the same shape and the same floor rule as the main device's seeds.
      Files go to the R2 bucket the main films use. */
   var L1_SEEDS = {};
+  /* NO FILM, NO COLUMN, for readers (owner, 2026-10-10). With no seed and
+     the admin gate off, the "Eli on video" column is not rendered and the
+     recap takes the panel's full width; nothing below runs, so no player,
+     bar or listener exists for a slot nobody can fill. The admin still
+     gets the label, the empty frame, "No video set" and EDIT VIDEOS. One
+     seed brings the column back for everyone. */
+  if (!Object.keys(L1_SEEDS).length && !window.ADMIN_GATE) {
+    var col = root.closest('.th-l1-vcol');
+    if (col) col.remove();
+    document.getElementById('th-l1-panel').classList.add('th-l1-solo');
+    return;
+  }
   var cards = root.querySelectorAll('.th-pm-vcard');
   window.l1FilmChrome = thVideoChrome({
     root: root,
