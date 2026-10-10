@@ -913,24 +913,24 @@
 }
 #qvVideos .qv-vtitle{font-family:var(--display);font-weight:300;font-size:clamp(20px,2.2vw,24px);line-height:1.3;}
 #qvVideos .qv-vtitle .em{color:var(--accent);}
-#qvVideos .qw-rail{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;max-width:none;}
-#qvVideos .qw-ped{display:inline-flex;align-items:center;justify-content:center;
+:is(#qvVideos,#l1Videos) .qw-rail{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;max-width:none;}
+:is(#qvVideos,#l1Videos) .qw-ped{display:inline-flex;align-items:center;justify-content:center;
   font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;
   color:var(--th-muted);background:transparent;border:1px solid var(--th-hair);border-radius:99px;
   padding:9px 15px;white-space:nowrap;opacity:1;border-radius:99px;
   transition:color .22s ease,border-color .22s ease,background .22s ease;}
-#qvVideos .qw-ped::before{content:none;}
-#qvVideos .qw-ped[aria-selected="false"]{opacity:1;}
-#qvVideos .qw-ped:hover{color:var(--th-ink);border-color:rgba(var(--accent-rgb),.40);}
-#qvVideos .qw-ped[aria-selected="true"]{color:var(--accent);border-color:rgba(var(--accent-rgb),.62);
+:is(#qvVideos,#l1Videos) .qw-ped::before{content:none;}
+:is(#qvVideos,#l1Videos) .qw-ped[aria-selected="false"]{opacity:1;}
+:is(#qvVideos,#l1Videos) .qw-ped:hover{color:var(--th-ink);border-color:rgba(var(--accent-rgb),.40);}
+:is(#qvVideos,#l1Videos) .qw-ped[aria-selected="true"]{color:var(--accent);border-color:rgba(var(--accent-rgb),.62);
   background:rgba(var(--accent-rgb),.10);}
-#qvVideos .qw-ped:focus-visible{outline:2px solid var(--accent);outline-offset:3px;}
-#qvVideos .qw-label{font-family:inherit;font-size:inherit;letter-spacing:inherit;color:inherit;white-space:nowrap;}
-#qvVideos .qw-ch .th-pm-vcard{max-width:660px;margin:0 auto;}
+:is(#qvVideos,#l1Videos) .qw-ped:focus-visible{outline:2px solid var(--accent);outline-offset:3px;}
+:is(#qvVideos,#l1Videos) .qw-label{font-family:inherit;font-size:inherit;letter-spacing:inherit;color:inherit;white-space:nowrap;}
+:is(#qvVideos,#l1Videos) .qw-ch .th-pm-vcard{max-width:660px;margin:0 auto;}
 @media(max-width:480px){
-  #qvVideos .qw-rail{gap:7px;}
-  #qvVideos .qw-ped{font-size:9.5px;letter-spacing:.06em;padding:8px 11px;}
-  #qvVideos .qw-label{font-size:inherit;letter-spacing:inherit;}
+  :is(#qvVideos,#l1Videos) .qw-rail{gap:7px;}
+  :is(#qvVideos,#l1Videos) .qw-ped{font-size:9.5px;letter-spacing:.06em;padding:8px 11px;}
+  :is(#qvVideos,#l1Videos) .qw-label{font-size:inherit;letter-spacing:inherit;}
 }
 /* the catalyst rail runs four pedestals since the private-capital chapter
    (2026-08-19); scoped so the readiness rail keeps the base three-across */
@@ -2596,10 +2596,10 @@ if (window.thStickyRail) {
 .th-pq-qualify b{color:var(--th-ink);font-weight:600;}
 /* the inline FIPS links: without this they paint browser-default blue, the
    same trap the btcfi body link hit */
-.th-pq-qualify a,.th-pq-qsrc a,.th-l1-body a,.th-l1-foot a{color:var(--th-q);text-decoration:underline;
+.th-pq-qualify a,.th-pq-qsrc a,.th-l1-body a{color:var(--th-q);text-decoration:underline;
   text-underline-offset:3px;text-decoration-thickness:1px;
   text-decoration-color:color-mix(in srgb,var(--th-q) 45%,transparent);}
-.th-pq-qualify a:hover,.th-pq-qsrc a:hover,.th-l1-body a:hover,.th-l1-foot a:hover{color:var(--th-ink);}
+.th-pq-qualify a:hover,.th-pq-qsrc a:hover,.th-l1-body a:hover{color:var(--th-ink);}
 /* the per-row Source links added with the row audit. They live inside the
    collapsed detail rows, which is why default-blue went unnoticed. */
 .th-detail-src a{color:var(--th-q);text-decoration:underline;
@@ -2810,34 +2810,48 @@ body.page-quantum{overflow-x:clip;}
 .th-l1-fact dd{margin:5px 0 0;font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;color:var(--th-ink);overflow-wrap:anywhere;}
 .th-l1-fact dd.th-l1-amb{color:var(--th-dev);}
 .th-l1-hint{display:inline-flex;align-items:center;gap:9px;margin-top:14px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--th-muted);}
+.th-l1-hint[hidden]{display:none;}
 .th-l1-chev{display:inline-block;font-size:11px;transition:transform .2s,color .2s;transform:translateY(-1px);}
 .th-l1.th-open .th-l1-chev{transform:rotate(90deg) translateX(-1px);color:var(--th-dev);}
-.th-l1-panel{display:none;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:28px;padding:20px 24px 24px;border-top:1px solid var(--th-hair);}
-.th-l1-panel.th-show{display:grid;animation:thflfade .25s ease;}
-.th-l1-list{margin:12px 0 0;padding:0 0 0 18px;}
-.th-l1-list li{font-size:14px;line-height:1.6;color:var(--th-ink);margin-bottom:8px;}
-.th-l1-list li::marker{color:var(--th-dev);}
-.th-l1-foot{margin-top:12px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.04em;color:var(--th-muted);}
-.th-l1-body a:focus-visible,.th-l1-foot a:focus-visible{outline:2px solid var(--th-dev);outline-offset:2px;}
-/* the video column: the shared card (.th-pm-vcard, 16:9 frame) and the
-   shared bar, sized by the panel's third. EDIT VIDEOS rides the label row. */
-.th-l1-vhead{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:20px;}
-.th-l1-vhead .th-pm-vid-admin{margin:0;}
-.th-l1-vid{margin-top:12px;}
-.th-l1-vid .th-pm-vcard{border-radius:0;}
-.th-l1-vid .meta{padding:10px 12px;}
-.th-l1-vid .qv-title{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500;letter-spacing:.04em;line-height:1.45;color:var(--th-ink);}
-/* no title, no strip: an empty slot is the frame alone */
-.th-l1-vid .meta:has(.qv-title:empty){display:none;}
+.th-l1-panel{display:none;padding:20px 24px 24px;border-top:1px solid var(--th-hair);}
+.th-l1-panel.th-show{display:block;animation:thflfade .25s ease;}
+.th-l1-body a:focus-visible{outline:2px solid var(--th-dev);outline-offset:2px;}
+/* NOT EXPANDABLE (no seeds, gate off): the script unwraps the button and
+   removes the hint and the panel; nothing here may still look clickable */
+.th-l1:not(.th-l1-live) .th-l1-sum{cursor:auto;}
+.th-l1:not(.th-l1-live) .th-l1-sum:hover{background:none;}
+/* the device: the main quantum device's pill rail and card cap (660px,
+   shared by selector with #qvVideos), left on the block's text column
+   instead of centered. EDIT VIDEOS rides the head row, admin only. */
+.th-l1-vhead{display:flex;justify-content:flex-start;}
+.th-l1-vhead:empty{display:none;}
+.th-l1-vhead .th-pm-vid-admin{margin:0 0 14px;}
+#l1Videos.qw{margin-top:0;}
+#l1Videos .qw-rail{justify-content:flex-start;margin-bottom:14px;}
+#l1Videos .qw-rail[hidden]{display:none;}
+/* height:auto releases th-selector.css's .qsec3 .qw-shell{height:502px},
+   the Head Start panel's fixed height, which this block sits inside;
+   pinned, it left 52px of dead panel under a 660px card */
+#l1Videos .qw-shell{margin:0;height:auto;border:0;border-radius:0;background:none;overflow:visible;}
+#l1Videos .qw-panel{padding:0;}
+/* 660px is the main device's card cap (#qvVideos .qw-ch .th-pm-vcard).
+   Set on the card itself: there the chapter IS the card, so that
+   descendant selector never matches, and it cannot carry this one. */
+#l1Videos .th-pm-vcard{max-width:660px;margin:0;border-radius:0;}
+/* the title strip: number and length in mono over the title */
+#l1Videos .meta{padding:12px 14px 14px;}
+#l1Videos .qv-num{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;color:var(--th-muted);}
+#l1Videos .qv-title{margin-top:6px;font-size:15px;font-weight:600;line-height:1.35;color:var(--th-ink);}
+#l1Videos .qv-title:empty{display:none;}
+/* the list editor: one bordered row per entry */
+.qv-pl-editor{margin-top:14px;max-width:660px;border:1px solid var(--th-hair);}
+.qv-pl-row{display:flex;flex-direction:column;gap:11px;padding-bottom:14px;border-bottom:1px solid var(--th-hair);}
 /* a media query adds no specificity, so the reduced-motion override needs
    the flag to beat the equal-specificity rule above regardless of order */
 @media (prefers-reduced-motion: reduce){
   .th-l1-panel.th-show{animation:none !important;}
   .th-l1-chev,.th-l1-sum{transition:none !important;}
 }
-/* the recap alone, when the video column is not rendered (see L1_SEEDS) */
-.th-l1-panel.th-l1-solo{grid-template-columns:minmax(0,1fr);}
-@media(max-width:860px){.th-l1-panel{grid-template-columns:1fr;gap:20px;}}
 @media(max-width:680px){
   .th-l1-sum{padding:16px 14px 14px;}
   .th-l1-panel{padding:16px 14px 18px;}
@@ -3023,9 +3037,13 @@ body.page-quantum{overflow-x:clip;}
        becoming an L1" with "2027 as our target"; ethereum.org says "target
        the completion of core post-quantum infrastructure by approximately
        2029". The X posts themselves were not machine-read (bot-gated).
+       WHAT THE BLOCK CLAIMS (2026-10-10): the collapsed content is the
+       whole of its copy. The expanded panel holds only the video device,
+       no paraphrase of the thread, so every claim above is in the
+       paragraph and the four facts, against the three linked sources.
        TEMPORAL-WORD CONTAINMENT: "actively considering" and "No decision has
-       been announced" are present-state claims with nothing live on the page
-       to prove they still hold, so they are registered in Q_PERISHABLE
+       been announced yet" are present-state claims ("yet" says so outright)
+       with nothing live on the page to prove they still hold, so they are registered in Q_PERISHABLE
        ('l1-update', break 2026-12-31) and flag data-stale past the break.
        "Actively considering" must never be upgraded to a stronger verb. -->
   <div class="th-l1" id="l1-update" role="region" aria-labelledby="th-l1-title" data-perish="l1-update" data-perishable="third-party" data-src="https://x.com/Starknet/status/2108113391525204034" data-checked="2026-10-09" data-breaks="2026-12-31" data-note="Starknet L1 decision pending">
@@ -3034,53 +3052,31 @@ body.page-quantum{overflow-x:clip;}
         <span class="th-l1-top"><span class="th-l1-lbl">What changed on Oct 8, 2026</span><span class="th-pq-badge" style="--bc:var(--th-dev)"><span class="th-bdot"></span>Actively considering</span></span>
         <span class="th-l1-title" id="th-l1-title">A second route to Phase 3: <span class="th-l1-amb">replace the base layer instead of waiting for it.</span></span>
       </button>
-      <p class="th-l1-body">On October 8, 2026, StarkWare CEO <a href="https://x.com/EliBenSasson/status/2108110129572741426" target="_blank" rel="noopener" data-umami-event="l1-update-source-eli">Eli Ben-Sasson</a> asked publicly whether Starknet should become an L1 for post-quantum agility. <a href="https://x.com/Starknet/status/2108113391525204034" target="_blank" rel="noopener" data-umami-event="l1-update-source-starknet">Starknet</a> confirmed the same day that it is actively considering it, with 2027 as the target to become the first fully quantum-resistant network. As an L2, Starknet can only be as quantum-safe as Ethereum, whose <a href="https://ethereum.org/roadmap/security/quantum-resistance/" target="_blank" rel="noopener" data-umami-event="l1-update-source-ethereum">roadmap</a> places core post-quantum infrastructure around 2029. As an L1, it would replace that base layer with a hash-based one on its own schedule, and the two External surfaces above would become Starknet's to decide. No decision has been announced.</p>
+      <p class="th-l1-body">On October 8, 2026, StarkWare CEO <a href="https://x.com/EliBenSasson/status/2108110129572741426" target="_blank" rel="noopener" data-umami-event="l1-update-source-eli">Eli Ben-Sasson</a> asked publicly whether Starknet should become an L1 for post-quantum agility. <a href="https://x.com/Starknet/status/2108113391525204034" target="_blank" rel="noopener" data-umami-event="l1-update-source-starknet">Starknet</a> confirmed the same day that it is actively considering it, with 2027 as the target to become the first fully quantum-resistant network. As an L2, Starknet can only be as quantum-safe as Ethereum, whose <a href="https://ethereum.org/roadmap/security/quantum-resistance/" target="_blank" rel="noopener" data-umami-event="l1-update-source-ethereum">roadmap</a> places core post-quantum infrastructure around 2029. As an L1, it would replace that base layer with a hash-based one on its own schedule, and the two External surfaces above would become Starknet's to decide. No decision has been announced yet.</p>
       <dl class="th-l1-facts">
         <div class="th-l1-fact"><dt>Public status</dt><dd class="th-l1-amb">Actively considering</dd></div>
         <div class="th-l1-fact"><dt>Target as an L1</dt><dd>2027</dd></div>
         <div class="th-l1-fact"><dt>Ethereum roadmap</dt><dd>Post-quantum infra around 2029</dd></div>
         <div class="th-l1-fact"><dt>Bitcoin</dt><dd>No commitment</dd></div>
       </dl>
-      <span class="th-l1-hint" aria-hidden="true"><span class="th-l1-chev">&#9656;</span><span class="th-l1-hint-txt">Thread recap</span></span>
+      <span class="th-l1-hint" aria-hidden="true" hidden><span class="th-l1-chev">&#9656;</span>Eli on video</span>
     </div>
+    <!-- THE PANEL IS THE VIDEO DEVICE ONLY (2026-10-10).
+         quantum's film device as a playlist: chapter pills, one card at a
+         time, the title strip, prev and next stepping through the list.
+         Nothing here is copied: js/video-slots.js (thVideoPlaylist and
+         thSlotApply) builds the chapters from L1_SEEDS, js/selector-panel.js
+         (initQw) drives the pills, js/video-chrome.js draws the bar. Its own
+         storage key (quantumL1Videos_v2) and its own seeds, so it never
+         shares state with #qvVideos. Card capped at the main device's 660px
+         card width, left on the block's text column.
+         NO SEEDS AND THE GATE OFF: the script removes this panel, the hint
+         and the button, so the block is not expandable at all. -->
     <div class="th-l1-panel" id="th-l1-panel">
-      <div class="th-l1-col">
-        <div class="th-l1-lbl">What Eli said, in short</div>
-        <ul class="th-l1-list">
-          <li>He opened with a question, not a plan: should Starknet become an L1 for post-quantum agility.</li>
-          <li>Two forces he wants the industry to watch: the quantum threat may be much closer than commonly assumed, and AI's progress in mathematics adds a second, faster-moving risk.</li>
-          <li>The constraint: as an L2, Starknet inherits Ethereum's security, and parts of Ethereum are not quantum-safe. Starknet can only be as quantum-safe as its base layer.</li>
-          <li>The timelines he cited: Ethereum's roadmap targets core post-quantum infrastructure around 2029. Bitcoin has made no commitment.</li>
-          <li>The option: as an L1, Starknet would control its own security upgrades and replace the base layer with a hash-based, quantum-resistant one, without waiting for Ethereum or Bitcoin.</li>
-          <li>The target: 2027 for full quantum resistance, two years ahead of the Ethereum date he cited.</li>
-          <li>What was not said: no decision, and no plan yet for how existing apps and users would move.</li>
-          <li>Starknet's follow-up the same day: actively considering becoming an L1, with 2027 as the target to be the first fully quantum-resistant network.</li>
-        </ul>
-        <p class="th-l1-foot">Paraphrased from the thread. Read <a href="https://x.com/EliBenSasson/status/2108110129572741426" target="_blank" rel="noopener" data-umami-event="l1-update-source-eli-recap">the original</a> for exact wording.</p>
-      </div>
-      <!-- THE VIDEO SLOT: quantum's film device, second instance. Behavior
-           is shared, not copied: js/video-slots.js (sources, titles,
-           posters, EDIT VIDEOS) and js/video-chrome.js (the control bar).
-           Its own storage key (quantumL1Videos_v1) and its own seeds
-           (L1_SEEDS below the main device's script), so it never shares
-           state with #qvVideos. It ships EMPTY: with no seed and the admin
-           gate off, the script removes this column and the recap runs
-           full width; the admin sees the label, the bare frame, "No video
-           set" and EDIT VIDEOS. A film reaches readers only by being
-           committed as a seed, which brings the column back. -->
-      <div class="th-l1-col th-l1-vcol">
-        <div class="th-l1-vhead"><div class="th-l1-lbl">Eli on video</div></div>
-        <div class="th-l1-vid" id="l1Videos">
-          <div class="th-l1-vpanel" id="l1-panel-v">
-            <article class="th-pm-vcard" data-qv="0">
-              <div class="frame">
-                <div class="qv-ph" hidden><i class="ti ti-movie" aria-hidden="true"></i><span>No video set</span></div>
-                <video class="qv-player" tabindex="0" preload="none" playsinline hidden></video>
-              </div>
-              <div class="meta"><h4 class="qv-title"></h4></div>
-            </article>
-          </div>
-        </div>
+      <div class="th-l1-vhead"></div>
+      <div class="qw th-l1-vid" id="l1Videos">
+        <div class="qw-rail" role="tablist" aria-label="Eli on video"></div>
+        <div class="qw-shell"><div class="qw-panel" id="l1-panel-v" role="tabpanel" aria-live="polite"></div></div>
       </div>
     </div>
   </div>
@@ -4033,6 +4029,9 @@ body.page-quantum{overflow-x:clip;}
     l1.querySelector('.th-l1-sum').addEventListener('click',function(e){
       /* the inline name links open their source; they never toggle */
       if(e.target.closest('a')) return;
+      /* nothing to open until the L1 video script says so (th-l1-live);
+         with no seeds and the gate off it never does */
+      if(!l1.classList.contains('th-l1-live')) return;
       var open = !l1.classList.contains('th-open');
       l1.classList.toggle('th-open', open);
       l1panel.classList.toggle('th-show', open);
@@ -4505,9 +4504,10 @@ var Q_PERISHABLE = {
      research. Replace with a public source the moment one exists. */
   'ecdsafail-contributors': { src: 'owner', checked: '2026-09-12', breaks: '2026-12-11',
     note: 'owner-sourced headcount, no public affiliation list to cite; replace with a public source if one appears. The page no longer states who leads the project: the Layr-Labs and Justin Drake attribution was removed from the note on 2026-09-13, so the only claim left here is the seven contributors' },
-  /* THE OCT 8, 2026 L1 UPDATE: "actively considering" and "No decision has
-     been announced" are present-state claims, and the two amber rail tags
-     depend on the same pending decision. Past the break all three are
+  /* THE OCT 8, 2026 L1 UPDATE: the block's paragraph and four facts (its
+     only copy; the panel holds videos, not claims). "Actively considering"
+     and "No decision has been announced yet" are present-state claims, and
+     the two amber rail tags depend on the same pending decision. Past the break all three are
      flagged data-stale; re-read the sources and rewrite, never upgrade
      "actively considering" without a primary source that says more. */
   'l1-update': { src: 'https://x.com/Starknet/status/2108113391525204034', checked: '2026-10-09', breaks: '2026-12-31',
@@ -5310,56 +5310,51 @@ var VIDEOS = [
   });
 })();
 </script>
-<!-- L1 BLOCK, "Eli on video": the same device, second instance (see the
-     markup note in #l1-update). One slot, so the transport's previous and
-     next are disabled at both ends, which is the shared bar's clamp rule.
-     Fullscreen takes #l1-panel-v, the slot's parent, per the bar's rule. -->
+<!-- L1 BLOCK, "Eli on video": the same device as a playlist (see the
+     panel note in #l1-update). js/video-slots.js thVideoPlaylist builds a
+     chapter per entry; initQw drives the pills; thVideoChrome the bar,
+     fullscreen on #l1-panel-v, the parent every chapter shares. -->
 <script>
 (function(){
+  var l1 = document.getElementById('l1-update');
   var root = document.getElementById('l1Videos');
-  if(!root) return;
-  /* L1_SEEDS is this device's data entry: what readers see. EMPTY ON
-     PURPOSE (2026-10-10): the owner adds the films through EDIT VIDEOS,
-     which previews locally, then they are committed here as
-     { 0: { src: '<R2 URL>', dur: <floored seconds>, title: '...' } },
-     the same shape and the same floor rule as the main device's seeds.
-     Files go to the R2 bucket the main films use. */
-  var L1_SEEDS = {};
-  /* NO FILM, NO COLUMN, for readers (owner, 2026-10-10). With no seed and
-     the admin gate off, the "Eli on video" column is not rendered and the
-     recap takes the panel's full width; nothing below runs, so no player,
-     bar or listener exists for a slot nobody can fill. The admin still
-     gets the label, the empty frame, "No video set" and EDIT VIDEOS. One
-     seed brings the column back for everyone. */
-  if (!Object.keys(L1_SEEDS).length && !window.ADMIN_GATE) {
-    var col = root.closest('.th-l1-vcol');
-    if (col) col.remove();
-    document.getElementById('th-l1-panel').classList.add('th-l1-solo');
-    return;
-  }
-  /* the hint names only what the panel holds: the markup ships the
-     reader's "Thread recap" (so the common case never flashes a promise
-     of videos), and it gains "and videos" once the column renders, for
-     everyone after one seed and always for the admin */
-  var hintTxt = document.querySelector('#l1-update .th-l1-hint-txt');
-  if (hintTxt) hintTxt.textContent = 'Thread recap and videos';
-  var cards = root.querySelectorAll('.th-pm-vcard');
-  window.l1FilmChrome = thVideoChrome({
+  if(!l1 || !root) return;
+  /* L1_SEEDS is this device's data entry: what readers see, in order.
+     EMPTY ON PURPOSE (2026-10-10). Each film is committed as
+       { src: '<R2 URL>', title: '...', poster: 'assets/posters/...', dur: <seconds, floored> }
+     dur is read off the file and FLOORED (the bar formats with
+     Math.floor; a rounded value prints one length and then corrects
+     itself), and it is what lets the bar print a total while preload
+     is none. The poster is optional; without one, an unplayed film is a
+     black frame. Files go to the R2 bucket the main films use. */
+  var L1_SEEDS = [];
+  var pl = thVideoPlaylist({
     root: root,
-    slots: '.th-pm-vcard',
-    indexKey: 'qv',
-    steps: cards,
-    fullscreen: document.getElementById('l1-panel-v'),
+    key: 'quantumL1Videos_v2',
+    seeds: L1_SEEDS,
+    editHost: l1.querySelector('.th-l1-vhead'),
     noun: 'video'
   });
-  thVideoSlots({
-    root: root,
-    key: 'quantumL1Videos_v1',
-    seeds: L1_SEEDS,
-    placeholders: ['eli-l1-1.mp4'],
-    editHost: document.querySelector('#l1-update .th-l1-vhead'),
-    chrome: function(){ return window.l1FilmChrome; }
-  });
+  /* NOTHING TO OPEN, NOTHING THAT OPENS (owner, 2026-10-10). With no
+     entry and the gate off the block is its collapsed content and
+     nothing else: the button is unwrapped to a plain element, the hint
+     and the panel are removed, and no player, bar or listener is built.
+     The admin always gets the expandable block with the device. */
+  if (!pl.count() && !window.ADMIN_GATE) {
+    var btn = l1.querySelector('.th-l1-btn');
+    if (btn) {
+      var head = document.createElement('div');
+      head.className = 'th-l1-btn';
+      while (btn.firstChild) head.appendChild(btn.firstChild);
+      btn.replaceWith(head);
+    }
+    var hint = l1.querySelector('.th-l1-hint'); if (hint) hint.remove();
+    var panel = document.getElementById('th-l1-panel'); if (panel) panel.remove();
+    return;
+  }
+  l1.classList.add('th-l1-live');
+  l1.querySelector('.th-l1-hint').hidden = false;
+  pl.render();
 })();
 </script>
 
