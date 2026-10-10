@@ -2820,32 +2820,26 @@ body.page-quantum{overflow-x:clip;}
    removes the hint and the panel; nothing here may still look clickable */
 .th-l1:not(.th-l1-live) .th-l1-sum{cursor:auto;}
 .th-l1:not(.th-l1-live) .th-l1-sum:hover{background:none;}
-/* the device: the main quantum device's pill rail and card cap (660px,
-   shared by selector with #qvVideos), left on the block's text column
-   instead of centered. EDIT VIDEOS rides the head row, admin only. */
+/* the device: the site's video grid (css/stride.css .video-grid-wrap,
+   the same rules #qvVideos and privacy run on), BOUNDED by the block
+   instead of full-bleed: stride makes the wrap 100vw with negative
+   margins, which inside this panel would run past the block's border.
+   EDIT VIDEOS rides the head row, admin only. */
 .th-l1-vhead{display:flex;justify-content:flex-start;}
 .th-l1-vhead:empty{display:none;}
 .th-l1-vhead .th-pm-vid-admin{margin:0 0 14px;}
-#l1Videos.qw{margin-top:0;}
-#l1Videos .qw-rail{justify-content:flex-start;margin-bottom:14px;}
-#l1Videos .qw-rail[hidden]{display:none;}
-/* height:auto releases th-selector.css's .qsec3 .qw-shell{height:502px},
-   the Head Start panel's fixed height, which this block sits inside;
-   pinned, it left 52px of dead panel under a 660px card */
-#l1Videos .qw-shell{margin:0;height:auto;border:0;border-radius:0;background:none;overflow:visible;}
+#l1Videos.video-grid-wrap{width:auto;max-width:none;margin:0;padding:0;}
+/* th-selector.css's .qw-panel padding (26px 30px) insets the grid inside
+   a block that already has its own: released so the cards sit on the
+   paragraph's text column, and the 375 row card keeps room for its chips */
 #l1Videos .qw-panel{padding:0;}
-/* 660px is the main device's card cap (#qvVideos .qw-ch .th-pm-vcard).
-   Set on the card itself: there the chapter IS the card, so that
-   descendant selector never matches, and it cannot carry this one. */
-#l1Videos .th-pm-vcard{max-width:660px;margin:0;border-radius:0;}
-/* the title strip: number and length in mono over the title */
-#l1Videos .meta{padding:12px 14px 14px;}
-#l1Videos .qv-num{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;color:var(--th-muted);}
-#l1Videos .qv-title{margin-top:6px;font-size:15px;font-weight:600;line-height:1.35;color:var(--th-ink);}
-#l1Videos .qv-title:empty{display:none;}
-/* the list editor: one bordered row per entry */
-.qv-pl-editor{margin-top:14px;max-width:660px;border:1px solid var(--th-hair);}
-.qv-pl-row{display:flex;flex-direction:column;gap:11px;padding-bottom:14px;border-bottom:1px solid var(--th-hair);}
+/* and its .qsec3 .qw-ch{height:450px}, the Head Start panel's fixed
+   chapter height: pinned, the featured card was cut under its rule and
+   every row card stood 450px tall */
+#l1Videos .qw-ch{height:auto;}
+/* a slot with no film is not shown to readers (the script sets hidden);
+   the grid's display rules would otherwise override the attribute */
+#l1Videos .video-slot[hidden]{display:none;}
 /* a media query adds no specificity, so the reduced-motion override needs
    the flag to beat the equal-specificity rule above regardless of order */
 @media (prefers-reduced-motion: reduce){
@@ -3061,22 +3055,77 @@ body.page-quantum{overflow-x:clip;}
       </dl>
       <span class="th-l1-hint" aria-hidden="true" hidden><span class="th-l1-chev">&#9656;</span>Eli on video</span>
     </div>
-    <!-- THE PANEL IS THE VIDEO DEVICE ONLY (2026-10-10).
-         quantum's film device as a playlist: chapter pills, one card at a
-         time, the title strip, prev and next stepping through the list.
-         Nothing here is copied: js/video-slots.js (thVideoPlaylist and
-         thSlotApply) builds the chapters from L1_SEEDS, js/selector-panel.js
-         (initQw) drives the pills, js/video-chrome.js draws the bar. Its own
-         storage key (quantumL1Videos_v2) and its own seeds, so it never
-         shares state with #qvVideos. Card capped at the main device's 660px
-         card width, left on the block's text column.
-         NO SEEDS AND THE GATE OFF: the script removes this panel, the hint
-         and the button, so the block is not expandable at all. -->
+    <!-- THE PANEL IS THE VIDEO DEVICE ONLY, in the site's video format
+         (2026-10-11): the main quantum device's news grid, card for card
+         (featured slot left, row cards right, tag and number chips, dotted
+         rule, title, Watch), four slots. Nothing is copied: the markup is
+         #qvVideos's, js/video-slots.js (thVideoSlots) fills the slots,
+         js/quantum-vgrid.js (now driving both roots) picks the featured
+         card, js/video-chrome.js draws the bar. Its own storage key
+         (quantumL1Videos_v3) and its own seeds (L1_SEEDS), so it never
+         shares state with #qvVideos. Bounded by the block, not full-bleed.
+         Readers see only the slots that have a film; with none and the
+         gate off the script removes this panel, the hint and the button,
+         so the block is not expandable at all. -->
     <div class="th-l1-panel" id="th-l1-panel">
       <div class="th-l1-vhead"></div>
-      <div class="qw th-l1-vid" id="l1Videos">
-        <div class="qw-rail" role="tablist" aria-label="Eli on video"></div>
-        <div class="qw-shell"><div class="qw-panel" id="l1-panel-v" role="tabpanel" aria-live="polite"></div></div>
+      <div class="qw video-grid-wrap th-l1-vid" id="l1Videos">
+      <div class="qw-rail" role="tablist" aria-label="Eli on video">
+        <button class="qw-ped" type="button" role="tab" data-ch="0" aria-selected="true" aria-controls="l1-panel-v" tabindex="0"><span class="qw-label">ELI ON VIDEO 01</span></button>
+        <button class="qw-ped" type="button" role="tab" data-ch="1" aria-selected="false" aria-controls="l1-panel-v" tabindex="-1"><span class="qw-label">ELI ON VIDEO 02</span></button>
+        <button class="qw-ped" type="button" role="tab" data-ch="2" aria-selected="false" aria-controls="l1-panel-v" tabindex="-1"><span class="qw-label">ELI ON VIDEO 03</span></button>
+        <button class="qw-ped" type="button" role="tab" data-ch="3" aria-selected="false" aria-controls="l1-panel-v" tabindex="-1"><span class="qw-label">ELI ON VIDEO 04</span></button>
+      </div>
+      <div class="qw-panel video-grid vgrid" id="l1-panel-v" role="tabpanel" aria-live="polite">
+        <article class="qw-ch video-slot th-pm-vcard is-on" data-ch="0" data-qv="0">
+          <div class="frame">
+            <div class="qv-ph" hidden><i class="ti ti-movie" aria-hidden="true"></i><span>No video set</span></div>
+            <video class="qv-player" tabindex="0" preload="none" playsinline hidden></video>
+          </div>
+          <div class="meta">
+            <div class="vg-chips"><span class="vg-tag">ELI ON VIDEO</span><span class="vg-date">01</span></div>
+            <span class="vg-rule" aria-hidden="true"></span>
+            <h4 class="qv-title"></h4>
+            <span class="vg-go"><i aria-hidden="true">&rarr;</i>Watch</span>
+          </div>
+        </article>
+        <article class="qw-ch video-slot th-pm-vcard" data-ch="1" data-qv="1">
+          <div class="frame">
+            <div class="qv-ph" hidden><i class="ti ti-movie" aria-hidden="true"></i><span>No video set</span></div>
+            <video class="qv-player" tabindex="0" preload="none" playsinline hidden></video>
+          </div>
+          <div class="meta">
+            <div class="vg-chips"><span class="vg-tag">ELI ON VIDEO</span><span class="vg-date">02</span></div>
+            <span class="vg-rule" aria-hidden="true"></span>
+            <h4 class="qv-title"></h4>
+            <span class="vg-go"><i aria-hidden="true">&rarr;</i>Watch</span>
+          </div>
+        </article>
+        <article class="qw-ch video-slot th-pm-vcard" data-ch="2" data-qv="2">
+          <div class="frame">
+            <div class="qv-ph" hidden><i class="ti ti-movie" aria-hidden="true"></i><span>No video set</span></div>
+            <video class="qv-player" tabindex="0" preload="none" playsinline hidden></video>
+          </div>
+          <div class="meta">
+            <div class="vg-chips"><span class="vg-tag">ELI ON VIDEO</span><span class="vg-date">03</span></div>
+            <span class="vg-rule" aria-hidden="true"></span>
+            <h4 class="qv-title"></h4>
+            <span class="vg-go"><i aria-hidden="true">&rarr;</i>Watch</span>
+          </div>
+        </article>
+        <article class="qw-ch video-slot th-pm-vcard" data-ch="3" data-qv="3">
+          <div class="frame">
+            <div class="qv-ph" hidden><i class="ti ti-movie" aria-hidden="true"></i><span>No video set</span></div>
+            <video class="qv-player" tabindex="0" preload="none" playsinline hidden></video>
+          </div>
+          <div class="meta">
+            <div class="vg-chips"><span class="vg-tag">ELI ON VIDEO</span><span class="vg-date">04</span></div>
+            <span class="vg-rule" aria-hidden="true"></span>
+            <h4 class="qv-title"></h4>
+            <span class="vg-go"><i aria-hidden="true">&rarr;</i>Watch</span>
+          </div>
+        </article>
+      </div>
       </div>
     </div>
   </div>
@@ -5310,51 +5359,78 @@ var VIDEOS = [
   });
 })();
 </script>
-<!-- L1 BLOCK, "Eli on video": the same device as a playlist (see the
-     panel note in #l1-update). js/video-slots.js thVideoPlaylist builds a
-     chapter per entry; initQw drives the pills; thVideoChrome the bar,
-     fullscreen on #l1-panel-v, the parent every chapter shares. -->
+<!-- L1 BLOCK, "Eli on video": the main film device's second instance
+     (see the panel note in #l1-update), same calls as #qvVideos above:
+     thVideoChrome for the bar, fullscreen on #l1-panel-v, the parent all
+     four slots share; thVideoSlots for sources, titles and EDIT VIDEOS;
+     js/quantum-vgrid.js picks the featured card. -->
 <script>
 (function(){
   var l1 = document.getElementById('l1-update');
   var root = document.getElementById('l1Videos');
   if(!l1 || !root) return;
-  /* L1_SEEDS is this device's data entry: what readers see, in order.
-     EMPTY ON PURPOSE (2026-10-10). Each film is committed as
-       { src: '<R2 URL>', title: '...', poster: 'assets/posters/...', dur: <seconds, floored> }
-     dur is read off the file and FLOORED (the bar formats with
-     Math.floor; a rounded value prints one length and then corrects
-     itself), and it is what lets the bar print a total while preload
-     is none. The poster is optional; without one, an unplayed film is a
-     black frame. Files go to the R2 bucket the main films use. */
-  var L1_SEEDS = [];
-  var pl = thVideoPlaylist({
+  /* L1_SEEDS is this device's data entry, in the main device's shape:
+       { 0: { src: '<R2 URL>', dur: <seconds, floored>, title: '...' }, 1: {...}, ... }
+     keyed by slot, 0 to 3. dur is FLOORED (the bar formats with
+     Math.floor) and lets the bar print a total while preload is none. A
+     poster goes on the slot's <video poster="..."> in the markup, as on
+     #qvVideos, and shows only while the slot plays its seeded file.
+     The tag and number chips are markup too. EMPTY ON PURPOSE
+     (2026-10-11): the owner fills it. */
+  var L1_SEEDS = {};
+  window.l1FilmChrome = thVideoChrome({
     root: root,
-    key: 'quantumL1Videos_v2',
-    seeds: L1_SEEDS,
-    editHost: l1.querySelector('.th-l1-vhead'),
+    slots: '.th-pm-vcard',
+    indexKey: 'qv',
+    steps: root.querySelectorAll('.qw-ped'),
+    fullscreen: document.getElementById('l1-panel-v'),
     noun: 'video'
   });
-  /* NOTHING TO OPEN, NOTHING THAT OPENS (owner, 2026-10-10). With no
-     entry and the gate off the block is its collapsed content and
-     nothing else: the button is unwrapped to a plain element, the hint
-     and the panel are removed, and no player, bar or listener is built.
-     The admin always gets the expandable block with the device. */
-  if (!pl.count() && !window.ADMIN_GATE) {
-    var btn = l1.querySelector('.th-l1-btn');
-    if (btn) {
-      var head = document.createElement('div');
-      head.className = 'th-l1-btn';
-      while (btn.firstChild) head.appendChild(btn.firstChild);
-      btn.replaceWith(head);
+  thVideoSlots({
+    root: root,
+    key: 'quantumL1Videos_v3',
+    seeds: L1_SEEDS,
+    placeholders: ['eli-l1-1.mp4', 'eli-l1-2.mp4', 'eli-l1-3.mp4', 'eli-l1-4.mp4'],
+    editHost: l1.querySelector('.th-l1-vhead'),
+    chrome: function(){ return window.l1FilmChrome; }
+  });
+  if (!window.ADMIN_GATE) {
+    /* READERS SEE ONLY FILLED SLOTS: an empty slot is an editor
+       affordance, not a card. If the featured slot is one of them, the
+       first filled slot is featured instead. */
+    var slots = [].slice.call(root.querySelectorAll('.qw-ch'));
+    var peds = [].slice.call(root.querySelectorAll('.qw-ped'));
+    var filled = slots.filter(function(c){ return c.classList.contains('has-video'); });
+    slots.forEach(function(c, i){
+      var on = c.classList.contains('has-video');
+      c.hidden = !on; if (peds[i]) peds[i].hidden = !on;
+    });
+    if (filled.length && !filled[0].classList.contains('is-on')) {
+      slots.forEach(function(c, i){
+        var f = c === filled[0];
+        c.classList.toggle('is-on', f);
+        if (peds[i]) { peds[i].setAttribute('aria-selected', f ? 'true' : 'false'); peds[i].tabIndex = f ? 0 : -1; }
+      });
     }
-    var hint = l1.querySelector('.th-l1-hint'); if (hint) hint.remove();
-    var panel = document.getElementById('th-l1-panel'); if (panel) panel.remove();
-    return;
+    /* NOTHING TO OPEN, NOTHING THAT OPENS (owner, 2026-10-10). With no
+       film and the gate off the block is its collapsed content and
+       nothing else: the button is unwrapped to a plain element, the hint
+       and the panel are removed. */
+    if (!filled.length) {
+      var btn = l1.querySelector('.th-l1-btn');
+      if (btn) {
+        var head = document.createElement('div');
+        head.className = 'th-l1-btn';
+        while (btn.firstChild) head.appendChild(btn.firstChild);
+        btn.replaceWith(head);
+      }
+      var hint = l1.querySelector('.th-l1-hint'); if (hint) hint.remove();
+      var panel = document.getElementById('th-l1-panel'); if (panel) panel.remove();
+      return;
+    }
   }
   l1.classList.add('th-l1-live');
   l1.querySelector('.th-l1-hint').hidden = false;
-  pl.render();
 })();
 </script>
 
