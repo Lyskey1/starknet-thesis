@@ -6,8 +6,11 @@
    measure: `is-on` now only marks which card is featured. This owns that flag
    directly rather than driving the hidden rail, and keeps the rail's
    aria-selected in step so the tablist still describes the state. */
-(() => {
-  const root = document.getElementById('qvVideos');
+/* Two roots since 2026-10-11: the main films (#qvVideos) and the L1
+   block's "Eli on video" grid (#l1Videos) are the same device, so the
+   same selection code drives both, each with its own slots and rail. */
+['qvVideos', 'l1Videos'].forEach((rootId) => {
+  const root = document.getElementById(rootId);
   if (!root) return;
   const slots = Array.from(root.querySelectorAll('.qw-ch'));
   const steps = Array.from(root.querySelectorAll('.qw-ped'));
@@ -38,4 +41,4 @@
     });
   });
   steps.forEach((step, i) => step.addEventListener('click', () => select(i)));
-})();
+});
