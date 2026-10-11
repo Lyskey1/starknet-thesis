@@ -85,6 +85,7 @@ function thVideoSlots(cfg) {
       : '') +
       '<div class="qv-fld qv-file"><label>Pick a local file (preview only)</label><input type="file" accept="video/*" class="qv-pick"><div class="qv-note">' + (pub ? 'Local preview only. To publish, upload the file to R2 and paste its URL above.' : 'Local preview only. To publish, add the file to the project and set its path above.') + '</div></div>' +
       '<div class="qv-actions"><button type="button" class="qv-btn primary qv-save">Save</button><button type="button" class="qv-btn qv-clear">Clear</button></div>' +
+      (pub ? '<div class="qv-note qv-pub-err" role="alert" hidden></div>' : '') +
     '</div>'; };
     var host = cfg.editHost || grid;
     host.insertAdjacentHTML('beforeend', '<div class="th-pm-vid-admin"><button type="button" class="news-edit-btn" aria-expanded="false"><i class="ti ti-pencil" aria-hidden="true"></i> <span>Edit videos</span></button>' +
@@ -97,7 +98,14 @@ function thVideoSlots(cfg) {
     pubBar = host.lastElementChild;
     editBtn = pubBar.querySelector('button');
     editLabel = editBtn.querySelector('span');
-    cards.forEach(function(c, i){ c.insertAdjacentHTML('beforeend', qvEd(phs[i] || '')); });
+    cards.forEach(function(c, i){
+      c.insertAdjacentHTML('beforeend', qvEd(phs[i] || ''));
+      /* "Local only": this slot plays a file picked from disk that a
+         publish cannot send. Shown in edit mode, on every card, so it is
+         seen before PUBLISH and not after. */
+      var chips = pub && c.querySelector('.vg-chips');
+      if (chips) chips.insertAdjacentHTML('beforeend', '<span class="vg-local" hidden>Local only</span>');
+    });
   }
   var defaults = cards.map(function(c){ return (c.querySelector('.qv-title').textContent || '').trim(); });
   /* the poster each slot ships with, and it exists because preload is
@@ -170,6 +178,7 @@ function thVideoSlots(cfg) {
     cards.forEach(function(c,i){
       c.querySelector('.qv-editor').hidden = !editing;
       if(editing) fillEditor(c, i);
+      syncLocal(i);
     });
   });
   function fillEditor(c, i){
@@ -206,12 +215,14 @@ function thVideoSlots(cfg) {
          needs it too, or the reader gets a film with no controls */
       c.classList.add('has-video');
       var ch = chrome(); if (ch) ch.refresh();
+      syncLocal(i);
     });
     c.querySelector('.qv-save').addEventListener('click', function(){
       state[i] = readEditor(c);
       save();
       applyCard(i);
       syncDraft();
+      syncLocal(i);
     });
     c.querySelector('.qv-clear').addEventListener('click', function(){
       state[i] = pub ? {} : { src:'', title:'' };
@@ -221,8 +232,12 @@ function thVideoSlots(cfg) {
       if (pub) { c.querySelector('.qv-poster').value = ''; c.querySelector('.qv-dur').value = ''; }
       applyCard(i);
       syncDraft();
+      syncLocal(i);
     });
-    if (pub) watchLength(c);
+    if (pub) {
+      watchLength(c);
+      c.querySelector('.qv-src').addEventListener('input', function(){ syncLocal(i); });
+    }
   });
 
   // ---------- publish mode ----------
@@ -248,6 +263,45 @@ function thVideoSlots(cfg) {
     return out;
   }
   function hasDraft(){ try { return localStorage.getItem(KEY) != null; } catch (e) { return false; } }
+  /* the same host rule as the publish endpoint (api/publish.js isR2Url) */
+  function isR2(v){
+    var u;
+    try { u = new URL(v); } catch (e) { return false; }
+    return u.protocol === 'https:' && u.origin + '/' === R2 && !u.username && !u.password && !u.port && u.pathname.length > 1;
+  }
+  /* a slot plays a local file that its src field would not replace */
+  function isLocalOnly(i){
+    if (!blobs[i]) return false;
+    var f = cards[i].querySelector('.qv-src');
+    return !isR2(f ? f.value.trim() : '');
+  }
+  function syncLocal(i){
+    var chip = cards[i].querySelector('.vg-local');
+    if (chip) chip.hidden = !(editing && isLocalOnly(i));
+  }
+  /* what is wrong with slot i for a publish, and what to do; [] when it
+     is publishable or truly empty. e is what its fields hold. */
+  function slotProblems(i, e){
+    e = e || {};
+    var p = [];
+    var filled = !!(e.title || e.poster || e.dur);
+    if (!e.src) {
+      if (blobs[i]) p.push('Local file, not publishable. Upload it to R2 and paste its URL.');
+      else if (filled) p.push('No video URL. Paste its R2 URL, or click Clear to empty the slot.');
+      else if (cards[i].classList.contains('has-video')) p.push('Shows a video that would not be published. Paste its R2 URL, or click Clear.');
+      return p;
+    }
+    if (!isR2(e.src)) {
+      p.push(blobs[i] ? 'Local file, not publishable. Upload it to R2 and paste its URL.' : 'URL must start with ' + R2);
+    }
+    if (!e.title) p.push('Title is missing. Add one (up to 120 characters).');
+    else if (e.title.length > 120) p.push('Title is ' + e.title.length + ' characters. Shorten it to 120.');
+    if (!(typeof e.dur === 'number' && e.dur % 1 === 0 && e.dur >= 1 && e.dur <= 21600)) {
+      p.push('Length must be a whole number of seconds. Paste the URL again to read it from the file, or type it.');
+    }
+    if (e.poster && !isR2(e.poster)) p.push('Poster URL must start with ' + R2 + ' (or leave it empty).');
+    return p;
+  }
   function syncDraft(){
     if (!pub || !pubBar) return;
     var pill = pubBar.querySelector('.qv-draft-pill');
@@ -308,8 +362,10 @@ function thVideoSlots(cfg) {
       cards.forEach(function(c, i){
         if (blobs[i]) { try { URL.revokeObjectURL(blobs[i]); } catch (e2) {} delete blobs[i]; }
         fillEditor(c, i);
+        var err = c.querySelector('.qv-pub-err'); if (err) { err.textContent = ''; err.hidden = true; }
       });
       applyAll(); syncDraft(); say('');
+      cards.forEach(function(c, i){ syncLocal(i); });
       if (cfg.onPublished) cfg.onPublished();
     });
     /* the same passphrase flow as the news panels: the key is asked once
@@ -321,16 +377,31 @@ function thVideoSlots(cfg) {
          saved is not silently left out */
       cards.forEach(function(c, i){ state[i] = readEditor(c); });
       save(); applyAll(); syncDraft();
+      /* THE PAYLOAD FIRST, THEN THE SLOTS (fix, 2026-10-11): build what
+         would be sent, then check every slot against it. Anything a slot
+         holds that would not be sent (a local file, a URL off the R2
+         host, a missing title, a bad length) blocks the publish with the
+         slot and the fix. The empty-set confirm used to run on the
+         payload alone, so four slots playing local files read as "no
+         videos". It now runs only when every slot is truly empty. */
       var entries = toEntries(state);
-      var bad = [];
-      for (var n = 0; n < cards.length; n++) {
-        var e = state[n];
-        if (!e || !e.src) continue;
-        var slot = 'Slot ' + ('0' + (n + 1)).slice(-2) + ': ';
-        if (!e.title) bad.push(slot + 'title is missing');
-        if (!(typeof e.dur === 'number' && e.dur > 0)) bad.push(slot + 'length must be a whole number of seconds');
+      var bad = [], firstBad = -1;
+      cards.forEach(function(c, n){
+        var p = slotProblems(n, state[n]);
+        var err = c.querySelector('.qv-pub-err');
+        if (err) { err.textContent = p.join(' '); err.hidden = !p.length; }
+        syncLocal(n);
+        if (!p.length) return;
+        if (firstBad < 0) firstBad = n;
+        bad.push('Slot ' + ('0' + (n + 1)).slice(-2) + ':\n  ' + p.join('\n  '));
+      });
+      if (bad.length) {
+        /* only the featured card shows its editor: bring the first
+           problem slot forward so its fields and message are on screen */
+        if (!cards[firstBad].classList.contains('is-on')) cards[firstBad].click();
+        window.alert('Not published. Fix these slots first:\n\n' + bad.join('\n\n'));
+        return;
       }
-      if (bad.length) { window.alert('Not published:\n' + bad.join('\n')); return; }
       if (!entries.length && !window.confirm('Publish with no videos? This removes every film from this block for all readers.')) return;
       var key = '';
       try { key = localStorage.getItem(PUBLISH_KEY_STORE) || ''; } catch (e) {}

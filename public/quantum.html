@@ -2837,6 +2837,15 @@ body.page-quantum{overflow-x:clip;}
 .th-l1-vhead .th-pm-vid-admin{flex-wrap:wrap;align-items:center;gap:8px;}
 .th-l1-vhead .news-edit-btn[hidden],.qv-pub-status[hidden]{display:none;}
 .qv-pub-status{flex-basis:100%;font-family:'IBM Plex Mono',monospace;font-size:10.5px;line-height:1.5;color:var(--th-muted);}
+/* edit mode: "Local only" on a card playing a file from disk that a
+   publish cannot send, in the not-decided amber so it reads as a
+   warning; and the per-slot reason a publish was blocked */
+#l1Videos .vg-local{padding:6px 9px;background:var(--th-dev);color:#111;text-transform:uppercase;font-weight:600;}
+#l1Videos .vg-local[hidden],.qv-pub-err[hidden]{display:none;}
+/* three chips outgrow a 375 row card (88px over): the row wraps, and
+   only when it has to, since tag and number alone still fit */
+#l1Videos .vg-chips{flex-wrap:wrap;row-gap:4px;max-width:100%;}
+.qv-pub-err{color:#ff8a65;}
 #l1Videos.video-grid-wrap{width:auto;max-width:none;margin:0;padding:0;}
 /* th-selector.css's .qw-panel padding (26px 30px) insets the grid inside
    a block that already has its own: released so the cards sit on the
