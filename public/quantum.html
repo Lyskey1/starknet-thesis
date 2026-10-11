@@ -2804,10 +2804,13 @@ body.page-quantum{overflow-x:clip;}
 .th-l1-amb{color:var(--th-dev);}
 .th-l1-body{margin-top:12px;font-size:14px;line-height:1.6;color:var(--th-ink);max-width:96ch;}
 .th-l1-facts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));margin:18px 0 0;border-top:1px solid var(--th-hair);border-bottom:1px solid var(--th-hair);}
-.th-l1-fact{padding:12px 16px 12px 0;}
+/* each cell is a column with the value pushed to the bottom: the second
+   label wraps to two lines at 1440 (three at 375) while the others hold
+   one, and the four values must still share a baseline */
+.th-l1-fact{display:flex;flex-direction:column;padding:12px 16px 12px 0;}
 .th-l1-fact+.th-l1-fact{border-left:1px solid var(--th-hair);padding-left:16px;}
-.th-l1-fact dt{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--th-muted);}
-.th-l1-fact dd{margin:5px 0 0;font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;color:var(--th-ink);overflow-wrap:anywhere;}
+.th-l1-fact dt{margin-bottom:5px;font-family:'IBM Plex Mono',monospace;font-size:10px;line-height:1.5;letter-spacing:.16em;text-transform:uppercase;color:var(--th-muted);}
+.th-l1-fact dd{margin:auto 0 0;font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;color:var(--th-ink);overflow-wrap:anywhere;}
 .th-l1-fact dd.th-l1-amb{color:var(--th-dev);}
 .th-l1-hint{display:inline-flex;align-items:center;gap:9px;margin-top:14px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--th-muted);}
 .th-l1-hint[hidden]{display:none;}
@@ -3049,11 +3052,11 @@ body.page-quantum{overflow-x:clip;}
       <p class="th-l1-body">On October 8, 2026, StarkWare CEO <a href="https://x.com/EliBenSasson/status/2108110129572741426" target="_blank" rel="noopener" data-umami-event="l1-update-source-eli">Eli Ben-Sasson</a> asked publicly whether Starknet should become an L1 for post-quantum agility. <a href="https://x.com/Starknet/status/2108113391525204034" target="_blank" rel="noopener" data-umami-event="l1-update-source-starknet">Starknet</a> confirmed the same day that it is actively considering it, with 2027 as the target to become the first fully quantum-resistant network. As an L2, Starknet can only be as quantum-safe as Ethereum, whose <a href="https://ethereum.org/roadmap/security/quantum-resistance/" target="_blank" rel="noopener" data-umami-event="l1-update-source-ethereum">roadmap</a> places core post-quantum infrastructure around 2029. As an L1, it would replace that base layer with a hash-based one on its own schedule, and the two External surfaces above would become Starknet's to decide. No decision has been announced yet.</p>
       <dl class="th-l1-facts">
         <div class="th-l1-fact"><dt>Public status</dt><dd class="th-l1-amb">Actively considering</dd></div>
-        <div class="th-l1-fact"><dt>Target as an L1</dt><dd>2027</dd></div>
+        <div class="th-l1-fact"><dt>Target as an independent, fully post-quantum L1</dt><dd>2027</dd></div>
         <div class="th-l1-fact"><dt>Ethereum roadmap</dt><dd>Post-quantum infra around 2029</dd></div>
         <div class="th-l1-fact"><dt>Bitcoin</dt><dd>No commitment</dd></div>
       </dl>
-      <span class="th-l1-hint" aria-hidden="true" hidden><span class="th-l1-chev">&#9656;</span>Eli on video</span>
+      <span class="th-l1-hint" aria-hidden="true" hidden><span class="th-l1-chev">&#9656;</span>Hear it from Eli Ben-Sasson</span>
     </div>
     <!-- THE PANEL IS THE VIDEO DEVICE ONLY, in the site's video format
          (2026-10-11): the main quantum device's news grid, card for card
@@ -3070,11 +3073,11 @@ body.page-quantum{overflow-x:clip;}
     <div class="th-l1-panel" id="th-l1-panel">
       <div class="th-l1-vhead"></div>
       <div class="qw video-grid-wrap th-l1-vid" id="l1Videos">
-      <div class="qw-rail" role="tablist" aria-label="Eli on video">
-        <button class="qw-ped" type="button" role="tab" data-ch="0" aria-selected="true" aria-controls="l1-panel-v" tabindex="0"><span class="qw-label">ELI ON VIDEO 01</span></button>
-        <button class="qw-ped" type="button" role="tab" data-ch="1" aria-selected="false" aria-controls="l1-panel-v" tabindex="-1"><span class="qw-label">ELI ON VIDEO 02</span></button>
-        <button class="qw-ped" type="button" role="tab" data-ch="2" aria-selected="false" aria-controls="l1-panel-v" tabindex="-1"><span class="qw-label">ELI ON VIDEO 03</span></button>
-        <button class="qw-ped" type="button" role="tab" data-ch="3" aria-selected="false" aria-controls="l1-panel-v" tabindex="-1"><span class="qw-label">ELI ON VIDEO 04</span></button>
+      <div class="qw-rail" role="tablist" aria-label="Hear it from Eli Ben-Sasson">
+        <button class="qw-ped" type="button" role="tab" data-ch="0" aria-selected="true" aria-controls="l1-panel-v" tabindex="0"><span class="qw-label">Eli Ben-Sasson 01</span></button>
+        <button class="qw-ped" type="button" role="tab" data-ch="1" aria-selected="false" aria-controls="l1-panel-v" tabindex="-1"><span class="qw-label">Eli Ben-Sasson 02</span></button>
+        <button class="qw-ped" type="button" role="tab" data-ch="2" aria-selected="false" aria-controls="l1-panel-v" tabindex="-1"><span class="qw-label">Eli Ben-Sasson 03</span></button>
+        <button class="qw-ped" type="button" role="tab" data-ch="3" aria-selected="false" aria-controls="l1-panel-v" tabindex="-1"><span class="qw-label">Eli Ben-Sasson 04</span></button>
       </div>
       <div class="qw-panel video-grid vgrid" id="l1-panel-v" role="tabpanel" aria-live="polite">
         <article class="qw-ch video-slot th-pm-vcard is-on" data-ch="0" data-qv="0">
@@ -3083,7 +3086,7 @@ body.page-quantum{overflow-x:clip;}
             <video class="qv-player" tabindex="0" preload="none" playsinline hidden></video>
           </div>
           <div class="meta">
-            <div class="vg-chips"><span class="vg-tag">ELI ON VIDEO</span><span class="vg-date">01</span></div>
+            <div class="vg-chips"><span class="vg-tag">Eli Ben-Sasson</span><span class="vg-date">01</span></div>
             <span class="vg-rule" aria-hidden="true"></span>
             <h4 class="qv-title"></h4>
             <span class="vg-go"><i aria-hidden="true">&rarr;</i>Watch</span>
@@ -3095,7 +3098,7 @@ body.page-quantum{overflow-x:clip;}
             <video class="qv-player" tabindex="0" preload="none" playsinline hidden></video>
           </div>
           <div class="meta">
-            <div class="vg-chips"><span class="vg-tag">ELI ON VIDEO</span><span class="vg-date">02</span></div>
+            <div class="vg-chips"><span class="vg-tag">Eli Ben-Sasson</span><span class="vg-date">02</span></div>
             <span class="vg-rule" aria-hidden="true"></span>
             <h4 class="qv-title"></h4>
             <span class="vg-go"><i aria-hidden="true">&rarr;</i>Watch</span>
@@ -3107,7 +3110,7 @@ body.page-quantum{overflow-x:clip;}
             <video class="qv-player" tabindex="0" preload="none" playsinline hidden></video>
           </div>
           <div class="meta">
-            <div class="vg-chips"><span class="vg-tag">ELI ON VIDEO</span><span class="vg-date">03</span></div>
+            <div class="vg-chips"><span class="vg-tag">Eli Ben-Sasson</span><span class="vg-date">03</span></div>
             <span class="vg-rule" aria-hidden="true"></span>
             <h4 class="qv-title"></h4>
             <span class="vg-go"><i aria-hidden="true">&rarr;</i>Watch</span>
@@ -3119,7 +3122,7 @@ body.page-quantum{overflow-x:clip;}
             <video class="qv-player" tabindex="0" preload="none" playsinline hidden></video>
           </div>
           <div class="meta">
-            <div class="vg-chips"><span class="vg-tag">ELI ON VIDEO</span><span class="vg-date">04</span></div>
+            <div class="vg-chips"><span class="vg-tag">Eli Ben-Sasson</span><span class="vg-date">04</span></div>
             <span class="vg-rule" aria-hidden="true"></span>
             <h4 class="qv-title"></h4>
             <span class="vg-go"><i aria-hidden="true">&rarr;</i>Watch</span>
@@ -5307,7 +5310,7 @@ var VIDEOS = [
 
 <!-- QV: Eli Ben-Sasson videos. The engine (sources, titles, posters, the
      EDIT VIDEOS editor) lives in js/video-slots.js, shared with the L1
-     block's "Eli on video" slot; this page supplies the device's names,
+     block's "Hear it from Eli Ben-Sasson" grid; this page supplies the device's names,
      its storage key and its seeded films. Persists only the src STRING +
      title (never the blob) under quantumVideos_v1. -->
 <script src="js/video-slots.js"></script>
@@ -5359,7 +5362,7 @@ var VIDEOS = [
   });
 })();
 </script>
-<!-- L1 BLOCK, "Eli on video": the main film device's second instance
+<!-- L1 BLOCK, "Hear it from Eli Ben-Sasson": the main film device's second instance
      (see the panel note in #l1-update), same calls as #qvVideos above:
      thVideoChrome for the bar, fullscreen on #l1-panel-v, the parent all
      four slots share; thVideoSlots for sources, titles and EDIT VIDEOS;

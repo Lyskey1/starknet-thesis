@@ -7,7 +7,7 @@
    directly rather than driving the hidden rail, and keeps the rail's
    aria-selected in step so the tablist still describes the state. */
 /* Two roots since 2026-10-11: the main films (#qvVideos) and the L1
-   block's "Eli on video" grid (#l1Videos) are the same device, so the
+   block's "Hear it from Eli Ben-Sasson" grid (#l1Videos) are the same device, so the
    same selection code drives both, each with its own slots and rail. */
 ['qvVideos', 'l1Videos'].forEach((rootId) => {
   const root = document.getElementById(rootId);

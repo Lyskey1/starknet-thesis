@@ -1,7 +1,7 @@
 // ============================================================
 // Video slots: the source, title, poster and editor engine behind
 // quantum's film device, extracted 2026-10-10 so a second device on
-// the same page (the Oct 8 L1 block's "Eli on video" slot) runs the
+// the same page (the Oct 8 L1 block's "Hear it from Eli Ben-Sasson" grid) runs the
 // SAME code instead of a copy of it. js/video-chrome.js still owns
 // the control bar; this owns what each slot plays.
 //
