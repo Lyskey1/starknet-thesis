@@ -1,8 +1,9 @@
 /* Serverless publish endpoint for the news content (Vercel function).
    POST /api/publish with header X-Publish-Key and a JSON body of
-   { <page>: [entries...] } for one or more known pages. On success it
-   commits data/news.json to the repo via the GitHub Contents API; the
-   static site redeploys from that commit. Secrets (ADMIN_PUBLISH_KEY,
+   { <page>: [entries...] } for one or more known pages (or one of the
+   other targets below: ecosystem, btcfi-ecosystem, videos). On success it
+   commits the target's data file (data/news.json for news) to the repo
+   via the GitHub Contents API; the static site redeploys from that commit. Secrets (ADMIN_PUBLISH_KEY,
    GITHUB_TOKEN) live in Vercel environment variables, server side only,
    and are never logged or echoed. */
 'use strict';
@@ -103,6 +104,69 @@ function validateBtcfiEco(eco) {
     }
   }
   if (total === 0) return 'every provided btcfi-ecosystem category is empty; refusing to publish an empty block';
+  return null;
+}
+
+// ---------- videos target ----------
+// Writes data/videos.json: { <setId>: [entries] }, one key per video set.
+// Only the quantum L1 block's grid publishes today (quantumL1); the main
+// quantum device and privacy keep their inline seeds. An entry is
+// { src, poster, title, dur }: src and poster are https URLs on the site's
+// R2 bucket (the films and their frames live there, nowhere else), title is
+// what the card prints, dur is the film's length in whole seconds, the hint
+// the control bar prints while preload is none. An empty set is allowed: it
+// is how every film of a set is taken down.
+const VIDEOS_FILE = 'public/data/videos.json'; // vesper layout: the site serves from public/
+const VIDEO_SETS = ['quantumL1'];
+const VIDEO_MAX_PER_SET = 4;
+const VIDEO_HOST = 'pub-3274162cfa1d48728621d5ec2d0906ad.r2.dev';
+const VIDEO_TITLE_CAP = 120;
+const VIDEO_URL_CAP = 2048;
+const VIDEO_MAX_DUR = 6 * 60 * 60; // six hours: a typo guard, not a policy
+
+function isR2Url(v) {
+  if (typeof v !== 'string' || !v || v.length > VIDEO_URL_CAP) return false;
+  let u;
+  try { u = new URL(v); } catch (e) { return false; }
+  return u.protocol === 'https:' && u.hostname === VIDEO_HOST && !u.username && !u.password && !u.port && u.pathname.length > 1;
+}
+
+// videos payload validation; returns null if valid, else a message
+function validateVideos(vids) {
+  if (!vids || typeof vids !== 'object' || Array.isArray(vids)) {
+    return 'videos must be an object of the form { "<setId>": [entries] }';
+  }
+  const keys = Object.keys(vids);
+  if (!keys.length) return 'videos has no set keys; expected one or more of: ' + VIDEO_SETS.join(', ');
+  for (const k of keys) {
+    if (!VIDEO_SETS.includes(k)) return 'unknown video set "' + k + '"; allowed: ' + VIDEO_SETS.join(', ');
+    const list = vids[k];
+    if (!Array.isArray(list)) return 'video set "' + k + '" must be an array of entries';
+    if (list.length > VIDEO_MAX_PER_SET) {
+      return 'video set "' + k + '" has ' + list.length + ' entries; the cap is ' + VIDEO_MAX_PER_SET;
+    }
+    for (let i = 0; i < list.length; i++) {
+      const e = list[i];
+      const where = 'video set "' + k + '" entry ' + (i + 1);
+      if (!e || typeof e !== 'object' || Array.isArray(e)) return where + ' must be an object';
+      for (const f of Object.keys(e)) {
+        if (!['src', 'poster', 'title', 'dur'].includes(f)) {
+          return where + ' has unexpected field "' + f + '"; allowed: src, poster, title, dur';
+        }
+      }
+      if (!isR2Url(e.src)) return where + ' field "src" must be an https URL on ' + VIDEO_HOST;
+      if (e.poster !== undefined && e.poster !== '' && !isR2Url(e.poster)) {
+        return where + ' field "poster" must be an https URL on ' + VIDEO_HOST + ' (or left empty)';
+      }
+      if (typeof e.title !== 'string' || !e.title.trim()) return where + ' is missing its required "title" string';
+      if (e.title.length > VIDEO_TITLE_CAP) {
+        return where + ' field "title" is ' + e.title.length + ' chars; the cap is ' + VIDEO_TITLE_CAP;
+      }
+      if (!Number.isInteger(e.dur) || e.dur < 1 || e.dur > VIDEO_MAX_DUR) {
+        return where + ' field "dur" must be a whole number of seconds between 1 and ' + VIDEO_MAX_DUR;
+      }
+    }
+  }
   return null;
 }
 
@@ -237,18 +301,19 @@ module.exports = async function handler(req, res) {
   const isObj = body && typeof body === 'object' && !Array.isArray(body);
   const isEco = isObj && 'ecosystem' in body;
   const isBtcfiEco = isObj && 'btcfi-ecosystem' in body;
-  if ((isEco || isBtcfiEco) && Object.keys(body).length > 1) {
-    return send(res, 400, { error: 'payload mixes publish targets; publish news, ecosystem, and btcfi-ecosystem separately' });
+  const isVideos = isObj && 'videos' in body;
+  if ((isEco || isBtcfiEco || isVideos) && Object.keys(body).length > 1) {
+    return send(res, 400, { error: 'payload mixes publish targets; publish news, ecosystem, btcfi-ecosystem, and videos separately' });
   }
   const bodyCap = (isEco || isBtcfiEco) ? ECO_MAX_BODY_BYTES : MAX_BODY_BYTES;
   if (Buffer.byteLength(JSON.stringify(body), 'utf8') > bodyCap) {
     return send(res, 413, { error: 'payload exceeds the ' + (bodyCap / 1024) + 'KB cap for this target' });
   }
 
-  const problem = isBtcfiEco ? validateBtcfiEco(body['btcfi-ecosystem']) : isEco ? validateEco(body.ecosystem) : validate(body);
+  const problem = isVideos ? validateVideos(body.videos) : isBtcfiEco ? validateBtcfiEco(body['btcfi-ecosystem']) : isEco ? validateEco(body.ecosystem) : validate(body);
   if (problem) return send(res, 400, { error: 'validation failed: ' + problem + '; nothing was published' });
 
-  const filePath = isBtcfiEco ? BTCFI_ECO_FILE : isEco ? ECO_FILE : FILE_PATH;
+  const filePath = isVideos ? VIDEOS_FILE : isBtcfiEco ? BTCFI_ECO_FILE : isEco ? ECO_FILE : FILE_PATH;
 
   // read the current file (content + sha) so a concurrent change conflicts
   // instead of being silently overwritten
@@ -275,7 +340,13 @@ module.exports = async function handler(req, res) {
   }
 
   let merged, message, pages;
-  if (isBtcfiEco) {
+  if (isVideos) {
+    pages = Object.keys(body.videos);
+    merged = Object.assign({}, current);
+    for (const k of pages) merged[k] = body.videos[k];
+    const total = pages.reduce((s, k) => s + body.videos[k].length, 0);
+    message = 'content: publish videos (' + pages.join(', ') + ', ' + total + ' video' + (total === 1 ? '' : 's') + ')';
+  } else if (isBtcfiEco) {
     const eco = body['btcfi-ecosystem'];
     pages = Object.keys(eco);
     merged = Object.assign({}, current);
@@ -327,3 +398,7 @@ module.exports = async function handler(req, res) {
     return send(res, 502, { error: 'could not reach the GitHub API' });
   }
 };
+
+// the build reads the same rules (scripts/build-videos.js), so a file that
+// would fail a publish also fails the deploy instead of rendering
+module.exports.validateVideos = validateVideos;

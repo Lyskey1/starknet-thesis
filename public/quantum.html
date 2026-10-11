@@ -2831,6 +2831,12 @@ body.page-quantum{overflow-x:clip;}
 .th-l1-vhead{display:flex;justify-content:flex-start;}
 .th-l1-vhead:empty{display:none;}
 .th-l1-vhead .th-pm-vid-admin{margin:0 0 14px;}
+/* the publish row (2026-10-11), admin only: Edit videos, news's
+   "Unsaved local draft" pill, Publish and Reset while editing, and the
+   rebuild notice after a publish on its own line */
+.th-l1-vhead .th-pm-vid-admin{flex-wrap:wrap;align-items:center;gap:8px;}
+.th-l1-vhead .news-edit-btn[hidden],.qv-pub-status[hidden]{display:none;}
+.qv-pub-status{flex-basis:100%;font-family:'IBM Plex Mono',monospace;font-size:10.5px;line-height:1.5;color:var(--th-muted);}
 #l1Videos.video-grid-wrap{width:auto;max-width:none;margin:0;padding:0;}
 /* th-selector.css's .qw-panel padding (26px 30px) insets the grid inside
    a block that already has its own: released so the cards sit on the
@@ -5372,15 +5378,16 @@ var VIDEOS = [
   var l1 = document.getElementById('l1-update');
   var root = document.getElementById('l1Videos');
   if(!l1 || !root) return;
-  /* L1_SEEDS is this device's data entry, in the main device's shape:
-       { 0: { src: '<R2 URL>', dur: <seconds, floored>, title: '...' }, 1: {...}, ... }
-     keyed by slot, 0 to 3. dur is FLOORED (the bar formats with
-     Math.floor) and lets the bar print a total while preload is none. A
-     poster goes on the slot's <video poster="..."> in the markup, as on
-     #qvVideos, and shows only while the slot plays its seeded file.
-     The tag and number chips are markup too. EMPTY ON PURPOSE
-     (2026-10-11): the owner fills it. */
-  var L1_SEEDS = {};
+  /* L1_SEEDS IS PUBLISHED, NOT HAND-EDITED (2026-10-11). The set lives
+     in data/videos.json under "quantumL1": an array of up to four
+     { src, poster, title, dur }, entry n in slot n, written by EDIT
+     VIDEOS > Publish through /api/publish. The page fetches that file at
+     load (js/video-slots.js, publish mode). What sits between the markers
+     below is the inline copy of it that scripts/build-videos.js writes on
+     every deploy, so readers get the last build's set at first paint and
+     keep it if the fetch fails. Do not edit it by hand: the next build
+     overwrites it from the file. The tag and number chips stay markup. */
+  var L1_SEEDS = /* VIDEOS:quantumL1:START */[]/* VIDEOS:quantumL1:END */;
   window.l1FilmChrome = thVideoChrome({
     root: root,
     slots: '.th-pm-vcard',
@@ -5389,26 +5396,33 @@ var VIDEOS = [
     fullscreen: document.getElementById('l1-panel-v'),
     noun: 'video'
   });
-  thVideoSlots({
-    root: root,
-    key: 'quantumL1Videos_v3',
-    seeds: L1_SEEDS,
-    placeholders: ['eli-l1-1.mp4', 'eli-l1-2.mp4', 'eli-l1-3.mp4', 'eli-l1-4.mp4'],
-    editHost: l1.querySelector('.th-l1-vhead'),
-    chrome: function(){ return window.l1FilmChrome; }
-  });
-  if (!window.ADMIN_GATE) {
+  /* the reader layout, run at load and again whenever the published set
+     changes in place (the fetched file differs from the inline copy, or
+     a publish), so it builds and unbuilds: nothing it takes away is lost */
+  var slots = [].slice.call(root.querySelectorAll('.qw-ch'));
+  var peds = [].slice.call(root.querySelectorAll('.qw-ped'));
+  var btn = l1.querySelector('.th-l1-btn');
+  var head = document.createElement('div');
+  head.className = 'th-l1-btn';
+  var hint = l1.querySelector('.th-l1-hint');
+  var panel = document.getElementById('th-l1-panel');
+  var panelHome = panel.parentNode;
+  function layout(){
+    if (window.ADMIN_GATE) {
+      l1.classList.add('th-l1-live');
+      hint.hidden = false;
+      return;
+    }
     /* READERS SEE ONLY FILLED SLOTS: an empty slot is an editor
        affordance, not a card. If the featured slot is one of them, the
        first filled slot is featured instead. */
-    var slots = [].slice.call(root.querySelectorAll('.qw-ch'));
-    var peds = [].slice.call(root.querySelectorAll('.qw-ped'));
     var filled = slots.filter(function(c){ return c.classList.contains('has-video'); });
     slots.forEach(function(c, i){
       var on = c.classList.contains('has-video');
       c.hidden = !on; if (peds[i]) peds[i].hidden = !on;
     });
-    if (filled.length && !filled[0].classList.contains('is-on')) {
+    var featured = slots.filter(function(c){ return c.classList.contains('is-on'); })[0];
+    if (filled.length && filled.indexOf(featured) < 0) {
       slots.forEach(function(c, i){
         var f = c === filled[0];
         c.classList.toggle('is-on', f);
@@ -5417,23 +5431,41 @@ var VIDEOS = [
     }
     /* NOTHING TO OPEN, NOTHING THAT OPENS (owner, 2026-10-10). With no
        film and the gate off the block is its collapsed content and
-       nothing else: the button is unwrapped to a plain element, the hint
-       and the panel are removed. */
+       nothing else: the button is swapped for a plain element, the hint
+       and the panel are taken out. A set that gains a film puts them
+       back. */
     if (!filled.length) {
-      var btn = l1.querySelector('.th-l1-btn');
-      if (btn) {
-        var head = document.createElement('div');
-        head.className = 'th-l1-btn';
+      if (btn.parentNode) {
+        l1.classList.remove('th-l1-live', 'th-open');
+        panel.classList.remove('th-show');
+        btn.setAttribute('aria-expanded', 'false');
         while (btn.firstChild) head.appendChild(btn.firstChild);
         btn.replaceWith(head);
       }
-      var hint = l1.querySelector('.th-l1-hint'); if (hint) hint.remove();
-      var panel = document.getElementById('th-l1-panel'); if (panel) panel.remove();
+      if (hint.parentNode) hint.remove();
+      if (panel.parentNode) panel.remove();
       return;
     }
+    if (head.parentNode) {
+      while (head.firstChild) btn.appendChild(head.firstChild);
+      head.replaceWith(btn);
+    }
+    if (!panel.parentNode) panelHome.appendChild(panel);
+    if (!hint.parentNode) l1.querySelector('.th-l1-sum').appendChild(hint);
+    l1.classList.add('th-l1-live');
+    hint.hidden = false;
   }
-  l1.classList.add('th-l1-live');
-  l1.querySelector('.th-l1-hint').hidden = false;
+  thVideoSlots({
+    root: root,
+    key: 'quantumL1Videos_v3',
+    seeds: L1_SEEDS,
+    publish: { set: 'quantumL1', file: '/data/videos.json' },
+    onPublished: layout,
+    placeholders: ['eli-l1-1.mp4', 'eli-l1-2.mp4', 'eli-l1-3.mp4', 'eli-l1-4.mp4'],
+    editHost: l1.querySelector('.th-l1-vhead'),
+    chrome: function(){ return window.l1FilmChrome; }
+  });
+  layout();
 })();
 </script>
 
