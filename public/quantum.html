@@ -2707,7 +2707,6 @@ body.page-quantum{overflow-x:clip;}
 .th-pq-left{min-width:0;}
 .th-fl{position:sticky;top:100px;--th-q:#c53400;--th-done:#36C692;--th-dev:#E5A552;--th-ext:#9a9a9a;--th-ink:#fafafa;--th-muted:#9a9a9a;--th-hair:rgba(250, 250, 250,.08);--th-hair-soft:rgba(250, 250, 250,.05);}
 .th-fl-head{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--th-q);margin-bottom:16px;}
-.th-fl-asof{display:block;font-style:normal;font-size:8.5px;letter-spacing:.08em;color:var(--th-muted);margin-top:3px;}
 .th-fl-node{position:relative;border:1px solid var(--th-hair);border-left:3px solid var(--ac);border-radius:0;overflow:hidden;cursor:pointer;background:linear-gradient(180deg,color-mix(in srgb,var(--ac) 7%,transparent),rgba(255,255,255,.006));transition:border-color .25s,box-shadow .25s,background .25s;}
 .th-fl-node:hover{box-shadow:0 18px 44px -26px var(--ac);background:linear-gradient(180deg,color-mix(in srgb,var(--ac) 12%,transparent),rgba(255,255,255,.01));}
 .th-fl-node.th-open{box-shadow:0 18px 44px -24px var(--ac);}
@@ -2770,7 +2769,6 @@ body.page-quantum{overflow-x:clip;}
 .th-fl-phase{line-height:1.25;}
 .th-fl-title{line-height:1.2;margin-top:2px;}
 .th-fl-time{grid-area:time;justify-self:start;line-height:1.25;padding:3px 8px;}
-.th-fl-asof{line-height:1.2;margin-top:2px;}
 .th-fl-chev{grid-area:chev;align-self:center;}
 .th-fl-conn{height:18px;}
 .th-fl-detail{padding:0 14px 14px;}
@@ -2976,13 +2974,13 @@ body.page-quantum{overflow-x:clip;}
     <div class="th-fl-head">The path to end-to-end</div>
 
     <div class="th-fl-node" style="--ac:var(--th-q)">
-      <div class="th-fl-headrow"><div class="th-fl-txt"><div class="th-fl-phase">Phase 1</div><div class="th-fl-title">Secure the future</div></div><span class="th-fl-time">&asymp; 2 months <i class="th-fl-asof" data-perish="roadmap-phase1">as of Jun 30, 2026</i></span><span class="th-fl-chev">&#9656;</span></div>
+      <div class="th-fl-headrow"><div class="th-fl-txt"><div class="th-fl-phase">Phase 1</div><div class="th-fl-title">Secure the future</div></div><span class="th-fl-time">&asymp; 2 months of work</span><span class="th-fl-chev">&#9656;</span></div>
       <div class="th-fl-detail"><p>The aim is that every new deployment, transaction and state update becomes quantum-safe by default: Pedersen would move to BLAKE2 across state commitment and address derivation, and consensus signing to a post-quantum scheme. The chain environment has already moved; the other three are published direction, not shipped.</p><div class="th-fl-sfcs"><span class="th-fl-sfc">State trie hashing</span><span class="th-fl-sfc">Address derivation</span><span class="th-fl-sfc" style="--ac:var(--th-done)">OS program &amp; config hash</span><span class="th-fl-sfc">Consensus signing</span></div></div>
     </div>
     <div class="th-fl-conn"><span class="th-fl-line"></span><span class="th-fl-tip">&#9662;</span></div>
 
     <div class="th-fl-node" style="--ac:var(--th-dev)">
-      <div class="th-fl-headrow"><div class="th-fl-txt"><div class="th-fl-phase">Phase 2</div><div class="th-fl-title">Migrate what exists</div></div><span class="th-fl-time">&asymp; 1 month <i class="th-fl-asof" data-perish="roadmap-phase2">as of Jun 30, 2026</i></span><span class="th-fl-chev">&#9656;</span></div>
+      <div class="th-fl-headrow"><div class="th-fl-txt"><div class="th-fl-phase">Phase 2</div><div class="th-fl-title">Migrate what exists</div></div><span class="th-fl-time">&asymp; 1 month after Phase 1</span><span class="th-fl-chev">&#9656;</span></div>
       <div class="th-fl-detail"><p>Existing contracts keep working, and bringing their storage key derivation into alignment is still research: no public specification, no implementation, no released toolkit.</p><div class="th-fl-sfcs"><span class="th-fl-sfc">Legacy storage</span></div></div>
     </div>
     <div class="th-fl-conn"><span class="th-fl-line"></span><span class="th-fl-tip">&#9662;</span></div>
@@ -4545,10 +4543,9 @@ var Q_PERISHABLE = {
      data-stale in the DOM rather than quietly trusted. */
   'pq-accounts-poc': { src: 'owner', checked: '2026-09-08', breaks: '2026-12-07',
     note: 'internal roadmap, cleared for publication, no public announcement yet; replace with the public source when announced' },
-  /* the roadmap's relative estimates are dated readings of the published
-     roadmap (StarkWare, 2026-06-30): the phase cards render the as-of */
-  'roadmap-phase1': { asof: '2026-06-30' },
-  'roadmap-phase2': { asof: '2026-06-30' },
+  /* 'roadmap-phase1' / 'roadmap-phase2' removed 2026-11-02: the phase
+     chips state the roadmap's durations as effort ("of work", "after
+     Phase 1"), which do not age, so there is no as-of reading to stamp. */
   /* ECDSA.Fail is a LIVE leaderboard. The 26 Jul 2026 cutoff figures are fixed
      and printed in the paper, so they are sourced and dated in the DOM with no
      key here and nothing to break. The post-cutoff figures (1.26 billion, 813
