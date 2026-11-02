@@ -2692,20 +2692,35 @@ if (window.thStickyRail) {
   .th-pq-table .th-or{display:block;margin:0 0 12px;}
   .th-pq-table .th-or td{display:block;padding:0;}
 }
+/* under 480px the two half-width columns run into each other ("Hash-based
+   (no ECC)" met "n/a" at 375): Current and Desired become two labeled
+   lines, full width */
+@media(max-width:479px){
+  .th-pq-table .th-mainrow td.th-mono{display:block;width:auto;}
+  .th-pq-table .th-mainrow td.th-mono+td.th-mono{margin-top:8px;}
+}
 /* surface-by-surface: sticky right-column roadmap flow */
 /* the shared body{overflow-x:hidden} makes body a scroll container, which disables position:sticky; clip keeps the same horizontal clipping without breaking sticky (scoped to this page only) */
 body.page-quantum{overflow-x:clip;}
-.th-bands{display:flex;flex-direction:column;gap:12px;}
+.th-bands{display:flex;flex-direction:column;gap:22px;}
 .th-band{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(320px,.9fr);gap:24px;}
 .th-band[hidden]{display:none;}
 .th-band .th-pq-table{table-layout:fixed;}
 .th-band .th-pq-table td{overflow-wrap:break-word;}
 .th-band-th{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;}
-.th-band-head{margin-bottom:-6px;}
+.th-band-head{margin-bottom:-16px;}
 .th-band-head .th-pq-table thead th{border-bottom:0;}
 .th-band-head .th-band-blk{justify-content:flex-end;}
 .th-band-head .th-fl-head{margin:0;padding-bottom:12px;}
 .th-band-blk{display:flex;flex-direction:column;min-width:0;}
+/* the chain between blocks (restored 2026-11-02): each phase band's block
+   draws a short line and the old arrowhead down into the 22px gap, toward
+   the next band (the last one points at Destination, which never hides).
+   It belongs to the band it leaves, so a band hidden by a filter takes its
+   arrow with it and the chain always lands on a visible block. Static. */
+.th-band[data-band] .th-band-blk{position:relative;}
+.th-band[data-band] .th-band-blk::before{content:"";position:absolute;left:50%;top:100%;width:1px;height:14px;background:linear-gradient(var(--th-hair),var(--th-hair-soft));}
+.th-band[data-band] .th-band-blk::after{content:"\25BE";position:absolute;left:50%;top:calc(100% + 11px);transform:translateX(-50%);color:var(--th-muted);font-size:10px;line-height:1;}
 .th-band-blk>.th-fl-node{flex:1 0 auto;}
 .th-band-dest{grid-template-columns:minmax(0,1fr);}
 .th-fl-node.th-fl-static{cursor:default;}
@@ -2729,7 +2744,7 @@ body.page-quantum{overflow-x:clip;}
 .th-fl-sfc{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ac);border:1px solid color-mix(in srgb,var(--ac) 26%,transparent);background:color-mix(in srgb,var(--ac) 8%,transparent);padding:4px 9px;border-radius:0;}
 .th-fl-fallback{margin-top:12px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--th-done);border:1px solid color-mix(in srgb,var(--th-done) 30%,transparent);background:color-mix(in srgb,var(--th-done) 10%,transparent);padding:6px 10px;border-radius:0;display:inline-block;}
 .th-fl-node.th-dest .th-fl-title{color:var(--th-done);}
-@media(max-width:1080px){.th-band{grid-template-columns:minmax(0,1fr);gap:10px;}.th-band-head{display:none;}.th-band-blk{order:-1;}}
+@media(max-width:1080px){.th-bands{gap:12px;}.th-band{grid-template-columns:minmax(0,1fr);gap:10px;}.th-band-head{display:none;}.th-band-blk{order:-1;}.th-band[data-band] .th-band-blk::before,.th-band[data-band] .th-band-blk::after{display:none;}}
 /* ROADMAP FITS ONE VIEWPORT (2026-09-07): 1440x900 with All active is a
    836px budget under the 64px nav. Title block ~122 (h3 40px, intro two
    lines on a 1000px measure, clamp as the guard), filters one 40px row,
