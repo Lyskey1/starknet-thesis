@@ -2670,19 +2670,9 @@ if (window.thStickyRail) {
 .th-detail-meta .th-lbl{color:var(--th-muted);text-transform:uppercase;letter-spacing:.14em;font-size:10.5px;}
 .th-detail-meta.th-fallback{--rowac:var(--th-done);}
 .th-pq-empty{padding:34px 20px;text-align:center;color:var(--th-muted);font-size:14px;display:none;}
-/* 681-860px: scrollable table: right-edge fade (cover scrolls with content,
-   shadow pinned to container) + sticky Surface column */
-@media(min-width:681px) and (max-width:860px){
-  .th-pq-card{overflow-x:auto;background:
-    linear-gradient(270deg,var(--th-panel) 0,transparent 44px) right center/44px 100% no-repeat local,
-    linear-gradient(270deg,rgba(0,0,0,.55),transparent) right center/36px 100% no-repeat scroll,
-    var(--th-panel);}
-  .th-pq-table{min-width:680px;}
-  .th-pq-table .th-mainrow .th-surface,.th-pq-table thead th:first-child{position:sticky;left:0;background:var(--th-panel);z-index:2;}
-}
-/* <=680px: restack the 5-column table as cards: Surface = title,
+/* <=1080px (680 until the bands, 2026-11-02, which stack at 1080 as the rail used to): restack the 5-column table as cards: Surface = title,
    Current/Desired = labeled pair, Status = badge; phase color kept via --rowac */
-@media(max-width:680px){
+@media(max-width:1080px){
   .th-pq-table{min-width:0;}
   .th-pq-table,.th-pq-table tbody{display:block;}
   .th-pq-table thead{display:none;}
@@ -2703,9 +2693,21 @@ if (window.thStickyRail) {
 /* surface-by-surface: sticky right-column roadmap flow */
 /* the shared body{overflow-x:hidden} makes body a scroll container, which disables position:sticky; clip keeps the same horizontal clipping without breaking sticky (scoped to this page only) */
 body.page-quantum{overflow-x:clip;}
-.th-pq-layout{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(320px,.9fr);gap:24px;align-items:start;margin-top:18px;}
-.th-pq-left{min-width:0;}
-.th-fl{position:sticky;top:100px;--th-q:#c53400;--th-done:#36C692;--th-dev:#E5A552;--th-ext:#9a9a9a;--th-ink:#fafafa;--th-muted:#9a9a9a;--th-hair:rgba(250, 250, 250,.08);--th-hair-soft:rgba(250, 250, 250,.05);}
+.th-bands{display:flex;flex-direction:column;gap:12px;}
+.th-band{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(320px,.9fr);gap:24px;}
+.th-band[hidden]{display:none;}
+.th-band .th-pq-table{table-layout:fixed;}
+.th-band .th-pq-table td{overflow-wrap:break-word;}
+.th-band-th{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;}
+.th-band-head{margin-bottom:-6px;}
+.th-band-head .th-pq-table thead th{border-bottom:0;}
+.th-band-head .th-band-blk{justify-content:flex-end;}
+.th-band-head .th-fl-head{margin:0;padding-bottom:12px;}
+.th-band-blk{display:flex;flex-direction:column;min-width:0;}
+.th-band-blk>.th-fl-node{flex:1 0 auto;}
+.th-band-dest{grid-template-columns:minmax(0,1fr);}
+.th-fl-node.th-fl-static{cursor:default;}
+.th-fl{--th-q:#c53400;--th-done:#36C692;--th-dev:#E5A552;--th-ext:#9a9a9a;--th-ink:#fafafa;--th-muted:#9a9a9a;--th-hair:rgba(250, 250, 250,.08);--th-hair-soft:rgba(250, 250, 250,.05);}
 .th-fl-head{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--th-q);margin-bottom:16px;}
 .th-fl-node{position:relative;border:1px solid var(--th-hair);border-left:3px solid var(--ac);border-radius:0;overflow:hidden;cursor:pointer;background:linear-gradient(180deg,color-mix(in srgb,var(--ac) 7%,transparent),rgba(255,255,255,.006));transition:border-color .25s,box-shadow .25s,background .25s;}
 .th-fl-node:hover{box-shadow:0 18px 44px -26px var(--ac);background:linear-gradient(180deg,color-mix(in srgb,var(--ac) 12%,transparent),rgba(255,255,255,.01));}
@@ -2724,11 +2726,8 @@ body.page-quantum{overflow-x:clip;}
 .th-fl-sfcs{display:flex;flex-wrap:wrap;gap:7px;margin-top:13px;}
 .th-fl-sfc{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ac);border:1px solid color-mix(in srgb,var(--ac) 26%,transparent);background:color-mix(in srgb,var(--ac) 8%,transparent);padding:4px 9px;border-radius:0;}
 .th-fl-fallback{margin-top:12px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--th-done);border:1px solid color-mix(in srgb,var(--th-done) 30%,transparent);background:color-mix(in srgb,var(--th-done) 10%,transparent);padding:6px 10px;border-radius:0;display:inline-block;}
-.th-fl-conn{display:flex;flex-direction:column;align-items:center;height:26px;}
-.th-fl-conn .th-fl-line{width:1px;flex:1;background:linear-gradient(var(--th-hair),var(--th-hair-soft));}
-.th-fl-conn .th-fl-tip{color:var(--th-muted);font-size:10px;line-height:1;margin-top:-2px;}
 .th-fl-node.th-dest .th-fl-title{color:var(--th-done);}
-@media(max-width:1080px){.th-pq-layout{grid-template-columns:1fr;}.th-fl{position:static;top:auto;}}
+@media(max-width:1080px){.th-band{grid-template-columns:minmax(0,1fr);gap:10px;}.th-band-head{display:none;}.th-band-blk{order:-1;}}
 /* ROADMAP FITS ONE VIEWPORT (2026-09-07): 1440x900 with All active is a
    836px budget under the 64px nav. Title block ~122 (h3 40px, intro two
    lines on a 1000px measure, clamp as the guard), filters one 40px row,
@@ -2753,9 +2752,8 @@ body.page-quantum{overflow-x:clip;}
 .th-pq-filters{margin-bottom:12px;}
 .th-pq-chip{padding:12px 14px;font-size:12px;gap:8px;}
 .th-pq-chip .th-pq-ct{font-size:11px;padding:0 6px;}
-.th-pq-layout{margin-top:0;}
 @media(min-width:861px){.th-pq-filters{flex-wrap:nowrap;}}
-@media(min-width:681px){
+@media(min-width:1081px){
   .th-pq-table thead th{padding:0 16px;height:40px;box-sizing:border-box;}
   .th-pq-table tbody td{padding:0 16px;height:56px;box-sizing:border-box;font-size:14px;}
   .th-pq-table .th-mono,.th-pq-table .th-owner{font-size:13.5px;}
@@ -2770,7 +2768,6 @@ body.page-quantum{overflow-x:clip;}
 .th-fl-title{line-height:1.2;margin-top:2px;}
 .th-fl-time{grid-area:time;justify-self:start;line-height:1.25;padding:3px 8px;}
 .th-fl-chev{grid-area:chev;align-self:center;}
-.th-fl-conn{height:18px;}
 .th-fl-detail{padding:0 14px 14px;}
 @media (prefers-reduced-motion: reduce){.th-fl-node.th-open .th-fl-detail{animation:none;}}
 /* two tags in one rail headrow (Phase 3, Destination): the wrapper takes the
@@ -2923,94 +2920,137 @@ body.page-quantum{overflow-x:clip;}
     <span class="th-pq-chip" data-filter="research" style="--ac:var(--th-dev)"><span class="th-pq-dot"></span>Research<span class="th-pq-ct">1</span></span>
     <span class="th-pq-chip" data-filter="external" style="--ac:var(--th-ext)"><span class="th-pq-dot"></span>External dependency<span class="th-pq-ct">2</span></span>
   </div>
-  <div class="th-pq-layout">
-  <div class="th-pq-left">
-  <div class="th-pq-card">
-    <table class="th-pq-table">
-      <thead><tr><th>Surface</th><th>Current</th><th>Desired</th><th>Roadmap status</th><th>Owner</th></tr></thead>
-      <tbody id="th-pq-rows">
-        <tr id="stark-prover" class="th-mainrow" data-status="live" style="--rowac:var(--th-done)"><td class="th-surface"><span class="th-chev">&#9656;</span>STARK prover</td><td class="th-mono">Hash-based (no ECC)</td><td class="th-mono">n/a</td><td><span class="th-pq-badge" style="--bc:var(--th-done)"><span class="th-bdot"></span>Live</span></td><td class="th-owner">Starknet</td></tr>
-        <tr class="th-detailrow" style="--rowac:var(--th-done)"><td colspan="5"><div class="th-detail-inner"><p>The core proof system relies on collision-resistant hash functions, not elliptic curves, so it carries no quantum exposure. This is the layer that is normally the most expensive to change, and on Starknet it was never the problem.</p><div class="th-detail-metas"><span class="th-detail-meta th-detail-src" data-src="https://quantum.starkware.co/migration-register" data-checked="2026-09-09"><span class="th-lbl">Source</span> <a href="https://quantum.starkware.co/migration-register" target="_blank" rel="noopener noreferrer">StarkWare Quantum Hub, migration register</a>, read <time datetime="2026-09-09">2026-09-09</time></span></div></div></td></tr>
-
-        <tr id="state-trie-hashing" class="th-mainrow" data-status="planned" style="--rowac:var(--th-q)"><td class="th-surface"><span class="th-chev">&#9656;</span>State trie hashing</td><td class="th-mono">Pedersen</td><td class="th-mono">BLAKE2</td><td><span class="th-pq-badge" style="--bc:var(--th-q)"><span class="th-bdot"></span>Planned</span></td><td class="th-owner">Starknet</td></tr>
-        <tr class="th-detailrow" style="--rowac:var(--th-q)"><td colspan="5"><div class="th-detail-inner"><p>The contracts and storage tries commit state with Pedersen today. The published direction is BLAKE2, which would remove the ability to forge balance proofs and is also cheaper to prove than Pedersen.</p><div class="th-detail-metas"><span class="th-detail-meta th-detail-src" data-src="https://quantum.starkware.co/migration-register" data-checked="2026-09-09"><span class="th-lbl">Source</span> <a href="https://quantum.starkware.co/migration-register" target="_blank" rel="noopener noreferrer">StarkWare Quantum Hub, migration register</a>, read <time datetime="2026-09-09">2026-09-09</time></span></div></div></td></tr>
-
-        <tr id="address-derivation" class="th-mainrow" data-status="planned" style="--rowac:var(--th-q)"><td class="th-surface"><span class="th-chev">&#9656;</span>Address derivation</td><td class="th-mono">Pedersen</td><td class="th-mono">BLAKE2</td><td><span class="th-pq-badge" style="--bc:var(--th-q)"><span class="th-bdot"></span>Planned</span></td><td class="th-owner">Starknet</td></tr>
-        <tr class="th-detailrow" style="--rowac:var(--th-q)"><td colspan="5"><div class="th-detail-inner"><p>Account and contract addresses are derived with Pedersen. Moving derivation to BLAKE2 would close a narrow window where an attacker could find a collision and slip a malicious contract into an address before it is funded.</p><div class="th-detail-metas"><span class="th-detail-meta th-detail-src" data-src="https://quantum.starkware.co/migration-register" data-checked="2026-09-09"><span class="th-lbl">Source</span> <a href="https://quantum.starkware.co/migration-register" target="_blank" rel="noopener noreferrer">StarkWare Quantum Hub, migration register</a>, read <time datetime="2026-09-09">2026-09-09</time></span></div></div></td></tr>
-
-        <!-- CORRECTED 2026-09-09. This row read current Pedersen / desired BLAKE2 /
-     status Complete, which is three errors in one line: it named the
-     superseded primitive as current, named the target loosely as "BLAKE2",
-     and used a status word the Hub does not use. The Hub records the OS
-     program hash AND the OS configuration hash as live on mainnet on a
-     BLAKE2s-256 construction from Starknet v0.14.3. The id is unchanged:
-     it is a deep-link anchor and the search index's anchor for this row. -->
-        <tr id="os-config-hash" class="th-mainrow" data-status="live" style="--rowac:var(--th-done)"><td class="th-surface"><span class="th-chev">&#9656;</span>OS program &amp; config hash</td><td class="th-mono">BLAKE2s-256</td><td class="th-mono">BLAKE2s-256</td><td><span class="th-pq-badge" style="--bc:var(--th-done)"><span class="th-bdot"></span>Live in v0.14.3</span></td><td class="th-owner">Starknet</td></tr>
-        <tr class="th-detailrow" style="--rowac:var(--th-done)"><td colspan="5"><div class="th-detail-inner"><p>The OS program hash and the chain's environment anchor (chain ID, version, fee token) were hashed with Pedersen. Both moved to a BLAKE2s-256 construction in <b>Starknet v0.14.3</b> and are live on Mainnet.</p><div class="th-detail-metas"><span class="th-detail-meta th-detail-src" data-src="https://quantum.starkware.co/migration-register" data-checked="2026-09-09"><span class="th-lbl">Source</span> <a href="https://quantum.starkware.co/migration-register" target="_blank" rel="noopener noreferrer">StarkWare Quantum Hub, migration register</a>, read <time datetime="2026-09-09">2026-09-09</time></span></div></div></td></tr>
-
-        <tr id="consensus-signing" class="th-mainrow" data-status="planned" style="--rowac:var(--th-q)"><td class="th-surface"><span class="th-chev">&#9656;</span>Consensus signing</td><td class="th-mono">ECDSA</td><td class="th-mono">Post-quantum (e.g. Falcon-512)</td><td><span class="th-pq-badge" style="--bc:var(--th-q)"><span class="th-bdot"></span>Planned</span></td><td class="th-owner">Starknet</td></tr>
-        <tr class="th-detailrow" style="--rowac:var(--th-q)"><td colspan="5"><div class="th-detail-inner"><p>Sequencer signatures use ECDSA. The published direction is a post-quantum scheme, named in the roadmap as one <em>such as</em> Falcon-512, in two steps: the signing layer becomes scheme-agnostic first, then sequencers rotate their keys.</p><div class="th-detail-metas"><span class="th-detail-meta th-detail-src" data-src="https://quantum.starkware.co/migration-register" data-checked="2026-09-09"><span class="th-lbl">Source</span> <a href="https://quantum.starkware.co/migration-register" target="_blank" rel="noopener noreferrer">StarkWare Quantum Hub, migration register</a>, read <time datetime="2026-09-09">2026-09-09</time></span></div></div></td></tr>
-
-        <tr id="legacy-storage" class="th-mainrow" data-status="research" style="--rowac:var(--th-dev)"><td class="th-surface"><span class="th-chev">&#9656;</span>Legacy storage</td><td class="th-mono">Pedersen (slot keys)</td><td class="th-mono">BLAKE2</td><td><span class="th-pq-badge" style="--bc:var(--th-dev)"><span class="th-bdot"></span>Research</span></td><td class="th-owner">Starknet</td></tr>
-        <!-- The toolkit is NOT a product and this row no longer describes one.
-             It read "A migration toolkit brings them into BLAKE2 alignment with
-             no manual data migration and no breaking changes", in the present
-             tense, for something the Hub records as research with no public
-             specification, implementation or released toolkit. Do not restore
-             a promised behavior for software that does not exist yet. -->
-        <tr class="th-detailrow" style="--rowac:var(--th-dev)"><td colspan="5"><div class="th-detail-inner"><p>Contracts already deployed under Pedersen-derived storage keys keep working, but their internal key derivation would no longer align once the trie moves. Bringing them forward is <b>research</b>: StarkWare has described wanting a migration path for legacy deployments, and there is no public specification, no implementation, no released toolkit and no developer workflow.</p><div class="th-detail-metas"><span class="th-detail-meta th-detail-src" data-src="https://quantum.starkware.co/migration-register" data-checked="2026-09-09"><span class="th-lbl">Source</span> <a href="https://quantum.starkware.co/migration-register" target="_blank" rel="noopener noreferrer">StarkWare Quantum Hub, migration register</a>, read <time datetime="2026-09-09">2026-09-09</time></span></div></div></td></tr>
-
-        <tr id="secp-syscalls" class="th-mainrow" data-status="external" style="--rowac:var(--th-ext)"><td class="th-surface"><span class="th-chev">&#9656;</span>secp syscalls</td><td class="th-mono">secp256k1/r1 (ECDSA)</td><td class="th-mono">TBD</td><td><span class="th-pq-badge" style="--bc:var(--th-ext)"><span class="th-bdot"></span>External</span></td><td class="th-owner">Ethereum</td></tr>
-        <tr class="th-detailrow" style="--rowac:var(--th-ext)"><td colspan="5"><div class="th-detail-inner"><p>The Cairo VM's secp256k1/r1 syscalls support L1 to L2 messaging and the Ethereum bridge. They are quantum-vulnerable, and removing them depends on Ethereum migrating first, otherwise the bridge breaks.</p><div class="th-detail-metas"><span class="th-detail-meta th-detail-src" data-src="https://quantum.starkware.co/migration-register" data-checked="2026-09-09"><span class="th-lbl">Source</span> <a href="https://quantum.starkware.co/migration-register" target="_blank" rel="noopener noreferrer">StarkWare Quantum Hub, migration register</a>, read <time datetime="2026-09-09">2026-09-09</time></span></div></div></td></tr>
-
-        <tr id="blob-data-availability" class="th-mainrow" data-status="external" style="--rowac:var(--th-ext)"><td class="th-surface"><span class="th-chev">&#9656;</span>Blob data availability</td><td class="th-mono">KZG commitment</td><td class="th-mono">TBD</td><td><span class="th-pq-badge" style="--bc:var(--th-ext)"><span class="th-bdot"></span>External</span></td><td class="th-owner">Ethereum</td></tr>
-        <tr class="th-detailrow" style="--rowac:var(--th-ext)"><td colspan="5"><div class="th-detail-inner"><p>State-diff data posted to Ethereum as blobs is anchored by a KZG commitment, which is quantum-vulnerable. A KZG compromise would affect data availability transparency, not state-transition soundness, which the STARK proof still protects.</p><div class="th-detail-metas"><span class="th-detail-meta th-fallback"><span class="th-lbl">Fallback</span> Starknet's sequencer can already post state diffs as calldata instead of blobs, a switch that exists today for blob-price spikes and does not depend on KZG.</span><span class="th-detail-meta th-detail-src" data-src="https://docs.starknet.io/architecture/data-availability/" data-checked="2026-09-09"><span class="th-lbl">Source</span> <a href="https://docs.starknet.io/architecture/data-availability/" target="_blank" rel="noopener noreferrer">Starknet docs, data availability</a>, read <time datetime="2026-09-09">2026-09-09</time></span></div></div></td></tr>
-      </tbody>
-    </table>
+  <!-- BANDS (2026-11-02): the table and "The path to end-to-end" are one
+       structure now. Each band is a full-width grid row: the group's rows on
+       the left (their own table, same styling, same fixed column shares as
+       every other band so the columns line up under the one header row),
+       the group's block on the right. The grid stretches both cells to the
+       taller of the two: when the block is taller, the rows keep their
+       height and the card's ground shows below them as bottom padding; an
+       open row or an open block grows the band and its neighbor with it.
+       Each band table keeps a visually hidden thead so a screen reader
+       still hears the column names; the visible header is the top band's,
+       hidden from assistive tech so it is not read twice. Foundation is not
+       a roadmap deliverable: it is the architecture the roadmap does not
+       have to touch, so its block has no chevron and opens nothing. The
+       filter hides a band when none of its rows match. At 1080px and below
+       (where the rail used to drop under the table) the bands stack, block
+       first, and the rows restack as cards. -->
+  <div class="th-bands" id="th-pq-rows">
+    <div class="th-band th-band-head">
+      <div class="th-pq-card" aria-hidden="true">
+        <table class="th-pq-table"><colgroup><col style="width:22%"><col style="width:21%"><col style="width:20%"><col style="width:26%"><col style="width:11%"></colgroup><thead><tr><th scope="col">Surface</th><th scope="col">Current</th><th scope="col">Desired</th><th scope="col">Roadmap status</th><th scope="col">Owner</th></tr></thead></table>
+      </div>
+      <div class="th-fl th-band-blk"><div class="th-fl-head">The path to end-to-end</div></div>
+    </div>
+    <div class="th-band" data-band="foundation">
+      <div class="th-pq-card">
+        <table class="th-pq-table" aria-label="Foundation"><colgroup><col style="width:22%"><col style="width:21%"><col style="width:20%"><col style="width:26%"><col style="width:11%"></colgroup><thead class="th-band-th"><tr><th scope="col">Surface</th><th scope="col">Current</th><th scope="col">Desired</th><th scope="col">Roadmap status</th><th scope="col">Owner</th></tr></thead>
+          <tbody>
+          <tr id="stark-prover" class="th-mainrow" data-status="live" style="--rowac:var(--th-done)"><td class="th-surface"><span class="th-chev">&#9656;</span>STARK prover</td><td class="th-mono">Hash-based (no ECC)</td><td class="th-mono">n/a</td><td><span class="th-pq-badge" style="--bc:var(--th-done)"><span class="th-bdot"></span>Live</span></td><td class="th-owner">Starknet</td></tr>
+          <tr class="th-detailrow" style="--rowac:var(--th-done)"><td colspan="5"><div class="th-detail-inner"><p>The core proof system relies on collision-resistant hash functions, not elliptic curves, so it carries no quantum exposure. This is the layer that is normally the most expensive to change, and on Starknet it was never the problem.</p><div class="th-detail-metas"><span class="th-detail-meta th-detail-src" data-src="https://quantum.starkware.co/migration-register" data-checked="2026-09-09"><span class="th-lbl">Source</span> <a href="https://quantum.starkware.co/migration-register" target="_blank" rel="noopener noreferrer">StarkWare Quantum Hub, migration register</a>, read <time datetime="2026-09-09">2026-09-09</time></span></div></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="th-fl th-band-blk">
+      <div class="th-fl-node th-fl-static" style="--ac:var(--th-done)">
+        <div class="th-fl-headrow"><div class="th-fl-txt"><div class="th-fl-phase">Foundation</div><div class="th-fl-title">Architecture advantage</div></div><span class="th-fl-time">No migration needed</span></div>
+      </div>
+      </div>
+    </div>
+    <div class="th-band" data-band="phase1">
+      <div class="th-pq-card">
+        <table class="th-pq-table" aria-label="Phase 1"><colgroup><col style="width:22%"><col style="width:21%"><col style="width:20%"><col style="width:26%"><col style="width:11%"></colgroup><thead class="th-band-th"><tr><th scope="col">Surface</th><th scope="col">Current</th><th scope="col">Desired</th><th scope="col">Roadmap status</th><th scope="col">Owner</th></tr></thead>
+          <tbody>
+          <tr id="state-trie-hashing" class="th-mainrow" data-status="planned" style="--rowac:var(--th-q)"><td class="th-surface"><span class="th-chev">&#9656;</span>State trie hashing</td><td class="th-mono">Pedersen</td><td class="th-mono">BLAKE2</td><td><span class="th-pq-badge" style="--bc:var(--th-q)"><span class="th-bdot"></span>Planned</span></td><td class="th-owner">Starknet</td></tr>
+          <tr class="th-detailrow" style="--rowac:var(--th-q)"><td colspan="5"><div class="th-detail-inner"><p>The contracts and storage tries commit state with Pedersen today. The published direction is BLAKE2, which would remove the ability to forge balance proofs and is also cheaper to prove than Pedersen.</p><div class="th-detail-metas"><span class="th-detail-meta th-detail-src" data-src="https://quantum.starkware.co/migration-register" data-checked="2026-09-09"><span class="th-lbl">Source</span> <a href="https://quantum.starkware.co/migration-register" target="_blank" rel="noopener noreferrer">StarkWare Quantum Hub, migration register</a>, read <time datetime="2026-09-09">2026-09-09</time></span></div></div></td></tr>
+          <tr id="address-derivation" class="th-mainrow" data-status="planned" style="--rowac:var(--th-q)"><td class="th-surface"><span class="th-chev">&#9656;</span>Address derivation</td><td class="th-mono">Pedersen</td><td class="th-mono">BLAKE2</td><td><span class="th-pq-badge" style="--bc:var(--th-q)"><span class="th-bdot"></span>Planned</span></td><td class="th-owner">Starknet</td></tr>
+          <tr class="th-detailrow" style="--rowac:var(--th-q)"><td colspan="5"><div class="th-detail-inner"><p>Account and contract addresses are derived with Pedersen. Moving derivation to BLAKE2 would close a narrow window where an attacker could find a collision and slip a malicious contract into an address before it is funded.</p><div class="th-detail-metas"><span class="th-detail-meta th-detail-src" data-src="https://quantum.starkware.co/migration-register" data-checked="2026-09-09"><span class="th-lbl">Source</span> <a href="https://quantum.starkware.co/migration-register" target="_blank" rel="noopener noreferrer">StarkWare Quantum Hub, migration register</a>, read <time datetime="2026-09-09">2026-09-09</time></span></div></div></td></tr>
+          <!-- CORRECTED 2026-09-09. This row read current Pedersen / desired BLAKE2 /
+       status Complete, which is three errors in one line: it named the
+       superseded primitive as current, named the target loosely as "BLAKE2",
+       and used a status word the Hub does not use. The Hub records the OS
+       program hash AND the OS configuration hash as live on mainnet on a
+       BLAKE2s-256 construction from Starknet v0.14.3. The id is unchanged:
+       it is a deep-link anchor and the search index's anchor for this row. -->
+          <tr id="os-config-hash" class="th-mainrow" data-status="live" style="--rowac:var(--th-done)"><td class="th-surface"><span class="th-chev">&#9656;</span>OS program &amp; config hash</td><td class="th-mono">BLAKE2s-256</td><td class="th-mono">BLAKE2s-256</td><td><span class="th-pq-badge" style="--bc:var(--th-done)"><span class="th-bdot"></span>Live in v0.14.3</span></td><td class="th-owner">Starknet</td></tr>
+          <tr class="th-detailrow" style="--rowac:var(--th-done)"><td colspan="5"><div class="th-detail-inner"><p>The OS program hash and the chain's environment anchor (chain ID, version, fee token) were hashed with Pedersen. Both moved to a BLAKE2s-256 construction in <b>Starknet v0.14.3</b> and are live on Mainnet.</p><div class="th-detail-metas"><span class="th-detail-meta th-detail-src" data-src="https://quantum.starkware.co/migration-register" data-checked="2026-09-09"><span class="th-lbl">Source</span> <a href="https://quantum.starkware.co/migration-register" target="_blank" rel="noopener noreferrer">StarkWare Quantum Hub, migration register</a>, read <time datetime="2026-09-09">2026-09-09</time></span></div></div></td></tr>
+          <tr id="consensus-signing" class="th-mainrow" data-status="planned" style="--rowac:var(--th-q)"><td class="th-surface"><span class="th-chev">&#9656;</span>Consensus signing</td><td class="th-mono">ECDSA</td><td class="th-mono">Post-quantum (e.g. Falcon-512)</td><td><span class="th-pq-badge" style="--bc:var(--th-q)"><span class="th-bdot"></span>Planned</span></td><td class="th-owner">Starknet</td></tr>
+          <tr class="th-detailrow" style="--rowac:var(--th-q)"><td colspan="5"><div class="th-detail-inner"><p>Sequencer signatures use ECDSA. The published direction is a post-quantum scheme, named in the roadmap as one <em>such as</em> Falcon-512, in two steps: the signing layer becomes scheme-agnostic first, then sequencers rotate their keys.</p><div class="th-detail-metas"><span class="th-detail-meta th-detail-src" data-src="https://quantum.starkware.co/migration-register" data-checked="2026-09-09"><span class="th-lbl">Source</span> <a href="https://quantum.starkware.co/migration-register" target="_blank" rel="noopener noreferrer">StarkWare Quantum Hub, migration register</a>, read <time datetime="2026-09-09">2026-09-09</time></span></div></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="th-fl th-band-blk">
+      <div class="th-fl-node" style="--ac:var(--th-q)">
+        <div class="th-fl-headrow"><div class="th-fl-txt"><div class="th-fl-phase">Phase 1</div><div class="th-fl-title">Secure the future</div></div><span class="th-fl-time">&asymp; 2 months of work</span><span class="th-fl-chev">&#9656;</span></div>
+        <div class="th-fl-detail"><p>The aim is that every new deployment, transaction and state update becomes quantum-safe by default: Pedersen would move to BLAKE2 across state commitment and address derivation, and consensus signing to a post-quantum scheme. The chain environment has already moved; the other three are published direction, not shipped.</p><div class="th-fl-sfcs"><span class="th-fl-sfc">State trie hashing</span><span class="th-fl-sfc">Address derivation</span><span class="th-fl-sfc" style="--ac:var(--th-done)">OS program &amp; config hash</span><span class="th-fl-sfc">Consensus signing</span></div></div>
+      </div>
+      </div>
+    </div>
+    <div class="th-band" data-band="phase2">
+      <div class="th-pq-card">
+        <table class="th-pq-table" aria-label="Phase 2"><colgroup><col style="width:22%"><col style="width:21%"><col style="width:20%"><col style="width:26%"><col style="width:11%"></colgroup><thead class="th-band-th"><tr><th scope="col">Surface</th><th scope="col">Current</th><th scope="col">Desired</th><th scope="col">Roadmap status</th><th scope="col">Owner</th></tr></thead>
+          <tbody>
+          <tr id="legacy-storage" class="th-mainrow" data-status="research" style="--rowac:var(--th-dev)"><td class="th-surface"><span class="th-chev">&#9656;</span>Legacy storage</td><td class="th-mono">Pedersen (slot keys)</td><td class="th-mono">BLAKE2</td><td><span class="th-pq-badge" style="--bc:var(--th-dev)"><span class="th-bdot"></span>Research</span></td><td class="th-owner">Starknet</td></tr>
+          <!-- The toolkit is NOT a product and this row no longer describes one.
+               It read "A migration toolkit brings them into BLAKE2 alignment with
+               no manual data migration and no breaking changes", in the present
+               tense, for something the Hub records as research with no public
+               specification, implementation or released toolkit. Do not restore
+               a promised behavior for software that does not exist yet. -->
+          <tr class="th-detailrow" style="--rowac:var(--th-dev)"><td colspan="5"><div class="th-detail-inner"><p>Contracts already deployed under Pedersen-derived storage keys keep working, but their internal key derivation would no longer align once the trie moves. Bringing them forward is <b>research</b>: StarkWare has described wanting a migration path for legacy deployments, and there is no public specification, no implementation, no released toolkit and no developer workflow.</p><div class="th-detail-metas"><span class="th-detail-meta th-detail-src" data-src="https://quantum.starkware.co/migration-register" data-checked="2026-09-09"><span class="th-lbl">Source</span> <a href="https://quantum.starkware.co/migration-register" target="_blank" rel="noopener noreferrer">StarkWare Quantum Hub, migration register</a>, read <time datetime="2026-09-09">2026-09-09</time></span></div></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="th-fl th-band-blk">
+      <div class="th-fl-node" style="--ac:var(--th-dev)">
+        <div class="th-fl-headrow"><div class="th-fl-txt"><div class="th-fl-phase">Phase 2</div><div class="th-fl-title">Migrate what exists</div></div><span class="th-fl-time">&asymp; 1 month after Phase 1</span><span class="th-fl-chev">&#9656;</span></div>
+        <div class="th-fl-detail"><p>Existing contracts keep working, and bringing their storage key derivation into alignment is still research: no public specification, no implementation, no released toolkit.</p><div class="th-fl-sfcs"><span class="th-fl-sfc">Legacy storage</span></div></div>
+      </div>
+      </div>
+    </div>
+    <div class="th-band" data-band="phase3">
+      <div class="th-pq-card">
+        <table class="th-pq-table" aria-label="Phase 3"><colgroup><col style="width:22%"><col style="width:21%"><col style="width:20%"><col style="width:26%"><col style="width:11%"></colgroup><thead class="th-band-th"><tr><th scope="col">Surface</th><th scope="col">Current</th><th scope="col">Desired</th><th scope="col">Roadmap status</th><th scope="col">Owner</th></tr></thead>
+          <tbody>
+          <tr id="secp-syscalls" class="th-mainrow" data-status="external" style="--rowac:var(--th-ext)"><td class="th-surface"><span class="th-chev">&#9656;</span>secp syscalls</td><td class="th-mono">secp256k1/r1 (ECDSA)</td><td class="th-mono">TBD</td><td><span class="th-pq-badge" style="--bc:var(--th-ext)"><span class="th-bdot"></span>External</span></td><td class="th-owner">Ethereum</td></tr>
+          <tr class="th-detailrow" style="--rowac:var(--th-ext)"><td colspan="5"><div class="th-detail-inner"><p>The Cairo VM's secp256k1/r1 syscalls support L1 to L2 messaging and the Ethereum bridge. They are quantum-vulnerable, and removing them depends on Ethereum migrating first, otherwise the bridge breaks.</p><div class="th-detail-metas"><span class="th-detail-meta th-detail-src" data-src="https://quantum.starkware.co/migration-register" data-checked="2026-09-09"><span class="th-lbl">Source</span> <a href="https://quantum.starkware.co/migration-register" target="_blank" rel="noopener noreferrer">StarkWare Quantum Hub, migration register</a>, read <time datetime="2026-09-09">2026-09-09</time></span></div></div></td></tr>
+          <tr id="blob-data-availability" class="th-mainrow" data-status="external" style="--rowac:var(--th-ext)"><td class="th-surface"><span class="th-chev">&#9656;</span>Blob data availability</td><td class="th-mono">KZG commitment</td><td class="th-mono">TBD</td><td><span class="th-pq-badge" style="--bc:var(--th-ext)"><span class="th-bdot"></span>External</span></td><td class="th-owner">Ethereum</td></tr>
+          <tr class="th-detailrow" style="--rowac:var(--th-ext)"><td colspan="5"><div class="th-detail-inner"><p>State-diff data posted to Ethereum as blobs is anchored by a KZG commitment, which is quantum-vulnerable. A KZG compromise would affect data availability transparency, not state-transition soundness, which the STARK proof still protects.</p><div class="th-detail-metas"><span class="th-detail-meta th-fallback"><span class="th-lbl">Fallback</span> Starknet's sequencer can already post state diffs as calldata instead of blobs, a switch that exists today for blob-price spikes and does not depend on KZG.</span><span class="th-detail-meta th-detail-src" data-src="https://docs.starknet.io/architecture/data-availability/" data-checked="2026-09-09"><span class="th-lbl">Source</span> <a href="https://docs.starknet.io/architecture/data-availability/" target="_blank" rel="noopener noreferrer">Starknet docs, data availability</a>, read <time datetime="2026-09-09">2026-09-09</time></span></div></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="th-fl th-band-blk">
+      <div class="th-fl-node" style="--ac:var(--th-ext)">
+        <div class="th-fl-headrow"><div class="th-fl-txt"><div class="th-fl-phase">Phase 3</div><div class="th-fl-title">Ethereum dependencies</div></div><span class="th-fl-times"><span class="th-fl-time">Gated on ETH</span><span class="th-fl-time" style="--ac:var(--th-dev)" data-perish="l1-tag-phase3">or replaced if L1</span></span><span class="th-fl-chev">&#9656;</span></div>
+        <div class="th-fl-detail"><p>Two surfaces sit outside Starknet's direct control and resolve as Ethereum completes its own migration.</p><div class="th-fl-sfcs"><span class="th-fl-sfc">secp syscalls (bridge)</span><span class="th-fl-sfc">Blob data availability (KZG)</span></div><span class="th-fl-fallback">Fallback: state diffs can be posted as calldata instead of blobs</span></div>
+      </div>
+      </div>
+    </div>
+    <div class="th-band th-band-dest">
+      <div class="th-fl th-band-blk">
+      <div class="th-fl-node th-dest" style="--ac:var(--th-done)">
+        <div class="th-fl-headrow"><div class="th-fl-txt"><div class="th-fl-phase">Destination</div><div class="th-fl-title">Full post-quantum security</div></div><span class="th-fl-times"><span class="th-fl-time">No date as L2</span><span class="th-fl-time" style="--ac:var(--th-dev)" data-perish="l1-tag-destination">2027 target as L1</span></span><span class="th-fl-chev">&#9656;</span></div>
+        <!-- THE CALENDAR DESTINATION IS GONE, deliberately (2026-09-09). This read
+       "Target ~2027" with "ahead of the industry's 2029 horizon". Neither is
+       supportable: the published roadmap gives RELATIVE phase estimates from
+       an unstated start, never a calendar destination, and the trie,
+       contract-address and consensus items are published direction while the
+       legacy-storage item is research. A date computed from a start that has
+       not been announced is a guess, and racing it against an industry
+       horizon compounds the guess with a comparison nobody published. Do not
+       restore a year here without a primary source that states one.
+       THE YEAR RETURNS ON ONE ROUTE ONLY (2026-10-09). Starknet's own post of
+       Oct 8, 2026 states 2027 as its target, and only for the L1 route it is
+       actively considering. That is the primary source the rule above asks
+       for, so "2027 target as L1" is amber (not decided) and sits beside "No
+       date as L2", which is the unchanged claim for the published L2 roadmap.
+       No industry race is drawn here. Registered in Q_PERISHABLE. -->
+        <div class="th-fl-detail"><p>The end state is no elliptic-curve assumptions anywhere in the proving, consensus, or state-commitment layers. There is no published date for it: the roadmap gives relative estimates between phases, not a calendar, and protocol activation is subject to Starknet governance.</p></div>
+      </div>
+      </div>
+    </div>
     <div class="th-pq-empty" id="th-pq-empty">No surfaces in this category.</div>
-  </div>
-  </div>
-  <aside class="th-fl">
-    <div class="th-fl-head">The path to end-to-end</div>
-
-    <div class="th-fl-node" style="--ac:var(--th-q)">
-      <div class="th-fl-headrow"><div class="th-fl-txt"><div class="th-fl-phase">Phase 1</div><div class="th-fl-title">Secure the future</div></div><span class="th-fl-time">&asymp; 2 months of work</span><span class="th-fl-chev">&#9656;</span></div>
-      <div class="th-fl-detail"><p>The aim is that every new deployment, transaction and state update becomes quantum-safe by default: Pedersen would move to BLAKE2 across state commitment and address derivation, and consensus signing to a post-quantum scheme. The chain environment has already moved; the other three are published direction, not shipped.</p><div class="th-fl-sfcs"><span class="th-fl-sfc">State trie hashing</span><span class="th-fl-sfc">Address derivation</span><span class="th-fl-sfc" style="--ac:var(--th-done)">OS program &amp; config hash</span><span class="th-fl-sfc">Consensus signing</span></div></div>
-    </div>
-    <div class="th-fl-conn"><span class="th-fl-line"></span><span class="th-fl-tip">&#9662;</span></div>
-
-    <div class="th-fl-node" style="--ac:var(--th-dev)">
-      <div class="th-fl-headrow"><div class="th-fl-txt"><div class="th-fl-phase">Phase 2</div><div class="th-fl-title">Migrate what exists</div></div><span class="th-fl-time">&asymp; 1 month after Phase 1</span><span class="th-fl-chev">&#9656;</span></div>
-      <div class="th-fl-detail"><p>Existing contracts keep working, and bringing their storage key derivation into alignment is still research: no public specification, no implementation, no released toolkit.</p><div class="th-fl-sfcs"><span class="th-fl-sfc">Legacy storage</span></div></div>
-    </div>
-    <div class="th-fl-conn"><span class="th-fl-line"></span><span class="th-fl-tip">&#9662;</span></div>
-
-    <div class="th-fl-node" style="--ac:var(--th-ext)">
-      <div class="th-fl-headrow"><div class="th-fl-txt"><div class="th-fl-phase">Phase 3</div><div class="th-fl-title">Ethereum dependencies</div></div><span class="th-fl-times"><span class="th-fl-time">Gated on ETH</span><span class="th-fl-time" style="--ac:var(--th-dev)" data-perish="l1-tag-phase3">or replaced if L1</span></span><span class="th-fl-chev">&#9656;</span></div>
-      <div class="th-fl-detail"><p>Two surfaces sit outside Starknet's direct control and resolve as Ethereum completes its own migration.</p><div class="th-fl-sfcs"><span class="th-fl-sfc">secp syscalls (bridge)</span><span class="th-fl-sfc">Blob data availability (KZG)</span></div><span class="th-fl-fallback">Fallback: state diffs can be posted as calldata instead of blobs</span></div>
-    </div>
-    <div class="th-fl-conn"><span class="th-fl-line"></span><span class="th-fl-tip">&#9662;</span></div>
-
-    <div class="th-fl-node th-dest" style="--ac:var(--th-done)">
-      <div class="th-fl-headrow"><div class="th-fl-txt"><div class="th-fl-phase">Destination</div><div class="th-fl-title">Full post-quantum security</div></div><span class="th-fl-times"><span class="th-fl-time">No date as L2</span><span class="th-fl-time" style="--ac:var(--th-dev)" data-perish="l1-tag-destination">2027 target as L1</span></span><span class="th-fl-chev">&#9656;</span></div>
-      <!-- THE CALENDAR DESTINATION IS GONE, deliberately (2026-09-09). This read
-     "Target ~2027" with "ahead of the industry's 2029 horizon". Neither is
-     supportable: the published roadmap gives RELATIVE phase estimates from
-     an unstated start, never a calendar destination, and the trie,
-     contract-address and consensus items are published direction while the
-     legacy-storage item is research. A date computed from a start that has
-     not been announced is a guess, and racing it against an industry
-     horizon compounds the guess with a comparison nobody published. Do not
-     restore a year here without a primary source that states one.
-     THE YEAR RETURNS ON ONE ROUTE ONLY (2026-10-09). Starknet's own post of
-     Oct 8, 2026 states 2027 as its target, and only for the L1 route it is
-     actively considering. That is the primary source the rule above asks
-     for, so "2027 target as L1" is amber (not decided) and sits beside "No
-     date as L2", which is the unchanged claim for the published L2 roadmap.
-     No industry race is drawn here. Registered in Q_PERISHABLE. -->
-      <div class="th-fl-detail"><p>The end state is no elliptic-curve assumptions anywhere in the proving, consensus, or state-commitment layers. There is no published date for it: the roadmap gives relative estimates between phases, not a calendar, and protocol activation is subject to Starknet governance.</p></div>
-    </div>
-  </aside>
   </div>
 
   <!-- THE OCT 8, 2026 L1 UPDATE (2026-10-09, owner copy, verbatim). Full
@@ -4069,6 +4109,10 @@ body.page-quantum{overflow-x:clip;}
         var d = r.nextElementSibling;
         if(d && d.classList.contains('th-detailrow')) d.style.display = match ? '' : 'none';
         if(match) shown++;
+      });
+      /* a band with no matching row goes entirely, block and all */
+      root.querySelectorAll('.th-band[data-band]').forEach(function(b){
+        b.hidden = !b.querySelector('.th-mainrow:not([style*="none"])');
       });
       empty.style.display = shown===0 ? 'block' : 'none';
     });
@@ -5301,7 +5345,7 @@ var VIDEOS = [
 <script>
 (function(){
   if(window.__thFlInit) return; window.__thFlInit = true;
-  document.querySelectorAll('.th-fl-node').forEach(function(n){
+  document.querySelectorAll('.th-fl-node:not(.th-fl-static)').forEach(function(n){
     n.addEventListener('click', function(){
       var wasOpen = n.classList.contains('th-open');
       document.querySelectorAll('.th-fl-node').forEach(function(x){ x.classList.remove('th-open'); });
