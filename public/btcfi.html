@@ -589,6 +589,14 @@
   }
   .bm-tip .d { color: var(--accent); margin-bottom: 5px; letter-spacing: .1em; }
   .bm-tip .r { display: flex; justify-content: space-between; gap: 14px; line-height: 1.7; }
+  /* the staked breakdown with its APY column: fixed mono columns so every
+     row lines up (each row is its own grid), the MAX tag in a fourth; the
+     TOTAL row fills the first two; the highest APY reads in ink */
+  .bm-tip.has-apy .r { display: grid; grid-template-columns: 8ch 6ch 6ch 3.5ch; gap: 12px; justify-content: initial; }
+  .bm-tip.has-apy .r > span + span { text-align: right; }
+  .bm-tip .r.h { color: rgba(214,218,214,.55); }
+  .bm-tip .r .hi { color: #fafafa; }
+  .bm-tip .r .mx { color: var(--accent); }
   .bm-tip .r.t { border-top: 1px solid rgba(250, 250, 250,.09); margin-top: 4px; padding-top: 4px; }
 
   /* section headers ported from quantum.html (th-pm- structure), using btcfi's own accent */
@@ -2025,16 +2033,11 @@
    two per row at 1024, one at 375. The figure is INK, not accent: these are
    unsigned values under the data-palette rule; the dollar equivalents on
    the sub-line keep the muted tier. */
-/* FIVE PER ROW since the APY card (2026-11-02); 3+2 from 1100px down,
-   one per row on phones. */
 @media (min-width:769px){
-  .bm-bleed .metrics-row{grid-template-columns:repeat(5,minmax(0,1fr));grid-template-rows:none;}
+  .bm-bleed .metrics-row{grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:none;}
 }
 @media (min-width:769px) and (max-width:1100px){
-  .bm-bleed .metrics-row{grid-template-columns:repeat(3,minmax(0,1fr));}
-}
-@media (max-width:768px){
-  .bm-bleed .metrics-row{grid-template-columns:minmax(0,1fr);}
+  .bm-bleed .metrics-row{grid-template-columns:repeat(2,minmax(0,1fr));}
 }
 }
 @media (max-width:1240px){
@@ -3427,6 +3430,9 @@
         <span class="metric-val" data-bm="staked" data-fmt="dec1">686.8</span>
         <div class="metric-label">BTC staked</div>
         <div class="metric-sub" data-bm-sub="staked">≈ $43.6M</div>
+        <!-- highest APY across Endur's BTC pools (/api/endur-btc-apy); shown
+             only from a fetch made on this load, hidden on failure -->
+        <div class="metric-sub" data-bm-apy style="display:none"></div>
         <span class="mlk-src" aria-hidden="true">SOURCE <i class="ti ti-arrow-up-right"></i></span>
       </a>
       <a class="metric-box btcg-liquid" href="https://voyager.online/contract/0x0787150e306e6eae6e3f79dea881770e8bbff2c1b8eb490f969669ee945b3135" target="_blank" rel="noopener">
@@ -3441,17 +3447,6 @@
         <span class="metric-val" data-bm="shielded" data-fmt="dec2">&mdash;</span>
         <div class="metric-label">Encrypted strkBTC</div>
         <div class="metric-sub" data-bm-sub="shielded">Data unavailable</div>
-        <span class="mlk-src" aria-hidden="true">SOURCE <i class="ti ti-arrow-up-right"></i></span>
-      </a>
-      <!-- BTC staking APY (2026-11-02): the TVL-weighted average across
-           Endur's BTC liquid staking pools, through /api/endur-btc-apy (an
-           hour at the CDN). No seed: a live or cached reading, else n/a.
-           The whole card is the link to the Endur dashboard, like its
-           neighbors; a separate "Endur" link inside it would nest anchors. -->
-      <a class="metric-box btcg-liquid" href="https://dashboard.endur.fi/" target="_blank" rel="noopener noreferrer">
-        <span class="metric-val" data-bm="apy" data-fmt="pct2">n/a</span>
-        <div class="metric-label">BTC staking APY</div>
-        <div class="metric-sub" data-bm-sub="apy">Avg across Endur BTC pools</div>
         <span class="mlk-src" aria-hidden="true">SOURCE <i class="ti ti-arrow-up-right"></i></span>
       </a>
     </div>
@@ -4589,7 +4584,7 @@
   // number, its tooltip TOTAL and the sum of its displayed rows are one
   // number by construction.
   function makeSnapshot(f){
-    var s = { updated: f.updated, btcUsd: f.btcUsd, supplies: f.supplies, stakedTokens: f.stakedTokens, stakedOther: f.stakedOther || 0, encryptedStrkBtc: f.encryptedStrkBtc, btcApy: f.btcApy, btcApyPools: f.btcApyPools, strkStaked: f.strkStaked, strkStakedAt: f.strkStakedAt, prov: f.prov };
+    var s = { updated: f.updated, btcUsd: f.btcUsd, supplies: f.supplies, stakedTokens: f.stakedTokens, stakedOther: f.stakedOther || 0, encryptedStrkBtc: f.encryptedStrkBtc, btcApy: f.btcApy, btcApyByToken: f.btcApyByToken, strkStaked: f.strkStaked, strkStakedAt: f.strkStakedAt, prov: f.prov };
     s.networkBtc = TOKENS.reduce(function(a, t){ return a + s.supplies[t.name]; }, 0);
     s.stakedBtc = TOKENS.reduce(function(a, t){ return a + s.stakedTokens[t.name]; }, s.stakedOther);
     return s;
@@ -4603,7 +4598,8 @@
       // encryptedStrkBtc may be absent: the card has no seed (2026-09-20) and
       // renders the unavailable state until a live pool summary supplies it
       && (s.encryptedStrkBtc == null || isFinite(s.encryptedStrkBtc))
-      // btcApy may be absent too: no seed, a live or cached reading or n/a
+      // btcApy (the highest Endur BTC pool APY) may be absent too: no seed,
+      // and only ever shown from a fetch made on this load
       && (s.btcApy == null || isFinite(s.btcApy))
       && s.prov && GROUPS.every(function(k){ return s.prov[k] && s.prov[k].origin && s.prov[k].at; }));
   }
@@ -4619,7 +4615,7 @@
   var SEED_AT = Date.parse(SEED_RAW.verified);
   var SEED = makeSnapshot({ updated: SEED_AT, btcUsd: SEED_RAW.btcUsd, supplies: SEED_RAW.supplies,
     stakedTokens: SEED_RAW.stakedTokens, stakedOther: SEED_RAW.stakedOther, encryptedStrkBtc: null, btcApy: null, prov: provAll('seed', SEED_AT) });
-  var CACHE_KEY = 'btcfiMetrics_v6'; // v6: adds the apy group; v5 and older shapes are ignored and rewritten on the next good fetch
+  var CACHE_KEY = 'btcfiMetrics_v7'; // v7: the apy group carries per-token APYs and their maximum; v6 and older shapes are ignored and rewritten on the next good fetch
 
   var RPCS = ['https://rpc.starknet.lava.build', 'https://api.cartridge.gg/x/starknet/mainnet', 'https://1rpc.io/starknet'];
   var SEL_TOTAL_SUPPLY = '0x80aa9fdbfaf9615e4afc7f5f722e265daca5ccc655360fa5ccacf9c267936d';
@@ -4630,6 +4626,7 @@
   function fmtDec1(v){ return v.toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 }); }
   function fmtDec2(v){ return v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
   function fmtPct2(v){ return fmtDec2(v) + '%'; }
+  var apyLine = row.querySelector('[data-bm-apy]');
   function fmtUsd(v){
     if (v >= 1e6) return '≈ $' + (v / 1e6).toFixed(1) + 'M';
     if (v >= 1e3) return '≈ $' + Math.round(v / 1e3).toLocaleString('en-US') + 'K';
@@ -4647,7 +4644,7 @@
   function setStat(key, btc, usd, instant){
     var e = els[key];
     if (!e || btc == null) return;
-    var fmt = e.fmt === 'pct2' ? fmtPct2 : e.fmt === 'dec2' ? fmtDec2 : e.fmt === 'dec1' ? fmtDec1 : fmtInt;
+    var fmt = e.fmt === 'dec2' ? fmtDec2 : e.fmt === 'dec1' ? fmtDec1 : fmtInt;
     var from = parseFloat(String(e.val.textContent).replace(/[^0-9.]/g, '')) || 0;
     if (reduce || instant || Math.abs(btc - from) < 0.005) {
       e.val.textContent = fmt(btc);
@@ -4679,6 +4676,7 @@
     var c = loadCache();
     if (!validSnapshot(c)) return SEED;
     GROUPS.forEach(function(k){ if (c.prov[k].origin === 'live') c.prov[k].origin = 'cache'; });
+    c.btcApy = null; c.btcApyByToken = null; // an APY from an earlier visit is stale: hidden until this load fetches one
     return makeSnapshot(c);
   })();
 
@@ -4745,8 +4743,21 @@
     tip.innerHTML = tipHtml('BTC ON STARKNET, BY TOKEN',
       TOKENS.map(function(t){ return { label: t.name.toUpperCase(), v: d[t.name] }; }), displayedTotal());
   });
+  // with a live APY reading the staked breakdown gains an APY column; the
+  // highest rate (every token tied at it, if several are) is marked MAX and
+  // the TOTAL row carries no APY. Without one, the two-column form as before.
   var stakedTip = cardTip('staked', function(tip){
-    tip.innerHTML = tipHtml('BTC STAKED, BY TOKEN', displayedStakedRows(), displayedStakedTotal());
+    var by = snap.btcApyByToken;
+    tip.classList.toggle('has-apy', !!by);
+    if (!by) { tip.innerHTML = tipHtml('BTC STAKED, BY TOKEN', displayedStakedRows(), displayedStakedTotal()); return; }
+    var top = rnd(snap.btcApy * 100, 2);
+    var rows = displayedStakedRows().map(function(r){
+      var a = by[r.label] == null ? null : rnd(by[r.label] * 100, 2);
+      var cell = a == null ? '<span></span>' : a === top ? '<span class="hi">' + fmtDec2(a) + '%</span><span class="mx">MAX</span>' : '<span>' + fmtDec2(a) + '%</span>';
+      return '<div class="r"><span>' + r.label + '</span><span>' + fmtDec1(r.v) + '</span>' + cell + '</div>';
+    }).join('');
+    tip.innerHTML = '<div class="d">BTC STAKED, BY TOKEN</div><div class="r h"><span></span><span>BTC</span><span>APY</span></div>' + rows +
+      '<div class="r t"><span>TOTAL</span><span>' + fmtDec1(displayedStakedTotal()) + '</span></div>';
   });
 
   var upEl = document.getElementById('bmUpdated');
@@ -4758,8 +4769,8 @@
     var rank = { seed: 0, cache: 1, live: 2 };
     var worst = 'live', oldest = Infinity;
     GROUPS.forEach(function(k){
-      // the APY card has no seed: while it shows n/a it shows no data, so
-      // it cannot drag the line to REFERENCE DATA under four live cards
+      // the APY line has no seed and hides when there is no reading, so a
+      // hidden line cannot drag the label to REFERENCE DATA
       if (k === 'apy' && snap.btcApy == null) return;
       var p = snap.prov[k];
       if (rank[p.origin] < rank[worst]) worst = p.origin;
@@ -4840,11 +4851,14 @@
     if (shownShielded === null) {
       if (els.shielded) { els.shielded.val.textContent = '—'; if (els.shielded.sub) els.shielded.sub.textContent = 'Data unavailable'; }
     } else setStat('shielded', shownShielded, shownShielded * snap.btcUsd);
-    /* the APY card: percent with two decimals, no fiat sub (the basis line
-       stays); n/a until a live or cached reading exists */
-    var shownApy = (typeof snap.btcApy === 'number' && isFinite(snap.btcApy)) ? rnd(snap.btcApy * 100, 2) : null;
-    if (shownApy === null) { if (els.apy) els.apy.val.textContent = 'n/a'; }
-    else setStat('apy', shownApy, null);
+    /* the staked card's second sub-line: the highest APY across Endur's BTC
+       pools, two decimals; hidden (never empty, never remembered) without a
+       reading from this load */
+    if (apyLine) {
+      var shownApy = (typeof snap.btcApy === 'number' && isFinite(snap.btcApy)) ? rnd(snap.btcApy * 100, 2) : null;
+      apyLine.style.display = shownApy === null ? 'none' : '';
+      apyLine.textContent = shownApy === null ? '' : 'Up to ' + fmtDec2(shownApy) + '% APY';
+    }
     netTip.refill();
     stakedTip.refill();
     tickUpdated();
@@ -4918,7 +4932,7 @@
     // build a candidate off-screen, starting from the current snapshot; nothing
     // on screen changes until the candidate is committed wholesale at the end
     var next = { updated: snap.updated, btcUsd: snap.btcUsd, supplies: snap.supplies, stakedTokens: snap.stakedTokens, stakedOther: snap.stakedOther, encryptedStrkBtc: snap.encryptedStrkBtc,
-      btcApy: snap.btcApy, btcApyPools: snap.btcApyPools,
+      btcApy: null, btcApyByToken: null, // a failed APY fetch hides the line: no carry-over
       prov: { supplies: snap.prov.supplies, staked: snap.prov.staked, shielded: snap.prov.shielded, price: snap.prov.price, apy: snap.prov.apy } };
     var stamped = false;
     function stamp(group){
@@ -4990,18 +5004,28 @@
         if (t && typeof t.balanceHuman === 'number' && isFinite(t.balanceHuman)) { next.encryptedStrkBtc = t.balanceHuman; stamp('shielded'); }
       }); })
       .catch(function(){});
-    // BTC staking APY: the same-origin route averages Endur's BTC pools and
-    // the CDN holds it an hour, so no cache-buster here (getJson adds one).
-    // A failure keeps the previous reading and its vintage.
+    // BTC staking APY: the same-origin route returns Endur's BTC pools with
+    // their own APYs and the CDN holds it an hour, so no cache-buster here
+    // (getJson adds one). Per token by the TOKENS names; the line shows the
+    // highest of them. A failure, or a reading over two hours old, leaves
+    // both null and the line and column hidden.
     var pApy = fetch('/api/endur-btc-apy')
       .then(function(r){ if (!r.ok) throw new Error('endur-btc-apy ' + r.status); return r.json(); })
       .then(function(d){
-        if (!d || typeof d.apy !== 'number' || !isFinite(d.apy) || d.apy < 0 || d.apy > 1 || !(d.pools > 0)) throw new Error('bad apy payload');
-        next.btcApy = d.apy; next.btcApyPools = d.pools;
+        if (!d || !Array.isArray(d.pools) || !isFinite(d.ts) || Date.now() - d.ts > 7200000) throw new Error('bad apy payload');
+        var by = {}, max = null;
+        d.pools.forEach(function(p){
+          var t = TOKENS.filter(function(t){ return p && typeof p.asset === 'string' && t.name.toLowerCase() === p.asset.toLowerCase(); })[0];
+          if (!t || typeof p.apy !== 'number' || !isFinite(p.apy) || p.apy < 0 || p.apy > 1) return;
+          by[t.name.toUpperCase()] = p.apy;
+          if (max === null || p.apy > max) max = p.apy;
+        });
+        if (max === null) throw new Error('no BTC pool APYs');
+        next.btcApy = max; next.btcApyByToken = by;
         stamp('apy');
         // the CDN copy can be up to an hour old: date the group by the route's
-        // own reading, and a last-good copy (stale) is cached data, not live
-        if (isFinite(d.ts) && d.ts <= Date.now()) next.prov.apy = { origin: d.stale ? 'cache' : 'live', at: d.ts };
+        // own reading, so the freshness line counts the APY's real age
+        if (d.ts <= Date.now()) next.prov.apy = { origin: 'live', at: d.ts };
       })
       .catch(function(){});
     Promise.all([pPrice, pSupplies, pStaked, pShielded, pApy]).then(function(){
