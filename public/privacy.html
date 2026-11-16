@@ -1023,7 +1023,8 @@
   .btile:hover .ba { transform: translate(2px,-2px); }
 
   /* ===== live pool metrics (data: strk20 backend; sources: Starkscan + STRK20 dashboard) ===== */
-  /* KPI row: four cells now (revenue joined the three pool-summary stats).
+  /* KPI rows: eight cells, two rows of four (2026-11-16: the second row
+     carries the official dashboard's pool-state extras).
      These are stat cards, not chart cells, so they keep the page's existing
      gx-card treatment; the no-glass rule applies to the plot cells below,
      which stay on the solid --bg-raise surface with a hairline. */
@@ -1051,7 +1052,36 @@
     .pmx-card[data-pmx="swaps"]    { grid-column: span 4; }
     .pmx-card[data-pmx="defi"],
     .pmx-card[data-pmx="revenue"]  { grid-column: span 6; }
+    .pmx-card[data-pmx="apps"]     { grid-column: span 8; }
+    .pmx-card[data-pmx="acts"]     { grid-column: span 4; }
   }
+  /* Public vs private, by app: a table, not a chart. Units differ per row
+     (TVL, volume, collateral, premiums) and the private slice sits orders of
+     magnitude under the public one, so a shared bar scale would draw nothing.
+     The last column states the ratio in words instead. */
+  .pmx-apps { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 10.5px; letter-spacing: .06em; }
+  .pmx-apps th { font-weight: 400; font-size: 9.5px; letter-spacing: .1em; color: var(--muted); text-align: right; padding: 0 0 8px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  .pmx-apps th:first-child, .pmx-apps td:first-child { text-align: left; padding-left: 0; }
+  .pmx-apps td { padding: 8px 0 8px 10px; border-bottom: 1px solid rgba(250,250,250,.05); text-align: right; color: var(--ink); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .pmx-apps tr:last-child td { border-bottom: 0; }
+  .pmx-apps .app { display: flex; flex-direction: column; gap: 3px; }
+  .pmx-apps .app a { color: var(--ink); text-decoration: none; letter-spacing: .1em; }
+  .pmx-apps .app a:hover { color: var(--em); }
+  .pmx-apps .app span, .pmx-apps .m { color: var(--muted); font-size: 9.5px; }
+  .pmx-apps .pri { color: var(--em); }
+  .pmx-apps .na { color: var(--muted); }
+  .pmx-apps-note { font-family: var(--mono); font-size: 9.5px; letter-spacing: .06em; line-height: 1.6; color: var(--muted); margin-top: 10px; }
+  .pmx-apps-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  @media (max-width: 640px) {
+    .pmx-apps .m, .pmx-apps .shr { display: none; }
+    .pmx-apps th { white-space: normal; }
+  }
+  /* Observed pool activities: one bar per activity, longest first, all on
+     one scale (counts of the same kind of thing). Untracked rows say SOON. */
+  .pmx-acts { display: flex; flex-direction: column; gap: 9px; }
+  .pmx-acts .foot { border-top: 1px solid var(--line); margin-top: 3px; padding-top: 9px; display: flex; flex-direction: column; gap: 6px; }
+  .pmx-acts .foot div { display: flex; justify-content: space-between; gap: 10px; font-family: var(--mono); font-size: 10px; letter-spacing: .08em; color: var(--muted); }
+  .pmx-acts .foot b { font-weight: 400; color: var(--ink); }
   /* Pool composition: one horizontal bar per asset at the latest snapshot
      date, in that asset's stacked-chart series color, sorted by value. Rows
      and TOTAL are built from the same split and the same display rounding as
@@ -2993,6 +3023,21 @@ a.eco-logo:focus-visible { outline: 2px solid var(--em); outline-offset: 2px; }
         <div class="pmx-body"><a class="pmx-live" href="https://starkscan.co/privacy-pool" target="_blank" rel="noopener">VIEW LIVE &rarr;</a></div>
         <a class="pmx-src" href="https://starkscan.co/privacy-pool" target="_blank" rel="noopener">SOURCE: STARKSCAN &#8599;</a>
       </div>
+      <!-- PUBLIC VS PRIVATE, BY APP (2026-11-16, synced to the official
+           STRK20 dashboard's app cards): every row uses the same source and
+           the same acceptance guards as strk20.starknet.io/dashboard
+           (dashboard/modules/appflows.js + applivevolume.js). Each row
+           carries its own data-src; nothing in the table is a literal. -->
+      <div class="pmx-card" data-pmx="apps" style="--span:8" data-src="https://strk20-dashboard-production.up.railway.app/agg/app-flows" data-checked="2026-11-16">
+        <div class="pmx-head"><span class="pmx-t">Public vs private, by app</span><span class="pmx-sub">EACH APP'S PUBLIC FIGURE AND THE SLICE THAT RAN THROUGH STRK20</span></div>
+        <div class="pmx-body"><a class="pmx-live" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">VIEW LIVE &rarr;</a></div>
+        <a class="pmx-src" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">SOURCE: STRK20 DASHBOARD &#8599;</a>
+      </div>
+      <div class="pmx-card" data-pmx="acts" style="--span:4" data-src="https://strk20-dashboard-production.up.railway.app/agg/window-ops" data-checked="2026-11-16">
+        <div class="pmx-head"><span class="pmx-t">Observed pool activities</span><span class="pmx-sub">COUNT, ALL-TIME</span></div>
+        <div class="pmx-body"><a class="pmx-live" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">VIEW LIVE &rarr;</a></div>
+        <a class="pmx-src" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">SOURCE: STRK20 DASHBOARD &#8599;</a>
+      </div>
       <div class="pmx-card" data-pmx="txs" style="--span:4" data-src="https://strk20-dashboard-production.up.railway.app/agg/transactions" data-checked="2026-09-20">
         <div class="pmx-head"><span class="pmx-t">Transactions</span><span class="pmx-sub">COUNT, DAILY</span></div>
         <div class="pmx-body"><a class="pmx-live" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">VIEW LIVE &rarr;</a></div>
@@ -3003,8 +3048,12 @@ a.eco-logo:focus-visible { outline: 2px solid var(--em); outline-offset: 2px; }
         <div class="pmx-body"><a class="pmx-live" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">VIEW LIVE &rarr;</a></div>
         <a class="pmx-src" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">SOURCE: STRK20 DASHBOARD &#8599;</a>
       </div>
-      <div class="pmx-card" data-pmx="swaps" style="--span:4" data-src="https://strk20-dashboard-production.up.railway.app/agg/swap-by-token" data-checked="2026-09-20">
-        <div class="pmx-head"><span class="pmx-t">Private swap volume</span><span class="pmx-sub">USD BY TOKEN, DAILY</span></div>
+      <!-- Starkscan's observed private swaps, the series the official
+           dashboard switched to (its swap-by-token reads are overridden by
+           this source); fetched through /api/strk20-private-swaps because
+           the upstream sends no CORS header. Last 30 UTC days. -->
+      <div class="pmx-card" data-pmx="swaps" style="--span:4" data-src="https://strk20.starknet.io/api/dashboard-sync?source=starkscan" data-checked="2026-11-16">
+        <div class="pmx-head"><span class="pmx-t">Private swap volume</span><span class="pmx-sub">USD, DAILY, LAST 30 DAYS · STARKSCAN OBSERVED</span></div>
         <div class="pmx-body"><a class="pmx-live" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">VIEW LIVE &rarr;</a></div>
         <a class="pmx-src" href="https://strk20.starknet.io/dashboard" target="_blank" rel="noopener">SOURCE: STRK20 DASHBOARD &#8599;</a>
       </div>
@@ -4319,9 +4368,177 @@ var pvVideoChrome = thVideoChrome({
     /* no chart shorter than 220px (2026-09-07, the dashboard section) */
     return Math.max(220, Math.min(PLOT_H[k] || 220, Math.round(w * 0.8)));
   }
-  function get(path){
+  function get(path, query){
     // cache-busting param: every page load and refresh pulls fresh numbers
-    return fetch(API + path + '?_=' + Date.now()).then(function(r){ if (!r.ok) throw new Error(path); return r.json(); });
+    return fetch(API + path + '?' + (query ? query + '&' : '') + '_=' + Date.now()).then(function(r){ if (!r.ok) throw new Error(path); return r.json(); });
+  }
+  function getAbs(url){
+    return fetch(url).then(function(r){ if (!r.ok) throw new Error(url); return r.json(); });
+  }
+  // the dashboard's activity window: all-time (ten years)
+  var OPS_WINDOW_MS = 10 * 365 * 24 * 60 * 60 * 1000;
+  /* Starkscan's observed private swaps, through this site's same-origin
+     proxy (api/strk20-private-swaps.js applies the dashboard's acceptance
+     rules upstream). The proxy is CDN-cached 5 min; a payload older than
+     30 min is refused here so a stuck cache never reads as live. */
+  function getStarkscan(){
+    return fetch('/api/strk20-private-swaps').then(function(r){ if (!r.ok) throw new Error('starkscan'); return r.json(); })
+      .then(function(x){
+        var age = Date.now() - Date.parse(x && x.fetchedAt);
+        if (!isFinite(age) || age > 1800000 || !x.total || !isFinite(x.total.volumeUsd) || !Array.isArray(x.daily)) throw new Error('starkscan stale');
+        return x;
+      });
+  }
+  var _ss = null; // one Starkscan read per cycle, shared by the swaps card and the AVNU row
+  function starkscanOnce(){ return _ss || (_ss = getStarkscan()); }
+
+  /* ---- PUBLIC VS PRIVATE, BY APP ----------------------------------------
+     The nine app cards of strk20.starknet.io/dashboard, in its order, each
+     read from the source that card reads, with the card's own guards
+     (schemaVersion, scope, status 'live', unit). Where the dashboard has no
+     private path the row says SOON; where a source fails or is stale the
+     cell shows the unavailable dash, never a remembered figure.
+       Vesu       public  DefiLlama TVL                     private  none yet (SOON)
+       Ekubo      /agg/ekubo-lp-tvl  (LP TVL; private = shadow-owned LP NFTs)
+       AVNU       public  DefiLlama aggregator volume, all-time
+                  private Starkscan observed AVNU private swaps
+       OFFMARKET  public  DefiLlama Polymarket International volume, all-time
+                  private /agg/routed-volume, offmarket slice (zero allowed)
+       Endur      /agg/endur-shadow-tvl (private = pool-held LSTs)
+       Troves     /agg/troves-shadow-tvl (private = shadow-owned vault shares)
+       Opus       /agg/opus-collateral (Shrine collateral, USD)
+       ArcX       /agg/app-flows arcx (USDC fills)
+       Supervega  /agg/app-flows supervega (option premiums)
+     Public and private are as the dashboard defines them per app: for the
+     backend-split rows public EXCLUDES the shadow-account slice; AVNU and
+     OFFMARKET compare a venue's whole public volume with its private slice.
+     The last column is private divided by public, a ratio, not a share. */
+  var LLAMA = 'https://api.llama.fi';
+  var APPS = [
+    { id: 'vesu',      name: 'VESU',      cat: 'LENDING',          metric: 'TVL',              url: 'https://vesu.xyz/' },
+    { id: 'ekubo',     name: 'EKUBO',     cat: 'DEX & LPS',        metric: 'LP TVL',           url: 'https://app.ekubo.org/' },
+    { id: 'avnu',      name: 'AVNU',      cat: 'DEX',              metric: 'VOLUME, ALL-TIME', url: 'https://app.avnu.fi/' },
+    { id: 'offmarket', name: 'OFFMARKET', cat: 'PREDICTION MARKETS', metric: 'VOLUME, ALL-TIME', url: 'https://offmarket.cx/' },
+    { id: 'endur',     name: 'ENDUR',     cat: 'STAKING & LSTS',   metric: 'TVL',              url: 'https://app.endur.fi/' },
+    { id: 'troves',    name: 'TROVES',    cat: 'YIELD STRATEGIES', metric: 'TVL',              url: 'https://app.troves.fi/' },
+    { id: 'opus',      name: 'OPUS',      cat: 'CREDIT & SAVINGS', metric: 'COLLATERAL',       url: 'https://app.opus.money/' },
+    { id: 'arcx',      name: 'ARCX',      cat: 'POINTS',           metric: 'FILL VOLUME',      url: 'https://app.arcx.trade/' },
+    { id: 'supervega', name: 'SUPERVEGA', cat: 'OPTIONS',          metric: 'PREMIUMS',         url: 'https://supervega.app/trade' }
+  ];
+  function fin(v){ return typeof v === 'number' && isFinite(v) && v >= 0; }
+  // the dashboard's own printer for these cards ($X.XXB / $X.XXM / $X.XK / $X)
+  function fmtApp(v){
+    if (v >= 1e9) return '$' + (v / 1e9).toFixed(2) + 'B';
+    if (v >= 1e6) return '$' + (v / 1e6).toFixed(2) + 'M';
+    if (v >= 1e3) return '$' + (v / 1e3).toFixed(1) + 'K';
+    if (v > 0 && v < 1) return '<$1';
+    return '$' + v.toFixed(0);
+  }
+  function fmtRatio(pri, pub){
+    if (!fin(pri) || !fin(pub) || pub <= 0) return null;
+    var r = pri / pub * 100;
+    if (r === 0) return '0%';
+    if (r < 0.01) return '<0.01%';
+    return (r < 1 ? r.toFixed(2) : r.toFixed(1)) + '%';
+  }
+  function split(b, scope){
+    // a backend public/private pair, accepted only on the dashboard's guards
+    if (!b || b.schemaVersion !== 1 || b.scope !== scope || b.status !== 'live' || b.unit !== 'usd' ||
+        !fin(b.public) || !fin(b.private)) return null;
+    return { pub: b.public, pri: b.private, at: Date.parse(b.asOf) || 0 };
+  }
+  function loadApps(){
+    var c = function(p){ return p.catch(function(){ return null; }); };
+    return Promise.all([
+      c(get('/agg/app-flows')), c(get('/agg/troves-shadow-tvl')), c(get('/agg/opus-collateral')),
+      c(get('/agg/endur-shadow-tvl')), c(get('/agg/ekubo-lp-tvl')), c(get('/agg/routed-volume')),
+      c(starkscanOnce()),
+      c(getAbs(LLAMA + '/tvl/vesu')),
+      c(getAbs(LLAMA + '/summary/aggregators/avnu?dataType=dailyVolume')),
+      c(getAbs(LLAMA + '/summary/dexs/polymarket-international?dataType=dailyVolume'))
+    ]).then(function(r){
+      var flows = r[0], ss = r[6], routed = r[5];
+      var ok1 = flows && flows.schemaVersion === 1 && flows.scope === 'partner-app-public-and-strk20-shadow-flows';
+      function partner(id){
+        var m = ok1 && flows.apps ? flows.apps[id] : null;
+        if (!m || m.status !== 'live' || m.unit !== 'usd' || !fin(m.public) || !fin(m.private)) return null;
+        return { pub: m.public, pri: m.private, at: Date.parse(m.asOf) || 0 };
+      }
+      var offPri = null;
+      if (routed && Array.isArray(routed.days) && Array.isArray(routed.protocols) && routed.protocols.indexOf('offmarket') !== -1) {
+        offPri = routed.days.reduce(function(a, d){ var v = d.byProtocol && d.byProtocol.offmarket; return a + (fin(v) ? v : 0); }, 0);
+      }
+      var got = {
+        vesu:      { pub: fin(r[7]) ? r[7] : null, pri: null, soon: true },
+        ekubo:     split(r[4], 'starknet-ekubo-lp-nfts-by-strk20-shadow-owners'),
+        avnu:      { pub: r[8] && fin(r[8].totalAllTime) ? r[8].totalAllTime : null,
+                     pri: ss && ss.venues && ss.venues.avnu && fin(ss.venues.avnu.volumeUsd) ? ss.venues.avnu.volumeUsd : null },
+        offmarket: { pub: r[9] && fin(r[9].totalAllTime) ? r[9].totalAllTime : null, pri: offPri },
+        endur:     split(r[3], 'protocol-tvl-less-strk20-pool-held-lsts'),
+        troves:    split(r[1], 'observed-strk20-shadow-vault-shares'),
+        opus:      split(r[2], 'shrine-collateral-by-strk20-shadow-troves'),
+        arcx:      partner('arcx'),
+        supervega: partner('supervega')
+      };
+      var SRC = {
+        vesu: LLAMA + '/tvl/vesu', ekubo: API + '/agg/ekubo-lp-tvl',
+        avnu: LLAMA + '/summary/aggregators/avnu · https://strk20.starknet.io/api/dashboard-sync?source=starkscan',
+        offmarket: LLAMA + '/summary/dexs/polymarket-international · ' + API + '/agg/routed-volume',
+        endur: API + '/agg/endur-shadow-tvl', troves: API + '/agg/troves-shadow-tvl', opus: API + '/agg/opus-collateral',
+        arcx: API + '/agg/app-flows', supervega: API + '/agg/app-flows'
+      };
+      return APPS.map(function(a){
+        var g = got[a.id] || {};
+        return { app: a, pub: fin(g.pub) ? g.pub : null, pri: fin(g.pri) ? g.pri : null, soon: !!g.soon, at: g.at || 0, src: SRC[a.id] };
+      });
+    });
+  }
+  function appsBlock(rows){
+    var td = function(v, cls){ return '<td class="' + (cls || '') + (v === null ? ' na' : '') + '">' + (v === null ? UNAVAILABLE : esc(v)) + '</td>'; };
+    return '<div class="pmx-apps-wrap"><table class="pmx-apps"><thead><tr><th scope="col">APP</th><th scope="col" class="m">METRIC</th><th scope="col">PUBLIC</th>' +
+      '<th scope="col">PRIVATE (STRK20)</th><th scope="col" class="shr">PRIVATE &divide; PUBLIC</th></tr></thead><tbody>' +
+      rows.map(function(r){
+        var a = r.app;
+        var pri = r.soon ? '<td class="na">SOON</td>' : td(r.pri === null ? null : fmtApp(r.pri), 'pri');
+        return '<tr data-src="' + esc(r.src) + '" data-checked="2026-11-16">' +
+          '<td><span class="app"><a href="' + a.url + '" target="_blank" rel="noopener">' + esc(a.name) + ' &#8599;</a><span>' + esc(a.cat) + '</span></span></td>' +
+          '<td class="m">' + esc(a.metric) + '</td>' +
+          td(r.pub === null ? null : fmtApp(r.pub)) + pri +
+          td(r.soon ? null : fmtRatio(r.pri, r.pub), 'shr') + '</tr>';
+      }).join('') + '</tbody></table></div>' +
+      '<p class="pmx-apps-note">Public and private as the STRK20 dashboard defines them per app. For LP, TVL, collateral, fills and premiums, public excludes the STRK20 shadow-account slice; for AVNU and OFFMARKET it is the venue&rsquo;s whole volume (DefiLlama; Polymarket International for OFFMARKET). Private swaps: Starkscan, observed only.</p>';
+  }
+
+  /* ---- OBSERVED POOL ACTIVITIES -----------------------------------------
+     The dashboard's activity list: deposits and withdrawals from Starkscan's
+     pool status (window-ops when Starkscan is out), swaps ONLY from Starkscan
+     (the dashboard never takes window-ops' legacy swap count), staking and
+     lending from window-ops. Borrowing and LPing are not tracked yet: SOON.
+     Bars share one scale, the largest count. */
+  function actsRows(raw){
+    var ss = raw.ss, ops = raw.ops || {}, pool = ss && ss.pool ? ss.pool : {};
+    var pick = function(a, b){ return fin(a) ? a : (fin(b) ? b : null); };
+    var rows = [
+      { name: 'DEPOSITS',    v: pick(pool.depositCount, ops.deposits) },
+      { name: 'WITHDRAWALS', v: pick(pool.withdrawalCount, ops.withdrawals) },
+      { name: 'TOKEN SWAPS', v: ss && ss.total && fin(ss.total.swapCount) ? ss.total.swapCount : null },
+      { name: 'STAKING',     v: fin(ops.stakes) ? ops.stakes : null },
+      { name: 'LENDING',     v: fin(ops.lends) ? ops.lends : null }
+    ];
+    if (!rows.some(function(r){ return r.v !== null; })) return null;
+    rows.sort(function(a, b){ return (b.v === null ? -1 : b.v) - (a.v === null ? -1 : a.v); });
+    return rows.concat([{ name: 'BORROWING', soon: true }, { name: 'LPING', soon: true }]);
+  }
+  function actsBlock(rows, raw){
+    var max = Math.max.apply(null, rows.map(function(r){ return r.v || 0; }).concat([1]));
+    var lend = raw.conv && fin(raw.conv.lendVolumeUsd) ? fmtUsd(raw.conv.lendVolumeUsd) : UNAVAILABLE;
+    return '<div class="pmx-comp pmx-acts">' + rows.map(function(r){
+      var val = r.soon ? 'SOON' : r.v === null ? UNAVAILABLE : Math.round(r.v).toLocaleString('en-US');
+      var pct = r.v ? Math.max(1.5, r.v / max * 100) : 0;
+      return '<div class="pmx-comp-r"><span class="n">' + r.name + '</span><span class="v">' + val + '</span>' +
+        '<span class="pmx-comp-bar"><i style="width:' + pct.toFixed(1) + '%;background:#6EB5FF"></i></span></div>';
+    }).join('') +
+      '<div class="foot"><div><span>LENDING VOLUME</span><b>' + lend + '</b></div><div><span>BORROWING VOLUME</span><b>SOON</b></div></div></div>';
   }
 
   var upEl = document.getElementById('pmxUpdated');
@@ -4335,7 +4552,7 @@ var pvVideoChrome = thVideoChrome({
   // The label reports the OLDEST data time on screen, so a card mixing two
   // endpoints (the KPI row) shows the older one, and a partially failed
   // silent refresh can never claim "just now" over a chart it did not update.
-  var prov = { stats: 0, shielded: 0, comp: 0, swaps: 0, defi: 0, txs: 0, users: 0, revenue: 0 };
+  var prov = { stats: 0, shielded: 0, comp: 0, swaps: 0, defi: 0, txs: 0, users: 0, revenue: 0, apps: 0, acts: 0 };
   // a payload's tvlAsOf as ms, 0 when it has none
   function asOfMs(p){ var t = p && typeof p.tvlAsOf === 'string' ? Date.parse(p.tvlAsOf) : NaN; return isFinite(t) ? t : 0; }
   // the shared pool-summary module (js/pool-summary.js, loaded in <head>);
@@ -4392,8 +4609,9 @@ var pvVideoChrome = thVideoChrome({
   });
 
   function load(silent){
+    _ss = null;
     if (!silent) Object.keys(bodies).forEach(skel);
-    var next = { stats: null, shielded: null, comp: null, swaps: null, defi: null, txs: null, users: null, revenue: null };
+    var next = { stats: null, shielded: null, comp: null, swaps: null, defi: null, txs: null, users: null, revenue: null, apps: null, acts: null };
     // every card stages a DRAW closure, called once here at the current cell
     // width and again on resize; the payload it closes over is the one this
     // cycle fetched, so the snapshot stays whole. `at` is the payload's data
@@ -4405,7 +4623,7 @@ var pvVideoChrome = thVideoChrome({
     // raw payloads this cycle, for the KPI row: it reads the same series the
     // charts do, so a KPI and its chart can never come from different vintages.
     // `at` holds each payload's tvlAsOf; the row shows the oldest of them.
-    var raw = { summary: null, shielded: null, fees: null, at: { summary: 0, shielded: 0, fees: 0 } };
+    var raw = { summary: null, shielded: null, fees: null, flow: null, fee: null, conv: null, ops: null, ss: null, at: { summary: 0, shielded: 0, fees: 0 } };
     var jobs = [
       // the pool summary comes through the shared module (one fetch rule,
       // one reader, one set of printers for every page)
@@ -4428,14 +4646,40 @@ var pvVideoChrome = thVideoChrome({
         }, asOfMs(d));
       }).catch(function(){}),
 
-      get('/agg/swap-by-token').then(function(d){
-        if (!d.days || !d.days.length) throw new Error('empty');
-        var split = topSeries(d.days, 'byToken', 4);
+      /* PRIVATE SWAPS, Starkscan observed (2026-11-16): the source the
+         official dashboard uses for VOLUME SWAPPED, its swap chart and
+         AVNU's private row. Until this date the card read /agg/swap-by-token,
+         which the dashboard now overrides because it under-counts (1,018
+         swaps / $676K against Starkscan's 1,964 / $1.10M on that day). The
+         same payload feeds the KPI, the AVNU row and the activity counts, so
+         those can never disagree with this chart. */
+      starkscanOnce().then(function(x){
+        raw.ss = x;
+        var days = x.daily.map(function(d){ return { date: d.date, total: d.volumeUsd, count: d.swapCount }; });
+        if (!days.length) throw new Error('empty');
+        var split = { names: ['OBSERVED'], value: function(day){ return day.total || 0; } };
         stage('swaps', function(W){
           var H = plotH('swaps', W);
-          return { chart: stackedBars(d.days, split, W, H, fmtUsd), legend: legend(split.names),
-                   meta: { days: d.days, W: W, P: PAD_STD, rows: stackRows(split, fmtUsd) } };
-        });
+          return { chart: stackedBars(days, split, W, H, fmtUsd), legend: '',
+                   meta: { days: days, W: W, P: PAD_STD, rows: function(day){
+                     return [{ label: 'VOLUME', value: fmtUsd(day.total || 0), color: PALETTE[0] },
+                             { label: 'SWAPS', value: day.count === null ? UNAVAILABLE : fmtN(day.count) }];
+                   } } };
+        }, Date.parse(x.fetchedAt));
+      }).catch(function(){}),
+
+      // the dashboard's pool-state extras, read raw for the KPI rows
+      get('/agg/lifetime-volume').then(function(d){ raw.flow = d; }).catch(function(){}),
+      get('/agg/lifetime-revenue').then(function(d){ raw.fee = d; }).catch(function(){}),
+      get('/agg/lifetime-conversions').then(function(d){ raw.conv = d; }).catch(function(){}),
+      get('/agg/window-ops', 'window_ms=' + OPS_WINDOW_MS).then(function(d){ raw.ops = d; }).catch(function(){}),
+
+      // PUBLIC VS PRIVATE, BY APP
+      loadApps().then(function(rows){
+        if (!rows.some(function(r){ return r.pub !== null || r.pri !== null; })) throw new Error('empty');
+        var ats = rows.filter(function(r){ return r.at > 0; }).map(function(r){ return r.at; });
+        stage('apps', function(){ return { chart: appsBlock(rows), legend: '', meta: null }; },
+              ats.length ? Math.min.apply(null, ats) : 0);
       }).catch(function(){}),
 
       get('/agg/routed-volume').then(function(d){
@@ -4525,6 +4769,8 @@ var pvVideoChrome = thVideoChrome({
       }).catch(function(){})
     ];
     Promise.all(jobs).then(function(){
+      var acts = actsRows(raw);
+      if (acts) stage('acts', function(){ return { chart: actsBlock(acts, raw), legend: '', meta: null }; });
       next.stats = buildStats(raw, silent);
       commit(next, silent);
     });
@@ -4574,9 +4820,10 @@ var pvVideoChrome = thVideoChrome({
        2026-08-10, meant to be read through a helper in js/fee-config.js that
        the 2026-08-12 rewrite of that file deleted; the fallback literal then
        rendered for five weeks while the pool moved on. No literal remains.
-     - REVENUE is the measured protocol-fees series (cumulative USD, priced
-       at spot by the backend), so its delta is that series' own 30-day
-       movement.
+     - REVENUE's value is /agg/lifetime-revenue, the official dashboard's
+       figure (since 2026-11-16, see the cell); its delta is the measured
+       protocol-fees series' own 30-day movement, shown only when the
+       revenue chart accepts that series.
      - STRK20 POOL USERS carries NO delta: its value is pool-summary userCount, a
        single number with no history, and registrations.totalUsers is a
        different metric (2,356 against 2,336 on 2026-08-07, viewing-key
@@ -4602,7 +4849,7 @@ var pvVideoChrome = thVideoChrome({
      claim convention. */
   var CHECKED = '2026-09-20';
   var UNAVAILABLE = '—';
-  function statCell(label, value, sub, delta, src){
+  function statCell(label, value, sub, delta, src, checked){
     var un = value === null || value === undefined;
     var v = un ? UNAVAILABLE : value;
     var s = un ? 'DATA UNAVAILABLE' : sub;
@@ -4610,7 +4857,7 @@ var pvVideoChrome = thVideoChrome({
     var foot = (s || d)
       ? '<div class="s">' + (s ? '<span>' + s + '</span>' : '') + (d ? '<b>' + d + '</b>' : '') + '</div>'
       : '';
-    return '<div class="pmx-stat gx-card" data-src="' + src + '" data-checked="' + CHECKED + '"><div class="l">' + label + '</div><div class="v">' + v + '</div>' + foot + '</div>';
+    return '<div class="pmx-stat gx-card" data-src="' + src + '" data-checked="' + (checked || CHECKED) + '"><div class="l">' + label + '</div><div class="v">' + v + '</div>' + foot + '</div>';
   }
   function buildStats(raw, silent){
     var M = window.STRK20PoolSummary || null;
@@ -4623,6 +4870,12 @@ var pvVideoChrome = thVideoChrome({
     var cum = raw.fees && raw.fees.length ? raw.fees[raw.fees.length - 1].cumUsd : null;
     var cov = r ? M.coverage(r) : null;
     var tvl = r ? r.tvlUsd : null;
+    var flow = raw.flow && fin(raw.flow.totalUsd) ? raw.flow.totalUsd : null;
+    var revUsd = raw.fee && fin(raw.fee.revenueUsd) ? raw.fee.revenueUsd : cum;
+    var revStrk = raw.fee && fin(raw.fee.revenueStrk) ? raw.fee.revenueStrk : null;
+    var feeStrk = raw.fee && fin(raw.fee.currentFeeStrk) && raw.fee.currentFeeStrk > 0 ? raw.fee.currentFeeStrk : null;
+    var swapped = raw.ss ? raw.ss.total.volumeUsd : null;
+    var staked = raw.conv && fin(raw.conv.stakeVolumeUsd) ? raw.conv.stakeVolumeUsd : null;
     // the row mixes three payloads; its data time is the OLDEST of theirs
     var ats = [raw.at.summary, raw.at.shielded, raw.at.fees].filter(function(t){ return t > 0; });
     var at = ats.length ? Math.min.apply(null, ats) : 0;
@@ -4639,8 +4892,32 @@ var pvVideoChrome = thVideoChrome({
       statCell('PROTECTED ASSETS', r && r.withBalances !== null ? M.formatCount(r.withBalances) : null,
         'WITH BALANCES IN THE POOL', '', API + '/agg/pool-summary') +
       statCell('STRK20 POOL USERS', r && r.userCount !== null ? M.formatCount(r.userCount) : null, '', '', API + '/agg/pool-summary') +
-      statCell('REVENUE', cum === null ? null : fmtUsd(cum),
-        'MEASURED, CUMULATIVE', dTag(delta30(raw.fees, function(d){ return d.cumUsd; }), fmtUsd), API + '/agg/tvl-history') };
+      /* REVENUE (2026-11-16): the value is the official dashboard's own
+         figure, /agg/lifetime-revenue (fee-paying actions x fee, priced at
+         spot), with its STRK amount on the sub-line. It used to be the last
+         cumulative point of the revenue chart's series, which made the KPI
+         fail together with the chart's pair guard: on 2026-11-16 the
+         headline read $5,828 against the series' $5,340 (8.4%, over the 5%
+         band) and the KPI showed unavailable. The 30D delta still comes from
+         the series when the chart accepts it, and is omitted otherwise. */
+      statCell('REVENUE', revUsd === null ? null : fmtUsd(revUsd),
+        revStrk === null ? 'MEASURED, CUMULATIVE' : esc(Math.round(revStrk).toLocaleString('en-US')) + ' STRK, CUMULATIVE',
+        dTag(delta30(raw.fees, function(d){ return d.cumUsd; }), fmtUsd), API + '/agg/lifetime-revenue', '2026-11-16') +
+      /* second row (2026-11-16): the official dashboard's pool-state extras.
+         GROSS POOL FLOW is lifetime deposits + withdrawals in USD; when the
+         payload says partial, the value is a lower bound and carries >=.
+         PRIVATE TX COST is the live onchain fee per pool action, the STRK
+         amount with the backend's spot USD beside it. VOLUME SWAPPED is
+         Starkscan's observed total, the same payload as the swap chart.
+         PRIVATE STAKING is the USD staked through the pool. */
+      statCell('GROSS POOL FLOW', flow === null ? null : (raw.flow.partial ? '&ge; ' : '') + fmtApp(flow),
+        'DEPOSITS + WITHDRAWALS, ALL-TIME', '', API + '/agg/lifetime-volume', '2026-11-16') +
+      statCell('PRIVATE TX COST', feeStrk === null ? null : esc(String(+feeStrk.toFixed(2))) + ' STRK',
+        raw.fee && fin(raw.fee.currentFeeUsd) ? '&asymp; $' + raw.fee.currentFeeUsd.toFixed(2) + ' AT SPOT, PER ACTION' : 'PER POOL ACTION', '', API + '/agg/lifetime-revenue', '2026-11-16') +
+      statCell('VOLUME SWAPPED', swapped === null ? null : fmtUsd(swapped),
+        'PRIVATE SWAPS, STARKSCAN OBSERVED', '', 'https://strk20.starknet.io/api/dashboard-sync?source=starkscan', '2026-11-16') +
+      statCell('PRIVATE STAKING', staked === null ? null : fmtUsd(staked),
+        'STAKED THROUGH THE POOL, ALL-TIME', '', API + '/agg/lifetime-conversions', '2026-11-16') };
   }
 
   var loaded = false;

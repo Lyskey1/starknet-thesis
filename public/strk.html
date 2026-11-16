@@ -1633,14 +1633,14 @@ window.ADMIN_GATE=on;})();
     </div>
     <div class="skh-strip">
       <!-- three live stats, one snapshot: circulating share (CoinGecko
-           circulating_supply / total_supply, the price block's source and the
+           circulating_supply / the 10B contractual total, the price block's source and the
            same figure [data-stat="unlockedpct"] renders), the staked ratio
            (onchain stake / CoinGecko circulating), and chain revenue
            annualized from the trailing 30 days (DefiLlama, x 365/30), never
            presented as a forecast. The engine that writes all three boots on
            this strip, because this strip is above the fold. -->
       <ul class="skh-stats">
-        <li><b data-metric="circ_supply_pct">71.8%</b><span>% circulating supply</span></li>
+        <li><b data-metric="circ_supply_pct">67.5%</b><span>% circulating supply</span></li>
         <li><b data-metric="strk_staked_pct">21.2%</b><span>% circulating supply staked</span></li>
         <li><b data-metric="chainrev_annualized">$1.6M</b><span>Chain revenue (annualized)</span></li>
       </ul>
@@ -4188,15 +4188,19 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
      of the vesting schedule this page charts.
        data-src  https://docs.starknet.io/learn/protocol/strk
      Cross-checked against the live source on every refresh (see the CoinGecko
-     leg below): CoinGecko reports total_supply and max_supply both at exactly
-     this figure, and a divergence is reported rather than absorbed.
-     It calibrates the vesting chart ONLY. Every circulating SHARE a reader
-     sees comes from state.unlockedPct, CoinGecko's own circulating_supply /
-     total_supply, so no percentage on this page is computed against a typed
-     denominator. */
+     leg below); a divergence is reported in the console rather than absorbed.
+     It DOES diverge since staking inflation began: CoinGecko reports
+     total_supply 10.19B and max_supply null (2026-11-16), because staking
+     rewards mint new STRK on top of the genesis 10B.
+     It is the denominator of every circulating SHARE a reader sees
+     (state.unlockedPct = CoinGecko circulating_supply / this constant), the
+     vesting chart's calibration and the Supply bar, so the stat, the bar,
+     the chart's TODAY dot and the "of 10B" labels are one number
+     (2026-11-16; before that the stat divided by CoinGecko's total_supply
+     and read 76.9% beside a 78.3% bar). */
   var CONTRACT_TOTAL_SUPPLY = 10e9;
 
-  var CACHE_KEY = 'strkNumbers_v2'; // v2: state carries per-cluster provenance; older cache shapes are dropped
+  var CACHE_KEY = 'strkNumbers_v3'; // v3 (2026-11-16): unlockedPct is now over the 10B contractual total; v2 caches held the CoinGecko total_supply ratio. v2: state carries per-cluster provenance; older cache shapes are dropped
   var NPM_FIRST_PUBLISH = '2026-02-24'; // starkzap first npm release
 
   var RPCS = ['https://rpc.starknet.lava.build', 'https://api.cartridge.gg/x/starknet/mainnet', 'https://1rpc.io/starknet'];
@@ -4398,13 +4402,10 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
       if (ub) ub.style.width = Math.min(100, state.unlockedPct).toFixed(1) + '%';
     }
     /* tokenomics. The STAT a reader sees is the same live ratio the hero
-       strip and [data-stat="unlockedpct"] render, which is what its own label
-       cites ("of the 10B max supply", CoinGecko): one number, one source,
-       three surfaces. The progress bar and the vesting chart below calibrate
-       against the CONTRACTUAL total instead, the named constant with the
-       docs.starknet.io source, because that is the base their own schedule
-       is built on. The two agree while CoinGecko keeps reporting a 10B
-       total, which the refresh checks. */
+       strip and [data-stat="unlockedpct"] render: CoinGecko circulating over
+       the 10B contractual total its own label cites ("of the 10B max
+       supply"). The progress bar and the vesting chart use the same ratio,
+       so stat, bar and TODAY dot are one number on three surfaces. */
     if (isFinite(state.unlockedPct)) (statEls.circpct || []).forEach(function(el){ tween(el, state.unlockedPct, FMT.circpct); });
     var cp = state.circ / CONTRACT_TOTAL_SUPPLY * 100;
     if (tkBar) tkBar.style.width = cp.toFixed(2) + '%';
@@ -4419,14 +4420,11 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
     // (21.2% is 21.2% in the hero, the panel and the tile)
     spTot.forEach(function(el){ tween(el, state.strkStaked, function(v){ return (v / 1e9).toFixed(2) + 'B STRK'; }); });
     spPct.forEach(function(el){ tween(el, state.stakePct, function(v){ return v.toFixed(1) + '%'; }); });
-    /* CIRCULATING SHARE. state.unlockedPct is CoinGecko's own
-       circulating_supply / total_supply, committed in the same cluster as
-       the circulating figure itself, and it is what [data-stat="unlockedpct"]
-       already renders. This line used to divide by a typed 1e10 instead, a
-       second denominator with no source behind it: it happens to agree today
-       (CoinGecko reports total_supply and max_supply both at exactly
-       10,000,000,000) but it would have kept reading 10B through any burn or
-       any revision, and it made one number on the page arrive two ways.
+    /* CIRCULATING SHARE. state.unlockedPct is CoinGecko circulating_supply
+       / CONTRACT_TOTAL_SUPPLY (the sourced 10B genesis total), committed in
+       the same cluster as the circulating figure itself, and it is what
+       [data-stat="unlockedpct"] and the Supply panel render: one number,
+       one denominator, every surface.
        Chain revenue is annualized from DefiLlama's trailing-30d aggregate:
        365/30 = x12.17, labeled "trailing 30d x 12.2" in the markup, never a
        forecast. */
@@ -4568,7 +4566,14 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
         }
         return { price: price, mcap: md.market_cap.usd, circ: md.circulating_supply,
                  fdv: ok(fdv) ? fdv : null,
-                 unlockedPct: ok(md.total_supply) ? md.circulating_supply / md.total_supply * 100 : null,
+                 /* share of the 10B contractual supply, the denominator
+                    every label on this page names ("of 10B STRK", "of the
+                    10B max supply"). NOT circulating / CoinGecko
+                    total_supply: since staking rewards started minting,
+                    CoinGecko's total_supply grew past 10B (10.19B on
+                    2026-11-16, max_supply null), so that ratio read 76.9%
+                    next to "7.83B of 10B", which is 78.3%. */
+                 unlockedPct: md.circulating_supply / CONTRACT_TOTAL_SUPPLY * 100,
                  btcUsd: ok(btc) ? price / btc : null,
                  chg24: md.price_change_percentage_24h, chg7: md.price_change_percentage_7d };
       }));
