@@ -2985,14 +2985,19 @@ const SRC={
      plots: /agg/tvl-history feesUsd is cumulative USD with the whole series
      priced at current STRK spot (fees accrue in STRK; the backend reprices
      at its pricedAt stamp). The lifetime headline rides along as a
-     cross-check: a pair mismatch beyond cents fails the fetch whole. */
+     cross-check: a pair gap beyond the 25% band fails the fetch whole. */
   s20rev(){return cached('s20rev',TTL['7D'],()=>Promise.all([
       gj('https://strk20-dashboard-production.up.railway.app/agg/tvl-history'),
       gj('https://strk20-dashboard-production.up.railway.app/agg/lifetime-revenue')
     ]).then(([h,lr])=>{
       const days=((h&&h.days)||[]).filter(d=>typeof d.feesUsd==='number');
       if(!days.length)throw new Error('empty');
-      if(Math.abs(days[days.length-1].feesUsd-lr.revenueUsd)>0.05)throw new Error('revenue pair mismatch');
+      /* band, not cents (2026-11-16): the pair drifted 8.4% apart ($5,828
+         headline vs $5,340 series), so a cents match failed every fetch.
+         25% / $50 floor, the same band as privacy.html: still catches a
+         unit or currency change (orders of magnitude). */
+      {const a=days[days.length-1].feesUsd,b=lr.revenueUsd;
+       if(!(typeof b==='number'&&isFinite(b))||Math.abs(a-b)>Math.max(50,Math.max(a,b)*0.25))throw new Error('revenue pair mismatch');}
       return days.map(d=>[Date.parse(d.date),d.feesUsd]);
     }));},
   /* cumulative unique direct depositors, committed onchain backfill
@@ -4671,8 +4676,8 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
         return { p_tx: sum(days.slice(-7)), p_tx_total: sum(days) };
       }));
     // MEASURED protocol fees: the dashboard's own cumulative series, with
-    // the lifetime headline as a cross-check. A pair mismatch beyond cents
-    // fails the cluster whole (all-or-nothing), never a half-render.
+    // the lifetime headline as a cross-check. A pair gap beyond the 25%
+    // band fails the cluster whole (all-or-nothing), never a half-render.
     var pS20rev = wrap(Promise.all([
         getJson('https://strk20-dashboard-production.up.railway.app/agg/tvl-history'),
         getJson('https://strk20-dashboard-production.up.railway.app/agg/lifetime-revenue')
@@ -4680,7 +4685,10 @@ document.querySelectorAll('#udonut .seg,#udonut .lab').forEach(s=>{
         var days = ((pair[0] && pair[0].days) || []).filter(function(x){ return typeof x.feesUsd === 'number'; });
         if (days.length < 31) throw 0;
         var head = days[days.length - 1].feesUsd;
-        if (!ok(head) || Math.abs(head - pair[1].revenueUsd) > 0.05) throw 0;
+        // band, not cents (2026-11-16): see s20rev in the chart registry;
+        // the same 25% / $50 floor band as privacy.html's revenue card
+        var lr = pair[1] && pair[1].revenueUsd;
+        if (!ok(head) || !ok(lr) || Math.abs(head - lr) > Math.max(50, Math.max(head, lr) * 0.25)) throw 0;
         return { rev30: Math.max(0, head - days[days.length - 31].feesUsd), // measured 30D revenue
                  feeUsd: pair[1].currentFeeUsd }; // live per-action cost in USD (the dollar-targeted fee at STRK spot), for the fee legend
       }));
