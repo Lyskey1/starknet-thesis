@@ -9,9 +9,9 @@ import { publicEnv } from "@/env";
 const siteOrigin = publicEnv.NEXT_PUBLIC_SITE_URL ?? "https://starknetthesis.io";
 
 export const siteConfig = {
-  /** Short brand name. Used for og:site_name and the Organization node. */
+  /** Short brand name. Used for og:site_name and the Organization and WebSite nodes. */
   name: "Starknet Thesis",
-  /** Full landing page title. Also the name of the WebSite JSON-LD node. */
+  /** Full landing page title. Also the name of the landing WebPage JSON-LD node. */
   defaultTitle: "Starknet Thesis: Privacy, Quantum Security, BTCFi",
   description: "An independent thesis on Starknet's three differentiators: private transfers via STRK20, a post-quantum proving system, and Bitcoin staking and DeFi (BTCFi).",
   /**
