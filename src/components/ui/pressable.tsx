@@ -97,26 +97,62 @@ export interface PressableLinkProps
 }
 
 /**
- * A `next/link` that answers the pointer. Safe to render from a Server Component —
+ * A link that answers the pointer. Safe to render from a Server Component —
  * `interaction` is a plain object, so it crosses the boundary.
+ *
+ * Only "/" is an App Router route. The six thesis pages are static HTML served
+ * from public/ through rewrites (next.config.ts), and the newsletter is an
+ * external site, so `next/link` cannot navigate to any of them: its prefetch
+ * asks for an RSC payload, gets a 404, and the click falls back to a full load
+ * anyway. Those targets render a plain `<a>`; "/" keeps `next/link`.
  */
 export const PressableLink = ({
   interaction = NAV_LINK,
   className,
   children,
+  href,
   ...props
 }: PressableLinkProps) => {
   const { style, bind } = usePressable(interaction);
 
+  if (href === "/") {
+    return (
+      <AnimatedLink
+        href={href}
+        style={style}
+        className={join(FOCUS_RING, className)}
+        {...bind}
+        {...props}
+      >
+        {children}
+      </AnimatedLink>
+    );
+  }
+
+  const {
+    prefetch: _prefetch,
+    replace: _replace,
+    scroll: _scroll,
+    shallow: _shallow,
+    passHref: _passHref,
+    legacyBehavior: _legacyBehavior,
+    locale: _locale,
+    as: _as,
+    onNavigate: _onNavigate,
+    unstable_dynamicOnHover: _dynamicOnHover,
+    ...anchorProps
+  } = props as typeof props & Record<string, unknown>;
+
   return (
-    <AnimatedLink
+    <animated.a
+      href={typeof href === "string" ? href : String(href)}
       style={style}
       className={join(FOCUS_RING, className)}
       {...bind}
-      {...props}
+      {...(anchorProps as ComponentPropsWithoutRef<"a">)}
     >
       {children}
-    </AnimatedLink>
+    </animated.a>
   );
 };
 

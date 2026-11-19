@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 import type { PerishableClaim } from "@/data/perishable";
 
 /** The registered claims a copy string may reference as `[[key]]`. */
@@ -11,7 +9,7 @@ export type InlineClaims = Record<string, PerishableClaim>;
  * everything else is text:
  *
  *   [label](https://host/path)   an external body link, new tab
- *   [label](/path)               an internal route link, same tab, next/link
+ *   [label](/path)               an internal page link, same tab, plain <a>
  *   [[claim-key]]                a registered perishable claim, rendered with
  *                                its source and its dates as data attributes
  *
@@ -55,9 +53,9 @@ export const renderInline = (text: string, claims: InlineClaims = {}): React.Rea
       if (claim) out.push(<ClaimSpan key={m.index} claim={claim} />);
     } else if (m[2].startsWith("/")) {
       out.push(
-        <Link key={m.index} className="lp-a" href={m[2]}>
+        <a key={m.index} className="lp-a" href={m[2]}>
           {m[1]}
-        </Link>,
+        </a>,
       );
     } else {
       out.push(

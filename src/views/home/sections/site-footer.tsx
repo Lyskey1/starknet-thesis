@@ -1,7 +1,5 @@
 "use client";
 
-import Link from "next/link";
-
 import type { FooterCopy } from "@/data/home";
 import { LINKS } from "@/lib/links";
 
@@ -96,13 +94,13 @@ export const SiteFooter = ({ copy }: SiteFooterProps) => {
                 Subscribe
                 <Arrow />
               </button>
-              <Link
+              <a
                 href="/privacy"
                 className="vc-btn inline-flex h-[52px] min-w-0 flex-1 items-center justify-between gap-[14px] bg-[#fafafa] px-[18px] font-general text-[15px] leading-[1.2] whitespace-nowrap text-[#0d0d0d] no-underline transition-colors duration-250 hover:bg-white max-sm:w-full max-sm:flex-none"
               >
                 Read the thesis
                 <Arrow />
-              </Link>
+              </a>
             </div>
           </form>
         </div>

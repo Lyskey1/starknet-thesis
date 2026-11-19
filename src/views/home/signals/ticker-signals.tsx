@@ -1,6 +1,4 @@
 import { Fragment } from "react";
-import Link from "next/link";
-
 import type { SignalCardCopy, TickerCopy } from "@/data/home";
 import { fillCounts, renderInline, type InlineClaims } from "@/utils/inline-copy";
 import { Flywheel } from "./flywheel";
@@ -57,7 +55,7 @@ export const TickerSignals = ({ tickerKicker, ticker, claims, signalsKicker, sig
       <p className="lp-kicker">{tickerKicker}</p>
       <h2 className="lp-h2" id="the-thesis-in-a-single-asset">{ticker.title}</h2>
       <p className="lp-p">{renderInline(ticker.body, claims)}</p>
-      <Link className="lp-link" href={ticker.link.href}>{ticker.link.label}</Link>
+      <a className="lp-link" href={ticker.link.href}>{ticker.link.label}</a>
       <div className="lp-fly" aria-hidden="true">
         <Flywheel />
       </div>
@@ -72,7 +70,7 @@ export const TickerSignals = ({ tickerKicker, ticker, claims, signalsKicker, sig
             <h3>{signals.ecosystem.heading}</h3>
             <p>{signals.ecosystem.blurb}</p>
             <MonoLine text={fillCounts(signals.ecosystem.mono, { n: projectsTracked, m: voicesTracked })} />
-            <Link className="lp-link" href={signals.ecosystem.link.href}>{signals.ecosystem.link.label}</Link>
+            <a className="lp-link" href={signals.ecosystem.link.href}>{signals.ecosystem.link.label}</a>
           </div>
           <LogoRow items={logos} />
         </article>
@@ -83,7 +81,7 @@ export const TickerSignals = ({ tickerKicker, ticker, claims, signalsKicker, sig
             <MonoLine
               text={fillCounts(signals.digest.mono, { w: weeklyRoundups, m: monthlyRecaps, r: researchArticles })}
             />
-            <Link className="lp-link" href={signals.digest.link.href}>{signals.digest.link.label}</Link>
+            <a className="lp-link" href={signals.digest.link.href}>{signals.digest.link.label}</a>
           </div>
           {latest && (
             <a className="lp-issue" href={latest.href} target="_blank" rel="noopener noreferrer">

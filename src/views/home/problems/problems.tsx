@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 import type { ProblemsCopy } from "@/data/home";
 import { renderInline, type InlineClaims } from "@/utils/inline-copy";
 import { PillarObject } from "./pillar-object";
@@ -68,7 +66,7 @@ const PanelCopyColumn = ({
       </div>
     )}
     <div className="lp-close">{panel.close}</div>
-    <Link className="lp-link" href={panel.link.href}>{panel.link.label}</Link>
+    <a className="lp-link" href={panel.link.href}>{panel.link.label}</a>
   </div>
 );
 

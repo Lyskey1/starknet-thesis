@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 import { HeroTorus } from "./hero-torus";
 import { LiveStats } from "./live-stats";
 
@@ -34,12 +32,12 @@ export const Hero = () => (
             turn.
           </p>
           <div className="qhx-ctas">
-            <Link className="qhx-cta dg-glass dg-glass--primary" href="/privacy">
+            <a className="qhx-cta dg-glass dg-glass--primary" href="/privacy">
               Read the thesis
-            </Link>
-            <Link className="qhx-cta dg-glass" href="/strk">
+            </a>
+            <a className="qhx-cta dg-glass" href="/strk">
               Why STRK
-            </Link>
+            </a>
           </div>
         </div>
       </div>

@@ -1,7 +1,6 @@
 "use client";
 
 import { animated, config, useSpring } from "@react-spring/web";
-import Link from "next/link";
 import { useId, useLayoutEffect, useRef, useState } from "react";
 
 import type { FaqCopy, FaqItemCopy } from "@/data/home";
@@ -74,7 +73,7 @@ const FaqItem = ({ question, answer, cta, claims, open, onToggle }: FaqItemProps
         <div ref={panelRef}>
           <p>{renderInline(answer, claims)}</p>
           {cta && (
-            <Link className="lp-link" href={cta.href}>{cta.label}</Link>
+            <a className="lp-link" href={cta.href}>{cta.label}</a>
           )}
         </div>
       </animated.div>
