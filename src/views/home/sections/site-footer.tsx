@@ -79,7 +79,7 @@ export const SiteFooter = ({ copy }: SiteFooterProps) => {
                 type="email"
                 required
                 placeholder="you@domain.com"
-                className="h-[46px] w-full min-w-0 border border-white/50 bg-black/[0.16] px-[14px] font-general text-[15px] leading-[1.2] text-white outline-none placeholder:text-white/70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                className="h-[46px] w-full min-w-0 border border-white/50 bg-black/[0.16] px-[14px] font-general text-[15px] leading-[1.2] text-white placeholder:text-white/70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
               />
             </label>
             <div className="flex items-stretch gap-[12px] max-sm:flex-col">

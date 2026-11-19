@@ -84,7 +84,7 @@ export const usePressable = (interaction: Interaction = NAV_LINK) => {
  * disappears entirely.
  */
 const FOCUS_RING =
-  "outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal";
+  "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal";
 
 const join = (...classes: (string | undefined)[]) =>
   classes.filter(Boolean).join(" ");
