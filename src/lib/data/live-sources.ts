@@ -128,3 +128,43 @@ export const fetchStrkStaked = async (): Promise<number> => {
  * Already a trailing-365-day figure; there is nothing to annualize.
  */
 export const fetchAppRevenue = async () => appRevenue365();
+
+/**
+ * The band's three figures read ON THE SERVER, for the landing's first HTML
+ * (2026-11-19). The page regenerates hourly (src/app/page.tsx), so a reader
+ * with no JavaScript (a crawler, an AI agent) gets the same three numbers a
+ * browser would have fetched, at most an hour old, instead of the hidden
+ * layout placeholders. Not a literal fallback: each value is fetched by the
+ * same functions as above and carries the time it was read; a source that
+ * fails or takes longer than SNAPSHOT_TIMEOUT_MS is simply absent, and its
+ * slot stays hidden until the browser's own fetch lands. The browser still
+ * refetches on mount and replaces these.
+ */
+export type LiveKey = "shielded" | "staked" | "revenue";
+export type LiveSnapshot = Partial<Record<LiveKey, { value: number; at: number }>>;
+
+const SNAPSHOT_TIMEOUT_MS = 8000;
+
+const within = <T,>(p: Promise<T>, ms: number): Promise<T> =>
+  new Promise<T>((resolve, reject) => {
+    const t = setTimeout(() => reject(new Error("timeout")), ms);
+    p.then(
+      (v) => { clearTimeout(t); resolve(v); },
+      (e) => { clearTimeout(t); reject(e); },
+    );
+  });
+
+export const loadLiveSnapshot = async (): Promise<LiveSnapshot> => {
+  const sources: Record<LiveKey, () => Promise<number>> = {
+    shielded: fetchShieldedValue,
+    staked: fetchStrkStaked,
+    revenue: async () => (await fetchAppRevenue()).usd,
+  };
+  const keys = Object.keys(sources) as LiveKey[];
+  const settled = await Promise.allSettled(keys.map((k) => within(sources[k](), SNAPSHOT_TIMEOUT_MS)));
+  const out: LiveSnapshot = {};
+  settled.forEach((r, i) => {
+    if (r.status === "fulfilled" && isFinite(r.value) && r.value > 0) out[keys[i]] = { value: r.value, at: Date.now() };
+  });
+  return out;
+};

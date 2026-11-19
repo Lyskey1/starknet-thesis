@@ -19,6 +19,7 @@ import { PERISHABLE } from "@/data/perishable";
 import { loadDigest } from "@/lib/data/digest";
 import { postQuantumAccountFeeStrk, privateTransferFee } from "@/lib/data/derived-fees";
 import { landingFeaturedProjects, projectsTracked, voicesTracked } from "@/lib/data/ecosystem";
+import { loadLiveSnapshot } from "@/lib/data/live-sources";
 import { qdayYear } from "@/lib/data/qday";
 import { getFaqStructuredData } from "@/utils/seo/faq-structured-data";
 import type { InlineClaims } from "@/utils/inline-copy";
@@ -37,7 +38,7 @@ const SECTIONS = ["The three problems", "The ticker", "Signals", "Frequently ask
 const kicker = (index: number) => `${String(index + 1).padStart(2, "0")} · ${SECTIONS[index]}`;
 
 export const HomeView = async () => {
-  const digest = await loadDigest();
+  const [digest, live] = await Promise.all([loadDigest(), loadLiveSnapshot()]);
   const logos = landingFeaturedProjects().map(({ name, handle, url, src, monogram }) => ({ name, handle, url, src, monogram }));
   const projects = projectsTracked();
   const voices = voicesTracked();
@@ -81,7 +82,7 @@ export const HomeView = async () => {
       />
 
       <PageBackdrop />
-      <Hero />
+      <Hero live={live} />
       <Problems
         kicker={kicker(0)}
         copy={homeProblems}

@@ -12,6 +12,7 @@ import {
   REFRESH_MS,
   TICK_MS,
   GROWTHEPIE_CREDIT,
+  type LiveSnapshot,
   relativeStamp,
   WINDOW_DAYS,
 } from "@/lib/data/live-sources";
@@ -20,7 +21,9 @@ import {
  * The baseline band: three LIVE numbers, and nothing else. Each slot is laid
  * out at full size from the first paint and revealed only once its value
  * has landed; a source that fails stays invisible. There is no literal
- * fallback anywhere on this band.
+ * fallback anywhere on this band. The first values come from the server
+ * (`initial`, read when the page regenerates, hourly), so the HTML a
+ * crawler receives carries real figures; the browser refetches on mount.
  *
  * FRESHNESS (2026-09-10): the printed "Live / UPDATED n HR AGO" line is gone
  * from the band. The stamp still exists and still reports the OLDEST of the
@@ -39,7 +42,7 @@ import {
  * title and a visually hidden note; the dashboard keeps its visible credit
  * on the chart's source line.
  */
-interface Live { value: number; at: number; label: string }
+interface Live { value: number; at: number; label: string; ssr?: boolean }
 type Key = "shielded" | "staked" | "revenue";
 
 const KEYS: Key[] = ["shielded", "staked", "revenue"];
@@ -75,15 +78,36 @@ const PRINT: Record<Key, (v: number) => string> = {
   revenue: (v) => "$" + abbr(v),
 };
 
+/* the labels of the server-read figures: the same strings READ hands back */
+const LABEL: Record<Key, string> = {
+  shielded: "Shielded value",
+  staked: "STRK staked",
+  revenue: appRev.text,
+};
+
+/* The server's snapshot as the first state, so the first HTML already
+   carries the figures (see loadLiveSnapshot). Each entry is marked `ssr`:
+   the "Updated n ago" title is relative to the reader's clock, so it waits
+   for the browser (a server-rendered one would not match on hydration). */
+const fromSnapshot = (initial?: LiveSnapshot): Partial<Record<Key, Live>> => {
+  const out: Partial<Record<Key, Live>> = {};
+  if (!initial) return out;
+  KEYS.forEach((key) => {
+    const s = initial[key];
+    if (s) out[key] = { value: s.value, at: s.at, label: LABEL[key], ssr: true };
+  });
+  return out;
+};
+
 const PLACEHOLDER: Record<Key, string> = {
   shielded: "$0,000,000",
   staked: "0.00B STRK",
   revenue: "$00.0M",
 };
 
-export const LiveStats = () => {
-  const [live, setLive] = useState<Partial<Record<Key, Live>>>({});
-  const [, setTick] = useState(0);
+export const LiveStats = ({ initial }: { initial?: LiveSnapshot }) => {
+  const [live, setLive] = useState<Partial<Record<Key, Live>>>(() => fromSnapshot(initial));
+  const [tick, setTick] = useState(0);
 
   useEffect(() => {
     let alive = true;
@@ -101,9 +125,11 @@ export const LiveStats = () => {
 
   const landed = KEYS.map((k) => live[k]).filter((x): x is Live => Boolean(x));
   const oldest = landed.length ? Math.min(...landed.map((x) => x.at)) : 0;
+  /* the stamp is the reader's-clock half: printed once the browser has run */
+  const stamped = oldest > 0 && (tick > 0 || landed.some((x) => !x.ssr));
 
   return (
-    <ul className="qhx-stats" aria-live="polite" {...(oldest ? { title: `Updated ${relativeStamp(oldest)}` } : {})}>
+    <ul className="qhx-stats" aria-live="polite" {...(stamped ? { title: `Updated ${relativeStamp(oldest)}` } : {})}>
       {KEYS.map((key) => {
         const entry = live[key];
         const credited = key === "revenue";

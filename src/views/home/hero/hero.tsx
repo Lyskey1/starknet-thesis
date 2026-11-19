@@ -1,3 +1,5 @@
+import type { LiveSnapshot } from "@/lib/data/live-sources";
+
 import { HeroTorus } from "./hero-torus";
 import { LiveStats } from "./live-stats";
 
@@ -16,7 +18,7 @@ import { LiveStats } from "./live-stats";
  * The strip is three LIVE numbers and one UPDATED stamp (see LiveStats);
  * nothing on it is typed.
  */
-export const Hero = () => (
+export const Hero = ({ live }: { live?: LiveSnapshot }) => (
   <section className="hero qhx" id="hero" aria-labelledby="hero-title">
     <div className="qhx-wrap">
       <div className="qhx-scene">
@@ -42,7 +44,7 @@ export const Hero = () => (
         </div>
       </div>
       <div className="qhx-strip">
-        <LiveStats />
+        <LiveStats initial={live} />
         <p className="qhx-turn is-accent">Privacy. Quantum. BTCFi.</p>
       </div>
     </div>
