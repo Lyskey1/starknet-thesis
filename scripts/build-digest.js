@@ -72,10 +72,13 @@ function cardHTML(post){
   const link = post.canonical_url || (post.slug ? SUBSTACK_URL + 'p/' + post.slug : SUBSTACK_URL);
   const cover = post.cover_image || '';
   const cat = classify(title);
+  /* (2026-11-20) every weekly roundup ships the same Substack cover, so the
+     issue number is set over it; keep in sync with digest.html */
+  const issue = cat === 'weekly' ? (/(\d+)\s*$/.exec(title) || [])[1] : '';
   const dateHtml = isNaN(d.getTime()) || !d.getTime() ? '' :
     '<time class="dgw-date" datetime="' + d.toISOString().slice(0, 10) + '">' + esc(fmtDate(d)) + '</time>';
   return '<a class="recap-card dgw-card" data-umami-event="digest-entry-click" data-cat="' + cat + '" href="' + escA(link) + '" target="_blank" rel="noopener">' +
-    '<span class="recap-cover dgw-cover">' + (cover ? '<img src="' + escA(cover) + '" loading="lazy" alt="">' : '') + '</span>' +
+    '<span class="recap-cover dgw-cover">' + (cover ? '<img src="' + escA(cover) + '" loading="lazy" alt="">' : '') + (issue ? '<span class="dgw-issue" aria-hidden="true"><small>No.</small>' + esc(issue) + '</span>' : '') + '</span>' +
     '<span class="dgw-top">' +
       '<span class="dgw-cat">' + CAT_LABELS[cat] + '</span>' +
     '</span>' +

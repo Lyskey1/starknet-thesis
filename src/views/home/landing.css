@@ -249,6 +249,9 @@ footer.vc-footer .dgf-bar a::before { content: ""; position: absolute; inset: -6
 /* the strip carries THREE stats on this page (quantum's carries four); the
    phone grid takes the page's own track count, nothing else changes */
 @media (max-width: 700px) { .landing .qhx-stats { grid-template-columns: repeat(3, auto); column-gap: 18px; justify-content: start; } }
+/* (2026-11-20) on the narrowest phones the three live figures ran within 2px
+   of each other; a step smaller keeps a clear gap */
+@media (max-width: 380px) { .landing .qhx-stats b { font-size: 1.3125rem; } }
 @media (max-width: 380px) { .lp-sec, .lp-twoup { padding: 32px 16px 0; } }
 
 @media (prefers-reduced-motion: reduce) {
