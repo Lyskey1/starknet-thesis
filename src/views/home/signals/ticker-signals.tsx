@@ -49,6 +49,28 @@ const MonoLine = ({ text }: { text: string }) => (
   </p>
 );
 
+/**
+ * The newest issue's cover, sized for where it is shown. The feed hands back
+ * Substack's CDN URL with no width, which serves the 1920x1080 original as a
+ * PNG (1.2 MB on 2026-11-19) into a 220px slot. The same CDN resizes and
+ * re-encodes on request: the transform sits in the path segment before the
+ * encoded source, so swapping that segment asks for a WebP at the width the
+ * slot needs (about 21 KB at 440px, 60 KB at 880px). A URL of any other
+ * shape is returned untouched, with no srcset.
+ */
+const SUBSTACK_FETCH = /^(https:\/\/substackcdn\.com\/image\/fetch\/)[^/]+(\/.+)$/;
+const coverAt = (url: string, width: number) =>
+  url.replace(SUBSTACK_FETCH, `$1w_${width},c_limit,f_webp,q_auto:good,fl_progressive:steep$2`);
+const coverSources = (url: string) =>
+  SUBSTACK_FETCH.test(url)
+    ? {
+        src: coverAt(url, 440),
+        srcSet: `${coverAt(url, 440)} 440w, ${coverAt(url, 880)} 880w`,
+        /* 220px beside the card's text; the card's full width once it stacks */
+        sizes: "(max-width: 980px) calc(100vw - 90px), 220px",
+      }
+    : { src: url };
+
 export const TickerSignals = ({ tickerKicker, ticker, claims, signalsKicker, signals, projectsTracked, voicesTracked, weeklyRoundups, monthlyRecaps, researchArticles, logos, latest }: TickerSignalsProps) => (
   <div className="lp-twoup" id="ticker-signals">
     <section className="lp-ticker" id="ticker" aria-labelledby="the-thesis-in-a-single-asset">
@@ -87,7 +109,7 @@ export const TickerSignals = ({ tickerKicker, ticker, claims, signalsKicker, sig
             <a className="lp-issue" href={latest.href} target="_blank" rel="noopener noreferrer">
               {latest.cover ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img className="lp-cover" src={latest.cover} alt="" width={220} height={124} loading="lazy" decoding="async" />
+                <img className="lp-cover" {...coverSources(latest.cover)} alt="" width={220} height={124} loading="lazy" decoding="async" />
               ) : null}
               <span className="lp-cover-t">{latest.title}</span>
             </a>
