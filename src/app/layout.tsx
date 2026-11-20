@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { Archivo, IBM_Plex_Mono, Mulish, Onest } from "next/font/google";
-import localFont from "next/font/local";
 
 import {
   generateMetadata,
@@ -15,22 +14,20 @@ import { ScrollLayout } from "@/layouts/scroll-layout";
 
 import "@/app/globals.css";
 
+/* Not preloaded (2026-11-20): no text on the landing or the 404 page resolves
+   to Onest (or Mulish, below), so a preload fetched each for nothing. The
+   faces stay declared: anything that does ask for one still gets it. */
 const onest = Onest({
   variable: "--font-onest",
   subsets: ["latin"],
   display: "swap",
+  preload: false,
 });
 
-/** Hero display + chrome face, per the Figma. Self-hosted from Fontshare. */
-const generalSans = localFont({
-  variable: "--font-general-sans",
-  display: "swap",
-  src: [
-    { path: "./fonts/GeneralSans-Light.woff2", weight: "300", style: "normal" },
-    { path: "./fonts/GeneralSans-Regular.woff2", weight: "400", style: "normal" },
-    { path: "./fonts/GeneralSans-Medium.woff2", weight: "500", style: "normal" },
-  ],
-});
+/* General Sans is declared ONCE, in globals.css, under the family name the
+   shared sheets use ("General Sans", files in public/fonts). It used to be
+   declared here a second time through next/font/local as "generalSans", so
+   the same three files were downloaded twice under two names. */
 
 /** Nav wordmark face (2026-09-05 nav typography pass): Archivo with the
  * width axis, so the header can set it Expanded 500 like the static pages,
@@ -57,6 +54,7 @@ const mulish = Mulish({
   subsets: ["latin"],
   weight: ["300", "400"],
   display: "swap",
+  preload: false,
 });
 
 export const metadata: Metadata = generateMetadata();
@@ -70,7 +68,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${onest.variable} ${generalSans.variable} ${mulish.variable} ${archivo.variable} ${plexMono.variable}`}
+        className={`${onest.variable} ${mulish.variable} ${archivo.variable} ${plexMono.variable}`}
       >
         <script defer src="https://cloud.umami.is/script.js" data-website-id="45f11859-9fc2-49ae-a59e-4826e0f1e174" />
         <script

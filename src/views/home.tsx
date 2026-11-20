@@ -14,6 +14,8 @@
  * landing.css carries the token bridge and the parity copy of the base type
  * rules those components compose on the static pages.
  */
+import { preload } from "react-dom";
+
 import { homeFaq, homeFooter, homeProblems, homeSignals, homeTicker } from "@/data/home";
 import { PERISHABLE } from "@/data/perishable";
 import { loadDigest } from "@/lib/data/digest";
@@ -33,11 +35,17 @@ import { TickerSignals } from "./home/signals/ticker-signals";
 
 import "./home/landing.css";
 
+/* The three General Sans files, preloaded: the hero title is the page's
+   largest paint and is set in this face, which the browser would otherwise
+   only discover after parsing the stylesheet. */
+const GENERAL_SANS = ["Light", "Regular", "Medium"].map((w) => `/fonts/GeneralSans-${w}.woff2`);
+
 /** The section order; the kicker number is the position, never typed. */
 const SECTIONS = ["The three problems", "The ticker", "Signals", "Frequently asked"] as const;
 const kicker = (index: number) => `${String(index + 1).padStart(2, "0")} · ${SECTIONS[index]}`;
 
 export const HomeView = async () => {
+  GENERAL_SANS.forEach((href) => preload(href, { as: "font", type: "font/woff2", crossOrigin: "anonymous" }));
   const [digest, live] = await Promise.all([loadDigest(), loadLiveSnapshot()]);
   const logos = landingFeaturedProjects().map(({ name, handle, url, src, monogram }) => ({ name, handle, url, src, monogram }));
   const projects = projectsTracked();
@@ -61,21 +69,16 @@ export const HomeView = async () => {
     <main className="landing">
       {/* The shared component sheets are the static pages' own files under
           public/css, linked (React hoists them into <head>) rather than
-          copied into the bundle, so /quantum and the landing read ONE file;
-          the mono face is the same Google Fonts request the static pages
-          make, by family name, because the shared sheets name it. */}
+          copied into the bundle, so /quantum and the landing read ONE file.
+          The mono face they name ("IBM Plex Mono") is the one the root
+          layout already self-hosts through next/font under that same
+          family name, so no Google Fonts request is made here. */}
       {/* eslint-disable-next-line @next/next/no-css-tags */}
       <link rel="stylesheet" href="/css/glass-cards.css" precedence="shared" />
       {/* eslint-disable-next-line @next/next/no-css-tags */}
       <link rel="stylesheet" href="/css/th-hero.css" precedence="shared" />
       {/* eslint-disable-next-line @next/next/no-css-tags */}
       <link rel="stylesheet" href="/css/th-selector.css" precedence="shared" />
-      {/* eslint-disable-next-line @next/next/no-page-custom-font */}
-      <link
-        rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&display=swap"
-        precedence="fonts"
-      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(getFaqStructuredData(homeFaq, claims)) }}

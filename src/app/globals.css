@@ -1,5 +1,14 @@
 @import "tailwindcss";
 
+/* General Sans, the display + chrome face: self-hosted from public/fonts
+   under the family name the static pages' shared sheets use, and the one
+   declaration in the app. --font-general-sans is the name the Tailwind font
+   tokens below read (it used to come from next/font/local). */
+@font-face { font-family: "General Sans"; font-weight: 300; font-style: normal; font-display: swap; src: url("/fonts/GeneralSans-Light.woff2") format("woff2"); }
+@font-face { font-family: "General Sans"; font-weight: 400; font-style: normal; font-display: swap; src: url("/fonts/GeneralSans-Regular.woff2") format("woff2"); }
+@font-face { font-family: "General Sans"; font-weight: 500; font-style: normal; font-display: swap; src: url("/fonts/GeneralSans-Medium.woff2") format("woff2"); }
+:root { --font-general-sans: "General Sans"; }
+
 /* Design tokens.
    Pixel values are expressed in `rem` so they scale with the adaptive root
    font-size defined in `@layer base` below — at each design base width, 1rem
