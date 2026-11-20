@@ -1884,6 +1884,12 @@ body.page-privacy{--qhx-u:min(1vw,14.4px)}
   .qhx-wrap{width:100%;max-width:none}
   .qhx-scene{min-height:0;position:static}
   body.page-privacy .qh-stage{left:0}
+  /* the figure as its own band UNDER the text (2026-11-20). The band rule in
+     the first block above lost to the frame rule at equal specificity, so
+     the figure sat absolute over the headline; this one outranks both. */
+  body.page-privacy .qhx-scene{display:flex;flex-direction:column;align-items:stretch}
+  body.page-privacy .hero .qh-stage{position:relative;order:2;inset:auto;top:auto;bottom:auto;left:auto;right:auto;
+    height:32svh;min-height:230px;margin:1.5rem -1.5rem 0;z-index:0}
   .qhx-col{width:auto}
   .qhx-strip{margin-top:2rem;padding-top:1.25rem;height:97px}
   .qhx-stats{grid-template-columns:repeat(4, 126px)}
@@ -1892,6 +1898,9 @@ body.page-privacy{--qhx-u:min(1vw,14.4px)}
   .qhx-stats b::after{height:26px}
   .qhx-stats span{font-size:10px}
   .qhx-turn{font-size:1.375rem}
+}
+@media (max-width:380px){
+  body.page-privacy .hero .qh-stage{margin-inline:-1.25rem}
 }
 @media (max-width:700px){
   .qhx-strip{flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:1rem;height:151px}

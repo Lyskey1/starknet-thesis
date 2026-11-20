@@ -245,3 +245,17 @@ body > *:not(.eco-bd) { position: relative; z-index: 1; }
 @media (prefers-reduced-motion: reduce) {
   .hst-prog, .lp-link { transition: none; }
 }
+
+/* Hero art on small screens (2026-11-20): under 980px the shared frame
+   stretches the stage across the whole hero, so the torus sat behind the
+   title and the lede. Here it becomes its own full-width band under the
+   CTAs, above the numbers strip. Explicit specificity (0,4,1), not :where,
+   because it has to beat the shared sheet's `body .qhx .qh-stage`. */
+@media (max-width: 980px) {
+  body .landing .hero.qhx .qhx-scene { flex-direction: column; align-items: stretch; }
+  body .landing .hero.qhx .qh-stage { position: relative; order: 2; inset: auto; top: auto; bottom: auto; left: auto; right: auto;
+    height: min(62vw, 380px); margin: 1rem -1.5rem 0; }
+}
+@media (max-width: 380px) {
+  body .landing .hero.qhx .qh-stage { margin-inline: -1.25rem; }
+}
