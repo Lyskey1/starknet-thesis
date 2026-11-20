@@ -69,9 +69,13 @@ function initQw(root, onPick){
   }
   function select(i, instant){
     rove.mirror(i);
-    thMorph(shell, panel, function(){
+    var swap = function(){
       chs.forEach(function(c){ c.classList.toggle('is-on', +c.dataset.ch === i); });
-    }, instant);
+    };
+    /* (2026-11-20) a root without a .qw-shell (quantum's video players) has
+       no box to morph: swap directly instead of throwing on a null box */
+    if (!shell) { swap(); return; }
+    thMorph(shell, panel, swap, instant);
   }
   var rove = thRove({ root: root, buttons: peds, shown: shown,
     pick: function(k){ select(k); if (onPick) onPick(k); } });
