@@ -1494,7 +1494,7 @@ body > .hero{position:relative;display:flex;flex-direction:column;
    was doing exactly that under flex). */
 .skh-stats{display:grid;grid-template-columns:repeat(3, calc(102px + 2 * var(--skh-u)));margin:0;padding:0;list-style:none}
 .skh-stats li{display:flex;flex-direction:column;gap:5px;min-width:0}
-.skh-stats b{font-family:var(--display);font-weight:300;font-size:max(calc(1.7 * var(--skh-u)),22px);
+.skh-stats b{font-family:var(--display);font-weight:300;font-size:max(calc(2.1 * var(--skh-u)),27px);
   line-height:1;letter-spacing:-.01em;color:var(--white);font-variant-numeric:tabular-nums}
 .skh-stats b::before,.skh-turn::before{content:"";display:inline-block;width:0;
   height:calc(1.85 * var(--skh-u))}
@@ -1519,7 +1519,7 @@ body > .hero{position:relative;display:flex;flex-direction:column;
      slot 45px -> height 1 + 20 + 26 + 5 + 45 = 97px in the one-row layout */
   .skh-strip{margin-top:2rem;padding-top:1.25rem;height:97px}
   .skh-stats{grid-template-columns:repeat(3, 126px)}
-  .skh-stats b{font-size:1.5rem}
+  .skh-stats b{font-size:1.75rem}
   .skh-stats b::before,.skh-turn::before{height:21px}
   .skh-stats b::after{height:26px}
   .skh-stats span{font-size:12px}
@@ -1535,6 +1535,7 @@ body > .hero{position:relative;display:flex;flex-direction:column;
      are shorter, so the stacked claim starts at the same y on every page */
   .skh-stats li{min-height:76px}
   .skh-stats span{letter-spacing:.06em}
+  .skh-stats b{font-size:1.5rem}
   .skh-turn{text-align:left;font-size:1.25rem;white-space:normal}
 }
 @media (max-width:380px){
@@ -5106,5 +5107,14 @@ document.addEventListener('keydown',function(e){
   if(b){b.setAttribute('aria-expanded','false');b.setAttribute('aria-label','Open menu');b.focus();}
 });
 </script>
+<style id="hero-tablet">
+/* (2026-11-20) between the phone stack (700px) and 980px the row could not
+   hold the stats and the claim side by side, so the claim ran off the right
+   edge (up to ~300px on quantum); it now stacks under the stats here too */
+@media (min-width:701px) and (max-width:980px){
+  .skh-strip{flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:1rem;height:auto}
+  .skh-turn{text-align:left;white-space:normal}
+}
+</style>
 </body>
 </html>

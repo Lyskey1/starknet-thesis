@@ -1868,7 +1868,7 @@ body.page-privacy{--qhx-u:min(1vw,14.4px)}
 .qhx-cdlab span{color:rgba(250,250,250,.25);margin:0 2px}
 .qhx-cdlab b{font-weight:400;color:rgba(250,250,250,.6)}
 .qhx-stats li{display:flex;flex-direction:column;gap:5px;min-width:0}
-.qhx-stats b{font-family:var(--display);font-weight:300;font-size:max(calc(1.7 * var(--qhx-u)),22px);
+.qhx-stats b{font-family:var(--display);font-weight:300;font-size:max(calc(2.1 * var(--qhx-u)),27px);
   line-height:1;letter-spacing:-.01em;color:var(--white);font-variant-numeric:tabular-nums;white-space:nowrap}
 .qhx-stats b::before,.qhx-turn::before{content:"";display:inline-block;width:0;
   height:calc(1.85 * var(--qhx-u))}
@@ -1893,7 +1893,7 @@ body.page-privacy{--qhx-u:min(1vw,14.4px)}
   .qhx-col{width:auto}
   .qhx-strip{margin-top:2rem;padding-top:1.25rem;height:97px}
   .qhx-stats{grid-template-columns:repeat(4, 126px)}
-  .qhx-stats b{font-size:1.5rem}
+  .qhx-stats b{font-size:1.75rem}
   .qhx-stats b::before,.qhx-turn::before{height:21px}
   .qhx-stats b::after{height:26px}
   .qhx-stats span{font-size:12px}
@@ -1907,6 +1907,7 @@ body.page-privacy{--qhx-u:min(1vw,14.4px)}
   .qhx-stats{width:100%;grid-template-columns:repeat(4, 1fr)}
   .qhx-stats li{min-height:76px}
   .qhx-stats span{letter-spacing:.06em}
+  .qhx-stats b{font-size:1.5rem}
   body.page-privacy .qhx-stats{grid-template-columns:repeat(2,auto);column-gap:32px;justify-content:start}
   .qhx-turn{text-align:left;font-size:1.25rem;white-space:normal}
 }
@@ -5973,5 +5974,14 @@ document.addEventListener('keydown',function(e){
   if(b){b.setAttribute('aria-expanded','false');b.setAttribute('aria-label','Open menu');b.focus();}
 });
 </script>
+<style id="hero-tablet">
+/* (2026-11-20) between the phone stack (700px) and 980px the row could not
+   hold the stats and the claim side by side, so the claim ran off the right
+   edge (up to ~300px on quantum); it now stacks under the stats here too */
+@media (min-width:701px) and (max-width:980px){
+  body.page-privacy .qhx-strip{flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:1rem;height:auto}
+  body.page-privacy .qhx-turn{text-align:left;white-space:normal}
+}
+</style>
 </body>
 </html>
