@@ -1829,7 +1829,7 @@ window.ADMIN_GATE=on;})();
                the markup too, so it works without JS. -->
           <p class="stk-cta"><a class="stk-cta-link" href="https://dashboard.endur.fi/stake" data-stake-link="stake"
              target="_blank" rel="noopener noreferrer">Stake STRK on Endur<i class="ti ti-chevron-right" aria-hidden="true"></i><span class="stk-vh"> (opens in a new tab)</span></a></p>
-          <div id="stakingUpdated" style="font-family:var(--mono),monospace;font-size:10px;letter-spacing:.12em;color:var(--muted);text-align:right;margin-top:10px;min-height:13px"></div>
+          <div id="stakingUpdated" style="font-family:var(--mono),monospace;font-size:11px;letter-spacing:.12em;color:var(--muted);text-align:right;margin-top:10px;min-height:14px"></div>
         </div>
       </div>
 
@@ -1965,7 +1965,7 @@ window.ADMIN_GATE=on;})();
         <a class="l-btcfi" data-set="btcfi" href="https://www.coingecko.com/en/categories/bitcoin-layer-2" target="_blank" rel="noopener noreferrer"><span class="swatch"></span><span class="ln">BTCFi</span><span class="lmc" data-metric="venn.btcfi">$618.9M</span><span class="lext">↗</span></a>
         <a class="l-strk" data-set="strk" href="https://www.coingecko.com/en/coins/starknet" target="_blank" rel="noopener noreferrer"><span class="swatch"></span><span class="ln">Starknet (STRK)</span><span class="lmc" data-metric="venn.starknet">$190.9M</span><span class="lext">↗</span></a>
       </div>
-      <div id="vennUpdated" style="font-family:var(--mono),monospace;font-size:10px;letter-spacing:.12em;color:var(--muted);text-align:right;margin-top:10px;min-height:13px"></div>
+      <div id="vennUpdated" style="font-family:var(--mono),monospace;font-size:11px;letter-spacing:.12em;color:var(--muted);text-align:right;margin-top:10px;min-height:14px"></div>
     </div>
   </div>
 </div></section>
@@ -5115,6 +5115,22 @@ document.addEventListener('keydown',function(e){
   .skh-strip{flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:1rem;height:auto}
   .skh-turn{text-align:left;white-space:normal}
 }
+</style>
+<style id="text-floor">
+/* (2026-11-20) readability floor: small labels inside charts, diagrams and
+   cards that rendered at 8-10.5px are raised to at least 11px (max() keeps
+   anything already larger, and SVG chart text is untouched) */
+html #numbers .chartbox .cax span{font-size:max(10px,11px)}
+html .nacc-count{font-size:max(10px,11px)}
+html #numbers .kpi .kl{font-size:max(10px,11px)}
+html #numbers .center .ct{font-size:max(10px,11px)}
+html #numbers .center .cs{font-size:max(10px,11px)}
+html #numbers .cell .cl{font-size:max(10px,11px)}
+html #numbers .cbar-leg{font-size:max(10px,11px)}
+html .pda-heads{font-size:max(9.5px,11px)}
+html .pda-name span{font-size:max(9.5px,11px)}
+html #numbers .chartbox .cnote{font-size:max(10px,11px)}
+html #numbers .cview{font-size:max(10px,11px)}
 </style>
 </body>
 </html>

@@ -2858,5 +2858,12 @@ document.addEventListener('keydown',function(e){
   if(b){b.setAttribute('aria-expanded','false');b.setAttribute('aria-label','Open menu');b.focus();}
 });
 </script>
+<style id="text-floor">
+/* (2026-11-20) readability floor: small labels inside charts, diagrams and
+   cards that rendered at 8-10.5px are raised to at least 11px (max() keeps
+   anything already larger, and SVG chart text is untouched) */
+html .eco-pill-glabel{font-size:max(9px,11px)}
+html .ix-kind{font-size:max(10px,11px)}
+</style>
 </body>
 </html>
