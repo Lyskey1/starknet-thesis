@@ -66,7 +66,7 @@ export const SiteHeader = () => {
           href="/"
           aria-label="Starknet Thesis, home"
           interaction={QUIET}
-          className="flex shrink-0 items-center gap-[10px]"
+          className="relative flex shrink-0 items-center gap-[10px] before:absolute before:inset-x-0 before:-inset-y-3 before:content-['']"
         >
           <svg
             viewBox="2.4 5.4 21.2 15.2"

@@ -184,6 +184,12 @@ footer.vc-footer .dgf-bar > span { grid-column: 1 / 6; }
 footer.vc-footer .dgf-bar .dgf-status { grid-column: 9 / 13; justify-self: start; }
 footer.vc-footer .dgf-bar a { color: rgba(250,250,250,.72); text-decoration: none; transition: color .25s; }
 footer.vc-footer .dgf-bar a:hover { color: var(--vc-orange); }
+/* tap areas (2026-11-20): invisible rings so the small footer links and the
+   logo meet the 24px touch minimum; nothing drawn or laid out changes */
+footer.vc-footer .dgf-bar a { position: relative; }
+footer.vc-footer .dgf-bar a::before { content: ""; position: absolute; inset: -6px -4px; }
+header.vc-header .vc-logo { position: relative; }
+header.vc-header .vc-logo::before { content: ""; position: absolute; left: 0; right: 0; top: -12px; bottom: -12px; }
 footer.vc-footer .dgf-bar .dgf-status, footer.vc-footer .dgf-bar .dgf-status:hover { color: inherit; }
 footer.vc-footer .dgf-bar .status { font-size: 12px; }
 /* single column below 700px: rows stack, all left-aligned on the container */
