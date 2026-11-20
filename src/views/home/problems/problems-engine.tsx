@@ -18,6 +18,11 @@ import { useEffect } from "react";
  *     is on the rail or the document is hidden, stopped for good after any
  *     user interaction (pointer, key, or a deep link), and never started under
  *     prefers-reduced-motion;
+ *   - (2026-11-20) the clock only runs while the section is on screen, so a
+ *     reader arrives at the first tile rather than mid-cycle, and the
+ *     panel's live region is silent while the rotation runs (a screen reader
+ *     would otherwise re-read the whole panel every 7s); it speaks again
+ *     once the reader takes over;
  *   - deep links #problems-privacy / #problems-quantum / #problems-btcfi
  *     select their tile (the tile carries the id, so the native anchor scroll
  *     lands the section under the nav through scroll-margin-top);
@@ -93,9 +98,22 @@ export const ProblemsEngine = ({ rootId }: { rootId: string }) => {
         let last = performance.now();
         const setProg = (v: number) => root.style.setProperty("--hst-prog", v.toFixed(4));
         const rail = root as HTMLElement;
+        const panel = root.querySelector<HTMLElement>(".qw-panel");
+        let onScreen = false;
+        if (auto && panel) panel.setAttribute("aria-live", "off");
+        if (auto && "IntersectionObserver" in window) {
+          const io = new IntersectionObserver((entries) => {
+            onScreen = entries.some((e) => e.isIntersecting);
+          }, { threshold: 0.25 });
+          io.observe(rail);
+          cleanups.push(() => io.disconnect());
+        } else {
+          onScreen = true;
+        }
         function stopAuto() {
           if (!auto) return;
           auto = false;
+          if (panel) panel.setAttribute("aria-live", "polite");
           cancelAnimationFrame(raf);
           rail.classList.remove("is-auto");
           rail.classList.add("is-manual");
@@ -105,7 +123,7 @@ export const ProblemsEngine = ({ rootId }: { rootId: string }) => {
           if (!auto) return;
           const dt = now - last;
           last = now;
-          if (!paused && !document.hidden) {
+          if (!paused && onScreen && !document.hidden) {
             acc += dt;
             if (acc >= PERIOD_MS) {
               acc = 0;
