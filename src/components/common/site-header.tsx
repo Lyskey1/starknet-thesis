@@ -13,7 +13,7 @@ import { MobileNav } from "./mobile-nav";
  * 1392, no padding of its own): the brand cluster (22px three-bar mark,
  * 10px gap, Archivo Expanded 500 wordmark at 15px) flush on its left edge,
  * socials + Subscribe flush on its right edge, and the page links (the
- * site's mono uppercase eyebrow grammar: IBM Plex Mono 11.5px, .14em,
+ * site's mono uppercase eyebrow grammar: IBM Plex Mono 13px, .14em,
  * muted .62 ink, hover ink, 280ms) absolutely centered on the bar's TRUE
  * center, which equals the viewport's 50% because the container is
  * viewport-centered. The centered row never collides above the 1024 fold
@@ -86,7 +86,7 @@ export const SiteHeader = () => {
         {/* page links centered on the bar's true center (= viewport 50%) */}
         <nav
           aria-label="Main"
-          className="absolute top-1/2 left-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center gap-[22px] font-[family-name:var(--font-plex-mono)] text-[11.5px] leading-[1.2] font-normal tracking-[0.14em] uppercase whitespace-nowrap max-lg:hidden"
+          className="absolute top-1/2 left-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center gap-[22px] font-[family-name:var(--font-plex-mono)] text-[13px] leading-[1.2] font-normal tracking-[0.14em] max-[1199px]:tracking-[0.1em] uppercase whitespace-nowrap max-lg:hidden"
         >
           {NAV.map((item) => (
             <PressableLink
@@ -124,7 +124,7 @@ export const SiteHeader = () => {
           <PressableLink
             href={LINKS.newsletter}
             interaction={GHOST}
-            className="flex shrink-0 items-center rounded-[6px] border border-[rgba(245,242,236,0.22)] bg-[rgba(38,38,38,0.74)] px-[14px] py-[8px] font-[family-name:var(--font-plex-mono)] text-[11px] leading-[1.2] font-normal tracking-[0.14em] uppercase whitespace-nowrap shadow-[inset_0_1px_0_rgba(255,255,255,0.22)]"
+            className="flex shrink-0 items-center rounded-[6px] border border-[rgba(245,242,236,0.22)] bg-[rgba(38,38,38,0.74)] px-[14px] py-[8px] font-[family-name:var(--font-plex-mono)] text-[12px] leading-[1.2] font-normal tracking-[0.14em] uppercase whitespace-nowrap shadow-[inset_0_1px_0_rgba(255,255,255,0.22)]"
           >
             Subscribe
           </PressableLink>

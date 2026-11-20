@@ -46,7 +46,7 @@ export const SiteFooter = ({ copy }: SiteFooterProps) => {
       <div className="vc-cta-band w-full bg-signal py-[clamp(36px,4.5vh,60px)] text-white">
         <div className="mx-auto grid w-[calc(100%-48px)] max-w-[1392px] grid-cols-[minmax(0,2fr)_minmax(0,1fr)] items-end gap-x-[56px] gap-y-[40px] text-left min-h-[min(24vh,250px)] max-lg:min-h-0 max-lg:grid-cols-1 max-lg:items-start max-lg:gap-[32px]">
           <div className="block">
-            <p className="vc-kicker mb-[20px] font-hud-mono text-[11px] leading-[1.2] font-normal tracking-[0.2em] text-white uppercase">
+            <p className="vc-kicker mb-[20px] font-hud-mono text-[12px] leading-[1.2] font-normal tracking-[0.2em] text-white uppercase">
               Starknet Thesis
             </p>
             <h2 className="vc-title font-general text-[clamp(34px,4.4vw,66px)] leading-[0.96] font-light tracking-[-0.022em] text-white">
@@ -70,7 +70,7 @@ export const SiteFooter = ({ copy }: SiteFooterProps) => {
             className="vc-sub ml-auto flex w-full max-w-[440px] flex-col items-stretch gap-[18px] max-lg:ml-0 max-lg:max-w-[520px]"
           >
             <label className="block">
-              <span className="mb-[9px] block font-hud-mono text-[11px] leading-[1.2] tracking-[0.16em] text-white/80 uppercase">
+              <span className="mb-[9px] block font-hud-mono text-[12px] leading-[1.2] tracking-[0.16em] text-white/80 uppercase">
                 Get the thesis in your inbox
               </span>
               <input
@@ -122,7 +122,7 @@ export const SiteFooter = ({ copy }: SiteFooterProps) => {
               key={column.heading}
               className="vc-col col-span-4 flex flex-col gap-[20px] py-[48px] max-[700px]:py-[24px]"
             >
-              <h3 className="font-hud-mono text-[11px] leading-[1.2] font-normal tracking-[0.18em] text-[rgba(250,250,250,0.65)] uppercase">
+              <h3 className="font-hud-mono text-[12px] leading-[1.2] font-normal tracking-[0.18em] text-[rgba(250,250,250,0.65)] uppercase">
                 {column.heading}
               </h3>
               <ul className="flex list-none flex-col gap-[12px] p-0">
@@ -162,7 +162,7 @@ export const SiteFooter = ({ copy }: SiteFooterProps) => {
           </p>
         </div>
         {copy.legal && (
-          <p className="vc-legal col-span-4 col-start-9 font-general text-[11.5px] leading-[1.6] text-[rgba(250,250,250,0.52)] normal-case">
+          <p className="vc-legal col-span-4 col-start-9 font-general text-[12.5px] leading-[1.6] text-[rgba(250,250,250,0.52)] normal-case">
             {copy.legal}
           </p>
         )}
