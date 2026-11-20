@@ -97,7 +97,7 @@ export const MobileNav = ({ items }: MobileNavProps) => {
           id="mobile-nav"
           aria-label="Main"
           style={panel}
-          className="absolute top-[calc(100%+0.5rem)] right-0 left-0 flex flex-col border border-white/10 bg-black/90 p-[1.25rem] backdrop-blur-[8px]"
+          className="absolute top-[calc(100%+0.5rem)] right-0 left-0 flex flex-col border border-white/10 bg-[rgba(13,13,13,0.97)] p-[1.25rem] backdrop-blur-[8px]"
         >
           {items.map((item) => (
             <PressableLink
