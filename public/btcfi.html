@@ -6017,5 +6017,36 @@
 </script>
 <script type="module" src="js/btcfi-hero-mark.js"></script>
 <script type="module" src="js/eco-backdrop.js"></script>
+<style id="accent-text">
+/* Small orange text, made readable (2026-11-20). The brand orange #c53400
+   reads at about 3.6:1 on the near-black background, under the 4.5:1 that
+   text this size needs; it stays as is for headlines, fills, borders and
+   the orange band (white text on a lighter orange would fail instead).
+   These are the rules that colour SMALL text orange on this page, found by
+   measuring the rendered page, switched to the lighter text orange.
+   `html ` adds one type to each selector and this block sits last in the
+   document, so each line wins exactly where the original rule won. */
+:root{--accent-text:#e8501a}
+html header.vc-header nav.vc-nav a.active{color:var(--accent-text)}
+html .hero .hero-eyebrow{color:var(--accent-text)}
+html .th-pm-eyebrow{color:var(--accent-text);opacity:1}
+html .cat-count b{color:var(--accent-text)}
+html .cat-key[aria-selected="true"]{color:var(--accent-text)}
+html .cat-mode{color:#f26b33}
+html .catalyst-tag{color:var(--accent-text)}
+html .inline-accent-link{color:var(--accent-text)}
+html .tl-year{color:var(--accent-text)}
+html .tl-detail-year{color:var(--accent-text)}
+html .status-next{color:var(--accent-text)}
+html .mst-rail-row.is-active .mst-rail-n{color:var(--accent-text)}
+html .bsk-seg-btc .bsk-pct{color:var(--accent-text)}
+html .bsk-seg-btc .bsk-role b{color:var(--accent-text)}
+html .page-btcfi .news-flashy .news-eyebrow{color:var(--accent-text)}
+html .status{color:var(--accent-text)}
+/* a few labels were also drawn at 85-90% opacity, which pulls even the
+   lighter orange back under the minimum: full opacity on those */
+/* on the grey glass buttons the background is lighter than the page: one
+   step brighter orange there so the active state still reads */
+</style>
 </body>
 </html>

@@ -5438,7 +5438,7 @@ var VIDEOS = [
      every deploy, so readers get the last build's set at first paint and
      keep it if the fetch fails. Do not edit it by hand: the next build
      overwrites it from the file. The tag and number chips stay markup. */
-  var L1_SEEDS = /* VIDEOS:quantumL1:START */[]/* VIDEOS:quantumL1:END */;
+  var L1_SEEDS = /* VIDEOS:quantumL1:START */[{"src":"https://pub-3274162cfa1d48728621d5ec2d0906ad.r2.dev/16x9%20landscape%20%E2%80%93%20Starknet%20could%20become%20an%20L1%20%281%29.mp4","poster":"https://pub-3274162cfa1d48728621d5ec2d0906ad.r2.dev/eli-l1-01.jpg","title":"Starknet could become an L1","dur":24},{"src":"https://pub-3274162cfa1d48728621d5ec2d0906ad.r2.dev/16x9%20landscape%20%E2%80%93%20Where%20Ethereum%20is%20heading%20is%20where%20Starknet%20is%20now%20%281%29.mp4","poster":"https://pub-3274162cfa1d48728621d5ec2d0906ad.r2.dev/eli-l1-02.jpg","title":"Where Ethereum is heading, Starknet already is. Why wait?","dur":64},{"src":"https://pub-3274162cfa1d48728621d5ec2d0906ad.r2.dev/16x9%20landscape%20%E2%80%93%20Built%20for%20post-quantum%20from%20the%20start%20%281%29.mp4","poster":"https://pub-3274162cfa1d48728621d5ec2d0906ad.r2.dev/eli-l1-03.jpg","title":"We’ve known how to address the quantum threat since 2018.","dur":26},{"src":"https://pub-3274162cfa1d48728621d5ec2d0906ad.r2.dev/16x9%20landscape%20%E2%80%93%20AI%20could%20break%20crypto%20first%20%281%29.mp4","poster":"https://pub-3274162cfa1d48728621d5ec2d0906ad.r2.dev/eli-l1-04.jpg","title":"AI is accelerating the quantum threat. We must prepare now.","dur":27}]/* VIDEOS:quantumL1:END */;
   window.l1FilmChrome = thVideoChrome({
     root: root,
     slots: '.th-pm-vcard',
@@ -5839,5 +5839,43 @@ var VIDEOS = [
 <script type="module" src="js/eco-backdrop.js"></script>
 <script type="module" src="js/quantum-hero-mark.js"></script>
 <script src="js/quantum-vgrid.js" defer></script>
+<style id="accent-text">
+/* Small orange text, made readable (2026-11-20). The brand orange #c53400
+   reads at about 3.6:1 on the near-black background, under the 4.5:1 that
+   text this size needs; it stays as is for headlines, fills, borders and
+   the orange band (white text on a lighter orange would fail instead).
+   These are the rules that colour SMALL text orange on this page, found by
+   measuring the rendered page, switched to the lighter text orange.
+   `html ` adds one type to each selector and this block sits last in the
+   document, so each line wins exactly where the original rule won. */
+:root{--accent-text:#e8501a}
+html header.vc-header nav.vc-nav a.active{color:var(--accent-text)}
+html .hero-eyebrow{color:var(--accent-text)}
+html .th-pm-eyebrow{color:var(--accent-text);opacity:1}
+html #catalyst-chapters .qw-label b{color:var(--accent-text)}
+html .th-pm-card .th-pm-date{color:var(--accent-text)}
+html .qcx-more{color:var(--accent-text);opacity:1}
+html .th-q-flow b.acc{color:var(--accent-text)}
+html .rxr-step b{color:var(--accent-text)}
+html .th-maze-stats.qu b{color:var(--accent-text)}
+html .qprop-body a{color:var(--accent-text)}
+html .hst-tile[aria-selected="true"] .hst-name b{color:var(--accent-text)}
+html .th-st-chip.q{color:var(--accent-text)}
+html .th-fl-head{color:var(--accent-text)}
+html .qadv-quote a{color:var(--accent-text)}
+html .qadv-role b{color:var(--accent-text)}
+/* these labels inherit their tab colour (orange only when selected) */
+html :is(#qvVideos, #l1Videos) .qw-ped[aria-selected="true"] .qw-label{color:var(--accent-text)}
+html .page-quantum .news-flashy .news-eyebrow{color:var(--accent-text)}
+html .status{color:var(--accent-text)}
+/* three rules colour by status through a variable set inline per item
+   (--bc / --ac: green live, amber research, orange planned), so only the
+   orange status is switched, matched on that inline value */
+html .th-pq-badge[style*="--bc:var(--th-q)"]{color:var(--accent-text)}
+html [style*="--ac:var(--th-q)"] .th-fl-phase, html .th-fl-phase[style*="--ac:var(--th-q)"]{color:var(--accent-text)}
+html [style*="--ac:var(--th-q)"] .th-fl-time, html .th-fl-time[style*="--ac:var(--th-q)"]{color:var(--accent-text)}
+/* a few labels were also drawn at 85-90% opacity, which pulls even the
+   lighter orange back under the minimum: full opacity on those */
+</style>
 </body>
 </html>

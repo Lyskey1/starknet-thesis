@@ -806,5 +806,25 @@
 <script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.185.0/build/three.module.js"}}</script>
 <script type="module" src="js/eco-backdrop.js"></script>
 <script type="module" src="js/digest-hero-mark.js"></script>
+<style id="accent-text">
+/* Small orange text, made readable (2026-11-20). The brand orange #c53400
+   reads at about 3.6:1 on the near-black background, under the 4.5:1 that
+   text this size needs; it stays as is for headlines, fills, borders and
+   the orange band (white text on a lighter orange would fail instead).
+   These are the rules that colour SMALL text orange on this page, found by
+   measuring the rendered page, switched to the lighter text orange.
+   `html ` adds one type to each selector and this block sits last in the
+   document, so each line wins exactly where the original rule won. */
+:root{--accent-text:#e8501a}
+html header.vc-header nav.vc-nav a.active{color:var(--accent-text)}
+html .dgh-kicker{color:var(--accent-text)}
+html .th-pm-eyebrow{color:var(--accent-text);opacity:1}
+/* the active filter sits on the grey glass button, lighter than the page:
+   one step brighter there so it still reads (5.4:1 on the glass) */
+html #recapTabs .toggle-btn.active{color:#f26b33}
+html .status{color:var(--accent-text)}
+/* a few labels were also drawn at 85-90% opacity, which pulls even the
+   lighter orange back under the minimum: full opacity on those */
+</style>
 </body>
 </html>
