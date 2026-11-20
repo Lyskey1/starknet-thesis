@@ -66,7 +66,7 @@ export const HomeView = async () => {
   };
 
   return (
-    <main className="landing">
+    <main className="landing" id="content" tabIndex={-1}>
       {/* The shared component sheets are the static pages' own files under
           public/css, linked (React hoists them into <head>) rather than
           copied into the bundle, so /quantum and the landing read ONE file.

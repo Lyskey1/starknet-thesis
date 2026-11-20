@@ -26,7 +26,7 @@ export const Hero = ({ live }: { live?: LiveSnapshot }) => (
         <div className="qhx-col">
           <p className="hero-eyebrow">The thesis</p>
           <h1 id="hero-title" className="hero-title vch-title">
-            Starknet answers crypto&apos;s <em>three hardest problems.</em>
+            Starknet answers crypto’s <em>three hardest problems.</em>
           </h1>
           <p className="hero-subtitle vch-sub">
             Real onchain privacy, post-quantum proofs by design, and Bitcoin turned into productive

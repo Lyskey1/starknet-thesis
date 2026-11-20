@@ -77,6 +77,7 @@ export default function RootLayout({
             __html: JSON.stringify(getSiteStructuredData()),
           }}
         />
+        <a href="#content" className="skip-link">Skip to content</a>
         <ScrollLayout>
           <AdaptiveGrid />
           <ReducedMotion />

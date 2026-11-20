@@ -207,3 +207,14 @@ body {
 @keyframes vcStatusPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 .vc-status-dot { animation: vcStatusPulse 2s infinite; }
 @media (prefers-reduced-motion: reduce) { .vc-status-dot { animation: none; } }
+
+/* (2026-11-20) the site is dark: native scrollbars and form controls follow,
+   and a skip link lets keyboard users jump past the header. The crowd slider
+   keeps its light native track. */
+:root { color-scheme: dark; }
+#crowdRange { color-scheme: light; }
+html body a.skip-link { position: fixed; left: 12px; top: 12px; z-index: 10000; padding: 10px 14px; border-radius: 6px;
+  background: #fafafa; color: #0d0d0d; font: 500 14px/1.2 system-ui, sans-serif; text-decoration: none;
+  transform: translateY(-200%); }
+html body a.skip-link:focus, html body a.skip-link:focus-visible { transform: none; outline: 2px solid #e8501a; outline-offset: 2px; }
+[id="content"]:focus, [data-skip-target]:focus { outline: none; }

@@ -42,7 +42,7 @@ export const PERISHABLE = {
      every major tracker. Checked against CoinMarketCap's ranking on the
      date below; a quarter is the re-check cadence. */
   "btc-largest-asset": {
-    text: "crypto's largest asset",
+    text: "crypto’s largest asset",
     src: "https://coinmarketcap.com/",
     checked: "2026-09-08",
     breaks: "2026-12-08",

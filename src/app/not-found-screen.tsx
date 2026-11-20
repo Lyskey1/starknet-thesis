@@ -82,7 +82,7 @@ export default function NotFoundScreen() {
       {/* eslint-disable-next-line @next/next/no-page-custom-font -- the BIOS face is only used here */}
       <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
       <div className="bar"><span>STARKNET THESIS BIOS (C) 2026 Lyskey Research</span><span>v4.0.4</span></div>
-      <main>
+      <main id="content" tabIndex={-1}>
         <pre>
           {LINES.map((line, i) =>
             line.text === "" ? (

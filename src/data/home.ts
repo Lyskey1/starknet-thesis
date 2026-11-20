@@ -172,7 +172,7 @@ export const homeSignals: { ecosystem: SignalCardCopy; digest: SignalCardCopy } 
   },
   digest: {
     heading: "Digest",
-    blurb: "Starknet's shipping, recapped every week and every month.",
+    blurb: "Starknet’s shipping, recapped every week and every month.",
     mono: "{w} weekly roundups \u00b7 {m} monthly recaps \u00b7 {r} research articles",
     link: { label: "Read the digest", href: "/digest" },
   },
@@ -202,7 +202,7 @@ export const homeFaq: FaqCopy = {
          (public/js/qday-config.js through src/lib/data/qday.ts), filled into
          the claim's text by the view; nothing here types it. */
       answer:
-        "Governments, Big Tech and researchers are converging on the same timeline, [[qday-timeline]], for when quantum computers break today's elliptic-curve cryptography. While most chains will have to migrate everything, Starknet has already done most of the work: its proofs are hash-based, which is post-quantum by construction, account abstraction allows wallets to migrate in a single transaction, and [[pq-accounts-running]]. For the rest, [[pq-roadmap-public]].",
+        "Governments, Big Tech and researchers are converging on the same timeline, [[qday-timeline]], for when quantum computers break today’s elliptic-curve cryptography. While most chains will have to migrate everything, Starknet has already done most of the work: its proofs are hash-based, which is post-quantum by construction, account abstraction allows wallets to migrate in a single transaction, and [[pq-accounts-running]]. For the rest, [[pq-roadmap-public]].",
       cta: { label: "Read Quantum", href: "/quantum" },
     },
     {
