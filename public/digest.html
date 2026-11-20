@@ -658,6 +658,7 @@
   var moreWrap = document.getElementById('recapMore');
   var moreBtn = document.getElementById('recapMoreBtn');
   var countEl = document.getElementById('recapCount');
+  var coverN = {};           // cover URL → how many posts use it
   var posts = [];            // ALL posts, sorted newest → oldest (never trimmed)
   var current = 'all';       // active filter
   var visible = INITIAL_VISIBLE; // how many of the current filtered list are shown
@@ -715,8 +716,8 @@
   // .recap-card stays on the anchor because the filter, the Load-more code
   // and hasStatic() all query it.
   function cardHTML(p){
-    /* (2026-11-20) weekly roundups share one cover: the issue number goes over it */
-    var issue = p.cat === 'weekly' ? (/(\d+)\s*$/.exec(p.title) || [])[1] : '';
+    /* (2026-11-20) where weekly roundups share one cover, the issue number goes over it */
+    var issue = p.cat === 'weekly' && p.image && (coverN[p.image] || 0) > 1 ? (/roundup\s*#?(\d+)/i.exec(p.title) || [])[1] || '' : '';
     return '<a class="recap-card dgw-card" data-umami-event="digest-entry-click" data-cat="' + p.cat + '" href="' + escA(p.link) + '" target="_blank" rel="noopener">' +
       '<span class="recap-cover dgw-cover">' + (p.image ? '<img src="' + escA(p.image) + '" loading="lazy" alt="">' : '') + (issue ? '<span class="dgw-issue" aria-hidden="true"><small>No.</small>' + esc(issue) + '</span>' : '') + '</span>' +
       '<span class="dgw-top">' +
@@ -781,6 +782,7 @@
   }
   function render(list){
     posts = list.slice().sort(function(a, b){ return b.date - a.date; }); // newest → oldest
+    coverN = {}; posts.forEach(function(p){ if (p.image) coverN[p.image] = (coverN[p.image] || 0) + 1; });
     current = 'all';
     visible = INITIAL_VISIBLE;
     tabs.querySelectorAll('.toggle-btn').forEach(function(b){ b.classList.toggle('active', b.getAttribute('data-filter') === 'all'); });

@@ -66,15 +66,17 @@ function classify(title){
 }
 const fmtDate = d => MN[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
 
+let COVER_N = {};
 function cardHTML(post){
   const d = new Date(post.post_date || post.published_at || post.date || 0);
   const title = post.title || '(untitled)';
   const link = post.canonical_url || (post.slug ? SUBSTACK_URL + 'p/' + post.slug : SUBSTACK_URL);
   const cover = post.cover_image || '';
   const cat = classify(title);
-  /* (2026-11-20) every weekly roundup ships the same Substack cover, so the
-     issue number is set over it; keep in sync with digest.html */
-  const issue = cat === 'weekly' ? (/(\d+)\s*$/.exec(title) || [])[1] : '';
+  /* (2026-11-20) recent weekly roundups reuse one Substack cover, so where a
+     cover is shared the issue number is set over it (a cover of its own is
+     left clear); keep in sync with digest.html */
+  const issue = cat === 'weekly' && cover && (COVER_N[cover] || 0) > 1 ? (/roundup\s*#?(\d+)/i.exec(title) || [])[1] || '' : '';
   const dateHtml = isNaN(d.getTime()) || !d.getTime() ? '' :
     '<time class="dgw-date" datetime="' + d.toISOString().slice(0, 10) + '">' + esc(fmtDate(d)) + '</time>';
   return '<a class="recap-card dgw-card" data-umami-event="digest-entry-click" data-cat="' + cat + '" href="' + escA(link) + '" target="_blank" rel="noopener">' +
@@ -95,6 +97,7 @@ let raw;
 try { raw = JSON.parse(fs.readFileSync(DATA, 'utf8')); }
 catch (e) { die('data/recap.json is not valid JSON: ' + e.message); }
 if (!Array.isArray(raw) || raw.length === 0) die('data/recap.json must be a non-empty array (got ' + (Array.isArray(raw) ? 'empty array' : typeof raw) + ')');
+raw.forEach(p => { if (p && p.cover_image) COVER_N[p.cover_image] = (COVER_N[p.cover_image] || 0) + 1; });
 const bad = raw.findIndex(p => !p || typeof p !== 'object' || !(p.title || p.canonical_url || p.slug));
 if (bad !== -1) die('data/recap.json entry #' + bad + ' has neither title nor a resolvable URL');
 

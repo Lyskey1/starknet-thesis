@@ -213,6 +213,9 @@ body {
    keeps its light native track. */
 :root { color-scheme: dark; }
 #crowdRange { color-scheme: light; }
+/* embedded frames (X posts, videos) keep the scheme they had before, so a
+   frame without its own dark declaration never gets an opaque light canvas */
+iframe { color-scheme: normal; }
 html body a.skip-link { position: fixed; left: 12px; top: 12px; z-index: 10000; padding: 10px 14px; border-radius: 6px;
   background: #fafafa; color: #0d0d0d; font: 500 14px/1.2 system-ui, sans-serif; text-decoration: none;
   transform: translateY(-200%); }
